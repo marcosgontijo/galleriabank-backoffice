@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelPagadorRecebedor" header="Pagador / Recebedor - #{pagadorRecebedorMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<p:outputLabel styleClass="labelBold" for="Pessoa" value="Pessoa: "  />
+					<p:selectOneRadio id="Pessoa" value="#{pagadorRecebedorMB.tipoPessoaIsFisica}"  disabled="true">
+			            <f:selectItem itemLabel="Física" itemValue="true" />
+			            <f:selectItem itemLabel="Jurídica" itemValue="false" />
+			            <p:ajax update="PanelPagadorRecebedor" event="valueChange" listener="#{pagadorRecebedorMB.selectedTipoPessoa}"/>
+			        </p:selectOneRadio>		
+
+					<p:outputLabel styleClass="labelBold" for="Cpf" value="CPF: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Cpf" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpf}" label="CPF" mask="999.999.999-99" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/> 
+					
+					<p:outputLabel styleClass="labelBold" for="Rg" value="RG / CNH: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Rg" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}" label="RG" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="DtEmissaoRG" value="Data Emissão: " />	
+					<h:outputText id="DtEmissaoRG" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRG}" label="Data Emissão">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>	
+					
+					<p:outputLabel styleClass="labelBold" for="CNPJ" value="CNPJ: "  rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="CNPJ" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpj}" label="CNPJ" mask="99.999.999/9999-99" rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/> 
+					
+					<p:outputLabel styleClass="labelBold" for="Atividade" value="Profissão: "  rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<p:outputLabel styleClass="labelBold" for="Atividade" value="Ramo de Atividade: " rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Atividade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.atividade}" label="Atividade"/>
+							
+					<p:outputLabel styleClass="labelBold" for="site" value="Site: " />	
+					<h:outputText id="site" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.site}" label="Site"/>				
+					
+					<p:outputLabel styleClass="labelBold" for="Nome" value="Nome: "  rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<p:outputLabel styleClass="labelBold" for="Nome" value="Razão Social: "  rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Nome" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nome}" label="Nome"/>   
+								
+					<p:outputLabel styleClass="labelBold" for="Sexo" value="Sexo: " />
+					<p:selectOneRadio id="Sexo" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexo}" disabled="true">
+						<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+						<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+			        </p:selectOneRadio>		
+			        
+					<p:outputLabel styleClass="labelBold" for="Contato" value="Contato: " />
+					<h:outputText id="Contato" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contato}" label="Contato"/>
+						
+ 					<p:outputLabel styleClass="labelBold" for="EMail" value="E-Mail: " />	
+					<h:outputText id="EMail" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}" label="E-Mail"/> 				
+								
+					<p:outputLabel styleClass="labelBold" for="DtNascimento" value="Data de Nascimento: " />	
+					<h:outputText id="DtNascimento" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}" label="Data de Nascimento">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>	
+					
+					<p:outputLabel styleClass="labelBold" for="TelResidencial" value="Telefone Residencial: " />
+					<h:outputText id="TelResidencial" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencial}" label="Telefone Residencial"/>																								
+
+					<p:outputLabel styleClass="labelBold" for="TelCelular" value="Telefone Celular: " />
+					<h:outputText id="TelCelular" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelular}" label="Telefone Celular"/>	
+					
+					<p:outputLabel styleClass="labelBold" for="Endereco" value="Endereço: " />
+					<h:outputText id="Endereco" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.endereco}" label="Endereço"/>	
+					
+					<p:outputLabel styleClass="labelBold" for="Complemento" value="Complemento: " />
+					<h:outputText id="Complemento" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complemento}" label="Complemento"/>
+															
+					<p:outputLabel styleClass="labelBold" for="Bairro" value="Bairro: " />
+					<h:outputText id="Bairro" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairro}" label="Bairro"/>
+					
+					<p:outputLabel styleClass="labelBold" for="Cep" value="Cep: " />
+					<h:outputText id="Cep" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cep}" label="Cep"/>
+					
+					<p:outputLabel styleClass="labelBold" for="Cidade" value="Cidade: " />
+					<h:outputText id="Cidade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidade} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade"/>																																																		
+					
+					<p:outputLabel styleClass="labelBold" for="Observacao1" value="Observação: " />
+					<h:outputText id="Observacao1" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" label="Observação"/>	
+					
+					<p:outputLabel styleClass="labelBold" for="Observacao2" value="" />
+					<h:outputText id="Observacao2" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao2}" label="Observação"/>				
+					
+				</h:panelGrid>																
+			</p:panel>
+			
+			<p:panel id="PanelCasado" header="Estado Civil" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel styleClass="labelBold" for="estadocivil" value="Estado Civil: " />
+						<p:selectOneMenu id="estadocivil"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil}"
+							label="Status" style="width:190px;" disabled="true">
+							<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
+							<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
+							<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
+							<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
+							<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
+							<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+							<p:ajax update="PanelCasado" event="valueChange"/>
+						</p:selectOneMenu>			
+					<p:outputLabel styleClass="labelBold" for="NomeConjuge" value="Nome: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="NomeConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeConjuge}" label="Nome" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<p:outputLabel styleClass="labelBold" for="SexoConjuge" value="Sexo: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<p:selectOneRadio id="SexoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexoConjuge}" disabled="true" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+						<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+						<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+			        </p:selectOneRadio>	
+					<p:outputLabel styleClass="labelBold" for="emailConjuge" value="E-Mail: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+					<h:outputText id="emailConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}" label="E-Mail" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="DtNascimentoConjuge" value="Data de Nascimento: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
+					<h:outputText id="DtNascimentoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoConjuge}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>	
+					
+					<p:outputLabel styleClass="labelBold" for="TelResidencialConjuge" value="Telefone Residencial: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="TelResidencialConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>																																																
+										
+					<p:outputLabel styleClass="labelBold" for="TelCelularConjuge" value="Telefone Celular: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="TelCelularConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>			
+																							
+					 											
+					<p:outputLabel styleClass="labelBold" for="CpfConjuge" value="CPF: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="CpfConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfConjuge}" label="CPF" mask="999.999.999-99" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>  							
+					<p:outputLabel styleClass="labelBold" for="RgConjuge" value="RG: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="RgConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
+					<p:outputLabel styleClass="labelBold" for="DtEmissaoRGConjuge" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+					<h:outputText id="DtEmissaoRGConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>						
+					<p:outputLabel styleClass="labelBold" for="CargoConjuge" value="Cargo/Ocupação: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="CargoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="EnderecoConjuge" value="Endereço: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="EnderecoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoConjuge}" label="Endereço" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+					
+					<p:outputLabel styleClass="labelBold" for="ComplementoConjuge" value="Complemento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="ComplementoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoConjuge}" label="Complemento" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+															
+					<p:outputLabel styleClass="labelBold" for="BairroConjuge" value="Bairro: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+					<h:outputText id="BairroConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroConjuge}" label="Bairro" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="CepConjuge" value="Cep: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="CepConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}" label="Cep" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="CidadeConjuge" value="Cidade: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="CidadeConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeConjuge} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="EstadoConjuge" value="Estado: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					<h:outputText id="EstadoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadoConjuge} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+				</h:panelGrid>												 
+			</p:panel>
+			
+			<p:panel id="PanelCoobrigado" header="Dados do Coobrigado" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel styleClass="labelBold" for="Coobrigado" value="Coobrigado: "  />
+					<p:selectOneRadio id="Coobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"  disabled="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax update="PanelCoobrigado" event="valueChange"/>
+					</p:selectOneRadio>				
+					<p:outputLabel styleClass="labelBold" for="NomeCoobrigado" value="Nome: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="NomeCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCoobrigado}" label="Nome" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+										
+					<p:outputLabel styleClass="labelBold" for="SexoCoobrigado" value="Sexo: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<p:selectOneRadio id="SexoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexoConjuge}" disabled="true" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}">
+						<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+						<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+			        </p:selectOneRadio>	
+			        					 											
+					<p:outputLabel styleClass="labelBold" for="CpfCoobrigado" value="CPF: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="CpfCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfCoobrigado}" label="CPF" mask="999.999.999-99" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>  							
+					<p:outputLabel styleClass="labelBold" for="RgCoobrigado" value="RG: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="RgCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgCoobrigado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>					
+					<p:outputLabel styleClass="labelBold" for="DtEmissaoRGCoobrigado" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					<h:outputText id="DtEmissaoRGCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGCoobrigado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>			
+					<p:outputLabel styleClass="labelBold" for="emailCoobrigado" value="E-Mail: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					<h:outputText id="emailCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailCoobrigado}" label="E-Mail" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="DtNascimentoCoobrigado" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					<h:outputText id="DtNascimentoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoCoobrigado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>						
+					<p:outputLabel styleClass="labelBold" for="TelResidencialCoobrigado" value="Telefone Residencial: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					<h:outputText id="TelResidencialCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialCoobrigado}" label="Telefone Residencial" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<p:outputLabel styleClass="labelBold" for="TelCelularCoobrigado" value="Telefone Celular: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					<h:outputText id="TelCelularCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularCoobrigado}" label="Telefone Celular" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+								
+					<p:outputLabel styleClass="labelBold" for="CargoCoobrigado" value="Cargo/Ocupação: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="CargoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoCoobrigado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="EnderecoCoobrigado" value="Endereço: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="EnderecoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoCoobrigado}" label="Endereço" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
+					
+					<p:outputLabel styleClass="labelBold" for="ComplementoCoobrigado" value="Complemento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="ComplementoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoCoobrigado}" label="Complemento" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+															
+					<p:outputLabel styleClass="labelBold" for="BairroCoobrigado" value="Bairro: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
+					<h:outputText id="BairroCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroCoobrigado}" label="Bairro" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="CepCoobrigado" value="Cep: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="CepCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepCoobrigado}" label="Cep" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="CidadeCoobrigado" value="Cidade: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="CidadeCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeCoobrigado} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="EstadoCoobrigado" value="Estado: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+					<h:outputText id="EstadoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadoCoobrigado} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
+				</h:panelGrid>
+				
+				<p:panel id="PanelCoobrigadoCasado" header="Estado Civil" style="margin-bottom:10px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel styleClass="labelBold" for="EstadoCivilCoobrigado" value="Estado Civil: " />
+							<p:selectOneMenu id="EstadoCivilCoobrigado"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado}"
+								label="Status" style="width:190px;" disabled="true">
+								<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
+								<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
+								<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
+								<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
+								<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
+								<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+								<p:ajax update="PanelCoobrigadoCasado" event="valueChange"/>
+							</p:selectOneMenu>			
+						<p:outputLabel styleClass="labelBold" for="NomeCoobrigadoCasado" value="Nome: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="NomeCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCoobrigadoCasado}" label="Nome" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<p:outputLabel styleClass="labelBold" for="SexoCoobrigadoCasado" value="Sexo: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<p:selectOneRadio id="SexoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexoCoobrigadoCasado}" disabled="true" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+							<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+				        </p:selectOneRadio>	
+						<p:outputLabel styleClass="labelBold" for="emailCoobrigadoCasado" value="E-Mail: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+						<h:outputText id="emailCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailCoobrigadoCasado}" label="E-Mail" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						
+						<p:outputLabel styleClass="labelBold" for="DtNascimentoCoobrigadoCasado" value="Data de Nascimento: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
+						<h:outputText id="DtNascimentoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoCoobrigadoCasado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						</h:outputText>	
+						
+						<p:outputLabel styleClass="labelBold" for="TelResidencialCoobrigadoCasado" value="Telefone Residencial: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="TelResidencialCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>																																																
+											
+						<p:outputLabel styleClass="labelBold" for="TelCelularCoobrigadoCasado" value="Telefone Celular: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="TelCelularCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>			
+																								
+						 											
+						<p:outputLabel styleClass="labelBold" for="CpfCoobrigadoCasado" value="CPF: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="CpfCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfCoobrigadoCasado}" label="CPF" mask="999.999.999-99" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>  							
+						<p:outputLabel styleClass="labelBold" for="RgCoobrigadoCasado" value="RG: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="RgCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
+						<p:outputLabel styleClass="labelBold" for="DtEmissaoRGCoobrigadoCasado" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+						<h:outputText id="DtEmissaoRGCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGCoobrigadoCasado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						</h:outputText>						
+						<p:outputLabel styleClass="labelBold" for="CargoCoobrigadoCasado" value="Cargo/Ocupação: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="CargoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						
+						<p:outputLabel styleClass="labelBold" for="EnderecoCoobrigadoCasado" value="Endereço: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="EnderecoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoCoobrigadoCasado}" label="Endereço" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
+						
+						<p:outputLabel styleClass="labelBold" for="ComplementoCoobrigadoCasado" value="Complemento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="ComplementoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoCoobrigadoCasado}" label="Complemento" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+																
+						<p:outputLabel styleClass="labelBold" for="BairroCoobrigadoCasado" value="Bairro: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+						<h:outputText id="BairroCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroCoobrigadoCasado}" label="Bairro" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						
+						<p:outputLabel styleClass="labelBold" for="CepCoobrigadoCasado" value="Cep: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="CepCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepCoobrigadoCasado}" label="Cep" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						
+						<p:outputLabel styleClass="labelBold" for="CidadeCoobrigadoCasado" value="Cidade: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="CidadeCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeCoobrigadoCasado} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						
+						<p:outputLabel styleClass="labelBold" for="EstadoCoobrigadoCasado" value="Estado: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+						<h:outputText id="EstadoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadoCoobrigadoCasado} - #{pagadorRecebedorMB.objetoPagadorRecebedor.estado}" label="Cidade" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
+					</h:panelGrid>												 
+				</p:panel>
+											 
+			</p:panel>
+			
+			<p:panel id="PanelDadosBancarios" header="Dados Bancários" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel styleClass="labelBold" for="PessoaCC" value="Pessoa: " />
+					<p:selectOneRadio id="PessoaCC" value="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"  disabled="true">
+			            <f:selectItem itemLabel="Física" itemValue="true" />
+			            <f:selectItem itemLabel="Jurídica" itemValue="false" />
+			            <p:ajax update="PanelDadosBancarios" event="valueChange" listener="#{pagadorRecebedorMB.selectedTipoPessoaCC}"/>
+			        </p:selectOneRadio>	
+			        	
+					<p:outputLabel styleClass="labelBold" for="CpfCC" value="CPF: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+					<h:outputText id="CpfCC" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfCC}" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+
+					<p:outputLabel styleClass="labelBold" for="CNPJCC" value="CNPJ: " rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+					<h:outputText id="CNPJCC" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpjCC}" rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+					
+					<p:outputLabel styleClass="labelBold" for="NomeCC" value="Nome: "  rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+					<p:outputLabel styleClass="labelBold" for="NomeCC" value="Razão Social: " rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}"/>
+					<h:outputText id="NomeCC" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}" />
+											
+					<p:outputLabel styleClass="labelBold" for="Banco" value="Banco: "  />	
+					<h:outputText id="Banco" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}" />	
+	
+					<p:outputLabel styleClass="labelBold" for="Agencia" value="Agência: "  />
+					<h:outputText id="Agencia" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}" />
+						  	
+					<p:outputLabel styleClass="labelBold" for="Conta" value="Conta: "  />
+					<h:outputText id="Conta" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}" />				
+				</h:panelGrid>
+			</p:panel>			
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{pagadorRecebedorMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{pagadorRecebedorMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{pagadorRecebedorMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="PagadorRecebedorConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{pagadorRecebedorMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="PagadorRecebedorConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!pagadorRecebedorMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

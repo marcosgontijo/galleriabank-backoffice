@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:panel id="ConsultaFinanceiro" header="Cálculo"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs" />
+				<p:panel id="PanelPDF" header="Impressão em Arquivo"
+					style="margin-bottom:10px;"
+					rendered="#{contratoCobrancaUtilsMB.calculoPDFGerado}">
+					<p:focus />
+					<p:messages />
+					<h:panelGrid columns="2">
+						<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+							draggable="false" closable="false" resizable="false">
+							<p:graphicImage name="image/ajaxloadingbar.gif" />
+						</p:dialog>
+
+						<h:form>
+							<p:commandButton value="Download do Relatório" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop);"
+								icon="ui-icon-arrowthick-1-s">
+								<p:fileDownload value="#{contratoCobrancaUtilsMB.file}" />
+							</p:commandButton>
+						</h:form>
+
+						<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+					</h:panelGrid>
+				</p:panel>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataCalculo" value="Data do Cálculo "
+						styleClass="labelBold" style="margin-right: 10px;" />
+					<h:outputText id="dataCalculo"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.dataCalculo}"
+						label="Data do Cálculo"
+						style="font-weight: bold; font-size: 18px;">
+						<f:convertDateTime locale="pt_BR" />
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+					</h:outputText>
+					<p:outputLabel for="identificacao" value="Identificação: "
+						styleClass="labelBold" />
+					<p:inputText id="identificacao"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.identificacaoCalculo}"
+						label="Identificação" required="true" style="width:300px;"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur="value=value.toUpperCase()"/>
+					<p:outputLabel for="dataAtualizacao" value="Data da Atualização "
+						styleClass="labelBold" style="margin-right: 10px;" />
+					<p:calendar id="dataAtualizacao"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.dataAtualizacao}"
+						label="Data da Atualização" size="30" pattern="dd/MM/yyyy"
+						locale="pt" required="true" styleClass="dateTimeField"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" onclick="this.select();">
+						<p:ajax event="dateSelect" update=":form:novaParcela :form:parcelas"
+							listener="#{contratoCobrancaUtilsMB.atualizaTaxas}" />
+					</p:calendar>
+					<p:outputLabel for="txJuros" value="Taxa de Juros (%): "
+						styleClass="labelBold" />
+					<p:inputText id="txJuros"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.txJuros}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+						<p:ajax event="blur" update=":form:novaParcela"
+							listener="#{contratoCobrancaUtilsMB.atualizaTaxas}" />
+					</p:inputText>
+					<p:outputLabel for="multa" value="Multa (%): "
+						styleClass="labelBold" />
+					<p:inputText id="multa"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.multa}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+						<p:ajax event="blur" update=":form:novaParcela"
+							listener="#{contratoCobrancaUtilsMB.atualizaTaxas}" />
+					</p:inputText>
+					<p:outputLabel for="honorarios" value="Honorários (%): "
+						styleClass="labelBold" />
+					<p:inputText id="honorarios"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.honorarios}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+						<p:ajax event="blur" update=":form:novaParcela"
+							listener="#{contratoCobrancaUtilsMB.atualizaTaxas}" />
+					</p:inputText>
+					<p:outputLabel value=" "
+						styleClass="labelBold" />					
+					<p:commandButton value="Recalcular" ajax="false"
+							icon="ui-icon-refresh" update="parcelas"
+							action="#{contratoCobrancaUtilsMB.atualizaTaxas}" />
+					<p:outputLabel for="imprimeTaxas" value="Imprime Taxas: "
+						styleClass="labelBold" />
+					<p:selectOneRadio id="imprimeTaxas"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.imprimeTaxas}"
+						required="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</p:selectOneRadio>
+					<p:outputLabel for="observacao" value="Observações: "
+						styleClass="labelBold" />
+					<p:inputTextarea rows="5" cols="50" id="observacao"
+						value="#{contratoCobrancaUtilsMB.objetoCalculo.descricao}"
+						label="Observação" onblur="value=value.toUpperCase()"
+						style="width:300px;"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" />
+					<p:spacer height="10" />						
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Recebedor" value="Pagador: "
+						styleClass="labelBold" />
+					<p:inputText id="Recebedor"
+						value="#{contratoCobrancaUtilsMB.nomeRecebedor}" label="Pagador"
+						readonly="TRUE"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" />
+					<p:commandButton id="botaoRecebedor" type="button"
+						onclick="PF('recebedorDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" 
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="parcelas" header="Parcelas" style="margin-bottom:10px;">
+				<p:panel id="novaParcela" header="Inserir Parcela"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="7">
+						<p:outputLabel for="dataVencimento" value="Data de Vencimento"
+							styleClass="labelBold" style="margin-right: 10px;" />
+						<p:calendar id="dataVencimento"
+							value="#{contratoCobrancaUtilsMB.dataVencimento}"
+							label="Data da Parcela" size="100" pattern="dd/MM/yyyy" mask="true"
+							locale="pt" styleClass="dateTimeField" onclick="this.select();">
+							<p:ajax event="dateSelect"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:calendar>
+
+						<p:outputLabel for="valorParcela" value="Valor da Parcela"
+							styleClass="labelBold" style="margin-right: 10px;" />
+						<p:inputText id="valorParcela"
+							value="#{contratoCobrancaUtilsMB.vlrParcela}"
+							onkeyup="mascara_num(this);﻿" required="true"
+							converter="bigDecimalConverter"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+							<p:ajax event="change"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:inputText>
+
+						<p:outputLabel for="observacaoParcela" value="Observação: "
+							styleClass="labelBold" />
+						<p:inputText id="observacaoParcela"
+							value="#{contratoCobrancaUtilsMB.observacaoParcela}"
+							label="Observação"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur="value=value.toUpperCase()"/>
+
+						<p:commandButton value="Inserir" ajax="false" icon="ui-icon-plus"
+							update="calculosDialogdlg"
+							action="#{contratoCobrancaUtilsMB.addParcela}"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}"
+							rendered="#{!contratoCobrancaUtilsMB.updateParcelaMode}" />
+
+						<p:commandButton value="Alterar" ajax="false"
+							icon="ui-icon-pencil" update="calculosDialogdlg"
+							action="#{contratoCobrancaUtilsMB.editParcela}"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}"
+							rendered="#{contratoCobrancaUtilsMB.updateParcelaMode}" />
+					</h:panelGrid>
+					<h:panelGrid columns="7" style="margin-top: 7px;">
+						<p:outputLabel for="dataPagamento" value="Data do Pagamento"
+							styleClass="labelBold" style="margin-right: 10px;" />
+						<p:calendar id="dataPagamento"
+							value="#{contratoCobrancaUtilsMB.dataPagamento}"
+							label="Data da Parcela" size="100" pattern="dd/MM/yyyy" mask="true"
+							locale="pt" styleClass="dateTimeField" onclick="this.select();">
+							<p:ajax event="dateSelect"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:calendar>
+
+						<p:outputLabel for="txJurosParcela" value="Taxa de Juros (%): "
+							styleClass="labelBold" />
+						<p:inputText id="txJurosParcela"
+							value="#{contratoCobrancaUtilsMB.txJurosPacela}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+							<p:ajax event="change"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:inputText>
+
+						<p:outputLabel for="multaParcela" value="Multa (%): "
+							styleClass="labelBold" />
+						<p:inputText id="multaParcela"
+							value="#{contratoCobrancaUtilsMB.multaParcela}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+							<p:ajax event="change"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:inputText>
+
+						<p:commandButton value="Recalcular" ajax="false"
+							icon="ui-icon-refresh" update="parcelas"
+							action="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}" />
+
+					</h:panelGrid>
+					<h:panelGrid columns="6" style="margin-top: 7px;">
+						<p:outputLabel for="honorariosParcela" value="Honorários (%):"
+							styleClass="labelBold" style="margin-right: 10px;" />
+						<p:inputText id="honorariosParcela"
+							value="#{contratoCobrancaUtilsMB.honorarios}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter"
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}">
+							<p:ajax event="change"
+								listener="#{contratoCobrancaUtilsMB.calculaValorTotalParcela}"
+								update="valorTotalParcela" />
+						</p:inputText>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:outputLabel for="numeroParcela" value="Número da Parcela"
+							styleClass="labelBold" style="margin-right: 10px;"
+							rendered="#{contratoCobrancaUtilsMB.updateParcelaMode}" />
+						<h:outputText id="numeroParcela"
+							value="#{contratoCobrancaUtilsMB.numeroParcela}"
+							label="Número da Parcela"
+							style="font-weight: bold; font-size: 18px;"
+							rendered="#{contratoCobrancaUtilsMB.updateParcelaMode}">
+						</h:outputText>
+
+						<p:outputLabel for="valorTotalParcela"
+							value="Valor Total da Parcela " styleClass="labelBold"
+							style="margin-right: 10px;" />
+						<h:outputText id="valorTotalParcela"
+							value="#{contratoCobrancaUtilsMB.totalParcela}"
+							label="Data do Cálculo"
+							style="font-weight: bold; font-size: 18px;"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</h:panelGrid>
+				</p:panel>
+
+				<p:dataTable id="calculosDialogdlg" var="calculosDialogdlg"
+					widgetVar="dt"
+					value="#{contratoCobrancaUtilsMB.objetoCalculo.listCalculoDetalhes}"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15" style="FONT-SIZE: 10pt;"
+					emptyMessage="">
+					<p:column style="text-align: center;" headerText="Parcela">
+						<h:outputText value="#{calculosDialogdlg.numeroParcela}">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Data do Pagamento"
+						sortBy="#{calculosDialogdlg.dataPagamento}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{calculosDialogdlg.dataPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Data de Vencimento"
+						sortBy="#{calculosDialogdlg.dataVencimento}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{calculosDialogdlg.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor da Parcela">
+						<h:outputText value="#{calculosDialogdlg.vlrParcela}">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Taxa de Juros (R$)">
+						<h:outputText value="#{calculosDialogdlg.vlrTxJuros}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Multa (R$)">
+						<h:outputText value="#{calculosDialogdlg.vlrMulta}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Honorários (R$)">
+						<h:outputText value="#{calculosDialogdlg.vlrHonorarios}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total">
+						<h:outputText value="#{calculosDialogdlg.total}">
+						</h:outputText>
+					</p:column>					
+					<p:column style="text-align: center;" headerText="Observação">
+						<h:outputText value="#{calculosDialogdlg.observacao}">
+						</h:outputText>
+					</p:column>
+					<p:column style="width:70px;">
+						<p:commandButton
+							action="#{contratoCobrancaUtilsMB.clearFieldsEditParcelaCalculo}"
+							ajax="false" icon="ui-icon-pencil" title="Editar Parcela"
+							update="novaParcela">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaUtilsMB.calculosDetalhes}"
+								value="#{calculosDialogdlg}" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaUtilsMB.updateParcelaMode}"
+								value="true" />
+						</p:commandButton>
+						<p:commandButton
+							action="#{contratoCobrancaUtilsMB.excluirParcela}"
+							icon="ui-icon-trash" title="Excluir Parcela"
+							update="calculosDialogdlg">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaUtilsMB.calculosDetalhes}"
+								value="#{calculosDialogdlg}" />
+							<p:confirm header="Confirmação"
+								message="Deseja realmente excluir?" icon="ui-icon-trash" />
+						</p:commandButton>
+					</p:column>
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column footerText="Total: " style="text-align:right; font-size: 15px;"
+								colspan="3" />
+							<p:column
+								footerText="#{contratoCobrancaUtilsMB.sumVlrParcelaStr}" style="font-size: 15px;"/>
+							<p:column
+								footerText="#{contratoCobrancaUtilsMB.sumTxJurosPacelaStr}" style="font-size: 15px;"/>
+							<p:column
+								footerText="#{contratoCobrancaUtilsMB.sumMultaParcelaStr}" style="font-size: 15px;"/>
+							<p:column
+								footerText="#{contratoCobrancaUtilsMB.sumHonorariosParcelaStr}" style="font-size: 15px;"/>
+							<p:column
+								footerText="#{contratoCobrancaUtilsMB.sumTotalParcelasStr}" style="font-size: 15px;"/>								
+							<p:column
+								footerText="" style="font-size: 15px;"/>
+							<p:column
+								footerText="" style="font-size: 15px;"/>
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check"
+					action="#{contratoCobrancaUtilsMB.saveCalculo}"
+					style="TEXT-DECORATION: bold;"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />
+				<p:spacer height="10"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />
+				<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print"
+					action="#{contratoCobrancaUtilsMB.saveCalculoPrePDF}" update="PanelPDF"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />
+				<p:spacer height="10"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />
+				<p:commandButton value="Gerar XLS" ajax="false" icon="ui-icon-print"
+					action="#{contratoCobrancaUtilsMB.saveCalculoPreXLS}" update="PanelPDF"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />
+				<p:spacer height="10"
+					rendered="#{!contratoCobrancaUtilsMB.deleteMode}" />					
+				<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash"
+					action="#{contratoCobrancaUtilsMB.deleteCalculo}"
+					style="TEXT-DECORATION: bold;"
+					rendered="#{contratoCobrancaUtilsMB.deleteMode}" />
+				<p:spacer height="10"
+					rendered="#{contratoCobrancaUtilsMB.deleteMode}" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true"
+					icon="ui-icon-cancel"
+					action="#{contratoCobrancaUtilsMB.clearFieldsCalculo}"
+					style="TEXT-DECORATION: bold; " />
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+			</p:confirmDialog>
+		</h:form>
+
+		<p:dialog header="Recebedores" widgetVar="recebedorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores">
+				<p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaUtilsMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaUtilsMB.selectedRecebedor}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaUtilsMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaUtilsMB.clearRecebedor}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor recebedorDialogdlg"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

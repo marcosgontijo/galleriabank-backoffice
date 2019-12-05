@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">		
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaIugu" header="Criação e Verificação de SubContas IUGU"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Favorecido" value="Nova SubConta IUGU: "
+						styleClass="labelBold" />
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"  />
+				</h:panelGrid>
+				<br />
+				<p:commandButton value="Criar e Verificar SubConta"
+					action="#{iuguMB.criarSubContaIUGUTela}"
+					image="ui-icon ui-icon-check" update="subContas mensagens"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			
+			<p:panel id="CobrancaIuguPorNome" header="Consultar SubConta IUGU"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="conta" value="Insira parte do nome a ser consultado (ex.: GAMA): "
+						styleClass="labelBold" />
+					<p:inputText id="conta" value="#{iuguMB.nomeSubConta}"
+						label="Nome da SubConta IUGU" 
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:outputLabel for="conta" value="Se nulo, irá pesquisar todas SubContas!!! "
+						styleClass="labelBold" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="1">
+					<p:outputLabel
+						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado no IUGU. "
+						styleClass="labelBold" style="margin-right: 59px;color: red" />
+				</h:panelGrid>
+				<br />
+				<p:commandButton value="Consultar"
+					action="#{iuguMB.consultaSubContaPorNome}"
+					image="ui-icon ui-icon-check" update="subContas mensagens"
+					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();" />
+			</p:panel>	
+			
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>		
+
+			<p:panel id="subContas"
+				header="SubContas Iugu"
+				style="margin-bottom:10px;">
+   		         <p:dataTable id="dtSubContas" var="subcontas" value="#{iuguMB.subContasIUGU}" sortOrder="ascending" sortBy="#{subcontas.name}">	        
+                 	<p:column style="text-align: center;width: 100px;" headerText="ID" filterBy="#{subcontas.id}" filterMatchMode="contains" sortBy="#{subcontas.id}">
+			            <h:outputText value="#{subcontas.id}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Nome" filterBy="#{subcontas.name}" filterMatchMode="contains" sortBy="#{subcontas.name}">
+			            <h:outputText value="#{subcontas.name}" />
+			        </p:column>	   
+			         <p:column style="text-align: center;width: 100px;" headerText="Verificadas" filterBy="#{subcontas.verificada}" filterMatchMode="contains" sortBy="#{subcontas.verificada}">
+			            <h:outputText value="#{subcontas.verificada}" />
+			        </p:column>	       		
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Saldo" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{subcontas.saldo}"
+							converter="bigDecimalConverter" />
+					</p:column>			        	        	                   	        		               		        			        			           			 		
+				</p:dataTable>				
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cnpj}"
+						filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cpf}"
+						filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.nome}"
+						filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							update=":form:CobrancaIugu favorecidoDialogdlg"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

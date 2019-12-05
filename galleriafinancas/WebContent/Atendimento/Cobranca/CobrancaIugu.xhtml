@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" 
+	template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+		 	<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />	
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaIugu" header="Gerar Cobrança Iugu"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Favorecido" value="Pagador: "
+						styleClass="labelBold" />
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"  />
+					<p:outputLabel for="Cedente" value="Recebedor: "
+						styleClass="labelBold" />
+					<p:inputText id="Cedente" value="#{iuguMB.nomeCedente}"
+						label="Cedente" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoCedente" type="button"
+						onclick="PF('cedenteDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"  />
+				</h:panelGrid>
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="Contrato" value="Número do Contrato: "
+						styleClass="labelBold" />			
+					<p:inputText id="Contrato" value="#{iuguMB.numeroContrato}" label="Número do Contrato" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
+					
+					<p:outputLabel for="Parcela" value="Número da Parcela: "
+						styleClass="labelBold" />			
+					<p:inputText id="Parcela" value="#{iuguMB.parcela}" label="Número da Parcela" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
+					
+					<p:outputLabel for="Descricao" value="Descrição Cobrança: "
+						styleClass="labelBold" />			
+					<p:inputText id="Descricao" value="#{iuguMB.descricaoItem}" label="Descrição" required="true" onblur="value=value.toUpperCase()"  style="width:400px;"></p:inputText>
+					
+					<p:outputLabel for="valorParcela" value="Valor da Cobrança (Formato: 0000,00): " styleClass="labelBold" />			
+					<p:inputText id="valorParcela" value="#{iuguMB.valorItem}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>	
+					<p:spacer></p:spacer>
+					<p:outputLabel value="Formato: 0000,00: " styleClass="labelBold" />  
+					
+										
+					<p:outputLabel for="dataVencimento" value="Data de Vencimento: " styleClass="labelBold" />
+					<p:calendar id="dataVencimento" value="#{iuguMB.dataVencimento}" required="true" label="Data de Vencimento" size="100" pattern="dd/MM/yyyy" mask="true" locale="pt" timeZone="GMT-3" styleClass="dateTimeField" onclick="this.select();" ></p:calendar>	
+					
+					<p:outputLabel value="Download da Fatura: " styleClass="labelBold"/>
+					<a href="#{iuguMB.urlFatura}" class="linkPDF" target="_blank"><b>Exibir Fatura gerada</b></a>
+				</h:panelGrid>
+								
+				<p:commandButton value="Gerar Cobrança"
+					action="#{iuguMB.geraCobrancaSimplesMenu()}"
+					image="ui-icon ui-icon-check"
+					update="mensagens FaturasIugu CobrancaIugu"
+					style="TEXT-DECORATION: bold;margin-top:25px;" />
+			</p:panel>
+			
+			<p:panel id="FaturasIugu" header="Faturas Iugu"
+				style="margin-bottom:10px;">
+			   <p:dataTable id="dtFaturas" var="faturas" value="#{iuguMB.faturasIUGU}" sortOrder="descending" sortBy="#{faturas.due_date}"
+   		         rowStyleClass="#{faturas.status eq 'paid' ? 'parcelaPaga' : null}">	        
+                 	<p:column style="text-align: center;width: 100px;" headerText="Sacado" filterBy="#{faturas.sacado}" filterMatchMode="contains" sortBy="#{faturas.sacado}">
+			            <h:outputText value="#{faturas.sacado}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Vencimento" sortBy="#{faturas.due_date}">
+			            <h:outputText value="#{faturas.due_date}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Total (R$)" filterBy="#{faturas.total}" filterMatchMode="contains" sortBy="#{faturas.total}">
+			            <h:outputText value="#{faturas.total}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Status" filterBy="#{faturas.status}" filterMatchMode="contains" sortBy="#{faturas.status}">
+			            <h:outputText value="#{faturas.status}" />
+			        </p:column>		
+			       	<p:column style="text-align: center;width: 100px;" headerText="Link Fatura">
+						<a href="#{faturas.secure_url}" class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
+			        </p:column>		        	
+			        	<p:column style="width:25px;" exportable="false" headerText="Cancelar Fatura" >
+			        		<p:commandButton action="#{iuguMB.cancelarFaturaIUGUFaturaSimples(faturas.id, iuguMB.selectedCedente.iuguLiveApiToken)}" ajax="false" icon="ui-icon-trash" title="Cancelar Fatura IUGU" update="dtFaturas"/>
+		            </p:column>	  		     			        	               			        	                   	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">				 	
+   		         <p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg" value="#{iuguMB.listRecebedores}" paginator="true" rows="10" selectionMode="single"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15" selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;" emptyMessage="" rowKey="#{favorecidoDialogdlg.id}" >		               	            			       
+
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.cnpj}" filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CNPJ" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.cnpj}"/>
+			         </p:column>	
+			         			         
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.cpf}" filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CPF" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.cpf}"/>
+			         </p:column>					         
+			         
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.nome}" filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="Nome" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.nome}"/>
+			         </p:column>	
+			  
+			        <f:facet name="footer">  
+			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedRecebedor}" image="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('favorecidoDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash" update=":form:CobrancaIugu favorecidoDialogdlg" oncomplete="PF('favorecidoDialog').hide();"/>
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('favorecidoDialog').hide();"/>  			                             
+			        </f:facet>  
+			    </p:dataTable> 			
+			</h:form>
+		</p:dialog>	
+		
+		<p:dialog header="Cedentes" widgetVar="cedenteDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formCedentes">				 	
+   		         <p:dataTable id="cedenteDialogdlg" var="cedenteDialogdlg" value="#{iuguMB.listCedentes}" paginator="true" rows="10" selectionMode="single"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15" selection="#{iuguMB.selectedCedente}" style="FONT-SIZE: 10pt;" emptyMessage="" rowKey="#{cedenteDialogdlg.id}" >		               	            			       
+
+			         <p:column style="text-align: center;" sortBy="#{cedenteDialogdlg.cnpj}" filterBy="#{cedenteDialogdlg.cnpj}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CNPJ" />
+			            </f:facet>
+			            <h:outputText value="#{cedenteDialogdlg.cnpj}"/>
+			         </p:column>	
+			         			         
+			         <p:column style="text-align: center;" sortBy="#{cedenteDialogdlg.cpf}" filterBy="#{cedenteDialogdlg.cpf}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CPF" />
+			            </f:facet>
+			            <h:outputText value="#{cedenteDialogdlg.cpf}"/>
+			         </p:column>					         
+			         
+			         <p:column style="text-align: center;" sortBy="#{cedenteDialogdlg.nome}" filterBy="#{cedenteDialogdlg.nome}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="Nome" />
+			            </f:facet>
+			            <h:outputText value="#{cedenteDialogdlg.nome}"/>
+			         </p:column>	
+			  
+			        <f:facet name="footer">  
+			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedCedente}" image="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('cedenteDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearCedentes}" image="ui-icon ui-icon-trash" update=":form:CobrancaIugu cedenteDialogdlg" oncomplete="PF('cedenteDialog').hide();"/>
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('cedenteDialog').hide();"/>  			                             
+			        </f:facet>  
+			    </p:dataTable> 			
+			</h:form>
+		</p:dialog>				
+	</ui:define>
+</ui:composition>

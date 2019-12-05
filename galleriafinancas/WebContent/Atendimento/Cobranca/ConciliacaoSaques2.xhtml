@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<script src="../../resources/js/functions.js"></script>		
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:messages id="mensagens" showDetail="true" />		
+			<h:outputScript name="js/locale-primefaces.js" />	
+			<p:panel id="CobrancaIugu" header="Conciliação de Saques"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="TipoRelatorio" value="Tipo de Conciliação: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoRelatorio"
+						value="#{iuguMB.relPorSubconta}" required="true">
+						<f:selectItem itemLabel="Todas SubContas" itemValue="false" />
+						<f:selectItem itemLabel="Subcontas específica" itemValue="true" />
+						<p:ajax update="CobrancaIugu" event="valueChange" listener="#{iuguMB.changeTipoConciliacao}"/>
+					</p:selectOneRadio>
+					<p:spacer width="10" />
+					<p:outputLabel for="Favorecido" value="SubConta IUGU: "
+						styleClass="labelBold" rendered="#{iuguMB.relPorSubconta}"/>
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" rendered="#{iuguMB.relPorSubconta}"/>
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" rendered="#{iuguMB.relPorSubconta}" />					
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 20px;"  rendered="#{iuguMB.relPorSubconta}" />
+					<p:calendar id="dataInicio" value="#{iuguMB.relDataContratoInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"  rendered="#{iuguMB.relPorSubconta}" />
+					<p:spacer width="10" rendered="#{iuguMB.relPorSubconta}"/>
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 20px;"
+						 rendered="#{iuguMB.relPorSubconta}"  />
+					<p:calendar id="dataFim" value="#{iuguMB.relDataContratoFim}"
+						required="true" label="Data Fim" size="100" pattern="dd/MM/yyyy"
+						locale="pt" styleClass="dateTimeField"  rendered="#{iuguMB.relPorSubconta}" />
+					<p:spacer width="10" rendered="#{iuguMB.relPorSubconta}"/>
+					<p:outputLabel for="status" value="Status: " styleClass="labelBold"
+						style="margin-right: 59px;"  />
+					<p:selectOneRadio id="status" value="#{iuguMB.relByStatus}">
+						<f:selectItem itemLabel="Todas" itemValue="Todas" />
+						<f:selectItem itemLabel="Pagas" itemValue="paid" />
+						<f:selectItem itemLabel="Vencidas" itemValue="expired" />
+						<f:selectItem itemLabel="Pendentes" itemValue="pending" />
+						<f:selectItem itemLabel="Canceladas" itemValue="canceled" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				<h:panelGrid columns="1">
+					<p:outputLabel
+						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado no IUGU. "
+						styleClass="labelBold" style="margin-right: 59px;color: red" />
+				</h:panelGrid>
+				<br />
+				<p:commandButton value="Processar conciliação"
+					action="#{iuguMB.processarConciliacaoSaque}"
+					image="ui-icon ui-icon-check" update="faturasSubConta mensagens"
+					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
+			</p:panel>
+
+			<p:panel id="faturasSubConta" header="Saques Iugu"
+				style="margin-bottom:10px;">
+				<p:dataTable id="dtFaturas" var="faturas"
+					value="#{iuguMB.saquesIUGU}" sortOrder="descending"
+					sortBy="#{faturas.created_at}">
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data" sortBy="#{faturas.created_at}">
+						<h:outputText value="#{faturas.due_date}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor (R$)" filterBy="#{faturas.amount}"
+						filterMatchMode="contains" sortBy="#{faturas.amount}">
+						<h:outputText value="#{faturas.amount}" />
+					</p:column>					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Status" filterBy="#{faturas.status}"
+						filterMatchMode="contains" sortBy="#{faturas.status}">
+						<h:outputText value="#{faturas.status}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage name="image/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<script type="text/javascript">
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+		</script>
+
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}"
+					filteredValue="#{iuguMB.listRecebedores}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cnpj}"
+						filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cpf}"
+						filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.nome}"
+						filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							update=":form:CobrancaIugu favorecidoDialogdlg"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.Calculos" table="CALCULOS">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="dataCalculo" type="java.util.Date">
+            <column name="dataCalculo" />
+        </property>     			    
+        <property name="dataAtualizacao" type="java.util.Date">
+            <column name="dataAtualizacao" />
+        </property>             
+       <property name="txJuros" type="big_decimal">
+            <column name="txJuros" />
+       </property>  
+       <property name="multa" type="big_decimal">
+            <column name="multa" />
+       </property>
+       <property name="identificacaoCalculo" type="java.lang.String">
+            <column name="identificacaoCalculo"/>
+       </property>     
+       <property name="descricao" type="text">
+            <column name="descricao"/>
+       </property> 
+       <many-to-one name="recebedor" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="recebedor" />
+		</many-to-one>               
+	   <list name="listCalculoDetalhes" table="Calculos_Detalhes_Join" cascade="all" lazy="false">   
+		   <key column="idCalculos" />
+		   <list-index></list-index>
+		   <many-to-many column="idCalculosDetalhes" class="com.webnowbr.siscoat.cobranca.db.model.CalculosDetalhes" />
+	   </list>     
+	   <property name="imprimeTaxas" type="boolean">
+           <column name="imprimeTaxas" />
+       </property> 
+       <property name="honorarios" type="big_decimal">
+            <column name="honorarios" />
+       </property>            
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuAtendimento.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">		
+		 	<script src="../../resources/js/functions.js"></script>			
+			<p:panel id="PanelLocador" header="Contrato gerado com Sucesso - #{contratoCobrancaMB.objetoContratoCobranca.pagador.nome}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+					 
+					<h:form>					
+					    <p:commandButton value="Download do Contrato" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					        <p:fileDownload value="#{contratoCobrancaMB.file}" />
+					    </p:commandButton>
+					    <p:spacer height="10" />
+					     <p:commandButton value="Download do(s) Boleto(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					        <p:fileDownload value="#{contratoCobrancaMB.fileBoleto}" />
+					     </p:commandButton>
+					</h:form>
+					 
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+					
+				</h:panelGrid>																			
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check" action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml" style="TEXT-DECORATION: bold;"/>		 													
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

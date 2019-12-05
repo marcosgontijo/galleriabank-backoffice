@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				 												
+			<p:panel id="ConsultaFinanceiro" header="Recalcula Valor" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataVencimento" value="Data Vencimento " styleClass="labelBold" style="margin-right: 59px;" />							
+					<p:calendar id="dataVencimento" value="#{contratoCobrancaUtilsMB.dtVencimento}" label="Data Vencimento" size="100" pattern="dd/MM/yyyy" mask="true" locale="pt" styleClass="dateTimeField"  onclick="this.select();"/>				
+					<p:outputLabel for="dataPagamento" value="Data Pagamento " styleClass="labelBold" style="margin-right: 59px;"/>							
+					<p:calendar id="dataPagamento" value="#{contratoCobrancaUtilsMB.dtPagamento}" required="true" label="Data Pagamento" size="100" pattern="dd/MM/yyyy" mask="true" locale="pt" styleClass="dateTimeField"  onclick="this.select();"/>
+													
+					<p:outputLabel for="valorParcela" value="Valor: " styleClass="labelBold" style="margin-right: 59px;"/>
+					<p:inputText id="valorParcela" value="#{contratoCobrancaUtilsMB.valorParcela}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>
+										
+					<p:outputLabel for="txJuros" value="Taxa de Juros (%): " styleClass="labelBold" />
+					<p:inputText id="txJuros" value="#{contratoCobrancaUtilsMB.txJuros}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>
+							
+					<p:outputLabel for="multa" value="Multa (%): " styleClass="labelBold" />
+					<p:inputText id="multa" value="#{contratoCobrancaUtilsMB.multa}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>								
+				</h:panelGrid>	
+				
+				<p:panel id="Pessoas" header="Recebedor" style="margin-bottom:10px;">		
+					<h:panelGrid columns="3">	
+						<p:outputLabel for="Recebedor" value="Favorecido 1: "  styleClass="labelBold"/> 
+						<p:inputText id="Recebedor" value="#{contratoCobrancaUtilsMB.nomeRecebedor}"  label="Recebedor" readonly="TRUE" required="true" style="FONT-SIZE: 10pt;width:300px;" />       
+						<p:commandButton id="botaoRecebedor" type="button" onclick="PF('recebedorDialog').show();" image="ui-icon ui-icon-circle-zoomin" />	 			  
+					</h:panelGrid>	 			  
+				</p:panel>											
+				<p:commandButton value="Consultar" ajax="false" action="#{contratoCobrancaUtilsMB.recalculaValor}" image="ui-icon ui-icon-check" update=":form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaFinanceiroResultados" header="Dados para Pagamento" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="Banco: " styleClass="labelBold"/>
+					<p:outputLabel value="#{contratoCobrancaUtilsMB.selectedRecebedor.banco}"/>
+					<p:outputLabel value="Agência: " styleClass="labelBold"/>
+					<p:outputLabel value="#{contratoCobrancaUtilsMB.selectedRecebedor.agencia}"/>		
+					<p:outputLabel value="C/C: " styleClass="labelBold"/>
+					<p:outputLabel value="#{contratoCobrancaUtilsMB.selectedRecebedor.conta}"/>	
+					<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+					<p:outputLabel value="#{contratoCobrancaUtilsMB.selectedRecebedor.nomeCC}"/>
+					<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaUtilsMB.selectedRecebedor.cpfCC != null}"/>
+					<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaUtilsMB.selectedRecebedor.cnpjCC != null}"/>
+					<p:outputLabel value="#{contratoCobrancaUtilsMB.selectedRecebedor.cpfCC}#{contratoCobrancaUtilsMB.selectedRecebedor.cnpjCC}"/>
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Valor: " styleClass="labelBold" />
+					<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaUtilsMB.valorAtualizado}" converter="bigDecimalConverter"/>
+				</h:panelGrid>	  
+				<h:panelGrid columns="2">	
+      				<p:outputLabel value="Data Pagamento: " styleClass="labelBold"/>
+      				<h:outputText value="#{contratoCobrancaUtilsMB.dtPagamento}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				    </h:outputText>								
+				</h:panelGrid>		
+			</p:panel>			
+		</h:form>	
+				
+		<p:dialog header="Recebedores" widgetVar="recebedorDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores">				 	
+   		         <p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg" value="#{contratoCobrancaUtilsMB.listRecebedores}" paginator="true" rows="10" selectionMode="single"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15" selection="#{contratoCobrancaUtilsMB.selectedRecebedor}" style="FONT-SIZE: 10pt;" emptyMessage="" rowKey="#{recebedorDialogdlg.id}" >		               	            
+
+			         <p:column style="text-align: center;" sortBy="#{recebedorDialogdlg.cnpj}" filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CNPJ" />
+			            </f:facet>
+			            <h:outputText value="#{recebedorDialogdlg.cnpj}"/>
+			         </p:column>	
+			         
+			         <p:column style="text-align: center;" sortBy="#{recebedorDialogdlg.cpf}" filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CPF" />
+			            </f:facet>
+			            <h:outputText value="#{recebedorDialogdlg.cpf}"/>
+			         </p:column>					         
+			         
+			         <p:column style="text-align: center;" sortBy="#{recebedorDialogdlg.nome}" filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="Nome" />
+			            </f:facet>
+			            <h:outputText value="#{recebedorDialogdlg.nome}"/>
+			         </p:column>	
+			  
+			        <f:facet name="footer">  
+			            <p:commandButton value="Selecionar" action="#{contratoCobrancaUtilsMB.populateSelectedRecebedor}" image="ui-icon ui-icon-check" update=":form:Recebedor" oncomplete="PF('recebedorDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{contratoCobrancaUtilsMB.clearRecebedor}" image="ui-icon ui-icon-trash" update=":form:Recebedor recebedorDialogdlg" oncomplete="PF('recebedorDialog').hide();"/>
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('recebedorDialog').hide();"/>  			                             
+			        </f:facet>  
+			    </p:dataTable> 			
+			</h:form>
+		</p:dialog> 
+	</ui:define>
+</ui:composition>	        

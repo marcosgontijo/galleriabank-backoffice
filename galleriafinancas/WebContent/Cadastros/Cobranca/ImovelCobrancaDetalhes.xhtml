@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelImovelCobranca" header="Imóvel - #{imovelCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " styleClass="labelBold"/>
+					<h:outputText id="NumeroMatricula" value="#{imovelCobrancaMB.objetoImovelCobranca.nome}" label="NumeroMatricula"/>  
+									
+					<p:outputLabel for="Cartorio" value="Cartório de Registro: " styleClass="labelBold"/>
+					<h:outputText id="Cartorio" value="#{imovelCobrancaMB.objetoImovelCobranca.cartorio}" label="Cartório"/>    
+																												
+					<p:outputLabel for="DescricaoImovel" value="Descrição: " styleClass="labelBold"/>
+					<h:outputText id="DescricaoImovel" value="#{imovelCobrancaMB.objetoImovelCobranca.nome}" label="Nome"/> 
+					
+					<p:outputLabel for="Endereco" value="Endereço: " styleClass="labelBold"/>
+					<h:outputText id="Endereco" value="#{imovelCobrancaMB.objetoImovelCobranca.endereco}" label="Endereço"/>	
+					
+					<p:outputLabel for="Complemento" value="Complemento: " styleClass="labelBold"/>
+					<h:outputText id="Complemento" value="#{imovelCobrancaMB.objetoImovelCobranca.complemento}" label="Complemento"/>
+					
+					<p:outputLabel for="Bairro" value="Bairro: " styleClass="labelBold"/>
+					<h:outputText id="Bairro" value="#{imovelCobrancaMB.objetoImovelCobranca.bairro}" label="Bairro"/>
+					
+					<p:outputLabel for="Cep" value="Cep: " styleClass="labelBold"/>
+					<h:outputText id="Cep" value="#{imovelCobrancaMB.objetoImovelCobranca.cep}" label="Cep"/>																																						
+							
+					<p:outputLabel for="Cidade" value="Cidade: " styleClass="labelBold"/>
+					<h:outputText id="Cidade" value="#{imovelCobrancaMB.objetoImovelCobranca.cidade} - #{imovelCobrancaMB.objetoImovelCobranca.estado}" label="Cidade"/>																											
+
+					<p:outputLabel for="TelResidencial" value="Telefone Residencial: " styleClass="labelBold"/>
+					<h:outputText id="TelResidencial" value="#{imovelCobrancaMB.objetoImovelCobranca.telResidencial}" label="Telefone Residencial"/>																								
+					
+					<p:outputLabel for="Tipo" value="Tipo: " styleClass="labelBold"/>
+					<h:outputText id="Tipo" value="#{imovelCobrancaMB.objetoImovelCobranca.tipo}" label="Tipo"/>	
+							
+					<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " styleClass="labelBold"/>
+					<h:outputText id="AreaTotal" value="#{imovelCobrancaMB.objetoImovelCobranca.areaTotal}" label="Área Total / Terreno (metros)"/>   							
+							
+					<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " styleClass="labelBold"/>
+					<h:outputText id="AreaConstruida" value="#{imovelCobrancaMB.objetoImovelCobranca.areaConstruida}" label="Área Útil / Construída (metros)"/>  
+					
+					<p:outputLabel for="linkGMaps" value="Link Google Maps: " styleClass="labelBold"/>
+					<h:outputText id="linkGMaps" value="#{imovelCobrancaMB.objetoImovelCobranca.linkGMaps}" label="Link Google Maps"/>  
+																												
+					<p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"/>
+					<h:outputText id="Observacao" value="#{imovelCobrancaMB.objetoImovelCobranca.observacao}" label="Observação"/>
+					
+					<p:outputLabel for="PossuiDivida" value="Possui Dívida: " styleClass="labelBold"/>
+					<h:outputText id="PossuiDivida" value="#{imovelCobrancaMB.objetoImovelCobranca.possuiDivida}" label="Possui Dívida"/>					
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{imovelCobrancaMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{imovelCobrancaMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{imovelCobrancaMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="ImovelCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{imovelCobrancaMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="ImovelCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!imovelCobrancaMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

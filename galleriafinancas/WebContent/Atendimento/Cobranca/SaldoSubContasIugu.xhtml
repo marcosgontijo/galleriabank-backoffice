@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaIugu" header="Consultar Saldo SubConta IUGU"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="tipoConta" value="Qual Conta Consultar: "
+						styleClass="labelBold" />
+					<p:selectOneRadio id="tipoConta" value="#{iuguMB.contaMestre}"
+						required="true">
+						<f:selectItem itemLabel="Gama Cobranças" itemValue="true" />
+						<f:selectItem itemLabel="Outra" itemValue="false" />
+						<p:ajax update="botaoFavorecido Favorecido" event="valueChange"
+							listener="#{iuguMB.clearRecebedor}" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Favorecido" value="SubConta IUGU: "
+						styleClass="labelBold" />
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" 
+						disabled="#{iuguMB.contaMestre}" />
+				</h:panelGrid>
+				<br />
+				<p:commandButton value="Consultar Saldo SubConta"
+					action="#{iuguMB.consultarSaldoSubConta}"
+					image="ui-icon ui-icon-check" update="saldoSubConta mensagens"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+
+			<p:panel id="saldoSubConta"
+				header="Saldo SubConta Iugu - #{iuguMB.selectedRecebedor.nome}"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="ID SubConta IUGU: " styleClass="labelBold" />
+					<p:outputLabel value="#{iuguMB.selectedRecebedor.iuguAccountId} "
+						styleClass="labelBold" />
+					<p:outputLabel value="Live Token IUGU: " styleClass="labelBold" />
+					<p:outputLabel
+						value="#{iuguMB.selectedRecebedor.iuguLiveApiToken} "
+						styleClass="labelBold" />
+				</h:panelGrid>
+				<br />
+				<br />
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Saldo a Liberar: " styleClass="labelBold"
+						style="font-size: 15px !important;" />
+					<p:outputLabel value="#{iuguMB.saldoSubContaALiberar} "
+						styleClass="labelBold" style="font-size: 15px !important;" />
+					<p:outputLabel value="Saldo Liberado: " styleClass="labelBold"
+						style="font-size: 15px !important;" />
+					<p:outputLabel value="#{iuguMB.saldoSubContaLiberado}"
+						styleClass="labelBold" style="font-size: 15px !important;" />
+				</h:panelGrid>
+				<br />
+				<p:panel id="operacoesSubConta" header="Operações"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="operacao" value="Operação: "
+							styleClass="labelBold" />
+						<p:selectOneRadio id="operacao"
+							value="#{iuguMB.operacaoTransferencia}" required="true">
+							<f:selectItem itemLabel="Tranferência SubContas" itemValue="true" />
+							<f:selectItem itemLabel="Solicitação de Saque" itemValue="false" />
+							<p:ajax update="dadosOperacao" event="valueChange"
+								listener="#{iuguMB.clearRecebedorAux}" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+					<br />
+					<p:panel id="PanelPDF" header="Impressão em PDF"
+						style="margin-bottom:10px;" rendered="#{iuguMB.reciboPDFGerado}">
+						<p:focus />
+						<p:messages />
+						<h:panelGrid columns="2">
+							<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+								draggable="false" closable="false" resizable="false">
+								<p:graphicImage name="image/ajaxloadingbar.gif" />
+							</p:dialog>
+
+							<h:form>
+								<p:commandButton value="Download do Relatório" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<p:fileDownload value="#{iuguMB.file}" />
+								</p:commandButton>
+							</h:form>
+
+							<script type="text/javascript">
+								function start() {
+									PF('statusDialog').show();
+								}
+
+								function stop() {
+									PF('statusDialog').hide();
+								}
+							</script>
+
+						</h:panelGrid>
+					</p:panel>
+					<p:panel id="dadosOperacao" header="Dados da Operação"
+						style="margin-bottom:10px;">
+
+						<h:panelGrid columns="2">
+							<p:outputLabel for="tipoContaAux" value="Qual Conta Destino: "
+								styleClass="labelBold"
+								rendered="#{iuguMB.operacaoTransferencia}" />
+							<p:selectOneRadio id="tipoContaAux"
+								value="#{iuguMB.contaMestreAux}" required="true"
+								rendered="#{iuguMB.operacaoTransferencia}">
+								<f:selectItem itemLabel="Gama Cobranças" itemValue="true" />
+								<f:selectItem itemLabel="Outra" itemValue="false" />
+								<p:ajax update="botaoFavorecidoAux FavorecidoAux"
+									event="valueChange" listener="#{iuguMB.clearRecebedorAux}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+
+						<h:panelGrid columns="3">
+							<p:outputLabel for="FavorecidoAux"
+								value="SubConta Destino IUGU: " styleClass="labelBold"
+								rendered="#{iuguMB.operacaoTransferencia}" />
+							<p:inputText id="FavorecidoAux"
+								value="#{iuguMB.nomeRecebedorAux}" label="Favorecido"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:420px;"
+								rendered="#{iuguMB.operacaoTransferencia}" />
+							<p:commandButton id="botaoFavorecidoAux" type="button"
+								onclick="PF('favorecidoDialogAux').show();"
+								image="ui-icon ui-icon-circle-zoomin" 
+								rendered="#{iuguMB.operacaoTransferencia}"
+								disabled="#{iuguMB.contaMestreAux}" />
+
+
+							<p:outputLabel 
+								value="Dados Bancários: " styleClass="labelBold"/>
+							<p:outputLabel
+								value="#{iuguMB.selectedRecebedorAux.banco} " styleClass="labelBold"/>
+							<p:spacer width="10" />
+							<p:spacer width="10" />
+							<p:outputLabel
+								value="Agência #{iuguMB.selectedRecebedorAux.agencia}" styleClass="labelBold"/>
+							<p:spacer width="10" />
+							<p:spacer width="10" />
+							<p:outputLabel
+								value="Conta #{iuguMB.selectedRecebedorAux.conta}" styleClass="labelBold"/>
+							<p:spacer width="10" />
+
+							<p:outputLabel for="valor" value="Valor da Operação: "
+								styleClass="labelBold" />
+							<p:inputText id="valor" value="#{iuguMB.valorItem}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+							<p:spacer width="10" />
+
+							<p:outputLabel for="senha" value="Senha da Operação: "
+								styleClass="labelBold" rendered="#{iuguMB.senhaStorage == '' }" />
+							<p:password id="senha" value="#{iuguMB.paramSenha}"
+								rendered="#{iuguMB.senhaStorage == '' }" />
+							<p:spacer width="10" rendered="#{iuguMB.senhaStorage == '' }" />
+
+							<p:outputLabel for="observacao" value="Observacao: "
+								styleClass="labelBold" />
+							<p:inputTextarea rows="10" cols="50" id="observacao"
+								value="#{iuguMB.observacao}" label="Observação"
+								onblur="value=value.toUpperCase()" style="width:300px;" />
+							<p:spacer width="10" />
+
+							<p:commandButton value="Transferir entre SubContas"
+								action="#{iuguMB.processaTransferenciaSubcontasTela}"
+								image="ui-icon ui-icon-check" update="saldoSubConta mensagens"
+								style="TEXT-DECORATION: bold;"
+								rendered="#{iuguMB.operacaoTransferencia}" />
+
+							<p:spacer width="10" rendered="#{iuguMB.operacaoTransferencia}" />
+
+							<p:commandButton value="Solicitar Saque"
+								action="#{iuguMB.processaSaqueSubcontaTela}"
+								image="ui-icon ui-icon-check"
+								update="saldoSubConta mensagens :form:PanelPDF"
+								style="TEXT-DECORATION: bold;"
+								rendered="#{!iuguMB.operacaoTransferencia}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:panel>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600"
+			responsive="true">
+			<h:form id="formPagadores">
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cnpj}"
+						filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cpf}"
+						filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.nome}"
+						filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							update=":form:CobrancaIugu favorecidoDialogdlg"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="SubConta Destino" widgetVar="favorecidoDialogAux"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600"
+			responsive="true">
+			<h:form id="formPagadoresAux">
+				<p:dataTable id="favorecidoDialogdlgAux"
+					var="favorecidoDialogdlgAux" value="#{iuguMB.listRecebedoresAux}"
+					paginator="true" rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedorAux}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlgAux.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlgAux.cnpj}"
+						filterBy="#{favorecidoDialogdlgAux.cnpj}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlgAux.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlgAux.cpf}"
+						filterBy="#{favorecidoDialogdlgAux.cpf}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlgAux.nome}"
+						filterBy="#{favorecidoDialogdlgAux.nome}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlgAux.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedorAux}"
+							image="ui-icon ui-icon-check" update=":form:operacoesSubConta"
+							oncomplete="PF('favorecidoDialog'Aux).hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedorAux}"
+							image="ui-icon ui-icon-trash"
+							update=":form:operacoesSubConta favorecidoDialogdlgAux"
+							oncomplete="PF('favorecidoDialogAux').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialogAux').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

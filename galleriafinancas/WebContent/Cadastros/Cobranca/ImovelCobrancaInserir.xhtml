@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">	
+		<script src="../resources/js/functions.js"></script>			
+			<p:panel id="PanelImovelCobranca" header="Imóvel - #{imovelCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " styleClass="labelBold"/>
+					<p:inputText id="NumeroMatricula" value="#{imovelCobrancaMB.objetoImovelCobranca.numeroMatricula}" label="NumeroMatricula"  onblur="value=value.toUpperCase()" style="width:400px;"/>  
+										
+					<p:outputLabel for="Cartorio" value="Cartório de Registro: " styleClass="labelBold"/>
+					<p:inputText id="Cartorio" value="#{imovelCobrancaMB.objetoImovelCobranca.cartorio}" label="Cartório" required="true" onblur="value=value.toUpperCase()" style="width:400px;"/>  
+																		
+					<p:outputLabel for="DescricaoImovel" value="Descrição: " styleClass="labelBold"/>
+					<p:inputText id="DescricaoImovel" value="#{imovelCobrancaMB.objetoImovelCobranca.nome}" label="Nome" required="true" onblur="value=value.toUpperCase()" style="width:400px;"/>  
+					
+					<p:outputLabel for="Endereco" value="Endereço: " styleClass="labelBold"/>
+					<p:inputText id="Endereco" value="#{imovelCobrancaMB.objetoImovelCobranca.endereco}" label="Endereço"  onblur="value=value.toUpperCase()" style="width:400px;"/>  	
+					
+					<p:outputLabel for="Complemento" value="Complemento: " styleClass="labelBold"/>
+					<p:inputText id="Complemento" value="#{imovelCobrancaMB.objetoImovelCobranca.complemento}" label="Complemento" onblur="value=value.toUpperCase()" style="width:400px;"/> 
+					
+					<p:outputLabel for="Bairro" value="Bairro: " styleClass="labelBold"/>
+					<p:inputText id="Bairro" value="#{imovelCobrancaMB.objetoImovelCobranca.bairro}" label="Bairro"  onblur="value=value.toUpperCase()" style="width:400px;"/> 		
+					
+					<p:outputLabel for="Cep" value="Cep: " styleClass="labelBold"/>
+					<p:inputMask id="Cep" value="#{imovelCobrancaMB.objetoImovelCobranca.cep}"  mask="99999-999" label="Cep"/>																																	
+										
+					<p:outputLabel for="Cidade" value="Cidade: " styleClass="labelBold"/>
+					<p:inputText id="Cidade" value="#{imovelCobrancaMB.objetoImovelCobranca.cidade}" label="Cidade"  onblur="value=value.toUpperCase()"  style="width:400px;"/> 
+					
+					<p:outputLabel for="Estado" value="Estado: " styleClass="labelBold"/>
+					<p:selectOneMenu id="Estado" value="#{imovelCobrancaMB.objetoImovelCobranca.estado}" label="Estado"   style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+								<f:selectItem itemValue="AC" itemLabel="ACRE" />
+								<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
+								<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
+								<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
+								<f:selectItem itemValue="BA" itemLabel="BAHIA" />
+								<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
+								<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
+								<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
+								<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
+								<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
+								<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
+								<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
+								<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
+								<f:selectItem itemValue="PA" itemLabel="PARÁ" />
+								<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
+								<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
+								<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
+								<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
+								<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
+								<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
+								<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
+								<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
+								<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
+								<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
+								<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
+								<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
+								<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />						    
+					</p:selectOneMenu>					
+																								
+					<p:outputLabel for="TelResidencial" value="Telefone Residencial: " styleClass="labelBold"/>
+					<p:inputMask id="TelResidencial" value="#{imovelCobrancaMB.objetoImovelCobranca.telResidencial}" mask="(99) 9999-9999" label="Telefone Residencial"/>																																	
+					
+					<p:outputLabel for="Tipo" value="Tipo: " styleClass="labelBold"/>
+					<p:selectOneMenu id="Tipo" value="#{imovelCobrancaMB.objetoImovelCobranca.tipo}" label="Tipo" required="true" style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
+						  <f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
+						  <f:selectItem itemValue="Apartamento Duplex" itemLabel="Apartamento Duplex" />
+						  <f:selectItem itemValue="Apartamento Triplex" itemLabel="Apartamento Triplex" />
+						  <f:selectItem itemValue="Bangalô" itemLabel="Bangalô" />
+						  <f:selectItem itemValue="Barracão" itemLabel="Barracão" />
+						  <f:selectItem itemValue="Box/Garagem" itemLabel="Box/Garagem" />
+						  <f:selectItem itemValue="Casa" itemLabel="Casa" />
+						  <f:selectItem itemValue="Chácara" itemLabel="Chácara" />
+						  <f:selectItem itemValue="Cobertura" itemLabel="Cobertura" />
+						  <f:selectItem itemValue="Comercial" itemLabel="Comercial" />
+						  <f:selectItem itemValue="Edícula" itemLabel="Edícula" />
+						  <f:selectItem itemValue="Flat" itemLabel="Flat" />
+						  <f:selectItem itemValue="Kitnet" itemLabel="Kitnet" />
+						  <f:selectItem itemValue="Loft" itemLabel="Loft" />
+						  <f:selectItem itemValue="Penthouse" itemLabel="Penthouse" />
+						  <f:selectItem itemValue="Rancho" itemLabel="Rancho" />
+						  <f:selectItem itemValue="Sobrado" itemLabel="Sobrado" />
+						  <f:selectItem itemValue="Terreno" itemLabel="Terreno" />						    
+					</p:selectOneMenu>	
+					
+					<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " styleClass="labelBold"/>
+					<p:inputText id="AreaTotal" value="#{imovelCobrancaMB.objetoImovelCobranca.areaTotal}" label="Área Total / Terreno (metros)" required="true" onblur="value=value.toUpperCase()" style="width:150px;"/>  							
+					
+					<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " styleClass="labelBold"/>
+					<p:inputText id="AreaConstruida" value="#{imovelCobrancaMB.objetoImovelCobranca.areaConstruida}" label="Área Útil / Construída (metros)" required="true" onblur="value=value.toUpperCase()" style="width:150px;"/>  									
+									
+					<p:outputLabel for="linkGMaps" value="Link Google Maps: " styleClass="labelBold"/>  
+					<p:inputText id="linkGMaps" value="#{imovelCobrancaMB.objetoImovelCobranca.linkGMaps}" label="Link Google Maps" required="true" style="width:400px;"/>
+											
+					<p:outputLabel for="PossuiDivida" value="Possui Dívida: " styleClass="labelBold" />
+					<p:selectOneRadio id="PossuiDivida" value="#{imovelCobrancaMB.objetoImovelCobranca.possuiDivida}" >
+						<f:selectItem itemLabel="Sim" itemValue="Sim" />
+						<f:selectItem itemLabel="Não" itemValue="Não" />
+					</p:selectOneRadio>		
+											
+					<p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"/>
+					<p:inputText id="Observacao" value="#{imovelCobrancaMB.objetoImovelCobranca.observacao}" label="Observação" onblur="value=value.toUpperCase()" style="width:400px;"/> 																							
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check" action="#{imovelCobrancaMB.inserir()}" style="TEXT-DECORATION: bold;"/>		 						
+				<p:spacer height="10" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="ImovelCobrancaConsultar.xhtml" style="TEXT-DECORATION: bold; "/>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

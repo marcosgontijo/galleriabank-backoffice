@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"	  
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  template="./MenuManutencao.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaUsuário" header="Usuário - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtUsuário" var="usuario" value="#{usuarioMB.lazyModel}" paginator="true" rows="10" lazy="true"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="5,10,15" selection="" emptyMessage="" sortBy="#{usuario.login}">
+			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
+			            <h:outputText value="#{usuario.login}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Último Acesso" sortBy="#{usuario.ultimoAcesso}">
+			            <h:outputText value="#{usuario.ultimoAcesso}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+			            </h:outputText>
+			        </p:column>			        	        
+			        <p:column style="width:120px;">
+			        	<p:commandButton action="UsuarioDetalhes.xhtml" ajax="false" icon="ui-icon-search" title="Detalhes">
+			        		<f:setPropertyActionListener target="#{usuarioMB.objetoUsuario}" value="#{usuario}" />  			        		
+			        		<f:setPropertyActionListener target="#{usuarioMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{usuarioMB.deleteMode}" value="false" />
+			        		<f:setPropertyActionListener value="Visualizar" target="#{usuarioMB.tituloPainel}" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>		                
+		                <p:commandButton action="#{usuarioMB.clearFieldsUpdate}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{usuarioMB.objetoUsuario}" value="#{usuario}" />
+		                	<f:setPropertyActionListener target="#{usuarioMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{usuarioMB.deleteMode}" value="false" />
+		                	<f:setPropertyActionListener value="Editar" target="#{usuarioMB.tituloPainel}" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="UsuarioDetalhes.xhtml" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{usuarioMB.objetoUsuario}" value="#{usuario}" />
+		                	<f:setPropertyActionListener target="#{usuarioMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{usuarioMB.deleteMode}" value="true" />
+		                	<f:setPropertyActionListener value="Excluir" target="#{usuarioMB.tituloPainel}" />
+		                </p:commandButton> 
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{usuarioMB.clearFields}">
+							<f:setPropertyActionListener value="Adicionar" target="#{usuarioMB.tituloPainel}" />
+						</p:commandButton>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+			<div align="center">	
+				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuAtendimento.xhtml"/>
+			</div>	
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuCadastros.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaImovelCobranca" header="Imóvel - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtImovelCobranca" var="ImovelCobranca" value="#{imovelCobrancaMB.lazyModel}" paginator="true" rows="20" lazy="true"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{ImovelCobranca.nome}">
+			        <f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{imovelCobrancaMB.clearFields}"/>
+			        </f:facet>			        
+			        <p:column style="text-align: center;" headerText="Número Matrícula" filterBy="#{ImovelCobranca.numeroMatricula}" filterMatchMode="contains" sortBy="#{ImovelCobranca.numeroMatricula}">
+			            <h:outputText value="#{ImovelCobranca.numeroMatricula}" />
+			        </p:column>                 
+			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{ImovelCobranca.nome}" filterMatchMode="contains" sortBy="#{ImovelCobranca.nome}">
+			            <h:outputText value="#{ImovelCobranca.nome}" />
+			        </p:column>
+			        <p:column style="width:120px;">
+			        	<p:commandButton action="ImovelCobrancaDetalhes.xhtml" ajax="false" icon="ui-icon-search" title="Detalhes">
+			        		<f:setPropertyActionListener target="#{imovelCobrancaMB.objetoImovelCobranca}" value="#{ImovelCobranca}" />  			        		
+			        		<f:setPropertyActionListener target="#{imovelCobrancaMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{imovelCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="ImovelCobrancaInserir.xhtml" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.objetoImovelCobranca}" value="#{ImovelCobranca}" />
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="ImovelCobrancaDetalhes.xhtml" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.objetoImovelCobranca}" value="#{ImovelCobranca}" />
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{imovelCobrancaMB.deleteMode}" value="true" />
+		                </p:commandButton> 
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{imovelCobrancaMB.clearFields}"/>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+			<div align="center">	
+				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuCadastros.xhtml"/>
+			</div>	
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

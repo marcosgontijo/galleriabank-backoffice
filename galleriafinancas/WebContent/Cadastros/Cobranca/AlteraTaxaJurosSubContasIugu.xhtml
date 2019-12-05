@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:panel id="PanelTaxaJuros"
+				header="Alteração da Taxa de Juros - SubContas IUGU"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="txJuros" value="Taxa de Juros (%):  " styleClass="labelBold"/>
+					<p:inputText id="txJuros"
+						value="#{iuguMB.taxaJuros}" type="number">
+					</p:inputText>
+				</h:panelGrid>
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Alterar taxa para todas as SubContas" ajax="false" icon="ui-icon-check"
+					action="#{iuguMB.alteraTaxaJurosSubContas}" style="TEXT-DECORATION: bold;" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

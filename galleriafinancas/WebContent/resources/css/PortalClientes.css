@@ -1,0 +1,56 @@
+/*
+Original design: Basic Noise (v1.0 - April 29, 2011) - A free xhtml/css website template by Andreas Viklund.
+For more information, see http://andreasviklund.com/templates/basic-noise/
+*/
+ .ui-widget {  
+  font-size: 11px !important;  
+  font-weight: bold;
+  font: Arial;
+}
+
+*{margin:0;padding:0;}
+body{background:#1a1a1a url(../image/PortalClientes/background_azul.jpg);color:#333;font:76% Arial;}
+p{line-height:1.6em;margin-bottom:18px;font-family:Arial}
+a{color:#000000;}
+a:hover{color:#9dc34c;}
+h1{color:#9dc34c;font-family:Arial;font-size:2.4em;}
+h2{color:#9dc34c;font-family:Arial;font-size:2.2em;font-weight:400;margin:0 0 10px 0;}
+h3{color:#9dc34c;font-family:Arial;font-size:1.6em;font-weight:400;margin:0 0 8px;}
+ul,ol,dl{margin:0 0 20px 20px; padding:0;}
+li{padding-bottom:5px;}
+
+#containerfull,#container980,#container760,#container600{margin:0 auto;padding:0;overflow:hidden;}
+#containerfull{width:100%;border:0;}
+#container980{width:980px;}
+#container760{width:760px;}
+#container600{width:600px;}
+
+#header{margin:0 auto;padding:10px 25px;}
+#header h1{text-align:center;margin:0;padding:20px 0 0;}
+#header h1 a{color:#9dc34c; font-family:Arial;font-size:1.8em;font-weight:400;text-decoration:none;}
+#header h2{text-align:center;color:#9dc34c;padding:0 0 20px 0;margin:0;font-family:Arial;font-size:1.6em;font-weight:400;}
+#header h5{text-align:center;color:#9dc34c;padding:0 0 20px 0;margin:0;font-family:Arial;font-size:3.6em;font-weight:400;}
+
+#menu{height:40px;}
+#menu ul{height:40px;list-style:none;margin:0;padding:0 25px 0 0;}
+#menu ul li{background-color:#9dc34c;display:block;float:left;margin:0 5px 0 0;padding:0;}
+#menu ul li a{background-color:#9dc34c;color:#ffffff;display:block;font-size:14px;padding:14px 12px;text-decoration:none; font-weight: bold;}
+#menu ul li a:hover{color:#000000;}
+#menu ul li a.current{background-color:#eee;color:#000000;border-bottom:1px solid #eee;}
+
+#feature{background-color:#eee;color:#555;padding:25px 25px 5px;border-top:1px solid #ccc;border-bottom:1px solid #ccc;}
+#feature h2{color:#9dc34c;font-size:2em;line-height:1em;}
+#feature p{font-size:1.3em;margin:0 0 15px 0; line-height:1.5em;}
+#feature img{display:block;margin:0 auto;}
+
+#main{clear:both;margin:0;background-color:#fff;padding:25px 25px 5px;}
+#content{width:100%;}
+
+#credits{color:#aaa;padding:15px 25px;}
+#credits p{text-align:left;font-size:12px;margin:0;padding:0;line-height:1.4em;text-align: center;}
+#credits a{color:#aaa;font-weight:400;}
+
+.left{float:left;width:49%;}
+.right{float:right;width:48%;}
+.clear{clear:both;visibility:hidden;}
+.small{font-size:0.8em;}

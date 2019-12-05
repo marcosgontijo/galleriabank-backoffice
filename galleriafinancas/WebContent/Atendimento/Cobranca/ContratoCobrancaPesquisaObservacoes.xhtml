@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				
+			<p:messages id="mensagens" showDetail="true"/>									
+			<p:panel id="PesquisaObservacao" header="Pesquisa Observações - Consultar" style="margin-bottom:10px;">	
+				<h:panelGrid columns="2">	
+			        <p:outputLabel value="Texto da Observação: " styleClass="labelBold" style="margin-right: 59px;"/>
+			        <p:inputText id="texto" value="#{contratoCobrancaMB.pesquisaObservacao}" label="Texto da Observação" style="width:150px;" required="true"/>
+				</h:panelGrid>																	
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.pesquisarObservacoes}" image="ui-icon ui-icon-check" update=":form:dtResultado :form:PesquisaObservacaoResultados :form:mensagens" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="PesquisaObservacaoResultados" header="Pesquisa Observações - Resultados" style="margin-bottom:10px;">	    		    
+   		         <p:dataTable id="dtResultado" var="resultado" value="#{contratoCobrancaMB.listPesquisaObservacoes}" emptyMessage="" sortBy="#{resultado.contratoCobrancaObservacoes.data}">
+			        <p:column style="text-align: center;width: 120px;" headerText="Data Contrato" sortBy="#{resultado.contratoCobrancaObservacoes.data}">
+			            <h:outputText value="#{resultado.contratoCobrancaObservacoes.data}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>			 
+			        <p:column style="text-align: center;width: 120px;" headerText="Número do Contrato" filterBy="#{resultado.numContrato}" filterMatchMode="contains" sortBy="#{resultado.numContrato}">
+			            <h:outputText value="#{resultado.numContrato}" />
+			        </p:column>           			        
+                 	<p:column style="text-align: center;" headerText="Observação" filterBy="#{resultado.contratoCobrancaObservacoes.observacao}" filterMatchMode="contains" sortBy="#{resultado.contratoCobrancaObservacoes.observacao}">
+			            <h:outputText value="#{resultado.contratoCobrancaObservacoes.observacao}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 120px;" headerText="Usuário" filterBy="#{resultado.contratoCobrancaObservacoes.usuario}" filterMatchMode="contains" sortBy="#{resultado.contratoCobrancaObservacoes.usuario}">
+			            <h:outputText value="#{resultado.contratoCobrancaObservacoes.usuario}" />
+			        </p:column>			        	               			        	                  	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>				
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

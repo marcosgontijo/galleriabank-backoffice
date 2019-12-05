@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="./MenuManutencao.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelParametro" header="Parametro - #{parametroMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Nome: "
+						class="campoRequerido" />
+						<h:outputText value="#{parametroMB.objetoParametro.nome}"/>	
+
+					<h:outputLabel value="Valor String: "
+						class="labelBold" />
+						<h:outputText value="#{parametroMB.objetoParametro.valorString}"/>	
+						
+					<h:outputLabel value="Valor Inteiro: "
+						class="labelBold" />
+						 <h:outputText value="#{parametroMB.objetoParametro.valorInt}"/>	
+						 
+					<h:outputLabel value="Valor Longo: "
+						class="labelBold" />
+						<h:outputText value="#{parametroMB.objetoParametro.valorLong}"/>		
+					    
+					<p:outputLabel value="Valor Decimal: " styleClass="labelBold"/>		
+					<p:outputLabel value="#{parametroMB.objetoParametro.valorBigDecimal}">
+						<f:convertNumber pattern="#,##0.00" />
+					</p:outputLabel>																	    					 										
+					
+					<h:outputLabel for="Buleano" value="Valor Buleano: "
+						class="labelBold" />
+					<p:selectBooleanButton id="Buleano" value="#{parametroMB.objetoParametro.valorBoolean}" onLabel="True" 
+						offLabel="False" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:80px" disabled="true"/>																					
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{parametroMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{parametroMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{parametroMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="ParametroConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{parametroMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="ParametroConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!parametroMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

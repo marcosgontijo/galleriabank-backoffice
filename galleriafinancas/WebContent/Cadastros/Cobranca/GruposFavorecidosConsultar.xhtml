@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuCadastros.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaGruposFavorecidos" header="Grupos de Favorecidos - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtGruposFavorecidos" var="GruposFavorecidos" value="#{gruposFavorecidosMB.lazyModel}" paginator="true" rows="20" lazy="true"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{GruposFavorecidos.nomeGrupo}">
+			        <f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{gruposFavorecidosMB.clearFields}"/>
+			        </f:facet>			        
+			         <p:column style="text-align: center;" headerText="Nome" filterBy="#{GruposFavorecidos.nomeGrupo}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">
+			            <h:outputText value="#{GruposFavorecidos.nomeGrupo}" />
+			        </p:column>
+			        <p:column style="width:120px;">
+			        	<p:commandButton action="GruposFavorecidosDetalhes.xhtml" ajax="false" icon="ui-icon-search" title="Detalhes">
+			        		<f:setPropertyActionListener target="#{gruposFavorecidosMB.objetoGruposFavorecidos}" value="#{GruposFavorecidos}" />  			        		
+			        		<f:setPropertyActionListener target="#{gruposFavorecidosMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{gruposFavorecidosMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="#{gruposFavorecidosMB.clearFieldsUpdate}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.objetoGruposFavorecidos}" value="#{GruposFavorecidos}" />
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="GruposFavorecidosDetalhes.xhtml" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.objetoGruposFavorecidos}" value="#{GruposFavorecidos}" />
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{gruposFavorecidosMB.deleteMode}" value="true" />
+		                </p:commandButton> 
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{gruposFavorecidosMB.clearFields}"/>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+			<div align="center">	
+				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuCadastros.xhtml"/>
+			</div>	
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

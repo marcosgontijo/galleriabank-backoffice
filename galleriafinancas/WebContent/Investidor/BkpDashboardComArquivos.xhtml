@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Galleria Finanças</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{resource['image/Commons/icon.ico']}"></link>
+	<link rel="stylesheet" type="text/css"
+		href="#{resource['css/Style.css']}" title="" media="all" />
+	<link rel="stylesheet" type="text/css"
+		href="#{resource['css/InvestidorPageBootstrap.min.css']}" title=""
+		media="all" />
+	<link rel="stylesheet" type="text/css"
+		href="#{resource['css/InvestidorPageStyle.css']}" title="" media="all" />
+	<h:outputScript name="#{resource['js/functions.js']}"
+		library="javascript" />
+	<h:outputScript name="#{resource['js/locale-primefaces.js']}"
+		library="javascript" />
+</h:head>
+<h:body onload="#{investidorMB.getContratosInvestidor()}">
+	<p:messages id="mensagens" showDetail="true" />
+	<div class="navbar-area">
+		<div class="ui-g">
+			<div class="ui-g-12 ui-md-4 ui-lg-4">
+				<a class="navbar-brand" href="#"><img
+					src="#{resource['image/LogoSiscoat.png']}" alt="" /></a>
+			</div>
+			<div class="ui-g-12 ui-md-7 ui-lg-7">
+				<h:outputText value="OLÁ " styleClass="investidorLogin"
+					style="color: #fff !important;padding-right: 7px;" />
+				<h:outputText value="#{investidorMB.usuarioLogado.name}"
+					styleClass="investidorLogin" style="color: #dfdfdf !important;" />
+			</div>
+
+			<div class="ui-g-12 ui-md-1 ui-lg-1">
+				<h:form id="formLogout">
+					<p:commandLink title="Sair" actionListener="#{logoutBean.logout}"
+						style="padding-top: 7%;">
+						<img src="#{resource['image/InvestidorPageExit.png']}" alt="" />
+					</p:commandLink>
+				</h:form>
+			</div>
+		</div>
+	</div>
+	<div class="slider-area">
+		<h:form id="formDashboard">
+			<p:panel id="saldoSubConta" header="Consulta de Contratos"
+				style="margin-bottom:10px;height: 500px;margin-top: 25px; ">
+				<div class="ui-g">
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<div class="bgCardConciliacao">
+							<div class="titulo">Contratos</div>
+							<div class="texto">
+								<h:outputText value="#{investidorMB.qtdeContratos}" />
+							</div>
+						</div>
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<div class="bgCardConciliacao">
+							<div class="titulo">Valor Investido</div>
+							<div class="texto">
+								R$
+								<h:outputText value="#{investidorMB.valorInvestido}"
+									converter="bigDecimalConverter" />
+							</div>
+						</div>
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<div class="bgCardConciliacao">
+							<div class="titulo">Parcelas em Aberto</div>
+							<div class="texto">
+								<h:outputText value="#{investidorMB.parcelasAbertas}" />
+							</div>
+						</div>
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-3">
+						<div class="bgCardConciliacao">
+							<div class="titulo">Valor Recebido</div>
+							<div class="texto">
+								R$
+								<h:outputText value="#{investidorMB.valorRecebido}"
+									converter="bigDecimalConverter" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<br />
+				<p:dataView var="contratos" value="#{investidorMB.contratos}"
+					rows="12" paginator="false" rowsPerPageTemplate="6,12,16"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					gridIcon="fa fa-fw fa-th-large" listIcon="fa fa-fw fa-bars"
+					layout="grid" style="height:900px !important;">
+
+					<p:dataViewGridItem>
+						<p:panel header="Contrato - #{contratos.numeroContrato}"
+							style="text-align:center">
+							<h:panelGrid columns="1" style="width:100%">
+								<br />
+								<h:outputText value="Data do Contrato"
+									style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
+								<h:outputText value="#{contratos.dataContrato}"
+									style="color: #b87b2a; font-size: 18px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</h:outputText>
+								<h:outputText value="Devedor"
+									style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
+								<h:outputText value="#{contratos.pagador.nome}"
+									style="color: #b87b2a; font-size: 18px;" />
+								<br />
+								<h:panelGrid columns="2" style="width:100%">
+									<p:commandButton value="Financeiro" update=":formDetalhes:dtParcelas"
+										oncomplete="PF('detalheContrato').show()"
+										icon="fa fa-fw fa-search"
+										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}" style="padding-left: 10px;">
+									</p:commandButton>
+									<p:commandButton value="Arquivos" update=":formFiles:contratoFiles"
+										oncomplete="PF('filesContrato').show()"
+										icon="fa fa-fw fa-search"
+										action="#{investidorMB.getFilesDoInvestidorNoContrato(contratos)}" style="padding-left: 10px;">
+									</p:commandButton>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:panel>
+					</p:dataViewGridItem>
+
+					<p:dataViewListItem>
+						<h:panelGrid columns="3" style="width:100%"
+							columnClasses="logo,detail">
+							<p:outputPanel>
+								<h:panelGrid columns="4" cellpadding="5">
+									<h:outputText value="Número Contrato " />
+									<h:outputText value="Data Contrato "
+										style="padding-left: 50px; color: #000 !important" />
+									<h:outputText value="Devedor "
+										style="padding-left: 50px; color: #000 !important" />
+									<p:spacer></p:spacer>
+									<h:outputText value="#{contratos.numeroContrato}"
+										style="font-weight: bold;font-size: 18px;" />
+									<h:outputText value="#{contratos.dataContrato}"
+										style="font-weight: bold;font-size: 18px;padding-left: 50px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<h:outputText value="#{contratos.pagador.nome}"
+										style="font-weight: bold;color: #b87b2a; font-size: 18px;padding-left: 50px;" />
+									<h:panelGrid columns="2" style="width:100%">
+										<p:commandButton value="Financeiro" update=":formDetalhes:dtParcelas"
+											oncomplete="PF('detalheContrato').show()"
+											icon="fa fa-fw fa-search"
+											action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}" style="margin-left: 20px;">
+										</p:commandButton>
+										<p:commandButton value="Arquivos" update=":formFiles:contratoFiles"
+											oncomplete="PF('filesContrato').show()"
+											icon="fa fa-fw fa-search"
+											action="#{investidorMB.getFilesDoInvestidorNoContrato(contratos)}" style="margin-left: 20px;">
+										</p:commandButton>
+									</h:panelGrid>
+								</h:panelGrid>
+							</p:outputPanel>
+						</h:panelGrid>
+					</p:dataViewListItem>
+				</p:dataView>
+			</p:panel>
+		</h:form>
+
+		<p:dialog
+			header="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
+			widgetVar="detalheContrato" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="false" responsive="true" width="800">
+			<h:form id="formDetalhes">
+				<h:outputText
+					value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
+					style="display:inline-block" />
+				<p:outputPanel id="contratoDetail" style="text-align:center;">
+					<p:dataTable id="dtParcelas" var="parcelas" reflow="true"
+						value="#{investidorMB.selectedContrato.listContratoCobrancaDetalhes}"
+						emptyMessage="" sortBy="#{contratos.numeroParcela}"
+						sortOrder="ascending"
+						rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+						rowKey="#{parcelas.id}" scrollable="true" scrollWidth="100%"
+						scrollHeight="80%">
+
+						<p:column style="text-align: center;" headerText="Parcela"
+							width="40">
+							<h:outputText value="#{parcelas.numeroParcela}" />
+						</p:column>
+						<p:column style="text-align: center;" headerText="Vencimento"
+							width="100">
+							<h:outputText value="#{parcelas.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;" headerText="Valor (R$)"
+							width="100">
+							<h:outputText value="#{investidorMB.valorInvestidor}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Ações" width="35">
+							<p:commandButton onclick="PF('observacoesDialog').show();"
+								title="Observação" icon="ui-icon-plus" update=":formObservacoes">
+								<f:setPropertyActionListener
+									target="#{investidorMB.selectedContratoCobrancaDetalhes}"
+									value="#{parcelas}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog
+			header="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
+			widgetVar="filesContrato" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="false" responsive="true" width="800">
+			<h:form id="formFiles">
+				<h:outputText
+					value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
+					style="display:inline-block" />
+				<p:outputPanel id="contratoFiles" style="text-align:center;">
+					<p:panel id="ArquivosSalvos"
+						header="Arquivo(s) Salvo(s) no Contrato"
+						style="margin-bottom:10px;">
+						<h:panelGrid columns="1">
+							<p:dataTable id="dtFiles" var="files"
+								value="#{investidorMB.files}" rowKey="#{files.name}"
+								selection="#{investidorMB.deletefiles}" emptyMessage=""
+								sortBy="#{files.name}" rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5,10,15">
+								<p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{files.name}"
+									filterMatchMode="contains" sortBy="#{files.name}">
+									<h:outputText value="#{files.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false"
+										action="#{investidorMB.viewFile(files.name, investidorMB.selectedContrato)}"
+										icon="ui-icon-search" onclick="target='_blank'">
+									</p:commandButton>
+								</p:column>
+
+								<p:column style="width:150px;">
+									<p:commandButton value="Download" ajax="false"
+										onclick="PrimeFaces.monitorDownload(start, stop);"
+										icon="ui-icon-arrowthick-1-s">
+										<f:setPropertyActionListener
+											target="#{investidorMB.selectedFile}" value="#{files}" />
+										<p:fileDownload value="#{investidorMB.downloadFile}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Observações" widgetVar="observacoesDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="formObservacoes">
+				<p:panel id="ObservacoesPanel" header="Observações - Consultar"
+					style="margin-top:10px;">
+					<p:dataTable id="dtObservacoes" var="observacoes"
+						value="#{investidorMB.selectedContratoCobrancaDetalhes.listContratoCobrancaDetalhesObservacoes}"
+						paginator="true" rows="5" lazy="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+						rowsPerPageTemplate="5,10" selection="" emptyMessage=""
+						sortBy="#{observacoes.data}" sortOrder="descending">
+						<p:column style="text-align: center;" headerText="Data Inicio"
+							sortBy="#{observacoes.data}">
+							<h:outputText value="#{observacoes.data}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;" headerText="Usuário"
+							filterBy="#{observacoes.usuario}" filterMatchMode="contains"
+							sortBy="#{observacoes.usuario}">
+							<h:outputText value="#{observacoes.usuario}" />
+						</p:column>
+						<p:column style="text-align: center;" headerText="Observação"
+							filterBy="#{observacoes.observacao}" filterMatchMode="contains"
+							sortBy="#{observacoes.observacao}">
+							<h:outputText value="#{observacoes.observacao}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+					<p:commandButton value="Voltar"
+						image="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('observacoesDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+	</div>
+	<footer id="footer" class="footer-area">
+	<div class="footer-copyright">
+		<div class="container">
+			<p style="color: #fff; text-align: center !important;">
+				<a href="http://www.galleriafinancas.com.br" target="_blank">Galleria
+					Finanças</a>
+			</p>
+		</div>
+		<!-- container -->
+	</div>
+	<!-- footer copyright --> </footer>
+</h:body>
+</html>

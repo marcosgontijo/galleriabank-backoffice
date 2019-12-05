@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	  <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui">
+	  
+	<f:view contentType="text/html">
+		<h:head>
+		</h:head>
+		<h:body>
+			<ui:composition template="../index.xhtml">                	  
+				<ui:define name="menu">		
+					<h:form style="margin-bottom:10px;">		
+						<p:menu style="width: 227px;">
+								<p:submenu label="Cadastros Cobrança" styleClass="titulosMenu">
+									<shiro:hasAnyRoles name="ROOT, COBRANCA">
+										<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO">									
+										<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, COBRANCA">
+										<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
+										<p:menuitem value="Grupos Favorecidos" action="/Cadastros/Cobranca/GruposFavorecidosConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+										<p:menuitem value="Grupos Pagadores" action="/Cadastros/Cobranca/GruposPagadoresConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+									</shiro:hasAnyRoles>										
+								</p:submenu>																																										
+						</p:menu>  	
+					</h:form>				
+				</ui:define>
+			</ui:composition>					
+		</h:body>
+	</f:view>
+</html>            

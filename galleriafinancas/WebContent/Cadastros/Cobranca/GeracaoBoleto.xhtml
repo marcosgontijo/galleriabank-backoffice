@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuCadastros.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaResponsavel" header="Responsável - Consultar" style="margin-bottom:10px;">	
+			
+			<p:commandButton value="GERAR" ajax="false" icon="ui-icon-plus" action="#{geracaoBoletoMB.geraBoleto}"/>	    		    
+
+			</p:panel>
+
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

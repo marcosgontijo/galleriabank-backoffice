@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:shiro="http://shiro.apache.org/tags"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>SisCoAt - WeB NoW br</title>          
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
+        <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" /> 
+        <h:outputScript name="#{resource['js/functions.js']}" library="javascript" />
+        
+        <style>
+	        .ui-layout-west, .ui-layout-west .ui-layout, .ui-layout-west .ui-layout-bd, .ui-layout-west .ui-layout-unit, .ui-layout-west .ui-widget-content{
+			    border: none;			    
+			    color: #70a8d2;
+			    background:#70a8d2 50% 50% repeat;
+		
+			}
+        </style>
+    </h:head>
+	<h:body>    
+	<script src="./resources/js/functions.js"></script>	
+	<script src="./resources/js/locale-primefaces.js"></script>
+		<p:layout fullPage="true" > 		    
+	  		<p:layoutUnit position="north" size="130" resizable="true" collapsible="true" style="BORDER:none; overflow: hidden;FONT-SIZE: 10pt;" spacingOpen="0">
+	  			<h:form id="menuSuperior">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 14px;padding-right: 15px;">
+					  <tr>
+					    <td valign="top" align="center"><img src="#{resource['image/LogoSiscoat.png']}" alt=""/></td>
+					  </tr>
+
+					</table>
+					<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
+					   <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="logout.hide()"/>
+					   <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="logout.hide()"/>
+					</p:confirmDialog>				
+				</h:form>				
+	    	</p:layoutUnit> 	
+		    <p:layoutUnit id="menu" position="west" size="200" resizable="false" closable="true" collapsible="true" minSize="40" maxSize="450" spacingOpen="0" >  			
+		    </p:layoutUnit>   	    			    		
+		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0" style="padding: 15px;">
+			    <h:form>
+			    	
+					<p:panel id="PanelClientes" header="Pré-Contrato" style="margin-bottom:10px;">
+						<p:focus /> 
+						<p:messages/>						
+						<p:separator />
+						<p:outputLabel value="Seu pré-cadastro foi enviado com sucesso! Para consultar o status da análise do contrato, informe o número: #{contratoCobrancaMB.preContratoCobranca.numeroContrato}" styleClass="labelBold"/>
+						<p:separator />												
+					</p:panel>
+				</h:form>
+		    </p:layoutUnit>
+		    <p:layoutUnit id="direita" position="east" size="200" resizable="false" closable="true" collapsible="true" minSize="40" maxSize="450" spacingOpen="0" >
+		    	<ui:insert name="direita" />          			
+		    </p:layoutUnit>   	 		    
+		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
+				<h:outputLink value="http://www.webnowbr.com.br" target="_blank"
+				    styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+				    <span class="ui-button-text">WeB NoW Br - Criação de Sites e Sistemas Personalizados - Copyright © 2016 Todos os direitos reservados.</span>
+				</h:outputLink>	
+		    </p:layoutUnit>			    
+		</p:layout>											
+	</h:body>
+</html>

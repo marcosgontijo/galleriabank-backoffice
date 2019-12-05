@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelGruposPagadores" header="Grupo de Pagadores - #{gruposPagadoresMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">							
+					<p:outputLabel for="Nome" value="Nome do Grupo: " styleClass="labelBold" />
+					<h:outputText id="Nome" value="#{gruposPagadoresMB.objetoGruposPagadores.nomeGrupo}" label="Nome do Grupo"/> 					
+					<p:outputLabel value="Pagador 1: " styleClass="labelBold"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador1.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador1.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador1.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador1.id > 0}"/>
+					<p:outputLabel value="Pagador 2: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador2.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador2.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador2.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador2.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador2.id > 0}"/>
+					<p:outputLabel value="Pagador 3: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador3.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador3.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador3.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador3.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador3.id > 0}"/>
+					<p:outputLabel value="Pagador 4: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador4.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador4.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador4.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador4.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador4.id > 0}"/>
+					<p:outputLabel value="Pagador 5: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador5.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador5.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador5.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador5.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador5.id > 0}"/>	
+					<p:outputLabel value="Pagador 6: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador6.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador6.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador6.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador6.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador6.id > 0}"/>
+					<p:outputLabel value="Pagador 7: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador7.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador7.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador7.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador7.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador7.id > 0}"/>
+					<p:outputLabel value="Pagador 8: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador8.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador8.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador8.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador8.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador8.id > 0}"/>
+					<p:outputLabel value="Pagador 9: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador9.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador9.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador9.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador9.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador9.id > 0}"/>
+					<p:outputLabel value="Pagador 10: " styleClass="labelBold" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador10.id > 0}"/>
+					<p:outputLabel value="#{gruposPagadoresMB.objetoGruposPagadores.pagador10.cpfCC}#{gruposPagadoresMB.objetoGruposPagadores.pagador10.cnpjCC} - #{gruposPagadoresMB.objetoGruposPagadores.pagador10.nomeCC}" rendered="#{gruposPagadoresMB.objetoGruposPagadores.pagador10.id > 0}"/>
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{gruposPagadoresMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{gruposPagadoresMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{gruposPagadoresMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="GruposPagadoresConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{gruposPagadoresMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="GruposPagadoresConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!gruposPagadoresMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

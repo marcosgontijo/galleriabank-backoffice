@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.GruposPagadores" table="GRUPOSPAGADORES">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="nomeGrupo" type="java.lang.String">
+            <column name="NOMEGRUPO" not-null="true"/>
+        </property>                                                                                           
+		<many-to-one name="pagador1" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador1" />
+		</many-to-one> 	
+		<many-to-one name="pagador2" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador2" />
+		</many-to-one> 	
+		<many-to-one name="pagador3" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador3" />
+		</many-to-one> 
+		<many-to-one name="pagador4" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador4" />
+		</many-to-one> 
+		<many-to-one name="pagador5" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador5" />
+		</many-to-one>     
+		<many-to-one name="pagador6" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador6" />
+		</many-to-one> 
+		<many-to-one name="pagador7" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador7" />
+		</many-to-one> 
+		<many-to-one name="pagador8" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador8" />
+		</many-to-one> 
+		<many-to-one name="pagador9" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador9" />
+		</many-to-one> 
+		<many-to-one name="pagador10" class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" lazy="false">
+			<column name="pagador10" />
+		</many-to-one> 				                                                                           
+    </class>
+</hibernate-mapping>

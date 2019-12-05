@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<typedef name="encryptedString" class="org.jasypt.hibernate3.type.EncryptedStringType">
+      <param name="password">@#jasypt#@</param>
+    </typedef>
+    
+    <class name="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" table="PAGADORRECEBEDOR">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="nome" type="java.lang.String">
+            <column name="NOME" not-null="true"/>
+        </property>
+        <property name="endereco" type="java.lang.String">
+            <column name="ENDERECO"/>
+        </property>   
+        <property name="bairro" type="java.lang.String">
+            <column name="BAIRRO"/>
+        </property>               
+        <property name="complemento" type="java.lang.String">
+            <column name="COMPLEMENTO"/>
+        </property> 
+        <property name="cidade" type="java.lang.String">
+            <column name="CIDADE"/>
+        </property> 
+        <property name="estado" type="java.lang.String">
+            <column name="ESTADO"/>
+        </property>      
+        <property name="telResidencial" type="java.lang.String">
+            <column name="TELRESIDENCIAL"/>
+        </property>        
+        <property name="telCelular" type="java.lang.String">
+            <column name="TELCELULAR"/>
+        </property>                  
+        <property name="email" type="java.lang.String">
+            <column name="EMAIL"/>
+        </property>   
+        <property name="dtNascimento" type="java.util.Date">
+            <column name="DTNASCIMENTO"/>
+        </property> 
+        <property name="observacao1" type="text">
+            <column name="OBSERVACAO1"/>
+        </property>   
+        <property name="observacao2" type="text">
+            <column name="OBSERVACAO2"/>
+        </property>   
+        <property name="cpf" type="java.lang.String">
+            <column name="CPF"/>
+        </property> 
+        <property name="cnpj" type="java.lang.String">
+            <column name="CNPJ"/>
+        </property>          
+        <property name="rg" type="java.lang.String">
+            <column name="RG"/>
+        </property>     
+		<property name="userInvestidor" type="boolean">
+           <column name="userInvestidor" />
+      	</property>    
+      	<property name="loginInvestidor" type="java.lang.String">
+            <column name="loginInvestidor"/>
+        </property>      
+      	<property name="senhaInvestidor" type="encryptedString">
+            <column name="senhaInvestidor"/>
+        </property>   
+       	<property name="dataEmissaoRG" type="java.util.Date">
+            <column name="dataEmissaoRG"/>
+        </property> 
+        <property name="cep" type="java.lang.String">
+            <column name="CEP"/>
+        </property> 
+        <property name="sexo" type="java.lang.String">
+            <column name="SEXO"/>
+        </property>  
+        <property name="cargoConjuge" type="java.lang.String">
+            <column name="CARGOCONJUGE"/>
+        </property>      
+		<property name="banco" type="java.lang.String">
+            <column name="BANCO"/>
+        </property>         
+        <property name="agencia" type="java.lang.String">
+            <column name="AGENCIA"/>
+        </property> 
+        <property name="conta" type="java.lang.String">
+            <column name="CONTA"/>
+        </property> 
+        <property name="nomeCC" type="java.lang.String">
+            <column name="NOMECC"/>
+        </property>   
+        <property name="telResidencialConjuge" type="java.lang.String">
+            <column name="telResidencialConjuge"/>
+        </property>   
+        <property name="telCelularConjuge" type="java.lang.String">
+            <column name="telCelularConjuge"/>
+        </property>   
+        <property name="dtNascimentoConjuge" type="java.util.Date">
+            <column name="dtNascimentoConjuge"/>
+        </property>                                  
+        <property name="cpfCC" type="java.lang.String">
+            <column name="CPFCC"/>
+        </property>   
+        <property name="cnpjCC" type="java.lang.String">
+            <column name="CNPJCC"/>
+        </property>      
+        <property name="atividade" type="java.lang.String">
+            <column name="ATIVIDADE"/>
+        </property>      
+		<property name="nomeConjuge" type="java.lang.String">
+            <column name="NOMECONJUGE"/>
+        </property> 
+        <property name="cpfConjuge" type="java.lang.String">
+            <column name="CPFCONJUGE"/>
+        </property>          
+        <property name="rgConjuge" type="java.lang.String">
+            <column name="RGCONJUGE"/>
+        </property> 
+       	<property name="dataEmissaoRGConjuge" type="java.util.Date">
+            <column name="dataEmissaoRGConjuge"/>
+        </property>      
+                <property name="sexoConjuge" type="java.lang.String">
+            <column name="SEXOConjuge"/>
+        </property>     
+		<property name="casado" type="boolean">
+           <column name="CASADO" />
+      	</property>  
+		<property name="estadocivil" type="java.lang.String">
+            <column name="estadocivil"/>
+        </property>       	     
+      			<property name="coobrigado" type="boolean">
+           <column name="coobrigado" />
+      	</property> 
+      	<property name="idIugu" type="java.lang.String">
+            <column name="IDIUGU"/>
+        </property>    
+        <property name="iuguAccountId" type="java.lang.String">
+            <column name="iuguAccountId"/>
+        </property>  
+        <property name="iuguNameAccount" type="java.lang.String">
+            <column name="iuguNameAccount"/>
+        </property>  
+        <property name="iuguLiveApiToken" type="java.lang.String">
+            <column name="iuguLiveApiToken"/>
+        </property>  
+        <property name="iuguTestApiToken" type="java.lang.String">
+            <column name="iuguTestApiToken"/>
+        </property>  
+        <property name="iuguUserToken" type="java.lang.String">
+            <column name="iuguUserToken"/>
+        </property>         
+        <property name="site" type="java.lang.String">
+            <column name="site"/>
+        </property>   
+        <property name="contato" type="java.lang.String">
+            <column name="contato"/>
+        </property>   
+        <property name="enderecoConjuge" type="java.lang.String">
+            <column name="enderecoConjuge"/>
+        </property>  
+        <property name="bairroConjuge" type="java.lang.String">
+            <column name="bairroConjuge"/>
+        </property>
+        <property name="complementoConjuge" type="java.lang.String">
+            <column name="complementoConjuge"/>
+        </property>
+        <property name="cidadeConjuge" type="java.lang.String">
+            <column name="cidadeConjuge"/>
+        </property>
+        <property name="estadoConjuge" type="java.lang.String">
+            <column name="estadoConjuge"/>
+        </property>
+        <property name="cepConjuge" type="java.lang.String">
+            <column name="cepConjuge"/>
+        </property> 
+        <property name="emailConjuge" type="java.lang.String">
+            <column name="emailConjuge"/>
+        </property>                              
+		<property name="nomeCoobrigado" type="java.lang.String">
+            <column name="NOMECoobrigado"/>
+        </property> 
+        <property name="cpfCoobrigado" type="java.lang.String">
+            <column name="CPFCoobrigado"/>
+        </property>          
+        <property name="rgCoobrigado" type="java.lang.String">
+            <column name="RGCoobrigado"/>
+        </property>      
+        <property name="enderecoCoobrigado" type="java.lang.String">
+            <column name="enderecoCoobrigado"/>
+        </property>  
+        <property name="bairroCoobrigado" type="java.lang.String">
+            <column name="bairroCoobrigado"/>
+        </property>
+        <property name="complementoCoobrigado" type="java.lang.String">
+            <column name="complementoCoobrigado"/>
+        </property>
+        <property name="cidadeCoobrigado" type="java.lang.String">
+            <column name="cidadeCoobrigado"/>
+        </property>
+        <property name="estadoCoobrigado" type="java.lang.String">
+            <column name="estadoCoobrigado"/>
+        </property>
+        <property name="cepCoobrigado" type="java.lang.String">
+            <column name="cepCoobrigado"/>
+        </property>          
+        <property name="cargoCoobrigado" type="java.lang.String">
+            <column name="CARGOCoobrigado"/>
+        </property>   
+        <property name="emailCoobrigado" type="java.lang.String">
+            <column name="emailCoobrigado"/>
+        </property>  
+       	<property name="dataEmissaoRGCoobrigado" type="java.util.Date">
+            <column name="dataEmissaoRGCoobrigado"/>
+        </property>     
+		<property name="nomeCoobrigadoCasado" type="java.lang.String">
+            <column name="NOMECoobrigadoCasado"/>
+        </property> 
+        <property name="cpfCoobrigadoCasado" type="java.lang.String">
+            <column name="CPFCoobrigadoCasado"/>
+        </property>          
+        <property name="rgCoobrigadoCasado" type="java.lang.String">
+            <column name="RGCoobrigadoCasado"/>
+        </property> 
+       	<property name="dataEmissaoRGCoobrigadoCasado" type="java.util.Date">
+            <column name="dataEmissaoRGCoobrigadoCasado"/>
+        </property>      
+        <property name="telResidencialCoobrigadoCasado" type="java.lang.String">
+            <column name="telResidencialCoobrigadoCasado"/>
+        </property>   
+        <property name="telCelularCoobrigadoCasado" type="java.lang.String">
+            <column name="telCelularCoobrigadoCasado"/>
+        </property>   
+        <property name="cargoCoobrigadoCasado" type="java.lang.String">
+            <column name="cargoCoobrigadoCasado"/>
+        </property>           
+        <property name="dtNascimentoCoobrigadoCasado" type="java.util.Date">
+            <column name="dtNascimentoCoobrigadoCasado"/>
+        </property>             
+        <property name="sexoCoobrigadoCasado" type="java.lang.String">
+            <column name="SEXOCoobrigadoCasado"/>
+        </property>     
+        <property name="enderecoCoobrigadoCasado" type="java.lang.String">
+            <column name="enderecoCoobrigadoCasado"/>
+        </property>  
+        <property name="bairroCoobrigadoCasado" type="java.lang.String">
+            <column name="bairroCoobrigadoCasado"/>
+        </property>
+        <property name="complementoCoobrigadoCasado" type="java.lang.String">
+            <column name="complementoCoobrigadoCasado"/>
+        </property>
+        <property name="cidadeCoobrigadoCasado" type="java.lang.String">
+            <column name="cidadeCoobrigadoCasado"/>
+        </property>
+        <property name="estadoCoobrigadoCasado" type="java.lang.String">
+            <column name="estadoCoobrigadoCasado"/>
+        </property>
+        <property name="cepCoobrigadoCasado" type="java.lang.String">
+            <column name="cepCoobrigadoCasado"/>
+        </property> 
+        <property name="emailCoobrigadoCasado" type="java.lang.String">
+            <column name="emailCoobrigadoCasado"/>
+        </property>                         
+        <property name="dtNascimentoCoobrigado" type="java.util.Date">
+            <column name="dtNascimentoCoobrigado"/>
+        </property>    
+        <property name="telResidencialCoobrigado" type="java.lang.String">
+            <column name="telResidencialCoobrigado"/>
+        </property>   
+        <property name="telCelularCoobrigado" type="java.lang.String">
+            <column name="telCelularCoobrigado"/>
+        </property>   
+        <property name="sexoCoobrigado" type="java.lang.String">
+            <column name="sexoCoobrigado"/>
+        </property>        
+		<property name="estadocivilcoobrigado" type="java.lang.String">
+            <column name="estadocivilcoobrigado"/>
+        </property> 
+		<many-to-one name="usuario"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="USUARIO" />
+		</many-to-one>                                                                                                            
+    </class>
+</hibernate-mapping>

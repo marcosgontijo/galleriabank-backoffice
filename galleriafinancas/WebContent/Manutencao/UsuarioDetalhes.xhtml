@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="./MenuManutencao.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelUsuario" header="Usuário - #{usuarioMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Nome: " styleClass="labelBold"/>		
+					<h:outputText value="#{usuarioMB.objetoUsuario.name}"/>
+					
+					<p:outputLabel value="Login: " styleClass="labelBold"/>		
+					<h:outputText value="#{usuarioMB.objetoUsuario.login}"/>	
+					
+					<p:outputLabel value="IP Autorizado: " styleClass="labelBold"/>		
+					<h:outputText value="#{usuarioMB.objetoUsuario.ip}"/>
+					
+					<p:outputLabel value="Último acesso: " styleClass="labelBold"/>	
+					<h:outputText value="#{usuarioMB.objetoUsuario.ultimoAcesso}" >	 		            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy hh:mm:ss"/>
+				    </h:outputText>
+				    
+					<spacer width="10"/>
+					<p:panel id="PanelPermissoes" header="Permissões de Acesso" style="margin-bottom:10px;margin-top:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Administrador: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.administrador}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.administrador}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+												
+							<p:outputLabel value="Operador do Posto: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userPosto}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userPosto}">
+								<h:outputText value="Não" />
+							</ui:fragment>		
+							
+							<p:outputLabel value="Administrador do Posto: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userAdministraPosto}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userAdministraPosto}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Gerencia Locação de Imóveis: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userLocacao}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userLocacao}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Gerencia Sistema de Cobrança: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobranca}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobranca}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Sistema de Cobrança - Edita Contrato: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobrancaEdita}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobrancaEdita}">
+								<h:outputText value="Não" />
+							</ui:fragment>								
+							
+							<p:outputLabel value="Sistema de Cobrança - Baixa Parcelas: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobrancaBaixa}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobrancaBaixa}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Sistema de Cobrança - IUGU: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobrancaIugu}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobrancaIugu}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Sistema de Cobrança - Gerencia Pré-Contratos: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userPreContrato}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userPreContrato}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+							
+							<p:outputLabel value="Cobranças IUGU Postos: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userIuguPosto}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userIuguPosto}">
+								<h:outputText value="Não" />
+							</ui:fragment>	
+														
+							<p:outputLabel value="Código do Responsável: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userPreContrato}">
+								<h:outputText value="#{usuarioMB.objetoUsuario.codigoResponsavel}" /> 
+							</ui:fragment>														
+						</h:panelGrid>						
+					</p:panel>																
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{usuarioMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{usuarioMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{usuarioMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="UsuarioConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{usuarioMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="UsuarioConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!usuarioMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

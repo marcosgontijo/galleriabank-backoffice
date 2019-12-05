@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.EmpresaCobranca" table="EMPRESACOBRANCA">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>        
+        <property name="nome" type="java.lang.String">
+            <column name="NOME" />
+        </property>
+        <property name="cnpj" type="java.lang.String">
+            <column name="CNPJ"/>
+        </property> 
+        <property name="endereco" type="java.lang.String">
+            <column name="ENDERECO"/>
+        </property>   
+        <property name="bairro" type="java.lang.String">
+            <column name="BAIRRO"/>
+        </property>               
+        <property name="cep" type="java.lang.String">
+            <column name="CEP"/>
+        </property> 
+        <property name="cidade" type="java.lang.String">
+            <column name="CIDADE"/>
+        </property> 
+        <property name="estado" type="java.lang.String">
+            <column name="ESTADO"/>
+        </property>     
+        <property name="agencia" type="java.lang.String">
+            <column name="AGENCIA"/>
+        </property> 
+        <property name="digitoAgencia" type="java.lang.String">
+            <column name="DIGITOAGENCIA"/>
+        </property>          
+        <property name="codigoBeneficiario" type="java.lang.String">
+            <column name="CODIGOBENEFICIARIO"/>
+        </property>  
+        <property name="digitoBeneficiario" type="java.lang.String">
+            <column name="DIGITOBENEFICIARIO"/>
+        </property>  
+        <property name="numeroConvenio" type="java.lang.String">
+            <column name="NUMEROCONVENIO"/>
+        </property>       
+        <property name="carteira" type="java.lang.String">
+            <column name="CARTEIRA"/>
+        </property>       
+        <property name="localPagamento" type="java.lang.String">
+            <column name="LOCALPAGAMENTO"/>
+        </property>   
+        <property name="instrucao1" type="java.lang.String">
+            <column name="INSTRUCAO1"/>
+        </property>        
+        <property name="instrucao2" type="java.lang.String">
+            <column name="INSTRUCAO2"/>
+        </property> 
+        <property name="instrucao3" type="java.lang.String">
+            <column name="INSTRUCAO3"/>
+        </property> 
+        <property name="instrucao4" type="java.lang.String">
+            <column name="INSTRUCAO4"/>
+        </property> 
+        <property name="instrucao5" type="java.lang.String">
+            <column name="INSTRUCAO5"/>
+        </property>    
+        <property name="sistema" type="java.lang.String">
+            <column name="SISTEMA"/>
+        </property>  
+         <property name="prefixoNumeroDoc" type="java.lang.String">
+            <column name="PREFIXONUMERODOC"/>
+        </property>  
+         <property name="nossoNumero" type="java.lang.String">
+            <column name="NOSSONUMERO"/>
+        </property>             
+    </class>
+</hibernate-mapping>

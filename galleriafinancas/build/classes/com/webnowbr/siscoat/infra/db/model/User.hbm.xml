@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="infra">
+    <!-- definicao de tipo para codificacao de senha -->
+	<!-- Hibernate 3
+    <typedef name="encryptedString" class="org.jasypt.hibernate3.type.EncryptedStringType">
+	-->
+	<!-- Hibernate 4
+	<typedef name="encryptedString" class="org.jasypt.hibernate4.type.EncryptedStringType">
+	-->
+	<!--  Hibernate 3 -->
+	<typedef name="encryptedString" class="org.jasypt.hibernate3.type.EncryptedStringType">
+      <param name="password">@#jasypt#@</param>
+    </typedef>
+       
+    <class name="com.webnowbr.siscoat.infra.db.model.User" table="USERS">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="NAME" not-null="true"/>
+        </property>
+        <property name="level" type="int">
+            <column name="LEVELUSR" not-null="true"/>
+        </property>
+        <property name="login" type="java.lang.String">
+            <column name="LOGIN" not-null="true" unique="true"/>
+        </property>
+        <property name="password" type="encryptedString">
+            <column name="PASSWORD" not-null="true"/>
+        </property>
+        <property name="addInfo" type="java.lang.String">
+            <column name="ADDINFO" />
+        </property>
+        <property name="path" type="java.lang.String">
+            <column name="PATH" />
+        </property>        
+        <list name="groupList" table="USER_GROUP" cascade="all" lazy="false">
+            <key column="USER_ID" />
+            <list-index></list-index>
+            <many-to-many column="GROUP_ID" class="com.webnowbr.siscoat.infra.db.model.GroupAdm"/>
+        </list>        
+        <property name="administrador" type="boolean">
+            <column name="ADMINISTRADOR" />
+        </property> 
+        <property name="userPosto" type="boolean">
+            <column name="USERPOSTO" />
+        </property>   
+        <property name="userLocacao" type="boolean">
+            <column name="USERLOCACAO" />
+        </property>     
+        <property name="userCobranca" type="boolean">
+            <column name="USERCOBRANCA" />
+        </property>  
+        <property name="userCobrancaEdita" type="boolean">
+            <column name="USERCOBRANCAEDITA" />
+        </property>  
+        <property name="userCobrancaBaixa" type="boolean">
+            <column name="USERCOBRANCABAIXA" />
+        </property>  
+        <property name="userCobrancaIugu" type="boolean">
+            <column name="USERCOBRANCAIUGU" />
+        </property> 
+        <property name="userPreContrato" type="boolean">
+            <column name="USERPRECONTRATO" />
+        </property> 
+        <property name="userIuguPosto" type="boolean">
+            <column name="userIuguPosto" />
+        </property>    
+        <property name="userInvestidor" type="boolean">
+            <column name="userInvestidor" />
+        </property>   
+		<property name="codigoResponsavel" type="java.lang.String">
+            <column name="CODIGORESPONSAVEL" />
+        </property>  
+        <property name="ip" type="java.lang.String">
+            <column name="IP" />
+        </property>  
+        <property name="ultimoAcesso" type="java.util.Date">
+            <column name="ultimoAcesso" />
+        </property>      
+		<list name="diasSemana" table="usuario_dias_semana_autorizados" lazy="false">
+		  <key column="diasSemana_id"></key>
+		  <index column="seq"></index>
+		  <element column="diaSemana" type="string"></element>
+		</list>           
+		<property name="horaInicioPermissaoAcesso" type="java.util.Date">
+            <column name="horaInicioPermissaoAcesso" />
+        </property>  
+		<property name="horaFimPermissaoAcesso" type="java.util.Date">
+            <column name="horaFimPermissaoAcesso" />
+        </property>          		                              		      
+    </class>
+</hibernate-mapping>

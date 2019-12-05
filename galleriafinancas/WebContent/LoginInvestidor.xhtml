@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:shiro="http://shiro.apache.org/tags"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+	    <title>Galleria Finanças</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
+        <link rel="stylesheet" type="text/css" href="#{resource['css/login_main.css']}" title="" media="all" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/login_util.css']}" title="" media="all" /> 
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700" rel="stylesheet"  title="" media="all" />    
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>   
+        <h:outputScript name="#{resource['js/login_main.js']}" library="javascript" />
+    </h:head>
+	<h:body>   
+		<h:outputText value="#{loginBean.initialize}"/>  		
+			<div class="limiter">
+				<div class="container-login100" style="background-image: url('#{resource['image/login_images/bg-01.jpg']}');">
+					<div class="wrap-login100 p-t-30 p-b-50">
+						<span class="login100-form-title p-b-41">
+							<img src="#{resource['image/LogoSiscoat.png']}" alt=""/>
+						</span>
+						<h:form id="formLogin" class="login100-form p-b-33 p-t-5">
+						    <p:growl id="messages" showDetail="true" sticky="true" />  
+						
+							<div class="wrap-input100">						
+								<p:inputText styleClass="input100" name="username" value="#{loginBean.username}" id="username" required="true" label="Usuário"  alt="Usuário" requiredMessage="Informe o usuário!" placeholder="Usuário" onblur="value=value.toUpperCase()"/>
+								<span class="focus-input100" data-placeholder="&#xF007;"/>
+							</div>
+		
+							<div class="wrap-input100">
+								<p:password id="password" styleClass="input100" value="#{loginBean.password}" required="true" inline="false" feedback= "false" alt="Senha" requiredMessage="Informe a senha!" onkeypress="if (event.keyCode == 13) { document.getElementById('form:aa').click(); return false; }" placeholder="Senha"/>								
+								<span class="focus-input100" data-placeholder="&#xF023;"/>
+							</div>
+							
+							<div class="container-login100-form-btn m-t-32">
+								<h:panelGrid columns="2">
+									<p:commandLink id="alterPasswd" ajax="false" update="messages"  style="margin-right: 20px;" styleClass="login100-form-btn2" action="./AlteraSenhaInvestidor.xhtml">
+										Alterar Senha
+									</p:commandLink>
+									<p:commandLink id="aa" styleClass="login100-form-btn" actionListener="#{loginBean.loginNow}" update="messages" ajax="false">
+										LOGIN
+									</p:commandLink>
+									<p:defaultCommand target="aa" />	
+								</h:panelGrid>
+							</div>		
+						</h:form>
+					</div>
+				</div>
+			</div>					
+	</h:body>
+</html>

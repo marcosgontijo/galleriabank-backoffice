@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos" table="CONTRATOCOBRANCAFAVORECIDOS">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="banco" type="java.lang.String">
+            <column name="BANCO"/>
+        </property>         
+        <property name="agencia" type="java.lang.String">
+            <column name="AGENCIA"/>
+        </property> 
+        <property name="conta" type="java.lang.String">
+            <column name="CONTA"/>
+        </property> 
+        <property name="nome" type="java.lang.String">
+            <column name="NOME"/>
+        </property>   
+        <property name="cpf" type="java.lang.String">
+            <column name="CPF"/>
+        </property>   
+        <property name="cnpj" type="java.lang.String">
+            <column name="CNPJ"/>
+        </property>                                 
+       <property name="vlrRecebido" type="big_decimal">
+            <column name="VLRRECEBIDO" />
+       </property>                                            
+    </class>
+</hibernate-mapping>

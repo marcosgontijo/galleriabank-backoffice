@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				
+			<p:messages id="mensagens" showDetail="true"/>												
+			<p:panel id="ConsultaReparcelar" header="Re-Parcelar Contrato - Consultar" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">									
+			        <p:outputLabel for="contrato" value="Contrato: " styleClass="labelBold" style="margin-right: 59px;"/>
+			        <p:inputText id="contrato" value="#{contratoCobrancaMB.numContrato}" label="Contrato" style="width:150px;" />													
+				</h:panelGrid>	
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelReParcela}" image="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaReparcelar" style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaReparcelarResultados" header="Re-Parcelar Contrato - Resultados" style="margin-bottom:10px;">	    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}"
+   		          rowStyleClass="#{contratos.parcelaPaga eq true ? 'parcelaPaga' : null}">
+   		          
+   		         	<f:facet name="header">  
+						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarReParcelar}" ajax="false" icon="ui-icon-pencil" value="Re-Parcelar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>  			                             
+					</f:facet>  
+					
+                	<p:column style="text-align: center;width: 100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			            <h:outputText value="#{contratos.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;width: 200px;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			            <h:outputText value="#{contratos.contratoCobranca.responsavel.nome}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 200px;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.contratoCobranca.pagador.nome}" />
+			        </p:column>	 
+			        <p:column style="text-align: center;width: 50px;" headerText="Parcela">
+			            <h:outputText value="#{contratos.parcela}" />
+			        </p:column>			
+			        <p:column style="text-align: center;width: 100px;" headerText="Vencimento Original" sortBy="#{contratos.dataVencimento}">
+			            <h:outputText value="#{contratos.dataVencimento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>	  
+			        <p:column style="text-align: center;width: 100px;" headerText="Valor">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valor}" converter="bigDecimalConverter"/>
+			        </p:column>		
+			        <f:facet name="footer">  
+						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarReParcelar}" ajax="false" icon="ui-icon-pencil" value="Re-Parcelar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>  			                             
+					</f:facet>      			        	               			        	        		            	            	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>			
+		</h:form>					
+	</ui:define>
+</ui:composition>	        

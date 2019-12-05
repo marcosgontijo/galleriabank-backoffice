@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:shiro="http://shiro.apache.org/tags"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>Galleria Finanças</title>          
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
+        <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" /> 
+        <h:outputScript name="#{resource['js/functions.js']}" library="javascript" />
+        <h:outputScript name="#{resource['js/locale-primefaces.js']}" library="javascript" />
+    </h:head>
+	<h:body>    
+		<p:layout fullPage="true" > 		    
+	  		<p:layoutUnit position="north" size="130" resizable="true" collapsible="true" style="BORDER:none; overflow: hidden;FONT-SIZE: 10pt;" spacingOpen="0">
+	  			<h:form id="menuSuperior">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 14px;padding-right: 15px;">
+					  <tr>
+					    <td width="30%" valign="top"><img src="#{resource['image/LogoSiscoat.png']}" alt=""/></td>
+					    <td>
+					    	<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO">
+					    		<p:commandLink title="Cadastros" action="/Cadastros/MenuCadastros.xhtml" ajax="false"><img src="#{resource['image/Commons/logoCadastros.png']}" alt=""/></p:commandLink>
+					    	</shiro:hasAnyRoles>
+					    </td>
+					    <td>
+					    	<shiro:hasAnyRoles name="ROOT, POSTO, LOCACAO, COBRANCA, PRECOBRANCA, IUGU_POSTO">
+					    		<p:commandLink title="Atendimento" action="/Atendimento/MenuAtendimento.xhtml" ajax="false"><img src="#{resource['image/Commons/logoFuncionalidades.png']}" alt=""/></p:commandLink>
+					    	</shiro:hasAnyRoles>
+					    </td>
+					    <td>
+					    	<shiro:hasAnyRoles name="ROOT, POSTO">
+					    		<p:commandLink title="Relatórios" action="/Relatorios/MenuRelatorio.xhtml" ajax="false"><img src="#{resource['image/Commons/logoRelatorios.png']}" alt=""/></p:commandLink>
+					    	</shiro:hasAnyRoles>
+					    </td>					   
+					    <td>
+					     	<shiro:hasAnyRoles name="ROOT">
+					    		<p:commandLink title="Manutenção" action="/Manutencao/MenuManutencao.xhtml" ajax="false"><img src="#{resource['image/Commons/logoManutencao.png']}" alt=""/></p:commandLink>
+					    	</shiro:hasAnyRoles>
+					    </td>
+					    <td><p:commandLink title="Sair" actionListener="#{logoutBean.logout}"><img src="#{resource['image/Commons/logoSair.png']}" alt=""/><p:confirm header="Confirmation" message="Deseja realmente sair?" icon="ui-icon-alert"/></p:commandLink></td>
+					    <td style="padding-top:5px;" valign="top" align="right">
+					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
+					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin"/>
+					    	<br></br>
+					    	<br></br>
+					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss" mode="server" />					    	
+					    </td>
+					  </tr>
+
+					</table>
+					<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
+					   <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="logout.hide()"/>
+					   <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="logout.hide()"/>
+					</p:confirmDialog>				
+				</h:form>				
+	    	</p:layoutUnit> 	
+		    <p:layoutUnit id="menu" position="west" size="255" 
+		    resizable="true" closable="false" collapsible="true" 
+			 maxSize="255" spacingOpen="0" header="Siscoat">
+		    	<ui:insert name="menu" />          			
+		    </p:layoutUnit>   	    			    		
+		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
+				<ui:insert name="conteudo">						
+									    	            		           
+                </ui:insert>
+		    </p:layoutUnit>
+		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
+				<p:outputLabel value="Copyright © 2019 Todos os direitos reservados. " styleClass="labelBold"/>
+		    </p:layoutUnit>			    
+		</p:layout>											
+	</h:body>
+</html>

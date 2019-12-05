@@ -1,0 +1,748 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class
+		name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+		table="CONTRATOCOBRANCA">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="PAGADOR" />
+		</many-to-one>
+		<many-to-one name="recebedor"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor1"
+			table="ContratoCobranca_Parcelas_Investidor_Join_1" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor1" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>		
+		<many-to-one name="recebedor2"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR2" />
+		</many-to-one>		
+		<list name="listContratoCobrancaParcelasInvestidor2"
+			table="ContratoCobranca_Parcelas_Investidor_Join_2" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor2" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>			
+		<many-to-one name="recebedor3"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR3" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor3"
+			table="ContratoCobranca_Parcelas_Investidor_Join_3" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor3" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor4"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR4" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor4"
+			table="ContratoCobranca_Parcelas_Investidor_Join_4" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor4" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor5"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR5" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor5"
+			table="ContratoCobranca_Parcelas_Investidor_Join_5" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor5" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor6"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR6" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor6"
+			table="ContratoCobranca_Parcelas_Investidor_Join_6" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor6" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor7"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR7" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor7"
+			table="ContratoCobranca_Parcelas_Investidor_Join_7" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor7" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor8"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR8" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor8"
+			table="ContratoCobranca_Parcelas_Investidor_Join_8" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor8" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor9"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR9" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor9"
+			table="ContratoCobranca_Parcelas_Investidor_Join_9" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor9" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<many-to-one name="recebedor10"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR10" />
+		</many-to-one>
+		<list name="listContratoCobrancaParcelasInvestidor10"
+			table="ContratoCobranca_Parcelas_Investidor_Join_10" cascade="all" lazy="false">
+			<key column="idContratoCobrancaParcelasInvestidor10" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaParcelasInvestidor"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor" />
+		</list>	
+		<property name="taxaRemuneracaoInvestidor1" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor1" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor2" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor2" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor3" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor3" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor4" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor4" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor5" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor5" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor6" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor6" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor7" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor7" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor8" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor8" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor9" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor9" />
+		</property>
+		<property name="taxaRemuneracaoInvestidor10" type="big_decimal">
+			<column name="taxaRemuneracaoInvestidor10" />
+		</property>
+		<property name="txMulta" type="big_decimal">
+			<column name="txMulta" />
+		</property>
+		<many-to-one name="responsavel"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="RESPONSAVEL" />
+		</many-to-one>
+		<many-to-one name="imovel"
+			class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca"
+			lazy="false">
+			<column name="IMOVEL" />
+		</many-to-one>
+		<property name="dataContrato" type="java.util.Date">
+			<column name="DATACONTRATO" />
+		</property>
+		<property name="dataInicio" type="java.util.Date">
+			<column name="DATAINICIO" />
+		</property>
+		<property name="diaMes" type="int">
+			<column name="DIAMES" />
+		</property>
+		<property name="qtdeParcelas" type="int">
+			<column name="QTDEPARCELAS" />
+		</property>
+		<property name="txAdministracao" type="big_decimal">
+			<column name="TXADMINISTRACAO" />
+		</property>
+		<property name="txJuros" type="big_decimal">
+			<column name="TXJUROS" />
+		</property>
+		<property name="vlrInvestimento" type="big_decimal">
+			<column name="VLRINVESTIMENTO" />
+		</property>
+		<property name="vlrRepasse" type="big_decimal">
+			<column name="VLRREPASSE" />
+		</property>
+		<property name="vlrLucro" type="big_decimal">
+			<column name="VLRLUCRO" />
+		</property>
+		<property name="acao" type="java.lang.String">
+			<column name="ACAO" />
+		</property>
+		<property name="observacao" type="text">
+			<column name="OBSERVACAO" />
+		</property>
+		<property name="observacao2" type="text">
+			<column name="OBSERVACAO2" />
+		</property>
+		<property name="geraParcelaFinal" type="boolean">
+			<column name="GERAPARCELAFINAL" />
+		</property>
+		<property name="vlrComissao" type="big_decimal">
+			<column name="VLRCOMISSAO" />
+		</property>
+		<list name="listContratoCobrancaDetalhes"
+			table="ContratoCobranca_Detalhes_Join" cascade="all" lazy="false">
+			<key column="idContratoCobranca" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaDetalhes"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes" />
+		</list>
+		<property name="dataPagamentoIni" type="java.util.Date">
+			<column name="DATAPAGAMENTOINI" />
+		</property>
+		<property name="dataPagamentoFim" type="java.util.Date">
+			<column name="DATAPAGAMENTOFIM" />
+		</property>
+		<property name="vlrParcela" type="big_decimal">
+			<column name="VLRPARCELA" />
+		</property>
+		<property name="numeroContrato" type="java.lang.String">
+			<column name="NUMEROCONTRATO" />
+		</property>
+		<property name="vlrRecebedor" type="big_decimal">
+			<column name="VLRRECEBEDOR" />
+		</property>
+		<property name="vlrRecebedor2" type="big_decimal">
+			<column name="VLRRECEBEDOR2" />
+		</property>
+		<property name="vlrRecebedor3" type="big_decimal">
+			<column name="VLRRECEBEDOR3" />
+		</property>
+		<property name="vlrRecebedor4" type="big_decimal">
+			<column name="VLRRECEBEDOR4" />
+		</property>
+		<property name="vlrRecebedor5" type="big_decimal">
+			<column name="VLRRECEBEDOR5" />
+		</property>
+		<property name="vlrRecebedor6" type="big_decimal">
+			<column name="VLRRECEBEDOR6" />
+		</property>
+		<property name="vlrRecebedor7" type="big_decimal">
+			<column name="VLRRECEBEDOR7" />
+		</property>
+		<property name="vlrRecebedor8" type="big_decimal">
+			<column name="VLRRECEBEDOR8" />
+		</property>
+		<property name="vlrRecebedor9" type="big_decimal">
+			<column name="VLRRECEBEDOR9" />
+		</property>
+		<property name="vlrRecebedor10" type="big_decimal">
+			<column name="VLRRECEBEDOR10" />
+		</property>
+		<property name="contratoRestritoAdm" type="boolean">
+			<column name="CONTRATORESTRITOADM" />
+		</property>
+		<property name="status" type="java.lang.String">
+			<column name="STATUS" />
+		</property>
+		<property name="vlrParcelaFinal" type="big_decimal">
+			<column name="VLRPARCELAFINAL" />
+		</property>
+		<property name="estadoCivil" type="java.lang.String">
+			<column name="ESTADOCIVIL" />
+		</property>
+		<property name="temMaisImoveis" type="java.lang.String">
+			<column name="TEMMAISIMOVEIS" />
+		</property>
+		<property name="finalidade" type="java.lang.String">
+			<column name="FINALIDADE" />
+		</property>
+		<property name="iprf" type="java.lang.String">
+			<column name="IPRF" />
+		</property>
+		<property name="profissao" type="java.lang.String">
+			<column name="PROFISSAO" />
+		</property>
+		<property name="quantoPrecisa" type="big_decimal">
+			<column name="QUANTOPRECISA" />
+		</property>
+		<list name="listContratoCobrancaObservacoes"
+			table="ContratoCobranca_Observacoes_Join" cascade="all" lazy="false">
+			<key column="idContratoCobranca" />
+			<list-index></list-index>
+			<many-to-many column="idContratoCobrancaObservacoes"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes" />
+		</list>
+		<property name="vlrParcelaStr" type="java.lang.String">
+			<column name="VLRPARCELASTR" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal1"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal1" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor1" type="big_decimal">
+			<column name="vlrFinalRecebedor1" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal2"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal2" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor2" type="big_decimal">
+			<column name="vlrFinalRecebedor2" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal3"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal3" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor3" type="big_decimal">
+			<column name="vlrFinalRecebedor3" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal4"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal4" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor4" type="big_decimal">
+			<column name="vlrFinalRecebedor4" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal5"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal5" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor5" type="big_decimal">
+			<column name="vlrFinalRecebedor5" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal6"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal6" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor6" type="big_decimal">
+			<column name="vlrFinalRecebedor6" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal7"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal7" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor7" type="big_decimal">
+			<column name="vlrFinalRecebedor7" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal8"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal8" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor8" type="big_decimal">
+			<column name="vlrFinalRecebedor8" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal9"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal9" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor9" type="big_decimal">
+			<column name="vlrFinalRecebedor9" />
+		</property>
+		<many-to-one name="recebedorParcelaFinal10"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="recebedorParcelaFinal10" />
+		</many-to-one>
+		<property name="vlrFinalRecebedor10" type="big_decimal">
+			<column name="vlrFinalRecebedor10" />
+		</property>		
+		<property name="reprovadoData" type="java.util.Date">
+			<column name="reprovadoData" />
+		</property>
+		<property name="reprovadoUsuario" type="java.lang.String">
+			<column name="reprovadoUsuario" />
+		</property>
+		<property name="reprovado" type="boolean">
+			<column name="reprovado" />
+		</property>
+		<property name="aprovadoData" type="java.util.Date">
+			<column name="aprovadoData" />
+		</property>
+		<property name="aprovadoUsuario" type="java.lang.String">
+			<column name="aprovadoUsuario" />
+		</property>
+		<property name="aprovado" type="boolean">
+			<column name="aprovado" />
+		</property>
+		<property name="inicioAnaliseData" type="java.util.Date">
+			<column name="inicioAnaliseData" />
+		</property>
+		<property name="inicioAnaliseUsuario" type="java.lang.String">
+			<column name="inicioAnaliseUsuario" />
+		</property>
+		<property name="inicioAnalise" type="boolean">
+			<column name="inicioAnalise" />
+		</property>
+		<property name="aguardandoDocumentoData"
+			type="java.util.Date">
+			<column name="aguardandoDocumentoData" />
+		</property>
+		<property name="aguardandoDocumentoUsuario"
+			type="java.lang.String">
+			<column name="aguardandoDocumentoUsuario" />
+		</property>
+		<property name="aguardandoDocumento" type="boolean">
+			<column name="aguardandoDocumento" />
+		</property>
+		<property name="matriculaAprovadaData" type="java.util.Date">
+			<column name="matriculaAprovadaData" />
+		</property>
+		<property name="matriculaAprovadaUsuario"
+			type="java.lang.String">
+			<column name="matriculaAprovadaUsuario" />
+		</property>
+		<property name="matriculaAprovada" type="boolean">
+			<column name="matriculaAprovada" />
+		</property>
+		<property name="fotoImovelReprovadaData"
+			type="java.util.Date">
+			<column name="fotoImovelReprovadaData" />
+		</property>
+		<property name="fotoImovelReprovadaUsuario"
+			type="java.lang.String">
+			<column name="fotoImovelReprovadaUsuario" />
+		</property>
+		<property name="fotoImovelReprovada" type="boolean">
+			<column name="fotoImovelReprovada" />
+		</property>
+		<property name="matriculaReprovadaData" type="java.util.Date">
+			<column name="matriculaReprovadaData" />
+		</property>
+		<property name="matriculaReprovadaUsuario"
+			type="java.lang.String">
+			<column name="matriculaReprovadaUsuario" />
+		</property>
+		<property name="matriculaReprovada" type="boolean">
+			<column name="matriculaReprovada" />
+		</property>
+		<property name="fotoImovelAprovadaData" type="java.util.Date">
+			<column name="fotoImovelAprovadaData" />
+		</property>
+		<property name="fotoImovelAprovadaUsuario"
+			type="java.lang.String">
+			<column name="fotoImovelAprovadaUsuario" />
+		</property>
+		<property name="fotoImovelAprovada" type="boolean">
+			<column name="fotoImovelAprovada" />
+		</property>
+		<property name="semFotoImovelData" type="java.util.Date">
+			<column name="semFotoImovelData" />
+		</property>
+		<property name="semFotoImovelUsuario" type="java.lang.String">
+			<column name="semFotoImovelUsuario" />
+		</property>
+		<property name="semFotoImovel" type="boolean">
+			<column name="semFotoImovel" />
+		</property>
+		<property name="documentosCompletosData"
+			type="java.util.Date">
+			<column name="documentosCompletosData" />
+		</property>
+		<property name="documentosCompletosUsuario"
+			type="java.lang.String">
+			<column name="documentosCompletosUsuario" />
+		</property>
+		<property name="documentosCompletos" type="boolean">
+			<column name="documentosCompletos" />
+		</property>
+		<property name="documentosIncompletosData"
+			type="java.util.Date">
+			<column name="documentosIncompletosData" />
+		</property>
+		<property name="documentosIncompletosUsuario"
+			type="java.lang.String">
+			<column name="documentosIncompletosUsuario" />
+		</property>
+		<property name="documentosIncompletos" type="boolean">
+			<column name="documentosIncompletos" />
+		</property>
+		<property name="cadastroAprovadoData" type="java.util.Date">
+			<column name="cadastroAprovadoData" />
+		</property>
+		<property name="cadastroAprovadoUsuario"
+			type="java.lang.String">
+			<column name="cadastroAprovadoUsuario" />
+		</property>
+		<property name="cadastroAprovado" type="boolean">
+			<column name="cadastroAprovado" />
+		</property>
+		<property name="cadastroReprovadoData" type="java.util.Date">
+			<column name="cadastroReprovadoData" />
+		</property>
+		<property name="cadastroReprovadoUsuario"
+			type="java.lang.String">
+			<column name="cadastroReprovadoUsuario" />
+		</property>
+		<property name="cadastroReprovado" type="boolean">
+			<column name="cadastroReprovado" />
+		</property>
+		<property name="aguardandoCertidoesData"
+			type="java.util.Date">
+			<column name="aguardandoCertidoesData" />
+		</property>
+		<property name="aguardandoCertidoesUsuario"
+			type="java.lang.String">
+			<column name="aguardandoCertidoesUsuario" />
+		</property>
+		<property name="aguardandoCertidoes" type="boolean">
+			<column name="aguardandoCertidoes" />
+		</property>
+		<property name="aguardandoCNDData" type="java.util.Date">
+			<column name="aguardandoCNDData" />
+		</property>
+		<property name="aguardandoCNDUsuario" type="java.lang.String">
+			<column name="aguardandoCNDUsuario" />
+		</property>
+		<property name="aguardandoCND" type="boolean">
+			<column name="aguardandoCND" />
+		</property>
+		<property name="agendarVisitaEmpresaData"
+			type="java.util.Date">
+			<column name="agendarVisitaEmpresaData" />
+		</property>
+		<property name="agendarVisitaEmpresaUsuario"
+			type="java.lang.String">
+			<column name="agendarVisitaEmpresaUsuario" />
+		</property>
+		<property name="agendarVisitaEmpresa" type="boolean">
+			<column name="agendarVisitaEmpresa" />
+		</property>
+		<property name="visitaEmpresaAprovadaData"
+			type="java.util.Date">
+			<column name="visitaEmpresaAprovadaData" />
+		</property>
+		<property name="visitaEmpresaAprovadaUsuario"
+			type="java.lang.String">
+			<column name="visitaEmpresaAprovadaUsuario" />
+		</property>
+		<property name="visitaEmpresaAprovada" type="boolean">
+			<column name="visitaEmpresaAprovada" />
+		</property>
+		<property name="visitaEmpresaReprovadaData"
+			type="java.util.Date">
+			<column name="visitaEmpresaReprovadaData" />
+		</property>
+		<property name="visitaEmpresaReprovadaUsuario"
+			type="java.lang.String">
+			<column name="visitaEmpresaReprovadaUsuario" />
+		</property>
+		<property name="visitaEmpresaReprovada" type="boolean">
+			<column name="visitaEmpresaReprovada" />
+		</property>
+		<property name="agendarVisitaImovelData"
+			type="java.util.Date">
+			<column name="agendarVisitaImovelData" />
+		</property>
+		<property name="agendarVisitaImovelUsuario"
+			type="java.lang.String">
+			<column name="agendarVisitaImovelUsuario" />
+		</property>
+		<property name="agendarVisitaImovel" type="boolean">
+			<column name="agendarVisitaImovel" />
+		</property>
+		<property name="visitaImovelAprovadaData"
+			type="java.util.Date">
+			<column name="visitaImovelAprovadaData" />
+		</property>
+		<property name="visitaImovelAprovadaUsuario"
+			type="java.lang.String">
+			<column name="visitaImovelAprovadaUsuario" />
+		</property>
+		<property name="visitaImovelAprovada" type="boolean">
+			<column name="visitaImovelAprovada" />
+		</property>
+		<property name="visitaImovelReprovadaData"
+			type="java.util.Date">
+			<column name="visitaImovelReprovadaData" />
+		</property>
+		<property name="visitaImovelReprovadaUsuario"
+			type="java.lang.String">
+			<column name="visitaImovelReprovadaUsuario" />
+		</property>
+		<property name="visitaImovelReprovada" type="boolean">
+			<column name="visitaImovelReprovada" />
+		</property>
+		<property name="enviadoCobrancaLaudoData"
+			type="java.util.Date">
+			<column name="enviadoCobrancaLaudoData" />
+		</property>
+		<property name="enviadoCobrancaLaudoUsuario"
+			type="java.lang.String">
+			<column name="enviadoCobrancaLaudoUsuario" />
+		</property>
+		<property name="enviadoCobrancaLaudo" type="boolean">
+			<column name="enviadoCobrancaLaudo" />
+		</property>
+		<property name="pagtoLaudoConfirmadaData"
+			type="java.util.Date">
+			<column name="pagtoLaudoConfirmadaData" />
+		</property>
+		<property name="pagtoLaudoConfirmadaUsuario"
+			type="java.lang.String">
+			<column name="pagtoLaudoConfirmadaUsuario" />
+		</property>
+		<property name="pagtoLaudoConfirmada" type="boolean">
+			<column name="pagtoLaudoConfirmada" />
+		</property>
+		<property name="laudoSolicitadoData" type="java.util.Date">
+			<column name="laudoSolicitadoData" />
+		</property>
+		<property name="laudoSolicitadoUsuario"
+			type="java.lang.String">
+			<column name="laudoSolicitadoUsuario" />
+		</property>
+		<property name="laudoSolicitado" type="boolean">
+			<column name="laudoSolicitado" />
+		</property>
+		<property name="laudoRecebidoData" type="java.util.Date">
+			<column name="laudoRecebidoData" />
+		</property>
+		<property name="laudoRecebidoUsuario" type="java.lang.String">
+			<column name="laudoRecebidoUsuario" />
+		</property>
+		<property name="laudoRecebido" type="boolean">
+			<column name="laudoRecebido" />
+		</property>
+		<property name="pajurSolicitadoData" type="java.util.Date">
+			<column name="pajurSolicitadoData" />
+		</property>
+		<property name="pajurSolicitadoUsuario"
+			type="java.lang.String">
+			<column name="pajurSolicitadoUsuario" />
+		</property>
+		<property name="pajurSolicitado" type="boolean">
+			<column name="pajurSolicitado" />
+		</property>
+		<property name="pajurFavoravelData" type="java.util.Date">
+			<column name="pajurFavoravelData" />
+		</property>
+		<property name="pajurFavoravelUsuario"
+			type="java.lang.String">
+			<column name="pajurFavoravelUsuario" />
+		</property>
+		<property name="pajurFavoravel" type="boolean">
+			<column name="pajurFavoravel" />
+		</property>
+		<property name="pajurDesfavoravelData" type="java.util.Date">
+			<column name="pajurDesfavoravelData" />
+		</property>
+		<property name="pajurDesfavoravelUsuario"
+			type="java.lang.String">
+			<column name="pajurDesfavoravelUsuario" />
+		</property>
+		<property name="pajurDesfavoravel" type="boolean">
+			<column name="pajurDesfavoravel" />
+		</property>
+		<property name="reanalisarPajurData" type="java.util.Date">
+			<column name="reanalisarPajurData" />
+		</property>
+		<property name="reanalisarPajurUsuario"
+			type="java.lang.String">
+			<column name="reanalisarPajurUsuario" />
+		</property>
+		<property name="reanalisarPajur" type="boolean">
+			<column name="reanalisarPajur" />
+		</property>
+		<property name="aguardandoInvestidorData"
+			type="java.util.Date">
+			<column name="aguardandoInvestidorData" />
+		</property>
+		<property name="aguardandoInvestidorUsuario"
+			type="java.lang.String">
+			<column name="aguardandoInvestidorUsuario" />
+		</property>
+		<property name="aguardandoInvestidor" type="boolean">
+			<column name="aguardandoInvestidor" />
+		</property>
+		<property name="agendadoCartorioData" type="java.util.Date">
+			<column name="agendadoCartorioData" />
+		</property>
+		<property name="agendadoCartorioUsuario"
+			type="java.lang.String">
+			<column name="agendadoCartorioUsuario" />
+		</property>
+		<property name="agendadoCartorio" type="boolean">
+			<column name="agendadoCartorio" />
+		</property>
+		<property name="contratoAssinadoData" type="java.util.Date">
+			<column name="contratoAssinadoData" />
+		</property>
+		<property name="contratoAssinadoUsuario"
+			type="java.lang.String">
+			<column name="contratoAssinadoUsuario" />
+		</property>
+		<property name="contratoAssinado" type="boolean">
+			<column name="contratoAssinado" />
+		</property>
+		<property name="ocultaRecebedor" type="boolean">
+		    <column name="OCULTARECEBEDOR" />
+		</property> 
+		<property name="ocultaRecebedor2" type="boolean">
+		    <column name="OCULTARECEBEDOR2" />
+		</property> 
+		<property name="ocultaRecebedor3" type="boolean">
+		    <column name="OCULTARECEBEDOR3" />
+		</property> 
+		<property name="ocultaRecebedor4" type="boolean">
+		    <column name="OCULTARECEBEDOR4" />
+		</property> 
+		<property name="ocultaRecebedor5" type="boolean">
+		    <column name="OCULTARECEBEDOR5" />
+		</property> 
+		<property name="ocultaRecebedor6" type="boolean">
+		    <column name="OCULTARECEBEDOR6" />
+		</property> 
+		<property name="ocultaRecebedor7" type="boolean">
+		    <column name="OCULTARECEBEDOR7" />
+		</property> 
+		<property name="ocultaRecebedor8" type="boolean">
+		    <column name="OCULTARECEBEDOR8" />
+		</property> 
+		<property name="ocultaRecebedor9" type="boolean">
+		    <column name="OCULTARECEBEDOR9" />
+		</property> 
+		<property name="ocultaRecebedor10" type="boolean">
+		    <column name="OCULTARECEBEDOR10" />
+		</property> 	
+	</class>
+</hibernate-mapping>

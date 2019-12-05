@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" 
+	template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+		 	<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />	
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaIugu" header="Consultar Transferências Bancárias"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="tipoConta" value="Qual Conta Consultar: "
+						styleClass="labelBold" />
+					<p:selectOneRadio id="tipoConta" value="#{iuguMB.contaMestre}"
+						required="true">
+						<f:selectItem itemLabel="Gama Cobranças" itemValue="true" />
+						<f:selectItem itemLabel="Outra" itemValue="false" />
+						<p:ajax update="botaoFavorecido Favorecido" event="valueChange"
+							listener="#{iuguMB.clearRecebedor}" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Favorecido" value="SubConta IUGU: "
+						styleClass="labelBold" />
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" 
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"   disabled="#{iuguMB.contaMestre}"/>
+				</h:panelGrid>
+				<br/>				
+				<p:commandButton value="Consultar Transferências Bancárias"
+					action="#{iuguMB.consultarTransferenciasBancarias}"
+					image="ui-icon ui-icon-check"
+					update="faturasSubConta mensagens"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			
+			<p:panel id="faturasSubConta" header="Transferências Bancárias - #{iuguMB.selectedRecebedor.nome}"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="ID SubConta IUGU: "
+						styleClass="labelBold" />
+					<p:outputLabel value="#{iuguMB.selectedRecebedor.iuguAccountId} "
+						styleClass="labelBold" />
+					<p:outputLabel value="Live Token IUGU: "
+						styleClass="labelBold"/>
+					<p:outputLabel value="#{iuguMB.selectedRecebedor.iuguLiveApiToken} "
+						styleClass="labelBold"/>
+				</h:panelGrid>
+				<br/>
+				<br/>
+   		         <p:dataTable id="dtFaturas" var="transferencias" value="#{iuguMB.transferenciasIUGU}" sortOrder="descending" sortBy="#{transferencias.created_at}">	        
+                 	<p:column style="text-align: center;width: 100px;" headerText="Sacado" filterBy="#{transferencias.recebedor}" filterMatchMode="contains" sortBy="#{transferencias.recebedor}">
+			            <h:outputText value="#{transferencias.recebedor}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Dt. Solicitação" sortBy="#{transferencias.created_at}">
+			            <h:outputText value="#{transferencias.created_at}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" />
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Dt. Atualização" sortBy="#{transferencias.updated_at}">
+			            <h:outputText value="#{transferencias.updated_at}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" />
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Valor (R$)" filterBy="#{transferencias.total}" filterMatchMode="contains" sortBy="#{transferencias.total}">
+			            <h:outputText value="#{transferencias.total}" />
+			        </p:column>	   
+			         <p:column style="text-align: center;width: 100px;" headerText="Status" filterBy="#{transferencias.status}" filterMatchMode="contains" sortBy="#{transferencias.status}">
+			            <h:outputText value="#{transferencias.status}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Observação" filterBy="#{transferencias.observacao}" filterMatchMode="contains" sortBy="#{transferencias.observacao}">
+			            <h:outputText value="#{transferencias.observacao}" />
+			        </p:column>	  			        	       			        	                   	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+			
+			<p:panel id="ArquivosSalvos"
+					header="Recibos Gerados"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="1">
+						<p:dataTable id="dtFiles" var="files"
+							value="#{iuguMB.files}" rowKey="#{files.name}"
+							selection="#{iuguMB.deletefiles}" emptyMessage=""
+							sortBy="#{files.name}">
+							<p:column selectionMode="multiple"
+								style="width:16px;text-align:center" />
+							<f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<p:fileDownload value="#{iuguMB.downloadAllFiles}" />
+								</p:commandButton>
+							</f:facet>
+							<p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{files.name}"
+								filterMatchMode="contains" sortBy="#{files.name}">
+								<h:outputText value="#{files.name}" />
+							</p:column>
+
+							<p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<f:setPropertyActionListener
+										target="#{iuguMB.selectedFile}" value="#{files}" />
+									<p:fileDownload value="#{iuguMB.downloadFile}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<p:fileDownload value="#{iuguMB.downloadAllFiles}" />
+								</p:commandButton>
+							</f:facet>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+		</h:form>
+		
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">				 	
+   		         <p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg" value="#{iuguMB.listRecebedores}" paginator="true" rows="10" selectionMode="single"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15" selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;" emptyMessage="" rowKey="#{favorecidoDialogdlg.id}" >		               	            			       
+
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.cnpj}" filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CNPJ" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.cnpj}"/>
+			         </p:column>	
+			         			         
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.cpf}" filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="CPF" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.cpf}"/>
+			         </p:column>					         
+			         
+			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.nome}" filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+			            <f:facet name="header">
+			                <h:outputText value="Nome" />
+			            </f:facet>
+			            <h:outputText value="#{favorecidoDialogdlg.nome}"/>
+			         </p:column>	
+			  
+			        <f:facet name="footer">  
+			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedRecebedor}" image="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('favorecidoDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash" update=":form:CobrancaIugu favorecidoDialogdlg" oncomplete="PF('favorecidoDialog').hide();"/>
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('favorecidoDialog').hide();"/>  			                             
+			        </f:facet>  
+			    </p:dataTable> 			
+			</h:form>
+		</p:dialog>		
+	</ui:define>
+</ui:composition>

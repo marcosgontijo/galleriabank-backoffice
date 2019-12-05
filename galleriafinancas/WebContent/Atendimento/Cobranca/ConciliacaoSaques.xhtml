@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:dialog widgetVar="statusDialog"  draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="image/bluespinner.gif" />
+			</p:dialog>	
+			<p:dialog widgetVar="statusDialogSaldo"  draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="image/bluespinner.gif" />
+			</p:dialog>						
+			<p:panel id="CobrancaIugu" header="Conciliação de Contas IUGU"
+				style="margin-bottom:10px;">
+				<p:tabView style="height: 6500px;">
+					<p:tab title="Créditos e Débitos por Dia">
+						<h:panelGrid columns="6">
+							<p:outputLabel
+								value="Informe o dia / mês / ano para a conciliação: "
+								styleClass="labelBold" />
+							<p:inputText id="dia" value="#{iuguMB.paramDia}" label="Dia"
+								maxlength="2" style="width:30px;" required="true" />
+							<p:outputLabel value=" / " styleClass="labelBold" />
+							<p:inputText id="mes" value="#{iuguMB.paramMes}" label="Mês"
+								maxlength="2" style="width:30px;" required="true" />
+							<p:outputLabel value=" / " styleClass="labelBold" />
+							<p:inputText id="ano" value="#{iuguMB.paramAno}" label="Ano"
+								maxlength="4" style="width:50px;" required="true" />
+						</h:panelGrid>
+						<br />
+						<h:panelGrid columns="1">
+							<p:outputLabel
+								value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado no IUGU. "
+								styleClass="labelBold" style="margin-right: 59px;color: red" />
+						</h:panelGrid>
+						<br />
+						<p:commandButton value="Processa Conciliação"
+							action="#{iuguMB.consultarConciliacaoExtratoFinanceiroSubConta}"
+							image="ui-icon ui-icon-check"
+							update="saldoSubConta :form:mensagens"
+							style="TEXT-DECORATION: bold;" />
+						<p:ajaxStatus onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" />
+						
+						<br />
+						<br />
+							
+						<p:panel id="saldoSubConta"
+							header="Resultado Conciliação de Contas IUGU"
+							style="margin-bottom:10px;height: 6500px;">
+							<div class="ui-g">
+								<div class="ui-g-12 ui-md-6 ui-lg-3">
+									<div class="bgCardConciliacao">
+										<div class="titulo">Faturas Pagas</div>
+										<div class="texto">
+											<h:outputText value="#{iuguMB.qtdeFaturasPagas}" />
+										</div>
+									</div>
+								</div>
+								<div class="ui-g-12 ui-md-6 ui-lg-3">
+									<div class="bgCardConciliacao">
+										<div class="titulo">Total Créditos</div>
+										<div class="texto">
+											R$
+											<h:outputText value="#{iuguMB.totalEntrada}"
+												converter="bigDecimalConverter" />
+										</div>
+									</div>
+								</div>
+								<div class="ui-g-12 ui-md-6 ui-lg-3">
+									<div class="bgCardConciliacao">
+										<div class="titulo">Total Débitos</div>
+										<div class="texto">
+											R$
+											<h:outputText value="#{iuguMB.totalSaida}"
+												converter="bigDecimalConverter" />
+										</div>
+									</div>
+								</div>
+								<div class="ui-g-12 ui-md-6 ui-lg-3">
+									<div class="bgCardConciliacao">
+										<div class="titulo">Taxas Debitadas</div>
+										<div class="texto">
+											R$
+											<h:outputText value="#{iuguMB.totalTaxas}"
+												converter="bigDecimalConverter" />
+										</div>
+									</div>
+								</div>
+							</div>
+							<br />
+							<br />
+							<p:dataTable id="dtFaturas" var="faturas"
+								value="#{iuguMB.faturasIUGU}" sortOrder="ascending"
+								sortBy="#{faturas.tipoTransacao}"
+								rowStyleClass="#{faturas.tipoTransacao eq 'Crédito' ? 'parcelaPaga' : null}"
+								expandableRowGroups="true" style="height: 6500px !important;">
+								<p:headerRow>
+									<p:column colspan="5">
+										<h:outputText value="#{faturas.tipoTransacao}"
+											style="font-size: 20px !important;" />
+									</p:column>
+								</p:headerRow>
+								<p:column style="text-align: center;width: 100px;"
+									headerText="Data">
+									<h:outputText value="#{faturas.dataTransacao}">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 100px;"
+									headerText="Nome da Conta">
+									<h:outputText value="#{faturas.nomeContaIUGU}" />
+								</p:column>
+								<p:column style="text-align: center;width: 100px;"
+									headerText="Descrição">
+									<h:outputText value="#{faturas.descricaoTransacao}" />
+								</p:column>
+								<p:column style="text-align: center;width: 100px;"
+									headerText="Valor">
+									<h:outputText value="#{faturas.valor}" />
+								</p:column>
+								<p:column style="text-align: center;width: 200px;"
+									headerText="Observação Saque">
+									<h:outputText value="#{faturas.observacaoSaque}" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+					</p:tab>
+					<p:tab title="Saldo Total IUGU">
+						<p:panel id="saldoTotalIUGU"
+							header="Saldo total IUGU"
+							style="margin-bottom:10px;height: 6500px;">							
+							<h:panelGrid columns="1">		
+								<br />						
+								<p:commandButton value="Processa Consulta Saque"
+								action="#{iuguMB.processaConciliacaoSaldoSubcontas}"
+								image="ui-icon ui-icon-check"
+								update="saldoTotalIUGU :form:mensagens"
+								style="TEXT-DECORATION: bold;" />
+								<br />
+								<p:outputLabel
+									value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado no IUGU. "
+									styleClass="labelBold" style="margin-right: 59px;color: red" />
+								<br />
+							</h:panelGrid>
+							<p:ajaxStatus onstart="PF('statusDialogSaldo').show()"
+								onsuccess="PF('statusDialogSaldo').hide()" />
+							<div class="ui-g-12 ui-md-12 ui-lg-4">
+								<div class="bgCardConciliacao">
+									<div class="titulo">Saldo Total IUGU</div>
+									<div class="texto">
+										R$
+										<h:outputText value="#{iuguMB.totalSaldoSubcontas}"
+											converter="bigDecimalConverter" />
+									</div>
+								</div>
+							</div>
+							<div class="ui-g-12 ui-md-12 ui-lg-8">
+								<p:dataTable id="dtSaldos" var="saldos"
+									value="#{iuguMB.saldosIUGU}" sortOrder="ascending"
+									sortBy="#{saldos.subConta.nome}" expandableRowGroups="true">
+									<f:facet name="header">
+										<p:outputLabel value="Saldo SubContas IUGU"
+											styleClass="labelBold" />
+									</f:facet>
+									<p:headerRow>
+										<p:column colspan="1">
+											<h:outputText value="#{saldos.subConta.nome}"
+												style="font-size: 20px !important;" />
+										</p:column>
+									</p:headerRow>
+									<p:column style="text-align: center;width: 100px;"
+										headerText="Valor">
+							            R$ <h:outputText value="#{saldos.totalSaldo}"
+											converter="bigDecimalConverter" />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</p:panel>
+					</p:tab>
+				</p:tabView>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cnpj}"
+						filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cpf}"
+						filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.nome}"
+						filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							update=":form:CobrancaIugu favorecidoDialogdlg"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

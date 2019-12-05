@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+	<h:head>
+	</h:head>
+	<h:body>
+		<ui:composition template="../index.xhtml">
+			<ui:define name="menu">
+				<h:form style="margin-bottom:10px;">
+					<p:menu style="width: 227px; ">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+							<p:submenu label="Contratos Cobrança" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+									<p:menuitem value="Pré-Contratos"
+										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Contratos Quitados"
+										action="#{contratoCobrancaMB.geraConsultaContratosQuitados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Contratos Reprovados"
+										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Fila de Investidores"
+										action="#{contratoCobrancaMB.clearFieldFilaInvestidores}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Gerar Contrato"
+										action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Re-Parcelar Contrato"
+										action="#{contratoCobrancaMB.clearFieldsReParcelar}"
+										ajax="false" icon="ui-icon-transferthick-e-w"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Financeiro"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Financeiro Baixado"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixado}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Recebedores"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Recalcula Valor"
+										action="#{contratoCobrancaUtilsMB.clearFieldsRecalculaValor}"
+										ajax="false" icon="ui-icon ui-icon-refresh"
+										styleClass="itemMenu" />
+									<p:menuitem value="Cálculos"
+										action="#{contratoCobrancaUtilsMB.clearFieldsCalculo}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Gerar Arquivo Remessa"
+										action="#{geracaoRemessaMB.clearGeracaoRemessaMB}"
+										ajax="false" icon="ui-icon ui-icon-clipboard"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pesquisa Observações"
+										action="#{contratoCobrancaMB.clearObservacoes}" ajax="false"
+										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
+									<p:menuitem value="Gerar Debênture"
+										action="#{investidorMB.clearGeraDebenture}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+					</p:menu>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+	</h:body>
+</f:view>
+</html>

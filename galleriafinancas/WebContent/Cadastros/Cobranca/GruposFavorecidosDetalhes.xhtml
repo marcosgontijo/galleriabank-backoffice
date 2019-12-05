@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelGruposFavorecidos" header="Grupo de Favorecidos - #{gruposFavorecidosMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">							
+					<p:outputLabel for="Nome" value="Nome do Grupo: " styleClass="labelBold" />
+					<h:outputText id="Nome" value="#{gruposFavorecidosMB.objetoGruposFavorecidos.nomeGrupo}" label="Nome do Grupo"/> 					
+					<p:outputLabel value="Favorecido 1: " styleClass="labelBold"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor1.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor1.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor1.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor1.id > 0}"/>
+					<p:outputLabel value="Favorecido 2: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor2.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor2.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor2.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor2.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor2.id > 0}"/>
+					<p:outputLabel value="Favorecido 3: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor3.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor3.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor3.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor3.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor3.id > 0}"/>
+					<p:outputLabel value="Favorecido 4: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor4.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor4.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor4.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor4.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor4.id > 0}"/>
+					<p:outputLabel value="Favorecido 5: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor5.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor5.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor5.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor5.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor5.id > 0}"/>	
+					<p:outputLabel value="Favorecido 6: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor6.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor6.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor6.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor6.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor6.id > 0}"/>
+					<p:outputLabel value="Favorecido 7: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor7.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor7.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor7.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor7.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor7.id > 0}"/>
+					<p:outputLabel value="Favorecido 8: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor8.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor8.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor8.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor8.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor8.id > 0}"/>
+					<p:outputLabel value="Favorecido 9: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor9.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor9.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor9.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor9.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor9.id > 0}"/>
+					<p:outputLabel value="Favorecido 10: " styleClass="labelBold" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor10.id > 0}"/>
+					<p:outputLabel value="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor10.cpfCC}#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor10.cnpjCC} - #{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor10.nomeCC}" rendered="#{gruposFavorecidosMB.objetoGruposFavorecidos.recebedor10.id > 0}"/>
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{gruposFavorecidosMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{gruposFavorecidosMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{gruposFavorecidosMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="GruposFavorecidosConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{gruposFavorecidosMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="GruposFavorecidosConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!gruposFavorecidosMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"	  
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  template="./MenuManutencao.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaParametro" header="Parâmetro - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtParametro" var="parametro" value="#{parametroMB.lazyModel}" paginator="true" rows="10" lazy="true"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="5,10,15" selection="" emptyMessage="">
+			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{parametro.nome}" filterMatchMode="contains" sortBy="#{parametro.nome}">
+			            <h:outputText value="#{parametro.nome}" />
+			        </p:column>				        	        
+			        <p:column style="width:120px;">
+			        	<p:commandButton action="ParametroDetalhes.xhtml" ajax="false" icon="ui-icon-search" title="Detalhes">
+			        		<f:setPropertyActionListener target="#{parametroMB.objetoParametro}" value="#{parametro}" />  			        		
+			        		<f:setPropertyActionListener target="#{parametroMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{parametroMB.deleteMode}" value="false" />
+			        		<f:setPropertyActionListener value="Visualizar" target="#{parametroMB.tituloPainel}" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>		                
+		                <p:commandButton action="#{parametroMB.clearFieldsUpdate}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{parametroMB.objetoParametro}" value="#{parametro}" />
+		                	<f:setPropertyActionListener target="#{parametroMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{parametroMB.deleteMode}" value="false" />
+		                	<f:setPropertyActionListener value="Editar" target="#{parametroMB.tituloPainel}" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="ParametroDetalhes.xhtml" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{parametroMB.objetoParametro}" value="#{parametro}" />
+		                	<f:setPropertyActionListener target="#{parametroMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{parametroMB.deleteMode}" value="true" />
+		                	<f:setPropertyActionListener value="Excluir" target="#{parametroMB.tituloPainel}" />
+		                </p:commandButton> 
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{parametroMB.clearFields}">
+							<f:setPropertyActionListener value="Adicionar" target="#{parametroMB.tituloPainel}" />
+						</p:commandButton>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+			<div align="center">	
+				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuAtendimento.xhtml"/>
+			</div>	
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

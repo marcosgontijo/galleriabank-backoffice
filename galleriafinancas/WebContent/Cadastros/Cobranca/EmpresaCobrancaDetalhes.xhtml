@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelEmpresaCobranca" header="Empresa de Cobrança - #{empresaCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>	
+						<h:panelGrid columns="2">	
+							<p:outputLabel for="Sistema" value="Utilizar no sistema: " styleClass="labelBold" />
+							<p:selectOneRadio id="Sistema" value="#{empresaCobrancaMB.objetoEmpresaCobranca.sistema}" required="true"  disabled="true">
+					            <f:selectItem itemLabel="Cobrança" itemValue="Cobrança" />
+					            <f:selectItem itemLabel="Locação" itemValue="Locação" />
+					            <f:selectItem itemLabel="Desativado" itemValue="Desativado" />
+					        </p:selectOneRadio>		
+					        
+							<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" />
+							<h:outputText id="Nome" value="#{empresaCobrancaMB.objetoEmpresaCobranca.nome}" label="Nome"/>
+							  
+							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"/>
+							<h:outputText id="CNPJ" value="#{empresaCobrancaMB.objetoEmpresaCobranca.cnpj}" label="CNPJ" mask="99.999.999/9999-99" />
+							
+							<p:outputLabel for="Endereco" value="Endereço: "  styleClass="labelBold" />
+							<h:outputText id="Endereco" value="#{empresaCobrancaMB.objetoEmpresaCobranca.endereco}" label="Endereco"/>  	
+							
+							<p:outputLabel for="Bairro" value="Bairro: "  styleClass="labelBold" />
+							<h:outputText id="Bairro" value="#{empresaCobrancaMB.objetoEmpresaCobranca.bairro}" label="Bairro"/> 
+
+							<p:outputLabel for="Cidade" value="Cidade: "  styleClass="labelBold" />
+							<h:outputText id="Cidade" value="#{empresaCobrancaMB.objetoEmpresaCobranca.cidade}" label="Cidade"/> 
+							
+							<p:outputLabel for="Cep" value="Cep: "  styleClass="labelBold" />
+							<h:outputText id="Cep" value="#{empresaCobrancaMB.objetoEmpresaCobranca.cep}" label="Cep"/>	
+					
+							<p:outputLabel for="Estado" value="Estado: "  styleClass="labelBold" />
+							<h:outputText id="Estado" value="#{empresaCobrancaMB.objetoEmpresaCobranca.estado}" label="Estado"/>																			
+						</h:panelGrid>																		
+			</p:panel>			
+			<p:panel id="PanelBanco" header="Dados Bancários" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Banco: " styleClass="labelBold" />
+					<p:outputLabel value="237 | Banco Bradesco S.A." styleClass="labelBold" />
+				</h:panelGrid>
+				<h:panelGrid columns="4">									
+					<p:outputLabel for="agencia" value="Agência: " styleClass="labelBold" />	
+					<h:outputText id="agencia" value="#{empresaCobrancaMB.objetoEmpresaCobranca.agencia}" label="agencia"/>				 
+					
+					<p:outputLabel for="digitoAgencia" value=" - " styleClass="labelBold" />					
+					<h:outputText id="digitoAgencia" value="#{empresaCobrancaMB.objetoEmpresaCobranca.digitoAgencia}" label="Dígito Agência"/>		 
+					
+					<p:outputLabel for="codigoBeneficiario" value="Código Beneficiário: " styleClass="labelBold" />		
+					<h:outputText id="codigoBeneficiario" value="#{empresaCobrancaMB.objetoEmpresaCobranca.codigoBeneficiario}" label="Código Beneficiário"/>						 
+					
+					<p:outputLabel for="digitoBeneficiario" value=" - " styleClass="labelBold" />				
+					<h:outputText id="digitoBeneficiario" value="#{empresaCobrancaMB.objetoEmpresaCobranca.digitoBeneficiario}" label="Dígito Beneficiário"/>							 				
+				</h:panelGrid>	
+				<h:panelGrid columns="2">											
+					<p:outputLabel for="numeroConvenio" value="Número do Convênio: " styleClass="labelBold" />	
+					<h:outputText id="numeroConvenio" value="#{empresaCobrancaMB.objetoEmpresaCobranca.numeroConvenio}" label="numeroConvenio"/>				
+					
+					<p:outputLabel for="carteira" value="Carteira: " styleClass="labelBold" />		
+					<h:outputText id="carteira" value="#{empresaCobrancaMB.objetoEmpresaCobranca.carteira}" label="carteira"/> 
+				</h:panelGrid>											 
+			</p:panel>			
+			<p:panel id="PanelBoleto" header="Dados do Boleto" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">				
+					<p:outputLabel for="localPagamento" value="Local do Pagamento: " styleClass="labelBold" />	
+					<h:outputText id="localPagamento" value="#{empresaCobrancaMB.objetoEmpresaCobranca.localPagamento}" label="localPagamento"/>						 
+					
+					<p:outputLabel for="instrucao1" value="Instrução 1: " styleClass="labelBold" />	
+					<h:outputText id="instrucao1" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao1}" label="instrucao1"/>										 
+					
+					<p:outputLabel for="instrucao2" value="Instrução 2: " styleClass="labelBold" />		
+					<h:outputText id="instrucao2" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao2}" label="instrucao2"/>				
+					
+					<p:outputLabel for="instrucao3" value="Instrução 3: " styleClass="labelBold" />					
+					<h:outputText id="instrucao3" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao3}" label="instrucao3"/>	 
+					
+					<p:outputLabel for="instrucao4" value="Instrução 4: " styleClass="labelBold" />					
+					<h:outputText id="instrucao4" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao4}" label="instrucao4"/>	 
+					
+					<p:outputLabel for="instrucao5" value="Instrução 5: " styleClass="labelBold" />					
+					<h:outputText id="instrucao5" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao5}" label="instrucao5"/>											 				
+				</h:panelGrid>												 
+			</p:panel>	
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{empresaCobrancaMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{empresaCobrancaMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{empresaCobrancaMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="EmpresaCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{empresaCobrancaMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="EmpresaCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!empresaCobrancaMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:panel id="listaInvestidores" header="Fila de Investidores" style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />			
+				<p:dataTable id="investidoresDlg" var="investidoresDlg"
+					value="#{contratoCobrancaMB.listFilaInvestidores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedInvestidor}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{investidoresDlg.id}">
+					<f:facet name="header">  
+			            <p:commandButton value="Inserir na Fila" ajax="false" icon="ui-icon-calculator" action="#{contratoCobrancaMB.clearFieldADDFilaInvestidores}">
+			            	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>    	                             
+			        </f:facet>  
+					<p:column style="text-align: center;"
+						headerText="Data Registro"
+						sortBy="#{investidoresDlg.dataInsercao}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{investidoresDlg.dataInsercao}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Investidor" filterBy="#{investidoresDlg.investidor.nome}" filterMatchMode="contains" >
+			            <h:outputText value="#{investidoresDlg.investidor.nome}" />
+			        </p:column>					
+					<p:column style="text-align: center;"
+						headerText="Valor (R$)">
+						<h:outputText value="#{investidoresDlg.valorDisponivel}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Data Disponibilidade (R$)"
+						sortBy="#{investidoresDlg.dataDisponibilidade}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{investidoresDlg.dataDisponibilidade}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>		
+					<p:column style="text-align: center;" headerText="Observação" filterBy="#{investidoresDlg.observacao}" filterMatchMode="contains" >
+			            <h:outputText value="#{investidoresDlg.observacao}" />
+			        </p:column>											
+			        <p:column style="width:120px;">
+		                <p:commandButton action="#{contratoCobrancaMB.clearFieldEDITFilaInvestidores}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoFilaInvestidores}" value="#{investidoresDlg}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="#{contratoCobrancaMB.clearFieldEDITFilaInvestidores}" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoFilaInvestidores}" value="#{investidoresDlg}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+		                </p:commandButton> 
+		            </p:column>						
+					
+					<f:facet name="footer">  
+			            <p:commandButton value="Inserir na Fila" ajax="false" icon="ui-icon-calculator" action="#{contratoCobrancaMB.clearFieldADDFilaInvestidores}">
+			            	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>    	    			                             
+			        </f:facet>  
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

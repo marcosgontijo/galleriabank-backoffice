@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:panel id="ConsultaFinanceiro"
+				header="Inclusão na Fila de Investidores"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs" />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataRegistro" value="Data Registro: "
+						styleClass="labelBold" style="margin-right: 10px;" />
+					<h:outputText id="dataRegistro"
+						value="#{contratoCobrancaMB.objetoFilaInvestidores.dataInsercao}"
+						label="Data Registro" style="font-weight: bold; font-size: 18px;">
+						<f:convertDateTime locale="pt_BR" />
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="investidor" value="Investidor: "
+						styleClass="labelBold" />
+					<p:inputText id="investidor"
+						value="#{contratoCobrancaMB.nomeRecebedor}" label="Investidor"
+						readonly="TRUE"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 105px;"
+						disabled="#{contratoCobrancaMB.deleteMode}" />
+					<p:commandButton id="botaoRecebedor" type="button"
+						onclick="PF('recebedorDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"
+						disabled="#{contratoCobrancaMB.deleteMode}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="valorDisponivel" value="Valor Disponível (R$): "
+						styleClass="labelBold" />
+					<p:inputText id="valorDisponivel"
+						value="#{contratoCobrancaMB.objetoFilaInvestidores.valorDisponivel}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" 
+						converter="bigDecimalConverter"
+						disabled="#{contratoCobrancaMB.deleteMode}">
+					</p:inputText>
+					<p:outputLabel for="dataDisponibilidade"
+						value="Data Disponibilidade (R$): " styleClass="labelBold"
+						style="margin-right: 10px;" />
+					<p:calendar id="dataDisponibilidade"
+						value="#{contratoCobrancaMB.objetoFilaInvestidores.dataDisponibilidade}"
+						label="Data da Atualização" size="30" pattern="dd/MM/yyyy"
+						locale="pt"  styleClass="dateTimeField"
+						onclick="this.select();"
+						disabled="#{contratoCobrancaMB.deleteMode}">
+					</p:calendar>
+					<p:outputLabel for="observacao" value="Observações: "
+						styleClass="labelBold" />
+					<p:inputTextarea rows="5" cols="50" id="observacao"
+						value="#{contratoCobrancaMB.objetoFilaInvestidores.observacao}"
+						label="Observação" onblur="value=value.toUpperCase()"
+						style="width:300px;" disabled="#{contratoCobrancaMB.deleteMode}" />
+					<p:spacer height="10" />
+				</h:panelGrid>
+			</p:panel>
+			<div align="center">
+				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check"
+					action="#{contratoCobrancaMB.addInvestidorNaFila}"
+					style="TEXT-DECORATION: bold;"
+					rendered="#{!contratoCobrancaMB.deleteMode}" />
+				<p:spacer height="10" rendered="#{!contratoCobrancaMB.deleteMode}" />
+				<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash"
+					action="#{contratoCobrancaMB.deleteInvestidorFila}"
+					style="TEXT-DECORATION: bold;"
+					rendered="#{contratoCobrancaMB.deleteMode}" />
+				<p:spacer height="10" rendered="#{contratoCobrancaMB.deleteMode}" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true"
+					icon="ui-icon-cancel"
+					action="#{contratoCobrancaMB.clearFieldFilaInvestidores}"
+					style="TEXT-DECORATION: bold; " />
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+			</p:confirmDialog>
+		</h:form>
+
+		<p:dialog header="Recebedores" widgetVar="recebedorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores">
+				<p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:investidor"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor}"
+							image="ui-icon ui-icon-trash"
+							update=":form:investidor recebedorDialogdlg"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

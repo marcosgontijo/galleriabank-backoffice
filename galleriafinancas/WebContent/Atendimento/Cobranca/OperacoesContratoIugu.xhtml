@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaIugu" header="Operações Contratos IUGU"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="TipoRelatorio" value="Consulta: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoRelatorio"
+						value="#{iuguMB.relIsContrato}" required="true">
+						<f:selectItem itemLabel="Contrato" itemValue="true" />
+						<f:selectItem itemLabel="Período" itemValue="false" />
+						<p:ajax update="CobrancaIugu contratos dadosOperacoes dadosContrato" event="valueChange"
+							listener="#{iuguMB.limpaFiltros}" />
+					</p:selectOneRadio>
+					<p:outputLabel for="contrato" value="Contrato: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="contrato" value="#{iuguMB.numeroContrato}"
+						label="Contrato" style="width:150px;"
+						disabled="#{!iuguMB.relIsContrato}" />
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio" value="#{iuguMB.relDataContratoInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"
+						disabled="#{iuguMB.relIsContrato}" />
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim" value="#{iuguMB.relDataContratoFim}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"
+						disabled="#{iuguMB.relIsContrato}" />
+					<p:commandButton value="Consultar Contrato"
+						action="#{iuguMB.consultaOperacoesContratoIugu}"
+						image="ui-icon ui-icon-check"
+						update="contratos dadosContrato mensagens dadosParcelas dadosOperacoes dadosContratoDT :formObservacoes"
+						style="TEXT-DECORATION: bold;" />						
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="contratos" header="Consulta - Contratos Filtrados"
+				style="margin-bottom:10px;" visible="#{!iuguMB.relIsContrato}">
+				<p:dataTable id="dtContratos" var="contratos"
+					value="#{iuguMB.contratosCobranca}" paginator="true" rows="20"
+					lazy="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					sortBy="#{contratos.dataContrato}" sortOrder="descending"
+					reflow="true">
+					<f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+					</f:facet>
+					<p:column style="text-align: center;width:105px;"
+						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+						<h:outputText value="#{contratos.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Data Contrato"
+						sortBy="#{contratos.dataContrato}">
+						<h:outputText value="#{contratos.dataContrato}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains"
+						sortBy="#{contratos.pagador.nome}">
+						<h:outputText value="#{contratos.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Recebedor"
+						filterBy="#{contratos.recebedor.nome}" filterMatchMode="contains"
+						sortBy="#{contratos.recebedor.nome}">
+						<h:outputText value="#{contratos.recebedor.nome}" />
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Valor da Parcela (R$)"
+						filterBy="#{contratos.vlrParcelaStr}" filterMatchMode="contains"
+						sortBy="#{contratos.vlrParcela}">
+						<h:outputText value="#{contratos.vlrParcelaStr}">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Data Inicio"
+						sortBy="#{contratos.dataInicio}">
+						<h:outputText value="#{contratos.dataInicio}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<p:commandButton action="#{iuguMB.consultaSaldosContratoSelecionado}"
+							ajax="false" icon="ui-icon-check" value="Selecionar"
+							title="Selecionar" update=":form:dadosContrato :form:transferencias :form:transferencias"  >
+							<f:setPropertyActionListener
+								target="#{iuguMB.contratoCobranca}" value="#{contratos}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p:panel id="dadosContrato" header="Dados do Contrato"
+				style="margin-bottom:10px;">
+				<p:panel id="dadosPagadorResponsavel"
+					header="Dados do Pagador e Responsável" style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Contrato : " styleClass="labelBold" />
+						<p:outputLabel value="#{iuguMB.contratoCobranca.numeroContrato}" style="font-weight: bold; font-size: 18px;"/>
+						<p:outputLabel value="Pagador : " styleClass="labelBold" />
+						<p:outputLabel value="#{iuguMB.contratoCobranca.pagador.nome}" />
+						<p:outputLabel value="Responsável : " styleClass="labelBold" />
+						<p:outputLabel value="#{iuguMB.contratoCobranca.responsavel.nome}" />
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="dadosParcelas" header="Dados das Parcelas"
+					style="margin-bottom:10px;">
+					<p:dataTable id="dtParcelas" var="parcelas"
+						value="#{iuguMB.parcelas3meses}" paginator="true" rows="100"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+						rowsPerPageTemplate="100,200,300" emptyMessage=""
+						sortBy="#{contratos.numeroParcela}" sortOrder="ascending"
+						rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : null}"
+						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+						rowKey="#{parcelas.id}">
+
+						<p:column style="text-align: center;" headerText="Número Parcela"
+							filterBy="#{parcelas.numeroParcela}" filterMatchMode="contains"
+							sortBy="#{parcelas.numeroParcela}">
+							<h:outputText value="#{parcelas.numeroParcela}" />
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Data Vencimento Original"
+							sortBy="#{parcelas.dataVencimento}">
+							<h:outputText value="#{parcelas.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Data Vencimento Atualizada"
+							sortBy="#{parcelas.dataVencimentoAtual}"
+							styleClass="colunaHiddenRelFinanceiro">
+							<h:outputText value="#{parcelas.dataVencimentoAtual}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela (R$)">
+							<h:outputText value="#{parcelas.vlrParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela Atualizado (R$)">
+							<h:outputText value="--"
+								rendered="#{parcelas.parcelaPaga  or parcelas.vlrParcelaAtualizada == null}" />
+							<h:outputText value="#{parcelas.vlrParcelaAtualizada}"
+								converter="bigDecimalConverter"
+								rendered="#{!parcelas.parcelaPaga}" />
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor do Investidor (R$)">
+							<h:outputText value="#{parcelas.vlrRepasse}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor da Administração (R$)">
+							<h:outputText value="#{parcelas.vlrRetencao}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor Recebido (R$)"
+							styleClass="colunaHiddenRelFinanceiro">
+							<h:outputText value="--" rendered="#{parcelas.parcelaPaga}" />
+							<h:outputText value="#{parcelas.vlrRecebido}"
+								converter="bigDecimalConverter"
+								rendered="#{!parcelas.parcelaPaga}" />
+						</p:column>
+						<p:column style="text-align: center;" headerText="Parcela Paga?"
+							styleClass="colunaHiddenRelFinanceiro">
+							<ui:fragment rendered="#{parcelas.parcelaPaga}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!parcelas.parcelaPaga}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+						</p:column>
+						<p:column>
+							<p:commandButton id="botaoObservacoes" 
+								onclick="PF('observacoesDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  update=":formObservacoes" >
+								<f:setPropertyActionListener
+									target="#{iuguMB.contratoCobrancaDetalhes}"
+									value="#{parcelas}"/>
+								<f:setPropertyActionListener target="#{iuguMB.observacaoContratoDetalhes}" value="Teste" />
+							</p:commandButton>	
+						</p:column>					
+					</p:dataTable>
+				</p:panel>
+				<p:panel id="dadosOperacoes" header="Operações"
+					style="margin-bottom:10px;">
+
+					<h:panelGrid columns="3" style=" margin-bottom: 25px;">
+						<p:outputLabel for="tipoConta"
+							value="Conta Origem Transferência: " styleClass="labelBold" />
+						<p:selectOneRadio id="tipoConta" value="#{iuguMB.contaMestre}"
+							required="true">
+							<f:selectItem itemLabel="Gama Mestre" itemValue="true" />
+							<f:selectItem itemLabel="Outra" itemValue="false" />
+							<p:ajax update="botaoFavorecido Favorecido" event="valueChange"
+								listener="#{iuguMB.clearRecebedor}" />
+						</p:selectOneRadio>
+						<p:spacer width="10" />
+						<p:outputLabel for="Favorecido" value="SubConta IUGU: "
+							styleClass="labelBold" />
+						<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+							label="Favorecido" readonly="TRUE" required="true"
+							style="FONT-SIZE: 10pt;width:420px;" />
+						<p:commandButton id="botaoFavorecido" type="button"
+							onclick="PF('favorecidoDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" 
+							disabled="#{iuguMB.contaMestre}" />
+						<p:outputLabel for="senha" value="Senha da Operação: "
+							styleClass="labelBold" rendered="#{iuguMB.senhaStorage ==  '' }" />
+						<p:password id="senha" value="#{iuguMB.paramSenha}"
+							rendered="#{iuguMB.senhaStorage == '' }" />
+						<p:spacer width="10" rendered="#{iuguMB.senhaStorage == '' }" />      	
+						<p:outputLabel for="observacao" value="Observação: "
+							styleClass="labelBold" />
+						<p:inputTextarea rows="10" cols="50" id="observacao"
+							value="#{iuguMB.observacao}" label="Observação"
+							onblur="value=value.toUpperCase()" style="width:350px;" />
+						<p:spacer width="10" />
+						<p:outputLabel for="parcelaObs" value="Atualizar Observação Parcela: "
+							styleClass="labelBold" />				         			
+						<p:selectOneMenu id="parcelaObs"
+							value="#{iuguMB.parcelaObservacao}" label="Atualizar Observação Parcela"
+							style="width: 160px;">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{iuguMB.parcelas3meses}" var="c"
+								itemLabel="#{c.numeroParcela}" itemValue="#{c.id}" />
+						</p:selectOneMenu>				        			
+					</h:panelGrid>
+
+					<p:dataTable id="dadosContratoDT" var="dadosContratoDT"
+						value="#{iuguMB.operacaoContratoIUGU}"
+						style="FONT-SIZE: 10pt;margin-bottom: 25px;" emptyMessage=""
+						rowKey="#{dadosContratoDT.id}" editable="true" editMode="cell">
+
+						<p:column style="text-align: center;"
+							sortBy="#{dadosContratoDT.recebedor.nome}"
+							filterBy="#{dadosContratoDT.recebedor.nome}"
+							filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Nome" />
+							</f:facet>
+							<h:outputText value="#{dadosContratoDT.recebedor.nome}" />
+						</p:column>
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Saldo Recebedor IUGU">
+							<h:outputText value="R$ " />
+							<h:outputText value="#{dadosContratoDT.saldoRecebedor}"
+								converter="bigDecimalConverter" />
+						</p:column>
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Valor Recebedor Contrato">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dadosContratoDT.vlrRecebedor}"
+										converter="bigDecimalConverter" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{dadosContratoDT.vlrRecebedor}"
+										converter="bigDecimalConverter"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);"
+										style="width:100%" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column style="width:120px;">
+							<p:commandButton
+								action="#{iuguMB.processaTransferenciaOperacoesContratoIugu('tela')}"
+								ajax="false" style="width: 120px;"
+								icon="ui-icon-transferthick-e-w" title="Detalhes"
+								value="Transferir" update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+								<f:setPropertyActionListener
+									target="#{iuguMB.selectedOperacaoContratoPagadorRecebedorIUGU}"
+									value="#{dadosContratoDT.recebedor}" />
+								<f:setPropertyActionListener target="#{iuguMB.valorItem}"
+									value="#{dadosContratoDT.vlrRecebedor}" />
+							</p:commandButton>
+							<p:commandButton
+								action="#{iuguMB.processaSaqueOperacoesContratoIugu('tela')}"
+								ajax="false" style="width: 120px;"
+								icon="ui-icon-arrowthickstop-1-n" title="Detalhes" value="Sacar"
+								update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+								<f:setPropertyActionListener
+									target="#{iuguMB.selectedOperacaoContratoPagadorRecebedorIUGU}"
+									value="#{dadosContratoDT.recebedor}" />
+								<f:setPropertyActionListener target="#{iuguMB.valorItem}"
+									value="#{dadosContratoDT.vlrRecebedor}" />
+							</p:commandButton>
+							<p:commandButton
+								action="#{iuguMB.processaTransferenciaSaqueOperacoesContratoIugu}"
+								ajax="false" style="width: 120px;" icon="ui-icon-refresh"
+								title="Detalhes" value="Transferir e Sacar"
+								update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+								<f:setPropertyActionListener
+									target="#{iuguMB.selectedOperacaoContratoPagadorRecebedorIUGU}"
+									value="#{dadosContratoDT.recebedor}" />
+								<f:setPropertyActionListener target="#{iuguMB.valorItem}"
+									value="#{dadosContratoDT.vlrRecebedor}" />
+							</p:commandButton>
+						</p:column>
+
+						<f:facet name="footer">
+							<p:commandButton
+								action="#{iuguMB.processaTransferenciaLoteOperacoesContratoIugu('tela')}"
+								ajax="false" style="width: 150px;"
+								icon="ui-icon-transferthick-e-w" title="Detalhes"
+								value="Transferir Todos" update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+							</p:commandButton>
+							<p:commandButton
+								action="#{iuguMB.processaSaqueLoteOperacoesContratoIugu('tela')}"
+								ajax="false" style="width: 150px;"
+								icon="ui-icon-arrowthickstop-1-n" title="Detalhes"
+								value="Sacar Todos" update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+							</p:commandButton>
+							<p:commandButton
+								action="#{iuguMB.processaTransferenciaSaqueLoteOperacoesContratoIugu}"
+								ajax="false" style="width: 200px;" icon="ui-icon-refresh"
+								title="Detalhes" value="Transferir e Sacar Todos"
+								update=":form:dadosContrato :form:transferencias :form:dadosOperacoes">
+							</p:commandButton>
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+				<p:panel id="transferencias" header="Transferências"
+					style="margin-bottom:10px;">
+					
+	   		         <p:dataTable id="dtFaturas" var="transferencias" value="#{iuguMB.transferenciasIUGU}" sortOrder="descending" sortBy="#{transferencias.created_at}">
+	   		         	<f:facet name="header">
+							<p:commandButton
+									action="#{iuguMB.getTranferenciasRecebdoresContrato}"
+									ajax="false" style="width: 400px;" icon="ui-icon-search"
+									title="Detalhes" value="Carregar últimas transferências"
+									update=":form:transferencias">
+							</p:commandButton>
+						</f:facet>	        
+	                 	<p:column style="text-align: center;width: 100px;" headerText="Sacado" filterBy="#{transferencias.recebedor}" filterMatchMode="contains" sortBy="#{transferencias.recebedor}">
+				            <h:outputText value="#{transferencias.recebedor}" />
+				        </p:column>
+				        <p:column style="text-align: center;width: 100px;" headerText="Dt. Solicitação" sortBy="#{transferencias.created_at}">
+				            <h:outputText value="#{transferencias.created_at}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" />
+				            </h:outputText>
+				        </p:column>	
+				        <p:column style="text-align: center;width: 100px;" headerText="Dt. Atualização" sortBy="#{transferencias.updated_at}">
+				            <h:outputText value="#{transferencias.updated_at}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" />
+				            </h:outputText>
+				        </p:column>	
+				        <p:column style="text-align: center;width: 100px;" headerText="Valor (R$)" filterBy="#{transferencias.total}" filterMatchMode="contains" sortBy="#{transferencias.total}">
+				            <h:outputText value="#{transferencias.total}" />
+				        </p:column>	   
+				         <p:column style="text-align: center;width: 100px;" headerText="Status" filterBy="#{transferencias.status}" filterMatchMode="contains" sortBy="#{transferencias.status}">
+				            <h:outputText value="#{transferencias.status}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Observação" filterBy="#{transferencias.observacao}" filterMatchMode="contains" sortBy="#{transferencias.observacao}">
+				            <h:outputText value="#{transferencias.observacao}" />
+				        </p:column>	  			        	       			        	                   	        		               		        			        			           			 		
+					</p:dataTable>
+				</p:panel>
+			</p:panel>		
+		</h:form>
+			<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+				resizable="false" style="FONT-SIZE: 10pt;" width="600"
+				responsive="true">
+				<h:form id="formPagadores">
+					<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+						value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+						selectionMode="single"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15"
+						selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+						emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+
+						<p:column style="text-align: center;"
+							sortBy="#{favorecidoDialogdlg.cnpj}"
+							filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="CNPJ" />
+							</f:facet>
+							<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+						</p:column>
+
+						<p:column style="text-align: center;"
+							sortBy="#{favorecidoDialogdlg.cpf}"
+							filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="CPF" />
+							</f:facet>
+							<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+						</p:column>
+
+						<p:column style="text-align: center;"
+							sortBy="#{favorecidoDialogdlg.nome}"
+							filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Nome" />
+							</f:facet>
+							<h:outputText value="#{favorecidoDialogdlg.nome}" />
+						</p:column>
+
+						<f:facet name="footer">
+							<p:commandButton value="Selecionar"
+								action="#{iuguMB.populateSelectedRecebedor}"
+								image="ui-icon ui-icon-check" update=":form:dadosContrato"
+								oncomplete="PF('favorecidoDialog').hide();" />
+							<p:commandButton value="Limpar Seleção"
+								action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+								update=":form:CobrancaIugu favorecidoDialogdlg"
+								oncomplete="PF('favorecidoDialog').hide();" />
+							<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+								oncomplete="PF('favorecidoDialog').hide();" />
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:dialog>		
+		<p:dialog header="Observações" widgetVar="observacoesDialog" resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="formObservacoes">
+				<p:panel id="ObservacoesPanel1" header="Observações - Inserir" style="margin-top:10px;">	
+					<h:panelGrid columns="2">						
+						<p:outputLabel for="numeroContrato" value="Número do Contrato:" styleClass="labelBold" style="margin-right: 59px;"/>
+						<h:outputText id="numeroContrato" value="#{iuguMB.contratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>
+						<p:outputLabel for="parcela" value="Parcela" styleClass="labelBold" style="margin-right: 59px;"/>
+						<h:outputText id="parcela" value="#{iuguMB.contratoCobrancaDetalhes.numeroParcela}" label="Parcela" style="font-weight: bold; font-size: 18px;"/>
+						<p:outputLabel value="Data da Observação: " styleClass="labelBold" style="font-weight: bold; font-size: 18px;"/>
+					    <h:outputText value="#{iuguMB.dataObservacao}" style="font-weight: bold; font-size: 18px;">			            	
+					          <f:convertDateTime locale="pt_BR"  />
+					          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+					    </h:outputText>
+					    <p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"  style="margin-right: 59px;"/>
+						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{iuguMB.observacao}" label="Observação" onblur="value=value.toUpperCase()"  style="width:450px;"/>
+					</h:panelGrid>
+					<div align="center" style="margin-top:20px;">								
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{iuguMB.addObservacaoDetalhes}" update="ObservacoesPanel"  />																						
+					</div>	 													
+				</p:panel>
+				<p:panel id="ObservacoesPanel" header="Observações - Consultar" style="margin-top:10px;">	
+	   		         <p:dataTable id="dtObservacoes" var="observacoes" value="#{iuguMB.listContratoCobrancaDetalhesObservacoes}" paginator="true" rows="5" lazy="true"
+	   		         	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         	currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 	rowsPerPageTemplate="5,10" selection="" emptyMessage="" sortBy="#{observacoes.data}" sortOrder="descending">               
+				        <p:column style="text-align: center;" headerText="Data Inicio" sortBy="#{observacoes.data}">
+				            <h:outputText value="#{observacoes.data}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+				            </h:outputText>
+				        </p:column>		
+				        <p:column style="text-align: center;" headerText="Usuário" filterBy="#{observacoes.usuario}" filterMatchMode="contains" sortBy="#{observacoes.usuario}">
+			            	<h:outputText value="#{observacoes.usuario}" />
+			        	</p:column>	    
+			        	<p:column style="text-align: center;" headerText="Observação" filterBy="#{observacoes.observacao}" filterMatchMode="contains" sortBy="#{observacoes.observacao}">
+			            	<h:outputText value="#{observacoes.observacao}" />
+			        	</p:column>	             
+				        <p:column style="width:150px;">	
+				        	<shiro:hasAnyRoles name="ROOT">		        
+					            <p:commandButton action="#{iuguMB.excluirObservacaoDetalhes}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+					               <f:setPropertyActionListener target="#{iuguMB.contratoCobrancaDetalhesObservacoes}" value="#{observacoes}" />
+					             </p:commandButton>			
+					        </shiro:hasAnyRoles> 	        	            
+			            </p:column>		      		               		        			        			           			 		
+					</p:dataTable>	
+				</p:panel>			
+				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
+					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+				</div>	  				
+			</h:form>
+		</p:dialog> 			
+	</ui:define>
+</ui:composition>

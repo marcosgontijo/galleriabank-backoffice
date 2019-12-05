@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory name="">
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/SaqueIUGU.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/EmpresaCobranca.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedor.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/GruposPagadores.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/GruposFavorecidos.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Responsavel.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ImovelCobranca.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CalculosDetalhes.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Calculos.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaFavorecidos.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaObservacoes.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaDetalhesObservacoes.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaDetalhesParcial.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaDetalhes.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaParcelasInvestidor.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobranca.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/TransferenciasObservacoesIUGU.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/FilaInvestidores.hbm.xml"/> 		
+ 		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
+        <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 
+        <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>
+        <mapping resource="com/webnowbr/siscoat/infra/db/model/Parametros.hbm.xml"/> 	 		
+ </session-factory>
+</hibernate-configuration>

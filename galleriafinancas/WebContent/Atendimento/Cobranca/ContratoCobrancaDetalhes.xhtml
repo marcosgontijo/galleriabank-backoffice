@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:shiro="http://shiro.apache.org/tags"
+			    template="../MenuAtendimento.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">		
+		 	<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />			
+		 	<link rel="stylesheet" type="text/css" href="../../resources/css/Style.css" title="" media="all" /> 	
+			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>									
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+					<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>					
+					<p:outputLabel value="Data do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+				    <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.dataContrato}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel for="status" value="Status: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+					<h:outputText id="status" value="#{contratoCobrancaMB.objetoContratoCobranca.status}" label="Status" style="font-weight: bold; font-size: 18px;"/>						
+					<p:spacer width="10"/>
+				</h:panelGrid>
+				
+				<shiro:hasAnyRoles name="ROOT">	
+					<h:panelGrid columns="2">		
+						<p:outputLabel value="Restrito ao Administrador: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;margin-top: 50px;"/>
+			        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoRestritoAdm}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.contratoRestritoAdm}">
+								<h:outputText value="Não" />
+						</ui:fragment>	
+						<p:spacer width="10"/>					
+					</h:panelGrid>
+				</shiro:hasAnyRoles>
+					
+				<p:panel id="Pessoas" header="Envolvidos" style="margin-bottom:10px;">	
+					<p:panel header="Pagador" style="margin-bottom:10px;">		
+						<h:panelGrid columns="2">	
+							<p:outputLabel value="Nome: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.cpf}#{contratoCobrancaMB.objetoContratoCobranca.pagador.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.pagador.nome}" />
+							<p:outputLabel value="E-Mail: " styleClass="labelBold"/>	
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.email}" label="E-Mail"/> 											
+							<p:outputLabel value="Telefone Residencial: " />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telResidencial}" label="Telefone Residencial"/>																								
+							<p:outputLabel value="Telefone Celular: " />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telCelular}" label="Telefone Celular"/>						
+						</h:panelGrid>	
+					</p:panel>
+					<p:panel header="Responsável" style="margin-bottom:10px;">		
+						<h:panelGrid columns="2">								
+							<p:outputLabel value="Nome: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cpf}#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" />
+							<p:outputLabel value="E-Mail: " styleClass="labelBold"/>	
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.email}" label="E-Mail"/> 	
+							<p:outputLabel value="Telefone Residencial: " />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telResidencial}" label="Telefone Residencial"/>																								
+							<p:outputLabel value="Telefone Celular: " />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telCelular}" label="Telefone Celular"/>														
+						</h:panelGrid>	
+					</p:panel>					
+				</p:panel>
+				<p:panel header="Favorecido" style="margin-bottom:10px;">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>	
+				<p:panel header="Favorecido 2" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor2}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>				
+				<p:panel header="Favorecido 3" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor3}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>	
+				<p:panel header="Favorecido 4" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor4}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>		
+				<p:panel header="Favorecido 5" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor5}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>	
+				<p:panel header="Favorecido 6" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor6}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>
+				<p:panel header="Favorecido 7" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor7}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>
+				<p:panel header="Favorecido 8" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor8}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>
+				<p:panel header="Favorecido 9" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor9}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>
+				<p:panel header="Favorecido 10" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.id > 0}">	
+       				<h:panelGrid columns="2">	
+       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.banco}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Agência: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.agencia}"/>		
+						<p:outputLabel value="C/C: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.conta}"/>
+						<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}"/>
+						<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC != null}"/>
+						<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cnpjCC != null}"/>	
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cnpjCC}"/>					
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Valor: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor10}" converter="bigDecimalConverter"/>
+					</h:panelGrid>	
+				</p:panel>										
+				<p:panel id="Dados" header="Dados do Contrato" style="margin-bottom:10px;">	
+					<h:panelGrid columns="3">
+							<p:outputLabel value="Imóvel: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}" />
+							<p:spacer width="10"/>	
+							<p:outputLabel value="Cartório de Registro: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.cartorio}" />
+							<p:spacer width="10"/>	
+					</h:panelGrid>
+					<h:panelGrid columns="3">		
+							<p:outputLabel value="Valor da Última NP: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestimento}" converter="bigDecimalConverter"/>
+				            								
+							<p:outputLabel value="Taxa de Administração: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txAdministracao}" converter="bigDecimalConverter"/>							
+							
+							<p:outputLabel value="Taxa de Juros: " styleClass="labelBold" />
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}" converter="bigDecimalConverter"/><h:outputText value=" %"/>														
+						</h:panelGrid>
+					</p:panel>																				
+					
+					<p:panel id="Pagamento" header="Forma de Pagamento" style="margin-bottom:10px;">	
+						<h:panelGrid columns="3">	
+							<p:outputLabel value="Data Inicio: " styleClass="labelBold" style="margin-right: 50px;"/>															
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				            </h:outputText>	
+				            <p:spacer width="10"/>												
+						</h:panelGrid>
+						<h:panelGrid columns="5">		
+							<p:outputLabel value="Número de Parcelas: " styleClass="labelBold" />
+							<h:outputText value="#{contratoCobrancaMB.qtdeParcelas}" />
+							<p:outputLabel value="de " styleClass="labelBold" />	
+							<h:outputText value="R$"/>						
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrParcela}" converter="bigDecimalConverter"/>																									
+						</h:panelGrid>		
+						
+						<h:panelGrid columns="3">		
+							<p:outputLabel value="Valor do Investidor: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRepasse}" converter="bigDecimalConverter"/>															
+																								
+							<p:outputLabel value="Valor da Administração: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRetencao}" converter="bigDecimalConverter"/>
+				            
+				            <p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrComissao}" converter="bigDecimalConverter"/>
+				        </h:panelGrid>		
+				        
+						<p:panel id="ParcelaFinal" header="Parcela Final" style="margin-top:10px;margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}">
+							<h:panelGrid columns="3">	
+								<p:outputLabel value="Valor da Parcela: " styleClass="labelBold" />
+								<h:outputText value="R$"/>						
+				            	<h:outputText value="#{contratoCobrancaMB.vlrParcelaFinal}" converter="bigDecimalConverter"/>
+																	
+								<p:outputLabel value="Valor do Investidor: " styleClass="labelBold" />
+								<h:outputText value="R$"/>						
+				            	<h:outputText value="#{contratoCobrancaMB.vlrRepasseFinal}" converter="bigDecimalConverter"/>																
+																									
+								<p:outputLabel value="Valor da Administração: " styleClass="labelBold" />
+								<h:outputText value="R$"/>						
+				            	<h:outputText value="#{contratoCobrancaMB.vlrRetencaoFinal}" converter="bigDecimalConverter"/>
+				            	
+				            	<p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
+				            	<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrComissaoFinal}" converter="bigDecimalConverter"/>
+							</h:panelGrid>	
+							
+							<p:panel header="Favorecido Final 1" style="margin-bottom:10px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1 != null}">	
+			       				<h:panelGrid columns="2">	
+			       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.banco}"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Agência: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.agencia}"/>		
+									<p:outputLabel value="C/C: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.conta}"/>
+									<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.nomeCC}"/>
+									<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.cpfCC != null}"/>
+									<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.cnpjCC != null}"/>	
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal1.cnpjCC}"/>					
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel value="Valor: " styleClass="labelBold" />
+									<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor1}" converter="bigDecimalConverter"/>
+								</h:panelGrid>	
+							</p:panel>
+							
+							<p:panel header="Favorecido Final 2" style="margin-bottom:10px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2 != null}">	
+			       				<h:panelGrid columns="2">	
+			       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.banco}"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Agência: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.agencia}"/>		
+									<p:outputLabel value="C/C: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.conta}"/>
+									<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.nomeCC}"/>
+									<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.cpfCC != null}"/>
+									<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.cnpjCC != null}"/>	
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal2.cnpjCC}"/>					
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel value="Valor: " styleClass="labelBold" />
+									<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor2}" converter="bigDecimalConverter"/>
+								</h:panelGrid>	
+							</p:panel>
+							
+							<p:panel header="Favorecido Final 3" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3 != null}" >	
+			       				<h:panelGrid columns="2">	
+			       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.banco}"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Agência: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.agencia}"/>		
+									<p:outputLabel value="C/C: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.conta}"/>
+									<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.nomeCC}"/>
+									<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.cpfCC != null}"/>
+									<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.cnpjCC != null}"/>	
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal3.cnpjCC}"/>					
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel value="Valor: " styleClass="labelBold" />
+									<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor3}" converter="bigDecimalConverter"/>
+								</h:panelGrid>	
+							</p:panel>
+							
+							<p:panel header="Favorecido Final 4" style="margin-bottom:10px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4 != null}" >	
+			       				<h:panelGrid columns="2">	
+			       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.banco}"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Agência: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.agencia}"/>		
+									<p:outputLabel value="C/C: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.conta}"/>
+									<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.nomeCC}"/>
+									<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.cpfCC != null}"/>
+									<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.cnpjCC != null}"/>	
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal4.cnpjCC}"/>					
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel value="Valor: " styleClass="labelBold" />
+									<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor4}" converter="bigDecimalConverter"/>
+								</h:panelGrid>	
+							</p:panel>
+							
+							<p:panel header="Favorecido Final 5" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5 != null}">	
+			       				<h:panelGrid columns="2">	
+			       					<p:outputLabel value="Banco: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.banco}"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Agência: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.agencia}"/>		
+									<p:outputLabel value="C/C: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.conta}"/>
+									<p:outputLabel value="Favorecido: " styleClass="labelBold"/>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.nomeCC}"/>
+									<p:outputLabel value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.cpfCC != null}"/>
+									<p:outputLabel value="CNPJ: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.cnpjCC != null}"/>	
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedorParcelaFinal5.cnpjCC}"/>					
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel value="Valor: " styleClass="labelBold" />
+									<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor5}" converter="bigDecimalConverter"/>
+								</h:panelGrid>	
+							</p:panel>
+						</p:panel>						        										
+					</p:panel>
+																																
+					<p:panel id="AcaoObservacao" header="Ação e Observação" style="margin-bottom:10px;">							
+						<h:panelGrid columns="3">					
+							<p:outputLabel value="Ação: " />							
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" />
+							<p:spacer width="10"/>  					
+							
+							<p:outputLabel value="Observação: " />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}" />
+							<p:spacer width="10"/>
+							
+							<p:outputLabel value="" />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}" />
+							<p:spacer width="10"/>							
+						</h:panelGrid>  
+					</p:panel>	
+						
+				<p:panel id="DetalheParcelas" header="Detalhamento - Forma de Pagamento" style="margin-bottom:10px;">		    		    
+	   		         <p:dataTable id="dtParcelas" var="parcelas" value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}" paginator="true" rows="100"
+	   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 rowsPerPageTemplate="100,200,300" selection="" style="width: 95%;" emptyMessage="" sortBy="#{contratos.numeroParcela}" sortOrder="ascending" rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}" > 	
+				        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
+				            <h:outputText value="#{parcelas.numeroParcela}" />
+				        </p:column>
+				        <p:column style="text-align: center;width: 70px;" headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+				            <h:outputText value="#{parcelas.dataVencimento}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				            </h:outputText>
+				        </p:column>				
+				        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
+				            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
+					        <p:column style="text-align: center;width: 110px;" headerText="Investidor (R$)">
+					            <h:outputText value="#{parcelas.vlrRepasse}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>		
+					        <p:column style="text-align: center;width: 120px;" headerText="Administração (R$)">
+					            <h:outputText value="#{parcelas.vlrRetencao}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>	
+					        <p:column style="text-align: center;width: 110px;" headerText="Repasse (R$)">
+					            <h:outputText value="#{parcelas.vlrComissao}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>						        					        
+				        <p:column style="text-align: center;width: 45px;" headerText="Pago?">	        
+				        	<ui:fragment rendered="#{parcelas.parcelaPaga}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!parcelas.parcelaPaga}">
+									<h:outputText value="Não" />
+							</ui:fragment>	
+				        </p:column>					        			        			              		        		               		        			        			           			 		
+					</p:dataTable>
+				</p:panel>																																														
+			</p:panel>
+			
+			<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;">							
+					<h:panelGrid columns="1">			                      								
+						<p:dataTable id="dtFiles" var="files" value="#{contratoCobrancaMB.files}" rowKey="#{files.name}" selection="#{contratoCobrancaMB.deletefiles}" emptyMessage="" sortBy="#{files.name}" >	
+							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+							 <f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+						    	</p:commandButton>								 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>
+					        </f:facet>	        
+					        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{files.name}" filterMatchMode="contains" sortBy="#{files.name}">
+					            <h:outputText value="#{files.name}" />
+					        </p:column>  
+					        
+					        <p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+						    	</p:commandButton>	
+				            </p:column>						        
+
+				             <f:facet name="footer">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+						    	</p:commandButton>					             
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>								
+					        </f:facet>             	        		               		        			        			           			 		
+						</p:dataTable>								
+					</h:panelGrid>  
+				</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{contratoCobrancaMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}"/>
+				<p:commandButton value="Imprimir" ajax="false" immediate="true" icon="ui-icon-print" action="#{contratoCobrancaMB.imprimeContrato}" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!contratoCobrancaMB.deleteMode}"/>			 						
+				<p:spacer height="10" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{contratoCobrancaMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!contratoCobrancaMB.deleteMode}"/>																		
+			</div>			
+		</h:form>			 		
+	</ui:define>
+</ui:composition>

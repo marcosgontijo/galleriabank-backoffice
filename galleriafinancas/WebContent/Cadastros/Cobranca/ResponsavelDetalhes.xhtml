@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">					
+			<p:panel id="PanelResponsavel" header="Responsável - #{responsavelMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
+					<p:selectOneRadio id="Pessoa" value="#{responsavelMB.tipoPessoaIsFisica}" required="true" disabled="true">
+			            <f:selectItem itemLabel="Física" itemValue="true" />
+			            <f:selectItem itemLabel="Jurídica" itemValue="false" />
+			            <p:ajax update="PanelPagadorRecebedor" event="valueChange" listener="#{responsavelMB.selectedTipoPessoa}"/>
+			        </p:selectOneRadio>		
+
+					<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Cpf" value="#{responsavelMB.objetoResponsavel.cpf}" label="CPF" mask="999.999.999-99" rendered="#{responsavelMB.tipoPessoaIsFisica}"/> 
+					
+					<p:outputLabel for="Rg" value="RG: " rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="Rg" value="#{responsavelMB.objetoResponsavel.rg}" label="RG" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
+					
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
+					<h:outputText id="CNPJ" value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ" mask="99.999.999/9999-99" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/> 
+					
+					<p:outputLabel for="Codigo" value="Código do Responsável: " styleClass="labelBold" />													
+					<h:outputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo"/>   					
+																
+					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
+					<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
+
+					<p:outputLabel for="Contato" value="Contato: " />
+					<h:outputText id="Contato" value="#{responsavelMB.objetoResponsavel.contato}" label="Contato"/>
+												
+					<h:outputText id="Nome" value="#{responsavelMB.objetoResponsavel.nome}" label="Nome"/> 
+					
+					<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold"/>	
+					<h:outputText id="EMail" value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail"/> 				
+														
+					<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"/>
+					<h:outputText id="Cpf" value="#{responsavelMB.objetoResponsavel.cpf}" label="CPF" mask="999.999.999-99"/> 	
+ 
+					<p:outputLabel for="Rg" value="RG: " styleClass="labelBold"/>
+					<h:outputText id="Rg" value="#{responsavelMB.objetoResponsavel.rg}" label="RG"/>
+ 
+					<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />	
+					<h:outputText id="DtNascimento" value="#{responsavelMB.objetoResponsavel.dtNascimento}" label="Data de Nascimento">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+					</h:outputText>	
+					
+					<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
+					<h:outputText id="TelResidencial" value="#{responsavelMB.objetoResponsavel.telResidencial}" label="Telefone Residencial"/>																								
+
+					<p:outputLabel for="TelCelular" value="Telefone Celular: " />
+					<h:outputText id="TelCelular" value="#{responsavelMB.objetoResponsavel.telCelular}" label="Telefone Celular"/>	
+					
+					<p:outputLabel for="Endereco" value="Endereço: " />
+					<h:outputText id="Endereco" value="#{responsavelMB.objetoResponsavel.endereco}" label="Endereço"/>	
+					
+					<p:outputLabel for="Complemento" value="Complemento: " />
+					<h:outputText id="Complemento" value="#{responsavelMB.objetoResponsavel.complemento}" label="Complemento"/>
+															
+					<p:outputLabel for="Bairro" value="Bairro: " />
+					<h:outputText id="Bairro" value="#{responsavelMB.objetoResponsavel.bairro}" label="Bairro"/>
+					
+					<p:outputLabel for="Cep" value="Cep: " />
+					<h:outputText id="Cep" value="#{responsavelMB.objetoResponsavel.cep}" label="Cep"/>
+					
+					<p:outputLabel for="Cidade" value="Cidade: " />
+					<h:outputText id="Cidade" value="#{responsavelMB.objetoResponsavel.cidade} - #{responsavelMB.objetoResponsavel.estado}" label="Cidade"/>																																																		
+					
+					<p:outputLabel for="Observacao" value="Observação: " />
+					<h:outputText id="Observacao" value="#{responsavelMB.objetoResponsavel.observacao}" label="Observação"/>					
+					
+				</h:panelGrid>																
+			</p:panel>
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{responsavelMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{responsavelMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{responsavelMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="ResponsavelConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{responsavelMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="ResponsavelConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!responsavelMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

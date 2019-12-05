@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				
+			<p:messages id="mensagens" showDetail="true"/>		
+			<p:panel id="PanelPDF" header="Impressão em PDF / XLS Gerada com Sucesso" style="margin-bottom:10px;" rendered="#{geracaoRemessaMB.gerouRemessa}">
+				<p:focus /> 
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+					 
+					<h:form>					
+					    <p:commandButton value="Download da Remessa" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					        <p:fileDownload value="#{geracaoRemessaMB.fileRemessa}" />
+					    </p:commandButton>
+					</h:form>
+					 
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+					
+				</h:panelGrid>																			
+			</p:panel>									
+			<p:panel id="Remessa" header="Geração de Arquivo Remessa Bradesco" style="margin-bottom:10px;">	
+				<h:panelGrid columns="2">			
+				 <p:outputLabel for="TipoFiltros" value="Tipo de Filtros: " styleClass="labelBold" style="margin-right: 59px;"/>
+					<p:selectOneRadio id="TipoFiltros" value="#{geracaoRemessaMB.tipoFiltros}" required="true">			            
+			            <f:selectItem itemLabel="Período" itemValue="true" />
+			            <f:selectItem itemLabel="Número do Contrato" itemValue="false" />			            
+			            <p:ajax update="Remessa" event="valueChange" listener="#{geracaoRemessaMB.habilitaFiltros}"/>
+			        </p:selectOneRadio>	
+			        
+			        <p:outputLabel for="contrato" value="Contrato: " styleClass="labelBold" style="margin-right: 59px;"/>
+			        <p:inputText id="contrato" value="#{geracaoRemessaMB.numContrato}" label="Contrato" style="width:150px;" disabled="#{geracaoRemessaMB.tipoFiltros}"/>
+			        			
+					<p:outputLabel for="dataInicio" value="Data Inicio: " styleClass="labelBold" style="margin-right: 59px;" />							
+					<p:calendar id="dataInicio" value="#{geracaoRemessaMB.relDataContratoInicio}" required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="#{!geracaoRemessaMB.tipoFiltros}"/>				
+					<p:outputLabel for="dataFim" value="Data Fim " styleClass="labelBold" style="margin-right: 59px;"/>							
+					<p:calendar id="dataFim" value="#{geracaoRemessaMB.relDataContratoFim}" required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="#{!geracaoRemessaMB.tipoFiltros}"/>
+				</h:panelGrid>	
+				<h:panelGrid columns="1">	
+					<br/>								
+					<p:commandButton value="Consultar" action="#{geracaoRemessaMB.consultarBoletos}" image="ui-icon ui-icon-check" update=":form:BoletosRemessa" style="TEXT-DECORATION: bold;"/>
+				</h:panelGrid>					
+			</p:panel>
+			<p:panel id="BoletosRemessa" header="Boletos Gerados - Resultados" style="margin-bottom:10px;">	    		    
+   		         <p:dataTable id="dtBoletos" var="boletos" value="#{geracaoRemessaMB.listBoletosRemessa}" emptyMessage="" sortBy="#{boletos.numeroContrato}"
+   		          selection="#{geracaoRemessaMB.selectedBoletos}" rowKey="#{boletos.id}">
+                 	<f:facet name="header">
+                 		<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" image="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>          
+			        </f:facet>		
+			        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>		        
+                 	<p:column style="text-align: center;width: 100px;" headerText="Contrato" filterBy="#{boletos.numeroContrato}" filterMatchMode="contains" sortBy="#{boletos.numeroContrato}">
+			            <h:outputText value="#{boletos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Parcela" filterBy="#{boletos.parcela}" filterMatchMode="contains" sortBy="#{boletos.numeroContrato}">
+			            <h:outputText value="#{boletos.parcela}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Dt. Emissão" sortBy="#{boletos.dtEmissao}">
+			            <h:outputText value="#{boletos.dtEmissao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Dt. Vencimento" sortBy="#{boletos.dtVencimento}">
+			            <h:outputText value="#{boletos.dtVencimento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Valor">
+			            <h:outputText value="R$ " /><h:outputText value="#{boletos.valor}" converter="bigDecimalConverter"/>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 100px;" headerText="Sacado" filterBy="#{boletos.nomeSacado}" filterMatchMode="contains" sortBy="#{boletos.numeroContrato}">
+			            <h:outputText value="#{boletos.nomeSacado}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 100px;" headerText="Documento" filterBy="#{boletos.documento}" filterMatchMode="contains" sortBy="#{boletos.numeroContrato}">
+			            <h:outputText value="#{boletos.documento}" />
+			        </p:column>
+			        <p:column style="width:32px;text-align: center">
+			            <p:commandButton action="#{geracaoRemessaMB.excluirBoleto}" ajax="false" update=":form:BoletosRemessa" icon="ui-icon-trash" value="Excluir" title="Excluir">
+			               <f:setPropertyActionListener target="#{geracaoRemessaMB.objetoBoletosRemessa}" value="#{boletos}" />
+			            </p:commandButton>
+			        </p:column>
+		            <f:facet name="footer">
+		            	<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" image="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>					
+			        </f:facet>	            	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>	  			
+	</ui:define>
+</ui:composition>	        

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelPDF" header="Impressão em PDF Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{investidorMB.debenturePDFGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{investidorMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="debetures" header="Geração PDF - Debêntures"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroCautela" value="Cautela N°: "
+						styleClass="labelBold" />
+					<p:inputText id="numeroCautela" style="margin-left: 12px;"
+						value="#{investidorMB.numeroCautela}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="qtdeDebentures" value="Qtde. Debêntures: "
+						styleClass="labelBold" />
+					<p:inputText id="qtdeDebentures" style="margin-left: 12px;"
+						value="#{investidorMB.qtdeDebentures}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="serie" value="Série: " styleClass="labelBold" />
+					<p:inputText id="serie" style="margin-left: 12px;"
+						value="#{investidorMB.serie}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="dataHoje" value="Data: " styleClass="labelBold" />
+					<p:calendar id="dataHoje" value="#{investidorMB.dataDebentures}"
+						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+					</p:calendar>
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Recebedor" value="Recebedor: "
+						styleClass="labelBold" />
+					<p:inputText id="Recebedor" value="#{investidorMB.nomePagador}"
+						label="Pagador" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:300px;"/>
+					<p:commandButton id="botaoPagador" type="button"
+						onclick="PF('pagadorDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"/>
+				</h:panelGrid>
+			</p:panel>
+			<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print"
+				action="#{investidorMB.geraDebenture()}" update="PanelPDF" />
+		</h:form>
+		<p:dialog header="Recebedores" widgetVar="pagadorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
+					value="#{investidorMB.listPagadores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{investidorMB.selectedPagador}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{pagadorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cnpj}"
+						filterBy="#{pagadorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cpf}"
+						filterBy="#{pagadorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.nome}"
+						filterBy="#{pagadorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{investidorMB.populateSelectedPagador}"
+							image="ui-icon ui-icon-check" update=":form:Pagador"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{investidorMB.clearPagador}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Pagador pagadorDialogdlg"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('pagadorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>		
+	</ui:define>
+</ui:composition>
