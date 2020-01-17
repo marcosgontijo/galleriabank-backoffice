@@ -30,6 +30,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal txMulta;
 		
 	private PagadorRecebedor pagador;
+	private String empresa;
 	private PagadorRecebedor recebedor;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor1;
 	private PagadorRecebedor recebedor2;
@@ -2481,5 +2482,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTxMulta(BigDecimal txMulta) {
 		this.txMulta = txMulta;
+	}
+
+	public String getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(String empresa) {
+		this.empresa = empresa;
 	}
 }

@@ -1052,7 +1052,7 @@ public class IuguMB {
 		this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();	
 		clearRecebedor();
 
-		this.paramAno = "2019";
+		this.paramAno = "2020";
 		this.paramMes = null;
 
 		this.contaMestre = true;

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelPDF"
+				header="Impressão em PDF / XLS Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{investidorMB.valoresLiquidosInvestidoresPDFGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{investidorMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaFinanceiro" header="Valor Líquido dos Investidores - Consultar"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{investidorMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{investidorMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{investidorMB.gerarRelatorioValorLiquido}"
+					image="ui-icon ui-icon-check"
+					update=":form:dtResultado :form:ConsultaResultados PanelPDF mensagens"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaResultados"
+				header="Valor Líquido dos Investidores - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtResultado" var="parcelas"
+					value="#{investidorMB.parcelasInvestidor}"
+					emptyMessage="" sortBy="#{parcelas.investidor.nome}"
+					rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : null}">
+					<f:facet name="header">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+							update="PanelPDF"
+							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+					</f:facet>
+					<p:headerRow>
+						<p:column style="text-align: center;width: 100px;" colspan="6"
+							headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
+							filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
+							<h:outputText value="#{parcelas.investidor.nome}"/>
+							<br></br>
+							<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+						</p:column>
+			        </p:headerRow>
+			        <p:column style="text-align: center;width: 50px;"
+						headerText="Contrato">
+						<h:outputText value="#{parcelas.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Pagador">
+						<h:outputText value="#{parcelas.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Valor Bruto da Parcela" >
+						<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+					</p:column>									
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Valor Líquido a Receber" >
+						<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:column style="width:3px" headerText="Ações">
+						<shiro:hasAnyRoles name="ROOT">
+								<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
+									title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
+									update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+										value="#{parcelas}" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+										value="#{parcelas.valorLiquido}" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+										value="#{parcelas.dataVencimento}" />
+								</p:commandButton>
+							<p:spacer width="10" />
+						</shiro:hasAnyRoles>
+					</p:column>							
+					<p:summaryRow>
+			            <p:column colspan="3" style="text-align:right">
+			                <h:outputText value="Total:" />
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{investidorMB.getTotalParcelaInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			            </p:column>			            
+			            <p:column >
+			                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			            </p:column>
+			            <p:column >
+			                <h:outputText value="" />
+			            </p:column>
+			        </p:summaryRow>									
+					<f:facet name="footer">
+						<div class="ui-g">
+    						<div class="ui-g-12 ui-md-12 ui-lg-12" style="margin-bottom: 10px !important;margin-top: 10px !important;">
+    							<p:outputLabel value="Valor Líquido Total R$ "
+									styleClass="labelBold" style="font-size: 16px !important;"/>
+								<p:outputLabel value="#{investidorMB.getTotalLiquidoTodosInvestidores()}"
+									styleClass="labelBold" style="font-size: 16px !important;" converter="bigDecimalConverter"/>
+							</div>
+						</div>					
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+							update="PanelPDF"
+							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		<p:dialog header="Baixar Parcela do Investidor"
+			widgetVar="baixaParcelaInvestidorDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" responsive="true" height="300" width="500">
+			<h:form id="formBaixaParcelaInvestidor">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato:"
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroContrato"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="numeroParcela" value="Número da Parcela: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroParcela"
+						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.numeroParcela}"
+						label="Número da Parcela:"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="valorBaixa" value="Valor: "
+						styleClass="labelBold" />
+					<p:inputText id="valorBaixa" 
+						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"/>	
+					<p:outputLabel for="dataPagamento" value="Data Pagamento: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataPagamento"
+						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+					</p:calendar>										
+				</h:panelGrid>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelaDoInvestidor}"
+							ajax="false" image="ui-icon-transferthick-e-w" value="Baixar" update=":form:ConsultaResultados" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcelaInvestidorDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>			
+	</ui:define>
+</ui:composition>

@@ -453,7 +453,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoque(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
 			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, 
-			final long idResponsavel, final String filtrarDataVencimento, final boolean grupoPagadores, final long idGrupoPagador) {
+			final long idResponsavel, final String filtrarDataVencimento, final boolean grupoPagadores, final long idGrupoPagador, final String empresa) {
 		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -738,6 +738,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (query_RELATORIO_FINANCEIRO_RECEBEDORES != null) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and (" + query_RELATORIO_FINANCEIRO_RECEBEDORES + ")";
 					}					
+					
+					if (!empresa.equals("TODAS")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.empresa = '" + empresa + "' ";
+					}
 																		
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
@@ -771,7 +775,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (idResponsavel > 0) {
 						params = params +1;
 						ps.setLong(params, idResponsavel);
-					}					
+					}							
 	
 					rs = ps.executeQuery();
 					
@@ -2315,7 +2319,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtraso(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
-			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, final long idResponsavel, final String filtrarDataVencimento, final boolean grupoPagadores, final long idGrupoPagador) {
+			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, final long idResponsavel, final String filtrarDataVencimento, final boolean grupoPagadores, final long idGrupoPagador, final String empresa) {
 		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2602,6 +2606,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false";
+					
+					if (!empresa.equals("TODAS")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
+					}
 					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);

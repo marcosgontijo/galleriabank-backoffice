@@ -1101,14 +1101,16 @@ public class ContratoCobrancaUtilsMB {
 					this.valorAtualizado = this.valorParcela;
 				}
 
-				if (!this.multa.equals(BigDecimal.ZERO)) {
-					//calcula Multa
-					double multa = (this.multa.doubleValue() / 100);
-					BigDecimal valorMulta = this.valorParcela;
-					valorMulta = (valorMulta.add(this.valorParcela.multiply(BigDecimal.valueOf(multa))).subtract(this.valorParcela));		
-
-					//Calcula valor Atualizado com a multa
-					this.valorAtualizado = this.valorAtualizado.add(valorMulta);		
+				if (this.multa != null) {
+					if (!this.multa.equals(BigDecimal.ZERO)) {
+						//calcula Multa
+						double multa = (this.multa.doubleValue() / 100);
+						BigDecimal valorMulta = this.valorParcela;
+						valorMulta = (valorMulta.add(this.valorParcela.multiply(BigDecimal.valueOf(multa))).subtract(this.valorParcela));		
+	
+						//Calcula valor Atualizado com a multa
+						this.valorAtualizado = this.valorAtualizado.add(valorMulta);		
+					}
 				}
 
 				//Seta para apenas 2 casas decimais

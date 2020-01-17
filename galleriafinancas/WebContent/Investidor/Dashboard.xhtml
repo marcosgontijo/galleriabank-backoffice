@@ -27,7 +27,7 @@
 	<p:messages id="mensagens" showDetail="true" />
 	<div class="navbar-area">
 		<div class="ui-g">
-			<div class="ui-g-12 ui-md-4 ui-lg-4">
+			<div class="ui-g-12 ui-md-4 ui-lg-4 responsiveIcons">
 				<a class="navbar-brand" href="#"><img
 					src="#{resource['image/LogoSiscoat.png']}" alt="" /></a>
 			</div>
@@ -38,7 +38,7 @@
 					styleClass="investidorLogin" style="color: #dfdfdf !important;" />
 			</div>
 			
-			<div class="ui-g-12 ui-md-1 ui-lg-1">
+			<div class="ui-g-12 ui-md-1 ui-lg-1 responsiveIcons">
 				<h:form id="formRefresh">
 					<p:commandLink title="Atualizar Portal" actionListener="#{investidorMB.getContratosInvestidor()}"
 						style="padding-top: 7%;" update="@all">
@@ -47,7 +47,7 @@
 				</h:form>
 			</div>
 
-			<div class="ui-g-12 ui-md-1 ui-lg-1">
+			<div class="ui-g-12 ui-md-1 ui-lg-1 responsiveIcons">
 				<h:form id="formLogout">
 					<p:commandLink title="Sair" actionListener="#{logoutBean.logout}"
 						style="padding-top: 7%;">
@@ -161,46 +161,73 @@
 		<p:dialog
 			header="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
 			widgetVar="detalheContrato" modal="true" showEffect="fade"
-			hideEffect="fade" resizable="false" responsive="true" width="800">
+			hideEffect="fade" resizable="false" responsive="true" width="800" positionType="absolute">
 			<h:form id="formDetalhes">
 				<h:outputText
 					value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
 					style="display:inline-block" />
-				<p:outputPanel id="contratoDetail" style="text-align:center;">
+				<p:outputPanel id="contratoDetail" style="text-align:center; ">
 					<p:dataTable id="dtParcelas" var="parcelas" reflow="true"
 						value="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionado}"
 						emptyMessage="" sortBy="#{contratos.numeroParcela}"
 						sortOrder="ascending"
 						rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
-						rowKey="#{parcelas.id}" scrollable="true" scrollWidth="100%"
-						scrollHeight="80%">
+						rowKey="#{parcelas.id}">
 
-						<p:column style="text-align: center;" headerText="Parcela"
-							width="40">
+						<p:column style="text-align: center;" headerText="Parcela">
 							<h:outputText value="#{parcelas.numeroParcela}" />
 						</p:column>
-						<p:column style="text-align: center;" headerText="Vencimento"
-							width="100">
+						<p:column style="text-align: center;"
+							headerText="Data Vencimento Original"
+							sortBy="#{parcelas.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						<p:column style="text-align: center;" headerText="Valor Líquido(R$)"
-							width="100">
-							<h:outputText value="#{parcelas.valorLiquido}"
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela (R$)">
+							<h:outputText value="#{parcelas.parcelaMensal}"
 								converter="bigDecimalConverter">
 							</h:outputText>
 						</p:column>
-						<p:column headerText="Ações" width="35">
-							<p:commandButton onclick="PF('observacoesDialog').show();"
-								title="Observação" icon="ui-icon-plus" update=":formObservacoes">
-								<f:setPropertyActionListener
-									target="#{investidorMB.selectedContratoCobrancaDetalhes}"
-									value="#{parcelas}" />
-							</p:commandButton>
+						<p:column style="text-align: center;" headerText="Juros (R$)">
+							<h:outputText value="#{parcelas.juros}"
+								converter="bigDecimalConverter">
+							</h:outputText>
 						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Amortização (R$)">
+							<h:outputText value="#{parcelas.amortizacao}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Saldo Credor (R$)">
+							<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;" headerText="IR Retido (R$)">
+							<h:outputText value="#{parcelas.irRetido}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;"
+							headerText="Valor Líquido (R$)">
+							<h:outputText value="#{parcelas.valorLiquido}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>			
+						
+						<p:column style="text-align: center;" headerText="Data Pagamento"
+							width="100">
+							<h:outputText value="#{parcelas.dataBaixa}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>						
 					</p:dataTable>
 				</p:outputPanel>
 			</h:form>

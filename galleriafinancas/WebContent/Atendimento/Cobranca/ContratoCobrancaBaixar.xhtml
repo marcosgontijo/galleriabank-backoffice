@@ -26,6 +26,13 @@
 						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
 						label="Número do Contrato"
 						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="empresa" value="Empresa: "
+						styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:outputText id="empresa"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.empresa}"
+						label="Empresa"
+						style="font-weight: bold; font-size: 18px;" />						
 					<p:outputLabel value="Data do Contrato: " styleClass="labelBold"
 						style="width:250px;font-weight: bold; font-size: 18px;" />
 					<h:outputText
@@ -189,17 +196,25 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>										
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
 											<p:spacer width="10" />
 										</shiro:hasAnyRoles>
@@ -294,11 +309,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -399,11 +422,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -504,11 +535,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 											<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -609,11 +648,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -714,11 +761,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -819,6 +874,14 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
@@ -924,11 +987,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -1029,11 +1100,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 										<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -1134,11 +1213,19 @@
 											<h:outputText value="Não" />
 										</ui:fragment>
 									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Data Pagamento"
+										width="100">
+										<h:outputText value="#{parcelas.dataBaixa}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>	
 									<p:column style="width:40px" headerText="Ações">
 											<shiro:hasAnyRoles name="ROOT">
 												<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 													title="Baixar Parcela do Investidor" icon="fa fa-fw fa-user-plus"
-													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;">
+													update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
 														value="#{parcelas}" />
@@ -1774,18 +1861,19 @@
 						label="Número da Parcela:"
 						style="font-weight: bold; font-size: 18px;" />
 					<p:outputLabel for="valorBaixa" value="Valor: "
-						styleClass="labelBold" style="margin-bottom: 20px;"/>
-					<p:inputText id="valorBaixa" style="margin-bottom: 20px;"
+						styleClass="labelBold" />
+					<p:inputText id="valorBaixa" 
 						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter"/>		
-					<p:outputLabel for="baixadoInvestidor" value="Baixar: "
+						converter="bigDecimalConverter"/>	
+					<p:outputLabel for="dataPagamento" value="Data Pagamento: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:selectBooleanButton id="baixadoInvestidor"
-						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.baixado}"
-						onLabel="Sim" offLabel="Não" onIcon="fa fa-fw fa-check"
-						offIcon="fa fa-fw fa-times" style="width:60px" />				
+					<p:calendar id="dataPagamento"
+						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+					</p:calendar>										
 				</h:panelGrid>
 
 				<div align="center" style="margin-top: 20px;">

@@ -331,6 +331,10 @@
 		   	.ui-datatable .colunaHiddenRelFinanceiro  { 
 		    	display: none !important;
 		    }
+		    
+		    		.responsiveIcons {
+						margin-top: -0.8em;
+					}
 		}
 		@media screen and (min-device-width: 768px) {
 		    .ui-datatable .colunaResponsivaRelFinanceiro  { 
@@ -477,6 +481,7 @@
 }
 
 @media screen and (max-width: 40em) {
+	
     .ui-sm-1,
     .ui-sm-2,
     .ui-sm-3,
@@ -594,6 +599,7 @@
 }
 
 @media screen and (min-width: 40.063em) {
+
     .ui-md-1,
     .ui-md-2,
     .ui-md-3,

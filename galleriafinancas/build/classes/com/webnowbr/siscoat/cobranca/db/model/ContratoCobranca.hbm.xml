@@ -744,5 +744,8 @@
 		<property name="ocultaRecebedor10" type="boolean">
 		    <column name="OCULTARECEBEDOR10" />
 		</property> 	
+		<property name="empresa" type="java.lang.String">
+			<column name="EMPRESA" />
+		</property>
 	</class>
 </hibernate-mapping>

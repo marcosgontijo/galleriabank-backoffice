@@ -15,6 +15,11 @@
 			lazy="false">
 			<column name="investidor" />
 		</many-to-one>
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>		
 		<property name="numeroParcela" type="java.lang.String">
 			<column name="NUMEROPARCELA" />
 		</property>

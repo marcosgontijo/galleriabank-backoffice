@@ -44,8 +44,8 @@
 				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaFinanceiro" header="Financeiro - Consultar"
-				style="margin-bottom:10px;">
-				<h:panelGrid columns="2">
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
 					<p:outputLabel for="TipoRelatorio" value="Tipo do Relatório: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectOneRadio id="TipoRelatorio"
@@ -110,6 +110,18 @@
 
 				<p:panel id="Pessoas" header="Envolvidos"
 					style="margin-bottom:10px;">
+					
+					<h:panelGrid columns="2">
+						<p:outputLabel for="empresa" value="Empresa: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="empresa"
+							value="#{contratoCobrancaMB.empresa}"
+							label="Status" style="width:360px;" disabled="#{!contratoCobrancaMB.tipoFiltros}">
+							<f:selectItem itemValue="TODAS" itemLabel="TODAS" />
+							<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+							<f:selectItem itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI" itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+						</p:selectOneMenu>		
+					</h:panelGrid>
 					
 					<h:panelGrid columns="3">
 						<p:outputLabel for="Responsavel" value="Responsável: "

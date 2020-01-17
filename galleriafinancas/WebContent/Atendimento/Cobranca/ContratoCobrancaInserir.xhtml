@@ -71,7 +71,18 @@
 
 					<p:panel id="Pessoas" header="Envolvidos"
 						style="margin-bottom:10px;">
-						<h:panelGrid columns="4">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="empresa" value="Empresa: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="empresa"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.empresa}"
+								label="Status" style="width:345px;" required="true">
+								<f:selectItem itemValue="" itemLabel="SELECIONE" />
+								<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+								<f:selectItem itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI" itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+							</p:selectOneMenu>		
+						</h:panelGrid>	
+						<h:panelGrid columns="4">			
 							<p:outputLabel for="Pagador" value="Pagador: "
 								styleClass="labelBold" />
 							<p:inputText id="Pagador"
@@ -112,7 +123,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(2)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;" />
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor}">
 								</p:selectBooleanCheckbox>
@@ -208,7 +219,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(3)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor2}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor2}" rendered="#{contratoCobrancaMB.renderRecebedor2}">
@@ -302,7 +313,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(4)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor3}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor3}" rendered="#{contratoCobrancaMB.renderRecebedor3}">
@@ -396,7 +407,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(5)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor4}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor4}" rendered="#{contratoCobrancaMB.renderRecebedor4}">
@@ -490,7 +501,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(6)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor5}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor5}" rendered="#{contratoCobrancaMB.renderRecebedor5}">
@@ -584,7 +595,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(7)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor6}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor6}" rendered="#{contratoCobrancaMB.renderRecebedor6}">
@@ -678,7 +689,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(8)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor7}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor7}" rendered="#{contratoCobrancaMB.renderRecebedor7}">
@@ -772,7 +783,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(9)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor8}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor8}" rendered="#{contratoCobrancaMB.renderRecebedor8}">
@@ -866,7 +877,7 @@
 										event="change"
 										listener="#{contratoCobrancaMB.updateRender(10)}" />
 								</p:selectBooleanCheckbox>
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor9}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor9}" rendered="#{contratoCobrancaMB.renderRecebedor9}">
@@ -951,7 +962,7 @@
 									image="ui-icon ui-icon-circle-zoomin" style=""
 									
 									rendered="#{contratoCobrancaMB.renderRecebedor10}" />
-								<p:outputLabel value="Ocultar no Operações Contrato: " styleClass="labelBold" style="margin-left: 20px;"
+								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;"
 									rendered="#{contratoCobrancaMB.renderRecebedor10}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor10}" rendered="#{contratoCobrancaMB.renderRecebedor10}">
@@ -1086,7 +1097,7 @@
 								required="true" label="Data Inicio" size="100"
 								pattern="dd/MM/yyyy" locale="pt" timeZone="GMT-3"
 								styleClass="dateTimeField"
-								disabled="#{contratoCobrancaMB.updateMode}">
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
 								<p:ajax event="dateSelect"
 									listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
 							</p:calendar>
@@ -1096,7 +1107,7 @@
 								styleClass="labelBold" />
 							<p:inputText id="qtdeParcelas"
 								value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
-								style="width: 30px;" disabled="#{contratoCobrancaMB.updateMode}">
+								style="width: 30px;" disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.populateDataPagamentoFim}"
 									update="dataPagamentoFim" />
@@ -1107,7 +1118,7 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter"
-								disabled="#{contratoCobrancaMB.updateMode}">
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.populateRetencaoParcela}"
 									update="vlrRetencao" />
@@ -1170,7 +1181,7 @@
 									style="margin-left: 12px;" required="true"
 									label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
 									locale="pt" timeZone="GMT-3" styleClass="dateTimeField"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || contratoCobrancaMB.updateMode}" />
+									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
 
 								<p:outputLabel for="vlrParcelaFinal" value="Valor da Parcela: "
 									styleClass="labelBold" />
@@ -1179,7 +1190,7 @@
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || contratoCobrancaMB.updateMode}">
+									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" >
 									<p:ajax event="change"
 										listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
 										update="vlrRetencaoFinal" />
@@ -1192,7 +1203,7 @@
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || contratoCobrancaMB.updateMode}">
+									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" >
 									<p:ajax event="change"
 										listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
 										update="vlrRetencaoFinal" />
@@ -1205,7 +1216,7 @@
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || contratoCobrancaMB.updateMode}" />
+									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
 
 								<p:outputLabel for="vlrComissaoFinal" value="Valor do Repasse: "
 									styleClass="labelBold" />
@@ -1214,7 +1225,7 @@
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || contratoCobrancaMB.updateMode}" />
+									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
 							</h:panelGrid>
 
 							<h:panelGrid columns="2">

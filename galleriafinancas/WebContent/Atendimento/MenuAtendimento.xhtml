@@ -72,6 +72,14 @@
 										action="#{contratoCobrancaUtilsMB.clearFieldsCalculo}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Pagto. Valor Líquido"
+										action="#{investidorMB.clearFieldsValorLiquido}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="IR Retido Investidores"
+										action="#{investidorMB.clearFieldsIRRetido}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 									<p:menuitem value="Gerar Arquivo Remessa"

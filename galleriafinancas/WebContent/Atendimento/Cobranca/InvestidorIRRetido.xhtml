@@ -11,9 +11,10 @@
 			<script src="../../resources/js/functions.js"></script>
 			<h:outputScript name="js/locale-primefaces.js" />
 			<p:messages id="mensagens" showDetail="true" />
-			<p:panel id="PanelPDF" header="Impressão em PDF Gerada com Sucesso"
+			<p:panel id="PanelPDF"
+				header="Impressão em PDF / XLS Gerada com Sucesso"
 				style="margin-bottom:10px;"
-				rendered="#{investidorMB.debenturePDFGerado}">
+				rendered="#{investidorMB.irRetidoInvestidoresPDFGerado}">
 				<p:focus />
 				<p:messages />
 				<h:panelGrid columns="2">
@@ -42,44 +43,93 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="debetures" header="Geração PDF - Debêntures"
+			<p:panel id="ConsultaFinanceiro" header="IR Retido dos Investidores - Consultar"
 				style="margin-bottom:10px;">
 				<h:panelGrid columns="2">
-					<p:outputLabel for="numeroCautela" value="Cautela N°: "
-						styleClass="labelBold" />
-					<p:inputText id="numeroCautela" style="margin-left: 12px;"
-						value="#{investidorMB.numeroCautela}"
-						onkeypress="return isNumberKey(event);" required="true" />
-					<p:outputLabel for="qtdeDebentures" value="Qtde. Debêntures: "
-						styleClass="labelBold" />
-					<p:inputText id="qtdeDebentures" style="margin-left: 12px;"
-						value="#{investidorMB.qtdeDebentures}"
-						onkeypress="return isNumberKey(event);" required="true" />
-					<p:outputLabel for="serie" value="Série: " styleClass="labelBold" />
-					<p:inputText id="serie" style="margin-left: 12px;"
-						value="#{investidorMB.serie}"
-						onkeypress="return isNumberKey(event);" required="true" />
-					<p:outputLabel for="dataHoje" value="Data: " styleClass="labelBold" />
-					<p:calendar id="dataHoje" value="#{investidorMB.dataDebentures}"
-						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
-						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
-					</p:calendar>
+					<p:outputLabel for="dataInicio" value="Data Baixa Inicio: "
+						styleClass="labelBold"  />
+					<p:calendar id="dataInicio"
+						value="#{investidorMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Baixa Fim "
+						styleClass="labelBold"  />
+					<p:calendar id="dataFim"
+						value="#{investidorMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
 				</h:panelGrid>
+				
 				<h:panelGrid columns="3">
-					<p:outputLabel for="Recebedor" value="Recebedor: "
+					<p:outputLabel for="Recebedor" value="Investidor: "
 						styleClass="labelBold" />
 					<p:inputText id="Recebedor" value="#{investidorMB.nomePagador}"
 						label="Pagador" readonly="TRUE" required="true"
-						style="FONT-SIZE: 10pt;width:300px;"/>
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 40px;"/>
 					<p:commandButton id="botaoPagador" type="button"
 						onclick="PF('pagadorDialog').show();"
 						image="ui-icon ui-icon-circle-zoomin"/>
 				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{investidorMB.gerarRelatorioIRRetido}"
+					image="ui-icon ui-icon-check"
+					update=":form:dtResultado :form:ConsultaResultados PanelPDF mensagens"
+					style="TEXT-DECORATION: bold;" />
 			</p:panel>
-			<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print"
-				action="#{investidorMB.geraDebenture()}" update="PanelPDF" />
+			<p:panel id="ConsultaResultados"
+				header="IR Retido dos Investidores - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtResultado" var="parcelas"
+					value="#{investidorMB.parcelasInvestidor}"
+					emptyMessage="" sortBy="#{parcelas.investidor.nome}">
+					<f:facet name="header">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.geraPDFIRRetidoInvestidores}"
+							update="PanelPDF"
+							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+					</f:facet>
+					<p:headerRow>
+						<p:column style="text-align: center;width: 100px;" colspan="3"
+							headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
+							filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
+							<h:outputText value="#{parcelas.investidor.nome}" />
+						</p:column>
+			        </p:headerRow>
+			        <p:column style="text-align: center;width: 50px;"
+						headerText="Contrato" >
+						<h:outputText value="#{parcelas.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Baixa" sortBy="#{parcelas.dataBaixa}">
+						<h:outputText value="#{parcelas.dataBaixa}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Valor IR Retido">
+						<h:outputText value="#{parcelas.irRetido}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:summaryRow>
+			            <p:column colspan="2" style="text-align:right">
+			                <h:outputText value="Total IR Retido:" />
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{investidorMB.getTotalIRRetidoInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			            </p:column>
+			        </p:summaryRow>									
+					<f:facet name="footer">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.geraPDFIRRetidoInvestidores}"
+							update="PanelPDF"
+							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
 		</h:form>
-		<p:dialog header="Recebedores" widgetVar="pagadorDialog"
+		<p:dialog header="Investidores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">
 				<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
@@ -133,6 +183,6 @@
 					</f:facet>
 				</p:dataTable>
 			</h:form>
-		</p:dialog>		
+		</p:dialog>				
 	</ui:define>
 </ui:composition>
