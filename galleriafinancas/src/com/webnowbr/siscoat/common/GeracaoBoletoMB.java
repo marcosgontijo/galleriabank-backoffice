@@ -33,7 +33,9 @@ import br.com.caelum.stella.boleto.Boleto;
 import br.com.caelum.stella.boleto.Datas;
 import br.com.caelum.stella.boleto.Endereco;
 import br.com.caelum.stella.boleto.Pagador;
+import br.com.caelum.stella.boleto.bancos.BancoDoBrasil;
 import br.com.caelum.stella.boleto.bancos.Bradesco;
+import br.com.caelum.stella.boleto.transformer.GeradorDeBoleto;
 import br.com.caelum.stella.boleto.transformer.GeradorDeBoletoHTML;
 
 
@@ -67,6 +69,141 @@ public class GeracaoBoletoMB {
 		this.boletos = new ArrayList<Boleto>();
 		this.boletosRemessaLote = new ArrayList<BoletosRemessa>();
 	}
+	
+	// armazena boletos em série para geração unica
+    public void geraBoletosBancoDoBrasil(String sistema, String contrato, String nome, String cpf, String cnpj,
+    		String endereco, String bairro, String cep, String cidade, String uf, Date dataVencimento, BigDecimal valor, String numeroParcela){  
+        
+    	EmpresaCobrancaDao empresaCobrancaDao = new EmpresaCobrancaDao();
+    	EmpresaCobranca empresaCobranca = new EmpresaCobranca();
+		FacesContext context = FacesContext.getCurrentInstance();
+
+    	Map<String, Object> filters = new HashMap<String, Object>();
+    	filters.put("sistema", sistema);
+    	
+    	List<EmpresaCobranca> listEmpresaCobranca = new ArrayList<EmpresaCobranca>();
+    	
+    	listEmpresaCobranca = empresaCobrancaDao.findByFilter(filters);
+    	
+    	// verifica se há mais de uma empresa por sistema
+    	// se sim da erro
+    	/*
+    	if (listEmpresaCobranca.size() > 1) {
+    		context.addMessage(null, new FacesMessage(
+    				FacesMessage.SEVERITY_ERROR, "Geração de Boleto Bradesco: Há mais de uma empresa de cobrança para o sistema de " + sistema + "!", ""));
+    	}
+    	if (listEmpresaCobranca.size() == 0) {
+    		context.addMessage(null, new FacesMessage(
+    				FacesMessage.SEVERITY_ERROR, "Geração de Boleto Bradesco: Não há empresa de cobrança para o sistema de " + sistema + "!", ""));
+    	}
+    	if (listEmpresaCobranca.size() == 1) {
+    	
+    	TRATAR AS GALLERIAS SA E CORRESPODENTE
+    	*/
+    		this.file = null;
+    		
+    		this.pathBoleto = null;
+    		this.nomeBoleto = null;
+    		this.gerouBoleto = true;
+    		
+    		empresaCobranca = listEmpresaCobranca.get(0);
+
+    		// Dados do Beneficiario
+    		// Classe Endereço
+	        Endereco enderecoBeneficiario = Endereco.novoEndereco()
+	                .comLogradouro(empresaCobranca.getEndereco())  
+	                .comBairro(empresaCobranca.getBairro())  
+	                .comCep(empresaCobranca.getCep())  
+	                .comCidade(empresaCobranca.getCidade())
+	                .comUf(empresaCobranca.getEstado());
+	        // Classe Beneficiario
+	        Beneficiario beneficiario = Beneficiario.novoBeneficiario()  
+	                .comNomeBeneficiario(empresaCobranca.getNome() + " - CNPJ: " + empresaCobranca.getCnpj())  
+	                .comAgencia(empresaCobranca.getAgencia()).comDigitoAgencia(empresaCobranca.getDigitoAgencia())  
+	                .comCodigoBeneficiario(empresaCobranca.getCodigoBeneficiario())  
+	                .comDigitoCodigoBeneficiario(empresaCobranca.getDigitoBeneficiario())  
+	                .comNumeroConvenio(empresaCobranca.getNumeroConvenio())  
+	                .comCarteira(empresaCobranca.getCarteira())  
+	                .comEndereco(enderecoBeneficiario)
+	                .comNossoNumero(contrato + String.format("%02d", Integer.valueOf(numeroParcela)));
+
+	        // Datas do boleto
+	        // Vencimento
+	        Locale locale = new Locale("pt-br", "BR");  
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
+			String dataVencimentoStr = sdf.format(dataVencimento.getTime());	        
+	        
+	        TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  	        
+			Calendar calEmissao = Calendar.getInstance(zone, locale);
+			String calEmissaoStr = sdf.format(calEmissao.getTime());	
+
+	        Datas datas = Datas.novasDatas()
+	                .comDocumento(Integer.valueOf(calEmissaoStr.substring(0, 2)), Integer.valueOf(calEmissaoStr.substring(3, 5)), Integer.valueOf(calEmissaoStr.substring(6,10)))
+	                .comProcessamento(Integer.valueOf(calEmissaoStr.substring(0, 2)), Integer.valueOf(calEmissaoStr.substring(3, 5)), Integer.valueOf(calEmissaoStr.substring(6, 10)))
+	                .comVencimento(Integer.valueOf(dataVencimentoStr.substring(0, 2)), Integer.valueOf(dataVencimentoStr.substring(3, 5)), Integer.valueOf(dataVencimentoStr.substring(6, 10))); 
+	        	
+	        // Dados do Pagador
+	        Endereco enderecoPagador = Endereco.novoEndereco()
+	                .comLogradouro(endereco)  
+	                .comBairro(bairro)  
+	                .comCep(cep)  
+	                .comCidade(cidade)  
+	                .comUf(uf);  
+	        
+	        String documento = "";
+	        if (cnpj != null) {
+	        	documento = cnpj;
+	        } else {
+	        	documento = cpf;
+	        }
+	        
+	        Pagador pagador = Pagador.novoPagador()  
+	                .comNome(nome)  
+	                .comDocumento(documento)
+	                .comEndereco(enderecoPagador);
+	
+	        // Dados do Boleto
+	        Banco banco = new BancoDoBrasil(); 
+
+	        Boleto boleto = Boleto.novoBoleto()  
+	                .comBanco(banco)  
+	                .comDatas(datas)  
+	                .comBeneficiario(beneficiario)  
+	                .comPagador(pagador)  
+	                .comValorBoleto(valor)  
+	                .comNumeroDoDocumento(contrato + String.format("%02d", Integer.valueOf(numeroParcela)))  
+	                .comInstrucoes(empresaCobranca.getInstrucao1(), empresaCobranca.getInstrucao2(), empresaCobranca.getInstrucao3(), empresaCobranca.getInstrucao4(), empresaCobranca.getInstrucao5())  
+	                .comLocaisDePagamento(empresaCobranca.getLocalPagamento(), "");   
+
+	        GeradorDeBoleto gerador = new GeradorDeBoleto(boleto);  
+
+	        // Para gerar um boleto em PDF  
+	        gerador.geraPDF("BancoDoBrasil.pdf");  
+
+	        // Para gerar um boleto em PNG  
+	        gerador.geraPNG("BancoDoBrasil.png");  	        
+	        
+			calEmissao.set(Calendar.HOUR_OF_DAY, 0);  
+			calEmissao.set(Calendar.MINUTE, 0);  
+			calEmissao.set(Calendar.SECOND, 0);  
+			calEmissao.set(Calendar.MILLISECOND, 0);
+			
+
+	        // Para gerar um array de bytes a partir de um PDF  
+	        byte[] bPDF = gerador.geraPDF();  
+
+	        // Para gerar um array de bytes a partir de um PNG  
+	        byte[] bPNG = gerador.geraPNG();
+			
+	        // popula tabela de arquivo remessa
+	        BoletosRemessa boletosRemessa = new BoletosRemessa(sistema, contrato, numeroParcela, dataVencimento, calEmissao.getTime(),
+	        		valor, documento, nome, endereco, bairro, cep, cidade, uf, false);
+	        
+	        boletosRemessaLote.add(boletosRemessa);
+	        
+	        boletos.add(boleto);
+    	//} 
+    }
 	
 	// armazena boletos em série para geração unica
     public void geraBoletosBradesco(String sistema, String contrato, String nome, String cpf, String cnpj,

@@ -137,7 +137,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -216,6 +216,17 @@
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 											<p:spacer width="10" />
 										</shiro:hasAnyRoles>
 									</p:column>
@@ -250,7 +261,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor2}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -327,9 +338,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -363,7 +384,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor3}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -440,9 +461,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -476,7 +507,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor4}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -553,9 +584,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -589,7 +630,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor5}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -666,9 +707,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -702,7 +753,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor6}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -779,9 +830,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -815,7 +876,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor7}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -892,9 +953,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -928,7 +999,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor8}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -1005,9 +1076,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -1041,7 +1122,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor9}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -1118,9 +1199,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -1154,7 +1245,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor10}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
-									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
 									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 									rowKey="#{parcelas.id}">
 		
@@ -1231,9 +1322,19 @@
 														value="#{parcelas}" />
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-														value="#{parcelas.parcelaMensal}" />
+														value="#{parcelas.valorLiquido}" />
 												</p:commandButton>
-											<p:spacer width="10" />
+												<p:spacer width="10" />
+												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
+													title="Cancelar Baixa Parcela do Investidor" icon="fa fa-fw fa-minus-circle"
+													update=":formCancelaBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{!parcelas.baixado}">
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+														value="#{parcelas}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+														value="#{parcelas.valorLiquido}" />
+												</p:commandButton>
 										</shiro:hasAnyRoles>
 									</p:column>
 								</p:dataTable>
@@ -1888,6 +1989,51 @@
 				</div>
 			</h:form>
 		</p:dialog>		
+		<p:dialog header="Cancela Baixa Parcela do Investidor"
+			widgetVar="cancelaBaixaParcelaInvestidorDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" responsive="true" height="300" width="500">
+			<h:form id="formCancelaBaixaParcelaInvestidor">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato:"
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroContrato"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="numeroParcela" value="Número da Parcela: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroParcela"
+						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.numeroParcela}"
+						label="Número da Parcela:"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="valorBaixa" value="Valor: "
+						styleClass="labelBold" />
+					<p:inputText id="valorBaixa" 
+						value="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" disabled="true"/>	
+					<p:outputLabel for="dataPagamento" value="Data Pagamento: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataPagamento"
+						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						locale="pt" timeZone="GMT-3" styleClass="dateTimeField" disabled="true">
+					</p:calendar>										
+				</h:panelGrid>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.cancelarBaixaParcelaDoInvestidor}"
+							ajax="false" image="ui-icon-transferthick-e-w" value="Cancelar Baixa" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						oncomplete="PF('cancelaBaixaParcelaInvestidorDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>			
 		<p:dialog header="Baixa Parcial" widgetVar="baixaParcialDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
 			height="650" width="500">
@@ -2076,7 +2222,7 @@
 			style="FONT-SIZE: 10pt;" width="460">
 			<h:form id="formBpGerarBoletoIUGU">
 				<div style="float: left; width: 75%;">
-					<h:panelGrid columns="2">
+					<h:panelGrid columns="2">						
 						<p:outputLabel for="numeroContrato" value="Número do Contrato:"
 							styleClass="labelBold" style="margin-right: 20px;" />
 						<h:outputText id="numeroContrato"
@@ -2089,6 +2235,10 @@
 							value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
 							label="Número da Parcela:"
 							style="font-weight: bold; font-size: 18px;" />
+						<p:outputLabel value="Cedente:"
+							styleClass="labelBold" style="margin-right: 20px;" />
+						<p:outputLabel value="GALLERIA FINANÇAS"
+							styleClass="labelBold" style="margin-right: 20px;" />
 						<p:outputLabel for="dataVencimento" value="Data do Vencimento: "
 							styleClass="labelBold" style="margin-right: 59px;" />
 						<p:calendar id="dataVencimento"
@@ -2111,26 +2261,22 @@
 							onkeydown="FormataValor(this, 13, event, 2);" required="true"
 							converter="bigDecimalConverter" />
 					</h:panelGrid>
-					<h:panelGrid columns="2">
-						<p:outputLabel for="splitter" value="Deseja utilizar split:"
-							styleClass="labelBold" style="margin-right: 20px;" />
-						<p:selectBooleanButton id="splitter"
-							value="#{contratoCobrancaMB.splitBoletoIugu}" onLabel="Sim"
-							offLabel="Não" style="width:60px">
-							<p:ajax update="selectCedente" event="valueChange" />
-						</p:selectBooleanButton>
-						<p:outputLabel for="selectCedente" value="Cedente Boleto Iugu:"
-							styleClass="labelBold" style="margin-right: 20px;" />
-						<p:selectOneMenu id="selectCedente"
-							value="#{contratoCobrancaMB.cedenteSelecionado}" label="Cliente"
-							required="true" style="width: 300px;"
-							disabled="#{!contratoCobrancaMB.splitBoletoIugu}">
-							<f:selectItem itemLabel="Selecione" itemValue="" />
-							<f:selectItems value="#{contratoCobrancaMB.cedentesIugu}"
-								var="cedente" itemLabel="#{cedente.nome}"
-								itemValue="#{cedente.id}" />
-						</p:selectOneMenu>
-					</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="splitter" value="Deseja utilizar split:" styleClass="labelBold" style="margin-right: 20px;"/>
+					<p:selectBooleanButton id="splitter" value="#{contratoCobrancaMB.splitBoletoIugu}" onLabel="Sim" offLabel="Não" style="width:60px" >
+						<p:ajax update="selectCedente" event="valueChange"/>
+					</p:selectBooleanButton>
+					<p:outputLabel for="selectCedente" value="Cedente Boleto Iugu:" styleClass="labelBold" style="margin-right: 20px;"/>
+					<p:selectOneMenu id="selectCedente"
+						value="#{contratoCobrancaMB.cedenteSelecionado}"
+						label="Cliente" required="true" style="width: 300px;"
+						disabled="#{!contratoCobrancaMB.splitBoletoIugu}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{contratoCobrancaMB.cedentesIugu}"
+							var="cedente" itemLabel="#{cedente.nome}"
+							itemValue="#{cedente.id}" />
+					</p:selectOneMenu>
+				</h:panelGrid>	
 				</div>
 				<div style="float: right; width: 25%; text-align: right;">
 					<img src="#{resource['image/boleto.jpg']}" alt="" />
@@ -2138,7 +2284,7 @@
 				<div align="center"
 					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
 					<p:commandButton value="Gerar Boleto IUGU"
-						action="#{contratoCobrancaMB.geraBoletoDaParcela(contratoCobrancaMB.objetoContratoCobranca,
+						action="#{contratoCobrancaMB.geraBoletoDaParcelaGalleria(contratoCobrancaMB.objetoContratoCobranca,
 																	contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela,
 																	contratoCobrancaMB.bpContratoCobrancaDetalhes.id,
 																	contratoCobrancaMB.dataVencimentoBoleto,																	

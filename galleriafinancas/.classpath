@@ -35,7 +35,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jasperreports-5.5.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/barbecue-1.5-beta1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-digester-2.1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/itext-2.1.7.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/caelum-stella-boleto-2.1.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/caelum-stella-core-2.1.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang3-3.5.jar"/>

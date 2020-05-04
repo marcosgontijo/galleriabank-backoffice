@@ -139,7 +139,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://www.webnowbr.com.br/LogoIUGU/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoat.galleriafinancas.com.br/logocadastros.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -410,8 +410,15 @@ public class ImpressoesPDFMB {
 			cell1.setPaddingTop(5f);
 			cell1.setColspan(6);
 			table.addCell(cell1);
+			
+			String endereco = ""; 
+			if (this.objetoContratoCobranca.getPagador().getNumero() != null) {
+				if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
+					endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
+				}
+			}
 
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEndereco() + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
+			cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -2095,7 +2102,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://www.webnowbr.com.br/LogoIUGU/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoat.galleriafinancas.com.br/logocadastros.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -2840,8 +2847,15 @@ public class ImpressoesPDFMB {
 				cell1.setPaddingTop(5f);
 				cell1.setColspan(6);
 				table.addCell(cell1);
+				
+				String endereco = ""; 
+				if (this.objetoContratoCobranca.getPagador().getNumero() != null) {
+					if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
+						endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
+					}
+				}
 
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEndereco() + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
+				cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
 				cell1.setBorder(0);
 				cell1.setBorderWidthLeft(1);
 				cell1.setBorderColorLeft(BaseColor.BLACK);

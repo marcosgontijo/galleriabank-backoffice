@@ -26,6 +26,7 @@ public class PagadorRecebedor implements Serializable {
 	private String observacao2;
 	private String atividade;
 	private String contato;
+	private String numero;
 	
 	private String estadocivil;
 	
@@ -1081,5 +1082,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setUsuario(User usuario) {
 		this.usuario = usuario;
+	}
+
+	public String getNumero() {
+		return numero;
+	}
+
+	public void setNumero(String numero) {
+		this.numero = numero;
 	}
 }

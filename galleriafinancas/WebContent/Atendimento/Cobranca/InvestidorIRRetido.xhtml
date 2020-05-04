@@ -90,10 +90,10 @@
 							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 					</f:facet>
 					<p:headerRow>
-						<p:column style="text-align: center;width: 100px;" colspan="3"
+						<p:column style="text-align: center;width: 100px;" colspan="6"
 							headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 							filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
-							<h:outputText value="#{parcelas.investidor.nome}" />
+							<h:outputText value="#{parcelas.investidor.nome} | CPF #{parcelas.investidor.cpf}" />
 						</p:column>
 			        </p:headerRow>
 			        <p:column style="text-align: center;width: 50px;"
@@ -108,12 +108,33 @@
 						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 50px;"
+						headerText="Valor Bruto da Parcela" >
+						<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+					</p:column>		
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Juros" >
+						<h:outputText value="#{parcelas.juros}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Amortização" >
+						<h:outputText value="#{parcelas.amortizacao}" converter="bigDecimalConverter"/>
+					</p:column>											
+					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor IR Retido">
 						<h:outputText value="#{parcelas.irRetido}" converter="bigDecimalConverter"/>
 					</p:column>	
 					<p:summaryRow>
 			            <p:column colspan="2" style="text-align:right">
-			                <h:outputText value="Total IR Retido:" />
+			                <h:outputText value="Total:" />
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{investidorMB.getTotalParcelaInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{investidorMB.getTotalJurosInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{investidorMB.getTotalAmortizacaoInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>
 			            <p:column>
 			                <h:outputText value="#{investidorMB.getTotalIRRetidoInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>

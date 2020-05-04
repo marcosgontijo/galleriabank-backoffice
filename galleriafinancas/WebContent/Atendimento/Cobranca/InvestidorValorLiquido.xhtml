@@ -63,21 +63,203 @@
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.gerarRelatorioValorLiquido}"
 					image="ui-icon ui-icon-check"
-					update=":form:dtResultado :form:ConsultaResultados PanelPDF mensagens"
+					update=":form:dtResultado :form:ConsultaResultadosGallerias :form:ConsultaResultadosSA :form:ConsultaResultadosCorrespondente :form:ConsultaResultadosEnvelope PanelPDF mensagens"
 					style="TEXT-DECORATION: bold;" />
 			</p:panel>
-			<p:panel id="ConsultaResultados"
-				header="Valor Líquido dos Investidores - Resultados" style="margin-bottom:10px;">
-				<p:dataTable id="dtResultado" var="parcelas"
-					value="#{investidorMB.parcelasInvestidor}"
+			<p:panel id="ConsultaResultadosGallerias"
+				header="Valor Líquido dos Investidores - Consultar" style="margin-bottom:10px;">
+				<p:panel id="ConsultaResultadosSA"
+					header="GALLERIA FINANÇAS - Valor Líquido dos Investidores - Resultados" style="margin-bottom:10px;">
+					<p:dataTable id="dtResultado" var="parcelas"
+						value="#{investidorMB.parcelasInvestidorSA}"
+						emptyMessage="" sortBy="#{parcelas.investidor.nome}"
+						rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : null}">
+						<f:facet name="header">
+							<p:commandButton value="Gerar PDF - Valor Líquido" ajax="false"
+								icon="ui-icon-print"
+								action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+								update="PanelPDF"
+								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+						</f:facet>
+						<p:headerRow>
+							<p:column style="text-align: center;width: 100px;" colspan="6"
+								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
+								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
+								<h:outputText value="#{parcelas.investidor.nome}"/>
+								<br></br>
+								<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+							</p:column>
+				        </p:headerRow>
+				        <p:column style="text-align: center;width: 50px;"
+							headerText="Contrato">
+							<h:outputText value="#{parcelas.numeroContrato}" />
+						</p:column>
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Pagador">
+							<h:outputText value="#{parcelas.pagador.nome}" />
+						</p:column>
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
+							<h:outputText value="#{parcelas.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Bruto da Parcela" >
+							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+						</p:column>									
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Líquido a Receber" >
+							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="width:3px" headerText="Ações">
+							<shiro:hasAnyRoles name="ROOT">
+									<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
+										title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
+										update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+											value="#{parcelas}" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+											value="#{parcelas.valorLiquido}" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+											value="#{parcelas.dataVencimento}" />
+									</p:commandButton>
+								<p:spacer width="10" />
+							</shiro:hasAnyRoles>
+						</p:column>							
+						<p:summaryRow>
+				            <p:column colspan="3" style="text-align:right">
+				                <h:outputText value="Total:" />
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>			            
+				            <p:column >
+				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column >
+				                <h:outputText value="" />
+				            </p:column>
+				        </p:summaryRow>									
+						<f:facet name="footer">
+							<div class="ui-g">
+	    						<div class="ui-g-12 ui-md-12 ui-lg-12" style="margin-bottom: 10px !important;margin-top: 10px !important;">
+	    							<p:outputLabel value="Valor Líquido Total R$ "
+										styleClass="labelBold" style="font-size: 16px !important;"/>
+									<p:outputLabel value="#{investidorMB.getTotalLiquidoTodosInvestidoresSA()}"
+										styleClass="labelBold" style="font-size: 16px !important;" converter="bigDecimalConverter"/>
+								</div>
+							</div>					
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+				<p:panel id="ConsultaResultadosCorrespondente"
+					header="GALLERIA CORRESPONDENTE - Valor Líquido dos Investidores - Resultados" style="margin-bottom:10px;">
+					<p:dataTable id="dtResultadoCorrespondente" var="parcelas"
+						value="#{investidorMB.parcelasInvestidorCorrespondente}"
+						emptyMessage="" sortBy="#{parcelas.investidor.nome}"
+						rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : null}">
+						<f:facet name="header">
+						</f:facet>
+						<p:headerRow>
+							<p:column style="text-align: center;width: 100px;" colspan="6"
+								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
+								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
+								<h:outputText value="#{parcelas.investidor.nome}"/>
+								<br></br>
+								<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+							</p:column>
+				        </p:headerRow>
+				        <p:column style="text-align: center;width: 50px;"
+							headerText="Contrato">
+							<h:outputText value="#{parcelas.numeroContrato}" />
+						</p:column>
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Pagador">
+							<h:outputText value="#{parcelas.pagador.nome}" />
+						</p:column>
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
+							<h:outputText value="#{parcelas.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Bruto da Parcela" >
+							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+						</p:column>									
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Líquido a Receber" >
+							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="width:3px" headerText="Ações">
+							<shiro:hasAnyRoles name="ROOT">
+									<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
+										title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
+										update=":formBaixaParcelaInvestidor" style="height: 25px;width: 30px;" disabled="#{parcelas.baixado}">
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor}"
+											value="#{parcelas}" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
+											value="#{parcelas.valorLiquido}" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+											value="#{parcelas.dataVencimento}" />
+									</p:commandButton>
+								<p:spacer width="10" />
+							</shiro:hasAnyRoles>
+						</p:column>							
+						<p:summaryRow>
+				            <p:column colspan="3" style="text-align:right">
+				                <h:outputText value="Total:" />
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>			            
+				            <p:column >
+				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column >
+				                <h:outputText value="" />
+				            </p:column>
+				        </p:summaryRow>									
+						<f:facet name="footer">
+							<div class="ui-g">
+	    						<div class="ui-g-12 ui-md-12 ui-lg-12" style="margin-bottom: 10px !important;margin-top: 10px !important;">
+	    							<p:outputLabel value="Valor Líquido Total R$ "
+										styleClass="labelBold" style="font-size: 16px !important;"/>
+									<p:outputLabel value="#{investidorMB.getTotalLiquidoTodosInvestidoresCorrespondente()}"
+										styleClass="labelBold" style="font-size: 16px !important;" converter="bigDecimalConverter"/>
+								</div>
+							</div>					
+							<p:commandButton value="Gerar PDF - Valor Líquido" ajax="false"
+								icon="ui-icon-print"
+								action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+								update="PanelPDF"
+								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+						</f:facet>
+					</p:dataTable>
+				</p:panel>
+			</p:panel>
+			
+			<p:panel id="ConsultaResultadosEnvelope"
+				header="Investidores Envelope - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtResultadoEnvelope" var="parcelas"
+					value="#{investidorMB.parcelasInvestidorEnvelope}"
 					emptyMessage="" sortBy="#{parcelas.investidor.nome}"
 					rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : null}">
 					<f:facet name="header">
-						<p:commandButton value="Gerar PDF" ajax="false"
+						<p:commandButton value="Gerar PDF - Envelope" ajax="false"
 							icon="ui-icon-print"
-							action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+							action="#{investidorMB.geraPDFValorLiquidoInvestidoresEnvelope}"
 							update="PanelPDF"
-							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+							disabled="#{investidorMB.parcelasInvestidorEnvelope} == 0}" />
 					</f:facet>
 					<p:headerRow>
 						<p:column style="text-align: center;width: 100px;" colspan="6"
@@ -134,10 +316,10 @@
 			                <h:outputText value="Total:" />
 			            </p:column>
 			            <p:column>
-			                <h:outputText value="#{investidorMB.getTotalParcelaInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>			            
 			            <p:column >
-			                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidor(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+			                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>
 			            <p:column >
 			                <h:outputText value="" />
@@ -148,18 +330,18 @@
     						<div class="ui-g-12 ui-md-12 ui-lg-12" style="margin-bottom: 10px !important;margin-top: 10px !important;">
     							<p:outputLabel value="Valor Líquido Total R$ "
 									styleClass="labelBold" style="font-size: 16px !important;"/>
-								<p:outputLabel value="#{investidorMB.getTotalLiquidoTodosInvestidores()}"
+								<p:outputLabel value="#{investidorMB.getTotalLiquidoTodosInvestidoresEnvelope()}"
 									styleClass="labelBold" style="font-size: 16px !important;" converter="bigDecimalConverter"/>
 							</div>
 						</div>					
-						<p:commandButton value="Gerar PDF" ajax="false"
+						<p:commandButton value="Gerar PDF - Envelope" ajax="false"
 							icon="ui-icon-print"
-							action="#{investidorMB.geraPDFValorLiquidoInvestidores}"
+							action="#{investidorMB.geraPDFValorLiquidoInvestidoresEnvelope}"
 							update="PanelPDF"
-							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+							disabled="#{investidorMB.parcelasInvestidorEnvelope} == 0}" />
 					</f:facet>
 				</p:dataTable>
-			</p:panel>
+			</p:panel>			
 		</h:form>
 		<p:dialog header="Baixar Parcela do Investidor"
 			widgetVar="baixaParcelaInvestidorDialog" resizable="false"

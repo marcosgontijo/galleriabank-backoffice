@@ -42,7 +42,9 @@ public final class User implements Serializable {
     private boolean userCobrancaEdita;
     private boolean userCobrancaBaixa;
     private boolean userCobrancaIugu;
+    
     private boolean userPreContrato;
+    private boolean userPreContratoIUGU;
     private boolean userInvestidor;
     private String codigoResponsavel;
 
@@ -370,5 +372,13 @@ public final class User implements Serializable {
 
 	public void setUserInvestidor(boolean userInvestidor) {
 		this.userInvestidor = userInvestidor;
+	}
+
+	public boolean isUserPreContratoIUGU() {
+		return userPreContratoIUGU;
+	}
+
+	public void setUserPreContratoIUGU(boolean userPreContratoIUGU) {
+		this.userPreContratoIUGU = userPreContratoIUGU;
 	}
 }

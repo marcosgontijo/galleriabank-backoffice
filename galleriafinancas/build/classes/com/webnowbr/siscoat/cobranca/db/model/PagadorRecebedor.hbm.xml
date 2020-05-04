@@ -20,7 +20,10 @@
         </property>   
         <property name="bairro" type="java.lang.String">
             <column name="BAIRRO"/>
-        </property>               
+        </property>  
+        <property name="numero" type="java.lang.String">
+            <column name="NUMERO"/>
+        </property>                
         <property name="complemento" type="java.lang.String">
             <column name="COMPLEMENTO"/>
         </property> 

@@ -57,6 +57,8 @@
 				<h:panelGrid columns="3">
 					<p:outputLabel value="Valor: " styleClass="labelBold" />
 					<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaUtilsMB.valorAtualizado}" converter="bigDecimalConverter"/>
+					<p:outputLabel value="Valor Acréscimo: " styleClass="labelBold" />
+					<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaUtilsMB.valorAcrescimo}" converter="bigDecimalConverter"/>
 				</h:panelGrid>	  
 				<h:panelGrid columns="2">	
       				<p:outputLabel value="Data Pagamento: " styleClass="labelBold"/>

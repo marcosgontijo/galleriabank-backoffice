@@ -1,5 +1,13 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +19,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.json.JSONObject;
 import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
@@ -75,6 +84,8 @@ public class PagadorRecebedorMB {
 		this.tipoPessoaIsFisica = true;
 		
 		this.tipoPessoaIsFisicaCC = true;
+		
+		this.objetoPagadorRecebedor.setEstado("SP");
 
 		return "PagadorRecebedorInserir.xhtml";
 	}
@@ -343,6 +354,90 @@ public class PagadorRecebedorMB {
 		    this.objetoPagadorRecebedor.setSenhaInvestidor(senha);
 		}
 	}
+	
+	/**
+	 * SERVICO PARA PEGAR O ENDEREÇO AUTOMATICAMENTE
+	 * 
+	 * vianet.com.br
+	 */
+	public void getEnderecoByViaNet() {
+		try {			
+			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+			
+			int HTTP_COD_SUCESSO = 200;
+			
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				this.objetoPagadorRecebedor.setEndereco("");
+				this.objetoPagadorRecebedor.setBairro("");
+				this.objetoPagadorRecebedor.setCidade("");
+				this.objetoPagadorRecebedor.setEstado("");
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+
+				this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString().toUpperCase());
+				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString().toUpperCase());
+				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString().toUpperCase());
+				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString().toUpperCase());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/***
+	 * 
+	 * PARSE DO RETORNO SUCESSO
+	 * 
+	 * @param inputStream
+	 * @return
+	 */
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}		
 
 	/**
 	 * @return the lazyModel

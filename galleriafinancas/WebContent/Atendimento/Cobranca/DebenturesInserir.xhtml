@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="debetures" header="Debêntures"
+				style="margin-bottom:20px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroCautela" value="Cautela N°: "
+						styleClass="labelBold" />
+					<p:inputText id="numeroCautela" 
+						value="#{investidorMB.debenturesInvestidor.numeroCautela}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="qtdeDebentures" value="Qtde. Debêntures: "
+						styleClass="labelBold" />
+					<p:inputText id="qtdeDebentures" 
+						value="#{investidorMB.debenturesInvestidor.qtdeDebentures}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="serie" value="Série: " styleClass="labelBold" />
+					<p:inputText id="serie" 
+						value="#{investidorMB.debenturesInvestidor.serie}"
+						onkeypress="return isNumberKey(event);" required="true" />
+					<p:outputLabel for="dataHoje" value="Data Emissão: " styleClass="labelBold" />
+					<p:calendar id="dataHoje" value="#{investidorMB.debenturesInvestidor.dataDebentures}"
+						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+					</p:calendar>
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Pagador" value="Recebedor: "
+						styleClass="labelBold"/>
+					<p:inputText id="Pagador"
+						value="#{investidorMB.nomePagador}" label="Recebedor"
+						readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:300px;"/>
+					<p:commandButton id="botaoPagador" type="button"
+						onclick="PF('pagadorDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin"  />
+			</h:panelGrid>
+				<p:panel id="termoSecuritizacao" header="PDF - Termo de Securitização"
+					style="margin-bottom:20px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataVencimento" value="Data Vencimento: " styleClass="labelBold" />
+						<p:calendar id="dataVencimento" value="#{investidorMB.debenturesInvestidor.dataVencimento}"
+							required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+							locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+						</p:calendar>	
+					</h:panelGrid>
+				</p:panel>
+				<p:panel id="anexo1" header="PDF - Anexo I"
+					style="margin-bottom:20px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="lastrear" value="Lastrear Títulos: "
+								styleClass="labelBold" />
+						<p:selectOneRadio id="lastrear"
+								value="#{investidorMB.debenturesInvestidor.lastrearTitulos}" required="true">
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+							<p:ajax update="numeroDocumento porcentagem selecaoContrato" event="valueChange"
+									listener="#{investidorMB.atualizaLastreamentoTitulos}" />
+						</p:selectOneRadio>
+						<p:outputLabel for="numeroDocumento" value="Número da CCB: "
+							styleClass="labelBold" />
+						<p:inputText id="numeroDocumento" 
+							value="#{investidorMB.debenturesInvestidor.numeroDocumento}" required="true" 
+							disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>
+						<p:outputLabel for="porcentagem" value="Porcentagem Debêntures (%): "
+							styleClass="labelBold" />
+						<p:inputText id="porcentagem"
+							value="#{investidorMB.debenturesInvestidor.porcentagemDebentures}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigNoDecimalConverter" disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>			
+					</h:panelGrid>
+					<p:panel id="selecaoContrato" header="Selecionar Contrato"
+					style="margin-bottom:20px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="TipoFiltros" value="Buscar Contrato por: "
+								styleClass="labelBold" />
+						<p:selectOneRadio id="TipoFiltros"
+								value="#{investidorMB.filtraContrato}" required="true" disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}">
+							<f:selectItem itemLabel="Número do Contrato" itemValue="true" />
+							<f:selectItem itemLabel="Buscar Todos" itemValue="false" />
+							<p:ajax update="selecaoContrato" event="valueChange"
+									listener="#{investidorMB.habilitaFiltrosContrato}" />
+						</p:selectOneRadio>
+					</h:panelGrid>	
+					<h:panelGrid columns="3">
+						<p:outputLabel for="numcontrato" value="Contrato: "
+								styleClass="labelBold"  />
+						<p:inputText id="numcontrato"
+								value="#{investidorMB.filtroNumeroContrato}" label="Contrato"
+								style="width:50px;" rendered="#{investidorMB.filtraContrato}"  disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>
+						<p:spacer width="10" rendered="#{investidorMB.filtraContrato}"/>
+						<p:inputText id="contrato" value="#{investidorMB.numeroContrato}"
+							label="Contrato" readonly="TRUE" required="true"
+							style="FONT-SIZE: 10pt;width:50px;" rendered="#{!investidorMB.filtraContrato}"/>
+						<p:commandButton id="botaoContrato" type="button"
+							onclick="PF('contratoDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" rendered="#{!investidorMB.filtraContrato}"  disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>
+					</h:panelGrid>
+				</p:panel>
+				</p:panel>
+			</p:panel>
+			<p:commandButton value="Salvar e Gerar PDFs" ajax="false" icon="ui-icon-print"
+				action="#{investidorMB.inserirDebenture()}" update="PanelPDF" />
+			<p:spacer height="10"  />
+			<p:commandButton value="Cancelar" ajax="false" immediate="true"
+					icon="ui-icon-cancel"
+					action="#{investidorMB.clearFieldsConsultaDebentures()}"
+					style="TEXT-DECORATION: bold; " />
+		</h:form>
+		<p:dialog header="Contratos" widgetVar="contratoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formContratos">
+				<p:dataTable id="contratoDialogdlg" var="contratoDialogdlg"
+					value="#{investidorMB.listContratos}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5, 10, 15"
+					selection="#{investidorMB.selectedContratoLov}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{contratoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.numeroContrato}" filterBy="#{contratoDialogdlg.numeroContrato}" filterMatchMode="contains" >
+						<f:facet name="header">
+							<h:outputText value="Contrato" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.pagador.nome}"
+						filterBy="#{contratoDialogdlg.pagador.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Pagador" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.pagador.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{investidorMB.populateSelectedContrato}"
+							image="ui-icon ui-icon-check" update=":form:contrato"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{investidorMB.clearContrato}"
+							image="ui-icon ui-icon-trash"
+							update=":form:contrato contratoDialogdlg"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('contratoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>	
+		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
+					value="#{investidorMB.listPagadores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{investidorMB.selectedPagador}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{pagadorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cnpj}"
+						filterBy="#{pagadorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cpf}"
+						filterBy="#{pagadorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.nome}"
+						filterBy="#{pagadorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{investidorMB.populateSelectedPagador}"
+							image="ui-icon ui-icon-check" update=":form:Pagador"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{investidorMB.clearPagador}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Pagador pagadorDialogdlg"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('pagadorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

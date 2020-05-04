@@ -744,6 +744,36 @@
 		<property name="ocultaRecebedor10" type="boolean">
 		    <column name="OCULTARECEBEDOR10" />
 		</property> 	
+		<property name="recebedorEnvelope" type="boolean">
+		    <column name="recebedorEnvelope" />
+		</property> 
+		<property name="recebedorEnvelope2" type="boolean">
+		    <column name="recebedorEnvelope2" />
+		</property> 
+		<property name="recebedorEnvelope3" type="boolean">
+		    <column name="recebedorEnvelope3" />
+		</property> 
+		<property name="recebedorEnvelope4" type="boolean">
+		    <column name="recebedorEnvelope4" />
+		</property> 
+		<property name="recebedorEnvelope5" type="boolean">
+		    <column name="recebedorEnvelope5" />
+		</property> 
+		<property name="recebedorEnvelope6" type="boolean">
+		    <column name="recebedorEnvelope6" />
+		</property> 
+		<property name="recebedorEnvelope7" type="boolean">
+		    <column name="recebedorEnvelope7" />
+		</property> 
+		<property name="recebedorEnvelope8" type="boolean">
+		    <column name="recebedorEnvelope8" />
+		</property> 
+		<property name="recebedorEnvelope9" type="boolean">
+		    <column name="recebedorEnvelope9" />
+		</property> 
+		<property name="recebedorEnvelope10" type="boolean">
+		    <column name="recebedorEnvelope10" />
+		</property> 
 		<property name="empresa" type="java.lang.String">
 			<column name="EMPRESA" />
 		</property>

@@ -40,6 +40,10 @@
 										action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<p:menuitem value="Re-Parcelar Investidor"
+										action="#{contratoCobrancaMB.clearFieldsAlteraParcelasInvestidor}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 									<p:menuitem value="Re-Parcelar Contrato"
@@ -82,18 +86,29 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
-									<p:menuitem value="Gerar Arquivo Remessa"
-										action="#{geracaoRemessaMB.clearGeracaoRemessaMB}"
-										ajax="false" icon="ui-icon ui-icon-clipboard"
-										styleClass="itemMenu" />
-									<p:menuitem value="Pesquisa Observações"
-										action="#{contratoCobrancaMB.clearObservacoes}" ajax="false"
-										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
-									<p:menuitem value="Gerar Debênture"
-										action="#{investidorMB.clearGeraDebenture}" ajax="false"
-										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />
+									<p:menuitem value="Debêntures"
+										action="#{investidorMB.clearFieldsConsultaDebentures}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />										
 								</shiro:hasAnyRoles>
 							</p:submenu>
+							<p:submenu label="IUGU" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
+									<p:menuitem value="Cobrança Simples Iugu"
+										action="#{iuguMB.clearFieldsGeraCobrancaSimples}" ajax="false"
+										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+									<p:menuitem value="Faturas Período"
+										action="#{iuguMB.clearFieldsFaturasPeriodoIugu}" ajax="false"
+										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>									
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="SubContas IUGU"
+										action="#{iuguMB.clearFieldsSubContasIugu}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />
+									<p:menuitem value="Saldo Subcontas"
+										action="#{iuguMB.clearFieldsSaldoSubContaIugu}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />								
+								</shiro:hasAnyRoles>	
+							</p:submenu>						
 						</shiro:hasAnyRoles>
 					</p:menu>
 				</h:form>

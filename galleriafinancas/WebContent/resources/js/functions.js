@@ -58,7 +58,7 @@ function FormataValor(campo,tammax,teclapres,decimal) {
 		}
 	}
 }  
-
+function FormataValorSemPonto(campo,tammax,teclapres,decimal) { 	var tecla = teclapres.keyCode;   	vr = Limpar(campo.value,"0123456789");   	tam = vr.length;   	dec=decimal;	if (tam < tammax && tecla != 8){		tam = vr.length + 1;	}	if (tecla == 8 ){		//tam = tam; //substituir para tam = tam -1; para apagar de 2 em 2 digitos	}   	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 44){		if ( tam <= dec ){			campo.value = vr;		}   		if ( (tam > dec) && (tam <= 5) ){   			campo.value = vr.substring( 0, tam - 2 ) + "," + vr.substring( tam - dec, tam );		}   		if ( (tam >= 6) && (tam <= 8) ){   			campo.value = vr.substring( 0, tam - 5 ) + vr.substring( tam - 5, (tam - 5) + 3 ) + "," + vr.substring( tam - dec, tam );   		}		if ( (tam >= 9) && (tam <= 11) ){   			campo.value = vr.substring( 0, tam - 8 ) + vr.substring( tam - 8, (tam - 8) + 3 ) + "." + vr.substring( tam - 5, (tam - 5) + 3 ) + "," + vr.substring( tam - dec, tam );		}		if ( (tam >= 12) && (tam <= 14) ){   			campo.value = vr.substring( 0, tam - 11 ) + vr.substring( tam - 11, (tam - 11) + 3) + "." + vr.substring( tam - 8, (tam - 8) + 3 ) + "." + vr.substring( tam - 5, (tam - 5) + 3 ) + "," + vr.substring( tam - dec, tam );		}		if ( (tam >= 19) && (tam <= 22) ){   			campo.value = vr.substring( 0, tam - 18 ) + vr.substring( tam - 14, 4 ) + "." + vr.substring( tam - 11, 4 ) + "." + vr.substring( tam - 8, 4 ) + "." + vr.substring( tam - 5, 4 ) + "," + vr.substring( tam - 2, tam );		}	}} 
 function isNumberKey(event){
 
 	try{

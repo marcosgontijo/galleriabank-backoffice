@@ -14,6 +14,7 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private String numeroParcela;
+	private String empresa;
 	private Date dataVencimento;
 	private BigDecimal parcelaMensal;
 	private BigDecimal juros;
@@ -35,6 +36,8 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	// atributos temporarios, sem persistir
 	private boolean parcelaVencendo;
 	private boolean parcelaVencida;
+	
+	private boolean envelope;
 	
 	public ContratoCobrancaParcelasInvestidor(){
 
@@ -182,5 +185,21 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setPagador(PagadorRecebedor pagador) {
 		this.pagador = pagador;
+	}
+
+	public boolean isEnvelope() {
+		return envelope;
+	}
+
+	public void setEnvelope(boolean envelope) {
+		this.envelope = envelope;
+	}
+
+	public String getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(String empresa) {
+		this.empresa = empresa;
 	}
 }

@@ -35,6 +35,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
@@ -44,6 +45,7 @@ import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
@@ -82,11 +84,16 @@ import com.webnowbr.siscoat.security.LoginBean;
 public class IuguMB {
 
 	/****
-	 * LIVE TOKEN GAMA
-	 * f91a45da0fc74b8140c96abfd337f8bc
 	 * 
-	 * ID CONTA GAMA
-	 * 9A2AFFAB4A234E15AADC310D605BBCF8
+	 * GALLERIA CORRESPONDETE - CONTA MESTRE ID = 34
+	 * 
+	 * GALLERIA SA SUBCONTA ID = 14
+	 * 
+	 * LIVE TOKEN GALLERIA
+	 * bd88479c57011124c25638b26572e453
+	 * 
+	 * ID CONTA GALLERIA
+	 * 7D4D20A4F1184FEB91126DFEAD86AED8
 	 */
 
 	/** INICIO - Lista dos Pagadores utilizada pela LOV. */
@@ -104,10 +111,11 @@ public class IuguMB {
 	private String nomeRecebedorAux;	
 	private long idRecebedorAux;
 	private PagadorRecebedor selectedRecebedorAux;
-	private PagadorRecebedor selectedRecebedorGAMA;
+	private PagadorRecebedor selectedRecebedorGALLERIA;
 
 	private String descricaoItem;
 	private String numeroContrato;
+	private String qtdeParcelas;
 	private String parcela;
 	private String idContrato;
 	private String idParcela;
@@ -122,6 +130,7 @@ public class IuguMB {
 	private String saldoSubContaALiberar;
 
 	private List<FaturaIUGU> faturasIUGU;
+	private List<FaturaIUGU> faturasDownloadIUGU;
 	private List<TransferenciasIUGU> transferenciasIUGU;
 	private List<SubContaIUGU> subContasIUGU;
 	private LazyDataModel<FaturaIUGU> faturasIUGULazy;
@@ -142,7 +151,7 @@ public class IuguMB {
 	private String paramMes;
 	private String paramSenha;
 	private String senhaStorage;
-	
+
 	private BigDecimal totalEntrada;
 	private BigDecimal totalSaida;
 	private BigDecimal totalTaxas;
@@ -172,11 +181,11 @@ public class IuguMB {
 	private long parcelaObservacao;
 
 	private List<SaqueIUGU> saquesIUGU;
-	
+
 	private List<SaldoIUGU> saldosIUGU;
-	
+
 	private BigDecimal totalSaldoSubcontas;
-	
+
 	private BigDecimal totalMovimentacoes;
 	private String totalMovimentacoesStr;
 
@@ -196,6 +205,7 @@ public class IuguMB {
 	List<FileUploaded> deletefiles = new ArrayList<FileUploaded>();
 	StreamedContent downloadFile;
 	StreamedContent downloadAllFiles;
+	StreamedContent downloadAllFaturas;
 	FileUploaded selectedFile = new FileUploaded();
 
 	/**
@@ -266,6 +276,8 @@ public class IuguMB {
 		this.valorItem = null;
 		this.dataVencimento = null;
 
+		this.qtdeParcelas = "1";
+
 		this.idContrato = "";
 		this.idParcela = "";
 
@@ -273,7 +285,9 @@ public class IuguMB {
 
 		this.urlFatura = "";
 
-		consultarFaturasContaMestreGama();
+		consultarFaturasContaMestreGalleria();
+
+		this.faturasDownloadIUGU = new ArrayList<FaturaIUGU>();
 
 		return "/Atendimento/Cobranca/CobrancaIugu.xhtml";
 	}
@@ -288,8 +302,8 @@ public class IuguMB {
 		this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();	
 		clearRecebedor();
 
-		// get conta GAMA para usar no processo default
-		this.selectedRecebedorGAMA = pagadorRecebedorDao.findById(Long.valueOf("184"));
+		// get conta GALLERIA para usar no processo default
+		this.selectedRecebedorGALLERIA = pagadorRecebedorDao.findById(Long.valueOf("34"));
 
 		this.numeroContrato = null;
 		this.contratoCobranca = new ContratoCobranca();
@@ -322,7 +336,7 @@ public class IuguMB {
 			this.numeroContrato = null;
 			this.relDataContratoInicio = gerarDataHoje();
 			this.relDataContratoFim = gerarDataHoje();
-			
+
 		}
 		this.parcelas3meses = new ArrayList<ContratoCobrancaDetalhes>();
 		this.contratosCobranca = new ArrayList<ContratoCobranca>();
@@ -421,7 +435,7 @@ public class IuguMB {
 				this.parcelas3meses.add(c);
 			}
 		}
-		
+
 		// Pre Seleciona a parcela do mês para inserção automática de observação de parcela
 		Locale locale = new Locale("pt", "BR"); 
 		SimpleDateFormat getMes = new SimpleDateFormat("MM", locale);
@@ -583,7 +597,7 @@ public class IuguMB {
 
 			}
 		}	
-		
+
 		this.observacao = "";
 
 		if (origem.equals("tela")) {
@@ -630,7 +644,7 @@ public class IuguMB {
 				}
 			}
 		}	
-		
+
 		this.observacao = "";
 
 		if (origem.equals("tela")) {
@@ -771,7 +785,7 @@ public class IuguMB {
 				}
 			}
 		}	
-		
+
 		this.observacao = "";
 
 		if (origem.equals("tela")) {
@@ -800,7 +814,7 @@ public class IuguMB {
 				processaSaqueSubcontaTela();
 			}
 		}	
-		
+
 		this.observacao = "";
 
 		if (origem.equals("tela")) {
@@ -848,7 +862,7 @@ public class IuguMB {
 	 * @return
 	 */
 	public void geraCobrancaSimplesMenu() {
-		String liveToken = "f91a45da0fc74b8140c96abfd337f8bc";
+		String liveToken = "bd88479c57011124c25638b26572e453";
 		long idCedente = 0;
 
 		if (this.selectedCedente != null) {
@@ -858,7 +872,11 @@ public class IuguMB {
 			}
 		}
 
-		geraCobrancaSimples(liveToken, idCedente);
+		if (this.qtdeParcelas.equals("1")) {
+			geraCobrancaSimples(liveToken, idCedente);
+		} else {
+			geraCobrancaSimplesLote(liveToken, idCedente);
+		}
 
 		try {
 			Thread.sleep(500);
@@ -867,7 +885,207 @@ public class IuguMB {
 			e.printStackTrace();
 		}
 
-		consultarFaturasSubContaFaturaSimples();
+		consultarFaturasSubContaFaturaSimplesParam(liveToken);
+	}
+
+	/****
+	 * 
+	 * COMPOEM O JSON UTILIZADO NA GERAÇÃO DA COBRANÇA SIMPLES
+	 * 
+	 * @return
+	 */
+	public String composeJSONCobrancaSimplesLote(Calendar dataVencimento, String mes, String dia, String parcela) {
+		String jsonFavorecido = "";
+		String jsonItens = "";
+		String jsonPayer = "";
+		String jsonCustomVariables = "";
+
+		String documento = "";
+		if (this.selectedRecebedor.getCpf() == null) {
+			documento = this.selectedRecebedor.getCnpj().replace(".", "").replace("-", "").replace("/", "");
+		} else {
+			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
+		}
+
+		String descricaoCompleta = "SERVIÇO DE COBRANÇA";
+
+		if (!this.numeroContrato.equals("")) {
+			descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
+		}
+
+		if (!this.parcela.equals("")) {
+			descricaoCompleta = descricaoCompleta + " / PARCELA: " + parcela;
+		}
+
+		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
+
+		String bairro = "";
+
+		if (this.selectedRecebedor.getBairro() != null) {
+			if (this.selectedRecebedor.getBairro().length() > 0) {
+				bairro = this.selectedRecebedor.getBairro();
+			} else {
+				bairro = "Bairro";
+			}
+		} else {
+			bairro = "Bairro";
+		}
+		
+		String endereco = ""; 
+		if (this.selectedRecebedor.getNumero() != null) {
+			if (!this.selectedRecebedor.getNumero().equals("")) {
+				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
+			}
+		}
+
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
+		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
+		+ "\",\"district\":\"" + bairro
+		+ "\",\"number\":\"" + 000 + "\"}}";
+
+
+		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
+				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
+
+		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
+				dataVencimento.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
+
+		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
+				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + "}";
+
+		return jsonFavorecido;
+	}
+
+	/****
+	 * 
+	 * GERAÇÃO DA COBRANÇA SIMPLES
+	 * 
+	 * @return
+	 */
+	public void geraCobrancaSimplesLote(String idLiveTokenIugu, long idCedente) {
+		int HTTP_COD_SUCESSO = 200;
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (this.selectedRecebedor != null) {
+			boolean dadosValidos = true;
+
+			// validações
+			if (this.selectedRecebedor.getCpf() == null && this.selectedRecebedor.getCnpj() == null) {
+				dadosValidos = false;
+
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Dados do cliente incorretos (CPF ou CNPJ inválidos) !", ""));				
+			}
+
+			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
+				dadosValidos = false;
+
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Dados do cliente incorretos (Endereço ou CEP inválidos) !", ""));	
+			}
+
+
+			if (dadosValidos) {
+				try {							
+					URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + idLiveTokenIugu);
+
+					TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+					Locale locale = new Locale("pt", "BR");  
+					Calendar dataHoje = Calendar.getInstance(zone, locale);
+					dataHoje.setTime(this.dataVencimento);
+					dataHoje.set(Calendar.HOUR_OF_DAY, 0);  
+					dataHoje.set(Calendar.MINUTE, 0);  
+					dataHoje.set(Calendar.SECOND, 0);  
+					dataHoje.set(Calendar.MILLISECOND, 0);	
+
+					String mes = String.valueOf(dataHoje.get(Calendar.MONTH) + 1);
+					if (mes.length() == 1) {
+						mes = "0" + mes;
+					}
+
+					String dia = String.valueOf(dataHoje.get(Calendar.DAY_OF_MONTH));
+					if (dia.length() == 1) {
+						dia = "0" + dia;
+					}	
+
+					int parcela = Integer.valueOf(this.parcela);
+
+					int qtdeParcelas = Integer.valueOf(this.qtdeParcelas);
+
+					this.faturasDownloadIUGU = new ArrayList<FaturaIUGU>();
+
+					for (int i = 0; i < qtdeParcelas; i++) {
+						if (i > 0) {
+							parcela = parcela + 1;
+							dataHoje.add(Calendar.MONTH, 1);
+
+							mes = String.valueOf(dataHoje.get(Calendar.MONTH) + 1);
+							if (mes.length() == 1) {
+								mes = "0" + mes;
+							}
+
+							dia = String.valueOf(dataHoje.get(Calendar.DAY_OF_MONTH));
+							if (dia.length() == 1) {
+								dia = "0" + dia;
+							}	
+						}
+						String dados = composeJSONCobrancaSimplesLote(dataHoje, mes, dia, String.valueOf(parcela));
+						//JSONObject jsonObj = new JSONObject("{\"email\":\"webnowbr@gmail.com\",\"due_date\":\"20181212\",\"items\":[{\"description\":\"Cobrança\",\"quantity\":1,\"price_cents\":1486}],\"payer\":{\"cpf_cnpj\":\"31255904852\",\"name\":\"HERMES VIEIRA JUNIOR\",\"address\":{\"zip_code\":\"13073035\",\"street\":\"ENDEREÇO COMPLETO\",\"number\":\"1111\"}}}");
+						JSONObject jsonObj = new JSONObject(dados);
+						byte[] postDataBytes = jsonObj.toString().getBytes();
+
+						HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+						myURLConnection.setUseCaches(false);
+						myURLConnection.setRequestMethod("POST");
+						myURLConnection.setRequestProperty("Accept", "application/json");
+						myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+						myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+						myURLConnection.setDoOutput(true);
+						myURLConnection.getOutputStream().write(postDataBytes);
+
+						//myURLConnection.setDoInput(true);
+
+						// LEITURA DOS DADOS EM STRING
+						Thread.sleep(500);						
+
+						if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+							context.addMessage(null, new FacesMessage(
+									FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Erro na geração da Cobrança! " + myURLConnection.getResponseCode() + ": " + getErroIugu(myURLConnection.getErrorStream()), ""));
+							//throw new RuntimeException("HTTP error code : "+ myURLConnection.getResponseCode() + ": " + myResponse.getString("error"));				
+						} else {
+							// Seta o ID da fatura na Parcela do Siscoat
+							JSONObject myResponse = null;
+
+							myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
+
+							this.urlFatura = myResponse.getString("secure_url");
+
+							FaturaIUGU fatura = new FaturaIUGU();
+							fatura.setSacado(this.selectedRecebedor.getNome());
+							fatura.setSecure_url(this.urlFatura + ".pdf");
+
+							this.faturasDownloadIUGU.add(fatura);
+
+							context.addMessage(null, new FacesMessage(
+									FacesMessage.SEVERITY_INFO, "Cobrança Iugu: Cobrança gerada com sucesso!", ""));
+						}
+
+						myURLConnection.disconnect();
+					}
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				consultarFaturasSubContaFaturaSimplesParam(this.selectedRecebedor.getIuguLiveApiToken());
+			}
+		} else {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Favor selecionar um favorecido!", ""));
+		}
 	}
 
 	/**
@@ -913,7 +1131,7 @@ public class IuguMB {
 
 			boolean valid = true;
 
-			URL myURL = new URL("https://api.iugu.com/v1/accounts/9A2AFFAB4A234E15AADC310D605BBCF8?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL("https://api.iugu.com/v1/accounts/7D4D20A4F1184FEB91126DFEAD86AED8?api_token=bd88479c57011124c25638b26572e453");
 
 			if (!this.contaMestre) {
 				if (this.selectedRecebedor.getId() <= 0) {
@@ -925,7 +1143,7 @@ public class IuguMB {
 					myURL = new URL("https://api.iugu.com/v1/accounts/" + this.selectedRecebedor.getIuguAccountId() + "?api_token=" + this.selectedRecebedor.getIuguLiveApiToken());
 				}				
 			} else {
-				myURL = new URL("https://api.iugu.com/v1/accounts/9A2AFFAB4A234E15AADC310D605BBCF8?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				myURL = new URL("https://api.iugu.com/v1/accounts/7D4D20A4F1184FEB91126DFEAD86AED8?api_token=bd88479c57011124c25638b26572e453");
 			}	
 
 			if (valid) {			
@@ -1012,7 +1230,7 @@ public class IuguMB {
 					myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
 					String valorStr = myResponse.getString("balance_available_for_withdraw");
 					System.out.println(valorStr);
-					
+
 					if (valorStr.contains("R$")) {
 						valorStr = valorStr.replace("R$ ", "");
 						valorStr = valorStr.replace(".", "");
@@ -1023,7 +1241,7 @@ public class IuguMB {
 					}
 
 					saldoIUGU = new BigDecimal(valorStr);
-					
+
 					System.out.println(saldoIUGU);
 				}
 
@@ -1074,7 +1292,9 @@ public class IuguMB {
 
 			String urlComposta = "https://api.iugu.com/v1/accounts/financial?year=" + this.paramAno + "&month=" + this.paramMes + "&limit=1000&";
 
-			URL myURL = new URL(urlComposta + "api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			String token = "bd88479c57011124c25638b26572e453";
+
+			URL myURL = new URL(urlComposta + "api_token=bd88479c57011124c25638b26572e453");
 
 			if (!this.contaMestre) {
 				if (this.selectedRecebedor.getId() <= 0) {
@@ -1084,9 +1304,11 @@ public class IuguMB {
 					valid = false;
 				} else {
 					myURL = new URL(urlComposta + "api_token=" + this.selectedRecebedor.getIuguLiveApiToken());
+					token = this.selectedRecebedor.getIuguLiveApiToken();
 				}				
 			} else {
-				myURL = new URL(urlComposta + "api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				myURL = new URL(urlComposta + "api_token=bd88479c57011124c25638b26572e453");
+				token = "bd88479c57011124c25638b26572e453";
 			}				
 
 			//String dados = "{\"auto_withdraw\":false,\"fines\":true,\"per_day_interest\":true,\"late_payment_fine\":2}";
@@ -1124,7 +1346,7 @@ public class IuguMB {
 					JSONArray transacoes = myResponse.getJSONArray("transactions");
 
 					this.faturasIUGU = new ArrayList<FaturaIUGU>();
-					
+
 					FaturaIUGU faturaTemp = new FaturaIUGU();
 					this.totalMovimentacoes = BigDecimal.ZERO;
 
@@ -1138,9 +1360,11 @@ public class IuguMB {
 						Date entry_date = new java.sql.Date( ((java.util.Date)formatter.parse(entry_dateOriginal)).getTime() );
 
 						faturaIUGU.setDataTransacao(entry_date);				
-						
+
 						String valorTemp = obj.getString("amount");
-						
+
+						String reference = obj.getString("reference");
+
 						if (valorTemp.contains("R$")) {
 							valorTemp = valorTemp.replace("R$ ", "");
 							valorTemp = valorTemp.replace(".", "");
@@ -1149,20 +1373,20 @@ public class IuguMB {
 							valorTemp = valorTemp.replace(" BRL","");
 							valorTemp = valorTemp.replace(",", "");
 						}
-						
+
 						faturaIUGU.setValor(valorTemp);
 						faturaIUGU.setValorNum(new BigDecimal(valorTemp)); 
-						
+
 						faturaIUGU.setTipoTransacao(obj.getString("type"));
-						
+
 						if (faturaIUGU.getTipoTransacao().equals("credit")) {
 							this.totalMovimentacoes = this.totalMovimentacoes.add(faturaIUGU.getValorNum());
 						} else {
 							this.totalMovimentacoes = this.totalMovimentacoes.subtract(faturaIUGU.getValorNum());
 						}
-						
+
 						String valorSaldo = obj.getString("balance");
-						
+
 						if (valorSaldo.contains("R$")) {
 							valorSaldo = valorSaldo.replace("R$ ", "");
 							valorSaldo = valorSaldo.replace(".", "");
@@ -1171,7 +1395,7 @@ public class IuguMB {
 							valorSaldo = valorSaldo.replace(" BRL","");
 							valorSaldo = valorSaldo.replace(",", "");
 						}
-						
+
 						faturaIUGU.setSaldo(valorSaldo);
 						faturaIUGU.setSaldoNum(new BigDecimal(valorSaldo));
 
@@ -1191,48 +1415,48 @@ public class IuguMB {
 
 						ContratoCobranca contratoFatura = new ContratoCobranca();
 						ContratoCobrancaDetalhes contratoDetalhesFatura = new ContratoCobrancaDetalhes();
-						
+
 						if (descricaoOriginal.contains("Liberação: Invoice") && !descricaoOriginal.contains("Tarifa")) {
 							idConta = descricaoOriginal.substring(descricaoOriginal.indexOf("#") + 1,
 									descricaoOriginal.length());
 
 							descricaoModificada = "Liberação: Fatura ID " + idConta;
-							
+
 							String contratoDetalhe = getContratoByFaturaIUGU(idConta);
-							
+
 							if (contratoDetalhe != null && contratoDetalhe.length() == 7) {
 								String numeroContrato = contratoDetalhe.substring(0, 5);
-								
+
 								String numeroParcela = contratoDetalhe.substring(5, contratoDetalhe.length());
-								
+
 								ContratoCobrancaDao ccDao = new ContratoCobrancaDao();								
-								
+
 								contratoFatura = ccDao.findByFilter("numeroContrato", numeroContrato).get(0);
-								
+
 								for (ContratoCobrancaDetalhes ccd: contratoFatura.getListContratoCobrancaDetalhes()) {
 									if (ccd.getNumeroParcela().equals(numeroParcela)) {
 										contratoDetalhesFatura = ccd;
 									}
 								}		
-								
+
 								faturaIUGU.setNumeroContrato(contratoFatura.getNumeroContrato());
 								faturaIUGU.setValorParcela(contratoDetalhesFatura.getVlrParcela());
 								faturaIUGU.setDue_date(contratoDetalhesFatura.getDataVencimento());
 
 								faturaIUGU.setSacado(contratoFatura.getPagador().getNome());
-								
+
 								faturaTemp.setIdTransacao(idConta);
 								faturaTemp.setNumeroContrato(contratoFatura.getNumeroContrato());
 								faturaTemp.setValorParcela(contratoDetalhesFatura.getVlrParcela());
 								faturaTemp.setDue_date(contratoDetalhesFatura.getDataVencimento());
 								faturaTemp.setSacado(contratoFatura.getPagador().getNome());
-								
+
 								if (!this.contaMestre) {
 									faturaIUGU.setCedente(this.selectedRecebedor.getNome());	
 									faturaTemp.setCedente(this.selectedRecebedor.getNome());
 								} else {
-									faturaIUGU.setCedente("GAMA Mestre");
-									faturaTemp.setCedente("GAMA Mestre");	
+									faturaIUGU.setCedente("GALLERIA Mestre");
+									faturaTemp.setCedente("GALLERIA Mestre");	
 								}
 							}
 						}
@@ -1251,8 +1475,8 @@ public class IuguMB {
 							if (pagadorRecebedor.getNome() != null) {
 								descricaoModificada = "Transferencia da SubConta " + pagadorRecebedor.getNome();
 							} else {
-								if (idConta.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-									descricaoModificada =  "Transferencia da SubConta GAMA Mestre";
+								if (idConta.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+									descricaoModificada =  "Transferencia da SubConta GALLERIA Mestre";
 								} else {
 									descricaoModificada = "Transferencia da SubConta " + idConta;
 								}
@@ -1268,8 +1492,8 @@ public class IuguMB {
 							if (pagadorRecebedor2.getNome() != null) {
 								descricaoModificada = descricaoModificada + " para a SubConta " + pagadorRecebedor2.getNome();
 							} else {
-								if (idConta2.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-									descricaoModificada = descricaoModificada + " para a SubConta GAMA Mestre";
+								if (idConta2.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+									descricaoModificada = descricaoModificada + " para a SubConta GALLERIA Mestre";
 								} else {
 									descricaoModificada = descricaoModificada + " para a SubConta " + idConta2;
 								}
@@ -1290,8 +1514,8 @@ public class IuguMB {
 							if (pagadorRecebedor.getNome() != null) {
 								descricaoModificada = "Transferencia da SubConta " + pagadorRecebedor.getNome();
 							} else {
-								if (idConta.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-									descricaoModificada =  "Transferencia da SubConta GAMA Mestre";
+								if (idConta.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+									descricaoModificada =  "Transferencia da SubConta GALLERIA Mestre";
 								} else {
 									descricaoModificada = "Transferencia da SubConta " + idConta;
 								}
@@ -1307,8 +1531,8 @@ public class IuguMB {
 							if (pagadorRecebedor2.getNome() != null) {
 								descricaoModificada = descricaoModificada + " para a SubConta " + pagadorRecebedor2.getNome();
 							} else {
-								if (idConta2.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-									descricaoModificada = descricaoModificada + " para a SubConta GAMA Mestre";
+								if (idConta2.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+									descricaoModificada = descricaoModificada + " para a SubConta GALLERIA Mestre";
 								} else {
 									descricaoModificada = descricaoModificada + " para a SubConta " + idConta2;
 								}
@@ -1320,7 +1544,7 @@ public class IuguMB {
 									descricaoOriginal.length());
 
 							descricaoModificada = "Tarifas - Liberação: Fatura ID " + idConta;
-										
+
 							// recupera dados do contrato da fatura paga
 							faturaIUGU.setIdTransacao(faturaTemp.getIdTransacao());
 							faturaIUGU.setNumeroContrato(faturaTemp.getNumeroContrato());
@@ -1337,9 +1561,57 @@ public class IuguMB {
 
 						faturaIUGU.setDescricaoTransacao(descricaoModificada);
 
+						// Busca nome do sacado e data de vencimento da fatura
+						JSONObject retornoFatura = getContratoByFaturaIUGUAndToken(reference, token);
+
+						if (retornoFatura != null) {
+							String dueDateOriginal = retornoFatura.getString("due_date").substring(8, 10) + "/" + retornoFatura.getString("due_date").substring(5, 7) + "/" + retornoFatura.getString("due_date").substring(0, 4);
+							Date dueDate = new java.sql.Date( ((java.util.Date)formatter.parse(dueDateOriginal)).getTime());
+
+							faturaIUGU.setDue_date(dueDate);
+							faturaIUGU.setSecure_url(retornoFatura.getString("secure_url")); 
+
+							JSONArray variables = retornoFatura.getJSONArray("variables");
+
+							for (int k = 0; k < variables.length(); k++) {
+								JSONObject objVariables = variables.getJSONObject(k);
+
+								if (objVariables.getString("variable").equals("payer.email")) {
+									faturaIUGU.setEmail(objVariables.getString("value"));
+								}
+
+								if (objVariables.getString("variable").equals("payer.name")) {
+									faturaIUGU.setSacado(objVariables.getString("value"));
+								}
+							}							
+
+							JSONArray dadosContrato = retornoFatura.getJSONArray("items");
+
+							for (int m = 0; m < dadosContrato.length(); m++) {
+								JSONObject dados = dadosContrato.getJSONObject(m);
+
+								String description = dados.getString("description");
+
+								if (description.contains("SERVIÇO DE COBRANÇA - CONTRATO:")) {
+									description = description.substring(32, description.indexOf("/") - 1);
+									faturaIUGU.setNumeroContrato(description);
+								}
+
+							}	
+						}
+
+						// transforma texto do Tipo Transação
+						if (faturaIUGU.getTipoTransacao().equals("credit")) {
+							faturaIUGU.setTipoTransacao("Crédito");
+						}
+
+						if (faturaIUGU.getTipoTransacao().equals("debit")) {
+							faturaIUGU.setTipoTransacao("Débito");
+						}
+
 						this.faturasIUGU.add(faturaIUGU);
 					}		
-					
+
 					if (this.totalMovimentacoes != BigDecimal.ZERO) {
 						totalMovimentacoesStr = this.totalMovimentacoes.toString().replace(".", ",");
 					}
@@ -1359,11 +1631,11 @@ public class IuguMB {
 			e.printStackTrace();
 		}
 	}	
-	
+
 	public String getContratoByFaturaIUGU(String idFatura) {
-		
+
 		String retorno = null;
-		
+
 		try {			
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -1373,7 +1645,7 @@ public class IuguMB {
 
 			String urlComposta = "https://api.iugu.com/v1/invoices/" + idFatura;
 
-			URL myURL = new URL(urlComposta + "?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL(urlComposta + "?api_token=bd88479c57011124c25638b26572e453");
 
 			if (!this.contaMestre) {
 				if (this.selectedRecebedor.getId() <= 0) {
@@ -1382,7 +1654,7 @@ public class IuguMB {
 					myURL = new URL(urlComposta + "?api_token=" + this.selectedRecebedor.getIuguLiveApiToken());
 				}				
 			} else {
-				myURL = new URL(urlComposta + "?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				myURL = new URL(urlComposta + "?api_token=bd88479c57011124c25638b26572e453");
 			}		
 
 			if (valid) {			
@@ -1403,7 +1675,7 @@ public class IuguMB {
 				 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
 				 * https://api.iugu.com/v1/withdraw_requests/id"
 				 */
-				
+
 				if (myURLConnection.getResponseCode() == HTTP_COD_SUCESSO) {	
 					myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
 
@@ -1411,7 +1683,7 @@ public class IuguMB {
 
 					for (int i = 0; i < items.length(); i++) {
 						JSONObject obj = items.getJSONObject(i);
-						
+
 						retorno = obj.getString("description");
 						retorno = retorno.replaceAll("SERVIÇO DE COBRANÇA - CONTRATO: ", "");
 						retorno = retorno.replaceAll(" / PARCELA: ", "");		
@@ -1421,7 +1693,7 @@ public class IuguMB {
 						} else {
 							return null;
 						}
-						
+
 					}
 				} else {
 					return retorno;
@@ -1440,7 +1712,62 @@ public class IuguMB {
 		}
 		return retorno;
 	}
-	
+
+	public JSONObject getContratoByFaturaIUGUAndToken(String idFatura, String likeToken) {
+
+		String retorno = null;
+		JSONObject myResponse = null;
+
+		try {			
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			boolean valid = true;
+
+			String urlComposta = "https://api.iugu.com/v1/invoices/" + idFatura;
+
+			URL myURL = new URL(urlComposta + "?api_token=" + likeToken);
+
+			if (valid) {			
+				HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestMethod("GET");
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnection.setDoOutput(true);
+				//myURLConnection.getOutputStream().write(postDataBytes);
+
+				String erro = "";				
+
+				/**
+				 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+				 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+				 * https://api.iugu.com/v1/withdraw_requests/id"
+				 */
+
+				if (myURLConnection.getResponseCode() == HTTP_COD_SUCESSO) {	
+					myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
+				} else {
+					return myResponse;
+				}
+
+				myURLConnection.disconnect();
+			} else {
+				return myResponse;
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return myResponse;
+	}
+
+
 	/**
 	 * CONSULTA CONCILIAÇÃO PELO EXTRATO FINANCEIRO
 	 */
@@ -1455,30 +1782,30 @@ public class IuguMB {
 	 * CONSULTA CONCILIAÇÃO PELO EXTRATO FINANCEIRO
 	 */
 	public void consultarConciliacaoExtratoFinanceiroSubConta() {
-		
+
 		// TODO saldo total por subconta
 		// TODO saldo total vivo sistema
 		// TODO timestamp da transacao
 		// TODO COokpit
-		
+
 		FacesContext context = FacesContext.getCurrentInstance();
-		
+
 		List<PagadorRecebedor> contasIUGU = new ArrayList<PagadorRecebedor>();
 		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 		contasIUGU = pDao.getSubContasIugu();		
 
 		this.faturasIUGU = new ArrayList<FaturaIUGU>();
-		
+
 		clearContadoresConciliacao();
 
 		for (PagadorRecebedor contaIUGU : contasIUGU) {
 			try {			
 				int HTTP_COD_SUCESSO = 200;
-				
+
 				String urlComposta = "https://api.iugu.com/v1/accounts/financial?year=" + this.paramAno + "&month=" + this.paramMes + "&day=" + this.paramDia + "&limit=1000&";	
-				
+
 				URL myURL = new URL(urlComposta + "api_token=" + contaIUGU.getIuguLiveApiToken());
-				
+
 				HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 				myURLConnection.setUseCaches(false);
 				myURLConnection.setRequestMethod("GET");
@@ -1510,22 +1837,22 @@ public class IuguMB {
 					for (int i = 0; i < transacoes.length(); i++) {
 						JSONObject obj = transacoes.getJSONObject(i);
 						String descricaoOriginal = obj.getString("description");
-						
+
 						if (!descricaoOriginal.contains("Transferencia de Conta")) {
 							FaturaIUGU faturaIUGU = new FaturaIUGU();
 
 							String entry_dateOriginal = obj.getString("entry_date").substring(8, 10) + "/" + obj.getString("entry_date").substring(5, 7) + "/" + obj.getString("entry_date").substring(0, 4);
 							DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 							Date entry_date = new java.sql.Date( ((java.util.Date)formatter.parse(entry_dateOriginal)).getTime() );
-	
+
 							faturaIUGU.setDataTransacao(entry_date);
 							faturaIUGU.setTipoTransacao(obj.getString("type"));
-							
+
 							faturaIUGU.setValor(obj.getString("amount"));
 							faturaIUGU.setSaldo(obj.getString("balance")); 
-							
+
 							String valorTemp = faturaIUGU.getValor();
-							
+
 							if (valorTemp.contains("R$")) {
 								valorTemp = valorTemp.replace("R$ ", "");
 								valorTemp = valorTemp.replace(".", "");
@@ -1534,9 +1861,9 @@ public class IuguMB {
 								valorTemp = valorTemp.replace(" BRL","");
 								valorTemp = valorTemp.replace(",", "");
 							}
-							
+
 							String saldoTemp = faturaIUGU.getValor();
-							
+
 							if (saldoTemp.contains("R$")) {
 								saldoTemp = saldoTemp.replace("R$ ", "");
 								saldoTemp = saldoTemp.replace(".", "");
@@ -1545,38 +1872,38 @@ public class IuguMB {
 								saldoTemp = saldoTemp.replace(" BRL","");
 								saldoTemp = saldoTemp.replace(",", "");
 							}
-							
+
 							// se crédito, troca o label e soma o valor total recebido
 							if (faturaIUGU.getTipoTransacao().equals("credit")) {
 								faturaIUGU.setTipoTransacao("Crédito");
 								this.totalEntrada = this.totalEntrada.add(new BigDecimal(valorTemp));
-								
+
 								// faz somatoria da qtde de faturas pagas
 								if (descricaoOriginal.contains("Liberação: Invoice")) {
 									this.qtdeFaturasPagas = this.qtdeFaturasPagas + 1;
 								}
 							} 
-	
+
 							// se crédito, troca o label e soma o valor total debitado (entre taxa / transf e saque)
 							if (faturaIUGU.getTipoTransacao().equals("debit")) {
 								faturaIUGU.setTipoTransacao("Débito");
-								
+
 								if (descricaoOriginal.contains("Tarifas - Liberação")) {
 									this.totalTaxas = this.totalTaxas.add(new BigDecimal(valorTemp));
 								} else {
 									this.totalSaida = this.totalSaida.add(new BigDecimal(valorTemp));
 								}												
 							}
-							
+
 							//trata os totais por subcontas
 							if (faturaIUGU.getTotalMovimentacoes() == null) {
 								faturaIUGU.setTotalMovimentacoes(BigDecimal.ZERO);
 							}
-							
+
 							if (faturaIUGU.getTotalSaldo() == null) {
 								faturaIUGU.setTotalSaldo(BigDecimal.ZERO);
 							}
-							
+
 							if (faturaIUGU.getTipoTransacao().equals("credit")) {
 								faturaIUGU.setTotalMovimentacoes(faturaIUGU.getTotalMovimentacoes().subtract(new BigDecimal(valorTemp)));
 								faturaIUGU.setTotalSaldo(faturaIUGU.getTotalSaldo().subtract(new BigDecimal(saldoTemp)));
@@ -1584,131 +1911,131 @@ public class IuguMB {
 								faturaIUGU.setTotalMovimentacoes(faturaIUGU.getTotalMovimentacoes().add(new BigDecimal(valorTemp)));
 								faturaIUGU.setTotalSaldo(faturaIUGU.getTotalSaldo().add(new BigDecimal(saldoTemp)));
 							}
-							
+
 							faturaIUGU.setNomeContaIUGU(contaIUGU.getNome());
-	
+
 							/**
 							 * tratamento da descrição
 							 */
-	
+
 							// faturaIUGU.setDescricaoTransacao(obj.getString("description"));
-	
+
 							String descricaoModificada = null;
 							String idConta = null;
 							String idConta2 = null;
 							PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 							PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 							PagadorRecebedor pagadorRecebedor2 = new PagadorRecebedor();
-	
+
 							if (descricaoOriginal.contains("Liberação: Invoice") && !descricaoOriginal.contains("Tarifa")) {
 								idConta = descricaoOriginal.substring(descricaoOriginal.indexOf("#") + 1,
 										descricaoOriginal.length());
-	
+
 								descricaoModificada = "Liberação: Fatura ID " + idConta;
 							}
-	
+
 							if (descricaoOriginal.contains("Transferencia de Conta") && !descricaoOriginal.contains("Tarifa")) {
 								int index1 = descricaoOriginal.indexOf("#");
-	
+
 								descricaoModificada = null;
-	
+
 								idConta = descricaoOriginal.substring(index1 + 1, 59);
-	
+
 								idConta = idConta.replace("-", "").toUpperCase();
-	
+
 								pagadorRecebedor = pagadorRecebedorDao.getRecebedorByAccountIdIugu(idConta);
-	
+
 								if (pagadorRecebedor.getNome() != null) {
 									descricaoModificada = "Transferencia da SubConta " + pagadorRecebedor.getNome();
 								} else {
-									if (idConta.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-										descricaoModificada =  "Transferencia da SubConta GAMA Mestre";
+									if (idConta.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+										descricaoModificada =  "Transferencia da SubConta GALLERIA Mestre";
 									} else {
 										descricaoModificada = "Transferencia da SubConta " + idConta;
 									}
 								}
-	
+
 								idConta2 = descricaoOriginal.substring(descricaoOriginal.indexOf("#", 60) + 1,
 										descricaoOriginal.length());
-	
+
 								idConta2 = idConta2.replace("-", "").toUpperCase();
-	
+
 								pagadorRecebedor2 = pagadorRecebedorDao.getRecebedorByAccountIdIugu(idConta2);
-	
+
 								if (pagadorRecebedor2.getNome() != null) {
 									descricaoModificada = descricaoModificada + " para a SubConta " + pagadorRecebedor2.getNome();
 								} else {
-									if (idConta2.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-										descricaoModificada = descricaoModificada + " para a SubConta GAMA Mestre";
+									if (idConta2.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+										descricaoModificada = descricaoModificada + " para a SubConta GALLERIA Mestre";
 									} else {
 										descricaoModificada = descricaoModificada + " para a SubConta " + idConta2;
 									}
 								}
 							}
-	
+
 							if (descricaoOriginal.contains("Tarifas - Transferencia de Conta")) {
 								int index1 = descricaoOriginal.indexOf("#");
-	
+
 								descricaoModificada = null;
-	
+
 								idConta = descricaoOriginal.substring(index1 + 1, 69);
-	
+
 								idConta = idConta.replace("-", "").toUpperCase();
-	
+
 								pagadorRecebedor = pagadorRecebedorDao.getRecebedorByAccountIdIugu(idConta);
-	
+
 								if (pagadorRecebedor.getNome() != null) {
 									descricaoModificada = "Transferencia da SubConta " + pagadorRecebedor.getNome();
 								} else {
-									if (idConta.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-										descricaoModificada =  "Transferencia da SubConta GAMA Mestre";
+									if (idConta.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+										descricaoModificada =  "Transferencia da SubConta GALLERIA Mestre";
 									} else {
 										descricaoModificada = "Transferencia da SubConta " + idConta;
 									}
 								}
-	
+
 								idConta2 = descricaoOriginal.substring(descricaoOriginal.indexOf("#", 69) + 1,
 										descricaoOriginal.length());
-	
+
 								idConta2 = idConta2.replace("-", "").toUpperCase();
-	
+
 								pagadorRecebedor2 = pagadorRecebedorDao.getRecebedorByAccountIdIugu(idConta2);
-	
+
 								if (pagadorRecebedor2.getNome() != null) {
 									descricaoModificada = descricaoModificada + " para a SubConta " + pagadorRecebedor2.getNome();
 								} else {
-									if (idConta2.equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
-										descricaoModificada = descricaoModificada + " para a SubConta GAMA Mestre";
+									if (idConta2.equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
+										descricaoModificada = descricaoModificada + " para a SubConta GALLERIA Mestre";
 									} else {
 										descricaoModificada = descricaoModificada + " para a SubConta " + idConta2;
 									}
 								}
 							}
-	
+
 							if (descricaoOriginal.contains("Tarifas - Liberação: Invoice")) {
 								idConta = descricaoOriginal.substring(descricaoOriginal.indexOf("#") + 1,
 										descricaoOriginal.length());
-	
+
 								descricaoModificada = "Tarifas - Liberação: Fatura ID " + idConta;
 							}
-	
+
 							if (descricaoModificada == null) {
 								descricaoModificada = descricaoOriginal;
 							}
-	
+
 							faturaIUGU.setDescricaoTransacao(descricaoModificada);
-							
+
 							// busca a observação referente a transferência bancária.
 							if (descricaoOriginal.contains("Pedido de saque")) {
 								TransferenciasObservacoesIUGUDao transferenciasObservacoesIUGUDao = new TransferenciasObservacoesIUGUDao();
 								List<TransferenciasObservacoesIUGU> transferenciasObservacoesIUGU = new ArrayList<TransferenciasObservacoesIUGU>();
 								transferenciasObservacoesIUGU = transferenciasObservacoesIUGUDao.findByFilter("idTransferencia", obj.getString("reference"));
-	
+
 								if (transferenciasObservacoesIUGU.size() > 0) {
 									faturaIUGU.setObservacaoSaque(transferenciasObservacoesIUGU.get(0).getObservacao());
 								}	
 							}
-	
+
 							this.faturasIUGU.add(faturaIUGU);
 						}
 					}				
@@ -1724,71 +2051,71 @@ public class IuguMB {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// processa somatório dos saldos das subcontas IUGU
 		//processaConciliacaoSaldoSubcontas();
-		
+
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consulta Extrato Financeiro SubConta IUGU: Consulta efetuada com sucesso!", ""));
 	}
-	
+
 	/**
 	 * CHAMADO PELO MÉTODO consultarConciliacaoExtratoFinanceiroSubConta
 	 * PARA CONSOLIDAR TODOS OS SALDOS DAS SUBCONTAS DO SISTEMA
 	 */
 	public void processaConciliacaoSaldoSubcontas() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		
+
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
 		List<PagadorRecebedor> subcontas = new ArrayList<PagadorRecebedor>();
 		subcontas = prDao.getSubContasIugu();
 		this.saldosIUGU = new ArrayList<SaldoIUGU>();
 		SaldoIUGU saldoIUGU = new SaldoIUGU();
-		
+
 		this.totalSaldoSubcontas = BigDecimal.ZERO;
-		
+
 		// SOMA COM O SALDO DA SUBCONTA MESTRE
 		PagadorRecebedor pMestre = new PagadorRecebedor();
-		pMestre.setNome("__GAMA - CONTA MESTRE");
-		pMestre.setIuguAccountId("9A2AFFAB4A234E15AADC310D605BBCF8");
-		pMestre.setIuguLiveApiToken("f91a45da0fc74b8140c96abfd337f8bc");
-		
+		pMestre.setNome("GALLERIA - CONTA MESTRE");
+		pMestre.setIuguAccountId("7D4D20A4F1184FEB91126DFEAD86AED8");
+		pMestre.setIuguLiveApiToken("bd88479c57011124c25638b26572e453");
+
 		saldoIUGU = new SaldoIUGU();
 		BigDecimal saldo = BigDecimal.ZERO;
-		
+
 		saldo = consultarSaldoSubConta(pMestre);
-		
+
 		saldoIUGU.setSubConta(pMestre);
 		saldoIUGU.setTotalSaldo(saldo);
-		
+
 		this.totalSaldoSubcontas = this.totalSaldoSubcontas.add(saldo);
-		
+
 		this.saldosIUGU.add(saldoIUGU);
-		
+
 		// SOMA DEMAIS CONTAS
 		if (subcontas.size() > 0) {
 			for (PagadorRecebedor subconta : subcontas) {
 				saldoIUGU = new SaldoIUGU();
 				saldo = BigDecimal.ZERO;
-				
+
 				saldo = consultarSaldoSubConta(subconta);
-				
+
 				saldoIUGU.setSubConta(subconta);
 				saldoIUGU.setTotalSaldo(saldo);
-				
+
 				if (saldo.compareTo(BigDecimal.ZERO) != 0) {					
 					this.saldosIUGU.add(saldoIUGU);	
 				}
 			}
-			
+
 			// Soma Todos os saldos
 			for (SaldoIUGU su : this.saldosIUGU) {
-				if (!su.getSubConta().getIuguAccountId().equals("9A2AFFAB4A234E15AADC310D605BBCF8")) {
+				if (!su.getSubConta().getIuguAccountId().equals("7D4D20A4F1184FEB91126DFEAD86AED8")) {
 					this.totalSaldoSubcontas = this.totalSaldoSubcontas.add(su.getTotalSaldo());
 				}
 			}						
 		}	
-		
+
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consulta Extrato Financeiro SubConta IUGU: Consulta efetuada com sucesso!", ""));
 	}
@@ -1893,12 +2220,12 @@ public class IuguMB {
 
 			if (this.nomeSubConta != null) {
 				if (!this.nomeSubConta.equals("")) {
-					myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&query=" + this.nomeSubConta + "&api_token=f91a45da0fc74b8140c96abfd337f8bc");
+					myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&query=" + this.nomeSubConta + "&api_token=bd88479c57011124c25638b26572e453");
 				} else {
-					myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&api_token=f91a45da0fc74b8140c96abfd337f8bc");
+					myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&api_token=bd88479c57011124c25638b26572e453");
 				}				
 			} else {
-				myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&api_token=f91a45da0fc74b8140c96abfd337f8bc"); 
+				myURL = new URL("https://api.iugu.com/v1/marketplace?limit=1000&api_token=bd88479c57011124c25638b26572e453"); 
 			}
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
@@ -1978,6 +2305,7 @@ public class IuguMB {
 		if (getPerfilLogadoIsIuguPosto()) {
 			// get somente PagadorRecebedor com subcontas		
 			// CAPTIVA - ID 645 - SubConta 2EB210ACA7254C63822213E945FFC4FB
+			// CAPTIVA 2 - ID 1366 - SubConta B61A4F1AA6984D67894C403A4E7A37E0			
 			// DIORAMA - ID 157 - SubConta 721C7FBDCF6B4FDA841C20AFD3A32BB6
 
 			PagadorRecebedor prTemp = new PagadorRecebedor();
@@ -1985,6 +2313,11 @@ public class IuguMB {
 
 			// CAPTIVA
 			prTemp = pagadorRecebedorDao.findById((long) 645);			
+			this.listRecebedores.add(prTemp);
+
+			// CAPTIVA 2
+			prTemp = new PagadorRecebedor();
+			prTemp = pagadorRecebedorDao.findById((long) 1366);			
 			this.listRecebedores.add(prTemp);
 
 			// DIORAMA
@@ -2004,13 +2337,13 @@ public class IuguMB {
 	/**
 	 * CONSULTA FATURAS SUBCONTAS
 	 */
-	public void consultarFaturasContaMestreGama() {
+	public void consultarFaturasContaMestreGalleria() {
 		try {			
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=bd88479c57011124c25638b26572e453");
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 			myURLConnection.setUseCaches(false);
@@ -2175,6 +2508,93 @@ public class IuguMB {
 		}
 	}	
 
+	/**
+	 * CONSULTA FATURAS SUBCONTAS
+	 */
+	public void consultarFaturasSubContaFaturaSimplesParam(String liveToken) {
+		try {			
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + liveToken);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				erro = getErroIugu(myURLConnection.getErrorStream());
+
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Consultar Faturas SubConta IUGU: Erro ao consultar faturas SubConta! (Erro: " + erro + ")!", ""));
+
+			} else {				
+				this.faturasIUGU = new ArrayList<FaturaIUGU>();
+
+				myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
+
+				JSONArray faturas = myResponse.getJSONArray("items");
+
+				for (int i = 0; i < faturas.length(); i++) {
+					FaturaIUGU faturaIUGU = new FaturaIUGU();
+
+					JSONObject obj = faturas.getJSONObject(i);
+
+					String dueDateOriginal = obj.getString("due_date").substring(8, 10) + "/" + obj.getString("due_date").substring(5, 7) + "/" + obj.getString("due_date").substring(0, 4);
+					DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					Date dueDate = new java.sql.Date( ((java.util.Date)formatter.parse(dueDateOriginal)).getTime() );
+
+					faturaIUGU.setId(obj.getString("id"));
+					faturaIUGU.setDue_date(dueDate);
+					faturaIUGU.setSecure_url(obj.getString("secure_url"));
+					faturaIUGU.setTotal(obj.getString("total"));
+					faturaIUGU.setStatus(obj.getString("status"));    
+
+					JSONArray variables = obj.getJSONArray("variables");
+
+					for (int j = 0; j < variables.length(); j++) {
+						JSONObject objVariables = variables.getJSONObject(j);
+
+						if (objVariables.getString("variable").equals("payer.email")) {
+							faturaIUGU.setEmail(objVariables.getString("value"));
+						}
+
+						if (objVariables.getString("variable").equals("payer.name")) {
+							faturaIUGU.setSacado(objVariables.getString("value"));
+						}
+					}	
+
+					this.faturasIUGU.add(faturaIUGU);
+				}				
+
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
+
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
+
 
 
 	/**
@@ -2201,36 +2621,12 @@ public class IuguMB {
 	public void geraRelatorioFaturaConsolidadasPeriodo() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.faturasIUGU = new ArrayList<FaturaIUGU>();
+					
+		String login = getUsuarioLogado();
 
-		if (getPerfilLogadoIsIuguPosto()) {
-			// se o perfil do usuario é Iugu Posto, verá somente as fatturas das subcontas
-			// CAPTIVA - ID 645 - SubConta 2EB210ACA7254C63822213E945FFC4FB
-			// DIORAMA - ID 157 - SubConta 721C7FBDCF6B4FDA841C20AFD3A32BB6
-
-			PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-			PagadorRecebedor prTemp = new PagadorRecebedor();
-
-			// CAPTIVA
-			prTemp = prDao.findById((long) 645);			
-			consultarFaturasSubContaByToken(prTemp.getIuguLiveApiToken(), prTemp.getNome());
-
-			// DIORAMA
-			prTemp = prDao.findById((long) 157);			
-			consultarFaturasSubContaByToken(prTemp.getIuguLiveApiToken(), prTemp.getNome());			
-		} else {						
-			String login = getUsuarioLogado();
-
-			for (PagadorRecebedor pr : this.listRecebedores) {
-				// para o usuario thaina estamos ocultando as faturas captiva, diorama e galache
-				if (login.equals("thaina")) {
-					if (pr.getId() != 645 && pr.getId() != 157 && pr.getId() != 775) {
-						consultarFaturasSubContaByToken(pr.getIuguLiveApiToken(), pr.getNome());
-					}
-				} else {
-					consultarFaturasSubContaByToken(pr.getIuguLiveApiToken(), pr.getNome());
-				}				
-			}	
-		}
+		for (PagadorRecebedor pr : this.listRecebedores) {
+			consultarFaturasSubContaByToken(pr.getIuguLiveApiToken(), pr.getNome());			
+		}	
 
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
@@ -2244,11 +2640,11 @@ public class IuguMB {
 		this.paramDia = null;
 		this.paramMes = null;
 		this.paramAno = null;
-		
+
 		clearContadoresConciliacao();
-		
+
 		populaDataPesquisa();
-		
+
 		this.relDataContratoInicio = null;
 		this.relDataContratoFim = null;
 		this.relPorSubconta = false;
@@ -2258,13 +2654,13 @@ public class IuguMB {
 		this.saquesIUGU = new ArrayList<SaqueIUGU>();
 		this.saldosIUGU = new ArrayList<SaldoIUGU>();
 		this.totalSaldoSubcontas = BigDecimal.ZERO;
-		
+
 		this.relByStatus = "Todas";
 		clearRecebedor();
 
 		return "/Atendimento/Cobranca/ConciliacaoSaques.xhtml";
 	}	
-	
+
 	/**
 	 * CHAMADO PELA TELA DE CONCILIAÇÃO DE SAQUES
 	 * @return
@@ -2279,13 +2675,13 @@ public class IuguMB {
 			dia = "0" + dia;
 		}	
 		this.paramDia = dia;
-		
+
 		String mes = String.valueOf(dataHoje.get(Calendar.MONTH) + 1);
 		if (mes.length() == 1) {
 			mes = "0" + mes;
 		}
 		this.paramMes = mes;
-		
+
 		String ano = String.valueOf(dataHoje.get(Calendar.YEAR));
 		this.paramAno = ano;
 	}
@@ -2711,7 +3107,7 @@ public class IuguMB {
 
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://api.iugu.com/v1/invoice_conciliations?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL("https://api.iugu.com/v1/invoice_conciliations?api_token=bd88479c57011124c25638b26572e453");
 
 			String params = null;
 
@@ -2853,7 +3249,7 @@ public class IuguMB {
 	 */
 	public void cancelarFaturaIUGU(String idFatura, String iuguLiveApiToken) {
 		/***
-		 * Solicita saque para todos diferentes de GAMA
+		 * Solicita saque para todos diferentes de GALLERIA
 		 */
 		try {			
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -2907,8 +3303,13 @@ public class IuguMB {
 	 */
 	public void cancelarFaturaIUGUFaturaSimples(String idFatura, String iuguLiveApiToken) {
 		/***
-		 * Solicita saque para todos diferentes de GAMA
+		 * Solicita saque para todos diferentes de GALLERIA
 		 */
+
+		if (iuguLiveApiToken.equals("")) {
+			iuguLiveApiToken = "bd88479c57011124c25638b26572e453";
+		} 
+
 		try {			
 			FacesContext context = FacesContext.getCurrentInstance();
 			System.out.println("IUGU (1 - cancelaFaturaIUGU) - Cancela Fatura IUGU INICIO: Fatura " + idFatura + " / LiveToken " + iuguLiveApiToken );
@@ -2986,7 +3387,7 @@ public class IuguMB {
 
 			boolean valid = true;
 
-			URL myURL = new URL("https://api.iugu.com/v1/transfers?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL("https://api.iugu.com/v1/transfers?api_token=bd88479c57011124c25638b26572e453");
 
 			if (!this.contaMestre) {
 				if (this.selectedRecebedor.getId() <= 0) {
@@ -2998,7 +3399,7 @@ public class IuguMB {
 					myURL = new URL("https://api.iugu.com/v1/transfers?api_token=" + this.selectedRecebedor.getIuguLiveApiToken());
 				}				
 			} else {
-				myURL = new URL("https://api.iugu.com/v1/transfers?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				myURL = new URL("https://api.iugu.com/v1/transfers?api_token=bd88479c57011124c25638b26572e453");
 			}	
 
 			if (valid) {
@@ -3120,6 +3521,60 @@ public class IuguMB {
 	 * Método para fazer download de todos os arquivos do diretório do contrato
 	 * @return
 	 */
+	public StreamedContent getDownloadAllFaturas() {
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao(); 
+			String pathContrato = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
+
+			// cria objetos para ZIP
+			ZipOutputStream zip = null;
+			FileOutputStream fileWriter = null;
+
+			// cria arquivo ZIP
+			String nomeArquivo = "";
+			if (this.faturasDownloadIUGU.size() > 0) { 
+				nomeArquivo = "Boletos_" + this.faturasDownloadIUGU.get(0).getSacado() + ".zip";
+			} else {
+				nomeArquivo = "Boletos" + ".zip";	
+			}
+
+			fileWriter = new FileOutputStream(pathContrato + nomeArquivo);	
+
+			zip = new ZipOutputStream(fileWriter);
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			int contador = 0;
+
+			for (FaturaIUGU faturas : this.faturasDownloadIUGU) {				
+				contador = contador + 1 ;
+				URL url = new URL(faturas.getSecure_url());
+				File file = new File(pathContrato + faturas.getSacado() + "Boleto " + contador + ".pdf");
+
+				FileUtils.copyURLToFile(url, file);
+
+				addFileToZip("", file.getAbsolutePath(), zip);
+			} 
+
+			// Fecha o ZIP
+			zip.flush();
+			zip.close();
+
+			// Recupera ZIP gerado para fazer download
+			FileInputStream stream = new FileInputStream(pathContrato + nomeArquivo);
+			downloadAllFaturas = new DefaultStreamedContent(stream, pathContrato, nomeArquivo);
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return this.downloadAllFaturas;
+	}
+
+	/**
+	 * Método para fazer download de todos os arquivos do diretório do contrato
+	 * @return
+	 */
 	public StreamedContent getDownloadAllFiles() {
 		try {
 			// recupera path do contrato
@@ -3230,7 +3685,7 @@ public class IuguMB {
 
 			boolean valid = true;
 
-			URL myURL = new URL("https://api.iugu.com/v1/withdraw_requests?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+			URL myURL = new URL("https://api.iugu.com/v1/withdraw_requests?api_token=bd88479c57011124c25638b26572e453");
 
 			if (!this.contaMestre) {
 				if (this.selectedRecebedor.getId() <= 0) {
@@ -3242,7 +3697,7 @@ public class IuguMB {
 					myURL = new URL("https://api.iugu.com/v1/withdraw_requests?api_token=" + this.selectedRecebedor.getIuguLiveApiToken());
 				}				
 			} else {
-				myURL = new URL("https://api.iugu.com/v1/withdraw_requests?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				myURL = new URL("https://api.iugu.com/v1/withdraw_requests?api_token=bd88479c57011124c25638b26572e453");
 			}	
 
 			if (valid) {
@@ -3806,7 +4261,7 @@ public class IuguMB {
 	 */
 	public void solicitaSaqueIugu(String idSubcontaIugu, String amountCents, String iuguLiveApiToken, String observacao) {
 		/***
-		 * Solicita saque para todos diferentes de GAMA
+		 * Solicita saque para todos diferentes de GALLERIA
 		 */
 		if (!idSubcontaIugu.equals("275B315A7C464B168A71C29B09FEB081")) {
 			try {			
@@ -3911,7 +4366,7 @@ public class IuguMB {
 				} 	
 
 				if (!this.contaMestreAux) {
-					if (this.selectedRecebedor == null) {
+					if (this.selectedRecebedorAux == null) {
 						context.addMessage(null, new FacesMessage(
 								FacesMessage.SEVERITY_ERROR, "IUGU - Transferência entre SubContas: para efetuar a transferência é obrigatória a seleção da SubConta Destino!", ""));
 
@@ -3928,7 +4383,7 @@ public class IuguMB {
 
 				if (this.contaMestre && this.contaMestreAux) {
 					context.addMessage(null, new FacesMessage(
-							FacesMessage.SEVERITY_ERROR, "IUGU - Transferência entre SubContas: a conta Origem e Destino não podem ser Gama Cobranças!", ""));
+							FacesMessage.SEVERITY_ERROR, "IUGU - Transferência entre SubContas: a conta Origem e Destino não podem ser Galleria Finanças!", ""));
 
 					valid = false;
 				}
@@ -3937,14 +4392,14 @@ public class IuguMB {
 					if (!this.contaMestre) {
 						if (this.contaMestreAux) {
 							//efetua transferencia da conta selecionada para outra a conta mestre
-							efetuaTransferenciaIugu("9A2AFFAB4A234E15AADC310D605BBCF8", this.valorItem.toString().replace(".", "").replace(",", ""), "transf_siscoat", "transf_siscoat", this.selectedRecebedor.getIuguLiveApiToken());
+							efetuaTransferenciaIugu("7D4D20A4F1184FEB91126DFEAD86AED8", this.valorItem.toString().replace(".", "").replace(",", ""), "transf_siscoat", "transf_siscoat", this.selectedRecebedor.getIuguLiveApiToken());
 						} else {
 							// efetua transferencia da conta selecionada para outra conta selecionada
 							efetuaTransferenciaIugu(this.selectedRecebedorAux.getIuguAccountId(), this.valorItem.toString().replace(".", "").replace(",", ""), "transf_siscoat", "transf_siscoat", this.selectedRecebedor.getIuguLiveApiToken());
 						}
 					} else {
 						// efetua transferencia da conta mestre para a conta destino
-						efetuaTransferenciaIugu(this.selectedRecebedorAux.getIuguAccountId(), this.valorItem.toString().replace(".", "").replace(",", ""), "transf_siscoat", "transf_siscoat", "f91a45da0fc74b8140c96abfd337f8bc");
+						efetuaTransferenciaIugu(this.selectedRecebedorAux.getIuguAccountId(), this.valorItem.toString().replace(".", "").replace(",", ""), "transf_siscoat", "transf_siscoat", "bd88479c57011124c25638b26572e453");
 					}
 
 					context.addMessage(null, new FacesMessage(
@@ -4016,11 +4471,11 @@ public class IuguMB {
 				favorecido = this.selectedRecebedor.getNome();
 
 			} else {				
-				favorecido = "Gama Cobranças";				
+				favorecido = "Galleria Finanças";				
 			}	
 
 			//todo
-			favorecido = "Gama Cobranças";	
+			favorecido = "Galleria Finanças";	
 
 			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
 			this.nomePDF = "Recibo - " + favorecido + ".pdf";
@@ -4042,7 +4497,7 @@ public class IuguMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
 			table.setWidthPercentage(50.0f); 
 
-			Image img = Image.getInstance("http://www.webnowbr.com.br/LogoIUGU/iugu.jpg");
+			Image img = Image.getInstance("http://174.142.99.141/~webnowbr/LogoIUGU/iugu.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -4225,7 +4680,7 @@ public class IuguMB {
 				table.addCell(cell1);
 
 			} else {				
-				cell1 = new PdfPCell(new Phrase("Titular: Gama Cobranças", titulo));
+				cell1 = new PdfPCell(new Phrase("Titular: Galleria Finanças", titulo));
 				cell1.setBorder(0);
 				cell1.setBorderWidthLeft(1);
 				cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -4326,8 +4781,8 @@ public class IuguMB {
 						solicitaSaqueIugu(this.selectedRecebedor.getIuguAccountId(),  this.valorItem.toString(), 
 								this.selectedRecebedor.getIuguLiveApiToken(), this.observacao);
 					} else {
-						solicitaSaqueIugu("9A2AFFAB4A234E15AADC310D605BBCF8",  this.valorItem.toString(), 
-								"f91a45da0fc74b8140c96abfd337f8bc", this.observacao);
+						solicitaSaqueIugu("7D4D20A4F1184FEB91126DFEAD86AED8",  this.valorItem.toString(), 
+								"bd88479c57011124c25638b26572e453", this.observacao);
 					}
 
 					gravaSaqueObservacaoParcelaAutomatica(this.selectedRecebedor.getIuguLiveApiToken(), this.parcelaObservacao);
@@ -4414,11 +4869,8 @@ public class IuguMB {
 
 
 		if (this.splitBoletoIugu) {
-			retorno = validaSubcontaRecebedorIugu(contrato);
 
-			/**
-			 * CHAMADA DA GERAÇÃO DE FATURA
-			 */
+			retorno = validaSubcontaRecebedorIugu(contrato);
 
 			if (retorno.equals("")) {
 				geraCobrancaSimples(cedenteObj.getIuguLiveApiToken(), cedenteObj.getId());
@@ -4427,7 +4879,7 @@ public class IuguMB {
 			/**
 			 * CHAMADA DA GERAÇÃO DE FATURA
 			 */
-			geraCobrancaSimples("f91a45da0fc74b8140c96abfd337f8bc", 0);
+			geraCobrancaSimples("760bffed8d4907e7a3fe0f32f260a4ec", 14);
 		}
 
 
@@ -4495,9 +4947,16 @@ public class IuguMB {
 		} else {
 			bairro = "Bairro";
 		}
+		
+		String endereco = ""; 
+		if (this.selectedRecebedor.getNumero() != null) {
+			if (!this.selectedRecebedor.getNumero().equals("")) {
+				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
+			}
+		}
 
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
-		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + this.selectedRecebedor.getEndereco() 
+		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
 		+ "\",\"number\":\"" + 000 + "\"}}";
 
@@ -4654,7 +5113,7 @@ public class IuguMB {
 
 		if (dadosValidos) {
 			try {							
-				URL myURL = new URL("https://api.iugu.com/v1/marketplace/create_account?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				URL myURL = new URL("https://api.iugu.com/v1/marketplace/create_account?api_token=bd88479c57011124c25638b26572e453");
 
 				JSONObject jsonObj = new JSONObject(dados);
 				byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -4670,7 +5129,7 @@ public class IuguMB {
 				Thread.sleep(500);
 				if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 					context.addMessage(null, new FacesMessage(
-							FacesMessage.SEVERITY_ERROR, "SubConta IUGU: Erro na criação da SubConta ! HTTP error code : "+ + myURLConnection.getResponseCode() + ": " + getErroIugu(myURLConnection.getErrorStream()), ""));
+							FacesMessage.SEVERITY_ERROR, "SubConta IUGU: Erro na criação da SubConta ! HTTP error code : " + myURLConnection.getResponseCode() + ": " + getErroSimplesIugu(myURLConnection.getErrorStream()), ""));
 
 					retorno = getErroIugu(myURLConnection.getErrorStream());
 					//throw new RuntimeException("HTTP error code : "+ myURLConnection.getResponseCode());		
@@ -4759,10 +5218,10 @@ public class IuguMB {
 
 	public String clearAlteraTaxaJurosSubContas() {
 		this.taxaJuros = 5;
-		
+
 		return "/Cadastros/Cobranca/AlteraTaxaJurosSubContasIugu.xhtml";				
 	}
-	
+
 	public void alteraTaxaJurosSubContas() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -4970,23 +5429,31 @@ public class IuguMB {
 		if (recebedor.getBanco().contains("BRB")) {
 			banco = "BRB";
 		}
-		
+
 		if (recebedor.getBanco().contains("077")) {
 			banco = "Inter";
 		}
-		
+
 		if (recebedor.getBanco().contains("756")) {
 			banco = "Sicoob";
 		}
 
 		/** TODO verificar como fica a questão do Nome e do CPF do responsável */
+		
+		String endereco = ""; 
+		if (recebedor.getNumero() != null) {
+			if (!recebedor.getNumero().equals("")) {
+				endereco = recebedor.getEndereco() + ", " + recebedor.getNumero();
+			}
+		}
+		
 		json = "{\"data\":"
 				+ "{\"price_range\":\"1000000\", "
 				+ " \"physical_products\":\"false\", "
 				+ " \"business_type\":\"SERVIÇO DE COBRANÇA\", "
 				+ " \"person_type\":\"" + person_type + "\", "
 				+ " \"automatic_transfer\":\"false\", "
-				+ " \"address\":\"" + recebedor.getEndereco() + "\", "
+				+ " \"address\":\"" + endereco + "\", "
 				+ " \"cep\":\"" + recebedor.getCep().replace(".", "").replace("-", "") + "\", "
 				+ " \"city\":\"" + recebedor.getCidade() + "\", "
 				+ " \"state\":\"" + recebedor.getEstado() + "\", "
@@ -5117,14 +5584,14 @@ public class IuguMB {
 				processaSubContaIugu(this.selectedRecebedor);
 				consultarSubContasIUGU();
 			}
-			
+
 			// Configura conta com 5% de juros no atraso
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			PagadorRecebedor pTemp = pDao.findById(this.selectedRecebedor.getId());
 			configuraSubConta(pTemp.getIuguLiveApiToken(), 5);
-			
+
 			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "SubConta IUGU: Criação da sub-conta e verificação solicitada com sucesso! (SubConta: " + pTemp.getNome() + " / Id SubConta: " + pTemp.getIuguAccountId() + ")", ""));
+					FacesMessage.SEVERITY_INFO, "SubConta IUGU: Criação da sub-conta e verificação solicitada com sucesso! (SubConta: " + pTemp.getNome() + " / Id SubConta: " + pTemp.getIuguAccountId() + ")", ""));
 		}			
 	}
 
@@ -5315,6 +5782,49 @@ public class IuguMB {
 
 	/***
 	 * 
+	 * PARSE DO ERRO PROCESSAMENTO SIMPLES RETORNADO PELO IUGU
+	 * 
+	 * @param inputStream
+	 * @return
+	 */
+	public String getErroSimplesIugu(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+			String erros = "";
+
+			erros = myResponse.getString("errors");
+
+			return erros;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+
+	/***
+	 * 
 	 * PARSE DO ERRO RETORNADO PELO IUGU
 	 * 
 	 * @param inputStream
@@ -5355,6 +5865,8 @@ public class IuguMB {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -5431,7 +5943,7 @@ public class IuguMB {
 
 		if (dadosValidos) {
 			try {							
-				URL myURL = new URL("https://api.iugu.com/v1/customers?api_token=f91a45da0fc74b8140c96abfd337f8bc");
+				URL myURL = new URL("https://api.iugu.com/v1/customers?api_token=bd88479c57011124c25638b26572e453");
 
 				JSONObject jsonObj = new JSONObject(dados);
 				byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -5502,7 +6014,7 @@ public class IuguMB {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		contratoCobrancaDetalhesDao.merge(this.contratoCobrancaDetalhes);	
 	}
-	
+
 	public final void addObservacaoDetalhesAutomatica(String observacaoComposta) {
 		ContratoCobrancaDetalhesObservacoes contratoCobrancaDetalhesObservacoes = new ContratoCobrancaDetalhesObservacoes();
 		contratoCobrancaDetalhesObservacoes.setData(this.dataObservacao);
@@ -5563,7 +6075,7 @@ public class IuguMB {
 			}				
 		}	
 	}
-	
+
 	/****
 	 * FUNÇÃO QUE GRAVA OS DETALHES DO SAQUE NA OBSERVAÇÃO DA PARCELA
 	 */
@@ -6491,5 +7003,21 @@ public class IuguMB {
 
 	public void setTotalMovimentacoesStr(String totalMovimentacoesStr) {
 		this.totalMovimentacoesStr = totalMovimentacoesStr;
+	}
+
+	public String getQtdeParcelas() {
+		return qtdeParcelas;
+	}
+
+	public void setQtdeParcelas(String qtdeParcelas) {
+		this.qtdeParcelas = qtdeParcelas;
+	}
+
+	public List<FaturaIUGU> getFaturasDownloadIUGU() {
+		return faturasDownloadIUGU;
+	}
+
+	public void setFaturasDownloadIUGU(List<FaturaIUGU> faturasDownloadIUGU) {
+		this.faturasDownloadIUGU = faturasDownloadIUGU;
 	}
 }

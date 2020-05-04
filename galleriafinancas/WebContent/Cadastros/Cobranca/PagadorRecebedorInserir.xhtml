@@ -151,11 +151,27 @@
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelular}"
 						styleClass="phone" label="Telefone Celular" />
 
+					<p:outputLabel for="Cep" value="Cep: " />
+					<p:inputMask id="Cep"
+						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cep}"
+						mask="99999-999" label="Cep" >
+						<p:ajax event="blur" update="Endereco Bairro Cidade Estado" listener="#{pagadorRecebedorMB.getEnderecoByViaNet()}" />
+					</p:inputMask>
+					
+					<p:outputLabel value="" />
+					<p:outputLabel value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
+						
 					<p:outputLabel for="Endereco" value="Endereço: " />
 					<p:inputText id="Endereco"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.endereco}"
 						label="Endereço" onblur="value=value.toUpperCase()"
 						style="width:400px;" />
+						
+					<p:outputLabel for="Numero" value="Número: " />
+					<p:inputText id="Numero"
+						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.numero}"
+						label="Número" onblur="value=value.toUpperCase()"
+						style="width:50px;" />
 
 					<p:outputLabel for="Bairro" value="Bairro: " />
 					<p:inputText id="Bairro"
@@ -174,11 +190,6 @@
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidade}"
 						label="Cidade" onblur="value=value.toUpperCase()"
 						style="width:400px;" />
-
-					<p:outputLabel for="Cep" value="Cep: " />
-					<p:inputMask id="Cep"
-						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cep}"
-						mask="99999-999" label="Cep" />
 
 					<p:outputLabel for="Estado" value="Estado: " />
 					<p:selectOneMenu id="Estado"
@@ -1183,7 +1194,7 @@
 					action="#{pagadorRecebedorMB.atualizarIUGU()}"
 					style="TEXT-DECORATION: bold;"
 					rendered="#{pagadorRecebedorMB.updateMode}" />
-				<p:spacer height="10" rendered="#{pagadorRecebedorMB.updateMode}" />
+				<p:spacer height="10" rendered="#{pagadorRecebedorMB.updateMode}" />				
 				<p:commandButton value="Cancelar" ajax="false" immediate="true"
 					icon="ui-icon-cancel" action="PagadorRecebedorConsultar.xhtml"
 					style="TEXT-DECORATION: bold; " />

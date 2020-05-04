@@ -1,0 +1,1911 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="../MenuAtendimento.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<link rel="stylesheet" type="text/css"
+				href="../../resources/css/Style.css" title="" media="all" />
+			<p:panel id="PanelLocador"
+				header="Contrato - #{contratoCobrancaMB.tituloPainel}"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs"/>
+
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
+						styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:outputText id="numeroContrato"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+				</h:panelGrid>
+				
+								<p:panel id="Pessoas" header="Envolvidos"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="3">
+						<p:outputLabel value="Pagador: " styleClass="labelBold" />
+						<h:outputText
+							value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.cpf}#{contratoCobrancaMB.objetoContratoCobranca.pagador.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.pagador.nome}" />
+						<p:commandButton id="pagadorDetails" value="dados" type="button" />
+						<p:outputLabel value="Responsável: " styleClass="labelBold" />
+						<h:outputText
+							value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cpf}#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" />
+						<p:commandButton id="responsavelDetails" value="dados"
+							type="button" />
+						<p:overlayPanel id="pagadorDetailsPanel" for="pagadorDetails"
+							hideEffect="fade" dynamic="true" showCloseIcon="true">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="E-mail: " styleClass="labelBold" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.email}"
+									label="E-Mail" type="email" required="true"
+									onblur="value=value.toUpperCase()" style="width:400px;" />
+								<p:outputLabel value="Celular: " styleClass="labelBold" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telCelular}"
+									styleClass="phone" label="Telefone Celular" />
+								<p:outputLabel value="Contato: " styleClass="labelBold" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
+									label="Contato" onblur="value=value.toUpperCase()"
+									style="width:400px;" />
+							</h:panelGrid>
+							<br></br>
+							<p:commandButton value="Salvar" ajax="false"
+								action="#{contratoCobrancaMB.updatePagadorRecebedorDados}"
+								update="pagadorDetailsPanel" />
+						</p:overlayPanel>
+						<p:overlayPanel id="responsavelDetailsPanel"
+							for="responsavelDetails" hideEffect="fade" dynamic="true"
+							showCloseIcon="true">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="E-mail: " styleClass="labelBold" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.email}"
+									label="E-Mail" type="email" required="true"
+									onblur="value=value.toUpperCase()" style="width:400px;" />
+								<p:outputLabel value="Celular: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telCelular}" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telCelular}"
+									styleClass="phone" label="Telefone Celular" />
+								<p:outputLabel value="Contato: " styleClass="labelBold" />
+								<p:inputText
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
+									label="Contato" onblur="value=value.toUpperCase()"
+									style="width:400px;" />
+								<p:commandButton value="Salvar" ajax="false" icon="ui-icon-plus"
+									action="#{contratoCobrancaMB.updateResponsavelDados}"
+									update="responsavelDetailsPanel" />
+							</h:panelGrid>
+						</p:overlayPanel>
+					</h:panelGrid>
+					
+					<p:accordionPanel multiple="true" style="margin-bottom: 15px;margin-top: 15px;">
+						<p:tab
+							title="Favorecido 1 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.exibeRecebedor1}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 2 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor2.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.id > 0 and contratoCobrancaMB.objetoContratoCobranca.exibeRecebedor2}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas2" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor2}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 3 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor3.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.id > 0 and contratoCobrancaMB.objetoContratoCobranca.exibeRecebedor3}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas3" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor3}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 4 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor4.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas4" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor4}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 5 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor5.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas5" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor5}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 6 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor6.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas6" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor6}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>						
+						</p:tab>
+						<p:tab title="Favorecido 7 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor7.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas7" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor7}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+						</p:tab>
+						<p:tab title="Favorecido 8 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor8.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.id > 0}">>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas8" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor8}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>	
+								</p:dataTable>
+							</h:panelGrid>						
+						</p:tab>
+						<p:tab title="Favorecido 9 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor9.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas9" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor9}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>	
+						</p:tab>
+						<p:tab title="Favorecido 10 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.id > 0}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.banco}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Agência: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.agencia}" />
+								<p:outputLabel value="C/C: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.conta}" />
+								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}" />
+								<p:outputLabel value="CPF: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC != null}" />
+								<p:outputLabel value="CNPJ: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cnpjCC != null}" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cnpjCC}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" style="margin-top: 30px;">
+								<p:dataTable id="dtParcelas10" var="parcelas"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor10}"
+									emptyMessage="" sortBy="#{contratos.numeroParcela}"
+									sortOrder="ascending"
+									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									rowKey="#{parcelas.id}" editable="true">
+			
+									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
+			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<p:column style="text-align: center;" headerText="Número Parcela">
+										<h:outputText value="#{parcelas.numeroParcela}" />
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Data Vencimento Original"
+										sortBy="#{parcelas.dataVencimento}">
+										
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.dataVencimento}">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="dataVencimento"
+														value="#{parcelas.dataVencimento}"
+														style="margin-left: 12px;" required="true"
+														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
+														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor da Parcela (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.parcelaMensal}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="parcelaMensal" style="margin-left: 12px;"
+													value="#{parcelas.parcelaMensal}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="Juros (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.juros}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="juros" style="margin-left: 12px;"
+													value="#{parcelas.juros}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Amortização (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.amortizacao}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="amortizacao" style="margin-left: 12px;"
+													value="#{parcelas.amortizacao}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Saldo Credor (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="saldoCredorAtualizado" style="margin-left: 12px;"
+													value="#{parcelas.saldoCredorAtualizado}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;" headerText="IR Retido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.irRetido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="irRetido" style="margin-left: 12px;"
+													value="#{parcelas.irRetido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+									<p:column style="text-align: center;"
+										headerText="Valor Líquido (R$)">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{parcelas.valorLiquido}"
+													converter="bigDecimalConverter">
+													<f:convertNumber type="currency" currencySymbol="R$" />
+												</h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="valorLiquido" style="margin-left: 12px;"
+													value="#{parcelas.valorLiquido}"
+													onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);" required="true"
+													converter="bigDecimalConverter" />
+											</f:facet>
+										</p:cellEditor>	
+									</p:column>
+		
+									<p:column style="text-align: center;" headerText="Parcela Paga?"
+										styleClass="colunaHiddenRelFinanceiro">
+										<ui:fragment rendered="#{parcelas.baixado}">
+											<h:outputText value="Sim" />
+										</ui:fragment>
+										<ui:fragment rendered="#{!parcelas.baixado}">
+											<h:outputText value="Não" />
+										</ui:fragment>
+									</p:column>
+									
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>	
+						</p:tab>
+					</p:accordionPanel>					
+				</p:panel>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

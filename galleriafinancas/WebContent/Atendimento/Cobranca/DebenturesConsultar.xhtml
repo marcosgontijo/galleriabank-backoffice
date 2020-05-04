@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">			
+			<p:messages id="mensagens" showDetail="true"/>	
+			<p:panel id="PanelPDF" header="Impressão em PDF Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{investidorMB.debenturePDFGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download Debêntures" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.debenturePDFGerado}">  
+							<p:fileDownload value="#{investidorMB.file}"/>
+						</p:commandButton>
+						<p:spacer width="10" />
+						<p:commandButton value="Download Termo Securitização" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.termoSecuritizacaoPDFGerado}">
+							<p:fileDownload value="#{investidorMB.termoSecuritizacaoPDF}" />
+						</p:commandButton>
+						<p:spacer width="10" />
+						<p:commandButton value="Download BS" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.bsPDFGerado}">
+							<p:fileDownload value="#{investidorMB.bsPDF}"/>
+						</p:commandButton>
+						<p:spacer width="10" />
+						<p:commandButton value="Download Anexo I" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.anexo1PDFGerado}">
+							<p:fileDownload value="#{investidorMB.anexoPDF}"/>
+						</p:commandButton>				
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>												
+			<p:panel id="ConsultaDebentures" header="Debêntures - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtDebentures" var="debentures" value="#{investidorMB.listDebenturesInvestidor}" paginator="true" rows="40" 
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+                 reflow="true">
+			        <f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{investidorMB.clearGeraDebenture}">
+							<f:setPropertyActionListener target="#{investidorMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{investidorMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>                                	
+			        <p:column style="text-align: center;width:105px;" headerText="Cautela" filterBy="#{debentures.numeroCautela}" filterMatchMode="contains" sortBy="#{debentures.numeroCautela}">
+			            <h:outputText value="#{debentures.numeroCautela}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Emissão Debênture" sortBy="#{debentures.dataDebentures}">
+			            <h:outputText value="#{debentures.dataDebentures}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Recebedor" filterBy="#{debentures.recebedor.nome}" filterMatchMode="contains" sortBy="#{debentures.recebedor.nome}">
+			            <h:outputText value="#{debentures.recebedor.nome}" />
+			        </p:column>		        
+			        <p:column styleClass="colunaResponsiva">
+			         	<p:commandButton action="#{investidorMB.gerarPDFs}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar PDFs">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                	<f:setPropertyActionListener target="#{investidorMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{investidorMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>			        
+           		        <p:commandButton action="#{investidorMB.clearFieldsEditDebentures}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                	<f:setPropertyActionListener target="#{investidorMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{investidorMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton action="#{investidorMB.clearFieldsDeleteDebentures}" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                	<f:setPropertyActionListener target="#{investidorMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{investidorMB.deleteMode}" value="true" />
+		                </p:commandButton> 
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{investidorMB.clearGeraDebenture}">
+							<f:setPropertyActionListener target="#{investidorMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{investidorMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

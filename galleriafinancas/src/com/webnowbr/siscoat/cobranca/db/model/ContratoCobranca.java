@@ -54,6 +54,7 @@ public class ContratoCobranca implements Serializable {
 	
 	// não persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
+	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
 	
 	private BigDecimal taxaRemuneracaoInvestidor1;
 	private BigDecimal taxaRemuneracaoInvestidor2;
@@ -128,6 +129,18 @@ public class ContratoCobranca implements Serializable {
 	private boolean ocultaRecebedor8;
 	private boolean ocultaRecebedor9;
 	private boolean ocultaRecebedor10;
+	
+	private boolean recebedorEnvelope;
+	private boolean recebedorEnvelope2;
+	private boolean recebedorEnvelope3;
+	private boolean recebedorEnvelope4;
+	private boolean recebedorEnvelope5;
+	private boolean recebedorEnvelope6;
+	private boolean recebedorEnvelope7;
+	private boolean recebedorEnvelope8;
+	private boolean recebedorEnvelope9;
+	private boolean recebedorEnvelope10;
+
 	
 	private Responsavel responsavel;
 	
@@ -2491,4 +2504,93 @@ public class ContratoCobranca implements Serializable {
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
 	}
+
+	public boolean isRecebedorEnvelope() {
+		return recebedorEnvelope;
+	}
+
+	public void setRecebedorEnvelope(boolean recebedorEnvelope) {
+		this.recebedorEnvelope = recebedorEnvelope;
+	}
+
+	public boolean isRecebedorEnvelope2() {
+		return recebedorEnvelope2;
+	}
+
+	public void setRecebedorEnvelope2(boolean recebedorEnvelope2) {
+		this.recebedorEnvelope2 = recebedorEnvelope2;
+	}
+
+	public boolean isRecebedorEnvelope3() {
+		return recebedorEnvelope3;
+	}
+
+	public void setRecebedorEnvelope3(boolean recebedorEnvelope3) {
+		this.recebedorEnvelope3 = recebedorEnvelope3;
+	}
+
+	public boolean isRecebedorEnvelope4() {
+		return recebedorEnvelope4;
+	}
+
+	public void setRecebedorEnvelope4(boolean recebedorEnvelope4) {
+		this.recebedorEnvelope4 = recebedorEnvelope4;
+	}
+
+	public boolean isRecebedorEnvelope5() {
+		return recebedorEnvelope5;
+	}
+
+	public void setRecebedorEnvelope5(boolean recebedorEnvelope5) {
+		this.recebedorEnvelope5 = recebedorEnvelope5;
+	}
+
+	public boolean isRecebedorEnvelope6() {
+		return recebedorEnvelope6;
+	}
+
+	public void setRecebedorEnvelope6(boolean recebedorEnvelope6) {
+		this.recebedorEnvelope6 = recebedorEnvelope6;
+	}
+
+	public boolean isRecebedorEnvelope7() {
+		return recebedorEnvelope7;
+	}
+
+	public void setRecebedorEnvelope7(boolean recebedorEnvelope7) {
+		this.recebedorEnvelope7 = recebedorEnvelope7;
+	}
+
+	public boolean isRecebedorEnvelope8() {
+		return recebedorEnvelope8;
+	}
+
+	public void setRecebedorEnvelope8(boolean recebedorEnvelope8) {
+		this.recebedorEnvelope8 = recebedorEnvelope8;
+	}
+
+	public boolean isRecebedorEnvelope9() {
+		return recebedorEnvelope9;
+	}
+
+	public void setRecebedorEnvelope9(boolean recebedorEnvelope9) {
+		this.recebedorEnvelope9 = recebedorEnvelope9;
+	}
+
+	public boolean isRecebedorEnvelope10() {
+		return recebedorEnvelope10;
+	}
+
+	public void setRecebedorEnvelope10(boolean recebedorEnvelope10) {
+		this.recebedorEnvelope10 = recebedorEnvelope10;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getListContratoCobrancaParcelasInvestidorSelecionadoEnvelope() {
+		return listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+	}
+
+	public void setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+			List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope) {
+		this.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope = listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+	}	
 }

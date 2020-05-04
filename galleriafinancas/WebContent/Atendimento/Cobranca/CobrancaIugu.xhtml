@@ -7,9 +7,9 @@
 	xmlns:p="http://primefaces.org/ui" 
 	template="../MenuAtendimento.xhtml">
 
-	<ui:define name="conteudo">
+	<ui:define name="conteudo">	
 		<h:form id="form" style="margin-bottom:10px;">
-		 	<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/functions.js" />	
 		 	<h:outputScript name="js/locale-primefaces.js" />	
 			<p:messages id="mensagens" showDetail="true" />
 			<p:panel id="CobrancaIugu" header="Gerar Cobrança Iugu"
@@ -33,11 +33,14 @@
 						image="ui-icon ui-icon-circle-zoomin"  />
 				</h:panelGrid>
 				<h:panelGrid columns="2">	
+					<p:outputLabel for="qtdeParcelas" value="Qtde. de Parcelas: "	
+						styleClass="labelBold" />			
+					<p:inputText id="qtdeParcelas" value="#{iuguMB.qtdeParcelas}" label="Quantidade de Parcelas" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
 					<p:outputLabel for="Contrato" value="Número do Contrato: "
 						styleClass="labelBold" />			
 					<p:inputText id="Contrato" value="#{iuguMB.numeroContrato}" label="Número do Contrato" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
 					
-					<p:outputLabel for="Parcela" value="Número da Parcela: "
+					<p:outputLabel for="Parcela" value="Número da Primeira Parcela: "
 						styleClass="labelBold" />			
 					<p:inputText id="Parcela" value="#{iuguMB.parcela}" label="Número da Parcela" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
 					
@@ -46,12 +49,12 @@
 					<p:inputText id="Descricao" value="#{iuguMB.descricaoItem}" label="Descrição" required="true" onblur="value=value.toUpperCase()"  style="width:400px;"></p:inputText>
 					
 					<p:outputLabel for="valorParcela" value="Valor da Cobrança (Formato: 0000,00): " styleClass="labelBold" />			
-					<p:inputText id="valorParcela" value="#{iuguMB.valorItem}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>	
+					<p:inputText id="valorParcela" value="#{iuguMB.valorItem}" onkeypress="return isNumberKey(event);" onkeydown="FormataValorSemPonto(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>	
 					<p:spacer></p:spacer>
 					<p:outputLabel value="Formato: 0000,00: " styleClass="labelBold" />  
 					
 										
-					<p:outputLabel for="dataVencimento" value="Data de Vencimento: " styleClass="labelBold" />
+					<p:outputLabel for="dataVencimento" value="Data de Vencimento Primeira Parcela: " styleClass="labelBold" />
 					<p:calendar id="dataVencimento" value="#{iuguMB.dataVencimento}" required="true" label="Data de Vencimento" size="100" pattern="dd/MM/yyyy" mask="true" locale="pt" timeZone="GMT-3" styleClass="dateTimeField" onclick="this.select();" ></p:calendar>	
 					
 					<p:outputLabel value="Download da Fatura: " styleClass="labelBold"/>
@@ -61,10 +64,17 @@
 				<p:commandButton value="Gerar Cobrança"
 					action="#{iuguMB.geraCobrancaSimplesMenu()}"
 					image="ui-icon ui-icon-check"
-					update="mensagens FaturasIugu CobrancaIugu"
+					update="mensagens :formFaturas:FaturasIugu CobrancaIugu"
 					style="TEXT-DECORATION: bold;margin-top:25px;" />
+					
+				<p:commandButton value="Download Faturas Geradas" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					icon="ui-icon-arrowthick-1-s" disabled="#{iuguMB.faturasDownloadIUGU.size() == 0}" style="margin-left: 20px;">
+					<p:fileDownload value="#{iuguMB.downloadAllFaturas}" />
+				</p:commandButton>
 			</p:panel>
-			
+		</h:form>	
+		<h:form id="formFaturas" style="margin-bottom:10px;">
 			<p:panel id="FaturasIugu" header="Faturas Iugu"
 				style="margin-bottom:10px;">
 			   <p:dataTable id="dtFaturas" var="faturas" value="#{iuguMB.faturasIUGU}" sortOrder="descending" sortBy="#{faturas.due_date}"
@@ -91,8 +101,13 @@
 			        		<p:commandButton action="#{iuguMB.cancelarFaturaIUGUFaturaSimples(faturas.id, iuguMB.selectedCedente.iuguLiveApiToken)}" ajax="false" icon="ui-icon-trash" title="Cancelar Fatura IUGU" update="dtFaturas"/>
 		            </p:column>	  		     			        	               			        	                   	        		               		        			        			           			 		
 				</p:dataTable>
-			</p:panel>
+			</p:panel>	
 		</h:form>
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+		             
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <p:graphicImage name="image/bluespinner.gif" />
+		</p:dialog>
 		
 		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">				 	

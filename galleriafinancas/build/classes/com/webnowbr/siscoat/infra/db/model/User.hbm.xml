@@ -67,6 +67,9 @@
         <property name="userPreContrato" type="boolean">
             <column name="USERPRECONTRATO" />
         </property> 
+        <property name="userPreContratoIUGU" type="boolean">
+            <column name="userPreContratoIUGU" />
+        </property> 
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    

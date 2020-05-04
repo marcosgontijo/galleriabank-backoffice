@@ -106,7 +106,7 @@
 						headerText="Status" filterBy="#{faturas.status}"
 						filterMatchMode="contains" sortBy="#{faturas.status}">
 						<h:outputText
-							value="#{faturas.status.equals('expired') ? 'Vencida' : faturas.status.equals('paid') ? 'Paga' : faturas.status.equals('canceled') ? 'cancelada' : faturas.status}" />
+							value="#{faturas.status.equals('expired') ? 'Vencida' : faturas.status.equals('paid') ? 'Paga' : faturas.status.equals('canceled') ? 'cancelada' : faturas.status.equals('pending') ? 'Pendente' : faturas.status}" />
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Link Fatura">

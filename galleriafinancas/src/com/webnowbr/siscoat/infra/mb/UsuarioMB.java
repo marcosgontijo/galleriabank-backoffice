@@ -198,7 +198,15 @@ public class UsuarioMB {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
-				objetoUsuario.setCodigoResponsavel(null);
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAIUGU");
+			if (objetoUsuario.isUserPreContratoIUGU()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
 			}
 			
 			gAdm = gDao.findByFilter("acronym", "INVESTIDOR");
@@ -207,7 +215,10 @@ public class UsuarioMB {
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}
+				}				
+			}
+			
+			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
 			}
 			

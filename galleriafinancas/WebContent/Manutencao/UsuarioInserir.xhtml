@@ -102,6 +102,17 @@
 						<p:ajax event="change" update="PanelResponsavel" />
 					</p:selectBooleanButton>
 					
+					<h:outputLabel for="GerenciaPreContratosIUGU"
+						value="Sistema de Cobrança - Gerencia Pré-Contratos + IUGU: "
+						class="labelBold" />
+					<p:selectBooleanButton id="GerenciaPreContratosIUGU"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userPreContratoIUGU}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+						<p:ajax event="change" update="PanelResponsavel" />
+					</p:selectBooleanButton>
+					
 					<h:outputLabel for="GerenciaCobrançaIUGU"
 						value="Sistema de Cobrança - IUGU: " class="labelBold" />
 					<p:selectBooleanButton id="GerenciaCobrançaIUGU"

@@ -90,6 +90,7 @@ public class ContratoCobrancaUtilsMB {
 	private BigDecimal multa;
 
 	private BigDecimal valorAtualizado;
+	private BigDecimal valorAcrescimo;
 
 	private long qtdeDias;
 
@@ -1121,6 +1122,11 @@ public class ContratoCobrancaUtilsMB {
 		} else {
 			this.valorAtualizado = this.valorParcela;
 		}
+		
+		if (this.valorAtualizado == null) {
+			this.valorAtualizado = BigDecimal.ZERO;
+		}
+		this.valorAcrescimo = this.valorAtualizado.subtract(this.valorParcela);
 	}	
 
 	/*
@@ -1163,6 +1169,7 @@ public class ContratoCobrancaUtilsMB {
 
 		this.valorParcela = null;		
 		this.valorAtualizado = null;
+		this.valorAcrescimo = null;
 
 		this.qtdeDias = 0;
 
@@ -2587,5 +2594,11 @@ public class ContratoCobrancaUtilsMB {
 	 */
 	public void setDataAtualizacaoBkp(Date dataAtualizacaoBkp) {
 		this.dataAtualizacaoBkp = dataAtualizacaoBkp;
+	}
+	public BigDecimal getValorAcrescimo() {
+		return valorAcrescimo;
+	}
+	public void setValorAcrescimo(BigDecimal valorAcrescimo) {
+		this.valorAcrescimo = valorAcrescimo;
 	}	
 }
