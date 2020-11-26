@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="contasPagar" header="Contas a Pagar"
+				style="margin-bottom:20px;">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="numcontrato" value="Contrato: "
+							styleClass="labelBold"  />
+					<p:inputText id="numcontrato"
+							value="#{contasPagarMB.numeroContrato}" label="Contrato"
+							style="width:50px;" disabled="true"/>
+					<p:commandButton id="botaoContrato" type="button"
+						onclick="PF('contratoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" disabled="#{contasPagarMB.deleteMode}"/>
+				</h:panelGrid>	
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataPrevista" value="Data Prevista Pagamento: " styleClass="labelBold" />
+					<p:calendar id="dataPrevista" value="#{contasPagarMB.objetoContasPagar.dataPrevista}"
+						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+						 styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+					</p:calendar>
+					<p:outputLabel for="descricao" value="Descrição: "
+							styleClass="labelBold" />
+					<p:inputText id="descricao" 
+							value="#{contasPagarMB.objetoContasPagar.descricao}" required="true" 
+							disabled="#{contasPagarMB.deleteMode}"/>
+					<p:outputLabel for="valor" value="Valor (R$): "
+							styleClass="labelBold" />
+					<p:inputText id="valor"
+							value="#{contasPagarMB.objetoContasPagar.valor}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" disabled="#{contasPagarMB.deleteMode}"/>
+				</h:panelGrid>
+			</p:panel>
+			<p:commandButton value="Salvar Conta" ajax="false" icon="ui-icon-print"
+				action="#{contasPagarMB.salvarConta}" rendered="#{!contasPagarMB.deleteMode}" />
+			<p:spacer height="10" rendered="#{!contasPagarMB.deleteMode}" />
+			<p:commandButton value="Baixar Conta" ajax="false" icon="ui-icon-arrowthickstop-1-s"
+				action="#{contasPagarMB.baixarConta}" rendered="#{!contasPagarMB.deleteMode}" />
+			<p:commandButton value="Excluir Conta" ajax="false" icon="ui-icon-print"
+				action="#{contasPagarMB.excluirConta}" rendered="#{contasPagarMB.deleteMode}" />
+			<p:spacer height="10"  />
+			<p:commandButton value="Cancelar" ajax="false" immediate="true"
+					icon="ui-icon-cancel"
+					action="#{contasPagarMB.clearFields}"
+					style="TEXT-DECORATION: bold; " />
+		</h:form>
+		<p:dialog header="Contratos" widgetVar="contratoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formContratos">
+				<p:dataTable id="contratoDialogdlg" var="contratoDialogdlg"
+					value="#{contasPagarMB.listContratos}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5, 10, 15"
+					selection="#{contasPagarMB.selectedContratoLov}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{contratoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.numeroContrato}" filterBy="#{contratoDialogdlg.numeroContrato}" filterMatchMode="contains" >
+						<f:facet name="header">
+							<h:outputText value="Contrato" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.pagador.nome}"
+						filterBy="#{contratoDialogdlg.pagador.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Pagador" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.pagador.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contasPagarMB.populateSelectedContrato}"
+							image="ui-icon ui-icon-check" update=":form:contasPagar"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contasPagarMB.clearContrato}"
+							image="ui-icon ui-icon-trash"
+							update=":form:contasPagar contratoDialogdlg"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('contratoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>	
+	</ui:define>
+</ui:composition>

@@ -62,7 +62,7 @@ public class GeracaoRemessaMB {
 		this.numContrato = null;
 		this.tipoFiltros = true;
 		
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataInicio = Calendar.getInstance(zone, locale); 		
 		this.relDataContratoInicio = dataInicio.getTime();
@@ -76,7 +76,7 @@ public class GeracaoRemessaMB {
 	public void habilitaFiltros() {
 		if (this.tipoFiltros) {
 			this.numContrato = null;
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR");  
 			Calendar dataInicio = Calendar.getInstance(zone, locale); 		
 			this.relDataContratoInicio = dataInicio.getTime();
@@ -123,7 +123,7 @@ public class GeracaoRemessaMB {
 			
 			BoletosRemessaDao boletosRemessaDao = new BoletosRemessaDao();
 			// DATA DE GERAÇÃO DA REMESSA
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR");  
 			Calendar dataHoje = Calendar.getInstance(zone, locale);
 			

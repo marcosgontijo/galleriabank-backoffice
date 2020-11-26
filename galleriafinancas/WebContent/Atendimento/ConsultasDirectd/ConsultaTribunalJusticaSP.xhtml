@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaTribunalJusticaSP.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaTribunalJusticaSP.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>				 												
+			<p:panel id="consultaTribunalJusticaSP" header="Consulta Tribunal Justiça SP" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">								
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CNPJ" value="#{consultaTribunalJusticaSP.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true"/>	
+					<p:outputLabel for="Estado" value="Estado: " />
+					<p:selectOneMenu id="Estado" value="#{consultaTribunalJusticaSP.uf}"  label="Estado" style="width:250px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+						<f:selectItem itemValue="AC" itemLabel="Acre" />
+						<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+						<f:selectItem itemValue="AP" itemLabel="Amapá" />
+						<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+						<f:selectItem itemValue="BA" itemLabel="Bahia" />
+						<f:selectItem itemValue="CE" itemLabel="Ceará" />
+						<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+						<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+						<f:selectItem itemValue="GO" itemLabel="Goiás" />
+						<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+						<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+						<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+						<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+						<f:selectItem itemValue="PA" itemLabel="Pará" />
+						<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+						<f:selectItem itemValue="PR" itemLabel="Paraná" />
+						<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+						<f:selectItem itemValue="PI" itemLabel="Piauí" />
+						<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+						<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+						<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+						<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+						<f:selectItem itemValue="RR" itemLabel="Roraima" />
+						<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+						<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+						<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+						<f:selectItem itemValue="TO" itemLabel="Tocantins" />						    
+					</p:selectOneMenu>										
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaTribunalJusticaSP.consultaTribunalJusticaSP}" image="ui-icon ui-icon-check" update=":form:consultaTribunalJusticaSPResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="consultaTribunalJusticaSPResultados" header="Retorno Consulta Tribunal Justiça SP" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTribunalJusticaSP.retornoConsultaTribunalJusticaSP.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Consulta: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaTribunalJusticaSP.retornoConsultaTribunalJusticaSP.dataConsulta}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				</h:panelGrid>
+				
+				<p:panel id="listaProcessos1Grau" header="Lista Processos 1 Grau" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaProcessos1Grau" var="processos1Grau" value="#{consultaTribunalJusticaSP.retornoConsultaTribunalJusticaSP.processo1Grau}" emptyMessage="Nenhum processo encontrado!">
+				       <p:column style="text-align: center;" headerText="Número"></p:column>
+				        <p:column style="text-align: center;" headerText="URL Processo"></p:column>
+				        <p:column style="text-align: center;" headerText="Motivo"></p:column>
+				        <p:column style="text-align: center;" headerText="Classe"></p:column>
+				        <p:column style="text-align: center;" headerText="Assunto"></p:column>
+				        <p:column style="text-align: center;" headerText="Local Físico"></p:column>
+				        <p:column style="text-align: center;" headerText="Outros Assuntos"></p:column>
+				        <p:column style="text-align: center;" headerText="Distribuição"></p:column>
+				        <p:column style="text-align: center;" headerText="Controle"></p:column>
+				        <p:column style="text-align: center;" headerText="Juiz"></p:column>
+				        <p:column style="text-align: center;" headerText="Outros Números"></p:column>
+				        <p:column style="text-align: center;" headerText="Valor Ação"></p:column>
+				        <p:column style="text-align: center;" headerText="Partes"></p:column>
+						<p:subTable var="processos" value="#{processos1Grau.processos}">
+				            <f:facet name="header">
+				                <h:outputText value="#{processos1Grau.nomeForo}" />
+				            </f:facet>
+				            <p:column style="text-align: center;" headerText="Número">
+				                <h:outputText value="#{processos.numero}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="URL Processo">
+				                <h:outputText value="#{processos.urlProcesso}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Motivo">
+				                <h:outputText value="#{processos.motivo}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Classe">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.classe}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Assunto">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.assunto}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Local Físico">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.localFisico}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Outros Assuntos">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.outrosAssuntos}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Distribuição">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.distribuicao}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Controle">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.controle}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Juiz">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.juiz}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Outros Números">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.outrosNumeros}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Valor Ação">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.valorAcao}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Partes">
+					            <p:dataTable id="dtPartes" var="partes" value="#{processos.processoDetalhes.processoDetalhesPartes}" emptyMessage="Nenhuma parte encontrado!">
+						            <p:column style="text-align: center;" headerText="Tipo">
+						                <h:outputText value="#{partes.tipo}" />
+						            </p:column>
+						            <p:column style="text-align: center;" headerText="Partes">
+						                <h:outputText value="#{partes.nomeParte}" />
+						            </p:column>
+						        </p:dataTable>	
+					         </p:column>			            
+				        </p:subTable>
+					</p:dataTable>	
+				</p:panel>
+				
+				<p:panel id="listaProcessos2Grau" header="Lista Processos 2 Grau" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaProcessos2Grau" var="processos2Grau" value="#{consultaTribunalJusticaSP.retornoConsultaTribunalJusticaSP.processo2Grau}" emptyMessage="Nenhum processo encontrado!">
+				       <p:column style="text-align: center;" headerText="Número"></p:column>
+				        <p:column style="text-align: center;" headerText="URL Processo"></p:column>
+				        <p:column style="text-align: center;" headerText="Motivo"></p:column>
+				        <p:column style="text-align: center;" headerText="Classe"></p:column>
+				        <p:column style="text-align: center;" headerText="Assunto"></p:column>
+				        <p:column style="text-align: center;" headerText="Local Físico"></p:column>
+				        <p:column style="text-align: center;" headerText="Outros Assuntos"></p:column>
+				        <p:column style="text-align: center;" headerText="Distribuição"></p:column>
+				        <p:column style="text-align: center;" headerText="Controle"></p:column>
+				        <p:column style="text-align: center;" headerText="Juiz"></p:column>
+				        <p:column style="text-align: center;" headerText="Outros Números"></p:column>
+				        <p:column style="text-align: center;" headerText="Valor Ação"></p:column>
+				        <p:column style="text-align: center;" headerText="Partes"></p:column>
+						<p:subTable var="processos" value="#{processos2Grau.processos}">
+				            <f:facet name="header">
+				                <h:outputText value="#{processos2Grau.nomeForo}" />
+				            </f:facet>
+				            <p:column style="text-align: center;" headerText="Número">
+				                <h:outputText value="#{processos.numero}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="URL Processo">
+				                <h:outputText value="#{processos.urlProcesso}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Motivo">
+				                <h:outputText value="#{processos.motivo}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Classe">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.classe}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Assunto">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.assunto}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Local Físico">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.localFisico}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Outros Assuntos">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.outrosAssuntos}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Distribuição">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.distribuicao}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Controle">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.controle}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Juiz">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.juiz}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Outros Números">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.outrosNumeros}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Valor Ação">
+				                <h:outputText value="#{processos.processoDetalhes.processoDetalhesDados.valorAcao}" />
+				            </p:column>
+				            <p:column style="text-align: center;" headerText="Valor Ação">
+					            <p:dataTable id="dtPartes" var="partes" value="#{processos.processoDetalhes.processoDetalhesPartes}" emptyMessage="Nenhuma parte encontrado!">
+						            <p:column style="text-align: center;" headerText="Tipo">
+						                <h:outputText value="#{partes.tipo}" />
+						            </p:column>
+						            <p:column style="text-align: center;" headerText="Partes">
+						                <h:outputText value="#{partes.nomeParte}" />
+						            </p:column>
+						        </p:dataTable>	
+					         </p:column>			            
+				        </p:subTable>
+					</p:dataTable>	
+				</p:panel>
+				
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaTribunalJusticaSP.gerarPDF}" 
+							update="PanelPDF" />
+				</div>	
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

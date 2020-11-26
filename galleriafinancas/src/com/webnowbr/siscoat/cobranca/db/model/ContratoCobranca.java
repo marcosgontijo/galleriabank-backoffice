@@ -67,6 +67,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaRemuneracaoInvestidor9;
 	private BigDecimal taxaRemuneracaoInvestidor10;
 	
+	private BigDecimal valorCCB;
+	
 	private BigDecimal vlrRecebedor;
 	private BigDecimal vlrRecebedor2;
 	private BigDecimal vlrRecebedor3;
@@ -140,7 +142,17 @@ public class ContratoCobranca implements Serializable {
 	private boolean recebedorEnvelope8;
 	private boolean recebedorEnvelope9;
 	private boolean recebedorEnvelope10;
-
+	
+	private boolean recebedorGarantido1;
+	private boolean recebedorGarantido2;
+	private boolean recebedorGarantido3;
+	private boolean recebedorGarantido4;
+	private boolean recebedorGarantido5;
+	private boolean recebedorGarantido6;
+	private boolean recebedorGarantido7;
+	private boolean recebedorGarantido8;
+	private boolean recebedorGarantido9;
+	private boolean recebedorGarantido10;
 	
 	private Responsavel responsavel;
 	
@@ -174,17 +186,51 @@ public class ContratoCobranca implements Serializable {
 	private String iprf;
 	private String profissao;
 	
+	/*** usados no sistema ***/
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
 	
-	private boolean aguardandoDocumento;
-	private Date aguardandoDocumentoData;
-	private String aguardandoDocumentoUsuario;
+	private Date cadastroAprovadoData;
+	private boolean cadastroAprovado;
+	private String cadastroAprovadoValor;
+	private String cadastroAprovadoUsuario;
 	
 	private boolean matriculaAprovada;
 	private Date matriculaAprovadaData;
+	private String matriculaAprovadaValor;
 	private String matriculaAprovadaUsuario;
+	
+	private Date laudoRecebidoData;
+	private boolean laudoRecebido;
+	private String laudoRecebidoUsuario;
+	
+	private Date pajurFavoravelData;
+	private boolean pajurFavoravel;
+	private String pajurFavoravelUsuario;
+	
+	private Date pagtoLaudoConfirmadaData;
+	private boolean pagtoLaudoConfirmada;
+	private String pagtoLaudoConfirmadaUsuario;
+	
+	private Date documentosCompletosData;
+	private boolean documentosCompletos;
+	private String documentosCompletosUsuario;
+	
+	private Date ccbProntaData;
+	private boolean ccbPronta;
+	private String ccbProntaUsuario;
+	
+	private Date statusContratoData;
+	private String statusContrato;
+	private String statusContratoUsuario;
+	
+	/*** fim usados no sistema ***/
+	
+	
+	private boolean aguardandoDocumento;
+	private Date aguardandoDocumentoData;
+	private String aguardandoDocumentoUsuario;
 	
 	private boolean matriculaReprovada;
 	private Date matriculaReprovadaData;
@@ -209,18 +255,10 @@ public class ContratoCobranca implements Serializable {
 	private Date semFotoImovelData;
 	private boolean semFotoImovel;
 	private String semFotoImovelUsuario;
-	
-	private Date documentosCompletosData;
-	private boolean documentosCompletos;
-	private String documentosCompletosUsuario;
-	
+
 	private Date documentosIncompletosData;
 	private boolean documentosIncompletos;
 	private String documentosIncompletosUsuario;
-	
-	private Date cadastroAprovadoData;
-	private boolean cadastroAprovado;
-	private String cadastroAprovadoUsuario;
 	
 	private Date cadastroReprovadoData;
 	private boolean cadastroReprovado;
@@ -261,26 +299,14 @@ public class ContratoCobranca implements Serializable {
 	private Date enviadoCobrancaLaudoData;
 	private boolean enviadoCobrancaLaudo;
 	private String enviadoCobrancaLaudoUsuario;
-	
-	private Date pagtoLaudoConfirmadaData;
-	private boolean pagtoLaudoConfirmada;
-	private String pagtoLaudoConfirmadaUsuario;
-	
+
 	private Date laudoSolicitadoData;
 	private boolean laudoSolicitado;
 	private String laudoSolicitadoUsuario;
 	
-	private Date laudoRecebidoData;
-	private boolean laudoRecebido;
-	private String laudoRecebidoUsuario;
-	
 	private Date pajurSolicitadoData;
 	private boolean pajurSolicitado;
 	private String pajurSolicitadoUsuario;
-	
-	private Date pajurFavoravelData;
-	private boolean pajurFavoravel;
-	private String pajurFavoravelUsuario;
 	
 	private Date pajurDesfavoravelData;
 	private boolean pajurDesfavoravel;
@@ -2592,5 +2618,157 @@ public class ContratoCobranca implements Serializable {
 	public void setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 			List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope) {
 		this.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope = listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+	}
+
+	public boolean isRecebedorGarantido1() {
+		return recebedorGarantido1;
+	}
+
+	public void setRecebedorGarantido1(boolean recebedorGarantido1) {
+		this.recebedorGarantido1 = recebedorGarantido1;
+	}
+
+	public boolean isRecebedorGarantido2() {
+		return recebedorGarantido2;
+	}
+
+	public void setRecebedorGarantido2(boolean recebedorGarantido2) {
+		this.recebedorGarantido2 = recebedorGarantido2;
+	}
+
+	public boolean isRecebedorGarantido3() {
+		return recebedorGarantido3;
+	}
+
+	public void setRecebedorGarantido3(boolean recebedorGarantido3) {
+		this.recebedorGarantido3 = recebedorGarantido3;
+	}
+
+	public boolean isRecebedorGarantido4() {
+		return recebedorGarantido4;
+	}
+
+	public void setRecebedorGarantido4(boolean recebedorGarantido4) {
+		this.recebedorGarantido4 = recebedorGarantido4;
+	}
+
+	public boolean isRecebedorGarantido5() {
+		return recebedorGarantido5;
+	}
+
+	public void setRecebedorGarantido5(boolean recebedorGarantido5) {
+		this.recebedorGarantido5 = recebedorGarantido5;
+	}
+
+	public boolean isRecebedorGarantido6() {
+		return recebedorGarantido6;
+	}
+
+	public void setRecebedorGarantido6(boolean recebedorGarantido6) {
+		this.recebedorGarantido6 = recebedorGarantido6;
+	}
+
+	public boolean isRecebedorGarantido7() {
+		return recebedorGarantido7;
+	}
+
+	public void setRecebedorGarantido7(boolean recebedorGarantido7) {
+		this.recebedorGarantido7 = recebedorGarantido7;
+	}
+
+	public boolean isRecebedorGarantido8() {
+		return recebedorGarantido8;
+	}
+
+	public void setRecebedorGarantido8(boolean recebedorGarantido8) {
+		this.recebedorGarantido8 = recebedorGarantido8;
+	}
+
+	public boolean isRecebedorGarantido9() {
+		return recebedorGarantido9;
+	}
+
+	public void setRecebedorGarantido9(boolean recebedorGarantido9) {
+		this.recebedorGarantido9 = recebedorGarantido9;
+	}
+
+	public boolean isRecebedorGarantido10() {
+		return recebedorGarantido10;
+	}
+
+	public void setRecebedorGarantido10(boolean recebedorGarantido10) {
+		this.recebedorGarantido10 = recebedorGarantido10;
+	}
+
+	public BigDecimal getValorCCB() {
+		return valorCCB;
+	}
+
+	public void setValorCCB(BigDecimal valorCCB) {
+		this.valorCCB = valorCCB;
+	}
+
+	public String getCadastroAprovadoValor() {
+		return cadastroAprovadoValor;
+	}
+
+	public void setCadastroAprovadoValor(String cadastroAprovadoValor) {
+		this.cadastroAprovadoValor = cadastroAprovadoValor;
+	}
+
+	public String getMatriculaAprovadaValor() {
+		return matriculaAprovadaValor;
+	}
+
+	public void setMatriculaAprovadaValor(String matriculaAprovadaValor) {
+		this.matriculaAprovadaValor = matriculaAprovadaValor;
+	}
+
+	public Date getCcbProntaData() {
+		return ccbProntaData;
+	}
+
+	public void setCcbProntaData(Date ccbProntaData) {
+		this.ccbProntaData = ccbProntaData;
+	}
+
+	public boolean isCcbPronta() {
+		return ccbPronta;
+	}
+
+	public void setCcbPronta(boolean ccbPronta) {
+		this.ccbPronta = ccbPronta;
+	}
+
+	public String getCcbProntaUsuario() {
+		return ccbProntaUsuario;
+	}
+
+	public void setCcbProntaUsuario(String ccbProntaUsuario) {
+		this.ccbProntaUsuario = ccbProntaUsuario;
+	}
+
+	public Date getStatusContratoData() {
+		return statusContratoData;
+	}
+
+	public void setStatusContratoData(Date statusContratoData) {
+		this.statusContratoData = statusContratoData;
+	}
+
+	public String getStatusContrato() {
+		return statusContrato;
+	}
+
+	public void setStatusContrato(String statusContrato) {
+		this.statusContrato = statusContrato;
+	}
+
+	public String getStatusContratoUsuario() {
+		return statusContratoUsuario;
+	}
+
+	public void setStatusContratoUsuario(String statusContratoUsuario) {
+		this.statusContratoUsuario = statusContratoUsuario;
 	}	
 }

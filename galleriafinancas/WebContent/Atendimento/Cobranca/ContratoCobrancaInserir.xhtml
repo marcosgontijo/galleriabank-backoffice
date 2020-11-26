@@ -107,7 +107,7 @@
 						</h:panelGrid>
 						<p:panel id="panelRecebedor"
 							style="border: none; margin-left: -14px; margin-top: -8px;">
-							<h:panelGrid columns="8">
+							<h:panelGrid columns="10">
 								<p:outputLabel for="Recebedor" value="Favorecido 1: "
 									styleClass="labelBold" />
 								<p:inputText id="Recebedor"
@@ -130,7 +130,11 @@
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope}">
-								</p:selectBooleanCheckbox>								
+								</p:selectBooleanCheckbox>
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" />
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido1}">
+								</p:selectBooleanCheckbox>									
 							</h:panelGrid>
 
 							<p:panel id="panelRecebedorValor"
@@ -200,7 +204,7 @@
 						<p:panel id="panelRecebedor2"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor2}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor2" value="Favorecido 2: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor2}" />
@@ -232,7 +236,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor2}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope2}" rendered="#{contratoCobrancaMB.renderRecebedor2}">
-								</p:selectBooleanCheckbox>							
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor2}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido2}" rendered="#{contratoCobrancaMB.renderRecebedor2}">
+								</p:selectBooleanCheckbox>						
 							</h:panelGrid>
 							<p:panel id="panelRecebedor2Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0}">
@@ -299,7 +308,7 @@
 						<p:panel id="panelRecebedor3"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor3}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor3" value="Favorecido 3: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor3}" />
@@ -331,7 +340,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor3}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope3}" rendered="#{contratoCobrancaMB.renderRecebedor3}">
-								</p:selectBooleanCheckbox>								
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor3}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido3}" rendered="#{contratoCobrancaMB.renderRecebedor3}">
+								</p:selectBooleanCheckbox>							
 							</h:panelGrid>
 							<p:panel id="panelRecebedor3Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0}">
@@ -398,7 +412,7 @@
 						<p:panel id="panelRecebedor4"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor4}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor4" value="Favorecido 4: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor4}" />
@@ -430,7 +444,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor4}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope4}" rendered="#{contratoCobrancaMB.renderRecebedor4}">
-								</p:selectBooleanCheckbox>									
+								</p:selectBooleanCheckbox>			
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor4}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido4}" rendered="#{contratoCobrancaMB.renderRecebedor4}">
+								</p:selectBooleanCheckbox>							
 							</h:panelGrid>
 							<p:panel id="panelRecebedor4Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0}">
@@ -497,7 +516,7 @@
 						<p:panel id="panelRecebedor5"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor5}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor5" value="Favorecido 5: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor5}" />
@@ -529,7 +548,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor5}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope5}" rendered="#{contratoCobrancaMB.renderRecebedor5}">
-								</p:selectBooleanCheckbox>									
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor5}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido5}" rendered="#{contratoCobrancaMB.renderRecebedor5}">
+								</p:selectBooleanCheckbox>								
 							</h:panelGrid>
 							<p:panel id="panelRecebedor5Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0}">
@@ -628,7 +652,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor6}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope6}" rendered="#{contratoCobrancaMB.renderRecebedor6}">
-								</p:selectBooleanCheckbox>								
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor6}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido6}" rendered="#{contratoCobrancaMB.renderRecebedor6}">
+								</p:selectBooleanCheckbox>							
 							</h:panelGrid>
 							<p:panel id="panelRecebedor6Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0}">
@@ -727,7 +756,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor7}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope7}" rendered="#{contratoCobrancaMB.renderRecebedor7}">
-								</p:selectBooleanCheckbox>									
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor7}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido7}" rendered="#{contratoCobrancaMB.renderRecebedor7}">
+								</p:selectBooleanCheckbox>								
 							</h:panelGrid>
 							<p:panel id="panelRecebedor7Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0}">
@@ -794,7 +828,7 @@
 						<p:panel id="panelRecebedor8"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor8}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor8" value="Favorecido 8: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor8}" />
@@ -826,7 +860,12 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor8}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope8}" rendered="#{contratoCobrancaMB.renderRecebedor8}">
-								</p:selectBooleanCheckbox>										
+								</p:selectBooleanCheckbox>		
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor8}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido8}" rendered="#{contratoCobrancaMB.renderRecebedor8}">
+								</p:selectBooleanCheckbox>									
 							</h:panelGrid>
 							<p:panel id="panelRecebedor8Valor"
 								rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0}">
@@ -893,7 +932,7 @@
 						<p:panel id="panelRecebedor9"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor9}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor9" value="Favorecido 9: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor9}" />
@@ -925,6 +964,11 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor9}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope9}" rendered="#{contratoCobrancaMB.renderRecebedor9}">
+								</p:selectBooleanCheckbox>	
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor9}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido9}" rendered="#{contratoCobrancaMB.renderRecebedor9}">
 								</p:selectBooleanCheckbox>								
 							</h:panelGrid>
 							<p:panel id="panelRecebedor9Valor"
@@ -992,7 +1036,7 @@
 						<p:panel id="panelRecebedor10"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor10}">
-							<h:panelGrid columns="7">
+							<h:panelGrid columns="9">
 								<p:outputLabel for="Recebedor10" value="Favorecido 10: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor10}" />
@@ -1015,6 +1059,11 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor10}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope10}" rendered="#{contratoCobrancaMB.renderRecebedor10}">
+								</p:selectBooleanCheckbox>	
+								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
+									rendered="#{contratoCobrancaMB.renderRecebedor10}"/>
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorGarantido10}" rendered="#{contratoCobrancaMB.renderRecebedor10}">
 								</p:selectBooleanCheckbox>	
 							</h:panelGrid>
 							<p:panel id="panelRecebedor10Valor"
@@ -1144,7 +1193,7 @@
 							<p:calendar id="dataInicio"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
 								required="true" label="Data Inicio" size="100"
-								pattern="dd/MM/yyyy" locale="pt" timeZone="GMT-3"
+								pattern="dd/MM/yyyy" 
 								styleClass="dateTimeField"
 								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
 								<p:ajax event="dateSelect"
@@ -1202,6 +1251,15 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="valorCCB" value="Valor da CCB: "
+								styleClass="labelBold" />
+							<p:inputText id="valorCCB" style="margin-left: 12px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+								
 							<p:outputLabel value="Gerar Boleto das Parcelas "
 								styleClass="labelBold" />
 							<p:selectBooleanCheckbox
@@ -1229,7 +1287,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPagamentoFim}"
 									style="margin-left: 12px;" required="true"
 									label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-									locale="pt" timeZone="GMT-3" styleClass="dateTimeField"
+									 styleClass="dateTimeField"
 									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
 
 								<p:outputLabel for="vlrParcelaFinal" value="Valor da Parcela: "
@@ -2023,21 +2081,21 @@
 							<p:outputLabel for="Acao" value="Ação: " />
 							<p:inputText id="Acao"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.acao}"
-								label="Ação" onblur="value=value.toUpperCase()"
+								label="Ação" onblur=""
 								style="width:300px;" />
 							<p:spacer width="10" />
 
 							<p:outputLabel for="Observacao" value="Observação: " />
 							<p:inputTextarea rows="10" cols="50" id="Observacao"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}"
-								label="Observação" onblur="value=value.toUpperCase()"
+								label="Observação" onblur=""
 								style="width:300px;" />
 							<p:spacer width="10" />
 
 							<p:outputLabel for="Observacao2" value=" " />
 							<p:inputTextarea rows="10" cols="50" id="Observacao2"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}"
-								label="Observação" onblur="value=value.toUpperCase()"
+								label="Observação" onblur=""
 								style="width:300px;" />
 							<p:spacer width="10" />
 						</h:panelGrid>

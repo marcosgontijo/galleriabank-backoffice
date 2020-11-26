@@ -35,18 +35,18 @@
 				<h:panelGrid columns="2">	
 					<p:outputLabel for="qtdeParcelas" value="Qtde. de Parcelas: "	
 						styleClass="labelBold" />			
-					<p:inputText id="qtdeParcelas" value="#{iuguMB.qtdeParcelas}" label="Quantidade de Parcelas" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
+					<p:inputText id="qtdeParcelas" value="#{iuguMB.qtdeParcelas}" label="Quantidade de Parcelas" required="true" onblur=""  style="width:150px;"></p:inputText>
 					<p:outputLabel for="Contrato" value="Número do Contrato: "
 						styleClass="labelBold" />			
-					<p:inputText id="Contrato" value="#{iuguMB.numeroContrato}" label="Número do Contrato" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
+					<p:inputText id="Contrato" value="#{iuguMB.numeroContrato}" label="Número do Contrato" required="true" onblur=""  style="width:150px;"></p:inputText>
 					
 					<p:outputLabel for="Parcela" value="Número da Primeira Parcela: "
 						styleClass="labelBold" />			
-					<p:inputText id="Parcela" value="#{iuguMB.parcela}" label="Número da Parcela" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"></p:inputText>
+					<p:inputText id="Parcela" value="#{iuguMB.parcela}" label="Número da Parcela" required="true" onblur=""  style="width:150px;"></p:inputText>
 					
 					<p:outputLabel for="Descricao" value="Descrição Cobrança: "
 						styleClass="labelBold" />			
-					<p:inputText id="Descricao" value="#{iuguMB.descricaoItem}" label="Descrição" required="true" onblur="value=value.toUpperCase()"  style="width:400px;"></p:inputText>
+					<p:inputText id="Descricao" value="#{iuguMB.descricaoItem}" label="Descrição" required="true" onblur=""  style="width:400px;"></p:inputText>
 					
 					<p:outputLabel for="valorParcela" value="Valor da Cobrança (Formato: 0000,00): " styleClass="labelBold" />			
 					<p:inputText id="valorParcela" value="#{iuguMB.valorItem}" onkeypress="return isNumberKey(event);" onkeydown="FormataValorSemPonto(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>	
@@ -55,7 +55,7 @@
 					
 										
 					<p:outputLabel for="dataVencimento" value="Data de Vencimento Primeira Parcela: " styleClass="labelBold" />
-					<p:calendar id="dataVencimento" value="#{iuguMB.dataVencimento}" required="true" label="Data de Vencimento" size="100" pattern="dd/MM/yyyy" mask="true" locale="pt" timeZone="GMT-3" styleClass="dateTimeField" onclick="this.select();" ></p:calendar>	
+					<p:calendar id="dataVencimento" value="#{iuguMB.dataVencimento}" required="true" label="Data de Vencimento" size="100" pattern="dd/MM/yyyy" mask="true"  styleClass="dateTimeField" onclick="this.select();" ></p:calendar>	
 					
 					<p:outputLabel value="Download da Fatura: " styleClass="labelBold"/>
 					<a href="#{iuguMB.urlFatura}" class="linkPDF" target="_blank"><b>Exibir Fatura gerada</b></a>

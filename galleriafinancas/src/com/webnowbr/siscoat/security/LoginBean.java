@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.security;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +45,7 @@ public class LoginBean {
     private String message = "";
     private String username;
     private String password;
+    private String key;
     private String newPassword;
     private boolean renderMenu = false; 
 
@@ -88,8 +90,7 @@ public class LoginBean {
         Subject currentUser = SecurityUtils.getSubject();        
         FacesContext context = FacesContext.getCurrentInstance();
         
-        UserDao userdao = new UserDao();
-        List<User> userTmp = userdao.findByFilter("login", username);
+        List<User> userTmp = new ArrayList<User>();
         
         // let's login the current user so we can check against roles and
         // permissions:
@@ -98,24 +99,54 @@ public class LoginBean {
             if (username != null && password != null) {
                 UsernamePasswordToken token = new UsernamePasswordToken(username, password);
                 token.setRememberMe(true);
+                
+                UserDao userdao = new UserDao();
+                userTmp = userdao.findByFilter("login", username);
+                TwoFactorAuth twoFactorAuth = new TwoFactorAuth();                
         		
                 try {
-                    currentUser.login(token);
-
-                    loggedIn = true;
-                    
-                    renderMenu = false;
-                    
-                    //UserDao userdao = new UserDao();   
-                    //List<User> userTmp = userdao.findByFilter("login", username);
-                    
-                    if (userTmp.size() > 0) {
-                    	TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
-                		Locale locale = new Locale("pt", "BR");  
-                		Calendar dataHoje = Calendar.getInstance(zone, locale);
+                	// Google Authenticator
+                	if (userTmp.get(0).isTwoFactorAuth()) {
+	                	if (twoFactorAuth.getCurrentCode(userTmp.get(0).getKey()).equals(key)) {
+		                    currentUser.login(token);
+		
+		                    loggedIn = true;
+		                    
+		                    renderMenu = false;
+		                    
+		                    //UserDao userdao = new UserDao();   
+		                    //List<User> userTmp = userdao.findByFilter("login", username);
+		                    
+		                    if (userTmp.size() > 0) {
+		                    	TimeZone zone = TimeZone.getDefault();  
+		                		Locale locale = new Locale("pt", "BR");  
+		                		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		                		
+		                    	userTmp.get(0).setUltimoAcesso(dataHoje.getTime());
+		                    }
+	                	} else {
+	                		context.addMessage(null,
+	                	            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Código do Google Authenticator Inválido!", ""));
+		                    LOG.info("Código do Google Authenticator Inválido!");
+	                	}
+                	} else {
+                		currentUser.login(token);
                 		
-                    	userTmp.get(0).setUltimoAcesso(dataHoje.getTime());
-                    }
+	                    loggedIn = true;
+	                    
+	                    renderMenu = false;
+	                    
+	                    //UserDao userdao = new UserDao();   
+	                    //List<User> userTmp = userdao.findByFilter("login", username);
+	                    
+	                    if (userTmp.size() > 0) {
+	                    	TimeZone zone = TimeZone.getDefault();  
+	                		Locale locale = new Locale("pt", "BR");  
+	                		Calendar dataHoje = Calendar.getInstance(zone, locale);
+	                		
+	                    	userTmp.get(0).setUltimoAcesso(dataHoje.getTime());
+	                    }
+                	}
                 } catch (UnknownAccountException uae) {
                     LOG.info("There is no user with username of "
                             + token.getPrincipal());
@@ -232,5 +263,13 @@ public class LoginBean {
 
 	public void setRenderMenu(boolean renderMenu) {
 		this.renderMenu = renderMenu;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}  
 }

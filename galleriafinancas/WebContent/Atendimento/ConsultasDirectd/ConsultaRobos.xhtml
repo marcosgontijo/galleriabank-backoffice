@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />			 												
+			<p:panel id="ConsultaRobos" header="Consulta Robos" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>		
+				<h:panelGrid columns="2">
+					<p:outputLabel for="Consultas" value="Realizar Consultas por: " styleClass="labelBold" style="margin-right: 20px;"/>
+					<p:selectOneRadio id="Consultas" value="#{consultaRobos.consultaPor}" unselectable="true">
+			            <f:selectItem itemLabel="Pessoa Jurídica" itemValue="true" />
+				        <f:selectItem itemLabel="Pessoa Física" itemValue="false" />
+				        <p:ajax update="ConsultaRobos" event="valueChange" />
+			        </p:selectOneRadio>	
+				</h:panelGrid>	
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="CPF" value="CPF: " styleClass="labelBold" style="margin-right: 20px;" rendered="#{!consultaRobos.consultaPor}"/>		
+					<p:inputMask id="CPF" value="#{consultaRobos.cpf}" label="CPF" mask="999.999.999-99" rendered="#{!consultaRobos.consultaPor}"/>			
+					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" style="margin-right: 20px;"  rendered="#{!consultaRobos.consultaPor}"/>		
+					<p:inputText id="Nome" value="#{consultaRobos.nome}" label="Nome"  rendered="#{!consultaRobos.consultaPor}"/>
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;" rendered="#{consultaRobos.consultaPor}"/>		
+					<p:inputMask id="CNPJ" value="#{consultaRobos.cnpj}" label="CNPJ" mask="99.999.999/9999-99"  rendered="#{consultaRobos.consultaPor}"/>										
+				</h:panelGrid>	
+				<br></br>					
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaRobos.gerarConsultasRobos}" image="ui-icon ui-icon-check" update=":form:PanelPDF" 
+				style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>					
+			</p:panel>
+		 	<p:panel id="PanelPDF"
+				header="PDFs Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaRobos.consultasGeradas}">
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download Consulta(s)" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop);"
+								icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaRobos.downloadAllFiles}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>			
+		</h:form>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage name="image/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<script type="text/javascript">
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+		</script>	
+	</ui:define>
+</ui:composition>	        

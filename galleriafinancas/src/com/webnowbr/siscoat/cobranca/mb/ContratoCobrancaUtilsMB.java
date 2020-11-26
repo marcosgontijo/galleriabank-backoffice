@@ -488,7 +488,7 @@ public class ContratoCobrancaUtilsMB {
 	
 	public boolean compareDate(Date data1, Date data2) {
 		
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR"); 
 
 		Calendar date = Calendar.getInstance(zone, locale);  
@@ -563,7 +563,7 @@ public class ContratoCobrancaUtilsMB {
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 		this.nomePDF = "CÁLCULO - " + this.objetoCalculo.getIdentificacaoCalculo() + ".xls";  					
 
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
@@ -1078,7 +1078,7 @@ public class ContratoCobrancaUtilsMB {
 	}
 
 	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
@@ -1289,7 +1289,7 @@ public class ContratoCobrancaUtilsMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR"); 
 
 			Calendar date = Calendar.getInstance(zone, locale);  

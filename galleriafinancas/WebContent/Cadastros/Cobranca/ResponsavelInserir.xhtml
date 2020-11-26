@@ -50,20 +50,20 @@
 							<p:inputMask id="CNPJ" value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" validator="#{responsavelMB.validaCNPJ}" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
 							
 							<p:outputLabel for="Codigo" value="Código do Responsável: " styleClass="labelBold" />													
-							<p:inputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo" required="true" onblur="value=value.toUpperCase()"  style="width:150px;"/>  					
+							<p:inputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo" required="true" onblur=""  style="width:150px;"/>  					
 																
 							<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
 							<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>													
-							<p:inputText id="Nome" value="#{responsavelMB.objetoResponsavel.nome}" label="Nome" required="true" onblur="value=value.toUpperCase()"  style="width:400px;"/>  					
+							<p:inputText id="Nome" value="#{responsavelMB.objetoResponsavel.nome}" label="Nome" required="true" onblur=""  style="width:400px;"/>  					
 												
 							<p:outputLabel for="Contato" value="Contato: " />
 							<p:inputText id="Contato"
 								value="#{responsavelMB.objetoResponsavel.contato}"
-								label="Contato" onblur="value=value.toUpperCase()"
+								label="Contato" onblur=""
 								style="width:400px;" />
 																									
 							<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold"/>					
-							<p:inputText id="EMail" value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail" type="email" required="true" onblur="value=value.toUpperCase()" style="width:400px;"/>
+							<p:inputText id="EMail" value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail" type="email" required="true" onblur="" style="width:400px;"/>
 							
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />					
 							<p:inputMask id="DtNascimento" value="#{responsavelMB.objetoResponsavel.dtNascimento}" mask="99/99/9999"  label="Data de Nascimento">
@@ -77,16 +77,16 @@
 							<p:inputText id="TelCelular" value="#{responsavelMB.objetoResponsavel.telCelular}" styleClass="phone" label="Telefone Celular"/>		
 									
 							<p:outputLabel for="Endereco" value="Endereço: " />
-							<p:inputText id="Endereco" value="#{responsavelMB.objetoResponsavel.endereco}"  label="Endereço" onblur="value=value.toUpperCase()" style="width:400px;"/>  	
+							<p:inputText id="Endereco" value="#{responsavelMB.objetoResponsavel.endereco}"  label="Endereço" onblur="" style="width:400px;"/>  	
 							
 							<p:outputLabel for="Bairro" value="Bairro: " />
-							<p:inputText id="Bairro" value="#{responsavelMB.objetoResponsavel.bairro}"  label="Bairro" onblur="value=value.toUpperCase()" style="width:400px;"/> 
+							<p:inputText id="Bairro" value="#{responsavelMB.objetoResponsavel.bairro}"  label="Bairro" onblur="" style="width:400px;"/> 
 							
 							<p:outputLabel for="Complemento" value="Complemento: " />
-							<p:inputText id="Complemento" value="#{responsavelMB.objetoResponsavel.complemento}" label="Complemento" onblur="value=value.toUpperCase()" style="width:400px;"/> 
+							<p:inputText id="Complemento" value="#{responsavelMB.objetoResponsavel.complemento}" label="Complemento" onblur="" style="width:400px;"/> 
 							
 							<p:outputLabel for="Cidade" value="Cidade: " />
-							<p:inputText id="Cidade" value="#{responsavelMB.objetoResponsavel.cidade}"  label="Cidade"  onblur="value=value.toUpperCase()" style="width:400px;"/> 
+							<p:inputText id="Cidade" value="#{responsavelMB.objetoResponsavel.cidade}"  label="Cidade"  onblur="" style="width:400px;"/> 
 							
 							<p:outputLabel for="Cep" value="Cep: " />
 							<p:inputMask id="Cep" value="#{responsavelMB.objetoResponsavel.cep}" mask="99999-999"  label="Cep"/>	
@@ -124,7 +124,7 @@
 							</p:selectOneMenu>					
 		
 							<p:outputLabel for="Observacao" value="Observação: " />
-							<p:inputTextarea id="Observacao" rows="10" cols="48" counter="display" maxlength="3000" onblur="value=value.toUpperCase()" counterTemplate="{0} characters remaining." autoResize="false" value="#{responsavelMB.objetoResponsavel.observacao}"/>
+							<p:inputTextarea id="Observacao" rows="10" cols="48" counter="display" maxlength="3000" onblur="" counterTemplate="{0} characters remaining." autoResize="false" value="#{responsavelMB.objetoResponsavel.observacao}"/>
 							<p:outputLabel id="display" styleClass="labelBold"/>																					
 						</h:panelGrid>																		
 			</p:panel>

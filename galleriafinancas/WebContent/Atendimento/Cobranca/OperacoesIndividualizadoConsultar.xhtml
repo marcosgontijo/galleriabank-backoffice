@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelPDF"
+				header="PDF Detalhamento Novas Operações gerado com sucesso!!!"
+				style="margin-bottom:10px;"
+				rendered="#{investidorMB.operacoesIndividualizadoPDFGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download Detalhamento Novas Operações" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{investidorMB.operacoesIndividualizadoPDF}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaFiltrosOperacoesIndividualizado" header="Detalhamento Novas Operações - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataInicio" value="Data Contrato Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{investidorMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Contrato Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{investidorMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+				</h:panelGrid>
+				<p:commandButton value="Consultar"
+					action="#{investidorMB.consultaOperacoesIndividualizado}"
+					image="ui-icon ui-icon-check"
+					update=":form:ConsultaOperacoesIndividualizado PanelPDF"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaOperacoesIndividualizado" header="Detalhamento Novas Operações - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtDebentures" var="contratos" value="#{investidorMB.listOperacoesIndividualizado}" 
+   		         emptyMessage="" sortBy="#{contratos.cedente}">   
+                	<f:facet name="header">
+						<p:commandButton action="#{investidorMB.gerarOperacoesIndividualizadoPDF}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar PDF" value="Gerar PDF">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                </p:commandButton>
+			        </f:facet>                              	
+			        <p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.contrato.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.contrato.numeroContrato}">
+			            <h:outputText value="#{contratos.contrato.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.contrato.dataContrato}">
+			            <h:outputText value="#{contratos.contrato.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Cedente" filterBy="#{contratos.cedente}" filterMatchMode="contains" sortBy="#{contratos.cedente}">
+			            <h:outputText value="#{contratos.cedente}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Prazo Médio" >
+			            <h:outputText value="#{contratos.prazoMedio}" />
+			        </p:column>
+			        <p:column style="text-align: center;"
+							headerText="Bruto" >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.valorBruto}" converter="bigDecimalConverter"/>
+					</p:column>
+					<p:column style="text-align: center;"
+							headerText="Deságio" >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.desagio}" converter="bigDecimalConverter"/>
+					</p:column>
+					<p:column style="text-align: center;"
+							headerText="Líquido" >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.valorLiquido}" converter="bigDecimalConverter"/>
+					</p:column>
+					<p:column style="text-align: center;"
+							headerText="Pagto. Op." >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.valorLiquido}" converter="bigDecimalConverter"/>
+					</p:column>
+					<p:column style="text-align: center;"
+							headerText="Saldo." >
+						<h:outputText value="R$ 0,00"/>
+					</p:column>
+			        <p:summaryRow>
+			        	<p:column colspan="3" style="text-align: center;" >
+			               <h:outputText value=""/>
+			            </p:column>
+			        	<p:column style="text-align: center;">
+			               <h:outputText value="#{investidorMB.prazoMedioTotal}"/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			              	<h:outputText value="R$ "/><h:outputText value="#{investidorMB.totalBruto}" converter="bigDecimalConverter"/>
+			            </p:column>
+			             <p:column style="text-align: center;">
+			               <h:outputText value="R$ "/><h:outputText value="#{investidorMB.totalDesagio}" converter="bigDecimalConverter"/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value="R$ "/><h:outputText value="#{investidorMB.totalLiquido}" converter="bigDecimalConverter"/>
+			            </p:column>
+						<p:column style="text-align: center;">
+			               <h:outputText value="R$ "/><h:outputText value="#{investidorMB.totalLiquido}" converter="bigDecimalConverter"/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value="R$ 0,00"/>
+			            </p:column>
+			        </p:summaryRow> 
+			        <f:facet name="footer">
+						<p:commandButton action="#{investidorMB.gerarOperacoesIndividualizadoPDF}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar PDF" value="Gerar PDF">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                </p:commandButton>
+			        </f:facet>             		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -62,7 +62,7 @@
         </property>     
 		<property name="userInvestidor" type="boolean">
            <column name="userInvestidor" />
-      	</property>    
+      	</property>      
       	<property name="loginInvestidor" type="java.lang.String">
             <column name="loginInvestidor"/>
         </property>      

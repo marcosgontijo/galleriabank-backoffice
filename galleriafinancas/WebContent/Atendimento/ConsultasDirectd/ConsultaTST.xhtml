@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaTST.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaTST.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>			 												
+			<p:panel id="ConsultaTST" header="Consulta TST" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="CNPJ" value="CNPJ " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CNPJ" value="#{consultaTST.cnpj}" label="CNPJ" mask="99.999.999/9999-99" />	
+					<p:outputLabel for="CPF" value="CPF " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CPF" value="#{consultaTST.cpf}" label="CPF" mask="999.999.999-99"/>								
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaTST.consultaTST}" image="ui-icon ui-icon-check" update=":form:ConsultaTSTResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaTSTResultados" header="Retorno Consulta TST" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.infoServico.consultaUid}"/>
+					<p:outputLabel value="Expedição: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.expedicao}"/>
+					<p:outputLabel value="Validade: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaTST.retornoConsultaTST.validade}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Nome: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.nome}"/>
+					<p:outputLabel value="CNPJ: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.cnpj}"/>
+					<p:outputLabel value="CPF: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.cpf}"/>
+					<p:outputLabel value="Número: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.numero}"/>
+					<p:outputLabel value="Ano: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.ano}"/>
+					<p:outputLabel value="Consta Processos: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaTST.retornoConsultaTST.consta}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaTST.retornoConsultaTST.consta}">
+						<h:outputText value="Não" />
+					</ui:fragment>	
+					<p:outputLabel value="Total de Processos: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.totalProcessos}"/>
+					<p:outputLabel value="Observações: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTST.retornoConsultaTST.observacoes}"/>
+				</h:panelGrid>				
+				<p:panel id="listaProcessos" header="Lista de Processos" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaProcessos" var="processos" value="#{consultaTST.retornoConsultaTST.listaProcessos}" emptyMessage="Nenhum processo encontrado!">
+				       <p:column style="text-align: center;" headerText="Processos">
+				            <h:outputText value="#{processos}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaTST.gerarPDF}" 
+							update="PanelPDF" />
+				</div>
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

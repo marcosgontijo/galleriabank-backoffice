@@ -21,7 +21,7 @@
 					        </p:selectOneRadio>		
 					        
 							<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" />
-							<p:inputText id="Nome" value="#{empresaCobrancaMB.objetoEmpresaCobranca.nome}" onblur="value=value.toUpperCase()" label="Nome" required="true"  style="width:400px;"></p:inputText>
+							<p:inputText id="Nome" value="#{empresaCobrancaMB.objetoEmpresaCobranca.nome}" onblur="" label="Nome" required="true"  style="width:400px;"></p:inputText>
 							  
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"/>
 							<p:inputMask id="CNPJ" value="#{empresaCobrancaMB.objetoEmpresaCobranca.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" validator="#{empresaCobrancaMB.validaCNPJ}">
@@ -103,7 +103,7 @@
 			<p:panel id="PanelBoleto" header="Dados do Boleto" style="margin-bottom:10px;">
 				<h:panelGrid columns="2">				
 					<p:outputLabel for="localPagamento" value="Local do Pagamento: " styleClass="labelBold" />					
-					<p:inputText id="localPagamento" value="#{empresaCobrancaMB.objetoEmpresaCobranca.localPagamento}" onblur="value=value.toUpperCase()" label="Local do Pagamento" style="width:400px;"/> 
+					<p:inputText id="localPagamento" value="#{empresaCobrancaMB.objetoEmpresaCobranca.localPagamento}" onblur="" label="Local do Pagamento" style="width:400px;"/> 
 					
 					<p:outputLabel for="instrucao1" value="Instrução 1: " styleClass="labelBold" />					
 					<p:inputText id="instrucao1" value="#{empresaCobrancaMB.objetoEmpresaCobranca.instrucao1}" label="Instrução 1" style="width:400px;" required="true"/> 

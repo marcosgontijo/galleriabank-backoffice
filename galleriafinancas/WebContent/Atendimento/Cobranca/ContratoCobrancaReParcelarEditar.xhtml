@@ -870,7 +870,7 @@
 						<p:calendar id="dataInicio"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
 							required="true" label="Data Inicio" size="100"
-							pattern="dd/MM/yyyy" locale="pt" timeZone="GMT-3"
+							pattern="dd/MM/yyyy" 
 							styleClass="dateTimeField">
 							<p:ajax event="dateSelect"
 								listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
@@ -953,7 +953,7 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPagamentoFim}"
 								style="margin-left: 12px;" required="true"
 								label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-								locale="pt" timeZone="GMT-3" styleClass="dateTimeField" />
+								 styleClass="dateTimeField" />
 
 							<p:outputLabel for="vlrParcelaFinal" value="Valor da Parcela: "
 								styleClass="labelBold" />
@@ -1426,7 +1426,7 @@
 									value="#{parcelas.dataVencimento}"
 									style="margin-left: 12px;" required="true"
 									label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-									locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+									 styleClass="dateTimeField"/>
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>

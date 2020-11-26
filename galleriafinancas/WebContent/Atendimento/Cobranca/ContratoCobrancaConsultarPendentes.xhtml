@@ -49,7 +49,7 @@
 			<p:panel id="ConsultaContratos" header="Pré-Contratos Pendentes - Consultar" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">
-   		         	<f:facet name="header">
+   		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContrato}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
@@ -80,7 +80,7 @@
 			            <h:outputText value="#{contratos.imovel.cidade}" />
 			        </p:column>	
 			        <p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />

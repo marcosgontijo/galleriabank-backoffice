@@ -15,19 +15,22 @@
 				<ui:define name="menu">		
 					<h:form style="margin-bottom:10px;">		
 						<p:menu style="width: 227px;">
-								<p:submenu label="Cadastros Cobrança" styleClass="titulosMenu">
-									<shiro:hasAnyRoles name="ROOT, COBRANCA">
-										<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO">									
-										<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, COBRANCA">
-										<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
-										<p:menuitem value="Grupos Favorecidos" action="/Cadastros/Cobranca/GruposFavorecidosConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-										<p:menuitem value="Grupos Pagadores" action="/Cadastros/Cobranca/GruposPagadoresConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-									</shiro:hasAnyRoles>										
-								</p:submenu>																																										
+							<p:submenu label="Cadastros Cobrança" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO">									
+									<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
+									<p:menuitem value="Grupos Favorecidos" action="/Cadastros/Cobranca/GruposFavorecidosConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+									<p:menuitem value="Grupos Pagadores" action="/Cadastros/Cobranca/GruposPagadoresConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>	
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Taxa Juros IUGU" action="#{iuguMB.clearAlteraTaxaJurosSubContas}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>										
+							</p:submenu>																																										
 						</p:menu>  	
 					</h:form>				
 				</ui:define>

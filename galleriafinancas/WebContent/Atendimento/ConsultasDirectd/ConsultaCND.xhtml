@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaCND.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaCND.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>	 												
+			<p:panel id="ConsultaCND" header="Consulta Certidão Negativa de Débitos Estaduais" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">						
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CNPJ" value="#{consultaCND.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true"/>								
+					<p:outputLabel for="Estado" value="Estado: " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:selectOneMenu id="Estado" value="#{consultaCND.uf}" label="Estado"   style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+						<f:selectItem itemValue="AC" itemLabel="ACRE" />
+						<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
+						<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
+						<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
+						<f:selectItem itemValue="BA" itemLabel="BAHIA" />
+						<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
+						<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
+						<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
+						<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
+						<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
+						<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
+						<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
+						<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
+						<f:selectItem itemValue="PA" itemLabel="PARÁ" />
+						<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
+						<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
+						<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
+						<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
+						<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
+						<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
+						<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
+						<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
+						<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
+						<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
+						<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
+						<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
+						<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />						    
+					</p:selectOneMenu>	
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaCND.consultaCND}" image="ui-icon ui-icon-check" update=":form:ConsultaCNDResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaCNDResultados" header="Retorno Consulta Certidão Negativa de Débitos Estaduais" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.infoServico.consultaUid}"/>
+					<p:outputLabel value="Emissão: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaCND.retornoConsultaCND.dataEmissao}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Número Certidão: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.numCertidao}"/>
+					<p:outputLabel value="Contribuinte: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.contribuinte}"/>
+					<p:outputLabel value="CCE: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.CCE}"/>
+					<p:outputLabel value="Consta Dívida: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaCND.retornoConsultaCND.constaDivida}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaCND.retornoConsultaCND.constaDivida}">
+						<h:outputText value="Não" />
+					</ui:fragment>	
+					<p:outputLabel value="CNPJ: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.cnpj}"/>
+					<p:outputLabel value="CPF: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.cpf}"/>
+					<p:outputLabel value="IE: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.ie}"/>
+					<p:outputLabel value="Título: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.titulo}"/>
+					<p:outputLabel value="Status: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCND.retornoConsultaCND.status}"/>
+					<p:outputLabel value="Valido Até: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaCND.retornoConsultaCND.validoAte}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				</h:panelGrid>		
+				<p:panel id="listaDividas" header="Lista Dívidas" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaProcessos" var="dividas" value="#{consultaCND.retornoConsultaCND.listaDividas}" emptyMessage="Nenhuma dívida encontrada!">
+				       <p:column style="text-align: center;" headerText="Dívidas">
+				            <h:outputText value="#{dividas}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>	
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaCND.gerarPDF}" 
+							update="PanelPDF" />
+				</div>	
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

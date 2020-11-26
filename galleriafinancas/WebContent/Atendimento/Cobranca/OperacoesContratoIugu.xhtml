@@ -244,7 +244,7 @@
 							styleClass="labelBold" />
 						<p:inputTextarea rows="10" cols="50" id="observacao"
 							value="#{iuguMB.observacao}" label="Observação"
-							onblur="value=value.toUpperCase()" style="width:350px;" />
+							onblur="" style="width:350px;" />
 						<p:spacer width="10" />
 						<p:outputLabel for="parcelaObs" value="Atualizar Observação Parcela: "
 							styleClass="labelBold" />				         			
@@ -463,7 +463,7 @@
 					          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
 					    </h:outputText>
 					    <p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"  style="margin-right: 59px;"/>
-						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{iuguMB.observacao}" label="Observação" onblur="value=value.toUpperCase()"  style="width:450px;"/>
+						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{iuguMB.observacao}" label="Observação" onblur=""  style="width:450px;"/>
 					</h:panelGrid>
 					<div align="center" style="margin-top:20px;">								
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{iuguMB.addObservacaoDetalhes}" update="ObservacoesPanel"  />																						

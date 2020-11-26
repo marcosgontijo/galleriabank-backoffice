@@ -34,6 +34,15 @@
 	margin:0 0 7px 0;
 }
 
+#login-box-key {
+	float: left;
+	display:inline;
+	width:80px;
+	text-align: right;
+	padding: 14px 10px 0 0;
+	margin:0 0 7px 0;
+}
+
 #login-box-field {
 	float: left;
 	display:inline;

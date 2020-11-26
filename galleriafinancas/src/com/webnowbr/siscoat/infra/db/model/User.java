@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+
 /**
  * Classe de armazenamento de dados de usuario.
  * @author domingos
@@ -30,6 +32,8 @@ public final class User implements Serializable {
     /** Grupos ao qual o usuario esta associado. */
     private List<GroupAdm> groupList;
     
+    private List<Responsavel> listResponsavel;
+    
     private String ip;
     
     private boolean administrador;
@@ -45,6 +49,7 @@ public final class User implements Serializable {
     
     private boolean userPreContrato;
     private boolean userPreContratoIUGU;
+    private boolean userPreContratoAnalista;
     private boolean userInvestidor;
     private String codigoResponsavel;
 
@@ -54,6 +59,12 @@ public final class User implements Serializable {
     
     private Date horaInicioPermissaoAcesso;   
     private Date horaFimPermissaoAcesso;
+    
+    private String key;
+    private String urlQRCode;
+    
+    private boolean twoFactorAuth;
+    
     /**
      * Construtor.
      */
@@ -380,5 +391,45 @@ public final class User implements Serializable {
 
 	public void setUserPreContratoIUGU(boolean userPreContratoIUGU) {
 		this.userPreContratoIUGU = userPreContratoIUGU;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getUrlQRCode() {
+		return urlQRCode;
+	}
+
+	public void setUrlQRCode(String urlQRCode) {
+		this.urlQRCode = urlQRCode;
+	}
+
+	public boolean isTwoFactorAuth() {
+		return twoFactorAuth;
+	}
+
+	public void setTwoFactorAuth(boolean twoFactorAuth) {
+		this.twoFactorAuth = twoFactorAuth;
+	}
+
+	public boolean isUserPreContratoAnalista() {
+		return userPreContratoAnalista;
+	}
+
+	public void setUserPreContratoAnalista(boolean userPreContratoAnalista) {
+		this.userPreContratoAnalista = userPreContratoAnalista;
+	}
+
+	public List<Responsavel> getListResponsavel() {
+		return listResponsavel;
+	}
+
+	public void setListResponsavel(List<Responsavel> listResponsavel) {
+		this.listResponsavel = listResponsavel;
 	}
 }

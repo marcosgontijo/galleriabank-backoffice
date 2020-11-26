@@ -45,7 +45,10 @@
         </list>        
         <property name="administrador" type="boolean">
             <column name="ADMINISTRADOR" />
-        </property> 
+        </property>         
+        <property name="twoFactorAuth" type="boolean">
+            <column name="twoFactorAuth" />
+        </property>  
         <property name="userPosto" type="boolean">
             <column name="USERPOSTO" />
         </property>   
@@ -70,6 +73,9 @@
         <property name="userPreContratoIUGU" type="boolean">
             <column name="userPreContratoIUGU" />
         </property> 
+        <property name="userPreContratoAnalista" type="boolean">
+            <column name="userPreContratoAnalista" />
+        </property>
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    
@@ -95,6 +101,19 @@
         </property>  
 		<property name="horaFimPermissaoAcesso" type="java.util.Date">
             <column name="horaFimPermissaoAcesso" />
-        </property>          		                              		      
+        </property> 
+        <property name="key" type="java.lang.String">
+            <column name="key" />
+        </property> 
+        <property name="urlQRCode" type="java.lang.String">
+            <column name="urlQRCode" />
+        </property> 
+        <list name="listResponsavel"
+			table="Usuario_Responsavel_Join" cascade="all" lazy="false">
+			<key column="idUsuario" />
+			<list-index></list-index>
+			<many-to-many column="idResponsavel"
+				class="com.webnowbr.siscoat.cobranca.db.model.Responsavel" />
+		</list>            		                              		      
     </class>
 </hibernate-mapping>

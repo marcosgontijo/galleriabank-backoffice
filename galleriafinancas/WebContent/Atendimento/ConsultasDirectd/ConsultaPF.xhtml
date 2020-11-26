@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaPF.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaPF.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>	 												
+			<p:panel id="consultaPF" header="Consulta PF" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="CPF" value="CPF " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CPF" value="#{consultaPF.cpf}" label="CNPJ" mask="999.999.999-99" required="true" />									
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaPF.consultaPF}" image="ui-icon ui-icon-check" update=":form:consultaPFResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="consultaPFResultados" header="Retorno Consulta PF" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Consulta: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPF.retornoConsultaPF.dataConsulta}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+					<p:outputLabel value="CPF: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.cpf}"/>
+					<p:outputLabel value="Nome: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.nome}"/>
+					<p:outputLabel value="Sexo: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.sexo}"/>
+					<p:outputLabel value="Data Nascimento: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPF.retornoConsultaPF.dataNascimento}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+					<p:outputLabel value="Nome Mãe: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.nomeMae}"/>
+					<p:outputLabel value="Idade: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.idade}"/>
+					<p:outputLabel value="Signo: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.signo}"/>
+					
+					<p:outputLabel value="Interpol: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.interpol}"/>
+					<p:outputLabel value="FAC: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.fac}"/>
+					<p:outputLabel value="PEP: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.pep}"/>
+					<p:outputLabel value="PEP Parente: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.pepParente}"/>
+					
+					<p:outputLabel value="Última Atualização PF: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPF.retornoConsultaPF.ultimaAtualizacaoPF}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+					<p:outputLabel value="Situação Receita Banco Dados: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.situacaoReceitaBancoDados}"/>
+					<p:outputLabel value="Renda Estimada: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.rendaEstimada}"/>
+					<p:outputLabel value="Óbito: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPF.retornoConsultaPF.obito}"/>				
+				</h:panelGrid>
+				
+				<p:panel id="enderecos" header="Endereços" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtenderecos" var="enderecos" value="#{consultaPF.retornoConsultaPF.enderecos}" emptyMessage="Nenhum Endereço encontrado!">
+					    <p:column style="text-align: center;" headerText="Logradouro"  >
+				            <h:outputText value="#{enderecos.logradouro}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Número"  >
+				            <h:outputText value="#{enderecos.numero}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Complemento"  >
+				            <h:outputText value="#{enderecos.complemento}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Bairro"  >
+				            <h:outputText value="#{enderecos.bairro}" />
+				        </p:column>Endereço
+				        <p:column style="text-align: center;" headerText="Cidade"  >
+				            <h:outputText value="#{enderecos.cidade}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="UF"  >
+				            <h:outputText value="#{enderecos.uf}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="CEP"  >
+				            <h:outputText value="#{enderecos.cep}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Última Atualização">
+			            	<h:outputText value="#{enderecos.ultimaAtualizacao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />Endereço
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+					</p:dataTable>	
+				</p:panel>				
+				<p:panel id="telefones" header="Telefones" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dttelefones" var="telefones" value="#{consultaPF.retornoConsultaPF.telefones}" emptyMessage="Nenhum Telefone encontrado!">
+					    <p:column style="text-align: center;" headerText="Telefone Com DDD"  >
+				            <h:outputText value="#{telefones.telefoneComDDD}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Telemarketing Bloqueado"  >
+				            <h:outputText value="#{telefones.telemarketingBloqueado}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Telemarketing Ult. Bloq. Desb."  >
+				            <h:outputText value="#{telefones.telemarketingUltBloqDesb}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Operadora"  >
+				            <h:outputText value="#{telefones.operadora}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Última Atualização">
+			            	<h:outputText value="#{telefones.ultimaAtualizacao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+					</p:dataTable>	
+				</p:panel>				
+				<p:panel id="emails" header="Emails" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtemails" var="emails" value="#{consultaPF.retornoConsultaPF.emails}" emptyMessage="Nenhum Email encontrado!">
+					    <p:column style="text-align: center;" headerText="Endereço de Email"  >
+				            <h:outputText value="#{emails.enderecoEmail}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Última Atualização">
+			            	<h:outputText value="#{emails.ultimaAtualizacao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+					</p:dataTable>	
+				</p:panel>				
+				<p:panel id="sociedades" header="Sociedades" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtsociedades" var="sociedades" value="#{consultaPF.retornoConsultaPF.sociedades}" emptyMessage="Nenhuma Sociedade encontrada!">
+					    <p:column style="text-align: center;" headerText="Documento"  >
+				            <h:outputText value="#{sociedades.documento}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Nome"  >
+				            <h:outputText value="#{sociedades.nome}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Percentual de Participação"  >
+				            <h:outputText value="#{sociedades.percentualParticipacao}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Data Entrada">
+			            	<h:outputText value="#{sociedades.dataEntrada}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+					</p:dataTable>	
+				</p:panel>
+				<p:panel id="relacionados" header="Relacionados" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtrelacionados" var="relacionados" value="#{consultaPF.retornoConsultaPF.relacionados}" emptyMessage="Nenhum relacionado encontrado!">
+					    <p:column style="text-align: center;" headerText="CPF"  >
+				            <h:outputText value="#{relacionados.cpf}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Nome"  >
+				            <h:outputText value="#{relacionados.nome}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Relacionamento"  >
+				            <h:outputText value="#{relacionados.relacionamento}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>	
+				
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaPF.gerarPDF}"
+							update="PanelPDF" />
+				</div>					
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

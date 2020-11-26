@@ -55,6 +55,12 @@
         </property>    
         <property name="possuiDivida" type="java.lang.String">
             <column name="possuiDivida"/>
-        </property>                                  
+        </property> 
+        <property name="ocupacao" type="java.lang.String">
+            <column name="ocupacao"/>
+        </property>                  
+        <property name="valoEstimado" type="big_decimal">
+			<column name="valoEstimado" />
+		</property>                 
     </class>
 </hibernate-mapping>

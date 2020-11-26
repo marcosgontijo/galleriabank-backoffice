@@ -47,11 +47,8 @@
 				</h:panelGrid>
 			</p:panel>										
 			<p:panel id="ConsultaContratos" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.lazyModel}" paginator="true" rows="40" lazy="true"
-   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-                 reflow="true">
+                 <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         reflow="true">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -155,7 +152,7 @@
 					          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
 					    </h:outputText>
 					    <p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"  style="margin-right: 59px;"/>
-						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{contratoCobrancaMB.observacao}" label="Observação" onblur="value=value.toUpperCase()"  style="width:450px;"/>
+						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{contratoCobrancaMB.observacao}" label="Observação" onblur=""  style="width:450px;"/>
 					</h:panelGrid>
 					<div align="center" style="margin-top:20px;">								
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.addObservacao}" update="ObservacoesPanel"/>																						

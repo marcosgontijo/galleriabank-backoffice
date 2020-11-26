@@ -95,7 +95,7 @@
 					<p:outputLabel for="site" value="Site: " styleClass="labelBold" />
 					<p:inputText id="site"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.site}"
-						label="Site" required="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"
+						label="Site" 
 						style="width:400px;" />
 
 					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold"
@@ -105,7 +105,7 @@
 						rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
 					<p:inputText id="Nome"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nome}"
-						label="Nome" required="true" onblur="value=value.toUpperCase()"
+						label="Nome" required="true" onblur=""
 						style="width:400px;">
 						<p:ajax update="NomeCC" event="valueChange"
 							listener="#{pagadorRecebedorMB.selectedNome}" />
@@ -123,14 +123,14 @@
 					<p:outputLabel for="Contato" value="Contato: " />
 					<p:inputText id="Contato"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contato}"
-						label="Contato" onblur="value=value.toUpperCase()"
+						label="Contato" onblur=""
 						style="width:400px;" />
 
 					<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
 					<p:inputText id="EMail"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
-						label="E-Mail" type="email" required="true"
-						onblur="value=value.toUpperCase()" style="width:400px;">
+						label="E-Mail" type="email" 
+						onblur="" style="width:400px;">
 						<p:ajax event="blur" update=":form:PanelInvestidor" />
 					</p:inputText>
 
@@ -164,31 +164,31 @@
 					<p:outputLabel for="Endereco" value="Endereço: " />
 					<p:inputText id="Endereco"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.endereco}"
-						label="Endereço" onblur="value=value.toUpperCase()"
+						label="Endereço" onblur=""
 						style="width:400px;" />
 						
 					<p:outputLabel for="Numero" value="Número: " />
 					<p:inputText id="Numero"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.numero}"
-						label="Número" onblur="value=value.toUpperCase()"
+						label="Número" onblur=""
 						style="width:50px;" />
 
 					<p:outputLabel for="Bairro" value="Bairro: " />
 					<p:inputText id="Bairro"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairro}"
-						label="Bairro" onblur="value=value.toUpperCase()"
+						label="Bairro" onblur=""
 						style="width:400px;" />
 
 					<p:outputLabel for="Complemento" value="Complemento: " />
 					<p:inputText id="Complemento"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complemento}"
-						label="Complemento" onblur="value=value.toUpperCase()"
+						label="Complemento" onblur=""
 						style="width:400px;" />
 
 					<p:outputLabel for="Cidade" value="Cidade: " />
 					<p:inputText id="Cidade"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidade}"
-						label="Cidade" onblur="value=value.toUpperCase()"
+						label="Cidade" onblur=""
 						style="width:400px;" />
 
 					<p:outputLabel for="Estado" value="Estado: " />
@@ -228,13 +228,13 @@
 					<p:outputLabel for="Observacao1" value="Observação: " />
 					<p:inputTextarea id="Observacao1" rows="10" cols="48"
 						counter="display" maxlength="3000"
-						onblur="value=value.toUpperCase()"
+						onblur=""
 						counterTemplate="{0} characters remaining." autoResize="false"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
 					<p:outputLabel for="Observacao2" value=" " />
 					<p:inputTextarea id="Observacao2" rows="10" cols="48"
 						counter="display" maxlength="3000"
-						onblur="value=value.toUpperCase()"
+						onblur=""
 						counterTemplate="{0} characters remaining." autoResize="false"
 						value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao2}" />
 					<p:outputLabel id="display" />
@@ -262,7 +262,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 						<p:inputText id="NomeConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeConjuge}"
-							required="true" label="Nome" onblur="value=value.toUpperCase()"
+							required="true" label="Nome" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputText>
 						<p:outputLabel for="SexoConjuge" value="Sexo: "
@@ -306,7 +306,7 @@
 						<p:inputText id="emailConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}"
 							label="E-Mail" type="email" required="true"
-							onblur="value=value.toUpperCase()" style="width:400px;"
+							onblur="" style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 
 						<p:outputLabel for="DtNascimentoConjuge"
@@ -345,7 +345,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 						<p:inputText id="EnderecoConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoConjuge}"
-							label="Endereço" onblur="value=value.toUpperCase()"
+							label="Endereço" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 
@@ -353,7 +353,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 						<p:inputText id="BairroConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroConjuge}"
-							label="Bairro" onblur="value=value.toUpperCase()"
+							label="Bairro" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 
@@ -361,7 +361,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 						<p:inputText id="ComplementoConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoConjuge}"
-							label="Complemento" onblur="value=value.toUpperCase()"
+							label="Complemento" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 
@@ -369,7 +369,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 						<p:inputText id="CidadeConjuge"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeConjuge}"
-							label="Cidade" onblur="value=value.toUpperCase()"
+							label="Cidade" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
 
@@ -436,7 +436,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 						<p:inputText id="NomeCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCoobrigado}"
-							required="true" label="Nome" onblur="value=value.toUpperCase()"
+							required="true" label="Nome" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"></p:inputText>
 						<p:outputLabel for="SexoCoobrigado" value="Sexo: "
@@ -477,7 +477,7 @@
 						<p:inputText id="emailCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailCoobrigado}"
 							label="E-Mail" type="email" required="true"
-							onblur="value=value.toUpperCase()" style="width:400px;"
+							onblur="" style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 
 						<p:outputLabel for="DtNascimentoCoobrigado"
@@ -517,7 +517,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 						<p:inputText id="EnderecoCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoCoobrigado}"
-							label="Endereço" onblur="value=value.toUpperCase()"
+							label="Endereço" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 
@@ -525,7 +525,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 						<p:inputText id="BairroCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroCoobrigado}"
-							label="Bairro" onblur="value=value.toUpperCase()"
+							label="Bairro" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 
@@ -533,7 +533,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 						<p:inputText id="ComplementoCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoCoobrigado}"
-							label="Complemento" onblur="value=value.toUpperCase()"
+							label="Complemento" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 
@@ -541,7 +541,7 @@
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 						<p:inputText id="CidadeCoobrigado"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeCoobrigado}"
-							label="Cidade" onblur="value=value.toUpperCase()"
+							label="Cidade" onblur=""
 							style="width:400px;"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}" />
 
@@ -613,7 +613,7 @@
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 							<p:inputText id="NomeCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCoobrigadoCasado}"
-								required="true" label="Nome" onblur="value=value.toUpperCase()"
+								required="true" label="Nome" onblur=""
 								style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}"></p:inputText>
 							<p:outputLabel for="SexoCoobrigadoCasado" value="Sexo: "
@@ -658,7 +658,7 @@
 							<p:inputText id="emailCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailCoobrigadoCasado}"
 								label="E-Mail" type="email" required="true"
-								onblur="value=value.toUpperCase()" style="width:400px;"
+								onblur="" style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 
 							<p:outputLabel for="DtNascimentoCoobrigadoCasado"
@@ -699,7 +699,7 @@
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 							<p:inputText id="EnderecoCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoCoobrigadoCasado}"
-								label="Endereço" onblur="value=value.toUpperCase()"
+								label="Endereço" onblur=""
 								style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 
@@ -707,7 +707,7 @@
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 							<p:inputText id="BairroCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroCoobrigadoCasado}"
-								label="Bairro" onblur="value=value.toUpperCase()"
+								label="Bairro" onblur=""
 								style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 
@@ -716,7 +716,7 @@
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 							<p:inputText id="ComplementoCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoCoobrigadoCasado}"
-								label="Complemento" onblur="value=value.toUpperCase()"
+								label="Complemento" onblur=""
 								style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 
@@ -724,7 +724,7 @@
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 							<p:inputText id="CidadeCoobrigadoCasado"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeCoobrigadoCasado}"
-								label="Cidade" onblur="value=value.toUpperCase()"
+								label="Cidade" onblur=""
 								style="width:400px;"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}" />
 
@@ -785,7 +785,7 @@
 						<p:outputLabel id="login" value="Login Investidor: " styleClass="labelBold" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
 						<p:inputText id="loginInput"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.loginInvestidor}" required="true"
-							label="Login Investidor" onblur="value=value.toUpperCase()" style="width:400px;" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
+							label="Login Investidor" onblur="" style="width:400px;" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
 						</p:inputText>
 	
 						<p:outputLabel id="pwd" value="Senha Investidor: " styleClass="labelBold"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
@@ -838,7 +838,7 @@
 									rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
 								<p:inputText id="NomeCC"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
-									label="Nome" onblur="value=value.toUpperCase()"
+									label="Nome" onblur=""
 									style="width:400px;" />
 
 								<p:outputLabel for="Banco" value="Banco: "
@@ -900,8 +900,8 @@
 										itemLabel="029 | Banco Itaú BMG Consignado S.A." />
 									<f:selectItem itemValue="031 | Banco Beg S.A."
 										itemLabel="031 | Banco Beg S.A." />
-									<f:selectItem itemValue="033 | Banco Santander (Brasil) S.A."
-										itemLabel="033 | Banco Santander (Brasil) S.A." />
+									<f:selectItem itemValue="033 | Banco Santander S.A."
+										itemLabel="033 | Banco Santander S.A." />
 									<f:selectItem itemValue="036 | Banco Bradesco BBI S.A."
 										itemLabel="036 | Banco Bradesco BBI S.A." />
 									<f:selectItem itemValue="037 | Banco do Estado do Pará S.A."
@@ -1116,14 +1116,14 @@
 									styleClass="labelBold" />
 								<p:inputText id="Agencia"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}"
-									label="Agência" onblur="value=value.toUpperCase()"
+									label="Agência" onblur=""
 									style="width:100px;" />
 								<p:outputLabel for="Conta" value="Conta: "
 									styleClass="labelBold" />
 								<p:inputText id="Conta"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
 									styleClass="labelBold" label="Conta"
-									onblur="value=value.toUpperCase()" style="width:100px;" />
+									onblur="" style="width:100px;" />
 							</h:panelGrid>
 						</div>
 						<div class="ui-g-12 ui-md-6 ui-lg-6">

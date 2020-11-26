@@ -112,6 +112,17 @@
 						style="width:60px">
 						<p:ajax event="change" update="PanelResponsavel" />
 					</p:selectBooleanButton>
+
+					<h:outputLabel for="GerenciaPreContratosAnalista"
+						value="Sistema de Cobrança - Analista Pré-Contratos: "
+						class="labelBold" />
+					<p:selectBooleanButton id="GerenciaPreContratosAnalista"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userPreContratoAnalista}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+						<p:ajax event="change" update="PanelResponsavel" />
+					</p:selectBooleanButton>
 					
 					<h:outputLabel for="GerenciaCobrançaIUGU"
 						value="Sistema de Cobrança - IUGU: " class="labelBold" />
@@ -174,6 +185,26 @@
 						<p:datePicker id="timeFinish"
 							value="#{usuarioMB.objetoUsuario.horaFimPermissaoAcesso}"
 							timeOnly="true" pattern="HH:mm" />
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel id="Responsaveis" header="Acesso aos dados do(s) Responsável(eis):"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						 <p:selectCheckboxMenu id="responsavelList" value="#{usuarioMB.selectedResponsaveis}" label="Selecione os responsáveis ..."
+		                              filter="true" filterMatchMode="contains" panelStyle="width:550px" style="width:550px;"  converter="ResponsavelConverter">
+				            <f:selectItems value="#{usuarioMB.responsaveis}" var="resp" itemLabel="#{resp.nome}" itemValue="#{resp}" />
+				        </p:selectCheckboxMenu>
+				    </h:panelGrid>
+				</p:panel>
+				
+				<p:panel id="GoogleAuthenticator" header="Google Authenticator"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						<h:outputLabel for="twofactor" value="Habilitar Autenticação Google: " />
+						<p:selectBooleanButton id="twofactor" value="#{usuarioMB.objetoUsuario.twoFactorAuth}" onLabel="Sim" offLabel="Não" style="width:60px" />
+						<h:outputLabel for="qrCode" value="QR Code: " />
+						<img src="#{usuarioMB.objetoUsuario.urlQRCode}"/>
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>

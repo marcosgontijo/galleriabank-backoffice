@@ -22,7 +22,7 @@
 					<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />	    
 					<h:outputText value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.dataVencimento}" >    					        
 		            	<f:convertDateTime locale="pt_BR"  />
-		            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+		            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 		            </h:outputText>		
 		            
 					<p:outputLabel value="Valor da Parcela: R$ " styleClass="labelBold" />	    
@@ -55,7 +55,7 @@
 					
 					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 					<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
-					<p:inputText id="Nome" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).nome}"  label="Nome" onblur="value=value.toUpperCase()" style="width:400px;"/>
+					<p:inputText id="Nome" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).nome}"  label="Nome" onblur="" style="width:400px;"/>
 											
 					<p:outputLabel for="Banco" value="Banco: " styleClass="labelBold" />		
 					<p:selectOneMenu id="Banco" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).banco}"  label="Banco" style="width:410px;">
@@ -64,7 +64,7 @@
 						<f:selectItem itemValue="399 | HSBC Bank Brasil S.A. - Banco Múltiplo" itemLabel="399 | HSBC Bank Brasil S.A. - Banco Múltiplo"/>
 						<f:selectItem itemValue="104 | Caixa Econômica Federal" itemLabel="104 | Caixa Econômica Federal"/>
 						<f:selectItem itemValue="477 | Citibank N.A." itemLabel="477 | Citibank N.A."/>
-						<f:selectItem itemValue="033 | Banco Santander (Brasil) S.A." itemLabel="033 | Banco Santander (Brasil) S.A."/>
+						<f:selectItem itemValue="033 | Banco Santander S.A." itemLabel="033 | Banco Santander S.A."/>
 						<f:selectItem itemValue="237 | Banco Bradesco S.A." itemLabel="237 | Banco Bradesco S.A."/>
 						<f:selectItem itemValue="652 | Itaú Unibanco Holding S.A." itemLabel="652 | Itaú Unibanco Holding S.A."/>
 						<f:selectItem itemValue="246 | Banco ABC Brasil S.A." itemLabel="246 | Banco ABC Brasil S.A."/>
@@ -176,9 +176,9 @@
 						<f:selectItem itemValue="751 | Scotiabank Brasil S.A. Banco Múltiplo" itemLabel="751 | Scotiabank Brasil S.A. Banco Múltiplo"/>
 					</p:selectOneMenu>
 					<p:outputLabel for="Agencia" value="Agência: "  styleClass="labelBold" />
-					<p:inputText id="Agencia" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).agencia}"  label="Agência" onblur="value=value.toUpperCase()" style="width:100px;"/>  	
+					<p:inputText id="Agencia" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).agencia}"  label="Agência" onblur="" style="width:100px;"/>  	
 					<p:outputLabel for="Conta" value="Conta: "  styleClass="labelBold" />
-					<p:inputText id="Conta" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).conta}" styleClass="labelBold"  label="Conta" onblur="value=value.toUpperCase()" style="width:100px;"/>						
+					<p:inputText id="Conta" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).conta}" styleClass="labelBold"  label="Conta" onblur="" style="width:100px;"/>						
 					<p:outputLabel for="vlrPago" value="Valor Pago: " styleClass="labelBold" />
 					<p:inputText id="vlrPago" value="#{contratoCobrancaMB.selectedContratoCobrancaDetalhes.listContratoCobrancaFavorecidos.get(0).vlrRecebido}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" converter="bigDecimalConverter"/>
 				</h:panelGrid>													

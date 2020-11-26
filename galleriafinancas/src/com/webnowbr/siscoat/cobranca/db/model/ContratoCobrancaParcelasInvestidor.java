@@ -36,8 +36,10 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	// atributos temporarios, sem persistir
 	private boolean parcelaVencendo;
 	private boolean parcelaVencida;
-	
 	private boolean envelope;
+	private boolean investidorGarantido;
+	
+	private boolean parcelaContratoVencida;
 	
 	public ContratoCobrancaParcelasInvestidor(){
 
@@ -201,5 +203,21 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
+	}
+
+	public boolean isInvestidorGarantido() {
+		return investidorGarantido;
+	}
+
+	public void setInvestidorGarantido(boolean investidorGarantido) {
+		this.investidorGarantido = investidorGarantido;
+	}
+
+	public boolean isParcelaContratoVencida() {
+		return parcelaContratoVencida;
+	}
+
+	public void setParcelaContratoVencida(boolean parcelaContratoVencida) {
+		this.parcelaContratoVencida = parcelaContratoVencida;
 	}
 }

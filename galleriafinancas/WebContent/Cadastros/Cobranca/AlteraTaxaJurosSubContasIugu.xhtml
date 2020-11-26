@@ -14,6 +14,30 @@
 				<p:focus />
 				<p:messages />
 				<h:panelGrid columns="2">
+					<p:outputLabel for="tipoConta" value="Qual Conta Alterar: "
+						styleClass="labelBold" />
+					<p:selectOneRadio id="tipoConta" value="#{iuguMB.contaMestre}"
+						required="true">
+						<f:selectItem itemLabel="Todas" itemValue="true" />
+						<f:selectItem itemLabel="Conta Específica" itemValue="false" />
+						<p:ajax update="botaoFavorecido Favorecido" event="valueChange"
+							listener="#{iuguMB.clearRecebedor}" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Favorecido" value="SubConta IUGU: "
+						styleClass="labelBold" />
+					<p:inputText id="Favorecido" value="#{iuguMB.nomeRecebedor}"
+						label="Favorecido" readonly="TRUE" required="true"
+						style="FONT-SIZE: 10pt;width:420px;" />
+					<p:commandButton id="botaoFavorecido" type="button"
+						onclick="PF('favorecidoDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" 
+						disabled="#{iuguMB.contaMestre}" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
 					<p:outputLabel for="txJuros" value="Taxa de Juros (%):  " styleClass="labelBold"/>
 					<p:inputText id="txJuros"
 						value="#{iuguMB.taxaJuros}" type="number">
@@ -26,5 +50,60 @@
 					action="#{iuguMB.alteraTaxaJurosSubContas}" style="TEXT-DECORATION: bold;" />
 			</div>
 		</h:form>
+		
+		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600"
+			responsive="true">
+			<h:form id="formPagadores">
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cnpj}"
+						filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.cpf}"
+						filterBy="#{favorecidoDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{favorecidoDialogdlg.nome}"
+						filterBy="#{favorecidoDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{favorecidoDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{iuguMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:PanelTaxaJuros"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							update=":form:PanelTaxaJuros favorecidoDialogdlg"
+							oncomplete="PF('favorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('favorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

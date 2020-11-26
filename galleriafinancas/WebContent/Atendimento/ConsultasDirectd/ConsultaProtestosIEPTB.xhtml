@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaProtestosIEPTB.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaProtestosIEPTB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>			 												
+			<p:panel id="consultaProtestos" header="Consulta Protestos" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="CPF" value="CPF " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CPF" value="#{consultaProtestosIEPTB.cpf}" label="CNPJ" mask="999.999.999-99" />
+					<p:outputLabel for="CNPJ" value="CNPJ " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CNPJ" value="#{consultaProtestosIEPTB.cnpj}" label="CNPJ" mask="99.999.999/9999-99"  />
+					<p:outputLabel for="Estado" value="Estado " styleClass="labelBold" style="margin-right: 20px;" />
+					<p:inputText id="Estado" value="#{consultaProtestosIEPTB.uf}" label="Estado" />									
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaProtestosIEPTB.consultaProtestosIEPTB}" image="ui-icon ui-icon-check" update=":form:consultaProtestosResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="consultaProtestosResultados" header="Retorno Consulta Protestos" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaProtestosIEPTB.retornoProtestosIEPTB.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Consulta: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaProtestosIEPTB.retornoProtestosIEPTB.dataConsulta}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>				    
+					<p:outputLabel value="Documento Consultado: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaProtestosIEPTB.retornoProtestosIEPTB.documentoConsultado}"/>
+					<p:outputLabel value="Possui Protesto(s): " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaProtestosIEPTB.retornoProtestosIEPTB.constamProtestos}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaProtestosIEPTB.retornoProtestosIEPTB.constamProtestos}">
+						<h:outputText value="Não" />
+					</ui:fragment>				
+					<p:outputLabel value="Total Protestos: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaProtestosIEPTB.retornoProtestosIEPTB.totalNumProtestos}"/>
+				</h:panelGrid>
+				
+				<p:panel id="Protestos" header="Protestos" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtProtestos" var="protestos" value="#{consultaProtestosIEPTB.retornoProtestosIEPTB.protestos}" emptyMessage="Nenhum Protesto encontrado!" >
+					    <p:column style="text-align: center;" headerText="Estado" width="80">
+				            <h:outputText value="#{protestos.estado}" />
+				        </p:column>
+				       	<p:column style="text-align: center;"  width="70" headerText="Pesquisa Efetuada em">
+			            	<h:outputText value="#{protestos.pesquisaEfetuadaEm}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            	</h:outputText>
+						</p:column>	
+						<p:column style="text-align: center;" width="50" headerText="Total Protestos no Estado"  >
+				            <h:outputText value="#{protestos.totalNumProtestosUf}" />
+				        </p:column>
+				        
+				        <p:column style="text-align: center;" headerText="Cartórios Protesto"  >
+				        	<p:dataTable id="dtCartoriosProtesto" var="cartoriosProtesto" value="#{protestos.cartoriosProtesto}" emptyMessage="Nenhum Protesto em Cartório encontrado!">
+					   			<p:column style="text-align: center;" headerText="Cidade"  >
+						           <h:outputText value="#{cartoriosProtesto.cidade}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Nome"  >
+						           <h:outputText value="#{cartoriosProtesto.nome}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Endereco"  >
+						           <h:outputText value="#{cartoriosProtesto.endereco}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Observação"  >
+						           <h:outputText value="#{cartoriosProtesto.observacao}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Telefone"  >
+						           <h:outputText value="#{cartoriosProtesto.telefone}" />
+						        </p:column>
+								<p:column style="text-align: center;" headerText="Código Cartório"  >
+						           <h:outputText value="#{cartoriosProtesto.codigoCartorio}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Código Cidade"  >
+						           <h:outputText value="#{cartoriosProtesto.codigoCidade}" />
+						        </p:column>
+						        <p:column style="text-align: center;" width="70" headerText="Data Atualização">
+					            	<h:outputText value="#{cartoriosProtesto.dataAtualizacao}" >			            	
+						            	<f:convertDateTime locale="pt_BR"  />
+						            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+					            	</h:outputText>
+								</p:column>	
+								<p:column style="text-align: center;" headerText="Qtde. Protestos"  >
+						           <h:outputText value="#{cartoriosProtesto.numProtestos}" />
+						        </p:column>
+						        <p:column style="text-align: center;" headerText="Protestos"  >
+						           <p:dataTable id="dtProtesto" var="protesto" value="#{cartoriosProtesto.protesto}" emptyMessage="Nenhum Protesto encontrado!">
+							   			<p:column style="text-align: center;" width="70" headerText="Data Protesto">
+							            	<h:outputText value="#{protesto.dataAtualizacao}" >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							            	</h:outputText>
+										</p:column>	
+							   			<p:column style="text-align: center;" headerText="Valor Protestado"  >
+								           <h:outputText value="#{protesto.valorprotestado}" />
+								        </p:column>
+									</p:dataTable>	
+						        </p:column>
+							</p:dataTable>	
+						</p:column>
+					</p:dataTable>	
+				</p:panel>
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaProtestosIEPTB.gerarPDF}" 
+							update="PanelPDF" />
+				</div>						
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

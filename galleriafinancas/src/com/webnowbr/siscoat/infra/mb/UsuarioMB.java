@@ -11,6 +11,8 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.model.LazyDataModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 
@@ -19,6 +21,7 @@ import com.webnowbr.siscoat.infra.db.dao.GroupDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.TwoFactorAuth;
 
 import org.primefaces.model.SortOrder;
 
@@ -41,6 +44,9 @@ public class UsuarioMB {
 	
 	private List<String> diasSemana;
 	private String[] selectedDiasSemana;
+	
+	private Responsavel selectedResponsaveis[];
+	private List<Responsavel> responsaveis;
 	
 	/**
 	 * Construtor.
@@ -69,6 +75,12 @@ public class UsuarioMB {
 			}
 		};
 	}
+	
+	public void loadResponsavel() {
+		this.responsaveis = new ArrayList<Responsavel>();
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.responsaveis = rDao.findAll();
+	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
@@ -84,6 +96,9 @@ public class UsuarioMB {
 		this.diasSemana.add("Domingo"); 
 		
 		this.selectedDiasSemana = new String[0];
+		this.selectedResponsaveis = new Responsavel[0];
+		
+		loadResponsavel();
 
 		return "UsuarioInserir.xhtml";
 	}
@@ -106,6 +121,15 @@ public class UsuarioMB {
 			for (int i = 0; i < this.objetoUsuario.getDiasSemana().size(); i++) {		
 				this.selectedDiasSemana[i] = this.objetoUsuario.getDiasSemana().get(i);
 	        }
+		}
+		
+		loadResponsavel();
+		this.selectedResponsaveis = new Responsavel[this.objetoUsuario.getListResponsavel().size()];
+		
+		if (this.objetoUsuario.getListResponsavel().size() > 0) {
+			for (int i = 0; i < this.objetoUsuario.getListResponsavel().size(); i++) {
+				this.selectedResponsaveis[i] = this.objetoUsuario.getListResponsavel().get(i);
+			}
 		}
 
 		return "UsuarioInserir.xhtml";
@@ -208,7 +232,16 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
+			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAANALISTA");
+			if (objetoUsuario.isUserPreContratoAnalista()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+
 			gAdm = gDao.findByFilter("acronym", "INVESTIDOR");
 			if (objetoUsuario.isUserInvestidor()) {				
 				gAdmAux.add(gAdm.get(0));
@@ -233,6 +266,21 @@ public class UsuarioMB {
 				objetoUsuario.setDiasSemana(Arrays.asList(this.selectedDiasSemana));
 			}
 			
+			// Google Authenticator
+			if (objetoUsuario.isTwoFactorAuth()) {
+				if (objetoUsuario.getKey() == null || objetoUsuario.getKey().equals("")) {
+					TwoFactorAuth TwoFactorAuth = new TwoFactorAuth();
+					String base32Secret = TwoFactorAuth.generateBase32Secret();
+					
+					String qrCode = TwoFactorAuth.getQrCodeGoogle(this.objetoUsuario.getLogin() + "@siscoat.com.br", base32Secret);
+					
+					objetoUsuario.setKey(base32Secret);
+					objetoUsuario.setUrlQRCode(qrCode);
+				}
+			}
+			
+			this.objetoUsuario.setListResponsavel(Arrays.asList(this.selectedResponsaveis));
+						
 			if (objetoUsuario.getId() <= 0) {
 				postoDao.create(objetoUsuario);
 				msgRetorno = "inserido";
@@ -450,5 +498,21 @@ public class UsuarioMB {
 
 	public void setSelectedDiasSemana(String[] selectedDiasSemana) {
 		this.selectedDiasSemana = selectedDiasSemana;
-	}	
+	}
+
+	public Responsavel[] getSelectedResponsaveis() {
+		return selectedResponsaveis;
+	}
+
+	public void setSelectedResponsaveis(Responsavel[] selectedResponsaveis) {
+		this.selectedResponsaveis = selectedResponsaveis;
+	}
+
+	public List<Responsavel> getResponsaveis() {
+		return responsaveis;
+	}
+
+	public void setResponsaveis(List<Responsavel> responsaveis) {
+		this.responsaveis = responsaveis;
+	}
 }

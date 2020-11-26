@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaTRF3.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaTRF3.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>		 												
+			<p:panel id="ConsultaTRF3" header="Consulta TRF 3" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="TipoDocumento" value="Tipo do Relatório: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoDocumento"
+						value="#{consultaTRF3.tipoDocumento}" required="true">
+						<f:selectItem itemLabel="CNPJ" itemValue="false" />
+						<f:selectItem itemLabel="CPF" itemValue="true" />
+						<p:ajax update="ConsultaTRF3" event="valueChange" />
+					</p:selectOneRadio>	
+					<p:outputLabel for="CPF" value="CPF: " styleClass="labelBold" style="margin-right: 20px;"  rendered="#{consultaTRF3.tipoDocumento}"/>		
+					<p:inputMask id="CPF" value="#{consultaTRF3.cpf}" label="CPF" mask="999.999.999-99" required="true" rendered="#{consultaTRF3.tipoDocumento}"/>			
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;"  rendered="#{!consultaTRF3.tipoDocumento}"/>		
+					<p:inputMask id="CNPJ" value="#{consultaTRF3.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{!consultaTRF3.tipoDocumento}"/>									
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaTRF3.consultaTRF3}" image="ui-icon ui-icon-check" update=":form:ConsultaTRF3Resultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaTRF3Resultados" header="Retorno Consulta TRF 3" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Emissão: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaTRF3.retornoConsultaTRF3.emitidaAs}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+					<p:outputLabel value="Título: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.titulo}"/>
+					<ui:fragment rendered="#{consultaTRF3.tipoDocumento}">
+						<p:outputLabel value="CPF: " styleClass="labelBold"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaTRF3.tipoDocumento}">
+						<p:outputLabel value="CNPJ: " styleClass="labelBold"/>
+					</ui:fragment>	
+					<ui:fragment rendered="#{consultaTRF3.tipoDocumento}">
+						<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.cpf}"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaTRF3.tipoDocumento}">
+						<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.cNPJ}"/>
+					</ui:fragment>							
+					<p:outputLabel value="Nome: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.nome}"/>
+					<p:outputLabel value="Status: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.status}"/>
+					<p:outputLabel value="Código Controle Certidão: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaTRF3.retornoConsultaTRF3.codigoControleCertidao}"/>
+				</h:panelGrid>
+				
+				<p:panel id="listaDividas" header="Lista de Dívidas" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaDividas" var="dividas" value="#{consultaTRF3.retornoConsultaTRF3.listaDividas}" emptyMessage="Nenhuma dívida encontrada!">
+				       <p:column style="text-align: center;" headerText="Descrição">
+				            <h:outputText value="#{dividas}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>
+				
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaTRF3.gerarPDF}"
+							update="PanelPDF" />
+				</div>
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

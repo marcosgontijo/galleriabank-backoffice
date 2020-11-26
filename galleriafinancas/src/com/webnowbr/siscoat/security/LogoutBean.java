@@ -69,9 +69,9 @@ public class LogoutBean {
 		    	url = ((HttpServletRequest) request).getRequestURL().toString();
 		    	
 		    	if (investidor) {
-		    		url = url.substring(0, url.indexOf("galleriafinancas") + 16) + "/LoginInvestidor.xhtml";
+		    		url = url.substring(0, url.indexOf("galleriafinancas") + 23) + "/galleriafinancas/LoginInvestidor.xhtml";
 		    	} else {
-		    		url = url.substring(0, url.indexOf("galleriafinancas") + 16) + "/Login.xhtml";
+		    		url = url.substring(0, url.indexOf("galleriafinancas") + 23) + "/galleriafinancas/Login.xhtml";
 		    	}
 		    }
         	

@@ -108,7 +108,7 @@ public class ImpressoesPDFMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR"); 
 			Calendar date = Calendar.getInstance(zone, locale);  
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MM/yyyy", locale);
@@ -139,7 +139,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://siscoat.galleriafinancas.com.br/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastros.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -416,8 +416,10 @@ public class ImpressoesPDFMB {
 				if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
 					endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
 				}
+			} else {
+				endereco = this.objetoContratoCobranca.getPagador().getEndereco();
 			}
-
+			
 			cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
@@ -2071,7 +2073,7 @@ public class ImpressoesPDFMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR"); 
 			Calendar date = Calendar.getInstance(zone, locale);  
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MM/yyyy", locale);
@@ -2102,7 +2104,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://siscoat.galleriafinancas.com.br/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastros.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -2853,6 +2855,8 @@ public class ImpressoesPDFMB {
 					if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
 						endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
 					}
+				} else {
+					endereco = this.objetoContratoCobranca.getPagador().getEndereco();
 				}
 
 				cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));

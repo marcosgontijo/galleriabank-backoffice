@@ -176,7 +176,7 @@ public class PortalWebNowbr extends AuthorizingRealm {
 	 * @return
 	 */
 	public String getNomeDiaHoje() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		
@@ -217,7 +217,7 @@ public class PortalWebNowbr extends AuthorizingRealm {
 	 * @return
 	 */
 	public String getHoraHoje() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		

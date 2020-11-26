@@ -388,10 +388,10 @@ public class PagadorRecebedorMB {
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
 
-				this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString().toUpperCase());
-				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString().toUpperCase());
-				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString().toUpperCase());
-				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString().toUpperCase());
+				this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
+				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {

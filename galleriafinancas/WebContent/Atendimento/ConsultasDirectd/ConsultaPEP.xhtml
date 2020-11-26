@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaPEP.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaPEP.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>			 												
+			<p:panel id="ConsultaPEP" header="Consulta Pessoa Exposta Politicamente" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="CPF" value="CPF " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CPF" value="#{consultaPEP.cpf}" label="CPF" mask="999.999.999-99" required="true" />									
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaPEP.consultaPEP}" image="ui-icon ui-icon-check" update=":form:ConsultaPEPResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaPEPResultados" header="Retorno Consulta Pessoa Exposta Politicamente" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPEP.retornoConsultaPEP.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Consulta: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPEP.retornoConsultaPEP.dataConsulta}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+				    <p:outputLabel value="Nome: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPEP.retornoConsultaPEP.nome}"/>
+					<p:outputLabel value="CPF: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPEP.retornoConsultaPEP.cpf}"/>
+					<p:outputLabel value="É PEP? " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaPEP.retornoConsultaPEP.pep}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaPEP.retornoConsultaPEP.pep}">
+						<h:outputText value="Não" />
+					</ui:fragment>	
+				</h:panelGrid>
+			</p:panel>
+			<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaPEP.gerarPDF}" 
+							update="PanelPDF" />
+				</div>				
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

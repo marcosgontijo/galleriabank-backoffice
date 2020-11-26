@@ -16,6 +16,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.db.dao.*;
 
 /**
@@ -2954,6 +2955,55 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONTRATOS_APROVADOS = "select c.id from cobranca.contratocobranca c " +
+			"inner join cobranca.responsavel res on c.responsavel = res.id ";
+	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaContratosAprovados(final String codResponsavel) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_APROVADOS;
+					
+					query = query + "where status = 'Aprovado'" ;
+					
+					if (codResponsavel != null) {
+						if (!codResponsavel.equals("")) { 
+							query = query + " and res.codigo = '" + codResponsavel + "' ";
+						}
+						query = query + " order by id desc";						
+					} else {
+						query = query + " order by id desc";
+					}
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentes(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -2998,7 +3048,62 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return objects;
 			}
 		});	
-	}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaContratosPendentesResponsaveis(final String codResponsavel, final List<Responsavel> listResponsavel) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_PENDENTES;
+					
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
+					
+					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
+					
+					if (listResponsavel.size() > 0) {
+						for (Responsavel resp : listResponsavel) {
+							if (!resp.getCodigo().equals("")) { 
+								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
+							}
+						}
+
+						if (!queryResponsavel.equals("")) {
+							query = query + " and (" + queryResponsavel + ") ";
+						}
+						
+						query = query + " order by id desc";						
+					} else {
+						query = query + " order by id desc";
+					}
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
 	
 	public Boolean limpaObservacoesNaoUsadas() {
 		return (Boolean) executeDBOperation(new DBRunnable() {
@@ -3051,5 +3156,103 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return objects;
 			}
 		});	
-	}		
+	}
+	
+	private static final String QUERY_PARCELAS_POR_NUMERO_CONTRATO =  "select cd.id "
+			+ "from cobranca.contratocobrancadetalhes cd "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
+			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.numerocontrato = ? "
+			+ "order by cd.id";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobrancaDetalhes> getParcelasContratoPorNumeroContrato(final String numContrato) {
+		return (List<ContratoCobrancaDetalhes>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobrancaDetalhes> objects = new ArrayList<ContratoCobrancaDetalhes>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_PARCELAS_POR_NUMERO_CONTRATO);						
+					
+					ps.setString(1, numContrato);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					
+					while (rs.next()) {
+						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(1));
+						
+						objects.add(contratoCobrancaDetalhes);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_CONTRATO_POR_DATA_CONTRATO =  "select cc.id from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' "
+			+ "and cc.datacontrato >= ? ::timestamp "
+			+ "and cc.datacontrato <= ? ::timestamp ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratoPorDataContrato(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_CONTRATO_POR_DATA_CONTRATO);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);	
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
+					
+					while (rs.next()) {
+						contratoCobranca = ccDao.findById(rs.getLong(1));
+						
+						if (contratoCobranca.getPagador().getId() != 14) { 
+							objects.add(contratoCobranca);		
+						}									
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				
+				return objects;
+			}
+		});	
+	}
 }

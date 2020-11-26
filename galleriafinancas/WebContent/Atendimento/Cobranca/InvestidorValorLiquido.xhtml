@@ -51,12 +51,12 @@
 					<p:calendar id="dataInicio"
 						value="#{investidorMB.dataInicio}"
 						required="true" label="Data Inicio" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+						pattern="dd/MM/yyyy" styleClass="dateTimeField"/>
 					<p:outputLabel for="dataFim" value="Data Fim "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:calendar id="dataFim"
 						value="#{investidorMB.dataFim}" required="true"
-						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" 
 						styleClass="dateTimeField"/>
 				</h:panelGrid>
 
@@ -82,12 +82,17 @@
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 						</f:facet>
 						<p:headerRow>
-							<p:column style="text-align: center;width: 100px;" colspan="6"
+							<p:column style="text-align: center;width: 100px;" colspan="8"
 								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 								<h:outputText value="#{parcelas.investidor.nome}"/>
 								<br></br>
-								<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								<ui:fragment rendered="#{parcelas.investidor.cpf != null and parcelas.investidor.cpf ne ''}">
+									<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								</ui:fragment>
+								<ui:fragment rendered="#{parcelas.investidor.cpf == null}">
+									<h:outputText value="CNPJ #{parcelas.investidor.cnpj} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								</ui:fragment>								
 							</p:column>
 				        </p:headerRow>
 				        <p:column style="text-align: center;width: 50px;"
@@ -98,12 +103,22 @@
 							headerText="Pagador">
 							<h:outputText value="#{parcelas.pagador.nome}" />
 						</p:column>
+						<p:column style="text-align: center;width: 15px;"
+							headerText="Garantido">
+							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
+							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
+						</p:column>
 						<p:column style="text-align: center;width: 100px;"
 							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 15px;"
+							headerText="Em dia">
+							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
+							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
@@ -132,13 +147,13 @@
 							</shiro:hasAnyRoles>
 						</p:column>							
 						<p:summaryRow>
-				            <p:column colspan="3" style="text-align:right">
+				            <p:column colspan="5" style="text-align:right">
 				                <h:outputText value="Total:" />
 				            </p:column>
-				            <p:column>
+				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>			            
-				            <p:column >
+				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>
 				            <p:column >
@@ -166,12 +181,17 @@
 						<f:facet name="header">
 						</f:facet>
 						<p:headerRow>
-							<p:column style="text-align: center;width: 100px;" colspan="6"
+							<p:column style="text-align: center;width: 100px;" colspan="8"
 								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 								<h:outputText value="#{parcelas.investidor.nome}"/>
 								<br></br>
-								<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								<ui:fragment rendered="#{parcelas.investidor.cpf != null and parcelas.investidor.cpf ne ''}">
+									<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								</ui:fragment>
+								<ui:fragment rendered="#{parcelas.investidor.cpf == null}">
+									<h:outputText value="CNPJ #{parcelas.investidor.cnpj} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+								</ui:fragment>		
 							</p:column>
 				        </p:headerRow>
 				        <p:column style="text-align: center;width: 50px;"
@@ -182,12 +202,22 @@
 							headerText="Pagador">
 							<h:outputText value="#{parcelas.pagador.nome}" />
 						</p:column>
+						<p:column style="text-align: center;width: 15px;"
+							headerText="Garantido">
+							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
+							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
+						</p:column>
 						<p:column style="text-align: center;width: 100px;"
 							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 15px;"
+							headerText="Em dia">
+							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
+							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
@@ -216,13 +246,13 @@
 							</shiro:hasAnyRoles>
 						</p:column>							
 						<p:summaryRow>
-				            <p:column colspan="3" style="text-align:right">
+				            <p:column colspan="5" style="text-align:right">
 				                <h:outputText value="Total:" />
 				            </p:column>
-				            <p:column>
+				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>			            
-				            <p:column >
+				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>
 				            <p:column >
@@ -262,12 +292,17 @@
 							disabled="#{investidorMB.parcelasInvestidorEnvelope} == 0}" />
 					</f:facet>
 					<p:headerRow>
-						<p:column style="text-align: center;width: 100px;" colspan="6"
+						<p:column style="text-align: center;width: 100px;" colspan="8"
 							headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 							filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 							<h:outputText value="#{parcelas.investidor.nome}"/>
 							<br></br>
-							<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+							<ui:fragment rendered="#{parcelas.investidor.cpf != null and parcelas.investidor.cpf ne ''}">
+								<h:outputText value="CPF #{parcelas.investidor.cpf} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+							</ui:fragment>
+							<ui:fragment rendered="#{parcelas.investidor.cpf == null}">
+								<h:outputText value="CNPJ #{parcelas.investidor.cnpj} | Banco #{parcelas.investidor.banco} | AG. #{parcelas.investidor.agencia} C/C #{parcelas.investidor.conta} "/>
+							</ui:fragment>		
 						</p:column>
 			        </p:headerRow>
 			        <p:column style="text-align: center;width: 50px;"
@@ -278,6 +313,11 @@
 						headerText="Pagador">
 						<h:outputText value="#{parcelas.pagador.nome}" />
 					</p:column>
+					<p:column style="text-align: center;width: 15px;"
+							headerText="Garantido">
+							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
+							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
+						</p:column>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 						<h:outputText value="#{parcelas.dataVencimento}">
@@ -285,6 +325,11 @@
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 						</h:outputText>
 					</p:column>
+					<p:column style="text-align: center;width: 15px;"
+							headerText="Em dia">
+							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
+							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
+						</p:column>
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Bruto da Parcela" >
 						<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
@@ -312,13 +357,13 @@
 						</shiro:hasAnyRoles>
 					</p:column>							
 					<p:summaryRow>
-			            <p:column colspan="3" style="text-align:right">
+			            <p:column colspan="5" style="text-align:right">
 			                <h:outputText value="Total:" />
 			            </p:column>
-			            <p:column>
+			            <p:column style="text-align: center;">
 			                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>			            
-			            <p:column >
+			            <p:column style="text-align: center;">
 			                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>
 			            <p:column >
@@ -371,8 +416,7 @@
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:calendar id="dataPagamento"
 						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
-						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField">
 					</p:calendar>										
 				</h:panelGrid>
 

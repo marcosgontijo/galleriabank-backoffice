@@ -165,6 +165,9 @@
 		<property name="taxaRemuneracaoInvestidor10" type="big_decimal">
 			<column name="taxaRemuneracaoInvestidor10" />
 		</property>
+		<property name="valorCCB" type="big_decimal">
+			<column name="valorCCB" />
+		</property>
 		<property name="txMulta" type="big_decimal">
 			<column name="txMulta" />
 		</property>
@@ -404,6 +407,15 @@
 		<property name="aprovado" type="boolean">
 			<column name="aprovado" />
 		</property>
+		<property name="statusContratoData" type="java.util.Date">
+			<column name="statusContratoData" />
+		</property>
+		<property name="statusContrato" type="java.lang.String">
+			<column name="statusContrato" />
+		</property>
+		<property name="statusContratoUsuario" type="java.lang.String">
+			<column name="statusContratoUsuario" />
+		</property>
 		<property name="inicioAnaliseData" type="java.util.Date">
 			<column name="inicioAnaliseData" />
 		</property>
@@ -426,6 +438,10 @@
 		</property>
 		<property name="matriculaAprovadaData" type="java.util.Date">
 			<column name="matriculaAprovadaData" />
+		</property>
+		<property name="matriculaAprovadaValor"
+			type="java.lang.String">
+			<column name="matriculaAprovadaValor" />
 		</property>
 		<property name="matriculaAprovadaUsuario"
 			type="java.lang.String">
@@ -503,6 +519,10 @@
 			type="java.lang.String">
 			<column name="cadastroAprovadoUsuario" />
 		</property>
+		<property name="cadastroAprovadoValor"
+			type="java.lang.String">
+			<column name="cadastroAprovadoValor" />
+		</property>
 		<property name="cadastroAprovado" type="boolean">
 			<column name="cadastroAprovado" />
 		</property>
@@ -579,6 +599,17 @@
 		</property>
 		<property name="agendarVisitaImovel" type="boolean">
 			<column name="agendarVisitaImovel" />
+		</property>
+		<property name="ccbProntaData"
+			type="java.util.Date">
+			<column name="ccbProntaData" />
+		</property>
+		<property name="ccbProntaUsuario"
+			type="java.lang.String">
+			<column name="ccbProntaUsuario" />
+		</property>
+		<property name="ccbPronta" type="boolean">
+			<column name="ccbPronta" />
 		</property>
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
@@ -774,6 +805,36 @@
 		<property name="recebedorEnvelope10" type="boolean">
 		    <column name="recebedorEnvelope10" />
 		</property> 
+		<property name="recebedorGarantido1" type="boolean">
+		    <column name="recebedorGarantido1" />
+		</property> 
+		<property name="recebedorGarantido2" type="boolean">
+		    <column name="recebedorGarantido2" />
+		</property> 
+		<property name="recebedorGarantido3" type="boolean">
+		    <column name="recebedorGarantido3" />
+		</property> 
+		<property name="recebedorGarantido4" type="boolean">
+		    <column name="recebedorGarantido4" />
+		</property> 
+		<property name="recebedorGarantido5" type="boolean">
+		    <column name="recebedorGarantido5" />
+		</property>
+		<property name="recebedorGarantido6" type="boolean">
+		    <column name="recebedorGarantido6" />
+		</property>
+		<property name="recebedorGarantido7" type="boolean">
+		    <column name="recebedorGarantido7" />
+		</property>
+		<property name="recebedorGarantido8" type="boolean">
+		    <column name="recebedorGarantido8" />
+		</property>
+		<property name="recebedorGarantido9" type="boolean">
+		    <column name="recebedorGarantido9" />
+		</property>
+		<property name="recebedorGarantido10" type="boolean">
+		    <column name="recebedorGarantido10" />
+		</property>
 		<property name="empresa" type="java.lang.String">
 			<column name="EMPRESA" />
 		</property>

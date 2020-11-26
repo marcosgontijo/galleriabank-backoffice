@@ -144,9 +144,10 @@
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
                  	<f:facet name="header">
-						<p:commandButton value="Gerar XLS" ajax="false" icon="ui-icon-calculator" disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}">
-							<p:dataExporter type="xls" target="dtContratos" fileName="RelatorioFinanceiroBaixado"  disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}"/>
-						</p:commandButton>	            
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.writeXLSXFileBaixado}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />           
 			        </f:facet>	                 
                  	<p:column style="text-align: center;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
@@ -199,13 +200,47 @@
 		                </p:commandButton>			        			     
 		            </p:column>		
                  	<f:facet name="footer">
-						<p:commandButton value="Gerar XLS" ajax="false" icon="ui-icon-calculator" disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}">
-							<p:dataExporter type="xls" target="dtContratos" fileName="RelatorioFinanceiroBaixado"  disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}"/>
-						</p:commandButton>	            
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.writeXLSXFileBaixado}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />           
 			        </f:facet>			            	            	        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>			
 		</h:form>
+		<p:panel id="PanelXLS"
+			header="Impressão em PDF / XLS Gerada com Sucesso"
+			style="margin-bottom:10px;"
+			rendered="#{contratoCobrancaMB.contratoGerado}">
+			<p:focus />
+			<p:messages />
+			<h:panelGrid columns="2">
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+					draggable="false" closable="false" resizable="false">
+					<p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<h:form>
+					<p:commandButton value="Download do Relatório" ajax="false"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{contratoCobrancaMB.file}" />
+					</p:commandButton>
+				</h:form>
+
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+			</h:panelGrid>
+		</p:panel>
+		
 		<p:dialog header="Pagadores" widgetVar="pagadorDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">				 	
    		         <p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg" value="#{contratoCobrancaMB.listPagadores}" paginator="true" rows="10" selectionMode="single"

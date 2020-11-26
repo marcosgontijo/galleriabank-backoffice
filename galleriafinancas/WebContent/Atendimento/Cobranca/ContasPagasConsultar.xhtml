@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">			
+			<p:messages id="mensagens" showDetail="true"/>													
+			<p:panel id="ConsultaContasPagar" header="Contas Pagas - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtContasPagar" var="contasPagar" value="#{contasPagarMB.contasPagar}" paginator="true" rows="40" 
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{contasPagar.dataPrevista}" sortOrder="descending"
+                 reflow="true">                         	
+			        <p:column style="text-align: center;" headerText="Data Prevista Pagamento " sortBy="#{contasPagar.dataPrevista}">
+			            <h:outputText value="#{contasPagar.dataPrevista}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{contasPagar.descricao}" filterMatchMode="contains" sortBy="#{contasPagar.descricao}">
+			            <h:outputText value="#{contasPagar.descricao}" />
+			        </p:column>		   
+			        <p:column style="text-align: center;" headerText="Contrato">
+			            <h:outputText value="#{contasPagar.contrato.numeroContrato} - #{contasPagar.contrato.pagador.nome}" />
+			        </p:column>	 
+			        <p:column style="text-align: center;" headerText="Data Pagamento" sortBy="#{contasPagar.dataPagamento}">
+			            <h:outputText value="#{contasPagar.dataPagamento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	    
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

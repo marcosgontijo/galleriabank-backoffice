@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />		
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaPJQSA.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaPJQSA.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>			 												
+			<p:panel id="consultaPJQSA" header="Consulta PJ + QSA" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">								
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;" />		
+					<p:inputMask id="CNPJ" value="#{consultaPJQSA.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true"/>										
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaPJQSA.consultaPJQSA}" image="ui-icon ui-icon-check" update=":form:consultaPJQSAResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="consultaPJQSAResultados" header="Retorno Consulta PJ + QSA" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Consulta: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPJQSA.retornoConsultaPJQSA.dataConsulta}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Número Inscrição: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.numeroInscricao}"/>
+					<p:outputLabel value="Matriz: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaPJQSA.retornoConsultaPJQSA.matriz}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaPJQSA.retornoConsultaPJQSA.matriz}">
+						<h:outputText value="Não" />
+					</ui:fragment>
+					<p:outputLabel value="Data Abertura: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPJQSA.retornoConsultaPJQSA.dataAbertura}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Nome Empresarial: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.nomeEmpresarial}"/>
+					<p:outputLabel value="Nome Fantasia: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.nomeFantasia}"/>
+					<p:outputLabel value="Porte: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.porte}"/>
+					<p:outputLabel value="Atividade Econômica Principal: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.atividadeEconomicaPrincipal}"/>
+					<p:outputLabel value="Natureza Jurídica: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.naturezaJuridica}"/>
+					<p:outputLabel value="Logradouro: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.logradouro}"/>
+					<p:outputLabel value="Número: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.numero}"/>
+					<p:outputLabel value="Complemento: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.complemento}"/>
+					<p:outputLabel value="CEP: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.cEP}"/>
+					<p:outputLabel value="Bairro Distrito: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.bairroDistrito}"/>
+					<p:outputLabel value="Município: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.municipio}"/>
+				    <p:outputLabel value="Situação Cadastral: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.situacaoCadastral}"/>
+				    <p:outputLabel value="Data Situação Cadastral: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPJQSA.retornoConsultaPJQSA.dataSituacaoCadastral}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Motivo Situação Cadastral: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.motivoSituacaoCadastral}"/>
+					<p:outputLabel value="Situacao Especial: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.situacaoEspecial}"/>
+					<p:outputLabel value="Data Situação Especial: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPJQSA.retornoConsultaPJQSA.dataSituacaoEspecial}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Data Emissão: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaPJQSA.retornoConsultaPJQSA.dataEmissao}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>
+				    <p:outputLabel value="Endereço Eletrônico: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.enderecoEletronico}"/>
+					<p:outputLabel value="Telefone: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.telefone}"/>
+					<p:outputLabel value="ERF: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.eFR}"/>
+					<p:outputLabel value="Capital Social QSA: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaPJQSA.retornoConsultaPJQSA.capitalSocialQSA}"/>
+				    <p:outputLabel value="Em recuperação Judicial: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaPJQSA.retornoConsultaPJQSA.emRecuperJudicial}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaPJQSA.retornoConsultaPJQSA.emRecuperJudicial}">
+						<h:outputText value="Não" />
+					</ui:fragment>
+					<p:outputLabel value="Contingência: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaPJQSA.retornoConsultaPJQSA.contingencia}">
+						<h:outputText value="Sim" />
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaPJQSA.retornoConsultaPJQSA.contingencia}">
+						<h:outputText value="Não" />
+					</ui:fragment>
+				</h:panelGrid>
+				
+				<p:panel id="listaAtividades" header="Lista de Atividades Econômicas Secundárias" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaAtividades" var="atividades" value="#{consultaPJQSA.retornoConsultaPJQSA.atividadesEconomicasSecundarias}" emptyMessage="Nenhuma atividade encontrada!">
+				       <p:column style="text-align: center;" headerText="Atividades">
+				            <h:outputText value="#{atividades}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>
+				
+				<p:panel id="listaSocios" header="Lista de Sócios" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaSocios" var="socios" value="#{consultaPJQSA.retornoConsultaPJQSA.socios}" emptyMessage="Nenhum socio encontrado!">
+	   		        	<p:column style="text-align: center;" headerText="Nome Empresarial"  >
+				            <h:outputText value="#{socios.nomeNomeEmpresarial}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Qualificação"  >
+				            <h:outputText value="#{socios.qualificacao}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Tem Rep. legal?"  >
+				            <ui:fragment rendered="#{socios.representanteLegal}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!socios.representanteLegal}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+				        </p:column>	  
+				        <p:column style="text-align: center;" headerText="Qualif. Rep. Legal"  >
+				            <h:outputText value="#{socios.qualifRepLegal}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Nome Rep. Legal"  >
+				            <h:outputText value="#{socios.nomeRepresLegal}" />
+				        </p:column>		
+				        <p:column style="text-align: center;" headerText="Doc. Sócio"  >
+				            <h:outputText value="#{socios.docSocio}" />
+				        </p:column>		    
+					</p:dataTable>	
+				</p:panel>
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaPJQSA.gerarPDF}" 
+							update="PanelPDF" />
+				</div>	
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

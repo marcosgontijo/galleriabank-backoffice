@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />			
+		 	<p:panel id="PanelPDF"
+				header="Impressão em PDF Gerado com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{consultaCadin.pdfGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do PDF" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{consultaCadin.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>		 												
+			<p:panel id="ConsultaCadin" header="Consulta CADIN" style="margin-bottom:10px;">	
+				<p:focus /> 
+				<p:messages/>			
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="CPF" value="CPF: " styleClass="labelBold" style="margin-right: 20px;"  />		
+					<p:inputMask id="CPF" value="#{consultaCadin.cpf}" label="CPF" mask="999.999.999-99" />			
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" style="margin-right: 20px;"  />		
+					<p:inputMask id="CNPJ" value="#{consultaCadin.cnpj}" label="CNPJ" mask="99.999.999/9999-99" />									
+				</h:panelGrid>	
+				<br></br>						
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaCadin.consultaCadin}" image="ui-icon ui-icon-check" update=":form:ConsultaCadinResultados" style="TEXT-DECORATION: bold;"/>					
+			</p:panel>
+			<p:panel id="ConsultaCadinResultados" header="Retorno Consulta CADIN" style="margin-bottom:10px;">	    		    
+      			<h:panelGrid columns="2">	
+      				<p:outputLabel value="ID Consulta: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCadin.retornoConsultaCadin.infoServico.consultaUid}"/>
+					<p:outputLabel value="Data Emissão: " styleClass="labelBold"/>
+					<h:outputText value="#{consultaCadin.retornoConsultaCadin.data}" >			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+				    </h:outputText>
+					<p:outputLabel value="Código da Declaração: " styleClass="labelBold"/>
+					<p:outputLabel value="#{consultaCadin.retornoConsultaCadin.codigoDeclaracao}"/>
+					<p:outputLabel value="Tem pendências: " styleClass="labelBold"/>
+					<ui:fragment rendered="#{consultaCadin.retornoConsultaCadin.temPendencia}">
+						<p:outputLabel value="Sim"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{!consultaCadin.retornoConsultaCadin.temPendencia}">
+						<p:outputLabel value="Não"/>
+					</ui:fragment>	
+				</h:panelGrid>
+				
+				<p:panel id="listaPendencias" header="Lista de Pendências" style="margin-top:10px;margin-bottom:10px;">		    		    
+	   		        <p:dataTable id="dtListaPendencias" var="pendencia" value="#{consultaCadin.retornoConsultaCadin.pendencias}" emptyMessage="Nenhuma pendência encontrada!">
+	   		        	<p:column style="text-align: center;" headerText="Entidade"  >
+				            <h:outputText value="#{pendencia.entidade}" />
+				        </p:column>
+				        <p:column style="text-align: center;"  width="70" headerText="Data Inclusão">
+			            	<h:outputText value="#{pendencia.dataInclusaoCadin}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            	</h:outputText>
+						</p:column>	
+						<p:column style="text-align: center;" headerText="Qtde. Pendências"  >
+				            <h:outputText value="#{pendencia.quantidadePendencias}" />
+				        </p:column>
+				        <p:column style="text-align: center;" headerText="Local Regularização"  >
+				            <h:outputText value="#{pendencia.localRegularizacao}" />
+				        </p:column>
+					</p:dataTable>	
+				</p:panel>
+				
+				<div align="center">
+					<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{consultaCadin.gerarPDF}" 
+							update="PanelPDF" />
+				</div>	
+			</p:panel>			
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

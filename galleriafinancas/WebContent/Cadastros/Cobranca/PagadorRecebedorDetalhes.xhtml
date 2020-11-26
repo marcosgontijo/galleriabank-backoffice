@@ -26,7 +26,7 @@
 					
 					<p:outputLabel styleClass="labelBold" for="DtEmissaoRG" value="Data Emissão: " />	
 					<h:outputText id="DtEmissaoRG" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRG}" label="Data Emissão">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>	
 					
 					<p:outputLabel styleClass="labelBold" for="CNPJ" value="CNPJ: "  rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
@@ -57,7 +57,7 @@
 								
 					<p:outputLabel styleClass="labelBold" for="DtNascimento" value="Data de Nascimento: " />	
 					<h:outputText id="DtNascimento" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}" label="Data de Nascimento">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>	
 					
 					<p:outputLabel styleClass="labelBold" for="TelResidencial" value="Telefone Residencial: " />
@@ -119,7 +119,7 @@
 					
 					<p:outputLabel styleClass="labelBold" for="DtNascimentoConjuge" value="Data de Nascimento: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
 					<h:outputText id="DtNascimentoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoConjuge}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>	
 					
 					<p:outputLabel styleClass="labelBold" for="TelResidencialConjuge" value="Telefone Residencial: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -135,7 +135,7 @@
 					<h:outputText id="RgConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
 					<p:outputLabel styleClass="labelBold" for="DtEmissaoRGConjuge" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
 					<h:outputText id="DtEmissaoRGConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>						
 					<p:outputLabel styleClass="labelBold" for="CargoConjuge" value="Cargo/Ocupação: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
 					<h:outputText id="CargoConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoConjuge}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -183,14 +183,14 @@
 					<h:outputText id="RgCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgCoobrigado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>					
 					<p:outputLabel styleClass="labelBold" for="DtEmissaoRGCoobrigado" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
 					<h:outputText id="DtEmissaoRGCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGCoobrigado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>			
 					<p:outputLabel styleClass="labelBold" for="emailCoobrigado" value="E-Mail: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
 					<h:outputText id="emailCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailCoobrigado}" label="E-Mail" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
 					
 					<p:outputLabel styleClass="labelBold" for="DtNascimentoCoobrigado" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
 					<h:outputText id="DtNascimentoCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoCoobrigado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}">
-						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>						
 					<p:outputLabel styleClass="labelBold" for="TelResidencialCoobrigado" value="Telefone Residencial: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>	
 					<h:outputText id="TelResidencialCoobrigado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialCoobrigado}" label="Telefone Residencial" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.coobrigado}"/>
@@ -245,7 +245,7 @@
 						
 						<p:outputLabel styleClass="labelBold" for="DtNascimentoCoobrigadoCasado" value="Data de Nascimento: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
 						<h:outputText id="DtNascimentoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoCoobrigadoCasado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</h:outputText>	
 						
 						<p:outputLabel styleClass="labelBold" for="TelResidencialCoobrigadoCasado" value="Telefone Residencial: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -261,7 +261,7 @@
 						<h:outputText id="RgCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>					
 						<p:outputLabel styleClass="labelBold" for="DtEmissaoRGCoobrigadoCasado" value="Data Emissão: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>	
 						<h:outputText id="DtEmissaoRGCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGCoobrigadoCasado}" label="Data Emissão" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</h:outputText>						
 						<p:outputLabel styleClass="labelBold" for="CargoCoobrigadoCasado" value="Cargo/Ocupação: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
 						<h:outputText id="CargoCoobrigadoCasado" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoCoobrigadoCasado}" label="RG" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>

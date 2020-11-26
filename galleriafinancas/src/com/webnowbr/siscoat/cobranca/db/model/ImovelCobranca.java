@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ImovelCobranca implements Serializable {
@@ -26,6 +27,8 @@ public class ImovelCobranca implements Serializable {
 	private String areaTotal;
 	private String linkGMaps;
 	private String possuiDivida;
+	private String ocupacao;
+	private BigDecimal valoEstimado;
 			
 	public ImovelCobranca(){
 	}
@@ -293,4 +296,20 @@ public class ImovelCobranca implements Serializable {
 	            return false;  
 	        return true;  
 	    }
+
+	public String getOcupacao() {
+		return ocupacao;
+	}
+
+	public void setOcupacao(String ocupacao) {
+		this.ocupacao = ocupacao;
+	}
+
+	public BigDecimal getValoEstimado() {
+		return valoEstimado;
+	}
+
+	public void setValoEstimado(BigDecimal valoEstimado) {
+		this.valoEstimado = valoEstimado;
+	}
 }

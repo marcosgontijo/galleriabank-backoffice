@@ -60,7 +60,7 @@
 					<p:inputText id="identificacao"
 						value="#{contratoCobrancaUtilsMB.objetoCalculo.identificacaoCalculo}"
 						label="Identificação" required="true" style="width:300px;"
-						disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur="value=value.toUpperCase()"/>
+						disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur=""/>
 					<p:outputLabel for="dataAtualizacao" value="Data da Atualização "
 						styleClass="labelBold" style="margin-right: 10px;" />
 					<p:calendar id="dataAtualizacao"
@@ -121,7 +121,7 @@
 						styleClass="labelBold" />
 					<p:inputTextarea rows="5" cols="50" id="observacao"
 						value="#{contratoCobrancaUtilsMB.objetoCalculo.descricao}"
-						label="Observação" onblur="value=value.toUpperCase()"
+						label="Observação" onblur=""
 						style="width:300px;"
 						disabled="#{contratoCobrancaUtilsMB.deleteMode}" />
 					<p:spacer height="10" />						
@@ -172,7 +172,7 @@
 						<p:inputText id="observacaoParcela"
 							value="#{contratoCobrancaUtilsMB.observacaoParcela}"
 							label="Observação"
-							disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur="value=value.toUpperCase()"/>
+							disabled="#{contratoCobrancaUtilsMB.deleteMode}" onblur=""/>
 
 						<p:commandButton value="Inserir" ajax="false" icon="ui-icon-plus"
 							update="calculosDialogdlg"

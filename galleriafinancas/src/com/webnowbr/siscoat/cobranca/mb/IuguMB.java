@@ -521,7 +521,7 @@ public class IuguMB {
 	 * @return
 	 */
 	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
@@ -533,7 +533,7 @@ public class IuguMB {
 	 * @return
 	 */
 	public Date gerarDataMenos3Meses() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		dataHoje.add(Calendar.MONTH, -3);
@@ -546,7 +546,7 @@ public class IuguMB {
 	 * @return
 	 */
 	public Date gerarDataMais1Mes() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		dataHoje.add(Calendar.MONTH, +1);
@@ -873,9 +873,9 @@ public class IuguMB {
 		}
 
 		if (this.qtdeParcelas.equals("1")) {
-			geraCobrancaSimples(liveToken, idCedente);
+			geraCobrancaSimples(liveToken, idCedente, "tela");
 		} else {
-			geraCobrancaSimplesLote(liveToken, idCedente);
+			geraCobrancaSimplesLote(liveToken, idCedente, "tela");
 		}
 
 		try {
@@ -894,7 +894,7 @@ public class IuguMB {
 	 * 
 	 * @return
 	 */
-	public String composeJSONCobrancaSimplesLote(Calendar dataVencimento, String mes, String dia, String parcela) {
+	public String composeJSONCobrancaSimplesLote(Calendar dataVencimento, String mes, String dia, String parcela, String origemChamada) {
 		String jsonFavorecido = "";
 		String jsonItens = "";
 		String jsonPayer = "";
@@ -907,14 +907,32 @@ public class IuguMB {
 			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
 		}
 
-		String descricaoCompleta = "SERVIÇO DE COBRANÇA";
+		String descricaoCompleta = "";		
+		
+		if (origemChamada.equals("tela")) {
+			if (this.descricaoItem.equals("SERVIÇO DE COBRANÇA ")) {
+				descricaoCompleta = "SERVIÇO DE COBRANÇA";
 
-		if (!this.numeroContrato.equals("")) {
-			descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
-		}
+				if (!this.numeroContrato.equals("")) {
+					descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
+				}
 
-		if (!this.parcela.equals("")) {
-			descricaoCompleta = descricaoCompleta + " / PARCELA: " + parcela;
+				if (!this.parcela.equals("")) {
+					descricaoCompleta = descricaoCompleta + " / PARCELA: " + this.parcela;
+				}
+			} else {
+				descricaoCompleta = this.descricaoItem;
+			}
+		} else {
+			descricaoCompleta = "SERVIÇO DE COBRANÇA";
+
+			if (!this.numeroContrato.equals("")) {
+				descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
+			}
+
+			if (!this.parcela.equals("")) {
+				descricaoCompleta = descricaoCompleta + " / PARCELA: " + this.parcela;
+			}
 		}
 
 		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
@@ -936,6 +954,8 @@ public class IuguMB {
 			if (!this.selectedRecebedor.getNumero().equals("")) {
 				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
 			}
+		} else {
+			endereco = this.selectedRecebedor.getEndereco();
 		}
 
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
@@ -962,7 +982,7 @@ public class IuguMB {
 	 * 
 	 * @return
 	 */
-	public void geraCobrancaSimplesLote(String idLiveTokenIugu, long idCedente) {
+	public void geraCobrancaSimplesLote(String idLiveTokenIugu, long idCedentem, String origemChamada) {
 		int HTTP_COD_SUCESSO = 200;
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -989,7 +1009,7 @@ public class IuguMB {
 				try {							
 					URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + idLiveTokenIugu);
 
-					TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+					TimeZone zone = TimeZone.getDefault();  
 					Locale locale = new Locale("pt", "BR");  
 					Calendar dataHoje = Calendar.getInstance(zone, locale);
 					dataHoje.setTime(this.dataVencimento);
@@ -1029,7 +1049,7 @@ public class IuguMB {
 								dia = "0" + dia;
 							}	
 						}
-						String dados = composeJSONCobrancaSimplesLote(dataHoje, mes, dia, String.valueOf(parcela));
+						String dados = composeJSONCobrancaSimplesLote(dataHoje, mes, dia, String.valueOf(parcela), origemChamada);
 						//JSONObject jsonObj = new JSONObject("{\"email\":\"webnowbr@gmail.com\",\"due_date\":\"20181212\",\"items\":[{\"description\":\"Cobrança\",\"quantity\":1,\"price_cents\":1486}],\"payer\":{\"cpf_cnpj\":\"31255904852\",\"name\":\"HERMES VIEIRA JUNIOR\",\"address\":{\"zip_code\":\"13073035\",\"street\":\"ENDEREÇO COMPLETO\",\"number\":\"1111\"}}}");
 						JSONObject jsonObj = new JSONObject(dados);
 						byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -2301,33 +2321,8 @@ public class IuguMB {
 	 */
 	public String clearFieldsFaturasSubContaIugu() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-
-		if (getPerfilLogadoIsIuguPosto()) {
-			// get somente PagadorRecebedor com subcontas		
-			// CAPTIVA - ID 645 - SubConta 2EB210ACA7254C63822213E945FFC4FB
-			// CAPTIVA 2 - ID 1366 - SubConta B61A4F1AA6984D67894C403A4E7A37E0			
-			// DIORAMA - ID 157 - SubConta 721C7FBDCF6B4FDA841C20AFD3A32BB6
-
-			PagadorRecebedor prTemp = new PagadorRecebedor();
-			this.listRecebedores = new ArrayList<PagadorRecebedor>();
-
-			// CAPTIVA
-			prTemp = pagadorRecebedorDao.findById((long) 645);			
-			this.listRecebedores.add(prTemp);
-
-			// CAPTIVA 2
-			prTemp = new PagadorRecebedor();
-			prTemp = pagadorRecebedorDao.findById((long) 1366);			
-			this.listRecebedores.add(prTemp);
-
-			// DIORAMA
-			prTemp = new PagadorRecebedor();
-			prTemp = pagadorRecebedorDao.findById((long) 157);			
-			this.listRecebedores.add(prTemp);		
-		} else {
-			this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();
-		}
-
+		this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();
+		
 		clearRecebedor();
 		this.faturasIUGU = new ArrayList<FaturaIUGU>();
 
@@ -2666,7 +2661,7 @@ public class IuguMB {
 	 * @return
 	 */
 	public void populaDataPesquisa() {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
@@ -4455,7 +4450,7 @@ public class IuguMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+			TimeZone zone = TimeZone.getDefault();  
 			Locale locale = new Locale("pt", "BR"); 
 			Calendar date = Calendar.getInstance(zone, locale);  
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
@@ -4496,8 +4491,8 @@ public class IuguMB {
 			 */
 			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
 			table.setWidthPercentage(50.0f); 
-
-			Image img = Image.getInstance("http://174.142.99.141/~webnowbr/LogoIUGU/iugu.jpg");
+			
+			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/iugu.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -4517,7 +4512,7 @@ public class IuguMB {
 			cell1.setPaddingBottom(10f);
 			cell1.setColspan(2);
 			table.addCell(cell1);
-
+			
 			cell1 = new PdfPCell(new Phrase("Iugu Gestão de Pagamento", header));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
@@ -4873,13 +4868,13 @@ public class IuguMB {
 			retorno = validaSubcontaRecebedorIugu(contrato);
 
 			if (retorno.equals("")) {
-				geraCobrancaSimples(cedenteObj.getIuguLiveApiToken(), cedenteObj.getId());
+				geraCobrancaSimples(cedenteObj.getIuguLiveApiToken(), cedenteObj.getId(), "code");
 			}
 		} else {
 			/**
 			 * CHAMADA DA GERAÇÃO DE FATURA
 			 */
-			geraCobrancaSimples("760bffed8d4907e7a3fe0f32f260a4ec", 14);
+			geraCobrancaSimples("760bffed8d4907e7a3fe0f32f260a4ec", 14, "code");
 		}
 
 
@@ -4892,13 +4887,13 @@ public class IuguMB {
 	 * 
 	 * @return
 	 */
-	public String composeJSONCobrancaSimples() {
+	public String composeJSONCobrancaSimples(String origemChamada) {
 		String jsonFavorecido = "";
 		String jsonItens = "";
 		String jsonPayer = "";
 		String jsonCustomVariables = "";
 
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		dataHoje.setTime(this.dataVencimento);
@@ -4924,14 +4919,32 @@ public class IuguMB {
 			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
 		}
 
-		String descricaoCompleta = "SERVIÇO DE COBRANÇA";
+		String descricaoCompleta = "";
 
-		if (!this.numeroContrato.equals("")) {
-			descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
-		}
+		if (origemChamada.equals("tela")) {
+			if (this.descricaoItem.equals("SERVIÇO DE COBRANÇA ")) {
+				descricaoCompleta = "SERVIÇO DE COBRANÇA";
 
-		if (!this.parcela.equals("")) {
-			descricaoCompleta = descricaoCompleta + " / PARCELA: " + this.parcela;
+				if (!this.numeroContrato.equals("")) {
+					descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
+				}
+
+				if (!this.parcela.equals("")) {
+					descricaoCompleta = descricaoCompleta + " / PARCELA: " + this.parcela;
+				}
+			} else {
+				descricaoCompleta = this.descricaoItem;
+			}
+		} else {
+			descricaoCompleta = "SERVIÇO DE COBRANÇA";
+
+			if (!this.numeroContrato.equals("")) {
+				descricaoCompleta = descricaoCompleta + " - CONTRATO: " + this.numeroContrato;
+			}
+
+			if (!this.parcela.equals("")) {
+				descricaoCompleta = descricaoCompleta + " / PARCELA: " + this.parcela;
+			}
 		}
 
 		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
@@ -4953,6 +4966,8 @@ public class IuguMB {
 			if (!this.selectedRecebedor.getNumero().equals("")) {
 				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
 			}
+		} else {
+			endereco = this.selectedRecebedor.getEndereco();
 		}
 
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
@@ -4979,7 +4994,7 @@ public class IuguMB {
 	 * 
 	 * @return
 	 */
-	public void geraCobrancaSimples(String idLiveTokenIugu, long idCedente) {
+	public void geraCobrancaSimples(String idLiveTokenIugu, long idCedente, String origemChamada) {
 		int HTTP_COD_SUCESSO = 200;
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -5006,7 +5021,7 @@ public class IuguMB {
 				try {							
 					URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + idLiveTokenIugu);
 
-					String dados = composeJSONCobrancaSimples();
+					String dados = composeJSONCobrancaSimples(origemChamada);
 					//JSONObject jsonObj = new JSONObject("{\"email\":\"webnowbr@gmail.com\",\"due_date\":\"20181212\",\"items\":[{\"description\":\"Cobrança\",\"quantity\":1,\"price_cents\":1486}],\"payer\":{\"cpf_cnpj\":\"31255904852\",\"name\":\"HERMES VIEIRA JUNIOR\",\"address\":{\"zip_code\":\"13073035\",\"street\":\"ENDEREÇO COMPLETO\",\"number\":\"1111\"}}}");
 					JSONObject jsonObj = new JSONObject(dados);
 					byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -5217,28 +5232,43 @@ public class IuguMB {
 	}
 
 	public String clearAlteraTaxaJurosSubContas() {
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		// get somente PagadorRecebedor com subcontas
+		this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();	
+		clearRecebedor();
+		this.contaMestre = true;
+		
 		this.taxaJuros = 5;
 
 		return "/Cadastros/Cobranca/AlteraTaxaJurosSubContasIugu.xhtml";				
-	}
+	}	
 
 	public void alteraTaxaJurosSubContas() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
-		List<PagadorRecebedor> subContas = new ArrayList<PagadorRecebedor>();
-		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		subContas = prDao.getSubContasIugu();
+		if (this.selectedRecebedor != null) {
+			configuraSubConta(this.selectedRecebedor.getIuguLiveApiToken(), this.taxaJuros);
+			
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "Cobrança Iugu: Taxa de Juros Alterada com Sucesso para " + this.selectedRecebedor.getNome() + "! ( Nova Taxa: " +  this.taxaJuros + " )", ""));
+		} else {
+			List<PagadorRecebedor> subContas = new ArrayList<PagadorRecebedor>();
+			PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+			subContas = prDao.getSubContasIugu();
 
-		for (PagadorRecebedor subConta : subContas) {
-			if (subConta.getIuguLiveApiToken() != null) {
-				if (!subConta.getIuguLiveApiToken().equals("")) {
-					configuraSubConta(subConta.getIuguLiveApiToken(), this.taxaJuros);
-				}		
+			for (PagadorRecebedor subConta : subContas) {
+				if (subConta.getIuguLiveApiToken() != null) {
+					if (!subConta.getIuguLiveApiToken().equals("")) {
+						configuraSubConta(subConta.getIuguLiveApiToken(), this.taxaJuros);
+					}		
+				}
 			}
+			
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "Cobrança Iugu: Taxa de Juros Alterada com Sucesso! ( Nova Taxa: " +  this.taxaJuros + " )", ""));
 		}		
-
-		context.addMessage(null, new FacesMessage(
-				FacesMessage.SEVERITY_INFO, "Cobrança Iugu: Taxa de Juros Alterada com Sucesso! ( Nova Taxa: " +  this.taxaJuros + " )", ""));
+		
+		this.selectedRecebedor = null;
 	}
 
 	/****
@@ -5445,6 +5475,8 @@ public class IuguMB {
 			if (!recebedor.getNumero().equals("")) {
 				endereco = recebedor.getEndereco() + ", " + recebedor.getNumero();
 			}
+		} else {
+			endereco = recebedor.getEndereco();
 		}
 		
 		json = "{\"data\":"
@@ -6822,7 +6854,7 @@ public class IuguMB {
 	}
 
 	public void setObservacaoContratoDetalhes(String observacaoContratoDetalhes) {
-		TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  
+		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 

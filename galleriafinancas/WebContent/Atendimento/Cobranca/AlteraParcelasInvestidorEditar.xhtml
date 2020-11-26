@@ -28,7 +28,7 @@
 						style="font-weight: bold; font-size: 18px;" />
 				</h:panelGrid>
 				
-								<p:panel id="Pessoas" header="Envolvidos"
+				<p:panel id="Pessoas" header="Envolvidos"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Pagador: " styleClass="labelBold" />
@@ -47,7 +47,7 @@
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.email}"
 									label="E-Mail" type="email" required="true"
-									onblur="value=value.toUpperCase()" style="width:400px;" />
+									onblur="" style="width:400px;" />
 								<p:outputLabel value="Celular: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telCelular}"
@@ -55,7 +55,7 @@
 								<p:outputLabel value="Contato: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
-									label="Contato" onblur="value=value.toUpperCase()"
+									label="Contato" onblur=""
 									style="width:400px;" />
 							</h:panelGrid>
 							<br></br>
@@ -71,7 +71,7 @@
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.email}"
 									label="E-Mail" type="email" required="true"
-									onblur="value=value.toUpperCase()" style="width:400px;" />
+									onblur="" style="width:400px;" />
 								<p:outputLabel value="Celular: " styleClass="labelBold" />
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telCelular}" />
@@ -81,7 +81,7 @@
 								<p:outputLabel value="Contato: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
-									label="Contato" onblur="value=value.toUpperCase()"
+									label="Contato" onblur=""
 									style="width:400px;" />
 								<p:commandButton value="Salvar" ajax="false" icon="ui-icon-plus"
 									action="#{contratoCobrancaMB.updateResponsavelDados}"
@@ -122,11 +122,17 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
+		
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+					
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 		
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
@@ -147,7 +153,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -271,6 +277,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -303,12 +313,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor2}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor2}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -328,7 +344,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -452,6 +468,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor2}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -484,12 +504,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor3}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor3}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+											
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -509,7 +535,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -633,6 +659,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor3}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -665,12 +695,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor4}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
-		
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor4}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -690,7 +726,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -814,6 +850,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor4}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -846,12 +886,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor5}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor5}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -871,7 +917,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -995,6 +1041,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor5}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -1027,12 +1077,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor6}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
-		
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor6}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -1052,7 +1108,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -1176,6 +1232,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor6}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>						
 						</p:tab>
@@ -1208,12 +1268,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor7}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor7}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -1233,7 +1299,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -1357,6 +1423,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor7}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
 						</p:tab>
@@ -1389,12 +1459,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor8}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
-		
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor8}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -1414,7 +1490,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -1538,6 +1614,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>	
+									
+									<f:facet name="footer">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor8}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>						
 						</p:tab>
@@ -1570,12 +1650,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor9}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
-		
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor9}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -1595,7 +1681,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -1719,6 +1805,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor9}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet> 
 								</p:dataTable>
 							</h:panelGrid>	
 						</p:tab>
@@ -1751,12 +1841,18 @@
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
-									selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									selection="#{contratoCobrancaMB.selectedListContratoCobrancaParcelasInvestidor10}"
 									rowKey="#{parcelas.id}" editable="true">
 			
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
-		
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor10}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
+									
+									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+									
 									<p:column style="text-align: center;" headerText="Número Parcela">
 										<h:outputText value="#{parcelas.numeroParcela}" />
 									</p:column>
@@ -1776,7 +1872,7 @@
 														value="#{parcelas.dataVencimento}"
 														style="margin-left: 12px;" required="true"
 														label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-														locale="pt" timeZone="GMT-3" styleClass="dateTimeField"/>
+														 styleClass="dateTimeField"/>
 											</f:facet>
 										</p:cellEditor>	
 									</p:column>
@@ -1900,6 +1996,10 @@
 									<p:column style="width:35px">
 										<p:rowEditor />
 									</p:column>
+									
+									<f:facet name="header">  
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor10}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>	
 						</p:tab>

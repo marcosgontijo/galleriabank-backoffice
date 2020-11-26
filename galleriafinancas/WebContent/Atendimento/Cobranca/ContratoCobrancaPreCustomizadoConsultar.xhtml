@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>	
+			<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Ficha Principal" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.file}" />
+						</p:commandButton>
+						<p:commandButton value="Ficha Conjuge" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>									
+			<p:panel id="ConsultaContratos" header="Pré-Contratos Pendentes - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">
+   		         	<f:facet name="header">						
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>                 
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			            <h:outputText value="#{contratos.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
+			            <h:outputText value="#{contratos.pagador.nome}" />
+			        </p:column>	
+			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
+			            <h:outputText value="#{contratos.responsavel.nome}" />
+			        </p:column>	        
+			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Imóvel" filterBy="#{contratos.imovel.nome}" filterMatchMode="contains" sortBy="#{contratos.imovel.nome}">
+			            <h:outputText value="#{contratos.imovel.nome}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
+			            <h:outputText value="#{contratos.imovel.cidade}" />
+			        </p:column>	
+			        <p:column style="width:180px;">
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	
+		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Simples" title="Editar Simples">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>			
+			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
+			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>
+		                </shiro:hasAnyRoles>
+		                <p:spacer height="10"/>
+		                <shiro:hasAnyRoles name="ROOT"> 
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+			                </p:commandButton>		                	
+		                </shiro:hasAnyRoles>
+		            </p:column>	
+					<f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>		            		        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

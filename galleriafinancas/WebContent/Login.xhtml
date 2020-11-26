@@ -35,13 +35,12 @@
 				<div id="login-box-field">
 					<p:password id="password" value="#{loginBean.password}" required="true" maxlength="10" inline="false" feedback= "false" size="31" alt="Senha" requiredMessage="Informe a senha!" onkeypress="if (event.keyCode == 13) { document.getElementById('form:aa').click(); return false; }"/>			
 				</div>
-				<br/>
-				<br/>
-				<br/>
-				<br/>				
+				<div id="login-box-key" style="margin-top:5px;"><p:outputLabel for="key" value="Código: " styleClass="labelBold"/></div>
+				<div id="login-box-field" style="margin-top:13px;">						
+					<p:inputText value="#{loginBean.key}" id="key" label="Key" maxlength="6" size="10" alt="Key" requiredMessage="Informe o código!" style="font-weight: bold;"/>
+				</div>		
 				<br/>
 				<!-- <span class="login-box-options"><a href="#" style="margin-left:120px;"><h:outputLabel for="esqueceuSenha" value="#{bundle.Login_ForgotPsw}?" /></a></span> -->
-			
 				<p:commandLink id="aa" actionListener="#{loginBean.loginNow}" update="messages"  ajax="false">
 					<img src="./resources/image/login-btn.png" width="103" height="42" style="margin-left:205px;" />
 				</p:commandLink>

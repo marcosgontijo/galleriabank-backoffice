@@ -133,7 +133,7 @@ public class GeracaoBoletoMB {
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
 			String dataVencimentoStr = sdf.format(dataVencimento.getTime());	        
 	        
-	        TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  	        
+	        TimeZone zone = TimeZone.getDefault();  	        
 			Calendar calEmissao = Calendar.getInstance(zone, locale);
 			String calEmissaoStr = sdf.format(calEmissao.getTime());	
 
@@ -264,7 +264,7 @@ public class GeracaoBoletoMB {
 	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
 			String dataVencimentoStr = sdf.format(dataVencimento.getTime());	        
 	        
-	        TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  	        
+	        TimeZone zone = TimeZone.getDefault();  	        
 			Calendar calEmissao = Calendar.getInstance(zone, locale);
 			String calEmissaoStr = sdf.format(calEmissao.getTime());	
 
@@ -427,7 +427,7 @@ public class GeracaoBoletoMB {
 		        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
 				String dataVencimentoStr = sdf.format(dataVencimento.getTime());	        
 		        
-		        TimeZone zone = TimeZone.getTimeZone("GMT-03:00");  	        
+		        TimeZone zone = TimeZone.getDefault();  	        
 				Calendar calEmissao = Calendar.getInstance(zone, locale);
 				String calEmissaoStr = sdf.format(calEmissao.getTime());	
 

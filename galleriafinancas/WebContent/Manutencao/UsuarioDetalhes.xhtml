@@ -109,6 +109,14 @@
 								<h:outputText value="Não" />
 							</ui:fragment>
 							
+							<p:outputLabel value="Sistema de Cobrança - Analista Pré-Contratos: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userPreContratoAnalista}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userPreContratoAnalista}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+							
 							<p:outputLabel value="Cobranças IUGU Postos: " styleClass="labelBold"/>	
 							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userIuguPosto}">
 								<h:outputText value="Sim" />

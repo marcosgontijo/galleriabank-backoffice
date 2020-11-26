@@ -78,10 +78,14 @@
 		
 		<p:dialog header="Favorecidos" widgetVar="favorecidoDialog" resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">				 	
-   		         <p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg" value="#{iuguMB.listRecebedores}" paginator="true" rows="10" selectionMode="single"
-   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 rowsPerPageTemplate="5,10,15" selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;" emptyMessage="" rowKey="#{favorecidoDialogdlg.id}" >		               	            			       
-
+				<p:dataTable id="favorecidoDialogdlg" var="favorecidoDialogdlg"
+					value="#{iuguMB.listRecebedores}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{iuguMB.selectedRecebedor}" style="FONT-SIZE: 10pt;"
+					emptyMessage="" rowKey="#{favorecidoDialogdlg.id}">
+					
 			         <p:column style="text-align: center;" sortBy="#{favorecidoDialogdlg.cnpj}" filterBy="#{favorecidoDialogdlg.cnpj}" filterMatchMode="contains">
 			            <f:facet name="header">
 			                <h:outputText value="CNPJ" />

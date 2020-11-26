@@ -63,7 +63,7 @@
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.email}"
 									label="E-Mail" type="email" required="true"
-									onblur="value=value.toUpperCase()" style="width:400px;" />
+									onblur="" style="width:400px;" />
 								<p:outputLabel value="Celular: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telCelular}"
@@ -71,7 +71,7 @@
 								<p:outputLabel value="Contato: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
-									label="Contato" onblur="value=value.toUpperCase()"
+									label="Contato" onblur=""
 									style="width:400px;" />
 							</h:panelGrid>
 							<br></br>
@@ -87,7 +87,7 @@
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.email}"
 									label="E-Mail" type="email" required="true"
-									onblur="value=value.toUpperCase()" style="width:400px;" />
+									onblur="" style="width:400px;" />
 								<p:outputLabel value="Celular: " styleClass="labelBold" />
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.telCelular}" />
@@ -97,7 +97,7 @@
 								<p:outputLabel value="Contato: " styleClass="labelBold" />
 								<p:inputText
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.contato}"
-									label="Contato" onblur="value=value.toUpperCase()"
+									label="Contato" onblur=""
 									style="width:400px;" />
 								<p:commandButton value="Salvar" ajax="false" icon="ui-icon-plus"
 									action="#{contratoCobrancaMB.updateResponsavelDados}"
@@ -1217,7 +1217,7 @@
 								</p:dataTable>
 							</h:panelGrid>	
 						</p:tab>
-						<p:tab title="Favorecido 10 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.id > 0}">
+						<p:tab title="Favorecido 10 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor10.nomeCC}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.id > 0}">
 							<h:panelGrid columns="2">
 								<p:outputLabel value="Banco: " styleClass="labelBold" />
 								<p:outputLabel
@@ -1232,7 +1232,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.conta}" />
 								<p:outputLabel value="Favorecido: " styleClass="labelBold" />
 								<p:outputLabel
-									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}" />
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.nomeCC}" />
 								<p:outputLabel value="CPF: " styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC != null}" />
 								<p:outputLabel value="CNPJ: " styleClass="labelBold"
@@ -1391,7 +1391,7 @@
 							value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}">
 							<f:convertDateTime locale="pt_BR" />
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
-								timeZone="GMT-3" />
+							 />
 						</h:outputText>
 						<p:spacer width="10" />
 					</h:panelGrid>
@@ -1421,6 +1421,12 @@
 						<p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
 						<h:outputText value="R$" />
 						<h:outputText value="#{contratoCobrancaMB.vlrComissao}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel value="Valor da CCB "
+							styleClass="labelBold" />
+						<h:outputText value="R$" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
 							converter="bigDecimalConverter" />
 					</h:panelGrid>
 
@@ -1973,7 +1979,7 @@
 					<p:calendar id="dataPagamento"
 						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
 						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+						 styleClass="dateTimeField">
 					</p:calendar>										
 				</h:panelGrid>
 
@@ -2018,7 +2024,7 @@
 					<p:calendar id="dataPagamento"
 						value="#{contratoCobrancaMB.dataPagamentoInvestidor}" required="true"
 						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						locale="pt" timeZone="GMT-3" styleClass="dateTimeField" disabled="true">
+						 styleClass="dateTimeField" disabled="true">
 					</p:calendar>										
 				</h:panelGrid>
 
@@ -2063,7 +2069,7 @@
 					<p:calendar id="dataPagamento"
 						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
 						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						locale="pt" timeZone="GMT-3" styleClass="dateTimeField">
+						 styleClass="dateTimeField">
 						<p:ajax event="dateSelect" update="ValoresAtualizados Pessoas"
 							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
 					</p:calendar>
@@ -2159,7 +2165,7 @@
 							<p:outputLabel for="Observacao" value="Observação: " />
 							<p:inputTextarea rows="10" cols="50" id="Observacao"
 								value="#{contratoCobrancaMB.observacao}" label="Observação"
-								onblur="value=value.toUpperCase()" style="width:300px;" />
+								onblur="" style="width:300px;" />
 							<p:spacer width="10" />
 						</h:panelGrid>
 					</p:panel>
@@ -2244,7 +2250,7 @@
 						<p:calendar id="dataVencimento"
 							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
 							required="true" label="Data do Vencimento" size="100"
-							pattern="dd/MM/yyyy" locale="pt" timeZone="GMT-3"
+							pattern="dd/MM/yyyy" 
 							styleClass="dateTimeField">
 							<p:ajax event="dateSelect" update="formBpGerarBoletoIUGU"
 								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
@@ -2463,7 +2469,7 @@
 							styleClass="labelBold" style="margin-right: 59px;" />
 						<p:inputTextarea rows="2" cols="50" id="Observacao"
 							value="#{contratoCobrancaMB.observacao}" label="Observação"
-							onblur="value=value.toUpperCase()" style="width:450px;" />
+							onblur="" style="width:450px;" />
 					</h:panelGrid>
 					<div align="center" style="margin-top: 20px;">
 						<p:commandButton value="Adicionar" ajax="false"
@@ -2544,7 +2550,7 @@
 							value="#{contratoCobrancaMB.dataPromessaPagamento}"
 							style="margin-left: 12px;" required="true"
 							label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-							locale="pt" timeZone="GMT-3" styleClass="dateTimeField" />
+							 styleClass="dateTimeField" />
 					</h:panelGrid>
 					<div align="center" style="margin-top: 20px;">
 						<p:commandButton value="Salvar" ajax="false" icon="ui-icon-plus"

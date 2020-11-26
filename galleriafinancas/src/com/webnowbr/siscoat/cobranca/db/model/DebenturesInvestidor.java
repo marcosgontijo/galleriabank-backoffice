@@ -27,6 +27,9 @@ public class DebenturesInvestidor implements Serializable {
 	private ContratoCobranca contrato;
 	
 	private boolean lastrearTitulos;
+	
+	// Não persistido, utilizado no relatorio de Titulos Quitados.
+	private BigDecimal valorFace;
 		
 	public DebenturesInvestidor(){
 	}
@@ -117,5 +120,13 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setLastrearTitulos(boolean lastrearTitulos) {
 		this.lastrearTitulos = lastrearTitulos;
+	}
+
+	public BigDecimal getValorFace() {
+		return valorFace;
+	}
+
+	public void setValorFace(BigDecimal valorFace) {
+		this.valorFace = valorFace;
 	}
 }
