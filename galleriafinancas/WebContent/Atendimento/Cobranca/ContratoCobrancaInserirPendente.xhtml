@@ -60,11 +60,11 @@
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
-									<p:spacer ></p:spacer>
+									<p:spacer height="50"></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="inicioAnalise" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -83,7 +83,7 @@
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
 									<p:spacer ></p:spacer>						
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">														
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
 										<p:selectOneRadio id="cadastroAprovado" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 								            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 								            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
@@ -111,7 +111,7 @@
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Imóvel</p:outputLabel>			
 									<p:spacer ></p:spacer>						
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">														
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
 										<p:selectOneRadio id="imovelAprovado" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}" >
 								            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 								            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
@@ -142,7 +142,7 @@
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="pagtoLaudoConfirmadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:80px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="pagtoLaudoConfirmada" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=80px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -162,11 +162,11 @@
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
-									<p:spacer ></p:spacer>
+									<p:spacer height="50"></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="laudoRecebidoView" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="laudoRecebido" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -188,7 +188,7 @@
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="pajurFavoravelView" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="pajurFavoravel" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -210,7 +210,7 @@
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="documentosCompletosView" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="documentosCompletos" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -227,12 +227,12 @@
 							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
-									<p:outputLabel styleClass="labelBold">CCB Pronta</p:outputLabel>
-									<p:spacer ></p:spacer>
+									<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
+									<p:spacer height="50"></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT,COBRANCA">									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 										<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -245,14 +245,36 @@
 								          <f:convertDateTime locale="pt_BR"  />
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
-							</h:panelGrid>				
+							</h:panelGrid>	
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
+									<p:spacer ></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="agAssinaturaView" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>		
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+										<p:selectBooleanButton id="agAssinatura" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="agAssinaturaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="agAssinaturaData" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>			
 						</h:panelGrid>	
 						<h:panelGrid columns="2" style="margin-top:20px;margin-bottom: 20px;">	
 							<h:panelGrid columns="2" style="background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
 										<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>
-										<shiro:hasAnyRoles name="ROOT,COBRANCA">	
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">	
 											<p:selectOneRadio id="aprovado" value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}" layout="responsive" columns="2" style="font-weight: bold;">
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
@@ -800,7 +822,7 @@
 									<f:selectItem itemValue="000 | Banco Ford S.A." itemLabel="000 | Banco Ford S.A."/>
 									<f:selectItem itemValue="000 | Banco GMAC S.A." itemLabel="000 | Banco GMAC S.A."/>
 									<f:selectItem itemValue="000 | Banco Honda S.A." itemLabel="000 | Banco Honda S.A."/>
-									<f:selectItem itemValue="000 | Banco IBM S.A." itemLabel="000 | Banco IBM S.A."/>
+									<f:selectItem itemValue="000 | Banco IBM S.A." itemLabel="000 | Banco IBM S.A."/>									
 									<f:selectItem itemValue="000 | Banco Itaú Veículos S.A." itemLabel="000 | Banco Itaú Veículos S.A."/>
 									<f:selectItem itemValue="000 | Banco PSA Finance Brasil S.A." itemLabel="000 | Banco PSA Finance Brasil S.A."/>
 									<f:selectItem itemValue="000 | Banco Rodobens S.A." itemLabel="000 | Banco Rodobens S.A."/>
@@ -832,6 +854,7 @@
 									<f:selectItem itemValue="073 | BB Banco Popular do Brasil S.A." itemLabel="073 | BB Banco Popular do Brasil S.A."/>
 									<f:selectItem itemValue="074 | Banco J. Safra S.A." itemLabel="074 | Banco J. Safra S.A."/>
 									<f:selectItem itemValue="075 | Banco ABN AMRO S.A." itemLabel="075 | Banco ABN AMRO S.A."/>
+									<f:selectItem itemValue="077 | Banco Inter" itemLabel="077 | Banco Inter"/>
 									<f:selectItem itemValue="078 | BES Investimento do Brasil S.A.-Banco de Investimento" itemLabel="078 | BES Investimento do Brasil S.A.-Banco de Investimento"/>
 									<f:selectItem itemValue="081-7 | BBN Banco Brasileiro de Negócios S.A." itemLabel="081-7 | BBN Banco Brasileiro de Negócios S.A."/>
 									<f:selectItem itemValue="082-5 | Banco Topázio S.A." itemLabel="082-5 | Banco Topázio S.A."/>
@@ -843,6 +866,9 @@
 									<f:selectItem itemValue="107 | Banco BBM S.A." itemLabel="107 | Banco BBM S.A."/>
 									<f:selectItem itemValue="119 | Banco Western Union do Brasil S.A." itemLabel="119 | Banco Western Union do Brasil S.A."/>
 									<f:selectItem itemValue="125 | Brasil Plural S.A. - Banco Múltiplo" itemLabel="125 | Brasil Plural S.A. - Banco Múltiplo"/>
+									<f:selectItem
+										itemValue="136 | Banco Unicred"
+										itemLabel="136 | Banco Unicred" />	
 									<f:selectItem itemValue="184 | Banco Itaú BBA S.A." itemLabel="184 | Banco Itaú BBA S.A."/>
 									<f:selectItem itemValue="204 | Banco Bradesco Cartões S.A." itemLabel="204 | Banco Bradesco Cartões S.A."/>
 									<f:selectItem itemValue="208 | Banco BTG Pactual S.A." itemLabel="208 | Banco BTG Pactual S.A."/>
@@ -1005,7 +1031,9 @@
 							<f:selectItem itemValue="Casa" itemLabel="Casa" />		
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />		
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />		
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />						    
+							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
+							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
+							<f:selectItem itemValue="Rural" itemLabel="Rural" />						    
 						</p:selectOneMenu>		
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
@@ -1156,12 +1184,20 @@
 			</p:panel>	
 					
 			<div align="center">
-				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}"/>		 						
+				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+				</p:commandButton>			 						
 				<p:spacer height="10" />
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}"/>		 						
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+				</p:commandButton>		 						
 				<p:spacer height="10" />
+				<p:commandButton value="Voltar ao CRM" ajax="false" immediate="true" icon="ui-icon-arrowreturn-1-w" action="/Atendimento/Cobranca/CRM.xhtml" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.crmMode}"/>		 						
+				<p:spacer height="10" rendered="#{contratoCobrancaMB.crmMode}"/>
 				<shiro:hasAnyRoles name="ROOT"> 
-					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}"/>		 						
+					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}">
+						<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+					</p:commandButton>		 						
 					<p:spacer height="10" />
 				</shiro:hasAnyRoles>
 				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml" style="TEXT-DECORATION: bold; "/>								

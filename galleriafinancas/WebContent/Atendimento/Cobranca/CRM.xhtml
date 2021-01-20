@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" 
+	template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">	
+		<h:form id="form" style="margin-bottom:10px;">
+		 	<h:outputScript name="js/functions.js" />	
+		 	<h:outputScript name="js/locale-primefaces.js" />	
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CRM" header="CRM"
+				style="margin-bottom:10px;">
+				<h:form id="boardCRM">
+					<div class="ui-g">
+						<div class="ui-g-2 ui-md-2 ui-lg-2">
+						    <p:fieldset id="lead" legend="Novos Leads" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
+						        <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #bababa !important; padding: 10px;border-right: 3px solid #fff;">
+						        	Contratos
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;border-right: 3px solid #fff;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeLeads}"/>
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalLeads}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="leadDG" var="lead" value="#{crmMB.novoLead}" columns="1" emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="leadPanel" header="#{lead.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="2" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>
+						                    <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>
+											<h:outputText id="data" value="#{lead.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>								            
+											<h:outputText id="valor"  value="#{lead.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						           		<p:commandButton id="imageBtnLead" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;"/>
+									    <p:overlayPanel id="imagePanelLead" for="imageBtnLead" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{lead.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{lead.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{lead}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{lead.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{lead.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-2 ui-md-2 ui-lg-2">
+						    <p:fieldset id="emAnalise" legend="Em análise" style="font-weight: bold;margin-top: 10px;background-color: #f4eda2 !important;">						        
+						        <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #bababa !important; padding: 10px;border-right: 3px solid #fff;">
+						        	Contratos
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;border-right: 3px solid #fff;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeEmAnalise}"/>
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalEmAnalise}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="emAnaliseDG" var="emAnalise" value="#{crmMB.emAnalise}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="emAnalisePanel" header="#{emAnalise.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="2" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>
+						                    <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>
+											<h:outputText id="data" value="#{emAnalise.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>								            
+											<h:outputText id="valor"  value="#{emAnalise.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						                <p:commandButton id="imageBtnEmAnalise" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;"/>
+									    <p:overlayPanel id="imagePanelEmAnalise" for="imageBtnEmAnalise" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{emAnalise.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{emAnalise.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{emAnalise}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{emAnalise.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{emAnalise.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-2 ui-md-2 ui-lg-2">
+						    <p:fieldset id="agPagtoBoleto" legend="Ag. Pagto. Boleto" style="font-weight: bold;margin-top: 10px;background-color: #f4dea2 !important;">						        
+						        <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #bababa !important; padding: 10px;border-right: 3px solid #fff;">
+						        	Contratos
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;border-right: 3px solid #fff;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgPagtoBoleto}"/>
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgPagtoBoleto}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="agPagtoBoletoDG" var="agPagtoBoleto" value="#{crmMB.agPagtoBoleto}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="agPagtoBoletoPanel" header="#{agPagtoBoleto.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="2" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>
+						                    <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>
+											<h:outputText id="data" value="#{agPagtoBoleto.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>								            
+											<h:outputText id="valor"  value="#{agPagtoBoleto.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						                <p:commandButton id="imageBtnAgPagtoBoleto" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;"/>
+									    <p:overlayPanel id="imagePanelAgPagtoBoleto" for="imageBtnAgPagtoBoleto" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agPagtoBoleto.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agPagtoBoleto.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{agPagtoBoleto}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{agPagtoBoleto.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{agPagtoBoleto.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-2 ui-md-2 ui-lg-2">
+						    <p:fieldset id="agPAJUeLaudo" legend="Ag. PAJU e Laudo" style="font-weight: bold;margin-top: 10px;background-color: #f4cea2 !important;">						        
+						        <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #bababa !important; padding: 10px;border-right: 3px solid #fff;">
+						        	Contratos
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;border-right: 3px solid #fff;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgPAJUeLaudo}"/>
+						       	</div>
+						       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgPAJUeLaudo}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="agPAJUeLaudoDG" var="agPAJUeLaudo" value="#{crmMB.agPAJUeLaudo}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="agPAJUeLaudoPanel" header="#{agPAJUeLaudo.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="2" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>
+						                    <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>
+											<h:outputText id="data" value="#{agPAJUeLaudo.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>								            
+											<h:outputText id="valor"  value="#{agPAJUeLaudo.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						                <p:commandButton id="imageBtnAgPAJUeLaudo" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;"/>
+									    <p:overlayPanel id="imagePanelAgPAJUeLaudo" for="imageBtnAgPAJUeLaudo" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agPAJUeLaudo.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agPAJUeLaudo.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{agPAJUeLaudo}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{agPAJUeLaudo.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{agPAJUeLaudo.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-1 ui-md-1 ui-lg-1" style="margin-right: 50px;">
+						    <p:fieldset id="agDOC" legend="Ag. DOC" style="font-weight: bold;margin-top: 10px;background-color: #f4c3a2 !important;">						        
+						        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #bababa !important; padding: 10px;">
+						        	Contratos
+						       	</div>
+						    	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgDOC}"/>
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgDOC}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="agDOCDG" var="agDOC" value="#{crmMB.agDOC}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="agDOCPanel" header="#{agDOC.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="1" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>						                  
+											<h:outputText id="data" value="#{agDOC.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>							
+								            <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>	            
+											<h:outputText id="valor"  value="#{agDOC.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						                <p:commandButton id="imageBtnAgDOC" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;margin-top: 10px !important;"/>
+									    <p:overlayPanel id="imagePanelAgDOC" for="imageBtnAgDOC" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agDOC.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agDOC.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{agDOC}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{agDOC.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{agDOC.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-1 ui-md-1 ui-lg-1" style="margin-right: 50px;">
+						    <p:fieldset id="agCCB" legend="Ag. CCB" style="font-weight: bold;margin-top: 10px;background-color: #f4bda2 !important;">						        
+						        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #bababa !important; padding: 10px;">
+						        	Contratos
+						       	</div>
+						    	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgCCB}"/>
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgCCB}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="agCCBDG" var="agCCB" value="#{crmMB.agCCB}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="agCCBPanel" header="#{agCCB.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="1" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>						                  
+											<h:outputText id="data" value="#{agCCB.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>							
+								            <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>	            
+											<h:outputText id="valor"  value="#{agCCB.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						                <p:commandButton id="imageBtnAgCCB" icon="ui-icon-search" value="Detalhes" type="button" style="margin-top: 10px !important; width: 90px;"/>
+									    <p:overlayPanel id="imagePanelAgCCB" for="imageBtnAgCCB" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agCCB.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agCCB.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{agCCB}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{agCCB.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{agCCB.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						<div class="ui-g-1 ui-md-1 ui-lg-1">
+						    <p:fieldset id="agAssinatura" legend="Ag. Assinatura" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
+						        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #bababa !important; padding: 10px;">
+						        	Contratos
+						       	</div>
+						    	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgAssinatura}"/>
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgAssinatura}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="agAssinaturaDG" var="agAssinatura" value="#{crmMB.agAssinatura}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						            <p:panel id="agAssinaturaPanel" header="#{agAssinatura.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="1" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>						                  
+											<h:outputText id="data" value="#{agAssinatura.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>							
+								            <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>	            
+											<h:outputText id="valor"  value="#{agAssinatura.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						         		<p:commandButton id="imageBtnAgAssinatura" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;margin-top: 10px !important;"/>
+									    <p:overlayPanel id="imagePanelAgAssinatura" for="imageBtnAgAssinatura" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Pagador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agAssinatura.pagador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{agAssinatura.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important; width: 90px;">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{agAssinatura}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{agAssinatura.pagador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{agAssinatura.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>						
+					</div>
+				</h:form>
+			</p:panel>
+		</h:form>		
+	</ui:define>
+</ui:composition>

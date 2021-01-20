@@ -52,6 +52,7 @@
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContrato}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>                 
@@ -86,6 +87,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                </p:commandButton>
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
@@ -99,6 +101,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
@@ -106,6 +109,7 @@
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContrato}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>		            		        		               		        			        			           			 		

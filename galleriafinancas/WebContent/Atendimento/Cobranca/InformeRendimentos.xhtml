@@ -10,7 +10,7 @@
 		<h:form id="form" style="margin-bottom:10px;">
 			<script src="../../resources/js/functions.js"></script>
 			<h:outputScript name="js/locale-primefaces.js" />
-			<p:messages id="mensagens" showDetail="true" />
+			<p:messages id="mensagens" showDetail="true" />			
 			<p:panel id="PanelPDF"
 				header="Impressão em PDF / XLS Gerada com Sucesso"
 				style="margin-bottom:10px;"
@@ -24,7 +24,7 @@
 					</p:dialog>
 
 					<h:form>
-						<p:commandButton value="Download do Relatório" ajax="false"
+						<p:commandButton value="Download Selecionado(s)" ajax="false"
 							onclick="PrimeFaces.monitorDownload(start, stop);"
 							icon="ui-icon-arrowthick-1-s">
 							<p:fileDownload value="#{investidorMB.file}" />
@@ -43,20 +43,21 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="ConsultaFinanceiro" header="IR Retido dos Investidores - Consultar"
+			<p:panel id="ConsultaFinanceiro" header="Informe Redimentos - Consultar"
 				style="margin-bottom:10px;">
-				<h:panelGrid columns="3">
-					<p:outputLabel for="anofiscal" value="Ano Base: "
+				<h:panelGrid columns="2">
+					<p:outputLabel for="anofiscal" value="Ano base: "
 						styleClass="labelBold"  />
 					<p:selectOneMenu id="anofiscal"
 							value="#{investidorMB.anoBase}"
 							label="Status" style="width:190px;" required="true">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
-							<f:selectItem itemValue="2018" itemLabel="2018" />
 							<f:selectItem itemValue="2019" itemLabel="2019" />
 							<f:selectItem itemValue="2020" itemLabel="2020" />
 					</p:selectOneMenu>
-					<p:spacer></p:spacer>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="3">
 					<p:outputLabel for="Recebedor" value="Investidor: "
 						styleClass="labelBold" />
 					<p:inputText id="Recebedor" value="#{investidorMB.nomePagador}"
@@ -66,38 +67,140 @@
 						onclick="PF('pagadorDialog').show();"
 						image="ui-icon ui-icon-circle-zoomin"/>
 				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="imprimirHeaderFooter" value="Imprimir Cabeçalho e Rodapé: "
+						styleClass="labelBold"  />	
+        			<p:selectBooleanButton id="imprimirHeaderFooter" value="#{investidorMB.imprimirHeaderFooter}" onLabel="Sim" offLabel="Não" style="width:60px" />
+				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.processInformeRendimentos}"
 					image="ui-icon ui-icon-check"
-					update=":form:ConsultaInformeRendimentos PanelPDF mensagens"
-					style="TEXT-DECORATION: bold;" />
+					update=":form:dtResultado :form:ConsultaResultados PanelPDF mensagens"
+					style="TEXT-DECORATION: bold; margin-top: 15px;" />
 			</p:panel>
-			
-			<p:panel id="ConsultaInformeRendimentos"
-				header="Informe de Rendimentos - Resultados" style="margin-bottom:10px;">
-				<h:panelGrid columns="2">
-				<p:outputLabel value="Valor em 31/12/#{investidorMB.anoBase - 1}: "
-							styleClass="labelBold"  />
-					<h:outputText value="#{investidorMB.valorInvestidorAnoAnterior}" converter="bigDecimalConverter"/>
-					<p:outputLabel value="Valor em 31/12/#{investidorMB.anoBase}: "
-							styleClass="labelBold"  />
-					<h:outputText value="#{investidorMB.valorInvestidorAnoAtual}" converter="bigDecimalConverter"/>
-					<p:outputLabel value="Total IR Retido: "
-							styleClass="labelBold"  />
-					<h:outputText value="#{investidorMB.totalIRRetido}" converter="bigDecimalConverter"/>
-					<p:outputLabel value="Total Juros Líquido: "
-							styleClass="labelBold"  />
-					<h:outputText value="#{investidorMB.totalJurosLiquido}" converter="bigDecimalConverter"/>
+			<p:panel id="ConsultaResultados"
+				header="Informe Rendimentos - Resultados" style="margin-bottom:10px;">
+				
+				<h:panelGrid columns="2" style="margin-bottom: 20px;">
+					<p:outputLabel value="Investidor: "
+						styleClass="labelBold"  style="FONT-SIZE: 12pt !important;"/>
+					<p:outputLabel value="#{investidorMB.selectedPagador.nome}"
+						styleClass="labelBold" style="FONT-SIZE: 12pt !important;"/>
+					<p:outputLabel value="CPF: "
+						styleClass="labelBold" rendered="#{!investidorMB.selectedPagador.cpf eq ''}" style="FONT-SIZE: 12pt !important;"/>
+					<p:outputLabel value="#{investidorMB.selectedPagador.cpf}"
+						styleClass="labelBold" rendered="#{!investidorMB.selectedPagador.cpf eq ''}" style="FONT-SIZE: 12pt !important;"/>
+					<p:outputLabel value="CNPJ: "
+						styleClass="labelBold" rendered="#{!investidorMB.selectedPagador.cnpj eq ''}" style="FONT-SIZE: 12pt !important;"/>
+					<p:outputLabel value="#{investidorMB.selectedPagador.cnpj}"
+						styleClass="labelBold" rendered="#{!investidorMB.selectedPagador.cnpj eq ''}" style="FONT-SIZE: 12pt !important;"/>
 				</h:panelGrid>
-				<br></br>
-				<p:commandButton value="Gerar PDF" ajax="false"
+				
+				<p:dataTable id="dtResultado" var="parcelas"
+					value="#{investidorMB.investidorInformeRendimentos}"
+					emptyMessage="" sortBy="#{parcelas.empresa}">
+					
+					<f:facet name="header">
+						<p:commandButton value="Gerar PDF - Informe de Rendimentos" ajax="false"
 							icon="ui-icon-print"
 							action="#{investidorMB.geraPDFInformeRendimentos}"
 							update="PanelPDF"
-							disabled="#{investidorMB.parcelasInvestidor} == 0}" />
+							disabled="#{investidorMB.investidorInformeRendimentos.size() == 0}" />
+					</f:facet>
+
+			        <p:column style="text-align: center;width: 50px;"
+						headerText="Contrato" >
+						<h:outputText value="#{parcelas.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Razão Social" >
+						<h:outputText value="#{parcelas.empresa}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="CNPJ" >
+						<h:outputText value="#{parcelas.cnpj}" />
+					</p:column>
+					<p:column style="text-align: right;width: 50px;"
+						headerText="#{investidorMB.labelAnoAnterior}">
+						<h:outputText value="#{parcelas.saldoAnoAnterior}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:column style="text-align: right;width: 50px;"
+						headerText="#{investidorMB.labelAnoBase}">
+						<h:outputText value="#{parcelas.saldoAnoAtual}" converter="bigDecimalConverter"/>
+					</p:column>		
+					<p:column style="text-align: right;width: 50px;"
+						headerText="Juros" >
+						<h:outputText value="#{parcelas.juros}" converter="bigDecimalConverter"/>
+					</p:column>										
+					<p:column style="text-align: right;width: 50px;"
+						headerText="Valor IR Retido">
+						<h:outputText value="#{parcelas.irRetido}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:summaryRow>
+			            <p:column colspan="3" style="text-align:right">
+			                <h:outputText value="Totais (R$)" />
+			            </p:column>
+			            <p:column style="text-align:right">
+			                <h:outputText value="#{investidorMB.valorInvestidorAnoAnterior}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+						<p:column style="text-align:right">
+			                <h:outputText value="#{investidorMB.valorInvestidorAnoAtual}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+			            <p:column style="text-align:right">
+			                <h:outputText value="#{investidorMB.totalJurosLiquido}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+			            <p:column style="text-align:right">
+			                <h:outputText value="#{investidorMB.totalIRRetido}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+			        </p:summaryRow>	
+			        
+			        <f:facet name="footer">
+						<p:commandButton value="Gerar PDF - Informe de Rendimentos" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.geraPDFInformeRendimentos}"
+							update="PanelPDF"
+							disabled="#{investidorMB.investidorInformeRendimentos.size() == 0}" />
+					</f:facet>		
+				</p:dataTable>
 			</p:panel>
 		</h:form>
+			<p:panel id="informeLote"
+					header="Informe de Rendimentos em Lote"
+					style="margin-bottom:10px;">
+					<p:focus />
+					<p:messages />
+					<h:panelGrid columns="2">
+						<p:dialog modal="true" widgetVar="statusDialog"
+							draggable="false" closable="false" resizable="false" showHeader="false">
+							<p:graphicImage name="image/bluespinner.gif" />
+						</p:dialog>
+	
+						<h:form>
+							<p:commandButton value="Gerar PDFs" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop);"
+								icon="ui-icon-arrowthick-1-s">
+								<p:fileDownload value="#{investidorMB.downloadAllFiles}" />
+							</p:commandButton>
+						</h:form>
+	
+						<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+						</script>
+	
+					</h:panelGrid>
+			</p:panel>
 		<p:dialog header="Investidores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">

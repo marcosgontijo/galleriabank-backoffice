@@ -154,6 +154,17 @@ public class ContratoCobranca implements Serializable {
 	private boolean recebedorGarantido9;
 	private boolean recebedorGarantido10;
 	
+	private boolean parcelasAlteradas1;
+	private boolean parcelasAlteradas2;
+	private boolean parcelasAlteradas3;
+	private boolean parcelasAlteradas4;
+	private boolean parcelasAlteradas5;
+	private boolean parcelasAlteradas6;
+	private boolean parcelasAlteradas7;
+	private boolean parcelasAlteradas8;
+	private boolean parcelasAlteradas9;
+	private boolean parcelasAlteradas10;
+	
 	private Responsavel responsavel;
 	
 	private ImovelCobranca imovel;
@@ -221,6 +232,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean ccbPronta;
 	private String ccbProntaUsuario;
 	
+	private Date agAssinaturaData;
+	private boolean agAssinatura;
+	private String agAssinaturaUsuario;
+
 	private Date statusContratoData;
 	private String statusContrato;
 	private String statusContratoUsuario;
@@ -2770,5 +2785,109 @@ public class ContratoCobranca implements Serializable {
 
 	public void setStatusContratoUsuario(String statusContratoUsuario) {
 		this.statusContratoUsuario = statusContratoUsuario;
-	}	
+	}
+
+	public Date getAgAssinaturaData() {
+		return agAssinaturaData;
+	}
+
+	public void setAgAssinaturaData(Date agAssinaturaData) {
+		this.agAssinaturaData = agAssinaturaData;
+	}
+
+	public boolean isAgAssinatura() {
+		return agAssinatura;
+	}
+
+	public void setAgAssinatura(boolean agAssinatura) {
+		this.agAssinatura = agAssinatura;
+	}
+
+	public String getAgAssinaturaUsuario() {
+		return agAssinaturaUsuario;
+	}
+
+	public void setAgAssinaturaUsuario(String agAssinaturaUsuario) {
+		this.agAssinaturaUsuario = agAssinaturaUsuario;
+	}
+
+	public boolean isParcelasAlteradas1() {
+		return parcelasAlteradas1;
+	}
+
+	public void setParcelasAlteradas1(boolean parcelasAlteradas1) {
+		this.parcelasAlteradas1 = parcelasAlteradas1;
+	}
+
+	public boolean isParcelasAlteradas2() {
+		return parcelasAlteradas2;
+	}
+
+	public void setParcelasAlteradas2(boolean parcelasAlteradas2) {
+		this.parcelasAlteradas2 = parcelasAlteradas2;
+	}
+
+	public boolean isParcelasAlteradas3() {
+		return parcelasAlteradas3;
+	}
+
+	public void setParcelasAlteradas3(boolean parcelasAlteradas3) {
+		this.parcelasAlteradas3 = parcelasAlteradas3;
+	}
+
+	public boolean isParcelasAlteradas4() {
+		return parcelasAlteradas4;
+	}
+
+	public void setParcelasAlteradas4(boolean parcelasAlteradas4) {
+		this.parcelasAlteradas4 = parcelasAlteradas4;
+	}
+
+	public boolean isParcelasAlteradas5() {
+		return parcelasAlteradas5;
+	}
+
+	public void setParcelasAlteradas5(boolean parcelasAlteradas5) {
+		this.parcelasAlteradas5 = parcelasAlteradas5;
+	}
+
+	public boolean isParcelasAlteradas6() {
+		return parcelasAlteradas6;
+	}
+
+	public void setParcelasAlteradas6(boolean parcelasAlteradas6) {
+		this.parcelasAlteradas6 = parcelasAlteradas6;
+	}
+
+	public boolean isParcelasAlteradas7() {
+		return parcelasAlteradas7;
+	}
+
+	public void setParcelasAlteradas7(boolean parcelasAlteradas7) {
+		this.parcelasAlteradas7 = parcelasAlteradas7;
+	}
+
+	public boolean isParcelasAlteradas8() {
+		return parcelasAlteradas8;
+	}
+
+	public void setParcelasAlteradas8(boolean parcelasAlteradas8) {
+		this.parcelasAlteradas8 = parcelasAlteradas8;
+	}
+
+	public boolean isParcelasAlteradas9() {
+		return parcelasAlteradas9;
+	}
+
+	public void setParcelasAlteradas9(boolean parcelasAlteradas9) {
+		this.parcelasAlteradas9 = parcelasAlteradas9;
+	}
+
+	public boolean isParcelasAlteradas10() {
+		return parcelasAlteradas10;
+	}
+
+	public void setParcelasAlteradas10(boolean parcelasAlteradas10) {
+		this.parcelasAlteradas10 = parcelasAlteradas10;
+	}
 }

@@ -57,6 +57,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor;
+import com.webnowbr.siscoat.cobranca.db.model.InvestidorInformeRendimentos;
 import com.webnowbr.siscoat.cobranca.db.model.OperacoesIndividualizado;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
@@ -190,11 +191,18 @@ public class InvestidorMB {
 	List<ContratoCobrancaParcelasInvestidor> parcelasInvestidorSA;
 	List<ContratoCobrancaParcelasInvestidor> parcelasInvestidorEnvelope;
 	
+	List<InvestidorInformeRendimentos> investidorInformeRendimentos;
+	
+	String labelAnoBase = "";
+	String labelAnoAnterior = "";
+	
+	private boolean imprimirHeaderFooter;
+	
 	public InvestidorMB() {
 		
 	}
 	
-	public String clearFieldsInformeRendimentos() {
+	public String clearFieldsInformeRendimentosOLD() {
 		this.totalIRRetido = BigDecimal.ZERO;
 		this.totalJurosLiquido = BigDecimal.ZERO;
 		this.valorInvestidorAnoAtual = BigDecimal.ZERO;
@@ -219,7 +227,304 @@ public class InvestidorMB {
 		return "/Atendimento/Cobranca/InformeRendimentos.xhtml";
 	}
 	
+	public String clearFieldsInformeRendimentos() {
+		this.dataInicio = gerarDataHoje(); 
+		this.dataFim = gerarDataHoje();
+		
+		this.valorInvestidorAnoAtual = BigDecimal.ZERO;
+		this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
+		
+		this.parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
+		
+		this.investidorInformeRendimentos = new ArrayList<InvestidorInformeRendimentos>();
+		
+		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+		this.listPagadores = prDao.findAll();	
+		clearPagador();
+		
+		this.irRetidoInvestidoresPDFGerado = false;
+		this.pathPDF = "";
+		this.nomePDF = "";
+		this.file = null;
+		
+		this.anoBase = "";
+		
+		this.labelAnoBase = "Valor em";
+		this.labelAnoAnterior = "Valor em";
+		
+		this.posicaoInvestidorNoContrato = 0;
+		
+		this.imprimirHeaderFooter = true;
+		
+		return "/Atendimento/Cobranca/InformeRendimentos.xhtml";
+	}
+	
+	public void processInformeRendimentosPortalInvestidor() {
+		this.anoBase = "2020";
+		processInformeRendimentos();
+		
+		this.imprimirHeaderFooter = true;
+		
+		if (this.investidorInformeRendimentos.size() > 0) {
+			geraPDFInformeRendimentos();
+		}
+	}
+	
 	public void processInformeRendimentos() {
+		ContratoCobrancaParcelasInvestidorDao cDao = new ContratoCobrancaParcelasInvestidorDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		this.investidorInformeRendimentos = new ArrayList<InvestidorInformeRendimentos>();
+		this.posicaoInvestidorNoContrato = 0;
+		
+		if (this.selectedPagador == null || this.selectedPagador.getId() <= 0) {			
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Informe de rendimentos: É obrigatória a seleção do investidor!", ""));
+		} else {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			
+			Date dataInicioAnterior = null;
+			Date dataFimAnterior = null;
+			
+			try {						
+				if (this.anoBase.equals("2019")) {
+					this.dataInicio = format.parse("31/12/2018");
+					this.dataFim = format.parse("31/12/2019");
+					
+					dataInicioAnterior = format.parse("31/12/2017");
+					dataFimAnterior = format.parse("31/12/2018");
+					
+					this.labelAnoBase = "Valor em 31/12/2019";
+					this.labelAnoAnterior = "Valor em 31/12/2018";
+				}
+				
+				if (this.anoBase.equals("2020")) {
+					this.dataInicio = format.parse("31/12/2019");
+					this.dataFim = format.parse("31/12/2020");
+					
+					dataInicioAnterior = format.parse("31/12/2018");
+					dataFimAnterior = format.parse("31/12/2019");
+					
+					this.labelAnoBase = "Valor em 31/12/2020";
+					this.labelAnoAnterior = "Valor em 31/12/2019";
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			/****
+			 * BUSCA O SALDO DA ÚLTIMA PARCELA PAGA, IR E JUROS (ano base atual)
+			 */
+			this.parcelasInvestidor = cDao.getParcelasPorDataInvestidorBaixadasInforme(this.dataInicio, this.dataFim, this.selectedPagador.getId());
+			
+			InvestidorInformeRendimentos informeRendimentos = new InvestidorInformeRendimentos();
+			String numeroContrato = null;
+			int numeroParcela = 0;
+			BigDecimal irRetidoTotalContrato = BigDecimal.ZERO;
+			BigDecimal jurosTotalContrato = BigDecimal.ZERO;
+			BigDecimal saldoTotalContrato = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaParcelasInvestidor parcela : this.parcelasInvestidor) {
+				// Corrige valores nulos de valores
+				if (parcela.getIrRetido() == null) {
+					parcela.setIrRetido(BigDecimal.ZERO);
+				}
+				
+				if (parcela.getJuros() == null) {
+					parcela.setJuros(BigDecimal.ZERO);
+				}
+				
+				if (parcela.getSaldoCredorAtualizado() == null) {
+					parcela.setSaldoCredorAtualizado(BigDecimal.ZERO);
+				}
+				
+				if (numeroContrato == null) {
+					numeroContrato = parcela.getNumeroContrato();
+					irRetidoTotalContrato = parcela.getIrRetido();
+					jurosTotalContrato = parcela.getJuros();
+					
+					saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+					numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+				} else {
+					if (numeroContrato.equals(parcela.getNumeroContrato())) {
+						irRetidoTotalContrato = irRetidoTotalContrato.add(parcela.getIrRetido());
+						jurosTotalContrato = jurosTotalContrato.add(parcela.getJuros());
+						
+						// pegar sempre o saldo da última parcela baixada
+						if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+							numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+						}
+					} else {
+						// Armazena dados do contrato anterior
+						informeRendimentos = new InvestidorInformeRendimentos();
+						informeRendimentos.setNumeroContrato(numeroContrato);
+						informeRendimentos.setIrRetido(irRetidoTotalContrato);
+						informeRendimentos.setJuros(jurosTotalContrato);
+						informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
+						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+						informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior, dataFimAnterior, cDao, numeroContrato));
+						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+						informeRendimentos.setCnpj("34.425.347/0001-06");
+						
+						this.investidorInformeRendimentos.add(informeRendimentos);
+						
+						//Coleta dados do contrato atual
+						numeroContrato = parcela.getNumeroContrato();
+						irRetidoTotalContrato = parcela.getIrRetido();
+						jurosTotalContrato = parcela.getJuros();
+						saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+						numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+					}					
+				}		
+			}
+			
+			if (numeroContrato != null) {
+				// Armazena dados do último contrato
+				informeRendimentos = new InvestidorInformeRendimentos();
+				informeRendimentos.setNumeroContrato(numeroContrato);
+				informeRendimentos.setIrRetido(irRetidoTotalContrato);
+				informeRendimentos.setJuros(jurosTotalContrato);
+				informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
+				informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+				informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior, dataFimAnterior, cDao, numeroContrato));
+				informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+				informeRendimentos.setCnpj("34.425.347/0001-06");
+				
+				this.investidorInformeRendimentos.add(informeRendimentos);
+			}
+
+			/****
+			 * PEGA CONTRATOS GERADOS NO ANO BASE  
+			 * E QUE NÃO TIVERAM BAIXA
+			 */
+			Date dataInicioContrato = null;
+			Date dataFimContrato = null;
+
+			try {
+				dataInicioContrato = format.parse("01/01/"+ this.anoBase);
+				dataFimContrato = format.parse("31/12/"+ this.anoBase);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+
+			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+			List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(this.selectedPagador.getId(), dataInicioContrato, dataFimContrato);
+
+			// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
+			// SE SIM, É PQ JÁ HOUVE BAIXA
+			for (ContratoCobranca contrato : listContratos) { 
+				boolean consideraContrato = true;
+				
+				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+					if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
+						consideraContrato = false;
+					}
+				}
+				
+				// SE CONSIDERA O CONTRATO, 
+				if (consideraContrato) {						
+					informeRendimentos = new InvestidorInformeRendimentos();
+					informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
+					informeRendimentos.setIrRetido(BigDecimal.ZERO);
+					informeRendimentos.setJuros(BigDecimal.ZERO);
+					informeRendimentos.setSaldoAnoAtual(buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId()));
+					informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+					informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
+					informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+					informeRendimentos.setCnpj("34.425.347/0001-06");
+					
+					this.investidorInformeRendimentos.add(informeRendimentos);
+				}
+			}
+			
+			// FINALIZA PROCESSO DE CONSTRUÇÃO DO INFORME			
+			if (this.investidorInformeRendimentos.size() == 0) {
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "Investidores: Não há registros para os filtros informados!", ""));
+			} else {
+				this.totalIRRetido = BigDecimal.ZERO;
+				this.totalJurosLiquido = BigDecimal.ZERO;
+				this.valorInvestidorAnoAtual = BigDecimal.ZERO;
+				this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
+
+				/***
+				 * CORRIGIR VALORES NULOS NA LISTA
+				 */
+				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+					if (informe.getIrRetido() == null) {
+						informe.setIrRetido(BigDecimal.ZERO);
+					}
+					
+					if (informe.getJuros() == null) {
+						informe.setJuros(BigDecimal.ZERO);
+					}
+					
+					if (informe.getSaldoAnoAtual() == null) {
+						informe.setSaldoAnoAtual(BigDecimal.ZERO);
+					}
+					
+					if (informe.getSaldoAnoAnterior() == null) {
+						informe.setSaldoAnoAnterior(BigDecimal.ZERO);
+					}
+				}
+				
+				/***
+				 * FAZ SOMATÓRIA FINAL
+				 */
+				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+					this.totalIRRetido = this.totalIRRetido.add(informe.getIrRetido());
+					this.totalJurosLiquido = this.totalJurosLiquido.add(informe.getJuros());
+					this.valorInvestidorAnoAtual = this.valorInvestidorAnoAtual.add(informe.getSaldoAnoAtual());
+					this.valorInvestidorAnoAnterior = this.valorInvestidorAnoAnterior.add(informe.getSaldoAnoAnterior());
+				}
+			}
+			/*
+			this.valorInvestidorAnoAtual = cDao.getParcelasPorDataInvestidorIR(this.dataInicio, this.dataFim, this.selectedPagador.getId()); 
+			
+			if (dataInicioAnterior != null && dataFimAnterior != null) {
+				this.valorInvestidorAnoAnterior = cDao.getParcelasPorDataInvestidorIR(dataInicioAnterior, dataFimAnterior, this.selectedPagador.getId());
+			} else {
+				this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
+			}
+			*/
+		}
+	}
+
+	/***
+	 * CAPTURA O SALDO DO CONTRATO NO ANO BASE ANTERIOR
+	 * @param dataInicioAnoAnterior
+	 * @param dataFimAnoAnterior
+	 * @param cDaoAtual
+	 * @param numeroContrato
+	 * @return
+	 */
+	public BigDecimal getSaldoInvestidorAnoAnterior(Date dataInicioAnoAnterior, Date dataFimAnoAnterior, ContratoCobrancaParcelasInvestidorDao cDaoAtual, String numeroContrato) {
+		BigDecimal saldoAnterior = BigDecimal.ZERO;
+
+		List<ContratoCobrancaParcelasInvestidor> parcelasInvestidorAnoAnterior = cDaoAtual.getParcelasPorDataInvestidorBaixadasInforme(dataInicioAnoAnterior, dataFimAnoAnterior, this.selectedPagador.getId());
+		int numeroParcela = 0;
+		
+		for (ContratoCobrancaParcelasInvestidor parcela : parcelasInvestidorAnoAnterior) {
+			if (numeroContrato.equals(parcela.getNumeroContrato())) {
+				if (numeroParcela == 0) {
+					saldoAnterior = parcela.getSaldoCredorAtualizado();
+					numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+				} else {
+					if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+						saldoAnterior = parcela.getSaldoCredorAtualizado();
+						numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+					}
+				}
+			}
+		}
+		
+		return saldoAnterior;		
+	}
+
+	public void processInformeRendimentosOLD() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaParcelasInvestidorDao cDao = new ContratoCobrancaParcelasInvestidorDao();
 		
@@ -233,14 +538,6 @@ public class InvestidorMB {
 			Date dataFimAnterior = null;
 			
 			try {			
-				if (this.anoBase.equals("2018")) {
-					this.dataInicio = format.parse("01/01/2018");
-					this.dataFim = format.parse("31/12/2018");
-					
-					dataInicioAnterior = format.parse("01/01/2017");
-					dataFimAnterior = format.parse("31/12/2017");
-				}
-				
 				if (this.anoBase.equals("2019")) {
 					this.dataInicio = format.parse("01/01/2019");
 					this.dataFim = format.parse("31/12/2019");
@@ -635,6 +932,8 @@ public class InvestidorMB {
 			if (pr.getId() > 0) {
 				this.idInvestidor = pr.getId();
 				
+				this.selectedPagador = pr;
+				
 				// get contratos por investidor
 				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
 				this.contratos = contratoDao.getContratosPorInvestidor(this.idInvestidor);
@@ -794,6 +1093,73 @@ public class InvestidorMB {
 		}		
 	}
 	
+	// busca o valor final do investidor no contrato
+	public BigDecimal buscaValorFinalInvestidorNoContrato(ContratoCobranca contrato, long idInvestidor) {
+		BigDecimal valorFinal = BigDecimal.ZERO;
+		
+		if (contrato.getRecebedor() != null) {
+			if (contrato.getRecebedor().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor1();
+			}
+		}
+		
+		if (contrato.getRecebedor2() != null) {
+			if (contrato.getRecebedor2().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor2();
+			}	
+		}
+		
+		if (contrato.getRecebedor3() != null) {
+			if (contrato.getRecebedor3().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor3();
+			}		
+		}
+		
+		if (contrato.getRecebedor4() != null) {
+			if (contrato.getRecebedor4().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor4();
+			}		
+		}
+		
+		if (contrato.getRecebedor5() != null) {
+			if (contrato.getRecebedor5().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor5();
+			}
+		}
+		
+		if (contrato.getRecebedor6() != null) {
+			if (contrato.getRecebedor6().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor6();
+			}		
+		}
+		
+		if (contrato.getRecebedor7() != null) {
+			if (contrato.getRecebedor7().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor7();
+			}	
+		}
+		
+		if (contrato.getRecebedor8() != null) {
+			if (contrato.getRecebedor8().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor8();
+			}	
+		}
+		
+		if (contrato.getRecebedor9() != null) {
+			if (contrato.getRecebedor9().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor9();
+			}	
+		}
+		
+		if (contrato.getRecebedor10() != null) {
+			if (contrato.getRecebedor10().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrFinalRecebedor10();
+			}
+		}
+		
+		return valorFinal;
+	}
+	
 	// calcula quantidade de parcelas abertas
 	public void getCardsDashboards() {
 		this.qtdeContratos = this.contratos.size();
@@ -825,8 +1191,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor1().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor1() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor1();
 						}
 					}
 				}			
@@ -844,8 +1210,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor2().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor2() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor2();
 						}
 					}
 				}			
@@ -863,8 +1229,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor3().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor3() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor3();
 						}
 					}
 				}			
@@ -882,8 +1248,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor4().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor4() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor4();
 						}
 					}
 				}			
@@ -901,8 +1267,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor5().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor5() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor5();
 						}
 					}
 				}			
@@ -920,8 +1286,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor6().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor6() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor6();
 						}
 					}
 				}			
@@ -939,8 +1305,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor7().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor7() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor7();
 						}
 					}
 				}			
@@ -958,8 +1324,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor8().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor8() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor8();
 						}
 					}
 				}			
@@ -977,8 +1343,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor9().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor9() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor9();
 						}
 					}
 				}			
@@ -996,8 +1362,8 @@ public class InvestidorMB {
 					}
 					
 					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
-							valorInvestidoContrato = c.getListContratoCobrancaParcelasInvestidor10().get(0).getSaldoCredorAtualizado();
+						if (c.getVlrFinalRecebedor10() != null) {
+							valorInvestidoContrato = c.getVlrFinalRecebedor10();
 						}
 					}
 				}			
@@ -1794,12 +2160,14 @@ public class InvestidorMB {
 			/*
 			 *  Fonts Utilizadas no PDF
 			 */
+			Font headerBig = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 			Font normal12 = new Font(FontFamily.HELVETICA, 12);
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			tituloBranco.setColor(BaseColor.WHITE);
 			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font normalSmall = new Font(FontFamily.HELVETICA, 8);
 			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
@@ -1814,12 +2182,12 @@ public class InvestidorMB {
 
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
 			this.nomePDF = "Informe de rendimentos - " + this.selectedPagador.getNome() + ".pdf";
-			this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+			this.pathPDF = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString();
 
 			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
 
 			// Associa a stream de saída ao 
-			PdfWriter.getInstance(doc, os);
+			PdfWriter writer = PdfWriter.getInstance(doc, os);
 
 			// Abre o documento
 			doc.open();     			
@@ -1829,21 +2197,104 @@ public class InvestidorMB {
 			p1.setSpacingAfter(10);
 			doc.add(p1);  	
 			 */
-			PdfPTable table = new PdfPTable(new float[] { 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
-			table.setWidthPercentage(100.0f); 
-
-			PdfPCell cell1 = new PdfPCell(new Phrase("Informe de Rendimentos", header));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
+			PdfPTable table = new PdfPTable(new float[] { 0.2f, 0.3f, 0.3f, 0.2f, 0.2f, 0.2f, 0.2f});
+			table.setWidthPercentage(100.0f);
 			
+			PdfPCell cell1;
+			
+			// adiciona cabeçalho e rodapé
+			if (this.imprimirHeaderFooter) {
+				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
+				writer.setPageEvent(event);
+			
+				Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logo-galleria-relatorios-pdf.png");
+				img.setAlignment(Element.ALIGN_CENTER);
+				img.scaleAbsolute(90, 65);
+				cell1 = new PdfPCell(img);
+				cell1.setBorder(0);	
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setColspan(3);
+				cell1.setRowspan(3);
+				cell1.setPaddingBottom(15f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("Informe de Rendimentos Financeiros de " +  String.valueOf(Integer.valueOf(this.anoBase) + 1), titulo));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingBottom(13f);
+				cell1.setColspan(4);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("Ano Calendário - " + this.anoBase, titulo));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(4);
+				table.addCell(cell1);
+				
+				if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+					cell1 = new PdfPCell(new Phrase("Imposto de Renda Pessoa Física", titulo));
+				} else {
+					cell1 = new PdfPCell(new Phrase("Imposto de Renda Pessoa Jurídica", titulo));
+				}				
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingBottom(15f);
+				cell1.setColspan(4);
+				table.addCell(cell1);
+				
+			} else {
+				
+				cell1 = new PdfPCell(new Phrase("Informe de Rendimentos Financeiros de " +  String.valueOf(Integer.valueOf(this.anoBase) + 1), titulo));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(100f);
+				cell1.setPaddingBottom(13f);
+				cell1.setColspan(7);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("Ano Calendário - " + this.anoBase, titulo));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(7);
+				table.addCell(cell1);
+				
+				if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+					cell1 = new PdfPCell(new Phrase("Imposto de Renda Pessoa Física", titulo));
+				} else {
+					cell1 = new PdfPCell(new Phrase("Imposto de Renda Pessoa Jurídica", titulo));
+				}				
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingBottom(15f);
+				cell1.setColspan(7);
+				table.addCell(cell1);
+				
+			}
+/*
 			cell1 = new PdfPCell(new Phrase("Período: 01/01/" + this.anoBase + " a 31/12/" + this.anoBase, titulo));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(8f);
@@ -1853,275 +2304,423 @@ public class InvestidorMB {
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(15f);
-			cell1.setColspan(6);
+			cell1.setColspan(7);
 			table.addCell(cell1);
+*/
+			
+			cell1 = new PdfPCell(new Phrase("          ", normal12));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(7);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Identificação da Fonte Pagadora (IFP)", header));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(8f);
+			cell1.setPaddingBottom(9f);
+			cell1.setColspan(7);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Razão Social  ", titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(4);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CNPJ ", titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(3);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", normal12));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(30f);
+			cell1.setColspan(4);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("34.425.347/0001-06", normal12));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(30f);
+			cell1.setColspan(3);
+			table.addCell(cell1);
+			
+			if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+				cell1 = new PdfPCell(new Phrase("Pessoa Física Beneficiária dos Rendimentos", header));
+			} else {
+				cell1 = new PdfPCell(new Phrase("Pessoa Jurídica Beneficiária dos Rendimentos", header));
+			}		
+			
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(8f);
+			cell1.setPaddingBottom(9f);
+			cell1.setColspan(7);
+			table.addCell(cell1);
+			
+			if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+				cell1 = new PdfPCell(new Phrase("Nome ", titulo));
+			} else {
+				cell1 = new PdfPCell(new Phrase("Razão Social ", titulo));
+			}		
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(4);
+			table.addCell(cell1);
+						
+			if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+				cell1 = new PdfPCell(new Phrase("CPF ", titulo));
+			} else {
+				cell1 = new PdfPCell(new Phrase("CNPJ ", titulo));
+			}		
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(3);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(this.selectedPagador.getNome(), normal12));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(30f);
+			cell1.setColspan(4);
+			table.addCell(cell1);
+			
+			if (this.selectedPagador.getCpf() != null && !this.selectedPagador.getCpf().equals("")) {
+				cell1 = new PdfPCell(new Phrase(this.selectedPagador.getCpf(), normal12));
+			} else {
+				cell1 = new PdfPCell(new Phrase(this.selectedPagador.getCnpj(), normal12));
+			}		
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(30f);
+			cell1.setColspan(3);
+			table.addCell(cell1);			
 
-			cell1 = new PdfPCell(new Phrase("Nome: ", titulo));
+			cell1 = new PdfPCell(new Phrase("Rendimentos Sujeitos a Tributação Exclusiva", header));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(1);
+			cell1.setPaddingTop(8f);
+			cell1.setPaddingBottom(9f);
+			cell1.setColspan(7);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase(this.selectedPagador.getNome(), header));
+			cell1 = new PdfPCell(new Phrase("Contrato", titulo));
 			cell1.setBorder(0);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CPF: ", titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.selectedPagador.getCpf(), header));
-			cell1.setBorder(0);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("Investimentos", header));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("Razão Social", titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(1);
 			table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("CNPJ", titulo));
+			cell1 = new PdfPCell(new Phrase("Especificação", titulo));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
+			cell1.setColspan(2);
 			table.addCell(cell1);
-
+			
 			cell1 = new PdfPCell(new Phrase("Valor em 31/12/" + String.valueOf(Integer.valueOf(this.anoBase) - 1), titulo));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(1);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("Valor em 31/12/" + this.anoBase, titulo));
+			cell1 = new PdfPCell(new Phrase("Valor em 31/12/" + String.valueOf(Integer.valueOf(this.anoBase)), titulo));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(1);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("IR Retido", titulo));
+			cell1 = new PdfPCell(new Phrase("I.R. Retido na Fonte", titulo));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(1);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("Juros Líquidos", titulo));
+			cell1 = new PdfPCell(new Phrase("Juros", titulo));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.GRAY);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(1);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
+			for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+				
+				cell1 = new PdfPCell(new Phrase(informe.getNumeroContrato(), normalSmall));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+			
+				cell1 = new PdfPCell(new Phrase("Aplicações em Debêntures Simples", normalSmall));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("34.425.347/0001-06", normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
+				if (informe.getSaldoAnoAnterior().compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(informe.getSaldoAnoAnterior()), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+				
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (informe.getSaldoAnoAtual().compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(informe.getSaldoAnoAtual()), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
 
-			cell1 = new PdfPCell(new Phrase("R$ " + df.format(this.valorInvestidorAnoAnterior), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (informe.getIrRetido().compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(informe.getIrRetido()), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (informe.getJuros().compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(informe.getJuros()), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+			}
 			
-			cell1 = new PdfPCell(new Phrase("R$ " + df.format(this.valorInvestidorAnoAtual), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
+			if (this.investidorInformeRendimentos.size() > 0) {
+				cell1 = new PdfPCell(new Phrase(" ", normalSmall));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(10f);
+				cell1.setColspan(7);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase(" ", normalSmall));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(10f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("Totais", titulo));
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(10f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (valorInvestidorAnoAnterior.compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(valorInvestidorAnoAnterior), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (valorInvestidorAnoAtual.compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(valorInvestidorAnoAtual), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+								
+				if (totalIRRetido.compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(totalIRRetido), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+	
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+				
+				if (totalJurosLiquido.compareTo(BigDecimal.ZERO) != 0) {
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(totalJurosLiquido), normalSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("R$ 0,00", normalSmall));
+				}
+
+				cell1.setBorder(0);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(5f);
+				cell1.setPaddingBottom(5f);
+				cell1.setColspan(1);
+				table.addCell(cell1);
+			}
 			
-			cell1 = new PdfPCell(new Phrase("R$ " + df.format(this.totalIRRetido), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("R$ " + df.format(this.totalJurosLiquido), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.GRAY);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.GRAY);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.GRAY);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-		
 			doc.add(table);
 
 		} catch (FileNotFoundException e) {
@@ -7699,7 +8298,107 @@ public class InvestidorMB {
 				}
 			}
 		}
-	}		
+	}	
+	
+	/**
+	 * deleta o arquivo selecionado na tela
+	 */
+	public void deleteFile() {
+		List<FileUploaded> arquivosDownload = (List<FileUploaded>) this.listaArquivos();
+		
+		for (FileUploaded f : arquivosDownload) {
+			f.getFile().delete();
+		}    	
+	}
+	
+	/**
+	 * Método para fazer download de todos os arquivos do diretório do contrato
+	 * @return
+	 */
+	public StreamedContent getDownloadAllFiles() {
+		// limpa o diretório de PDFS
+		deleteFile();
+		
+		// Pega a lista de Investidores
+		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+		this.listPagadores = prDao.findAll();	
+		
+		// Seta ano Base
+		this.anoBase = "2020";
+		
+		// gera consulta e PDFs
+		for (PagadorRecebedor investidor : this.listPagadores) {
+			// Seta Investidor para gerar PDF
+			this.selectedPagador = investidor;
+			// Processa consulta Informe
+			processInformeRendimentos();
+			
+			// Gera PDF Informe Rendimentos
+			if (this.investidorInformeRendimentos.size() > 0) {
+				geraPDFInformeRendimentos();
+			}
+		}
+		
+		// Faz processo de geração do ZIP e donwload
+		List<FileUploaded> arquivosDownload = (List<FileUploaded>) this.listaArquivos();
+		
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao(); 
+			String pathContrato = pDao.findByFilter("nome", "ARQUIVOS_PDF_DOWNLOAD").get(0).getValorString();
+			
+			// cria objetos para ZIP
+			ZipOutputStream zip = null;
+			FileOutputStream fileWriter = null;
+
+			// cria arquivo ZIP
+			fileWriter = new FileOutputStream(pathContrato + "Informe_Rendimentos_Geral.zip");
+			zip = new ZipOutputStream(fileWriter);
+			
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : arquivosDownload) {
+				addFileToZip("", f.getFile().getAbsolutePath(), zip);
+			} 
+			
+			// Fecha o ZIP
+			zip.flush();
+			zip.close();
+			
+			// Recupera ZIP gerado para fazer download
+			FileInputStream stream = new FileInputStream(pathContrato + "Informe_Rendimentos_Geral.zip");
+			downloadAllFiles = new DefaultStreamedContent(stream, pathContrato, "Informe_Rendimentos_Geral.zip");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		this.irRetidoInvestidoresPDFGerado = false;
+		
+		return this.downloadAllFiles;
+	}
+	
+	/***
+	 * Lista os arquivos contidos no diretório
+	 * @return
+	 */
+	public Collection<FileUploaded> listaArquivos() {
+		//DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao(); 
+		String pathContrato = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString() + "/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+
+				//String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
 	
 	public final void populateSelectedPagador() {
 		this.idPagador = this.selectedPagador.getId();
@@ -7829,10 +8528,6 @@ public class InvestidorMB {
 
 	public void setDeletefiles(List<FileUploaded> deletefiles) {
 		this.deletefiles = deletefiles;
-	}
-
-	public StreamedContent getDownloadAllFiles() {
-		return downloadAllFiles;
 	}
 
 	public void setDownloadAllFiles(StreamedContent downloadAllFiles) {
@@ -8411,5 +9106,37 @@ public class InvestidorMB {
 
 	public void setValorInvestidorAnoAnterior(BigDecimal valorInvestidorAnoAnterior) {
 		this.valorInvestidorAnoAnterior = valorInvestidorAnoAnterior;
+	}
+
+	public List<InvestidorInformeRendimentos> getInvestidorInformeRendimentos() {
+		return investidorInformeRendimentos;
+	}
+
+	public void setInvestidorInformeRendimentos(List<InvestidorInformeRendimentos> investidorInformeRendimentos) {
+		this.investidorInformeRendimentos = investidorInformeRendimentos;
+	}
+
+	public String getLabelAnoBase() {
+		return labelAnoBase;
+	}
+
+	public void setLabelAnoBase(String labelAnoBase) {
+		this.labelAnoBase = labelAnoBase;
+	}
+
+	public String getLabelAnoAnterior() {
+		return labelAnoAnterior;
+	}
+
+	public void setLabelAnoAnterior(String labelAnoAnterior) {
+		this.labelAnoAnterior = labelAnoAnterior;
+	}
+
+	public boolean isImprimirHeaderFooter() {
+		return imprimirHeaderFooter;
+	}
+
+	public void setImprimirHeaderFooter(boolean imprimirHeaderFooter) {
+		this.imprimirHeaderFooter = imprimirHeaderFooter;
 	}
 }

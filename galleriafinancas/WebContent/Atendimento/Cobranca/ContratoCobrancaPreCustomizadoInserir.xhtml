@@ -45,6 +45,185 @@
 				    </h:outputText>																				
 				</h:panelGrid>
 				
+				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;">	  						
+					<h:panelGrid columns="8" style="margin-top:20px;">
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
+								<p:spacer ></p:spacer>
+								<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>		
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="inicioAnaliseUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="inicioAnaliseData" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #cfcfcf;margin-left: 20px;width: 250px;height: 110px;-webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
+								<p:spacer ></p:spacer>																
+								<p:selectOneRadio id="cadastroAprovadoView" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" disabled="true">
+						            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+						            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+						        </p:selectOneRadio>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="cadastroAprovadoUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}" style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
+								<h:outputText id="cadastroAprovadoData" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoData}" style="font-weight: bold;color: #0672de; font-size: 15px;" >			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>							    								    													    						   
+						</h:panelGrid>	
+						<h:panelGrid columns="2" style="background-color: #cfcfcf;margin-left: 20px;width: 250px;height: 110px;-webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Imóvel</p:outputLabel>			
+								<p:spacer ></p:spacer>														
+								<p:selectOneRadio id="imovelAprovadoView" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}"  disabled="true">
+						            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+						            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+						        </p:selectOneRadio>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="imovelAprovadoUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaUsuario}" style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
+								<h:outputText id="imovelAprovadoData" value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaData}" style="font-weight: bold;color: #0672de; font-size: 15px;" >			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>							    								    													    						   
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Laudo e Parecer Jurídico</p:outputLabel>
+								<p:spacer ></p:spacer>								
+								<p:selectBooleanButton id="pagtoLaudoConfirmadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:80px" disabled="true"/>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="pagtoLaudoConfirmadaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="pagtoLaudoConfirmadaData" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="8" style="margin-top: 20px;">
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
+								<p:spacer ></p:spacer>
+								<p:selectBooleanButton id="laudoRecebidoView" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="laudoRecebidoUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="laudoRecebidoData" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Parecer Jurídico Recebido</p:outputLabel>
+								<p:spacer ></p:spacer>									
+								<p:selectBooleanButton id="pajurFavoravelView" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="pajurFavoravelUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="pajurFavoravelData" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
+								<p:spacer ></p:spacer>									
+								<p:selectBooleanButton id="documentosCompletosView" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="documentosCompletosUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="documentosCompletosData" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">CCB Pronta</p:outputLabel>
+								<p:spacer ></p:spacer>						
+								<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="ccbProntaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="ccbProntaData" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
+									<p:spacer ></p:spacer>							
+									<p:selectBooleanButton id="agAssinaturaView" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="agAssinaturaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="agAssinaturaData" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>					
+					</h:panelGrid>	
+					<h:panelGrid columns="2" style="margin-top:20px;margin-bottom: 20px;">	
+						<h:panelGrid columns="2" style="background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>	
+									<p:selectOneRadio id="aprovadoView" value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}" layout="responsive" columns="2" style="font-weight: bold;" disabled="true">
+							            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+							            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+							            <f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+							            <f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
+							        </p:selectOneRadio>												    						    
+							</h:panelGrid>
+					</h:panelGrid>		
+				</p:panel>
+				
 				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
@@ -86,8 +265,8 @@
 								
 				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;">	
 					<h:panelGrid columns="2">
-						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: "  styleClass="labelBold" />
-						<p:inputText id="NumeroMatricula" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}" label="NumeroMatricula" required="true" onblur="" style="width:400px;"/>  
+						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: "   />
+						<p:inputText id="NumeroMatricula" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}" label="NumeroMatricula"  onblur="" style="width:400px;"/>  
 											
 						<p:outputLabel for="Cartorio" value="Cartório de Registro: "/>
 						<p:inputText id="Cartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}" label="Cartório" onblur="" style="width:400px;"/>  
@@ -156,7 +335,9 @@
 							<f:selectItem itemValue="Casa" itemLabel="Casa" />		
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />		
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />		
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />						    
+							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
+							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
+							<f:selectItem itemValue="Rural" itemLabel="Rural" />							    
 						</p:selectOneMenu>	
 						
 						<p:outputLabel for="valorEstimado" value="Qual o valor estimado do imóvel? "  />
@@ -244,12 +425,18 @@
 			</p:panel>
 					
 			<div align="center">
-				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}"/>		 						
+				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
+				</p:commandButton>	 						
 				<p:spacer height="10" />
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}"/>		 						
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
+				</p:commandButton>			 						
 				<p:spacer height="10" />
 				<shiro:hasAnyRoles name="ROOT"> 
-					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}"/>		 						
+					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}">
+						<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
+					</p:commandButton>			 						
 					<p:spacer height="10" />
 				</shiro:hasAnyRoles>
 				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml" style="TEXT-DECORATION: bold; "/>								

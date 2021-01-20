@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="../../resources/js/functions.js"></script>
+		 	<h:outputScript name="js/locale-primefaces.js" />				
+			<p:messages id="mensagens" showDetail="true"/>	
+			<p:panel id="PanelXLS"
+				header="Impressão em XLS Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{contabilidadeMB.xlsGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+	
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{contabilidadeMB.file}" />
+						</p:commandButton>
+					</h:form>
+	
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+						</script>
+	
+				</h:panelGrid>
+			</p:panel>														
+			<p:panel id="PosicaoAtual" header="Posição Atual - Consultar" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="contratos"
+					value="#{contabilidadeMB.relatorioContabilidadeEmAberto}"
+					selection=""
+					emptyMessage="" sortBy="#{contratos.numeroContrato}">
+					
+					<f:facet name="header">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contabilidadeMB.getXLSPosicaoAtual}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contabilidadeMB.relatorioContabilidadeEmAberto.size() == 0}" />
+					</f:facet>
+					
+					<f:facet name="footer">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contabilidadeMB.getXLSPosicaoAtual}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contabilidadeMB.relatorioContabilidadeEmAberto.size() == 0}" />
+					</f:facet>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+						<h:outputText value="#{contratos.numeroContrato}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Contrato"
+						sortBy="#{contratos.dataContrato}">
+						<h:outputText value="#{contratos.dataContrato}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Pagador" filterBy="#{contratos.pagador.nome}"
+						filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
+						<h:outputText value="#{contratos.pagador.nome}" />
+					</p:column>
+			        
+			        <p:column headerText="Debêntures">
+				        <p:dataTable var="investidores"
+							value="#{contratos.listInvestidores}"
+							emptyMessage="Não há investidores!!!" >
+							<p:column style="text-align: center;width: 100px;"
+								headerText="Nome" >
+								<h:outputText value="#{investidores.investidor.nome}" />
+							</p:column>
+					        <p:column style="text-align: center;width: 100px;"
+								headerText="Valor (R$)" >
+								<h:outputText value="#{investidores.saldoInvestidoresAberto}"
+									converter="bigDecimalConverter" />
+							</p:column>					        	
+						</p:dataTable>
+			        </p:column>
+
+					<p:summaryRow>
+			            <p:column colspan="2" style="text-align:right">
+			                <h:outputText value="Total em aberto no Contrato (R$):" />
+			            </p:column>
+			            <p:column style="text-align:right">
+			                <h:outputText value="#{contratos.saldoParcelasAberto}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+			            <p:column style="text-align:center">
+			                <h:outputText value="Total em aberto Investidores (R$): " /> <h:outputText value="#{contratos.saldoInvestidoresAberto}"
+									converter="bigDecimalConverter" />
+			            </p:column>
+			        </p:summaryRow>
+				</p:dataTable>
+			</p:panel>	
+		</h:form>					
+	</ui:define>
+</ui:composition>	        

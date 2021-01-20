@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">			
+			<p:messages id="mensagens" showDetail="true"/>	
+			<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Ficha Principal" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.file}" />
+						</p:commandButton>
+						<p:commandButton value="Ficha Conjuge" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>										
+			<p:panel id="ConsultaContratos" header="Contratos Debênturistas - Consultar" style="margin-bottom:10px;">		    		    
+                 <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         reflow="true">
+			        <f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>                 
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			            <h:outputText value="#{contratos.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.pagador.nome}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Recebedor" filterBy="#{contratos.recebedor.nome}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.recebedor.nome}" />
+			        </p:column>			        
+			        <p:column style="text-align: center;" headerText="Valor da Parcela (R$)" filterBy="#{contratos.vlrParcelaStr}" filterMatchMode="contains" sortBy="#{contratos.vlrParcela}">
+						<h:outputText value="#{contratos.vlrParcelaStr}">
+						</h:outputText>
+					</p:column>		
+			        <p:column style="text-align: center;" headerText="Data Inicio" sortBy="#{contratos.dataInicio}">
+			            <h:outputText value="#{contratos.dataInicio}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>			        
+			        <p:column styleClass="colunaResponsiva">			        
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                <p:spacer width="10" height="10"/>
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+		                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                </p:commandButton>
+		                </shiro:hasAnyRoles>	
+						<p:spacer width="10" height="10"/>	
+						<shiro:hasAnyRoles name="COBRANCA_IUGU">  	                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>		                	                
+						<p:spacer width="10" height="10"/>	
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">  	                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>
+			            <shiro:hasAnyRoles name="ROOT,COBRANCA">  		
+			               	<p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
+			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>
+			            <shiro:hasAnyRoles name="ROOT">
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+			                </p:commandButton>
+		                </shiro:hasAnyRoles> 
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton onclick="PF('observacoesDialog').show();" value="Observação" title="Observação" icon="ui-icon-plus" update=":formObservacoes">		                	
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.observacaoContrato}" value="#{contratoCobrancaMB.tituloPainel}" />		                	
+		                </p:commandButton>	                
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+		<p:dialog header="Observações" widgetVar="observacoesDialog" resizable="false" style="FONT-SIZE: 10pt;" width="800" responsive="true">
+			<h:form id="formObservacoes">
+				<p:panel id="ObservacoesPanel1" header="Observações - Inserir" style="margin-top:10px;">	
+					<h:panelGrid columns="2">						
+						<p:outputLabel for="numeroContrato" value="Número do Contrato:" styleClass="labelBold" style="margin-right: 59px;"/>
+						<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>
+						<p:outputLabel value="Data da Observação: " styleClass="labelBold" style="font-weight: bold; font-size: 18px;"/>
+					    <h:outputText value="#{contratoCobrancaMB.dataObservacao}" style="font-weight: bold; font-size: 18px;">			            	
+					          <f:convertDateTime locale="pt_BR"  />
+					          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+					    </h:outputText>
+					    <p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"  style="margin-right: 59px;"/>
+						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{contratoCobrancaMB.observacao}" label="Observação" onblur=""  style="width:450px;"/>
+					</h:panelGrid>
+					<div align="center" style="margin-top:20px;">								
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.addObservacao}" update="ObservacoesPanel"/>																						
+					</div>	 													
+				</p:panel>
+				<p:panel id="ObservacoesPanel" header="Observações - Consultar" style="margin-top:10px;">	
+	   		         <p:dataTable id="dtObservacoes" var="observacoes" value="#{contratoCobrancaMB.listContratoCobrancaObservacoes}" paginator="true" rows="5" lazy="true"
+	   		         	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         	currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 	rowsPerPageTemplate="5,10" selection="" emptyMessage="" sortBy="#{observacoes.data}" sortOrder="descending">               
+				        <p:column style="text-align: center;" headerText="Data Inicio" sortBy="#{observacoes.data}">
+				            <h:outputText value="#{observacoes.data}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+				            </h:outputText>
+				        </p:column>		
+				        <p:column style="text-align: center;" headerText="Usuário" filterBy="#{observacoes.usuario}" filterMatchMode="contains" sortBy="#{observacoes.usuario}">
+			            	<h:outputText value="#{observacoes.usuario}" />
+			        	</p:column>	    
+			        	<p:column style="text-align: center;" headerText="Observação" filterBy="#{observacoes.observacao}" filterMatchMode="contains" sortBy="#{observacoes.observacao}">
+			            	<h:outputText value="#{observacoes.observacao}" />
+			        	</p:column>	             
+				        <p:column style="width:150px;">	
+				        	<shiro:hasAnyRoles name="ROOT">		        
+					            <p:commandButton action="#{contratoCobrancaMB.excluirObservacao}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+					               <f:setPropertyActionListener target="#{contratoCobrancaMB.contratoCobrancaObservacoes}" value="#{observacoes}" />
+					             </p:commandButton>			
+					        </shiro:hasAnyRoles> 	        	            
+			            </p:column>		      		               		        			        			           			 		
+					</p:dataTable>	
+				</p:panel>			
+				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
+					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+				</div>	  				
+			</h:form>
+		</p:dialog>  
+	</ui:define>
+</ui:composition>	        

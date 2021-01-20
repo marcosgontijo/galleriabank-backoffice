@@ -14,9 +14,9 @@
 		<ui:composition template="../index.xhtml">
 			<ui:define name="menu">
 				<h:form style="margin-bottom:10px;">
-					<p:menu style="width: 227px; ">
-						<shiro:hasAnyRoles name="ROOT">
-							<p:submenu label="Gerenciamento" styleClass="titulosMenu">
+					<p:menu style="width: 227px; ">						
+						<p:submenu label="Gerenciamento" styleClass="titulosMenu">
+							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas a Pagar"
 									action="#{contasPagarMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
@@ -25,8 +25,12 @@
 									action="#{contasPagarMB.clearFieldsContasPagas}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
-							</p:submenu>
-						</shiro:hasAnyRoles>
+							</shiro:hasAnyRoles>
+							<p:menuitem value="CRM"
+								action="#{crmMB.clearFields}"
+								ajax="false" icon="ui-icon ui-icon-newwin"
+								styleClass="itemMenu" />
+						</p:submenu>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
@@ -46,65 +50,7 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">
-									<p:menuitem value="Consulta Robos"
-										action="#{consultaRobos.clearFields}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-									<p:menuitem value="Consulta TRF 3"
-										action="#{consultaTRF3.clearConsultaTRF3}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-									<p:menuitem value="Consulta PF Plus"
-										action="#{consultaPFPlus.clearConsultaPFPlus}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-									<p:menuitem value="Consulta PF"
-										action="#{consultaPF.clearConsultaPF}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />		
-									<p:menuitem value="Consulta PJ"
-										action="#{consultaPJ.clearConsultaPJ}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-									<p:menuitem value="Consulta Protestos"
-										action="#{consultaProtestosIEPTB.clearProtestosIEPTB}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta TST"
-										action="#{consultaTST.clearConsultaTST}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta Ant. Criminais"
-										action="#{consultaAntCriminais.clearConsultaAntCriminais}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta CND"
-										action="#{consultaCND.clearConsultaCND}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta CND Federal"
-										action="#{consultaCNDFederal.clearConsultaCND}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta PEP"
-										action="#{consultaPEP.clearConsultaPEP}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta CADIN"
-										action="#{consultaCadin.clearConsultaCadin}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta TJSP"
-										action="#{consultaTribunalJusticaSP.clearConsultaTribunalJusticaSP}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Consulta PJ + QSA"
-										action="#{consultaPJQSA.clearConsultaPJQSA}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>					
+								</shiro:hasAnyRoles>				
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
@@ -114,8 +60,12 @@
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
-									<p:menuitem value="Gerar Contrato"
+									<p:menuitem value="Contratos"
 										action="#{contratoCobrancaMB.consultarContratoCobranca}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Debênturistas"
+										action="#{contratoCobrancaMB.consultarContratoCobrancaGalleria}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									<p:menuitem value="Re-Parcelar Investidor"
@@ -172,6 +122,9 @@
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
 									<p:menuitem value="Informe Rendimentos"
 										action="#{investidorMB.clearFieldsInformeRendimentos}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Posição Atual"
+										action="#{contabilidadeMB.clearFieldsPosicaoAtual}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 							</p:submenu>

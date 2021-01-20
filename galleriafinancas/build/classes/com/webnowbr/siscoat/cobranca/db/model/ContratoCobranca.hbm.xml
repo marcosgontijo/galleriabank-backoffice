@@ -611,6 +611,17 @@
 		<property name="ccbPronta" type="boolean">
 			<column name="ccbPronta" />
 		</property>
+		<property name="agAssinaturaData"
+			type="java.util.Date">
+			<column name="agAssinaturaData" />
+		</property>
+		<property name="agAssinaturaUsuario"
+			type="java.lang.String">
+			<column name="agAssinaturaUsuario" />
+		</property>
+		<property name="agAssinatura" type="boolean">
+			<column name="agAssinatura" />
+		</property>
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
 			<column name="visitaImovelAprovadaData" />
@@ -834,6 +845,36 @@
 		</property>
 		<property name="recebedorGarantido10" type="boolean">
 		    <column name="recebedorGarantido10" />
+		</property>
+		<property name="parcelasAlteradas1" type="boolean">
+		    <column name="parcelasAlteradas1" />
+		</property> 
+		<property name="parcelasAlteradas2" type="boolean">
+		    <column name="parcelasAlteradas2" />
+		</property> 
+		<property name="parcelasAlteradas3" type="boolean">
+		    <column name="parcelasAlteradas3" />
+		</property> 
+		<property name="parcelasAlteradas4" type="boolean">
+		    <column name="parcelasAlteradas4" />
+		</property> 
+		<property name="parcelasAlteradas5" type="boolean">
+		    <column name="parcelasAlteradas5" />
+		</property>
+		<property name="parcelasAlteradas6" type="boolean">
+		    <column name="parcelasAlteradas6" />
+		</property>
+		<property name="parcelasAlteradas7" type="boolean">
+		    <column name="parcelasAlteradas7" />
+		</property>
+		<property name="parcelasAlteradas8" type="boolean">
+		    <column name="parcelasAlteradas8" />
+		</property>
+		<property name="parcelasAlteradas9" type="boolean">
+		    <column name="parcelasAlteradas9" />
+		</property>
+		<property name="parcelasAlteradas10" type="boolean">
+		    <column name="parcelasAlteradas10" />
 		</property>
 		<property name="empresa" type="java.lang.String">
 			<column name="EMPRESA" />

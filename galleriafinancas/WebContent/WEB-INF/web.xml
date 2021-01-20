@@ -85,7 +85,7 @@
 	<!-- this need same with resteasy servlet url-pattern -->
 	<context-param>
 		<param-name>resteasy.servlet.mapping.prefix</param-name>
-		<param-value>/rest</param-value>
+		<param-value>/siscoat</param-value>
 	</context-param>
 
 	<listener>
@@ -101,6 +101,6 @@
 
 	<servlet-mapping>
 		<servlet-name>resteasy-servlet</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/siscoat/*</url-pattern>
 	</servlet-mapping>
 </web-app>

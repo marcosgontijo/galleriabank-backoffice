@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -119,6 +120,8 @@ public class PagadorRecebedor implements Serializable {
 	private String sexoCoobrigado;
 	
 	private User usuario;
+	
+	private BigDecimal saldoInvestidor;
 
 	public PagadorRecebedor(){
 	}
@@ -1090,5 +1093,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setNumero(String numero) {
 		this.numero = numero;
+	}
+
+	public BigDecimal getSaldoInvestidor() {
+		return saldoInvestidor;
+	}
+
+	public void setSaldoInvestidor(BigDecimal saldoInvestidor) {
+		this.saldoInvestidor = saldoInvestidor;
 	}
 }

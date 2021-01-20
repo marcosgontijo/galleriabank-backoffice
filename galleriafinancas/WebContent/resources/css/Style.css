@@ -1002,3 +1002,10 @@
 	background-color: #fff !important;
     border: 1px solid #D5D5D5 !important;
 }
+
+ .ui-fieldset .ui-fieldset-legend {
+ 	font-size: 16px !important;
+	font-weight: bold !important;
+	color: #000 !important;
+	background-color: #dfdfdf !important;
+ }
