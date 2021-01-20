@@ -115,12 +115,14 @@ public class UsuarioMB {
 		this.diasSemana.add("Sábado");
 		this.diasSemana.add("Domingo");
 		
-		this.selectedDiasSemana = new String[this.objetoUsuario.getDiasSemana().size()];
-		
-		if (this.objetoUsuario.getDiasSemana().size() > 0) {
-			for (int i = 0; i < this.objetoUsuario.getDiasSemana().size(); i++) {		
-				this.selectedDiasSemana[i] = this.objetoUsuario.getDiasSemana().get(i);
-	        }
+		if (this.objetoUsuario.getDiasSemana() != null) {
+			this.selectedDiasSemana = new String[this.objetoUsuario.getDiasSemana().size()];
+			
+			if (this.objetoUsuario.getDiasSemana().size() > 0) {
+				for (int i = 0; i < this.objetoUsuario.getDiasSemana().size(); i++) {		
+					this.selectedDiasSemana[i] = this.objetoUsuario.getDiasSemana().get(i);
+		        }
+			}
 		}
 		
 		loadResponsavel();

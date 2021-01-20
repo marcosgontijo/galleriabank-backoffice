@@ -3328,7 +3328,7 @@ public class ContratoCobrancaMB {
 		
 		// pré-seleciona o recebedor -- default galleria SA
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		this.selectedRecebedor = prDao.findById((long) 87);
+		this.selectedRecebedor = prDao.findById((long) 14);
 		this.nomeRecebedor = this.selectedRecebedor.getNome();
 
 		/*
