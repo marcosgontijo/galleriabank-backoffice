@@ -3474,7 +3474,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			" from  cobranca.contratocobranca coco " + 
 			" inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id" +  
 			" where empresa like 'GALLERIA FINANÇAS SECURITIZADORA S.A.' " + 
-			" and coco.status = 'Aprovado' " ;	
+			" and coco.status = 'Aprovado' " +
+			" and coco.id in (select distinct cc.id from cobranca.contratocobranca cc " + 
+			" inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = cc.id " + 
+			" inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id " + 
+			" where cd.parcelapaga = false and cc.status='Aprovado') " ;	
 	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio) throws SQLException {
