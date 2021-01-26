@@ -42,21 +42,22 @@ public class RelatorioVendaOperacaoMB {
 //		
 //		this.contasPagar = cDao.findByFilter(filters);
 //		
-		
+
 		return "/Relatorios/Venda/RelatorioVendaOperacao.xhtml";
 	}
 
 	public void carregaListagem() {
-		
+
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		try {
-			this.contratosVenda = contratoCobrancaDao.geraRelatorioVendaOperacao();
+			if (this.contratosVenda == null || this.contratosVenda.size() == 0)
+				this.contratosVenda = contratoCobrancaDao.geraRelatorioVendaOperacao();
 			this.contratosVendaPesquisa = this.contratosVenda;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/** Get/Set */
