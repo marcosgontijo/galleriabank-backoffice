@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -49,6 +50,9 @@ public class RelatorioVendaOperacaoMB {
 	private BigDecimal faixaValorFinal;
 	private BigDecimal taxaDesagio = BigDecimal.valueOf(1.25);
 	private BigDecimal taxaDesagioCalculo;
+	private Date dataDesagio = new Date();
+	private Date dataDesagioCalculo;
+	
 	private Integer situacaoInvestimentos = 0;
 	private Integer SituacaoParcelas = 0;
 
@@ -69,9 +73,10 @@ public class RelatorioVendaOperacaoMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosVendaPesquisa = new ArrayList<RelatorioVendaOperacaoVO>(0);
 		try {
-			if (this.contratosVenda == null || this.contratosVenda.size() == 0 || taxaDesagio != taxaDesagioCalculo) {
-				this.contratosVenda = contratoCobrancaDao.geraRelatorioVendaOperacao(taxaDesagio);
+			if (this.contratosVenda == null || this.contratosVenda.size() == 0 || taxaDesagio != taxaDesagioCalculo  || dataDesagio != dataDesagioCalculo) {
+				this.contratosVenda = contratoCobrancaDao.geraRelatorioVendaOperacao(taxaDesagio, dataDesagio);
 				taxaDesagioCalculo = taxaDesagio;
+				dataDesagioCalculo = dataDesagio;
 			}
 
 			for (RelatorioVendaOperacaoVO relatorioVendaOperacaoVO : contratosVenda) {
@@ -124,6 +129,14 @@ public class RelatorioVendaOperacaoMB {
 
 	public void setTaxaDesagio(BigDecimal taxaDesagio) {
 		this.taxaDesagio = taxaDesagio;
+	}
+
+	public Date getDataDesagio() {
+		return dataDesagio;
+	}
+
+	public void setDataDesagio(Date dataDesagio) {
+		this.dataDesagio = dataDesagio;
 	}
 
 	public Integer getSituacaoInvestimentos() {
