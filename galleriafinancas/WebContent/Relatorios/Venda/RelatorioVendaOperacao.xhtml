@@ -50,6 +50,14 @@
 						<f:selectItem itemLabel="Em dia " itemValue="1" />
 						<f:selectItem itemLabel="Em atraso" itemValue="2" />
 					</p:selectOneRadio>
+					
+					<p:outputLabel for="taxaDesagio" value="Taxa Deságio : "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="taxaDesagio"
+							value="#{relatorioVendaOperacaoMB.taxaDesagio}"
+							label="Taxa de deságio" readonly="false" required="false"
+							style="FONT-SIZE: 10pt;width:300px;" />
+							
 				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
@@ -63,10 +71,16 @@
 			<!-- selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"-->
 			<p:panel id="ConsultaFinanceiroResultados"
 				header="Financeiro - Resultados" style="margin-bottom:10px;">
-				<p:dataTable id="dtContratos" var="contrato" 
+				<p:dataTable id="dtContratos" var="contrato"
 					value="#{relatorioVendaOperacaoMB.contratosVendaPesquisa}"
 					emptyMessage="" sortBy="#{contrato.ultimaParcela}">
-
+					<f:facet name="header">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{relatorioVendaOperacaoMB.XLSXFile}" />
+						</p:commandButton>
+					</f:facet>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{contrato.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{contrato.numeroContrato}">

@@ -3467,32 +3467,36 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_RELATORIO_VENDA_OPERACAO =  	
 			" select coco.id, numerocontrato, datapagamentofim , pare.nome, coco.vlrparcela," + 
-			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,1.25::numeric(19,2)) valorVenda, " + 
-			" cobranca.calculocontratofaltavender( coco.id, coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,1.25::numeric(19,2)) faltaVender, " + 
-			" cobranca.contratoEmDia(coco.id) contratoEmDia " + 
+			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2)) valorVenda, " + 
+			" cobranca.calculocontratofaltavender( coco.id, coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2)) faltaVender, " + 
+			" cobranca.contratoEmDia(coco.id) contratoEmDia," + 
+			" case when coco.vlrparcela = vlrparcelafinal then 'Americano' else 'Price' end Sistema " + 
 			" from  cobranca.contratocobranca coco " + 
 			" inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id" +  
 			" where empresa like 'GALLERIA FINANÇAS SECURITIZADORA S.A.' " + 
 			" and coco.status = 'Aprovado' " ;	
 	
 	@SuppressWarnings("unchecked")
-	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao() throws SQLException {
+	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio) throws SQLException {
 
 		List<RelatorioVendaOperacaoVO> result = new ArrayList<RelatorioVendaOperacaoVO>(0);
 
-		String query = QUERY_RELATORIO_VENDA_OPERACAO;
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
 		try {
 
-			connection = getConnection();
-
-			ps = connection.prepareStatement(query);
-
-			rs = ps.executeQuery();	
+			String query = QUERY_RELATORIO_VENDA_OPERACAO;
 			
+			connection = getConnection();	
+			
+			ps = connection
+					.prepareStatement(query);	
+			
+			ps.setBigDecimal(1, taxaDesagio);
+			ps.setBigDecimal(2, taxaDesagio);
+			
+			rs = ps.executeQuery();				
 			
 			while (rs.next()) {
 
@@ -3500,7 +3504,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						rs.getLong("id"), // BigInteger
 						rs.getString("numerocontrato"), // String contrato
 						rs.getDate("datapagamentofim"), // Date ultimaParcela
-						"SISTEMA", // String sistema
+						rs.getString("Sistema"), // String sistema
 						rs.getString("nome"), // String pagador
 						rs.getBigDecimal("vlrparcela"), // String BigDecimal valorParcela
 						rs.getBigDecimal("valorVenda"), // String BigDecimal valorVenda
