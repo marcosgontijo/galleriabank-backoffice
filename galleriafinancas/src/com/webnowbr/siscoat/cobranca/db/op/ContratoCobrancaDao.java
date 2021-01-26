@@ -1,9 +1,11 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -18,6 +20,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -3458,4 +3461,66 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+
+
+	
+	
+	private static final String QUERY_RELATORIO_VENDA_OPERACAO =  	
+			" select coco.id, numerocontrato, datapagamentofim , pare.nome, coco.vlrparcela," + 
+			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,1.25::numeric(19,2)) valorVenda, " + 
+			" cobranca.calculocontratofaltavender( coco.id, coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,1.25::numeric(19,2)) faltaVender, " + 
+			" cobranca.contratoEmDia(coco.id) contratoEmDia " + 
+			" from  cobranca.contratocobranca coco " + 
+			" inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id" +  
+			" where empresa like 'GALLERIA FINANÇAS SECURITIZADORA S.A.' " + 
+			" and coco.status = 'Aprovado' " ;	
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao() throws SQLException {
+
+		List<RelatorioVendaOperacaoVO> result = new ArrayList<RelatorioVendaOperacaoVO>(0);
+
+		String query = QUERY_RELATORIO_VENDA_OPERACAO;
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+
+			connection = getConnection();
+
+			ps = connection.prepareStatement(query);
+
+			rs = ps.executeQuery();	
+			
+			
+			while (rs.next()) {
+
+				RelatorioVendaOperacaoVO relatorioVendaOperacaoVO = new RelatorioVendaOperacaoVO(
+						rs.getLong("id"), // BigInteger
+						rs.getString("numerocontrato"), // String contrato
+						rs.getDate("datapagamentofim"), // Date ultimaParcela
+						"SISTEMA", // String sistema
+						rs.getString("nome"), // String pagador
+						rs.getBigDecimal("vlrparcela"), // String BigDecimal valorParcela
+						rs.getBigDecimal("valorVenda"), // String BigDecimal valorVenda
+						rs.getBigDecimal("faltaVender"), // String BigDecimal faltaVender
+						rs.getBoolean("contratoEmDia") // String Boolean situacao
+				);
+
+				result.add(relatorioVendaOperacaoVO);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return result;
+	}
+
+
+	
+	
 }

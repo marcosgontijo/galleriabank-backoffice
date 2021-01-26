@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="RelatorioVendaOperacao"
+				header="Operação - Disponível para venda"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="FaixaValorInicial" value="Faixa de Valor: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+
+					<h:panelGrid columns="2">
+						<p:inputText id="FaixaValorInicial"
+							value="#{relatorioVendaOperacaoMB.faixaValorInicial}"
+							label="Faixa de valor inicial" readonly="false" required="false"
+							style="FONT-SIZE: 10pt;width:300px;" />
+						<p:inputText id="FaixaValorFinal"
+							value="#{relatorioVendaOperacaoMB.faixaValorFinal}"
+							label="Faixa de valor final" readonly="false" required="false"
+							style="FONT-SIZE: 10pt;width:300px;" />
+					</h:panelGrid>
+
+					<p:outputLabel for="SituacaoInvestimentos"
+						value="Situação Investimento: " styleClass="labelBold"
+						style="margin-right: 59px;" />
+					<p:selectOneRadio id="SituacaoInvestimentos"
+						value="#{relatorioVendaOperacaoMB.situacaoInvestimentos}"
+						required="true">
+						<f:selectItem itemLabel="Vendida Parcialmente" itemValue="1" />
+						<f:selectItem itemLabel="100% Livre" itemValue="0" />
+					</p:selectOneRadio>
+
+					<p:outputLabel for="SituacaoParcelas" value="Situacao Parcelas "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="SituacaoParcelas"
+						value="#{relatorioVendaOperacaoMB.situacaoParcelas}"
+						required="true">
+						<f:selectItem itemLabel="Em dia " itemValue="0" />
+						<f:selectItem itemLabel="Em atraso" itemValue="1" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{relatorioVendaOperacaoMB.carregaListagem}"
+					update=":form:dtContratos" image="ui-icon ui-icon-check"
+					style="TEXT-DECORATION: bold;" />
+
+				<p:spacer width="10" />
+			</p:panel>
+
+			<!-- selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"-->
+			<p:panel id="ConsultaFinanceiroResultados"
+				header="Financeiro - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="contrato"
+					value="#{relatorioVendaOperacaoMB.contratosVendaPesquisa}"
+					emptyMessage="" sortBy="#{contrato.ultimaParcela}">
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{contrato.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contrato.numeroContrato}">
+						<h:outputText value="#{contrato.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.ultimaParcela}" headerText="Última Parcela"
+						sortBy="#{contrato.ultimaParcela}">
+						<h:outputText value="#{contrato.ultimaParcela}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.sistema}" headerText="Sistema"
+						sortBy="#{contrato.sistema}">
+						<h:outputText value="#{contrato.sistema}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.pagador}" headerText="Pagador"
+						sortBy="#{contrato.pagador}">
+						<h:outputText value="#{contrato.pagador}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.valorParcela}" headerText="Valor da Parcela"
+						sortBy="#{contrato.valorParcela}">
+						<h:outputText value="#{contrato.valorParcela}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.valorVenda}" headerText="Valor de Venda"
+						sortBy="#{contrato.valorVenda}">
+						<h:outputText value="#{contrato.valorVenda}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.faltaVender}" headerText="Falta Vender"
+						sortBy="#{contrato.faltaVender}">
+						<h:outputText value="#{contrato.faltaVender}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.percVendido}" headerText="Perc. Vendido"
+						sortBy="#{contrato.percVendido}">
+						<h:outputText value="#{contrato.percVendido}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						filterBy="#{contrato.situacao}" headerText="Situação"
+						sortBy="#{contrato.situacao}">
+						<h:outputText value="Em dia" rendered="#{contrato.situacao}" />
+						<h:outputText value="Com atrasos" rendered="#{!contrato.situacao}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
