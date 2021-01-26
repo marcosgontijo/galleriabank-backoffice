@@ -36,8 +36,9 @@
 					<p:selectOneRadio id="SituacaoInvestimentos"
 						value="#{relatorioVendaOperacaoMB.situacaoInvestimentos}"
 						required="true">
+						<f:selectItem itemLabel="Todas" itemValue="0" />
 						<f:selectItem itemLabel="Vendida Parcialmente" itemValue="1" />
-						<f:selectItem itemLabel="100% Livre" itemValue="0" />
+						<f:selectItem itemLabel="100% Livre" itemValue="2" />
 					</p:selectOneRadio>
 
 					<p:outputLabel for="SituacaoParcelas" value="Situacao Parcelas "
@@ -45,8 +46,9 @@
 					<p:selectOneRadio id="SituacaoParcelas"
 						value="#{relatorioVendaOperacaoMB.situacaoParcelas}"
 						required="true">
-						<f:selectItem itemLabel="Em dia " itemValue="0" />
-						<f:selectItem itemLabel="Em atraso" itemValue="1" />
+						<f:selectItem itemLabel="Todas" itemValue="0" />
+						<f:selectItem itemLabel="Em dia " itemValue="1" />
+						<f:selectItem itemLabel="Em atraso" itemValue="2" />
 					</p:selectOneRadio>
 				</h:panelGrid>
 
@@ -86,7 +88,7 @@
 						<h:outputText value="#{contrato.sistema}" />
 					</p:column>
 
-					<p:column style="text-align: center;width: 100px;"
+					<p:column style="text-align: left;width: 100px;"
 						filterBy="#{contrato.pagador}" headerText="Pagador"
 						sortBy="#{contrato.pagador}">
 						<h:outputText value="#{contrato.pagador}" />

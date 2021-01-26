@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.relatorio.mb;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -19,7 +20,7 @@ import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 @SessionScoped
 public class RelatorioVendaOperacaoMB {
 	/** Controle dos dados da Paginação. */
-	//private LazyDataModel<RelatorioVendaOperacaoVO> lazyModel;
+	// private LazyDataModel<RelatorioVendaOperacaoVO> lazyModel;
 	/** Variavel. */
 	private BigDecimal faixaValorInicial;
 	private BigDecimal faixaValorFinal;
@@ -43,10 +44,31 @@ public class RelatorioVendaOperacaoMB {
 	public void carregaListagem() {
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosVendaPesquisa = new ArrayList<RelatorioVendaOperacaoVO>(0);
 		try {
 			if (this.contratosVenda == null || this.contratosVenda.size() == 0)
 				this.contratosVenda = contratoCobrancaDao.geraRelatorioVendaOperacao();
-			this.contratosVendaPesquisa = this.contratosVenda;
+
+			for (RelatorioVendaOperacaoVO relatorioVendaOperacaoVO : contratosVenda) {
+				if (((BigDecimal.valueOf(0).compareTo(faixaValorInicial ) == 0  && BigDecimal.valueOf(0).compareTo(faixaValorFinal ) == 0)
+						|| ( relatorioVendaOperacaoVO.getValorVenda().compareTo(faixaValorInicial) >= 0
+								&& relatorioVendaOperacaoVO.getValorVenda().compareTo(faixaValorFinal) <= 0))
+						&& //
+						(situacaoInvestimentos == 0 || (situacaoInvestimentos == 1
+								&& relatorioVendaOperacaoVO.getPercVendido().compareTo(BigDecimal.valueOf(0)) > 0)
+								|| (situacaoInvestimentos == 2 && relatorioVendaOperacaoVO.getPercVendido()
+										.compareTo(BigDecimal.valueOf(0)) == 0))&& //
+						(SituacaoParcelas == 0 || (SituacaoParcelas == 1
+							&& relatorioVendaOperacaoVO.getSituacao())
+							|| (SituacaoParcelas == 2 &&  !relatorioVendaOperacaoVO.getSituacao()))) {
+					
+					this.contratosVendaPesquisa.add(relatorioVendaOperacaoVO);
+					
+				}
+			}
+
+			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.sql.Date;
 
 public class RelatorioVendaOperacaoVO {
-	private BigInteger contratoCobranca;	
+	private BigInteger contratoCobranca;
 	private String numeroContrato;
 	private Date ultimaParcela;
 	private String sistema;
@@ -16,8 +16,6 @@ public class RelatorioVendaOperacaoVO {
 	private BigDecimal percVendido;
 	private Boolean situacao;
 	private BigDecimal valorAvaliacao;
-	
-	
 
 	public RelatorioVendaOperacaoVO() {
 		super();
@@ -25,21 +23,24 @@ public class RelatorioVendaOperacaoVO {
 
 	public RelatorioVendaOperacaoVO(Long contratoCobranca, String numeroContrato, Date ultimaParcela, String sistema,
 			String pagador, BigDecimal valorParcela, BigDecimal valorVenda, BigDecimal faltaVender, Boolean situacao) {
-		super();		
+		super();
 		this.contratoCobranca = BigInteger.valueOf(contratoCobranca);
 		this.numeroContrato = numeroContrato;
 		this.ultimaParcela = ultimaParcela;
 		this.sistema = sistema;
 		this.pagador = pagador;
-		this.valorParcela = valorParcela;
-		this.valorVenda = valorVenda;
-		this.faltaVender = faltaVender;
+		this.valorParcela = valorParcela == null ? BigDecimal.valueOf(0) : valorParcela;
+		this.valorVenda = valorVenda == null ? BigDecimal.valueOf(0).setScale(2, BigDecimal.ROUND_HALF_UP) : valorVenda;
+		this.faltaVender = faltaVender == null ? BigDecimal.valueOf(0).setScale(2, BigDecimal.ROUND_HALF_UP)
+				: faltaVender;
 		this.situacao = situacao;
 		if (valorVenda != null && valorVenda.doubleValue() > 0) {
 			this.percVendido = BigDecimal.valueOf(1)
 					.add((faltaVender.divide(valorVenda, 4, BigDecimal.ROUND_HALF_UP)).negate());
-			
+
 			this.percVendido = this.percVendido.multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+		} else {
+			this.percVendido = BigDecimal.valueOf(0).setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
 	}
 
