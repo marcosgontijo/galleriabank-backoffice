@@ -16,6 +16,12 @@ public class RelatorioVendaOperacaoVO {
 	private BigDecimal percVendido;
 	private Boolean situacao;
 	private BigDecimal valorAvaliacao;
+	
+	
+
+	public RelatorioVendaOperacaoVO() {
+		super();
+	}
 
 	public RelatorioVendaOperacaoVO(Long contratoCobranca, String numeroContrato, Date ultimaParcela, String sistema,
 			String pagador, BigDecimal valorParcela, BigDecimal valorVenda, BigDecimal faltaVender, Boolean situacao) {

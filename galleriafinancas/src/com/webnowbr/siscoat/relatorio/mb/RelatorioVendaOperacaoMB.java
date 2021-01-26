@@ -2,10 +2,7 @@ package com.webnowbr.siscoat.relatorio.mb;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -14,9 +11,7 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
-import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
 /** ManagedBean. */
@@ -24,8 +19,7 @@ import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 @SessionScoped
 public class RelatorioVendaOperacaoMB {
 	/** Controle dos dados da Paginação. */
-	private LazyDataModel<ContratoCobranca> lazyModel;
-	private LazyDataModel<Responsavel> responsaveisLazy;
+	//private LazyDataModel<RelatorioVendaOperacaoVO> lazyModel;
 	/** Variavel. */
 	private BigDecimal faixaValorInicial;
 	private BigDecimal faixaValorFinal;
@@ -42,7 +36,7 @@ public class RelatorioVendaOperacaoMB {
 //		
 //		this.contasPagar = cDao.findByFilter(filters);
 //		
-
+		contratosVenda = null;
 		return "/Relatorios/Venda/RelatorioVendaOperacao.xhtml";
 	}
 
@@ -101,5 +95,13 @@ public class RelatorioVendaOperacaoMB {
 	public void setContratosVendaPesquisa(List<RelatorioVendaOperacaoVO> contratosVendaPesquisa) {
 		this.contratosVendaPesquisa = contratosVendaPesquisa;
 	}
+//
+//	public LazyDataModel<RelatorioVendaOperacaoVO> getLazyModel() {
+//		return lazyModel;
+//	}
+//
+//	public void setLazyModel(LazyDataModel<RelatorioVendaOperacaoVO> lazyModel) {
+//		this.lazyModel = lazyModel;
+//	}
 
 }

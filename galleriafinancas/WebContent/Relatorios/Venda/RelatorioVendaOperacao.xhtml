@@ -8,7 +8,7 @@
 
 	<ui:define name="conteudo">
 		<h:form id="form" style="margin-bottom:10px;">
-			<script src="../../resources/js/functions.js"></script>
+			<script src="../resources/js/functions.js"></script>
 			<h:outputScript name="js/locale-primefaces.js" />
 			<p:messages id="mensagens" showDetail="true" />
 
@@ -61,7 +61,7 @@
 			<!-- selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"-->
 			<p:panel id="ConsultaFinanceiroResultados"
 				header="Financeiro - Resultados" style="margin-bottom:10px;">
-				<p:dataTable id="dtContratos" var="contrato"
+				<p:dataTable id="dtContratos" var="contrato" 
 					value="#{relatorioVendaOperacaoMB.contratosVendaPesquisa}"
 					emptyMessage="" sortBy="#{contrato.ultimaParcela}">
 
@@ -92,20 +92,20 @@
 						<h:outputText value="#{contrato.pagador}" />
 					</p:column>
 
-					<p:column style="text-align: center;width: 100px;"
+					<p:column style="text-align: right;width: 100px;"
 						filterBy="#{contrato.valorParcela}" headerText="Valor da Parcela"
 						sortBy="#{contrato.valorParcela}">
 						<h:outputText value="#{contrato.valorParcela}"
 							converter="bigDecimalConverter" />
 					</p:column>
 
-					<p:column style="text-align: center;width: 100px;"
+					<p:column style="text-align: right;width: 100px;"
 						filterBy="#{contrato.valorVenda}" headerText="Valor de Venda"
 						sortBy="#{contrato.valorVenda}">
 						<h:outputText value="#{contrato.valorVenda}"
 							converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;width: 100px;"
+					<p:column style="text-align: right;width: 100px;"
 						filterBy="#{contrato.faltaVender}" headerText="Falta Vender"
 						sortBy="#{contrato.faltaVender}">
 						<h:outputText value="#{contrato.faltaVender}"
