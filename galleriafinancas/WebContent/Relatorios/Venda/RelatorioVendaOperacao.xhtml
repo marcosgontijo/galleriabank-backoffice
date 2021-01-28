@@ -23,7 +23,7 @@
 					<h:panelGrid columns="2">
 						<p:inputText id="FaixaValorInicial"
 							value="#{relatorioVendaOperacaoMB.faixaValorInicial}"
-							label="Faixa de valor inicial" readonly="false" required="false"
+							label="Faixa de valor inicial" readonly="false" required="true"
 							style="FONT-SIZE: 10pt;width:100px;" />
 						<p:inputText id="FaixaValorFinal"
 							value="#{relatorioVendaOperacaoMB.faixaValorFinal}"
@@ -72,7 +72,7 @@
 				<p:commandButton value="Consultar"
 					action="#{relatorioVendaOperacaoMB.carregaListagem()}"
 					update=":form:dtContratos" image="ui-icon ui-icon-check"
-					style="TEXT-DECORATION: bold;" />
+					style="TEXT-DECORATION: bold;" ajax="false"/>
 
 				<p:spacer width="10" />
 			</p:panel>
