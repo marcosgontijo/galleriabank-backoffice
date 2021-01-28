@@ -55,7 +55,7 @@
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:inputText id="taxaDesagio"
 						value="#{relatorioVendaOperacaoMB.taxaDesagio}"
-						label="Taxa de deságio" readonly="false" required="false"
+						label="Taxa de deságio" readonly="false" required="true"
 						style="FONT-SIZE: 10pt;width:60px;" />
 
 					<p:outputLabel for="dataCalculo" value="Data Cálculo : "
@@ -65,6 +65,7 @@
 						label="Data Cálculo" size="60" pattern="dd/MM/yyyy" locale="pt"
 						styleClass="dateTimeField" />
 
+
 				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
@@ -73,6 +74,7 @@
 					style="TEXT-DECORATION: bold;" />
 
 				<p:spacer width="10" />
+				<p:messages />
 			</p:panel>
 
 			<!-- selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"-->

@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -69,6 +71,12 @@ public class RelatorioVendaOperacaoMB {
 	}
 
 	public void carregaListagem() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (taxaDesagio.floatValue() <= 0) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Taxa Deságio: A taxa de desagio esta inválida!", ""));
+			return;
+		}
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosVendaPesquisa = new ArrayList<RelatorioVendaOperacaoVO>(0);
