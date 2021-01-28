@@ -70,12 +70,12 @@ public class RelatorioVendaOperacaoMB {
 		return "/Relatorios/Venda/RelatorioVendaOperacao.xhtml";
 	}
 
-	public void carregaListagem() {
+	public String carregaListagem() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (taxaDesagio.floatValue() <= 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Taxa Deságio: A taxa de desagio esta inválida!", ""));
-			return;
+			return "";
 		}
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -110,6 +110,8 @@ public class RelatorioVendaOperacaoMB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return "";
 
 	}
 
