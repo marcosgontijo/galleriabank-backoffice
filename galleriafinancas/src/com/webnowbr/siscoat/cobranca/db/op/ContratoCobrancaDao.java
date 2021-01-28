@@ -3467,7 +3467,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_RELATORIO_VENDA_OPERACAO =  	
 			" select coco.id, numerocontrato, datapagamentofim , pare.nome, coco.vlrparcela," + 
-			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2)) valorVenda, " + 
+			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2), ?) valorVenda, " + 
 			" cobranca.calculocontratofaltavender( coco.id, coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2)) faltaVender, " + 
 			" cobranca.contratoEmDia(coco.id) contratoEmDia," + 
 			" case when coco.vlrparcela = vlrparcelafinal then 'Americano' else 'Price' end Sistema " + 
@@ -3481,7 +3481,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			" where cd.parcelapaga = false and cc.status='Aprovado') " ;	
 	
 	@SuppressWarnings("unchecked")
-	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio) throws SQLException {
+	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio, Date dataDesagio) throws SQLException {
 
 		List<RelatorioVendaOperacaoVO> result = new ArrayList<RelatorioVendaOperacaoVO>(0);
 
@@ -3497,8 +3497,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			ps = connection
 					.prepareStatement(query);	
 			
-			ps.setBigDecimal(1, taxaDesagio);
-			ps.setBigDecimal(2, taxaDesagio);
+			ps.setBigDecimal(1, taxaDesagio);		
+			java.sql.Date dataDesagioSQL = new java.sql.Date(dataDesagio.getTime());
+			ps.setDate(2, dataDesagioSQL);			
+			ps.setBigDecimal(3, taxaDesagio);
 			
 			rs = ps.executeQuery();				
 			
