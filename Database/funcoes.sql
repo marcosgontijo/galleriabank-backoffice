@@ -118,7 +118,7 @@ BEGIN
 	IF  ( select count(*)
 		from cobranca.contratocobranca_detalhes_join cbdj
 		inner join cobranca.contratocobrancadetalhes cbd on cbdj.idcontratocobrancadetalhes = cbd.id
-		where  cbdj.idcontratocobranca =  452 and parcelapaga = false and datavencimento < now()) > 0 THEN					
+		where  cbdj.idcontratocobranca =  idcontratocobranca and parcelapaga = false and datavencimento < now()) > 0 THEN					
 		return false;
 	ELSE
 		return true;
