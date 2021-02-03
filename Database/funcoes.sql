@@ -35,7 +35,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cobranca.calculocontratoantecipado(numeric, timestamp without time zone, numeric, integer, numeric)
-  OWNER TO postgres;
+  OWNER TO webnowbr;
 
 -- Function: cobranca.calculocontratofaltavender(bigint, numeric, timestamp without time zone, numeric, integer, numeric)
 
@@ -105,7 +105,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cobranca.calculocontratofaltavender(bigint, numeric, timestamp without time zone, numeric, integer, numeric)
-  OWNER TO postgres;
+  OWNER TO webnowbr;
 
 -- Function: cobranca.contratoemdia(bigint)
 
@@ -129,7 +129,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cobranca.contratoemdia(bigint)
-  OWNER TO postgres;
+  OWNER TO webnowbr;
 
 -- Function: cobranca.valorvendidomes(bigint, bigint, integer, boolean, timestamp without time zone)
 
@@ -171,4 +171,4 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cobranca.valorvendidomes(bigint, bigint, integer, boolean, timestamp without time zone)
-  OWNER TO postgres;
+  OWNER TO webnowbr;
