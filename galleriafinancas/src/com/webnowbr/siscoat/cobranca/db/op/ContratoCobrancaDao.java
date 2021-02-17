@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +19,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
 /**
@@ -361,7 +360,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = QUERY_GET_CONTRATOS_POR_INVESTIDOR;
 					
 					if (idInvestidor > 0) {
-						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +   
+						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +  
 									"  and (cc.recebedor = " + idInvestidor + " or " +
 									"      cc.recebedor2 = " + idInvestidor + " or " +
 									"      cc.recebedor3 = " + idInvestidor + " or " +
@@ -2962,6 +2961,50 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public List<Long> consultaIdContratosQuitadosInvestidor(final long idInvestidor) {
+		return (List<Long>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<Long> objects = new ArrayList<Long>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_QUITADOS +  
+							"  and (dd.recebedor = " + idInvestidor + " or " +
+							"      dd.recebedor2 = " + idInvestidor + " or " +
+							"      dd.recebedor3 = " + idInvestidor + " or " +
+							"      dd.recebedor4 = " + idInvestidor + " or " +
+							"      dd.recebedor5 = " + idInvestidor + " or " +
+							"      dd.recebedor6 = " + idInvestidor + " or " +
+							"      dd.recebedor7 = " + idInvestidor + " or " +
+							"      dd.recebedor8 = " + idInvestidor + " or " +
+							"      dd.recebedor9 = " + idInvestidor + " or " +
+							"      dd.recebedor10 = " + idInvestidor + ")";
+					
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();				
+					
+					
+					while (rs.next()) {
+						objects.add(rs.getLong(1));												
 					}
 	
 				} finally {

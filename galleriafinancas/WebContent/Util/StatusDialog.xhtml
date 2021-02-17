@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<script type="text/javascript">
+		function start() {
+			PF('statusDialog').show();
+		}
+
+		function stop() {
+			PF('statusDialog').hide();
+		}
+	</script>
+
+
+	<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+		draggable="false" closable="false" resizable="false">
+		<p:graphicImage name="image/ajaxloadingbar.gif" />
+	</p:dialog>
+</ui:composition>

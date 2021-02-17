@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="extratoCompleto" header="" widgetVar="extrato"
+		modal="true" showEffect="fade" hideEffect="fade" resizable="false"
+		responsive="true" width="800" positionType="center center">
+		<h:form id="formExtrato">
+			<p:panel id="extratoCompletoDetail" style="text-align:center; ">
+				<p:dataTable id="dtExtrato" var="extrato"
+					styleClass="dashboard-extrato-table" sortOrder="ascending"
+					sortBy="#{extrato.dataMovimento}" expandableRowGroups="true"
+					value="#{investidorMB.extrato}" paginator="true" rows="5"
+					lazy="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="5,10,15" selection="" emptyMessage="">
+					<p:headerRow>
+						<p:column colspan="3"
+							style="color: #b87b2a; font-size: 14px; font-weight: bold;text-align: left;">
+							<h:outputText value="#{extrato.dataMovimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yy" />
+							</h:outputText>
+						</p:column>
+						<p:column colspan="2" />
+					</p:headerRow>
+
+					<p:columnGroup type="header">
+						<p:column headerText="Data Pgto"
+							style="color: #b87b2a; font-size: 14px; font-weight: bold;width:80px;" />
+						<p:column headerText="Referência"
+							style="color: #b87b2a; font-size: 14px; font-weight: bold;" />
+						<p:column headerText="Valor"
+							style="color: #b87b2a; font-size: 14px; font-weight: bold;width:100px;" />
+					</p:columnGroup>
+
+					<p:column>
+						<h:outputText value="" />
+					</p:column>
+					<p:column
+						style="color: #b87b2a; font-size: 12px; font-weight: bold;text-align:left;">
+						<h:outputText escape="false" value="#{extrato.descricao}" />
+					</p:column>
+					<p:column
+						style="color: #b87b2a; font-size: 12px; font-weight: bold;text-align:right;">
+						<h:outputText value="#{extrato.valor}"
+							converter="bigDecimalConverter">
+							<f:convertNumber type="currency" currencySymbol="R$" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+</ui:composition>

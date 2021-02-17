@@ -24,8 +24,10 @@
 		library="javascript" />
 </h:head>
 <h:body onload="#{investidorMB.getContratosInvestidor()}">
+
+	
 	<p:messages id="mensagens" showDetail="true" />
-	<div class="navbar-area">
+	<div class="navbar-area dashboard-navBar">
 		<div class="ui-g">
 			<div class="ui-g-12 ui-md-4 ui-lg-4 responsiveIcons">
 				<a class="navbar-brand" href="#"><img
@@ -37,12 +39,14 @@
 				<h:outputText value="#{investidorMB.usuarioLogado.name}"
 					styleClass="investidorLogin" style="color: #dfdfdf !important;" />
 			</div>
-			
+
 			<div class="ui-g-12 ui-md-1 ui-lg-1 responsiveIcons">
 				<h:form id="formRefresh">
-					<p:commandLink title="Atualizar Portal" actionListener="#{investidorMB.getContratosInvestidor()}"
+					<p:commandLink title="Atualizar Portal"
+						actionListener="#{investidorMB.getContratosInvestidor()}"
 						style="padding-top: 7%;" update="@all">
-						<img src="#{resource['image/AtualizacaoPortalInvestidor.png']}" alt="" />
+						<img src="#{resource['image/AtualizacaoPortalInvestidor.png']}"
+							alt="" />
 					</p:commandLink>
 				</h:form>
 			</div>
@@ -56,133 +60,268 @@
 				</h:form>
 			</div>
 		</div>
-	</div>
-	<div class="slider-area">
-		<h:form id="formDashboard">			
-			<p:panel id="saldoSubConta" header="Consulta de Contratos"
-				style="margin-bottom:10px;height: 500px;margin-top: 25px; ">
-				<div class="ui-g">
-					<div class="ui-g-12 ui-md-4 ui-lg-4">
-						<div class="bgCardConciliacao">
-							<div class="titulo">Contratos</div>
-							<div class="texto">
-								<h:outputText value="#{investidorMB.qtdeContratos}" />
-							</div>
-						</div>
-					</div>
-					<div class="ui-g-12 ui-md-4 ui-lg-4">
-						<div class="bgCardConciliacao">
-							<div class="titulo">Valor Investido</div>
-							<div class="texto">
-								R$
-								<h:outputText value="#{investidorMB.valorInvestido}"
-									converter="bigDecimalConverter" />
-							</div>
-						</div>
-					</div>
-					<div class="ui-g-12 ui-md-4 ui-lg-4">
-						<div class="bgCardConciliacao">
-							<div class="titulo">Valor Recebido</div>
-							<div class="texto">
-								R$
-								<h:outputText value="#{investidorMB.valorRecebido}"
-									converter="bigDecimalConverter" />
-							</div>
-						</div>
-					</div>
+		<div class="ui-g dashboard-area">
+			<div
+				class="ui-g-12 ui-md-12 ui-lg-12 dashboard-resumo bgCardConciliacao">
+				<p:dataTable id="dtResumo" var="resumo" styleClass="dashboard-table"
+					style="width:90%" value="#{investidorMB.investidorResumosTela}">
+
+					<p:columnGroup type="header">
+						<p:column
+							headerText="Contratos #{investidorMB.labelSituacaoResumo}"
+							styleClass="titulo #{investidorMB.getCssStatus(investidorMB.situacaoSelecionada)}" />
+						<p:column headerText="Valor Investido" styleClass="titulo" />
+						<p:column headerText="Valor Recebido" styleClass="titulo" />
+					</p:columnGroup>
+
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.qtdeContratos}" />
+					</p:column>
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.valorInvestido}"
+							converter="bigDecimalConverter">
+							<f:convertNumber type="currency" currencySymbol="R$" />
+						</h:outputText>
+					</p:column>
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.valorRecebido}"
+							converter="bigDecimalConverter">
+							<f:convertNumber type="currency" currencySymbol="R$" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+				<div class="responsiveIcons" style="margin: auto">
+					<h:form id="detalhaResumo">
+						<p:commandLink title="Detalhar Resumo"
+							oncomplete="PF('resumo').show()" icon="fa fa-fw fa-search"
+							style="padding-top: 7%;">
+							<img src="#{resource['image/detalharResumo.png']}"
+								style="height: 62px" alt="" />
+						</p:commandLink>
+					</h:form>
 				</div>
-				<br />
-				<br />
-				<p:dataView var="contratos" value="#{investidorMB.contratos}"
-					rows="12" paginator="false" rowsPerPageTemplate="6,12,16"
-					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					gridIcon="fa fa-fw fa-th-large" listIcon="fa fa-fw fa-bars"
-					layout="grid" style="height:900px !important;">
+			</div>
+		</div>
+	</div>
 
-					<p:dataViewGridItem>
-						<p:panel header="Contrato - #{contratos.numeroContrato}"
-							style="text-align:center">
-							<h:panelGrid columns="1" style="width:100%">
-								<br />
-								<h:outputText value="Data do Contrato"
-									style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
-								<h:outputText value="#{contratos.dataContrato}"
-									style="color: #b87b2a; font-size: 18px;">
-									<f:convertDateTime locale="pt_BR" />
-									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-								</h:outputText>
-								<h:outputText value="Devedor"
-									style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
-								<h:outputText value="#{contratos.pagador.nome}"
-									style="color: #b87b2a; font-size: 18px;" />
-								<br />
-								<p:commandButton value="Financeiro" update=":formDetalhes:dtParcelas"
-										oncomplete="PF('detalheContrato').show()"
-										icon="fa fa-fw fa-search"
-										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}" style="padding-left: 10px;">
-										<f:setPropertyActionListener
-														target="#{investidorMB.selectedContrato.numeroContrato}"
-														value="#{contratos.numeroContrato}" />
-								</p:commandButton>
-								<p:spacer width="10" />
-								<p:commandButton value="Envelope" update=":formDetalhesEnvelope:dtParcelasEnvelope"
-										oncomplete="PF('detalheContratoEnvelope').show()"
-										icon="fa fa-fw fa-search"
-										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}" style="padding-left: 10px;"
-										rendered="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope.size() gt 0}">
-										<f:setPropertyActionListener
-														target="#{investidorMB.selectedContrato.numeroContrato}"
-														value="#{contratos.numeroContrato}" />
-								</p:commandButton>
-							</h:panelGrid>
-						</p:panel>
-					</p:dataViewGridItem>
 
-					<p:dataViewListItem>
-						<h:panelGrid columns="3" style="width:100%"
-							columnClasses="logo,detail">
-							<p:outputPanel>
-								<h:panelGrid columns="4" cellpadding="5">
-									<h:outputText value="Número Contrato " />
-									<h:outputText value="Data Contrato "
-										style="padding-left: 50px; color: #000 !important" />
-									<h:outputText value="Devedor "
-										style="padding-left: 50px; color: #000 !important" />
-									<p:spacer></p:spacer>
-									<h:outputText value="#{contratos.numeroContrato}"
-										style="font-weight: bold;font-size: 18px;" />
+	<div class="slider-area">
+		<h:form id="formDashboard">
+		
+			<div style="width: 100%; padding-top: 5px;">
+				<div
+					style="width: 96%; margin: 10px auto; height: 92px; display: flex; justify-content: center;">
+
+
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+						<p:commandLink title="Contratos Ativos" disabled="#{!investidorMB.existeContratoAtivo}"
+							styleClass="dashboard-icone-menu" ajax="true"
+							update="formDashboard dtResumo"
+							action="#{investidorMB.filtrarSituacaoAtivos()}">
+							<img src="#{resource['image/ContratosAtivos.svg']}"
+								style="height: 62px" alt="" />
+						</p:commandLink>
+						<h:outputText value="Contratos Ativos" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+						<p:commandLink title="Contratos Quitados"  disabled="#{!investidorMB.existeContratoQuitado}"
+							styleClass="dashboard-icone-menu" ajax="true"
+							update="formDashboard dtResumo"
+							action="#{investidorMB.filtrarSituacaoQuitados()}">
+							<img src="
+							#{resource['image/ContratosQuitados.svg']}"
+								style="height: 62px" alt="" />
+						</p:commandLink>
+						<h:outputText value="Contratos Quitados" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+						<p:commandLink title="Extrato Detalhado"
+							styleClass="dashboard-icone-menu"
+							oncomplete="PF('extrato').show()">
+							<img src="
+							#{resource['image/ExtratoDetalhado.svg']}"
+								style="height: 62px" alt="" />
+						</p:commandLink>
+						<h:outputText value="Extrato Completo" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+
+						<p:commandLink title="Documentos" disabled="true"
+							styleClass="dashboard-icone-menu" ajax="false"
+							onclick="#{investidorMB.downloadInformeRendimentosPortalInvestidor()}">
+							<img src="
+							#{resource['image/Documentos.svg']}"
+								style="height: 62px" alt="" />
+						</p:commandLink>
+						<h:outputText value="Documentos" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+						<p:commandLink title="Gerar PDF - Informe de Rendimentos 2020"
+							ajax="false" styleClass="dashboard-icone-menu"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<img src="
+							#{resource['image/informeRendimentos.svg']}"
+								style="height: 62px" alt="" />
+							<p:fileDownload
+								value="#{investidorMB.processInformeRendimentosPortalInvestidor()}" />
+						</p:commandLink>
+
+						<h:outputText value="Informe de Rendimentos" />
+					</h:panelGrid>
+
+				</div>
+			</div>
+			<h:panelGrid columns="2" style="width:100%"
+				columnClasses="dashboard-extrato, dashboard-contratos">
+
+				<p:panel id="extratoInvestidor" styleClass="dashboard-center"
+					header="Extrato de Pagamentos"
+					style="margin-bottom:10px;height: 535px;margin-top: 25px;">
+					<br />
+					<p:panel style="text-align:center;height: 443px;">
+						<h:panelGrid columns="1">
+							<p:dataTable id="dtExtratoUltimosLancmentos" var="extrato"
+								styleClass="dashboard-extrato-table" sortOrder="ascending"
+								sortBy="#{extrato.dataMovimento}" expandableRowGroups="true"
+								value="#{investidorMB.extratoUltimosLancamentos}">
+								<p:headerRow>
+									<p:column colspan="3"
+										style="color: #b87b2a; font-size: 14px; font-weight: bold;text-align: left;">
+										<h:outputText value="#{extrato.dataMovimento}">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yy" />
+										</h:outputText>
+									</p:column>
+									<p:column colspan="2" />
+								</p:headerRow>
+
+								<p:columnGroup type="header">
+									<p:column headerText="Data Pgto"
+										style="color: #b87b2a; font-size: 14px; font-weight: bold;width:80px;" />
+									<p:column headerText="Referência"
+										style="color: #b87b2a; font-size: 14px; font-weight: bold;" />
+									<p:column headerText="Valor"
+										style="color: #b87b2a; font-size: 14px; font-weight: bold;width:100px;" />
+								</p:columnGroup>
+
+								<p:column>
+									<h:outputText value="" />
+								</p:column>
+								<p:column
+									style="color: #b87b2a; font-size: 12px; font-weight: bold;text-align:left;">
+									<h:outputText escape="false" value="#{extrato.descricao}" />
+								</p:column>
+								<p:column
+									style="color: #b87b2a; font-size: 12px; font-weight: bold;text-align:right;">
+									<h:outputText value="#{extrato.valor}"
+										converter="bigDecimalConverter">
+										<f:convertNumber type="currency" currencySymbol="R$" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+							<br />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:panel>
+				<p:panel id="saldoSubConta" styleClass="dashboard-center"
+					header="Contratos"
+					style="margin-bottom:10px;height: 535px;margin-top: 25px; ">
+					<br />
+					<p:dataView var="contratos" value="#{investidorMB.contratosVOTela}"
+						rows="12" paginator="false" rowsPerPageTemplate="6,12,16"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						layout="grid" style="height:900px !important;"
+						styleClass="dashboard-dataview-grid">
+
+						<p:dataViewGridItem>
+							<p:panel style="text-align:center">
+								<f:facet name="header" style="text-align:center">
+									<h:outputText value="Contrato - #{contratos.numeroContrato}" />
+									<br />
+									<h:outputText
+										styleClass="#{investidorMB.getCssStatus(contratos.situacao)}"
+										value="#{contratos.situacao}" />
+								</f:facet>
+								<h:panelGrid columns="1" style="width:100%">
+									<br />
+									<h:outputText value="Data do Contrato"
+										style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
 									<h:outputText value="#{contratos.dataContrato}"
-										style="font-weight: bold;font-size: 18px;padding-left: 50px;">
+										style="color: #b87b2a; font-size: 18px;">
 										<f:convertDateTime locale="pt_BR" />
 										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 									</h:outputText>
-									<h:outputText value="#{contratos.pagador.nome}"
-										style="font-weight: bold;color: #b87b2a; font-size: 18px;padding-left: 50px;" />
-									<p:commandButton value="Financeiro" update="detalhesInvestidor"
-											oncomplete="PF('detalheContrato').show()"
-											icon="fa fa-fw fa-search"
-											action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}" style="margin-left: 20px;">
+									<h:outputText value="Pagador"
+										style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
+									<h:outputText value="#{contratos.pagador}"
+										style="color: #b87b2a; font-size: 18px;" />
+									<br />
+									<h:outputText value="Valor Investido"
+										style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
+									<h:outputText value="#{contratos.valorInvestido}"
+										converter="bigDecimalConverter"
+										style="color: #b87b2a; font-size: 18px;">
+										<f:convertNumber type="currency" currencySymbol="R$" />
+									</h:outputText>
+									<h:outputText value="Valor Recebido"
+										style="color: #b87b2a; font-size: 18px; font-weight: bold;" />
+									<h:outputText value="#{contratos.valorRecebido}"
+										converter="bigDecimalConverter"
+										style="color: #b87b2a; font-size: 18px;">
+										<f:convertNumber type="currency" currencySymbol="R$" />
+									</h:outputText>
+									<br />
+									<p:commandButton value="Financeiro"
+										update=":formDetalhes:dtParcelas"
+										oncomplete="PF('detalheContrato').show()"
+										icon="fa fa-fw fa-search"
+										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}"
+										style="padding-left: 10px;">
+										<f:setPropertyActionListener
+											target="#{investidorMB.selectedContrato.numeroContrato}"
+											value="#{contratos.numeroContrato}" />
+									</p:commandButton>
+									<p:spacer width="10" />
+									<p:commandButton value="Envelope"
+										update=":formDetalhesEnvelope:dtParcelasEnvelope"
+										oncomplete="PF('detalheContratoEnvelope').show()"
+										icon="fa fa-fw fa-search"
+										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}"
+										style="padding-left: 10px;"
+										rendered="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope.size() gt 0}">
+										<f:setPropertyActionListener
+											target="#{investidorMB.selectedContrato.numeroContrato}"
+											value="#{contratos.numeroContrato}" />
 									</p:commandButton>
 								</h:panelGrid>
-							</p:outputPanel>
-						</h:panelGrid>
-					</p:dataViewListItem>
-				</p:dataView>
-			</p:panel>
-		
-			<p:panel id="informeRendimentos2020" header="Informe de Rendimentos - 2020"
-				style="padding-top:20px; padding-bottom:20px;">				
+							</p:panel>
+						</p:dataViewGridItem>
+
+
+					</p:dataView>
+				</p:panel>
+			</h:panelGrid>
+
+			<p:panel id="informeRendimentos2020" rendered="false"
+				header="Informe de Rendimentos - 2020"
+				style="padding-top:20px; padding-bottom:20px;">
 				<h:panelGrid columns="1">
-					<p:outputLabel value="Para gerar o informe de rendimentos 2020, clique no botão e faça download do PDF."
+					<p:outputLabel
+						value="Para gerar o informe de rendimentos 2020, clique no botão e faça download do PDF."
 						styleClass="labelBold" />
-					<p:commandButton value="Gerar PDF - Informe de Rendimentos" ajax="false"
-						icon="ui-icon-print"
+					<p:commandButton value="Gerar PDF - Informe de Rendimentos"
+						ajax="false" icon="ui-icon-print"
 						action="#{investidorMB.processInformeRendimentosPortalInvestidor}"
 						update="PDF:PanelPDF" />
 				</h:panelGrid>
-				
-				<p:panel id="PanelPDF"
-					header="Download do Informe de Rendimentos"
+
+				<p:panel id="PanelPDF" header="Download do Informe de Rendimentos"
 					style="margin-bottom:10px;margin-top:20px;"
 					rendered="#{investidorMB.irRetidoInvestidoresPDFGerado}">
 					<p:focus />
@@ -192,15 +331,15 @@
 							draggable="false" closable="false" resizable="false">
 							<p:graphicImage name="image/ajaxloadingbar.gif" />
 						</p:dialog>
-			
+
 						<h:form>
-							<p:commandButton value="Download do Informe de Rendimentos" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
+							<p:commandButton value="Download do Informe de Rendimentos"
+								ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
 								icon="ui-icon-arrowthick-1-s">
 								<p:fileDownload value="#{investidorMB.file}" />
 							</p:commandButton>
 						</h:form>
-			
+
 						<script type="text/javascript">
 						function start() {
 						    PF('statusDialog').show();
@@ -210,223 +349,28 @@
 						    PF('statusDialog').hide();
 						}
 						</script>
-			
+
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>
+
 		</h:form>
-		
-		<p:dialog id="detalhesInvestidorEnvelope"
-			header=""
-			widgetVar="detalheContratoEnvelope" modal="true" showEffect="fade"
-			hideEffect="fade" resizable="false" responsive="true" width="800" positionType="absolute">
-			<h:form id="formDetalhesEnvelope">
-				<h:outputText
-					value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
-					style="display:inline-block" />
-				<p:outputPanel id="contratoDetailEnvelope" style="text-align:center; ">
-					<p:dataTable id="dtParcelasEnvelope" var="parcelas" reflow="true"
-						value="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope}"
-						emptyMessage="" sortBy="#{contratos.numeroParcela}"
-						sortOrder="ascending"
-						rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
-						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
-						rowKey="#{parcelas.id}">
-						
-						<f:facet name="header">
-							<h:outputText
-								value="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
-								 style="font-size: 20px;"/>
-						</f:facet>
 
-						<p:column style="text-align: center;" headerText="Parcela">
-							<h:outputText value="#{parcelas.numeroParcela}" />
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Data Vencimento Original"
-							sortBy="#{parcelas.dataVencimento}">
-							<h:outputText value="#{parcelas.dataVencimento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor da Parcela (R$)">
-							<h:outputText value="#{parcelas.parcelaMensal}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;" headerText="Juros (R$)">
-							<h:outputText value="#{parcelas.juros}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Amortização (R$)">
-							<h:outputText value="#{parcelas.amortizacao}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Saldo Credor (R$)">
-							<h:outputText value="#{parcelas.saldoCredorAtualizado}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;" headerText="IR Retido (R$)">
-							<h:outputText value="#{parcelas.irRetido}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor Líquido (R$)">
-							<h:outputText value="#{parcelas.valorLiquido}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>			
-						<p:column style="text-align: center;"
-							headerText="Valor Pago (R$)">
-							<h:outputText value="#{parcelas.valorBaixado}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>			
-						<p:column style="text-align: center;" headerText="Data Pagamento"
-							width="100">
-							<h:outputText value="#{parcelas.dataBaixa}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>						
-					</p:dataTable>
-				</p:outputPanel>
-			</h:form>
-		</p:dialog>
 
-		<p:dialog id="detalhesInvestidor"
-			header=""
-			widgetVar="detalheContrato" modal="true" showEffect="fade"
-			hideEffect="fade" resizable="false" responsive="true" width="800" positionType="absolute">
-			<h:form id="formDetalhes">
-				<h:outputText
-					value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
-					style="display:inline-block" />
-				<p:outputPanel id="contratoDetail" style="text-align:center; ">
-					<p:dataTable id="dtParcelas" var="parcelas" reflow="true"
-						value="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionado}"
-						emptyMessage="" sortBy="#{contratos.numeroParcela}"
-						sortOrder="ascending"
-						rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
-						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
-						rowKey="#{parcelas.id}">
-						
-						<f:facet name="header">
-							<h:outputText
-								value="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
-								 style="font-size: 20px;"/>
-						</f:facet>
 
-						<p:column style="text-align: center;" headerText="Parcela">
-							<h:outputText value="#{parcelas.numeroParcela}" />
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Data Vencimento Original"
-							sortBy="#{parcelas.dataVencimento}">
-							<h:outputText value="#{parcelas.dataVencimento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor da Parcela (R$)">
-							<h:outputText value="#{parcelas.parcelaMensal}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;" headerText="Juros (R$)">
-							<h:outputText value="#{parcelas.juros}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Amortização (R$)">
-							<h:outputText value="#{parcelas.amortizacao}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Saldo Credor (R$)">
-							<h:outputText value="#{parcelas.saldoCredorAtualizado}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;" headerText="IR Retido (R$)">
-							<h:outputText value="#{parcelas.irRetido}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor Líquido (R$)">
-							<h:outputText value="#{parcelas.valorLiquido}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>			
-						<p:column style="text-align: center;"
-							headerText="Valor Pago (R$)">
-							<h:outputText value="#{parcelas.valorBaixado}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>			
-						<p:column style="text-align: center;" headerText="Data Pagamento"
-							width="100">
-							<h:outputText value="#{parcelas.dataBaixa}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>						
-					</p:dataTable>
-				</p:outputPanel>
-			</h:form>
-		</p:dialog>
 
-		<p:dialog header="Observações" widgetVar="observacoesDialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="800">
-			<h:form id="formObservacoes">
-				<p:panel id="ObservacoesPanel" header="Observações - Consultar"
-					style="margin-top:10px;">
-					<p:dataTable id="dtObservacoes" var="observacoes"
-						value="#{investidorMB.selectedContratoCobrancaDetalhes.listContratoCobrancaDetalhesObservacoes}"
-						paginator="true" rows="5" lazy="true"
-						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-						currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
-						rowsPerPageTemplate="5,10" selection="" emptyMessage=""
-						sortBy="#{observacoes.data}" sortOrder="descending">
-						<p:column style="text-align: center;" headerText="Data Inicio"
-							sortBy="#{observacoes.data}">
-							<h:outputText value="#{observacoes.data}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;" headerText="Usuário"
-							filterBy="#{observacoes.usuario}" filterMatchMode="contains"
-							sortBy="#{observacoes.usuario}">
-							<h:outputText value="#{observacoes.usuario}" />
-						</p:column>
-						<p:column style="text-align: center;" headerText="Observação"
-							filterBy="#{observacoes.observacao}" filterMatchMode="contains"
-							sortBy="#{observacoes.observacao}">
-							<h:outputText value="#{observacoes.observacao}" />
-						</p:column>
-					</p:dataTable>
-				</p:panel>
-				<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
-					<p:commandButton value="Voltar"
-						image="ui-icon-arrowreturnthick-1-w"
-						oncomplete="PF('observacoesDialog').hide();" />
-				</div>
-			</h:form>
-		</p:dialog>
+
 	</div>
+
+
+	<ui:include
+		src="/Util/StatusDialog.xhtml"></ui:include>
+	<ui:include
+		src="/Investidor/Dashboard-DetalhesInvestidorEnvelope.xhtml"></ui:include>
+	<ui:include src="/Investidor/Dashboard-DetalhesInvestidor.xhtml"></ui:include>
+	<ui:include src="/Investidor/Dashboard-Observacoes.xhtml"></ui:include>
+	<ui:include src="/Investidor/Dashboard-ExtratoCompleto.xhtml"></ui:include>
+	<ui:include src="/Investidor/Dashboard-Resumo.xhtml"></ui:include>
 	<footer id="footer" class="footer-area">
 	<div class="footer-copyright">
 		<div class="container">
@@ -438,5 +382,7 @@
 		<!-- container -->
 	</div>
 	<!-- footer copyright --> </footer>
+
+
 </h:body>
 </html>

@@ -40,10 +40,10 @@
 							
 							<div class="container-login100-form-btn m-t-32">
 								<h:panelGrid columns="2">
-									<p:commandLink id="alterPasswd" ajax="false" update="messages"  style="margin-right: 20px;" styleClass="login100-form-btn2" action="./AlteraSenhaInvestidor.xhtml">
+									<p:commandLink id="alterPasswd" ajax="true" update="messages"  style="margin-right: 20px;" styleClass="login100-form-btn2" action="./AlteraSenhaInvestidor.xhtml">
 										Alterar Senha
 									</p:commandLink>
-									<p:commandLink id="aa" styleClass="login100-form-btn" actionListener="#{loginBean.loginNow}" update="messages" ajax="false">
+									<p:commandLink id="aa" styleClass="login100-form-btn" actionListener="#{loginBean.loginNow}" update="messages" ajax="true">
 										LOGIN
 									</p:commandLink>
 									<p:defaultCommand target="aa" />	
