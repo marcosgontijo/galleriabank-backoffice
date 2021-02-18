@@ -60,7 +60,7 @@
 	<div class="slider-area">
 		<h:form id="formDashboard">			
 			<p:panel id="saldoSubConta" header="Consulta de Contratos"
-				style="margin-bottom:10px;height: 500px;margin-top: 25px; ">
+				style="margin-bottom:10px;height: 500px;margin-top: 25px; height: 2050px !important;">
 				<div class="ui-g">
 					<div class="ui-g-12 ui-md-4 ui-lg-4">
 						<div class="bgCardConciliacao">
@@ -97,7 +97,7 @@
 					rows="12" paginator="false" rowsPerPageTemplate="6,12,16"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					gridIcon="fa fa-fw fa-th-large" listIcon="fa fa-fw fa-bars"
-					layout="grid" style="height:900px !important;">
+					layout="grid">
 
 					<p:dataViewGridItem>
 						<p:panel header="Contrato - #{contratos.numeroContrato}"
@@ -168,52 +168,52 @@
 						</h:panelGrid>
 					</p:dataViewListItem>
 				</p:dataView>
-			</p:panel>
-		
-			<p:panel id="informeRendimentos2020" header="Informe de Rendimentos - 2020"
-				style="padding-top:20px; padding-bottom:20px;">				
-				<h:panelGrid columns="1">
-					<p:outputLabel value="Para gerar o informe de rendimentos 2020, clique no botão e faça download do PDF."
-						styleClass="labelBold" />
-					<p:commandButton value="Gerar PDF - Informe de Rendimentos" ajax="false"
-						icon="ui-icon-print"
-						action="#{investidorMB.processInformeRendimentosPortalInvestidor}"
-						update="PDF:PanelPDF" />
-				</h:panelGrid>
 				
-				<p:panel id="PanelPDF"
-					header="Download do Informe de Rendimentos"
-					style="margin-bottom:10px;margin-top:20px;"
-					rendered="#{investidorMB.irRetidoInvestidoresPDFGerado}">
-					<p:focus />
-					<p:messages />
-					<h:panelGrid columns="2">
-						<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-							draggable="false" closable="false" resizable="false">
-							<p:graphicImage name="image/ajaxloadingbar.gif" />
-						</p:dialog>
-			
-						<h:form>
-							<p:commandButton value="Download do Informe de Rendimentos" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
-								icon="ui-icon-arrowthick-1-s">
-								<p:fileDownload value="#{investidorMB.file}" />
-							</p:commandButton>
-						</h:form>
-			
-						<script type="text/javascript">
-						function start() {
-						    PF('statusDialog').show();
-						}
-						 
-						function stop() {
-						    PF('statusDialog').hide();
-						}
-						</script>
-			
+				<p:panel id="informeRendimentos2020" header="Informe de Rendimentos - 2020"
+				style="height: 50px !important;">				
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Para gerar o informe de rendimentos 2020, clique no botão e faça download do PDF."
+							styleClass="labelBold" />
+						<p:commandButton value="Gerar PDF - Informe de Rendimentos" ajax="false"
+							icon="ui-icon-print"
+							action="#{investidorMB.processInformeRendimentosPortalInvestidor}"
+							update="PDF:PanelPDF" />
 					</h:panelGrid>
+				
+					<p:panel id="PanelPDF"
+						header="Download do Informe de Rendimentos"
+						style="margin-bottom:10px;margin-top:20px;"
+						rendered="#{investidorMB.irRetidoInvestidoresPDFGerado}">
+						<p:focus />
+						<p:messages />
+						<h:panelGrid columns="2">
+							<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+								draggable="false" closable="false" resizable="false">
+								<p:graphicImage name="image/ajaxloadingbar.gif" />
+							</p:dialog>
+				
+							<h:form>
+								<p:commandButton value="Download do Informe de Rendimentos" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<p:fileDownload value="#{investidorMB.file}" />
+								</p:commandButton>
+							</h:form>
+				
+							<script type="text/javascript">
+							function start() {
+							    PF('statusDialog').show();
+							}
+							 
+							function stop() {
+							    PF('statusDialog').hide();
+							}
+							</script>
+				
+						</h:panelGrid>
+					</p:panel>
 				</p:panel>
-			</p:panel>
+			</p:panel>	
 		</h:form>
 		
 		<p:dialog id="detalhesInvestidorEnvelope"

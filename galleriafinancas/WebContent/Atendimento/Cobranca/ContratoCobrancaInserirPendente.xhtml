@@ -1068,8 +1068,8 @@
 						</p:calendar>			
 					</h:panelGrid>								
 					<h:panelGrid columns="2">	
-						<p:outputLabel for="vlrInvestimento" value="Valor da Última NP: "  />
-						<p:inputText id="vlrInvestimento" value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestimento}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);"  converter="bigDecimalConverter"/>
+						<p:outputLabel for="txHonorario" value="Honorários (%): "  />
+						<p:inputText id="txHonorario" value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);"  converter="bigDecimalConverter"/>
 						<p:spacer width="10"/>				
 					</h:panelGrid>		
 					<h:panelGrid columns="4">		

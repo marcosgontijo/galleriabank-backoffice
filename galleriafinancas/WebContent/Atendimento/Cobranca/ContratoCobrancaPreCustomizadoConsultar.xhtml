@@ -81,7 +81,7 @@
 			        </p:column>	
 			        <p:column style="width:180px;">
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	
-		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Simples" title="Editar Simples">
+		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Operação" title="Editar Simples">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />

@@ -20,12 +20,15 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
 	private BigDecimal vlrInvestimento;
+	private BigDecimal txHonorario;
 	private BigDecimal vlrRepasse;
 	private BigDecimal vlrLucro;
 	private BigDecimal vlrComissao;
 	private String acao;
 	private String observacao;
 	private String observacao2;
+	
+	private BigDecimal txJurosParcelas;
 	
 	private BigDecimal txMulta;
 		
@@ -2889,5 +2892,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setParcelasAlteradas10(boolean parcelasAlteradas10) {
 		this.parcelasAlteradas10 = parcelasAlteradas10;
+	}
+
+	public BigDecimal getTxHonorario() {
+		return txHonorario;
+	}
+
+	public void setTxHonorario(BigDecimal txHonorario) {
+		this.txHonorario = txHonorario;
+	}
+
+	public BigDecimal getTxJurosParcelas() {
+		return txJurosParcelas;
+	}
+
+	public void setTxJurosParcelas(BigDecimal txJurosParcelas) {
+		this.txJurosParcelas = txJurosParcelas;
 	}
 }

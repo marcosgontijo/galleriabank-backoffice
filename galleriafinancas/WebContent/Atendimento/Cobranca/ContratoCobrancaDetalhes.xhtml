@@ -84,8 +84,14 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor}" converter="bigDecimalConverter"/>
-					</h:panelGrid>	
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor1}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor1}" converter="bigDecimalConverter"/>
+					</h:panelGrid>		
 				</p:panel>	
 				<p:panel header="Favorecido 2" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.id > 0}">	
        				<h:panelGrid columns="2">	
@@ -105,7 +111,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor2}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor2}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor2}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor2}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>				
 				<p:panel header="Favorecido 3" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.id > 0}">	
@@ -126,7 +138,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor3}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor3}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor3}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor3}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>	
 				<p:panel header="Favorecido 4" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.id > 0}">	
@@ -147,7 +165,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor4}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor4}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor4}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor4}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>		
 				<p:panel header="Favorecido 5" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.id > 0}">	
@@ -168,7 +192,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor5}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor5}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor5}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor5}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>	
 				<p:panel header="Favorecido 6" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.id > 0}">	
@@ -189,7 +219,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor6}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor6}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor6}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor6}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>
 				<p:panel header="Favorecido 7" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.id > 0}">	
@@ -210,7 +246,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor7}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor7}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor7}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor7}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>
 				<p:panel header="Favorecido 8" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.id > 0}">	
@@ -231,8 +273,14 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor8}" converter="bigDecimalConverter"/>
-					</h:panelGrid>	
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor8}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor8}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor8}" converter="bigDecimalConverter"/>
+					</h:panelGrid>		
 				</p:panel>
 				<p:panel header="Favorecido 9" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.id > 0}">	
        				<h:panelGrid columns="2">	
@@ -252,7 +300,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor9}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor9}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor9}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor9}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>
 				<p:panel header="Favorecido 10" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.id > 0}">	
@@ -273,7 +327,13 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3">
 						<p:outputLabel value="Valor: " styleClass="labelBold" />
-						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor10}" converter="bigDecimalConverter"/>
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor10}" converter="bigDecimalConverter"/>						
+						<p:outputLabel value="Valor Final: " styleClass="labelBold" />
+						<h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor10}" converter="bigDecimalConverter"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Taxa Remuneração (%): " styleClass="labelBold" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor10}" converter="bigDecimalConverter"/>
 					</h:panelGrid>	
 				</p:panel>										
 				<p:panel id="Dados" header="Dados do Contrato" style="margin-bottom:10px;">	
@@ -286,12 +346,9 @@
 							<p:spacer width="10"/>	
 					</h:panelGrid>
 					<h:panelGrid columns="3">		
-							<p:outputLabel value="Valor da Última NP: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestimento}" converter="bigDecimalConverter"/>
+							<p:outputLabel value="Honorários (%): " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" converter="bigDecimalConverter"/>
 				            								
-							<p:outputLabel value="Taxa de Administração: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txAdministracao}" converter="bigDecimalConverter"/>							
-							
 							<p:outputLabel value="Taxa de Juros: " styleClass="labelBold" />
 				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}" converter="bigDecimalConverter"/><h:outputText value=" %"/>														
 						</h:panelGrid>
@@ -323,6 +380,12 @@
 				            
 				            <p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
 				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrComissao}" converter="bigDecimalConverter"/>
+				            
+				            <p:outputLabel value="Taxa de Juros (%): " styleClass="labelBold" />
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" converter="bigDecimalConverter"/>
+				            
+				            <p:outputLabel value="Valor da CCB: " styleClass="labelBold" />
+				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}" converter="bigDecimalConverter"/>
 				        </h:panelGrid>		
 				        
 						<p:panel id="ParcelaFinal" header="Parcela Final" style="margin-top:10px;margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}">
@@ -489,6 +552,18 @@
 				            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
 				        </p:column>		
+				         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
+				            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
+				         <p:column style="text-align: center;width: 110px;" headerText="Amortização (R$)">
+				            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
+				         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
+				            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
 					        <p:column style="text-align: center;width: 110px;" headerText="Investidor (R$)">
 					            <h:outputText value="#{parcelas.vlrRepasse}" converter="bigDecimalConverter">
 					            </h:outputText>
@@ -501,7 +576,7 @@
 					            <h:outputText value="#{parcelas.vlrComissao}" converter="bigDecimalConverter">
 					            </h:outputText>
 					        </p:column>						        					        
-				        <p:column style="text-align: center;width: 45px;" headerText="Pago?">	        
+				        	<p:column style="text-align: center;width: 45px;" headerText="Pago?">	        
 				        	<ui:fragment rendered="#{parcelas.parcelaPaga}">
 								<h:outputText value="Sim" />
 							</ui:fragment>

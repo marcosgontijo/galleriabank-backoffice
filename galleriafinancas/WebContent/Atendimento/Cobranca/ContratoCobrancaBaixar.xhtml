@@ -215,6 +215,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -339,6 +342,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -462,6 +468,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -585,6 +594,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -708,6 +720,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -831,6 +846,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -954,6 +972,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -1077,6 +1098,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -1200,6 +1224,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -1323,6 +1350,9 @@
 													<f:setPropertyActionListener
 														target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
 														value="#{parcelas.valorLiquido}" />
+													<f:setPropertyActionListener
+														target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
+														value="#{parcelas.dataVencimento}" />
 												</p:commandButton>
 												<p:spacer width="10" />
 												<p:commandButton onclick="PF('cancelaBaixaParcelaInvestidorDialog').show();"
@@ -1361,19 +1391,6 @@
 						<p:spacer width="10" />
 					</h:panelGrid>
 					<h:panelGrid columns="3">
-						<p:outputLabel value="Valor da Última NP: " styleClass="labelBold" />
-						<h:outputText value="R$" />
-						<h:outputText
-							value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestimento}"
-							converter="bigDecimalConverter" />
-
-						<p:outputLabel value="Taxa de Administração: "
-							styleClass="labelBold" />
-						<h:outputText value="R$" />
-						<h:outputText
-							value="#{contratoCobrancaMB.objetoContratoCobranca.txAdministracao}"
-							converter="bigDecimalConverter" />
-
 						<p:outputLabel value="Taxa de Juros: " styleClass="labelBold" />
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}"
@@ -1810,6 +1827,8 @@
 										target="#{contratoCobrancaMB.reciboGerado}" value="false" />
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.txZero}" value="true" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.vlrRecebido}" value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
 								</p:commandButton>
 								<p:spacer width="10" />
 							</shiro:hasAnyRoles>

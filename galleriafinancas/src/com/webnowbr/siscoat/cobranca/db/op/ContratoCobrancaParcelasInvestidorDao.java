@@ -52,7 +52,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor5" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
-			" and cp.datavencimento <= ? ::timestamp " +
+			" and cp.datavencimento < ? ::timestamp " +
 			" and c.ocultarecebedor5 = false " + 
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor, c.pagador pagador, c.recebedorenvelope6 recebedorenvelope, empresa, c.recebedorgarantido6 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
@@ -80,7 +80,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor9" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
-			" and cp.datavencimento <= ? ::timestamp " +
+			" and cp.datavencimento < ? ::timestamp " +
 			" and c.ocultarecebedor9 = false " + 
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor, c.pagador pagador, c.recebedorenvelope10 recebedorenvelope, empresa, c.recebedorgarantido10 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
@@ -91,7 +91,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" and c.ocultarecebedor10 = false " + 
 			" ) investidores" + 
 			" where recebedor not in (14,15,34) " + 
-			" order by recebedor";
+			" order by recebedor"; 
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaParcelasInvestidor> getParcelasPorDataInvestidor(final Date dataInicio, final Date dataFim) {

@@ -1160,6 +1160,30 @@ public class InvestidorMB {
 		return valorFinal;
 	}
 	
+	// verifica se contrato está baixado
+	public String statusContrato(List<ContratoCobrancaParcelasInvestidor> parcelasInvestidor) {
+		String retorno = "";
+		int contadorBaixas = 0;
+		
+		for (ContratoCobrancaParcelasInvestidor cd : parcelasInvestidor) {
+			if (cd.isBaixado()) {
+				contadorBaixas = contadorBaixas + 1;
+			}			
+		}	
+		
+		if (contadorBaixas == 0) {
+			retorno = "Sem Baixas";
+		} else { 
+			if (contadorBaixas == parcelasInvestidor.size()) {
+				retorno = "Baixado Completamente";
+			} else {
+				retorno = "Baixado Parcialmente";
+			}
+		}
+		
+		return retorno;
+	}
+	
 	// calcula quantidade de parcelas abertas
 	public void getCardsDashboards() {
 		this.qtdeContratos = this.contratos.size();
@@ -1182,17 +1206,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 1) {
 				if (!c.isRecebedorEnvelope()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor1()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor1() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor1();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor1());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor1()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor1() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor1();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1201,17 +1232,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 2) {
 				if (!c.isRecebedorEnvelope2()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor2()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor2() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor2();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor2());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor2()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor2() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor2();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1220,17 +1258,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 3) {
 				if (!c.isRecebedorEnvelope3()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor3()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor3() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor3();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor3());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor3()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor3() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor3();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1239,17 +1284,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 4) {
 				if (!c.isRecebedorEnvelope4()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor4()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor4() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor4();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor4());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor4()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor4() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor4();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1258,17 +1310,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 5) {
 				if (!c.isRecebedorEnvelope5()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor5()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor5() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor5();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor5());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor5()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor5() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor5();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1277,17 +1336,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 6) {
 				if (!c.isRecebedorEnvelope6()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor6()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor6() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor6();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor6());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor6()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor6() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor6();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1296,17 +1362,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 7) {
 				if (!c.isRecebedorEnvelope7()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor7()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor7() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor7();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor7());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor7()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor7() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor7();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1315,17 +1388,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 8) {
 				if (!c.isRecebedorEnvelope8()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor8()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor8() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor8();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor8());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor8()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor8() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor8();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1334,17 +1414,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 9) {
 				if (!c.isRecebedorEnvelope9()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor9()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor9() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor9();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor9());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor9()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor9() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor9();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			
@@ -1353,17 +1440,24 @@ public class InvestidorMB {
 			if (this.posicaoInvestidorNoContrato == 10) {
 				if (!c.isRecebedorEnvelope10()) {
 					valorInvestidoContrato = BigDecimal.ZERO;
-					for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor10()) {
-						if (cd.isBaixado()) {
-							valorInvestidoContrato = cd.getSaldoCredorAtualizado();
-						} else {
-							break;
-						}
-					}
 					
-					if (valorInvestidoContrato.compareTo(BigDecimal.ZERO) == 0) {
-						if (c.getVlrFinalRecebedor10() != null) {
-							valorInvestidoContrato = c.getVlrFinalRecebedor10();
+					String statusContrato = statusContrato(c.getListContratoCobrancaParcelasInvestidor10());
+					
+					if (statusContrato.equals("Baixado Parcialmente")) {
+						for (ContratoCobrancaParcelasInvestidor cd : c.getListContratoCobrancaParcelasInvestidor10()) {
+							if (cd.isBaixado()) {
+								valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+							} else {
+								break;
+							}
+						}
+					} else {
+						if (statusContrato.equals("Sem Baixas")) {
+							if (c.getVlrFinalRecebedor10() != null) {
+								valorInvestidoContrato = c.getVlrFinalRecebedor10();
+							}
+						} else {
+							valorInvestidoContrato = BigDecimal.ZERO;
 						}
 					}
 				}			

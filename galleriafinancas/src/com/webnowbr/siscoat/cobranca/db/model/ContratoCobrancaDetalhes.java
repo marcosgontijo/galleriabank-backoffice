@@ -33,6 +33,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrComissao;
 	private BigDecimal vlrRecebido;
 	
+	private BigDecimal vlrJurosParcela;
+	private BigDecimal vlrAmortizacaoParcela;
+	
 	private List<ContratoCobrancaFavorecidos> listContratoCobrancaFavorecidos;
 	
 	private List<ContratoCobrancaDetalhesParcial> listContratoCobrancaDetalhesParcial;
@@ -416,5 +419,21 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setTxMulta(BigDecimal txMulta) {
 		this.txMulta = txMulta;
+	}
+
+	public BigDecimal getVlrJurosParcela() {
+		return vlrJurosParcela;
+	}
+
+	public void setVlrJurosParcela(BigDecimal vlrJurosParcela) {
+		this.vlrJurosParcela = vlrJurosParcela;
+	}
+
+	public BigDecimal getVlrAmortizacaoParcela() {
+		return vlrAmortizacaoParcela;
+	}
+
+	public void setVlrAmortizacaoParcela(BigDecimal vlrAmortizacaoParcela) {
+		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
 	}
 }

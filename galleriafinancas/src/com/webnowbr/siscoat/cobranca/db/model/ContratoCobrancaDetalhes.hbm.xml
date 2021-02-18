@@ -52,6 +52,12 @@
 		<property name="vlrRecebido" type="big_decimal">
 			<column name="VLRRECEBIDO" />
 		</property>
+		<property name="vlrJurosParcela" type="big_decimal">
+			<column name="vlrJurosParcela" />
+		</property>
+		<property name="vlrAmortizacaoParcela" type="big_decimal">
+			<column name="vlrAmortizacaoParcela" />
+		</property>
 		<property name="idFaturaIugu" type="java.lang.String">
 			<column name="idFaturaIugu" />
 		</property>

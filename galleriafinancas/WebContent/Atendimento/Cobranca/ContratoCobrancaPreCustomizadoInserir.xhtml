@@ -258,7 +258,16 @@
 							<p:inputText id="NomeCPF" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 							</p:inputText>	
 							<p:inputText id="NomeCNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-							</p:inputText>															 												
+							</p:inputText>	
+							
+							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
+							<p:inputText id="TelCelular" value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelular}" styleClass="phone" label="Telefone Celular" />
+							
+							<p:outputLabel for="EMail" value="E-Mail: " />					
+							<p:inputText id="EMail" value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}" label="E-Mail" type="email"  onblur="" style="width:400px;"/>
+							
+							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "  />
+							<p:inputText id="quantoPrecisa" value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" converter="bigDecimalConverter"/>																	 												
 						</h:panelGrid>	
 					</p:panel>	
 				</p:panel>			
@@ -354,13 +363,6 @@
 						</p:selectOneMenu>  	
 					</h:panelGrid>							
 				</p:panel>	
-						
-				<p:panel id="Infos" header="Outras Informações" style="margin-bottom:10px;">
-					<h:panelGrid columns="2">
-						<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? " styleClass="labelBold" />
-						<p:inputText id="quantoPrecisa" value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" required="true" converter="bigDecimalConverter"/>
-					</h:panelGrid> 
-				</p:panel>
 				
 				<p:panel id="AcaoObservacao" header="Ação e Observação" style="margin-bottom:10px;">							
 					<h:panelGrid columns="3">					
@@ -425,7 +427,7 @@
 			</p:panel>
 					
 			<div align="center">
-				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}">
+				<p:commandButton value="Cadastrar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}">
 					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
 				</p:commandButton>	 						
 				<p:spacer height="10" />

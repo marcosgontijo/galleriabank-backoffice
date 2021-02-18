@@ -202,6 +202,9 @@
 		<property name="vlrInvestimento" type="big_decimal">
 			<column name="VLRINVESTIMENTO" />
 		</property>
+		<property name="txHonorario" type="big_decimal">
+			<column name="txHonorario" />
+		</property>		
 		<property name="vlrRepasse" type="big_decimal">
 			<column name="VLRREPASSE" />
 		</property>
@@ -878,6 +881,9 @@
 		</property>
 		<property name="empresa" type="java.lang.String">
 			<column name="EMPRESA" />
+		</property>
+		<property name="txJurosParcelas" type="big_decimal">
+			<column name="txJurosParcelas" />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -53,6 +53,9 @@
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 						</p:commandButton>
+						<p:commandButton value="Adicionar Novo Modelo" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
 			        </f:facet>                 
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
@@ -134,6 +137,9 @@
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+						<p:commandButton value="Adicionar Novo Modelo" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>
