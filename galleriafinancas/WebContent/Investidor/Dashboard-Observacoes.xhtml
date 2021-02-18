@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog header="Observações" widgetVar="observacoesDialog"
+		resizable="false" style="FONT-SIZE: 10pt;" width="800"  positionType="center center">
+		<h:form id="formObservacoes">
+			<p:panel id="ObservacoesPanel" header="Observações - Consultar"
+				style="margin-top:10px;">
+				<p:dataTable id="dtObservacoes" var="observacoes"
+					value="#{investidorMB.selectedContratoCobrancaDetalhes.listContratoCobrancaDetalhesObservacoes}"
+					paginator="true" rows="5" lazy="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="5,10" selection="" emptyMessage=""
+					sortBy="#{observacoes.data}" sortOrder="descending">
+					<p:column style="text-align: center;" headerText="Data Inicio"
+						sortBy="#{observacoes.data}">
+						<h:outputText value="#{observacoes.data}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Usuário"
+						filterBy="#{observacoes.usuario}" filterMatchMode="contains"
+						sortBy="#{observacoes.usuario}">
+						<h:outputText value="#{observacoes.usuario}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Observação"
+						filterBy="#{observacoes.observacao}" filterMatchMode="contains"
+						sortBy="#{observacoes.observacao}">
+						<h:outputText value="#{observacoes.observacao}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+				<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w"
+					oncomplete="PF('observacoesDialog').hide();" />
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

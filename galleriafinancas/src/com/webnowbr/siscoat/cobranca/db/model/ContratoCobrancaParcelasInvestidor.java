@@ -2,9 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
@@ -20,28 +18,28 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private BigDecimal juros;
 	private BigDecimal amortizacao;
 	private BigDecimal saldoCredor;
-	private BigDecimal saldoCredorAtualizado;	
+	private BigDecimal saldoCredorAtualizado;
 	private BigDecimal irRetido;
 	private BigDecimal valorLiquido;
-	
+
 	private boolean baixado;
 	private Date dataBaixa;
 	private BigDecimal valorBaixado;
-	
+
 	private PagadorRecebedor investidor;
 	private PagadorRecebedor pagador;
-	
+
 	private String numeroContrato;
-	
+
 	// atributos temporarios, sem persistir
 	private boolean parcelaVencendo;
 	private boolean parcelaVencida;
 	private boolean envelope;
 	private boolean investidorGarantido;
-	
+
 	private boolean parcelaContratoVencida;
-	
-	public ContratoCobrancaParcelasInvestidor(){
+
+	public ContratoCobrancaParcelasInvestidor() {
 
 	}
 

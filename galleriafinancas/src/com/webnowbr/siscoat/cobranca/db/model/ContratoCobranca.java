@@ -27,11 +27,11 @@ public class ContratoCobranca implements Serializable {
 	private String acao;
 	private String observacao;
 	private String observacao2;
-	
+
 	private BigDecimal txJurosParcelas;
 	
 	private BigDecimal txMulta;
-		
+
 	private PagadorRecebedor pagador;
 	private String empresa;
 	private PagadorRecebedor recebedor;
@@ -54,11 +54,11 @@ public class ContratoCobranca implements Serializable {
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor9;
 	private PagadorRecebedor recebedor10;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
-	
+
 	// não persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
-	
+
 	private BigDecimal taxaRemuneracaoInvestidor1;
 	private BigDecimal taxaRemuneracaoInvestidor2;
 	private BigDecimal taxaRemuneracaoInvestidor3;
@@ -69,9 +69,9 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaRemuneracaoInvestidor8;
 	private BigDecimal taxaRemuneracaoInvestidor9;
 	private BigDecimal taxaRemuneracaoInvestidor10;
-	
+
 	private BigDecimal valorCCB;
-	
+
 	private BigDecimal vlrRecebedor;
 	private BigDecimal vlrRecebedor2;
 	private BigDecimal vlrRecebedor3;
@@ -82,22 +82,22 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal vlrRecebedor8;
 	private BigDecimal vlrRecebedor9;
 	private BigDecimal vlrRecebedor10;
-	
+
 	private BigDecimal vlrFinalRecebedor1;
 	private PagadorRecebedor recebedorParcelaFinal1;
-	
+
 	private BigDecimal vlrFinalRecebedor2;
 	private PagadorRecebedor recebedorParcelaFinal2;
-	
+
 	private BigDecimal vlrFinalRecebedor3;
 	private PagadorRecebedor recebedorParcelaFinal3;
-	
+
 	private BigDecimal vlrFinalRecebedor4;
 	private PagadorRecebedor recebedorParcelaFinal4;
-	
+
 	private BigDecimal vlrFinalRecebedor5;
 	private PagadorRecebedor recebedorParcelaFinal5;
-	
+
 	private BigDecimal vlrFinalRecebedor6;
 	private PagadorRecebedor recebedorParcelaFinal6;
 
@@ -106,13 +106,24 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal vlrFinalRecebedor8;
 	private PagadorRecebedor recebedorParcelaFinal8;
-	
+
 	private BigDecimal vlrFinalRecebedor9;
 	private PagadorRecebedor recebedorParcelaFinal9;
-	
+
 	private BigDecimal vlrFinalRecebedor10;
 	private PagadorRecebedor recebedorParcelaFinal10;
-	
+
+	private Date dataInclusaoRecebedor1;
+	private Date dataInclusaoRecebedor2;
+	private Date dataInclusaoRecebedor3;
+	private Date dataInclusaoRecebedor4;
+	private Date dataInclusaoRecebedor5;
+	private Date dataInclusaoRecebedor6;
+	private Date dataInclusaoRecebedor7;
+	private Date dataInclusaoRecebedor8;
+	private Date dataInclusaoRecebedor9;
+	private Date dataInclusaoRecebedor10;
+
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
 	private boolean exibeRecebedor3;
@@ -123,7 +134,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean exibeRecebedor8;
 	private boolean exibeRecebedor9;
 	private boolean exibeRecebedor10;
-		
+
 	private boolean ocultaRecebedor;
 	private boolean ocultaRecebedor2;
 	private boolean ocultaRecebedor3;
@@ -134,7 +145,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean ocultaRecebedor8;
 	private boolean ocultaRecebedor9;
 	private boolean ocultaRecebedor10;
-	
+
 	private boolean recebedorEnvelope;
 	private boolean recebedorEnvelope2;
 	private boolean recebedorEnvelope3;
@@ -145,7 +156,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean recebedorEnvelope8;
 	private boolean recebedorEnvelope9;
 	private boolean recebedorEnvelope10;
-	
+
 	private boolean recebedorGarantido1;
 	private boolean recebedorGarantido2;
 	private boolean recebedorGarantido3;
@@ -156,7 +167,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean recebedorGarantido8;
 	private boolean recebedorGarantido9;
 	private boolean recebedorGarantido10;
-	
+
 	private boolean parcelasAlteradas1;
 	private boolean parcelasAlteradas2;
 	private boolean parcelasAlteradas3;
@@ -167,31 +178,31 @@ public class ContratoCobranca implements Serializable {
 	private boolean parcelasAlteradas8;
 	private boolean parcelasAlteradas9;
 	private boolean parcelasAlteradas10;
-	
+
 	private Responsavel responsavel;
-	
+
 	private ImovelCobranca imovel;
-	
+
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
 	private List<ContratoCobrancaObservacoes> listContratoCobrancaObservacoes;
-	
+
 	private Date dataPagamentoIni;
 	private Date dataPagamentoFim;
-	
+
 	private BigDecimal vlrParcela;
-	
+
 	private BigDecimal vlrParcelaAtualizada;
-	
+
 	private boolean geraParcelaFinal;
-	
+
 	private String numeroContrato;
-	
+
 	private boolean contratoRestritoAdm;
-	
+
 	private String status;
-	
+
 	private String vlrParcelaStr;
-	
+
 	private BigDecimal vlrParcelaFinal;
 	private BigDecimal quantoPrecisa;
 	private String estadoCivil;
@@ -199,42 +210,42 @@ public class ContratoCobranca implements Serializable {
 	private String finalidade;
 	private String iprf;
 	private String profissao;
-	
+
 	/*** usados no sistema ***/
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
-	
+
 	private Date cadastroAprovadoData;
 	private boolean cadastroAprovado;
 	private String cadastroAprovadoValor;
 	private String cadastroAprovadoUsuario;
-	
+
 	private boolean matriculaAprovada;
 	private Date matriculaAprovadaData;
 	private String matriculaAprovadaValor;
 	private String matriculaAprovadaUsuario;
-	
+
 	private Date laudoRecebidoData;
 	private boolean laudoRecebido;
 	private String laudoRecebidoUsuario;
-	
+
 	private Date pajurFavoravelData;
 	private boolean pajurFavoravel;
 	private String pajurFavoravelUsuario;
-	
+
 	private Date pagtoLaudoConfirmadaData;
 	private boolean pagtoLaudoConfirmada;
 	private String pagtoLaudoConfirmadaUsuario;
-	
+
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
 	private String documentosCompletosUsuario;
-	
+
 	private Date ccbProntaData;
 	private boolean ccbPronta;
 	private String ccbProntaUsuario;
-	
+
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
@@ -242,34 +253,33 @@ public class ContratoCobranca implements Serializable {
 	private Date statusContratoData;
 	private String statusContrato;
 	private String statusContratoUsuario;
-	
+
 	/*** fim usados no sistema ***/
-	
-	
+
 	private boolean aguardandoDocumento;
 	private Date aguardandoDocumentoData;
 	private String aguardandoDocumentoUsuario;
-	
+
 	private boolean matriculaReprovada;
 	private Date matriculaReprovadaData;
 	private String matriculaReprovadaUsuario;
-	
+
 	private boolean fotoImovelAprovada;
 	private Date fotoImovelAprovadaData;
 	private String fotoImovelAprovadaUsuario;
-	
+
 	private boolean fotoImovelReprovada;
 	private Date fotoImovelReprovadaData;
 	private String fotoImovelReprovadaUsuario;
-	
+
 	private Date aprovadoData;
 	private boolean aprovado;
 	private String aprovadoUsuario;
-	
+
 	private Date reprovadoData;
 	private boolean reprovado;
 	private String reprovadoUsuario;
-	
+
 	private Date semFotoImovelData;
 	private boolean semFotoImovel;
 	private String semFotoImovelUsuario;
@@ -277,43 +287,43 @@ public class ContratoCobranca implements Serializable {
 	private Date documentosIncompletosData;
 	private boolean documentosIncompletos;
 	private String documentosIncompletosUsuario;
-	
+
 	private Date cadastroReprovadoData;
 	private boolean cadastroReprovado;
 	private String cadastroReprovadoUsuario;
-	
+
 	private Date aguardandoCertidoesData;
 	private boolean aguardandoCertidoes;
 	private String aguardandoCertidoesUsuario;
-	
+
 	private Date aguardandoCNDData;
 	private boolean aguardandoCND;
 	private String aguardandoCNDUsuario;
-	
+
 	private Date agendarVisitaEmpresaData;
 	private boolean agendarVisitaEmpresa;
 	private String agendarVisitaEmpresaUsuario;
-	
+
 	private Date visitaEmpresaAprovadaData;
 	private boolean visitaEmpresaAprovada;
 	private String visitaEmpresaAprovadaUsuario;
-	
+
 	private Date visitaEmpresaReprovadaData;
 	private boolean visitaEmpresaReprovada;
 	private String visitaEmpresaReprovadaUsuario;
-	
+
 	private Date agendarVisitaImovelData;
 	private boolean agendarVisitaImovel;
 	private String agendarVisitaImovelUsuario;
-	
+
 	private Date visitaImovelAprovadaData;
 	private boolean visitaImovelAprovada;
 	private String visitaImovelAprovadaUsuario;
-	
+
 	private Date visitaImovelReprovadaData;
 	private boolean visitaImovelReprovada;
 	private String visitaImovelReprovadaUsuario;
-	
+
 	private Date enviadoCobrancaLaudoData;
 	private boolean enviadoCobrancaLaudo;
 	private String enviadoCobrancaLaudoUsuario;
@@ -321,33 +331,32 @@ public class ContratoCobranca implements Serializable {
 	private Date laudoSolicitadoData;
 	private boolean laudoSolicitado;
 	private String laudoSolicitadoUsuario;
-	
+
 	private Date pajurSolicitadoData;
 	private boolean pajurSolicitado;
 	private String pajurSolicitadoUsuario;
-	
+
 	private Date pajurDesfavoravelData;
 	private boolean pajurDesfavoravel;
 	private String pajurDesfavoravelUsuario;
-	
+
 	private Date reanalisarPajurData;
 	private boolean reanalisarPajur;
 	private String reanalisarPajurUsuario;
-	
+
 	private Date aguardandoInvestidorData;
 	private boolean aguardandoInvestidor;
 	private String aguardandoInvestidorUsuario;
-	
+
 	private Date agendadoCartorioData;
 	private boolean agendadoCartorio;
 	private String agendadoCartorioUsuario;
-	
+
 	private Date contratoAssinadoData;
 	private boolean contratoAssinado;
 	private String contratoAssinadoUsuario;
-	
-	
-	public ContratoCobranca(){
+
+	public ContratoCobranca() {
 		super();
 		this.pagador = new PagadorRecebedor();
 		this.recebedor = new PagadorRecebedor();
@@ -363,7 +372,7 @@ public class ContratoCobranca implements Serializable {
 		this.responsavel = new Responsavel();
 		this.imovel = new ImovelCobranca();
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
-		
+
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
 		this.exibeRecebedor3 = true;
@@ -1196,7 +1205,8 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	/**
-	 * @param listContratoCobrancaObservacoes the listContratoCobrancaObservacoes to set
+	 * @param listContratoCobrancaObservacoes the listContratoCobrancaObservacoes to
+	 *                                        set
 	 */
 	public void setListContratoCobrancaObservacoes(List<ContratoCobrancaObservacoes> listContratoCobrancaObservacoes) {
 		this.listContratoCobrancaObservacoes = listContratoCobrancaObservacoes;
@@ -2514,6 +2524,86 @@ public class ContratoCobranca implements Serializable {
 
 	public void setVlrFinalRecebedor10(BigDecimal vlrFinalRecebedor10) {
 		this.vlrFinalRecebedor10 = vlrFinalRecebedor10;
+	}
+
+	public Date getDataInclusaoRecebedor1() {
+		return dataInclusaoRecebedor1;
+	}
+
+	public void setDataInclusaoRecebedor1(Date dataInclusaoRecebedor1) {
+		this.dataInclusaoRecebedor1 = dataInclusaoRecebedor1;
+	}
+
+	public Date getDataInclusaoRecebedor2() {
+		return dataInclusaoRecebedor2;
+	}
+
+	public void setDataInclusaoRecebedor2(Date dataInclusaoRecebedor2) {
+		this.dataInclusaoRecebedor2 = dataInclusaoRecebedor2;
+	}
+
+	public Date getDataInclusaoRecebedor3() {
+		return dataInclusaoRecebedor3;
+	}
+
+	public void setDataInclusaoRecebedor3(Date dataInclusaoRecebedor3) {
+		this.dataInclusaoRecebedor3 = dataInclusaoRecebedor3;
+	}
+
+	public Date getDataInclusaoRecebedor4() {
+		return dataInclusaoRecebedor4;
+	}
+
+	public void setDataInclusaoRecebedor4(Date dataInclusaoRecebedor4) {
+		this.dataInclusaoRecebedor4 = dataInclusaoRecebedor4;
+	}
+
+	public Date getDataInclusaoRecebedor5() {
+		return dataInclusaoRecebedor5;
+	}
+
+	public void setDataInclusaoRecebedor5(Date dataInclusaoRecebedor5) {
+		this.dataInclusaoRecebedor5 = dataInclusaoRecebedor5;
+	}
+
+	public Date getDataInclusaoRecebedor6() {
+		return dataInclusaoRecebedor6;
+	}
+
+	public void setDataInclusaoRecebedor6(Date dataInclusaoRecebedor6) {
+		this.dataInclusaoRecebedor6 = dataInclusaoRecebedor6;
+	}
+
+	public Date getDataInclusaoRecebedor7() {
+		return dataInclusaoRecebedor7;
+	}
+
+	public void setDataInclusaoRecebedor7(Date dataInclusaoRecebedor7) {
+		this.dataInclusaoRecebedor7 = dataInclusaoRecebedor7;
+	}
+
+	public Date getDataInclusaoRecebedor8() {
+		return dataInclusaoRecebedor8;
+	}
+
+	public void setDataInclusaoRecebedor8(Date dataInclusaoRecebedor8) {
+		this.dataInclusaoRecebedor8 = dataInclusaoRecebedor8;
+	}
+
+	public Date getDataInclusaoRecebedor9() {
+		return dataInclusaoRecebedor9;
+	}
+
+	public void setDataInclusaoRecebedor9(Date dataInclusaoRecebedor9) {
+		this.dataInclusaoRecebedor9 = dataInclusaoRecebedor9;
+	}
+
+	public Date getDataInclusaoRecebedor10() {
+		return dataInclusaoRecebedor10;
+	}
+
+	public void setDataInclusaoRecebedor10(Date dataInclusaoRecebedor10) {
+		this.dataInclusaoRecebedor10 = dataInclusaoRecebedor10;
 	}
 
 	public PagadorRecebedor getRecebedorParcelaFinal10() {

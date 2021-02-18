@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="detalhesInvestidorEnvelope" header=""
+		widgetVar="detalheContratoEnvelope" modal="true" showEffect="fade"
+		hideEffect="fade" resizable="false" responsive="true" width="800"
+		positionType="center center">
+		<h:form id="formDetalhesEnvelope">
+			<h:outputText
+				value="#{parcelas.numeroParcela} #{parcelas.dataVencimento}"
+				style="display:inline-block" />
+			<p:outputPanel id="contratoDetailEnvelope"
+				style="text-align:center; ">
+				<p:dataTable id="dtParcelasEnvelope" var="parcelas" reflow="true"
+					value="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope}"
+					emptyMessage="" sortBy="#{contratos.numeroParcela}"
+					sortOrder="ascending"
+					rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+					selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+					rowKey="#{parcelas.id}">
+
+					<f:facet name="header">
+						<h:outputText
+							value="Contrato - #{investidorMB.selectedContrato.numeroContrato}"
+							style="font-size: 20px;" />
+					</f:facet>
+
+					<p:column style="text-align: center;" headerText="Parcela">
+						<h:outputText value="#{parcelas.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Data Vencimento Original"
+						sortBy="#{parcelas.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Valor da Parcela (R$)">
+						<h:outputText value="#{parcelas.parcelaMensal}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Juros (R$)">
+						<h:outputText value="#{parcelas.juros}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Amortização (R$)">
+						<h:outputText value="#{parcelas.amortizacao}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Saldo Credor (R$)">
+						<h:outputText value="#{parcelas.saldoCredorAtualizado}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="IR Retido (R$)">
+						<h:outputText value="#{parcelas.irRetido}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Valor Líquido (R$)">
+						<h:outputText value="#{parcelas.valorLiquido}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Pago (R$)">
+						<h:outputText value="#{parcelas.valorBaixado}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Data Pagamento"
+						width="100">
+						<h:outputText value="#{parcelas.dataBaixa}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+		</h:form>
+	</p:dialog>
+</ui:composition>

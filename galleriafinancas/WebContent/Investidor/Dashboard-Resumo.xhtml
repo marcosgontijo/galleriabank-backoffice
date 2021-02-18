@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="resumoDetail" header="" widgetVar="resumo" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false"
+		responsive="true" width="900" positionType="center center">
+		<h:form id="formResumo">
+			<p:panel id="resumoDetail" style="text-align:center; ">
+				<p:dataTable id="dtResumoDetail" var="resumo" styleClass="dashboard-table"
+					value="#{investidorMB.investidorResumos}">
+
+					<p:columnGroup type="header">
+						<p:column headerText="Situação" styleClass="titulo" />
+						<p:column headerText="Contratos" styleClass="titulo" />
+						<p:column headerText="Valor Investido" styleClass="titulo" />
+						<p:column headerText="Valor Recebido" styleClass="titulo" />
+					</p:columnGroup>
+
+					<p:column
+						styleClass="dashboard-texto-left #{investidorMB.getCssStatus(resumo.situacaoContrato)}">
+						<h:outputText value="#{resumo.situacaoContrato}" />
+					</p:column>
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.qtdeContratos}" />
+					</p:column>
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.valorInvestido}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column styleClass="dashboard-texto">
+						<h:outputText value="#{resumo.valorRecebido}"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+</ui:composition>
