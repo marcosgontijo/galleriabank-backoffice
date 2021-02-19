@@ -223,6 +223,15 @@
 		<property name="geraParcelaFinal" type="boolean">
 			<column name="GERAPARCELAFINAL" />
 		</property>
+		<property name="leadCompleto" type="boolean">
+			<column name="leadCompleto" />
+		</property>
+		<property name="leadCompletoData" type="java.util.Date">
+			<column name="leadCompletoData" />
+		</property>
+		<property name="leadCompletoUsuario" type="java.lang.String">
+			<column name="leadCompletoUsuario" />
+		</property>
 		<property name="vlrComissao" type="big_decimal">
 			<column name="VLRCOMISSAO" />
 		</property>

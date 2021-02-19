@@ -50,6 +50,23 @@
 						<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 								-moz-border-radius: 5px;
 								border-radius: 5px; padding: 10px;">	
+								<p:outputLabel styleClass="labelBold">Lead Completo</p:outputLabel>
+								<p:spacer ></p:spacer>
+								<p:selectBooleanButton id="leadView" value="#{contratoCobrancaMB.objetoContratoCobranca.leadCompleto}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" />		
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="leadUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.leadCompletoUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+								<h:outputText id="leadData" value="#{contratoCobrancaMB.objetoContratoCobranca.leadCompletoData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+							          <f:convertDateTime locale="pt_BR"  />
+							          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+							    </h:outputText>																    						    
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								-moz-border-radius: 5px;
+								border-radius: 5px; padding: 10px;">	
 								<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
 								<p:spacer ></p:spacer>
 								<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>		

@@ -4733,6 +4733,19 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		}
 	}
+	
+	public String geraConsultaLeads(String statuslead) {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+
+		if (statuslead != null && !statuslead.equals("")) {
+			this.contratosPendentes = contratoCobrancaDao.consultaLeads(statuslead);
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsCompletos.xhtml";
+		} else {
+			this.contratosPendentes = contratoCobrancaDao.consultaLeads(statuslead);
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
+		}
+	}
 
 	public String geraConsultaContratosCustomizados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();

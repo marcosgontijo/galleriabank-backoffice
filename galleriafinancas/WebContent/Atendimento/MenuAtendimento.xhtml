@@ -38,10 +38,18 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosCustomizados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<p:menuitem value="Leads"
+										action="#{contratoCobrancaMB.geraConsultaLeads('')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">
 									<p:menuitem value="Pré-Contratos"
 										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads Completos"
+										action="#{contratoCobrancaMB.geraConsultaLeads('lead_completo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>

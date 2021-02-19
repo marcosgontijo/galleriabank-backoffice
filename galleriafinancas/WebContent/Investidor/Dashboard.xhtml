@@ -118,7 +118,7 @@
 							styleClass="dashboard-icone-menu" ajax="true"
 							update="formDashboard dtResumo"
 							action="#{investidorMB.filtrarSituacaoAtivos()}">
-							<img src="#{resource['image/ContratosAtivos.svg']}"
+							<img src="#{resource['image/ContratosAtivos.png']}"
 								style="height: 62px" alt="" />
 						</p:commandLink>
 						<h:outputText value="Contratos Ativos" />
@@ -130,7 +130,7 @@
 							update="formDashboard dtResumo"
 							action="#{investidorMB.filtrarSituacaoQuitados()}">
 							<img src="
-							#{resource['image/ContratosQuitados.svg']}"
+							#{resource['image/ContratosQuitados.png']}"
 								style="height: 62px" alt="" />
 						</p:commandLink>
 						<h:outputText value="Contratos Quitados" />
@@ -141,7 +141,7 @@
 							styleClass="dashboard-icone-menu"
 							oncomplete="PF('extrato').show()">
 							<img src="
-							#{resource['image/ExtratoDetalhado.svg']}"
+							#{resource['image/ExtratoDetalhado.png']}"
 								style="height: 62px" alt="" />
 						</p:commandLink>
 						<h:outputText value="Extrato Completo" />
@@ -153,7 +153,7 @@
 							styleClass="dashboard-icone-menu" ajax="false"
 							onclick="#{investidorMB.downloadInformeRendimentosPortalInvestidor()}">
 							<img src="
-							#{resource['image/Documentos.svg']}"
+							#{resource['image/Documentos.png']}"
 								style="height: 62px" alt="" />
 						</p:commandLink>
 						<h:outputText value="Documentos" />
@@ -165,7 +165,7 @@
 							onclick="PrimeFaces.monitorDownload(start, stop);"
 							icon="ui-icon-arrowthick-1-s">
 							<img src="
-							#{resource['image/informeRendimentos.svg']}"
+							#{resource['image/informeRendimentos.png']}"
 								style="height: 62px" alt="" />
 							<p:fileDownload
 								value="#{investidorMB.processInformeRendimentosPortalInvestidor()}" />
@@ -349,47 +349,11 @@
 						    PF('statusDialog').hide();
 						}
 						</script>
+
 					</h:panelGrid>
-				
-					<p:panel id="PanelPDF"
-						header="Download do Informe de Rendimentos"
-						style="margin-bottom:10px;margin-top:20px;"
-						rendered="#{investidorMB.irRetidoInvestidoresPDFGerado}">
-						<p:focus />
-						<p:messages />
-						<h:panelGrid columns="2">
-							<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-								draggable="false" closable="false" resizable="false">
-								<p:graphicImage name="image/ajaxloadingbar.gif" />
-							</p:dialog>
-				
-							<h:form>
-								<p:commandButton value="Download do Informe de Rendimentos" ajax="false"
-									onclick="PrimeFaces.monitorDownload(start, stop);"
-									icon="ui-icon-arrowthick-1-s">
-									<p:fileDownload value="#{investidorMB.file}" />
-								</p:commandButton>
-							</h:form>
-				
-							<script type="text/javascript">
-							function start() {
-							    PF('statusDialog').show();
-							}
-							 
-							function stop() {
-							    PF('statusDialog').hide();
-							}
-							</script>
-				
-						</h:panelGrid>
-					</p:panel>
 				</p:panel>
-<<<<<<< HEAD
-			</p:panel>	
-=======
 			</p:panel>
 
->>>>>>> 028c02de313a830de75e16e4aca2744777651abf
 		</h:form>
 
 

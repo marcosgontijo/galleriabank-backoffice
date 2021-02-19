@@ -123,7 +123,7 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor8;
 	private Date dataInclusaoRecebedor9;
 	private Date dataInclusaoRecebedor10;
-
+	
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
 	private boolean exibeRecebedor3;
@@ -212,6 +212,11 @@ public class ContratoCobranca implements Serializable {
 	private String profissao;
 
 	/*** usados no sistema ***/
+	
+	private boolean leadCompleto;
+	private Date leadCompletoData;
+	private String leadCompletoUsuario;
+	
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
@@ -2998,5 +3003,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTxJurosParcelas(BigDecimal txJurosParcelas) {
 		this.txJurosParcelas = txJurosParcelas;
+	}
+
+	public boolean isLeadCompleto() {
+		return leadCompleto;
+	}
+
+	public void setLeadCompleto(boolean leadCompleto) {
+		this.leadCompleto = leadCompleto;
+	}
+
+	public Date getLeadCompletoData() {
+		return leadCompletoData;
+	}
+
+	public void setLeadCompletoData(Date leadCompletoData) {
+		this.leadCompletoData = leadCompletoData;
+	}
+
+	public String getLeadCompletoUsuario() {
+		return leadCompletoUsuario;
+	}
+
+	public void setLeadCompletoUsuario(String leadCompletoUsuario) {
+		this.leadCompletoUsuario = leadCompletoUsuario;
 	}
 }

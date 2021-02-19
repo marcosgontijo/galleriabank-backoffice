@@ -3161,6 +3161,51 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaLeads(final String completo) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_PENDENTES;
+					
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
+					
+					query = query + " and c.responsavel = 46 ";
+					
+					if (completo.equals("lead_completo")) {
+						query = query + " and c.leadcompleto = true ";
+					}
+					
+					query = query + " order by id desc";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentes(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
