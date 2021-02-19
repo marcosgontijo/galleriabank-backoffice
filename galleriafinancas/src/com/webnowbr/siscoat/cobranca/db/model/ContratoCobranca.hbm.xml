@@ -391,7 +391,37 @@
 		</many-to-one>
 		<property name="vlrFinalRecebedor10" type="big_decimal">
 			<column name="vlrFinalRecebedor10" />
-		</property>		
+		</property>
+		<property name="dataInclusaoRecebedor1" type="java.util.Date">
+			<column name="dataInclusaoRecebedor1" />
+		</property>
+		<property name="dataInclusaoRecebedor2" type="java.util.Date">
+			<column name="dataInclusaoRecebedor2" />
+		</property>
+		<property name="dataInclusaoRecebedor3" type="java.util.Date">
+			<column name="dataInclusaoRecebedor3" />
+		</property>
+		<property name="dataInclusaoRecebedor4" type="java.util.Date">
+			<column name="dataInclusaoRecebedor4" />
+		</property>
+		<property name="dataInclusaoRecebedor5" type="java.util.Date">
+			<column name="dataInclusaoRecebedor5" />
+		</property>
+		<property name="dataInclusaoRecebedor6" type="java.util.Date">
+			<column name="dataInclusaoRecebedor6" />
+		</property>
+		<property name="dataInclusaoRecebedor7" type="java.util.Date">
+			<column name="dataInclusaoRecebedor7" />
+		</property>
+		<property name="dataInclusaoRecebedor8" type="java.util.Date">
+			<column name="dataInclusaoRecebedor8" />
+		</property>
+		<property name="dataInclusaoRecebedor9" type="java.util.Date">
+			<column name="dataInclusaoRecebedor9" />
+		</property>
+		<property name="dataInclusaoRecebedor10" type="java.util.Date">
+			<column name="dataInclusaoRecebedor10" />
+		</property>	
 		<property name="reprovadoData" type="java.util.Date">
 			<column name="reprovadoData" />
 		</property>
