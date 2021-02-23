@@ -1,59 +1,314 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ui:composition 
-	  xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:shiro="http://shiro.apache.org/tags"
-	  xmlns:p="http://primefaces.org/ui"
-	  template="../MenuAtendimento.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
 
-	<ui:define name="conteudo">  
-		<h:form style="margin-bottom:10px;">			
-			<p:messages id="mensagens" showDetail="true"/>	
-			<p:panel id="PanelPDF" header="Impressão em PDF"
-				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
-				<p:focus />
-				<p:messages />
-				<h:panelGrid columns="2">
-					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-						draggable="false" closable="false" resizable="false">
-						<p:graphicImage name="image/ajaxloadingbar.gif" />
-					</p:dialog>
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaContratos" header="Contratos - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
 
-					<h:form>
-						<p:commandButton value="Ficha Principal" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
-							icon="ui-icon-arrowthick-1-s">
-							<p:fileDownload value="#{impressoesPDFMB.file}" />
-						</p:commandButton>
-						<p:commandButton value="Ficha Conjuge" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
-							icon="ui-icon-arrowthick-1-s">
-							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
-						</p:commandButton>
-					</h:form>
+					<p:outputLabel for="TipoFiltros" value="Tipo de Filtros: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoFiltros"
+						value="#{contratoCobrancaMB.tipoFiltros}" required="true">
+						<f:selectItem itemLabel="Data do Contrato" itemValue="true" />
+						<f:selectItem itemLabel="Número do Contrato" itemValue="false" />
+						<p:ajax update="ConsultaContratos" event="valueChange"
+							listener="#{contratoCobrancaMB.habilitaFiltros}" />
+					</p:selectOneRadio>
 
-					<script type="text/javascript">
-						function start() {
-							PF('statusDialog').show();
-						}
+					<p:outputLabel for="contrato" value="Contrato: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="contrato"
+						value="#{contratoCobrancaMB.numContrato}" label="Contrato"
+						style="width:150px;" disabled="#{contratoCobrancaMB.tipoFiltros}" />
 
-						function stop() {
-							PF('statusDialog').hide();
-						}
-					</script>
-
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{contratoCobrancaMB.relDataContratoInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"
+						disabled="#{!contratoCobrancaMB.tipoFiltros}" />
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{contratoCobrancaMB.relDataContratoFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"
+						disabled="#{!contratoCobrancaMB.tipoFiltros}" />
 				</h:panelGrid>
-			</p:panel>										
-			<p:panel id="ConsultaContratos" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
+
+				<p:panel id="Pessoas" header="Envolvidos"
+					style="margin-bottom:10px;margin-top: 20px;" rendered="#{contratoCobrancaMB.tipoFiltros}">
+					
+					<h:panelGrid columns="2">
+						<p:outputLabel for="empresa" value="Empresa: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="empresa"
+							value="#{contratoCobrancaMB.empresa}"
+							label="Status" style="width:360px;" disabled="#{!contratoCobrancaMB.tipoFiltros}">
+							<f:selectItem itemValue="TODAS" itemLabel="TODAS" />
+							<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+							<f:selectItem itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI" itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+						</p:selectOneMenu>		
+					</h:panelGrid>
+					
+					<h:panelGrid columns="3">
+						<p:outputLabel for="Responsavel" value="Responsável: "
+							styleClass="labelBold" />
+						<p:inputText id="Responsavel"
+							value="#{contratoCobrancaMB.nomeResponsavel}" label="Responsável"
+							required="true" readonly="TRUE"
+							style="FONT-SIZE: 10pt;width:300px;" />
+						<p:commandButton id="botaoResponsavel" type="button"
+							onclick="PF('responsavelDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" 
+							disabled="#{!contratoCobrancaMB.tipoFiltros}" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2">
+						<p:outputLabel for="GruposPagadores"
+							value="Seleção do(s) Pagador(es): " styleClass="labelBold"
+							style="margin-right: 59px;" />
+						<p:selectOneRadio id="GruposPagadores"
+							value="#{contratoCobrancaMB.grupoPagadores}" required="true">
+							<f:selectItem itemLabel="Grupo" itemValue="true" />
+							<f:selectItem itemLabel="Individual" itemValue="false" />
+							<p:ajax update="Pessoas GruposPagador Pagador " event="valueChange"
+								listener="#{contratoCobrancaMB.selecaoGrupoPagadores}" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:outputLabel for="GruposPagador" value="Grupo de Pagador(es): "
+							styleClass="labelBold"
+							rendered="#{contratoCobrancaMB.grupoPagadores}" />
+						<p:inputText id="GruposPagador"
+							value="#{contratoCobrancaMB.nomeGrupoPagador}"
+							label="Grupo de Favorecido(s)" readonly="TRUE" required="true"
+							style="FONT-SIZE: 10pt;width:300px;"
+							rendered="#{contratoCobrancaMB.grupoPagadores}" />
+						<p:commandButton id="botaoGruposPagador" type="button"
+							onclick="PF('grupoPagadoresDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" 
+							rendered="#{contratoCobrancaMB.grupoPagadores}" />
+
+						<p:outputLabel for="Pagador" value="Pagador: "
+							styleClass="labelBold"
+							rendered="#{!contratoCobrancaMB.grupoPagadores}" />
+						<p:inputText id="Pagador"
+							value="#{contratoCobrancaMB.nomePagador}" label="Pagador"
+							readonly="TRUE" required="true"
+							style="FONT-SIZE: 10pt;width:300px;"
+							rendered="#{!contratoCobrancaMB.grupoPagadores}" />
+						<p:commandButton id="botaoPagador" type="button"
+							onclick="PF('pagadorDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" 
+							rendered="#{!contratoCobrancaMB.grupoPagadores}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:outputLabel for="GruposFavorecidos"
+							value="Seleção do(s) Favorecido(s): " styleClass="labelBold"
+							style="margin-right: 59px;" />
+						<p:selectOneRadio id="GruposFavorecidos"
+							value="#{contratoCobrancaMB.grupoFavorecidos}" required="true"
+							disabled="#{!contratoCobrancaMB.tipoFiltros}">
+							<f:selectItem itemLabel="Grupo" itemValue="true" />
+							<f:selectItem itemLabel="Individual" itemValue="false" />
+							<p:ajax
+								update="Pessoas Recebedor2 Recebedor3 Recebedor4 Recebedor5 Recebedor GruposFavorecido botaoGruposFavorecido botaoRecebedor botaoRecebedor2 botaoRecebedor3 botaoRecebedor4 botaoRecebedor5"
+								event="valueChange"
+								listener="#{contratoCobrancaMB.selecaoGrupoFavorecidos}" />
+						</p:selectOneRadio>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<h:panelGrid columns="3">
+							<p:outputLabel for="GruposFavorecido"
+								value="Grupo de Favorecido(s): " styleClass="labelBold"
+								rendered="#{contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="GruposFavorecido"
+								value="#{contratoCobrancaMB.nomeGrupoFavorecido}"
+								label="Grupo de Favorecido(s)" readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;"
+								rendered="#{contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoGruposFavorecido" type="button"
+								onclick="PF('gruposFavorecidoDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin" 
+								disabled="#{!contratoCobrancaMB.tipoFiltros || !contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor" value="Favorecido 1: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor"
+								value="#{contratoCobrancaMB.nomeRecebedor}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor" type="button"
+								onclick="PF('recebedorDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin" 
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor2" value="Favorecido 2: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor2"
+								value="#{contratoCobrancaMB.nomeRecebedor2}" label="Recebedor2"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor2" type="button"
+								onclick="PF('recebedor2Dialog').show();"
+								image="ui-icon ui-icon-circle-zoomin" 
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor3" value="Favorecido 3: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor3"
+								value="#{contratoCobrancaMB.nomeRecebedor3}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor3" type="button"
+								onclick="PF('recebedorDialog3').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor4" value="Favorecido 4: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor4"
+								value="#{contratoCobrancaMB.nomeRecebedor4}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor4" type="button"
+								onclick="PF('recebedorDialog4').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor5" value="Favorecido 5: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor5"
+								value="#{contratoCobrancaMB.nomeRecebedor5}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor5" type="button"
+								onclick="PF('recebedorDialog5').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+						</h:panelGrid>
+						<h:panelGrid columns="3" style="margin-left: 50px;">
+							<p:outputLabel for="Recebedor6" value="Favorecido 6: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor6"
+								value="#{contratoCobrancaMB.nomeRecebedor6}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor6" type="button"
+								onclick="PF('recebedorDialog6').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor7" value="Favorecido 7: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor7"
+								value="#{contratoCobrancaMB.nomeRecebedor7}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor7" type="button"
+								onclick="PF('recebedorDialog7').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor8" value="Favorecido 8: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor8"
+								value="#{contratoCobrancaMB.nomeRecebedor8}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor8" type="button"
+								onclick="PF('recebedorDialog8').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor9" value="Favorecido 9: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor9"
+								value="#{contratoCobrancaMB.nomeRecebedor9}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor9" type="button"
+								onclick="PF('recebedorDialog9').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+
+							<p:outputLabel for="Recebedor10" value="Favorecido 10: "
+								styleClass="labelBold"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:inputText id="Recebedor10"
+								value="#{contratoCobrancaMB.nomeRecebedor10}" label="Recebedor"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+							<p:commandButton id="botaoRecebedor10" type="button"
+								onclick="PF('recebedorDialog10').show();"
+								image="ui-icon ui-icon-circle-zoomin" style=""
+								
+								disabled="#{!contratoCobrancaMB.tipoFiltros || contratoCobrancaMB.grupoFavorecidos}"
+								rendered="#{!contratoCobrancaMB.grupoFavorecidos}" />
+						</h:panelGrid>
+					</h:panelGrid>
+				</p:panel>
+				<p:commandButton value="Consultar"
+					action="#{contratoCobrancaMB.geraConsultaContratos}"
+					image="ui-icon ui-icon-check"
+					update=":form:ConsultaContratosResultados"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
                  <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         reflow="true">
 			        <f:facet name="header">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFields}">
-							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
-						</p:commandButton>
-						<p:commandButton value="Adicionar Novo Modelo" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>                 
@@ -145,7 +400,758 @@
 			        </f:facet>
 				</p:dataTable>
 			</p:panel>
-		</h:form>	
+		</h:form>
+		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formPagadores">
+				<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
+					value="#{contratoCobrancaMB.listPagadores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedPagador}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{pagadorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cnpj}"
+						filterBy="#{pagadorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.cpf}"
+						filterBy="#{pagadorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{pagadorDialogdlg.nome}"
+						filterBy="#{pagadorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{pagadorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedPagador}"
+							image="ui-icon ui-icon-check" update=":form:Pagador"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearPagador}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Pagador pagadorDialogdlg"
+							oncomplete="PF('pagadorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('pagadorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="GrupoPagadores" widgetVar="grupoPagadoresDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formGrupoPagadores">
+				<p:dataTable id="grupoPagadoresDialogdlg"
+					var="grupoPagadoresDialogdlg"
+					value="#{contratoCobrancaMB.listGrupoPagadores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedGrupoPagadores}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{grupoPagadoresDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{grupoPagadoresDialogdlg.nome}"
+						filterBy="#{grupoPagadoresDialogdlg.nome}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Grupo" />
+						</f:facet>
+						<h:outputText value="#{grupoPagadoresDialogdlg.nomeGrupo}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedGrupoPagador}"
+							image="ui-icon ui-icon-check" update=":form:GruposPagador"
+							oncomplete="PF('grupoPagadoresDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearGrupoPagadores}"
+							image="ui-icon ui-icon-trash"
+							update=":form:GruposPagador grupoPagadoresDialogdlg"
+							oncomplete="PF('grupoPagadoresDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('grupoPagadoresDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Grupos de Favorecidos"
+			widgetVar="gruposFavorecidoDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formGruposFavorecidos">
+				<p:dataTable id="gruposFavorecidodlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listGrupoFavorecido}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedGrupoFavorecido}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nomeGrupo}"
+						filterBy="#{recebedorDialogdlg.nomeGrupo}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome do Grupo" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nomeGrupo}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedGrupoFavorecido}"
+							image="ui-icon ui-icon-check" update=":form:GruposFavorecido"
+							oncomplete="PF('gruposFavorecidoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearGrupoFavorecido}"
+							image="ui-icon ui-icon-trash"
+							update=":form:GruposFavorecido gruposFavorecidodlg"
+							oncomplete="PF('gruposFavorecidoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('gruposFavorecidoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores">
+				<p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor recebedorDialogdlg"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedor2Dialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores2">
+				<p:dataTable id="recebedor2Dialogdlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor2}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor2}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor2"
+							oncomplete="PF('recebedor2Dialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor2}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor2 recebedor2Dialogdlg"
+							oncomplete="PF('recebedor2Dialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedor2Dialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog3"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores3">
+				<p:dataTable id="recebedorDialogdlg3" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor3}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor3}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor3"
+							oncomplete="PF('recebedorDialog3').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor3}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor3 recebedorDialogdlg3"
+							oncomplete="PF('recebedorDialog3').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog3').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog4"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores4">
+				<p:dataTable id="recebedorDialogdlg4" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor4}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor4}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor4 "
+							oncomplete="PF('recebedorDialog4').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor4}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor4 recebedorDialogdlg4 "
+							oncomplete="PF('recebedorDialog4').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog4').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog5"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores5">
+				<p:dataTable id="recebedorDialogdlg5" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor5}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor5}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor5 "
+							oncomplete="PF('recebedorDialog5').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor5}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor5 recebedorDialogdlg5"
+							oncomplete="PF('recebedorDialog5').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog5').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog6"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores6">
+				<p:dataTable id="recebedorDialogdlg6" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor6}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor6}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor6 "
+							oncomplete="PF('recebedorDialog6').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor6}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor6 recebedorDialogdlg6"
+							oncomplete="PF('recebedorDialog6').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog6').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog7"
+			resizable="false" style="FONT-SIZE: 10pt;" width="700">
+			<h:form id="formRecebedores7">
+				<p:dataTable id="recebedorDialogdlg7" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor7}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor7}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor7 "
+							oncomplete="PF('recebedorDialog7').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor7}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor7 recebedorDialogdlg7"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog7').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog8"
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="formRecebedores8">
+				<p:dataTable id="recebedorDialogdlg8" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor8}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor8}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor8 "
+							oncomplete="PF('recebedorDialog8').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor8}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor8 recebedorDialogdlg8"
+							oncomplete="PF('recebedorDialog8').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog8').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog9"
+			resizable="false" style="FONT-SIZE: 10pt;" width="900">
+			<h:form id="formRecebedores9">
+				<p:dataTable id="recebedorDialogdlg9" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor9}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor9}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor9 "
+							oncomplete="PF('recebedorDialog9').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor9}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor9 recebedorDialogdlg9"
+							oncomplete="PF('recebedorDialog9').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog9').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Favorecidos" widgetVar="recebedorDialog10"
+			resizable="false" style="FONT-SIZE: 10pt;" width="1000">
+			<h:form id="formRecebedores10">
+				<p:dataTable id="recebedorDialogdlg10" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor10}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor10}"
+							image="ui-icon ui-icon-check" update=":form:Recebedor10"
+							oncomplete="PF('recebedorDialog10').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor10}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Recebedor10 recebedorDialogdlg10"
+							oncomplete="PF('recebedorDialog10').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog10').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Responsáveis" widgetVar="responsavelDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formResponsaveis">
+				<p:dataTable id="responsavelDialogdlg" var="responsavelDialogdlg"
+					value="#{contratoCobrancaMB.listResponsaveis}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedResponsavel}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{responsavelDialogdlg.id}" sortBy="#{responsavelDialogdlg.nome}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.cnpj}"
+						filterBy="#{responsavelDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.cpf}"
+						filterBy="#{responsavelDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.nome}"
+						filterBy="#{responsavelDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedResponsavel}"
+							image="ui-icon ui-icon-check" update=":form:Responsavel"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearResponsavel}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Responsavel responsavelDialogdlg"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('responsavelDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 		<p:dialog header="Observações" widgetVar="observacoesDialog" resizable="false" style="FONT-SIZE: 10pt;" width="800" responsive="true">
 			<h:form id="formObservacoes">
 				<p:panel id="ObservacoesPanel1" header="Observações - Inserir" style="margin-top:10px;">	
@@ -196,4 +1202,4 @@
 			</h:form>
 		</p:dialog>  
 	</ui:define>
-</ui:composition>	        
+</ui:composition>

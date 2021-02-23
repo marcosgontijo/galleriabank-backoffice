@@ -2379,6 +2379,417 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_CONSULTA_CONTRATOS_ULTIMOS_50 =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "order by cc.id desc "
+			+ "limit 50 ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosUltimos50() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_50;	
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.numerocontrato = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosPorNumero(final String numeroContrato) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO;	
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+				
+					ps.setString(1, numeroContrato);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_DATA =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.dataContrato >= ? ::timestamp "
+			+ "and cc.dataContrato <= ? ::timestamp ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratos(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
+			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
+			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, final long idResponsavel, final boolean grupoPagadores, final long idGrupoPagador, final String empresa) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_DATA;	
+				String query_RELATORIO_FINANCEIRO_RECEBEDORES = null;
+				try {
+					connection = getConnection();
+					
+					if (grupoPagadores) {
+						if (idGrupoPagador > 0) {
+							GruposPagadores gp = new GruposPagadores();
+							GruposPagadoresDao gpd = new GruposPagadoresDao();
+							
+							gp = gpd.findById(idGrupoPagador);
+							
+							String pagadores = "";
+							
+							if (gp.getId() > 0) {
+								if (gp.getPagador1() != null) {
+									if (gp.getPagador1().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador1().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador1().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador2() != null) {
+									if (gp.getPagador2().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador2().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador2().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador3() != null) {
+									if (gp.getPagador3().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador3().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador3().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador4() != null) {
+									if (gp.getPagador4().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador4().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador4().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador5() != null) {
+									if (gp.getPagador5().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador5().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador5().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador6() != null) {
+									if (gp.getPagador6().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador6().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador6().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador7() != null) {
+									if (gp.getPagador7().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador7().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador7().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador8() != null) {
+									if (gp.getPagador8().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador8().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador8().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador9() != null) {
+									if (gp.getPagador9().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador9().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador9().getId());			
+										}									
+									}
+								}
+								if (gp.getPagador10() != null) {
+									if (gp.getPagador10().getId() > 0) {
+										if (!pagadores.equals("")) {
+											pagadores = pagadores + ", " + gp.getPagador10().getId();										
+										} else {
+											pagadores = String.valueOf(gp.getPagador10().getId());			
+										}									
+									}
+								}								
+							}
+							
+							if (!pagadores.equals("")) {
+								query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador in (" + pagadores + ") ";	
+							}							
+						}
+					} else {
+						if (idPagador > 0) {
+							query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador = ?";
+						}	
+					}					
+					
+					if (idRecebedor > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = 
+								"  (cc.recebedor = " + idRecebedor + " or " +
+								"      cc.recebedor2 = " + idRecebedor + " or " +
+								"      cc.recebedor3 = " + idRecebedor + " or " +
+								"      cc.recebedor4 = " + idRecebedor + " or " +
+								"      cc.recebedor5 = " + idRecebedor + " or " +
+								"      cc.recebedor6 = " + idRecebedor + " or " +
+								"      cc.recebedor7 = " + idRecebedor + " or " +
+								"      cc.recebedor8 = " + idRecebedor + " or " +
+								"      cc.recebedor9 = " + idRecebedor + " or " +
+								"      cc.recebedor10 = " + idRecebedor + ")";
+					}
+					
+					if (idRecebedor2 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor2 + " or " +
+								"      cc.recebedor2 = " + idRecebedor2 + " or " +
+								"      cc.recebedor3 = " + idRecebedor2 + " or " +
+								"      cc.recebedor4 = " + idRecebedor2 + " or " +
+								"      cc.recebedor5 = " + idRecebedor2 + " or " +
+								"      cc.recebedor6 = " + idRecebedor2 + " or " +
+								"      cc.recebedor7 = " + idRecebedor2 + " or " +
+								"      cc.recebedor8 = " + idRecebedor2 + " or " +
+								"      cc.recebedor9 = " + idRecebedor2 + " or " +
+								"      cc.recebedor10 = " + idRecebedor2 + ")";
+					}	
+					
+					if (idRecebedor3 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor3 + " or " +
+								"      cc.recebedor2 = " + idRecebedor3 + " or " +
+								"      cc.recebedor3 = " + idRecebedor3 + " or " +
+								"      cc.recebedor4 = " + idRecebedor3 + " or " +
+								"      cc.recebedor5 = " + idRecebedor3 + " or " +
+								"      cc.recebedor6 = " + idRecebedor3 + " or " +
+								"      cc.recebedor7 = " + idRecebedor3 + " or " +
+								"      cc.recebedor8 = " + idRecebedor3 + " or " +
+								"      cc.recebedor9 = " + idRecebedor3 + " or " +
+								"      cc.recebedor10 = " + idRecebedor3 + ")";
+					}
+					
+					if (idRecebedor4 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor4 + " or " +
+								"      cc.recebedor2 = " + idRecebedor4 + " or " +
+								"      cc.recebedor3 = " + idRecebedor4 + " or " +
+								"      cc.recebedor4 = " + idRecebedor4 + " or " +
+								"      cc.recebedor5 = " + idRecebedor4 + " or " +
+								"      cc.recebedor6 = " + idRecebedor4 + " or " +
+								"      cc.recebedor7 = " + idRecebedor4 + " or " +
+								"      cc.recebedor8 = " + idRecebedor4 + " or " +
+								"      cc.recebedor9 = " + idRecebedor4 + " or " +
+								"      cc.recebedor10 = " + idRecebedor4 + ")";
+					}
+					
+					if (idRecebedor5 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor5 + " or " +
+								"      cc.recebedor2 = " + idRecebedor5 + " or " +
+								"      cc.recebedor3 = " + idRecebedor5 + " or " +
+								"      cc.recebedor4 = " + idRecebedor5 + " or " +
+								"      cc.recebedor5 = " + idRecebedor5 + " or " +
+								"      cc.recebedor6 = " + idRecebedor5 + " or " +
+								"      cc.recebedor7 = " + idRecebedor5 + " or " +
+								"      cc.recebedor8 = " + idRecebedor5 + " or " +
+								"      cc.recebedor9 = " + idRecebedor5 + " or " +
+								"      cc.recebedor10 = " + idRecebedor5 + ")";
+					}
+					
+					if (idRecebedor6 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor6 + " or " +
+								"      cc.recebedor2 = " + idRecebedor6 + " or " +
+								"      cc.recebedor3 = " + idRecebedor6 + " or " +
+								"      cc.recebedor4 = " + idRecebedor6 + " or " +
+								"      cc.recebedor5 = " + idRecebedor6 + " or " +
+								"      cc.recebedor6 = " + idRecebedor6 + " or " +
+								"      cc.recebedor7 = " + idRecebedor6 + " or " +
+								"      cc.recebedor8 = " + idRecebedor6 + " or " +
+								"      cc.recebedor9 = " + idRecebedor6 + " or " +
+								"      cc.recebedor10 = " + idRecebedor6 + ")";
+					}
+					
+					if (idRecebedor7 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor7 + " or " +
+								"      cc.recebedor2 = " + idRecebedor7 + " or " +
+								"      cc.recebedor3 = " + idRecebedor7 + " or " +
+								"      cc.recebedor4 = " + idRecebedor7 + " or " +
+								"      cc.recebedor5 = " + idRecebedor7 + " or " +
+								"      cc.recebedor6 = " + idRecebedor7 + " or " +
+								"      cc.recebedor7 = " + idRecebedor7 + " or " +
+								"      cc.recebedor8 = " + idRecebedor7 + " or " +
+								"      cc.recebedor9 = " + idRecebedor7 + " or " +
+								"      cc.recebedor10 = " + idRecebedor7 + ")";
+					}
+					
+					if (idRecebedor8 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor8 + " or " +
+								"      cc.recebedor2 = " + idRecebedor8 + " or " +
+								"      cc.recebedor3 = " + idRecebedor8 + " or " +
+								"      cc.recebedor4 = " + idRecebedor8 + " or " +
+								"      cc.recebedor5 = " + idRecebedor8 + " or " +
+								"      cc.recebedor6 = " + idRecebedor8 + " or " +
+								"      cc.recebedor7 = " + idRecebedor8 + " or " +
+								"      cc.recebedor8 = " + idRecebedor8 + " or " +
+								"      cc.recebedor9 = " + idRecebedor8 + " or " +
+								"      cc.recebedor10 = " + idRecebedor8 + ")";
+					}
+					
+					if (idRecebedor9 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor9 + " or " +
+								"      cc.recebedor2 = " + idRecebedor9 + " or " +
+								"      cc.recebedor3 = " + idRecebedor9 + " or " +
+								"      cc.recebedor4 = " + idRecebedor9 + " or " +
+								"      cc.recebedor5 = " + idRecebedor9 + " or " +
+								"      cc.recebedor6 = " + idRecebedor9 + " or " +
+								"      cc.recebedor7 = " + idRecebedor9 + " or " +
+								"      cc.recebedor8 = " + idRecebedor9 + " or " +
+								"      cc.recebedor9 = " + idRecebedor9 + " or " +
+								"      cc.recebedor10 = " + idRecebedor9 + ")";
+					}
+					
+					if (idRecebedor10 > 0) {
+						query_RELATORIO_FINANCEIRO_RECEBEDORES = query_RELATORIO_FINANCEIRO_RECEBEDORES + 
+								" or (cc.recebedor = " + idRecebedor10 + " or " +
+								"      cc.recebedor2 = " + idRecebedor10 + " or " +
+								"      cc.recebedor3 = " + idRecebedor10 + " or " +
+								"      cc.recebedor4 = " + idRecebedor10 + " or " +
+								"      cc.recebedor5 = " + idRecebedor10 + " or " +
+								"      cc.recebedor6 = " + idRecebedor10 + " or " +
+								"      cc.recebedor7 = " + idRecebedor10 + " or " +
+								"      cc.recebedor8 = " + idRecebedor10 + " or " +
+								"      cc.recebedor9 = " + idRecebedor10 + " or " +
+								"      cc.recebedor10 = " + idRecebedor10 + ")";
+					}
+					
+					if (query_RELATORIO_FINANCEIRO_RECEBEDORES != null) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and (" + query_RELATORIO_FINANCEIRO_RECEBEDORES + ")";
+					}
+					
+					if (idResponsavel > 0) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.responsavel = ?";
+					}
+					
+					if (!empresa.equals("TODAS")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
+					}
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+					
+					int params = 0;
+				
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);	
+						
+					params = 2;
+					
+					if (!grupoPagadores) {
+						if (idPagador > 0) {
+							params = params +1;
+							ps.setLong(params, idPagador);
+						}	
+					}
+					
+					if (idResponsavel > 0) {
+						params = params +1;
+						ps.setLong(params, idResponsavel);
+					}						
+	
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtraso(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
@@ -3516,14 +3927,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							
 					// verifica as cláusulas dos repsonsáveis
 					if (codResponsavel != null || listResponsavel != null) {
-						queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
+						if (!queryResponsavel.equals("")) {
+							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
+						}
 						
 						String queryGuardaChuva = "";
 						if (listResponsavel.size() > 0) {							
 							for (Responsavel resp : listResponsavel) {
 								if (!resp.getCodigo().equals("")) { 
 									if (queryGuardaChuva.equals("")) {
-										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
+										queryGuardaChuva = " and (res.codigo = '" + resp.getCodigo() + "' ";
 									} else {
 										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
 									}									

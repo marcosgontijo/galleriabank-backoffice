@@ -53,6 +53,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	private boolean baixadoParaInvestidor;
 	
+	private Date dataUltimoPagamento;
+	private BigDecimal valorTotalPagamento;
+	
 	public ContratoCobrancaDetalhes(){
 		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
 		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
@@ -435,5 +438,21 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setVlrAmortizacaoParcela(BigDecimal vlrAmortizacaoParcela) {
 		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
+	}
+
+	public Date getDataUltimoPagamento() {
+		return dataUltimoPagamento;
+	}
+
+	public void setDataUltimoPagamento(Date dataUltimoPagamento) {
+		this.dataUltimoPagamento = dataUltimoPagamento;
+	}
+
+	public BigDecimal getValorTotalPagamento() {
+		return valorTotalPagamento;
+	}
+
+	public void setValorTotalPagamento(BigDecimal valorTotalPagamento) {
+		this.valorTotalPagamento = valorTotalPagamento;
 	}
 }

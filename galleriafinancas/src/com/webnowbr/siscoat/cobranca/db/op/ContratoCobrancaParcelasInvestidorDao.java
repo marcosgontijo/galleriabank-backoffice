@@ -411,13 +411,15 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope = false " + 
 			" and baixado = true " +
 			"union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor2 recebedor from cobranca.contratocobranca_parcelas_investidor_join_2 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor2" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
-			" and cp.databaixa <= ? ::timestamp " + 
+			" and cp.databaixa <= ? ::timestamp " +
+			" and c.recebedorenvelope2 = false " + 
 			" and baixado = true " +
 			" union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor3 recebedor from cobranca.contratocobranca_parcelas_investidor_join_3 cj" + 
@@ -425,6 +427,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope3 = false " + 
 			" and baixado = true " +
 			" union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor4 recebedor from cobranca.contratocobranca_parcelas_investidor_join_4 cj" + 
@@ -432,13 +435,15 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope4 = false " + 
 			" and baixado = true " +
 			" union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor5 recebedor from cobranca.contratocobranca_parcelas_investidor_join_5 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor5" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
-			" and cp.databaixa <= ? ::timestamp " + 
+			" and cp.databaixa <= ? ::timestamp " +
+			" and c.recebedorenvelope5 = false " + 
 			" and baixado = true " +
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
@@ -446,13 +451,15 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope6 = false " + 
 			" and baixado = true " +
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor7 recebedor from cobranca.contratocobranca_parcelas_investidor_join_7 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor7" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
-			" and cp.databaixa <= ? ::timestamp " + 
+			" and cp.databaixa <= ? ::timestamp " +
+			" and c.recebedorenvelope7 = false " + 
 			" and baixado = true " +
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor8 recebedor from cobranca.contratocobranca_parcelas_investidor_join_8 cj" + 
@@ -460,6 +467,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope8 = false " + 
 			" and baixado = true " +
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor9 recebedor from cobranca.contratocobranca_parcelas_investidor_join_9 cj" + 
@@ -467,6 +475,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope9 = false " + 
 			" and baixado = true " +
 			"  union" + 
 			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
@@ -474,6 +483,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
+			" and c.recebedorenvelope10 = false " + 
 			" and baixado = true " +
 			" ) investidores" + 
 			" order by numerocontrato";

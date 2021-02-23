@@ -1732,87 +1732,41 @@
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 						rowKey="#{parcelas.id}">
 
-						<p:column style="text-align: center;" headerText="Número Parcela"
-							filterBy="#{parcelas.numeroParcela}" filterMatchMode="contains"
-							sortBy="#{parcelas.numeroParcela}">
-							<h:outputText value="#{parcelas.numeroParcela}" />
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Data Vencimento Original"
-							sortBy="#{parcelas.dataVencimento}">
-							<h:outputText value="#{parcelas.dataVencimento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Data Vencimento Atualizada"
-							sortBy="#{parcelas.dataVencimentoAtual}"
-							styleClass="colunaHiddenRelFinanceiro">
-							<h:outputText value="#{parcelas.dataVencimentoAtual}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Data Promessa Pagto."
-							sortBy="#{parcelas.promessaPagamento}"
-							styleClass="colunaHiddenRelFinanceiro">
-							<h:outputText value="#{parcelas.promessaPagamento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor da Parcela (R$)">
-							<h:outputText value="#{parcelas.vlrParcela}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor da Parcela Atualizado (R$)">
-							<h:outputText value="--"
-								rendered="#{parcelas.parcelaPaga  or parcelas.vlrParcelaAtualizada == null}" />
-							<h:outputText value="#{parcelas.vlrParcelaAtualizada}"
-								converter="bigDecimalConverter"
-								rendered="#{!parcelas.parcelaPaga}" />
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor do Investidor (R$)">
-							<h:outputText value="#{parcelas.vlrRepasse}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor da Administração (R$)">
-							<h:outputText value="#{parcelas.vlrRetencao}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Valor Recebido (R$)"
-							styleClass="colunaHiddenRelFinanceiro">
-							<h:outputText value="--" rendered="#{parcelas.parcelaPaga}" />
-							<h:outputText value="#{parcelas.vlrRecebido}"
-								converter="bigDecimalConverter"
-								rendered="#{!parcelas.parcelaPaga}" />
-						</p:column>
-						<p:column style="text-align: center;" headerText="Parcela Paga?"
-							styleClass="colunaHiddenRelFinanceiro">
-							<ui:fragment rendered="#{parcelas.parcelaPaga}">
-								<h:outputText value="Sim" />
-							</ui:fragment>
-							<ui:fragment rendered="#{!parcelas.parcelaPaga}">
-								<h:outputText value="Não" />
-							</ui:fragment>
-						</p:column>
-						<p:column style="text-align: center;width: 100px;"
-							headerText="Download IUGU" styleClass="colunaHiddenRelFinanceiro">
-							<ui:fragment rendered="#{parcelas.secureURLIugu != null}">
-								<a href="#{parcelas.secureURLIugu}" class="linkPDF"
-									target="_blank"><b>Fatura</b></a>
-							</ui:fragment>
-						</p:column>
+				        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
+				            <h:outputText value="#{parcelas.numeroParcela}" />
+				        </p:column>
+				        <p:column style="text-align: center;width: 70px;" headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+				            <h:outputText value="#{parcelas.dataVencimento}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				            </h:outputText>
+				        </p:column>	
+				        <p:column style="text-align: center;width: 70px;" headerText="Dt. Último Pagto." sortBy="#{parcelas.dataUltimoPagamento}">
+				            <h:outputText value="#{parcelas.dataUltimoPagamento}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				            </h:outputText>
+				        </p:column>	
+				        <p:column style="text-align: center;width: 110px;" headerText="Valor Total Pago (R$)">
+				            <h:outputText value="#{parcelas.valorTotalPagamento}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>	
+				        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
+				            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>	
+				         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
+				            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
+				         <p:column style="text-align: center;width: 110px;" headerText="Amortização (R$)">
+				            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
+				         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
+				            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
+				            </h:outputText>
+				        </p:column>		
 						<p:column style="width:150px" headerText="Ações"
 							styleClass="colunaResponsivaRelFinanceiro">
 							<shiro:hasAnyRoles name="ROOT">

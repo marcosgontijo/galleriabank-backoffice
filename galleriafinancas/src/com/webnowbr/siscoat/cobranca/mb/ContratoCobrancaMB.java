@@ -3041,7 +3041,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setTxJuros(pDao.findByFilter("nome","COBRANCA_REC_TX_JUROS").get(0).getValorBigDecimal());
 		this.objetoContratoCobranca.setTxMulta(pDao.findByFilter("nome","COBRANCA_REC_MULTA").get(0).getValorBigDecimal());
 
-		return "/Atendimento/Cobranca/ContratoCobrancaInserirNew.xhtml";
+		return "/Atendimento/Cobranca/ContratoCobrancaInserir.xhtml";
 	}
 
 	public void clearSelectedRecebedores() {
@@ -3280,6 +3280,15 @@ public class ContratoCobrancaMB {
 			if (auxDataVencimento.equals(auxDataPagamento) && !ccd.isParcelaPaga()) {
 				ccd.setParcelaVencendo(true);
 			}
+			
+			BigDecimal somaBaixas = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+				somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+			}
+			
+			ccd.setValorTotalPagamento(somaBaixas);
 		}
 
 		loadRetencaoRepasse();
@@ -4433,6 +4442,88 @@ public class ContratoCobrancaMB {
 	 */
 	public void setHasBaixaParcial(boolean hasBaixaParcial) {
 		this.hasBaixaParcial = hasBaixaParcial;
+	}
+	
+	public String clearFieldsContratos() {
+		this.filtrarDataVencimento = "Atualizada";
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+
+		clearPagador();
+		clearRecebedor();
+		clearRecebedor2();
+		clearRecebedor3();
+		clearRecebedor4();
+		clearRecebedor5();
+		clearRecebedor6();
+		clearRecebedor7();
+		clearRecebedor8();
+		clearRecebedor9();
+		clearRecebedor10();
+		clearResponsavel();
+		clearGrupoFavorecido();
+		clearGrupoPagadores();
+
+		this.grupoPagadores = false;
+		this.tipoFiltros = true;
+
+		this.numContrato = null;
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listPagadores = pagadorRecebedorDao.findAll();
+		this.listRecebedores = pagadorRecebedorDao.findAll();
+
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		this.listResponsaveis = responsavelDao.findAll();
+
+		GruposFavorecidosDao gruposFavorecidosDao = new GruposFavorecidosDao();
+		this.listGrupoFavorecido = gruposFavorecidosDao.findAll();
+
+		GruposPagadoresDao gruposPagadoresDao = new GruposPagadoresDao();
+		this.listGrupoPagadores = gruposPagadoresDao.findAll();
+
+		this.contratoGerado = false;
+
+		this.grupoFavorecidos = true;
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratos = contratoCobrancaDao.consultaContratosUltimos50();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
+	}
+	
+	public void geraConsultaContratos() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratos = new ArrayList<ContratoCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		if (this.tipoFiltros) {
+			/* Filtra por period, parcelas em atraso / no periodo, evolvidos */
+			if (this.grupoFavorecidos) {
+				converteGrupoFavorecidos();
+			}
+			
+			this.contratos = contratoCobrancaDao.consultaContratos(
+						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
+						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
+						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
+						this.getIdRecebedor10(), this.getIdResponsavel(), this.grupoPagadores, this.idGrupoPagador, this.empresa);
+		} else {
+			/* Se filtro somente por numero do contrato */
+			if (this.numContrato.length() == 4) {
+				this.contratos = contratoCobrancaDao
+						.consultaContratosPorNumero("0" + this.numContrato);
+			} else {
+				this.contratos = contratoCobrancaDao
+						.consultaContratosPorNumero(this.numContrato);
+			}
+		}
 	}
 
 	public String clearFieldsRelFinanceiro() {
@@ -7722,6 +7813,8 @@ public class ContratoCobrancaMB {
 		} else {
 			this.vlrParcelaAtualizadaNew = this.bpContratoCobrancaDetalhes.getVlrParcela();
 		}
+		
+		this.vlrRecebido = this.vlrParcelaAtualizadaNew;
 	}
 
 	/* GERAÇÃO DE BOLETO */
@@ -7956,7 +8049,7 @@ public class ContratoCobrancaMB {
 
 				bpContratoCobrancaDetalhes.setVlrParcela(valorParcelaAtual);
 				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
-				bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
+				//bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
 			} else {
 				// atualiza data de vencimento para a data atual se a data de vencimento for
 				// menor que a data de hoje
@@ -8063,6 +8156,15 @@ public class ContratoCobrancaMB {
 			if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 				ccd.setParcelaVencendo(true);
 			}
+			
+			BigDecimal somaBaixas = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+				somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+			}
+			
+			ccd.setValorTotalPagamento(somaBaixas);
 		}
 
 		/*

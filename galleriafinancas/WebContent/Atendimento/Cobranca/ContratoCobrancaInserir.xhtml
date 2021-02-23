@@ -126,10 +126,14 @@
 								<p:outputLabel value="Ocultar no Pagto. Valor Líquido: " styleClass="labelBold" style="margin-left: 20px;" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" />
 								<p:selectBooleanCheckbox
@@ -188,7 +192,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor1" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
@@ -198,6 +205,18 @@
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:outputLabel for="valorRecebedorFinal" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorRecebedorFinal" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor1}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -231,11 +250,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor2}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor2}" rendered="#{contratoCobrancaMB.renderRecebedor2}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor2}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope2}" rendered="#{contratoCobrancaMB.renderRecebedor2}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor2}"/>
@@ -292,7 +315,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor2}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor2" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
@@ -301,7 +327,19 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor2}" />																		
+										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
+									<p:outputLabel for="valorRecebedorFinal2" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0}" />
+									<p:inputText id="valorRecebedorFinal2" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor2}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>																
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -335,11 +373,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor3}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor3}" rendered="#{contratoCobrancaMB.renderRecebedor3}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor3}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope3}" rendered="#{contratoCobrancaMB.renderRecebedor3}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor3}"/>
@@ -396,7 +438,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor3}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor3" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
@@ -405,7 +450,19 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor3}" />											
+										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
+									<p:outputLabel for="valorRecebedorFinal3" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0}" />
+									<p:inputText id="valorRecebedorFinal3" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor3}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>																						
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -439,11 +496,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor4}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor4}" rendered="#{contratoCobrancaMB.renderRecebedor4}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor4}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope4}" rendered="#{contratoCobrancaMB.renderRecebedor4}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>			
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor4}"/>
@@ -500,7 +561,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor4}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor4" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
@@ -509,7 +573,19 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor4}" />										
+										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
+									<p:outputLabel for="valorRecebedorFinal4" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0}" />
+									<p:inputText id="valorRecebedorFinal4" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor4}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0}" >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>										
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -543,11 +619,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor5}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor5}" rendered="#{contratoCobrancaMB.renderRecebedor5}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor5}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope5}" rendered="#{contratoCobrancaMB.renderRecebedor5}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor5}"/>
@@ -604,7 +684,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor5}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor5" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
@@ -613,7 +696,19 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor5}" />											
+										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
+									<p:outputLabel for="valorRecebedorFinal5" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0}" />
+									<p:inputText id="valorRecebedorFinal5" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor5}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>												
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -647,11 +742,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor6}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor6}" rendered="#{contratoCobrancaMB.renderRecebedor6}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor6}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope6}" rendered="#{contratoCobrancaMB.renderRecebedor6}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor6}"/>
@@ -708,7 +807,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor6}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor6" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
@@ -717,7 +819,19 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor6}" />										
+										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
+									<p:outputLabel for="valorRecebedorFinal6" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0}" />
+									<p:inputText id="valorRecebedorFinal6" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor6}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>												
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -751,11 +865,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor7}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor7}" rendered="#{contratoCobrancaMB.renderRecebedor7}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor7}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope7}" rendered="#{contratoCobrancaMB.renderRecebedor7}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor7}"/>
@@ -812,7 +930,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor7}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor7" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
@@ -822,6 +943,18 @@
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
+									<p:outputLabel for="valorRecebedorFinal7" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0}" />
+									<p:inputText id="valorRecebedorFinal7" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor7}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -855,11 +988,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor8}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor8}" rendered="#{contratoCobrancaMB.renderRecebedor8}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor8}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope8}" rendered="#{contratoCobrancaMB.renderRecebedor8}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor8}"/>
@@ -916,7 +1053,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor8}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor8" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
@@ -926,6 +1066,18 @@
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
+									<p:outputLabel for="valorRecebedorFinal8" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0}" />
+									<p:inputText id="valorRecebedorFinal8" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor8}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -959,11 +1111,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor9}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor9}" rendered="#{contratoCobrancaMB.renderRecebedor9}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>		
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor9}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope9}" rendered="#{contratoCobrancaMB.renderRecebedor9}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor9}"/>
@@ -1020,7 +1176,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor9}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor9" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
@@ -1030,6 +1189,18 @@
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
+									<p:outputLabel for="valorRecebedorFinal9" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor9.id > 0}" />
+									<p:inputText id="valorRecebedorFinal9" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor9}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor9.id > 0}" >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -1054,11 +1225,15 @@
 									rendered="#{contratoCobrancaMB.renderRecebedor10}" />
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.ocultaRecebedor10}" rendered="#{contratoCobrancaMB.renderRecebedor10}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Envelope: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor10}"/>
 								<p:selectBooleanCheckbox
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorEnvelope10}" rendered="#{contratoCobrancaMB.renderRecebedor10}">
+									<p:ajax event="change"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
 								</p:selectBooleanCheckbox>	
 								<p:outputLabel value="Garantido: " styleClass="labelBold" style="margin-left: 20px;" 
 									rendered="#{contratoCobrancaMB.renderRecebedor10}"/>
@@ -1115,7 +1290,10 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
+										rendered="#{contratoCobrancaMB.renderRecebedor10}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor10" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
@@ -1125,11 +1303,22 @@
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
+									<p:outputLabel for="valorRecebedorFinal10" value="Valor Final: "
+										styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0}" />
+									<p:inputText id="valorRecebedorFinal10" style="margin-left: 12px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor10}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter"
+										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0}"  >
+										<p:ajax event="blur"
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
+										</p:inputText>	
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
 					</p:panel>
-
 					<p:panel id="Dados" header="Dados do Contrato"
 						style="margin-bottom:10px;">
 						<h:panelGrid columns="3">
@@ -1142,27 +1331,13 @@
 								onclick="PF('imovelDialog').show();"
 								image="ui-icon ui-icon-circle-zoomin"  />
 
-							<p:outputLabel for="vlrInvestimento" value="Valor da Última NP: "
+							<p:outputLabel for="txHonorario" value="Honorários (%): "
 								styleClass="labelBold" />
-							<p:inputText id="vlrInvestimento"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestimento}"
+							<p:inputText id="txHonorario"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateValorParcelaFinal}"
-									update="vlrParcelaFinal" />
-							</p:inputText>
-							<p:spacer width="10" />
-
-							<p:outputLabel for="txAdministracao"
-								value="Taxa de Administração: " styleClass="labelBold" />
-							<p:inputText id="txAdministracao"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.txAdministracao}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter">
-							</p:inputText>
+								converter="bigDecimalConverter" />
 							<p:spacer width="10" />
 
 							<p:outputLabel for="txJuros" value="Taxa de Juros (%): "
@@ -1229,7 +1404,7 @@
 							<p:inputText id="vlrRepasse" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.vlrRepasse}"
 								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								onkeydown="FormataValor(this, 13, event, 2);" 
 								converter="bigDecimalConverter">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.populateRetencaoParcela}"
@@ -1241,7 +1416,7 @@
 							<p:inputText id="vlrRetencao" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.vlrRetencao}"
 								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								onkeydown="FormataValor(this, 13, event, 2);" 
 								converter="bigDecimalConverter" />
 
 							<p:outputLabel for="vlrComissao" value="Valor do Repasse: "
@@ -1249,13 +1424,21 @@
 							<p:inputText id="vlrComissao" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.vlrComissao}"
 								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								onkeydown="FormataValor(this, 13, event, 2);" 
 								converter="bigDecimalConverter" />
 								
 							<p:outputLabel for="valorCCB" value="Valor da CCB: "
 								styleClass="labelBold" />
 							<p:inputText id="valorCCB" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="taxaJurosParcela" value="Taxa de Juros (%): "
+								styleClass="labelBold" />
+							<p:inputText id="taxaJurosParcela" style="margin-left: 12px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
@@ -1277,7 +1460,7 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
 									style="margin-left: 12px;">
 									<p:ajax
-										update="vlrParcelaFinal vlrRepasseFinal vlrRetencaoFinal panelRecebedorFinal1 panelRecebedorFinal2 panelRecebedorFinal3 panelRecebedorFinal4 panelRecebedorFinal5"
+										update="vlrParcelaFinal vlrRepasseFinal vlrRetencaoFinal"
 										listener="#{contratoCobrancaMB.gerarParcelaFinal}" />
 								</p:selectBooleanCheckbox>
 
@@ -1334,744 +1517,6 @@
 									converter="bigDecimalConverter"
 									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
 							</h:panelGrid>
-
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Quebrar parcela Final: "
-									styleClass="labelBold" />
-								<p:selectBooleanCheckbox
-									value="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<p:ajax
-										update="panelRecebedorFinal1 panelRecebedorFinal2 panelRecebedorFinal3 panelRecebedorFinal4 panelRecebedorFinal5"
-										event="change"
-										listener="#{contratoCobrancaMB.updateRenderFinal(2)}" />
-								</p:selectBooleanCheckbox>
-							</h:panelGrid>
-
-							<p:panel id="panelRecebedorFinal1"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal1"
-										value="Recebedor Final 1: " styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:inputText id="RecebedorFinal1"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal1}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:commandButton id="botaoRecebedorFinal1" type="button"
-										onclick="PF('recebedorFinal1Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal1Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal1.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal1.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal1.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal1.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal1.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal1.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal1.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal1.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal1.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal1.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal1.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal1.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal1.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal1" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal1"
-											style="margin-left: 12px;"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor1}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-
-							<p:panel id="panelRecebedorFinal2"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal2"
-										value="Recebedor Final 2: " styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:inputText id="RecebedorFinal2"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal2}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:commandButton id="botaoRecebedorFinal2" type="button"
-										onclick="PF('recebedorFinal2Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal2Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal2.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal2.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal2.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal2.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal2.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal2.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal2.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal2.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal2.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal2.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal2.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal2.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal2.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal2" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal2"
-											style="margin-left: 12px;"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor2}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-
-							<p:panel id="panelRecebedorFinal3"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal3"
-										value="Recebedor Final 3: " styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:inputText id="RecebedorFinal3"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal3}"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal3" type="button"
-										onclick="PF('recebedorFinal3Dialog').show();"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal3Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal3.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal3.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal3.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal3.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal3.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal3.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal3.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal3.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal3.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal3.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal3.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal3.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal3.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal3" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal3"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor3}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-
-							<p:panel id="panelRecebedorFinal4"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal4"
-										value="Recebedor Final 4: " styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									<p:inputText id="RecebedorFinal4"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal4}"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal4" type="button"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										onclick="PF('recebedorFinal4Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal4Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal4.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal4.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal4.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal4.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal4.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal4.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal4.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal4.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal4.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal4.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal4.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal4.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal4.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal4" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal4"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor4}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-
-							<p:panel id="panelRecebedorFinal5"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal5"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 5: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal5"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal5}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal5"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal5Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal5Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal5.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal5.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal5.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal5.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal5.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal5.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal5.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal5.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal5.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal5.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal5.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal5.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal5.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal5" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal5"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor5}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-							
-							<p:panel id="panelRecebedorFinal6"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal6"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 6: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal6"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal6}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal6"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal6Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal6Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal6.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal6.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal6.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal6.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal6.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal6.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal6.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal6.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal6.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal6.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal6.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal6.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal6.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal6" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal6"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor6}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-							
-							<p:panel id="panelRecebedorFinal7"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal7"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 7: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal7"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal7}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal7"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal7Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal7Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal7.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal7.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal7.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal7.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal7.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal7.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal7.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal7.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal7.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal7.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal7.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal7.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal7.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal7" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal7"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor7}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-							
-							<p:panel id="panelRecebedorFinal8"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal8"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 8: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal8"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal8}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal8"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal8Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal8Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal8.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal8.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal8.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal8.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal8.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal8.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal8.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal8.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal8.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal8.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal8.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal8.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal8.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal8" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal8"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor8}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-							
-							<p:panel id="panelRecebedorFinal9"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal9"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 9: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal9"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal9}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal9"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal9Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal9Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal9.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal9.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal9.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal9.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal9.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal9.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal9.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal9.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal9.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal9.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal9.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal9.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal9.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal9" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal9"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor9}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
-							
-							<p:panel id="panelRecebedorFinal10"
-								style="border: none; margin-left: -14px; margin-top: -8px;"
-								disabled="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<h:panelGrid columns="5">
-									<p:outputLabel for="RecebedorFinal10"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="Recebedor Final 10: " styleClass="labelBold" />
-									<p:inputText id="RecebedorFinal10"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										value="#{contratoCobrancaMB.nomeRecebedorFinal10}"
-										label="Recebedor" readonly="TRUE" required="true"
-										style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;" />
-									<p:commandButton id="botaoRecebedorFinal10"
-										rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-										type="button" onclick="PF('recebedorFinal10Dialog').show();"
-										image="ui-icon ui-icon-circle-zoomin" style=""
-										 />
-								</h:panelGrid>
-								<p:panel id="panelRecebedorFinal10Valor"
-									rendered="#{contratoCobrancaMB.renderRecebedorFinais}">
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Banco: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.banco}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="4">
-										<p:outputLabel value="Agência: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.agencia}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel value="C/C: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.conta}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Favorecido: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.nomeCC}"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="CPF: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal10.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal10.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal10.cpfCC == null)}" />
-										<p:outputLabel value="CNPJ: " styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal10.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal10.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal10.cnpjCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.cpfCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal10.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal10.cpfCC == '' or contratoCobrancaMB.selectedRecebedorFinal10.cpfCC == null)}" />
-										<p:outputLabel
-											value="#{contratoCobrancaMB.selectedRecebedorFinal10.cnpjCC}"
-											rendered="#{contratoCobrancaMB.selectedRecebedorFinal10.id > 0 and !(contratoCobrancaMB.selectedRecebedorFinal10.cnpjCC == '' or contratoCobrancaMB.selectedRecebedorFinal10.cnpjCC == null)}" />
-									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="valorRecebedorFinal10" value="Valor: "
-											styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}" />
-										<p:inputText id="valorRecebedorFinal10"
-											style="margin-left: 12px;"
-											rendered="#{contratoCobrancaMB.renderRecebedorFinais}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor10}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" />
-									</h:panelGrid>
-								</p:panel>
-							</p:panel>
 						</p:panel>
 					</p:panel>
 
@@ -2113,49 +1558,31 @@
 							rowsPerPageTemplate="100,200,300" selection="" emptyMessage=""
 							sortBy="#{contratos.numeroParcela}"
 							rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}">
-							<p:column style="text-align: center;" headerText="Parcela"
-								filterBy="#{parcelas.numeroParcela}" filterMatchMode="contains"
-								sortBy="#{parcelas.numeroParcela}">
-								<h:outputText value="#{parcelas.numeroParcela}" />
-							</p:column>
-							<p:column style="text-align: center;" headerText="Vencimento"
-								sortBy="#{contratos.dataVencimento}">
-								<h:outputText value="#{parcelas.dataVencimento}">
-									<f:convertDateTime locale="pt_BR" />
-									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							<p:column style="text-align: center;" headerText="Valor">
-								<h:outputText value="#{parcelas.vlrParcela}"
-									converter="bigDecimalConverter">
-									<f:convertNumber type="currency" currencySymbol="R$" />
-								</h:outputText>
-							</p:column>
-							<p:column style="text-align: center;"
-								headerText="Investidor (R$)">
-								<h:outputText value="#{parcelas.vlrRepasse}"
-									converter="bigDecimalConverter">
-								</h:outputText>
-							</p:column>
-							<p:column style="text-align: center;"
-								headerText="Administração (R$)">
-								<h:outputText value="#{parcelas.vlrRetencao}"
-									converter="bigDecimalConverter">
-								</h:outputText>
-							</p:column>
-							<p:column style="text-align: center;" headerText="Repasse (R$)">
-								<h:outputText value="#{parcelas.vlrComissao}"
-									converter="bigDecimalConverter">
-								</h:outputText>
-							</p:column>
-							<p:column style="text-align: center;" headerText="Pago?">
-								<ui:fragment rendered="#{parcelas.parcelaPaga}">
-									<h:outputText value="Sim" />
-								</ui:fragment>
-								<ui:fragment rendered="#{!parcelas.parcelaPaga}">
-									<h:outputText value="Não" />
-								</ui:fragment>
-							</p:column>
+					        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
+					            <h:outputText value="#{parcelas.numeroParcela}" />
+					        </p:column>
+					        <p:column style="text-align: center;width: 70px;" headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+					            <h:outputText value="#{parcelas.dataVencimento}" >			            	
+					            	<f:convertDateTime locale="pt_BR"  />
+					            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+					            </h:outputText>
+					        </p:column>	
+					        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
+					            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>	
+					         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
+					            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>		
+					         <p:column style="text-align: center;width: 110px;" headerText="Amortização (R$)">
+					            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>		
+					         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
+					            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>	
 						</p:dataTable>
 					</p:panel>
 				</p:panel>
@@ -2985,571 +2412,6 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal1Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal1">
-				<p:dataTable id="recebedorFinalDialogdlg1" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal1}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal1}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal1 :form:panelRecebedorFinal1"
-							oncomplete="PF('recebedorFinal1Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal1}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal1 recebedorFinalDialogdlg1 :form:panelRecebedorFinal1"
-							oncomplete="PF('recebedorFinal1Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal1Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal2Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal2">
-				<p:dataTable id="recebedorFinalDialogdlg2" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal2}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal2}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal2 :form:panelRecebedorFinal2"
-							oncomplete="PF('recebedorFinal2Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal2}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal2 recebedorFinalDialogdlg2 :form:panelRecebedorFinal2"
-							oncomplete="PF('recebedorFinal2Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal2Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal3Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal3">
-				<p:dataTable id="recebedorFinalDialogdlg3" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal3}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal3}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal3 :form:panelRecebedorFinal3"
-							oncomplete="PF('recebedorFinal3Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal3}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal3 recebedorFinalDialogdlg3 :form:panelRecebedorFinal3"
-							oncomplete="PF('recebedorFinal3Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal3Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal4Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal4">
-				<p:dataTable id="recebedorFinalDialogdlg4" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal4}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal4}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal4 :form:panelRecebedorFinal4"
-							oncomplete="PF('recebedorFinal4Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal4}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal4 recebedorFinalDialogdlg4 :form:panelRecebedorFinal4"
-							oncomplete="PF('recebedorFinal4Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal4Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal5Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal5">
-				<p:dataTable id="recebedorFinalDialogdlg5" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal5}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal5}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal5 :form:panelRecebedorFinal5"
-							oncomplete="PF('recebedorFinal5Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal5}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal5 recebedorFinalDialogdlg5 :form:panelRecebedorFinal5"
-							oncomplete="PF('recebedorFinal5Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal5Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal6Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal6">
-				<p:dataTable id="recebedorFinalDialogdlg6" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal6}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal6}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal6 :form:panelRecebedorFinal6"
-							oncomplete="PF('recebedorFinal6Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal6}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal6 recebedorFinalDialogdlg6 :form:panelRecebedorFinal6"
-							oncomplete="PF('recebedorFinal6Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal6Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal7Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal7">
-				<p:dataTable id="recebedorFinalDialogdlg7" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal7}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal7}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal7 :form:panelRecebedorFinal7"
-							oncomplete="PF('recebedorFinal7Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal7}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal7 recebedorFinalDialogdlg7 :form:panelRecebedorFinal7"
-							oncomplete="PF('recebedorFinal7Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal7Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal8Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal8">
-				<p:dataTable id="recebedorFinalDialogdlg8" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal8}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal8}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal8 :form:panelRecebedorFinal8"
-							oncomplete="PF('recebedorFinal8Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal8}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal8 recebedorFinalDialogdlg8 :form:panelRecebedorFinal8"
-							oncomplete="PF('recebedorFinal8Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal8Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal9Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal9">
-				<p:dataTable id="recebedorFinalDialogdlg9" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal9}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal9}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal9 :form:panelRecebedorFinal9"
-							oncomplete="PF('recebedorFinal9Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal9}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal9 recebedorFinalDialogdlg9 :form:panelRecebedorFinal9"
-							oncomplete="PF('recebedorFinal9Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal9Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		<p:dialog header="Favorecidos" widgetVar="recebedorFinal10Dialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600">
-			<h:form id="formRecebedoresFinal10">
-				<p:dataTable id="recebedorFinalDialogdlg10" var="recebedorDialogdlg"
-					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
-					rows="10" selectionMode="single"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{contratoCobrancaMB.selectedRecebedorFinal10}"
-					style="FONT-SIZE: 10pt;" emptyMessage=""
-					rowKey="#{recebedorDialogdlg.id}">
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cnpj}"
-						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CNPJ" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.cpf}"
-						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="CPF" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.cpf}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{recebedorDialogdlg.nome}"
-						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome" />
-						</f:facet>
-						<h:outputText value="#{recebedorDialogdlg.nome}" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Selecionar"
-							action="#{contratoCobrancaMB.populateSelectedRecebedorFinal10}"
-							image="ui-icon ui-icon-check"
-							update=":form:RecebedorFinal10 :form:panelRecebedorFinal10"
-							oncomplete="PF('recebedorFinal10Dialog').hide();" />
-						<p:commandButton value="Limpar Seleção"
-							action="#{contratoCobrancaMB.clearRecebedorFinal10}"
-							image="ui-icon ui-icon-trash"
-							update=":form:RecebedorFinal10 recebedorFinalDialogdlg10 :form:panelRecebedorFinal10"
-							oncomplete="PF('recebedorFinal10Dialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
-							oncomplete="PF('recebedorFinal10Dialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>										
 		</shiro:hasAnyRoles>
 	</ui:define>
 </ui:composition>

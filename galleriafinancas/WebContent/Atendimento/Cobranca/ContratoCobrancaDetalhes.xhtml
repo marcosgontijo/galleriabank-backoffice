@@ -547,11 +547,11 @@
 				            	<f:convertDateTime locale="pt_BR"  />
 				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 				            </h:outputText>
-				        </p:column>				
+				        </p:column>		
 				        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
 				            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
-				        </p:column>		
+				        </p:column>					        		        			
 				         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
 				            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
@@ -563,27 +563,7 @@
 				         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
 				            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
-				        </p:column>		
-					        <p:column style="text-align: center;width: 110px;" headerText="Investidor (R$)">
-					            <h:outputText value="#{parcelas.vlrRepasse}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>		
-					        <p:column style="text-align: center;width: 120px;" headerText="Administração (R$)">
-					            <h:outputText value="#{parcelas.vlrRetencao}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>	
-					        <p:column style="text-align: center;width: 110px;" headerText="Repasse (R$)">
-					            <h:outputText value="#{parcelas.vlrComissao}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>						        					        
-				        	<p:column style="text-align: center;width: 45px;" headerText="Pago?">	        
-				        	<ui:fragment rendered="#{parcelas.parcelaPaga}">
-								<h:outputText value="Sim" />
-							</ui:fragment>
-							<ui:fragment rendered="#{!parcelas.parcelaPaga}">
-									<h:outputText value="Não" />
-							</ui:fragment>	
-				        </p:column>					        			        			              		        		               		        			        			           			 		
+				        </p:column>						        					        				        			        			              		        		               		        			        			           			 		
 					</p:dataTable>
 				</p:panel>																																														
 			</p:panel>
