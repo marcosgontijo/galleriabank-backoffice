@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog header="Conta Contábil" widgetVar="contaContabilDialog"
+		resizable="false" style="FONT-SIZE: 10pt;" width="600">
+		<h:form id="formContaContabil">
+			<p:dataTable id="contaContabilDialogdlg" var="contaContabilDialogdlg"
+				value="#{mbean.listContasContabil}" paginator="true" rows="10"
+				selectionMode="single"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15" selection="#{mbean.selectedContaContabil}"
+				style="FONT-SIZE: 10pt;" emptyMessage=""
+				rowKey="#{contaContabilDialogdlg.id}">
+
+				<p:column style="text-align: left;"
+					sortBy="#{contaContabilDialogdlg.codigoContaContabil}"
+					filterBy="#{contaContabilDialogdlg.codigoContaContabil}"
+					filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Codigo" />
+					</f:facet>
+					<h:outputText
+						value="#{contaContabilDialogdlg.contaContabilPai.codigoContaContabil}."
+						rendered="#{contaContabilDialogdlg.contaContabilPai != null }" />
+					<h:outputText value="#{contaContabilDialogdlg.codigoContaContabil}" />
+				</p:column>
+				
+				<p:column style="text-align: left;"
+					sortBy="#{contaContabilDialogdlg.nome}"
+					filterBy="#{contaContabilDialogdlg.nome}"
+					filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nome" />
+					</f:facet>
+					<h:outputText
+						value="#{contaContabilDialogdlg.contaContabilPai.nome} - "
+						rendered="#{contaContabilDialogdlg.contaContabilPai != null }" />
+					<h:outputText value="#{contaContabilDialogdlg.nome}" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Selecionar"
+						action="#{mbean.populateSelectedContaContabil}"
+						image="ui-icon ui-icon-check" update=":form"
+						oncomplete="PF('contaContabilDialog').hide();" />
+					<p:commandButton value="Limpar Seleção"
+						action="#{mbean.clearContaContabil}"
+						image="ui-icon ui-icon-trash"
+						update=":form contaContabilDialogdlg"
+						oncomplete="PF('contaContabilDialog').hide();" />
+					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						oncomplete="PF('contaContabilDialog').hide();" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

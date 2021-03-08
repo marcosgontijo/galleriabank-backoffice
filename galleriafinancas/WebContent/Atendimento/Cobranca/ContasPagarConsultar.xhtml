@@ -1,73 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ui:composition 
-	  xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:shiro="http://shiro.apache.org/tags"
-	  xmlns:p="http://primefaces.org/ui"
-	  template="../MenuAtendimento.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
 
-	<ui:define name="conteudo">  
-		<h:form style="margin-bottom:10px;">			
-			<p:messages id="mensagens" showDetail="true"/>													
-			<p:panel id="ConsultaContasPagar" header="Contas a Pagar - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtContasPagar" var="contasPagar" value="#{contasPagarMB.contasPagar}" paginator="true" rows="40" 
-   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{contasPagar.dataPrevista}" sortOrder="descending"
-                 reflow="true">
-			        <f:facet name="header">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
-							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}" value="false" />
-							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}" value="false" />
-						</p:commandButton>
-			        </f:facet>                                	
-			        <p:column style="text-align: center;" headerText="Data Prevista Pagamento " sortBy="#{contasPagar.dataPrevista}">
-			            <h:outputText value="#{contasPagar.dataPrevista}" >			            	
-			            	<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-			            </h:outputText>
-			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{contasPagar.descricao}" filterMatchMode="contains" sortBy="#{contasPagar.descricao}">
-			            <h:outputText value="#{contasPagar.descricao}" />
-			        </p:column>		   
-			        <p:column style="text-align: center;width: 100px;"
+	<ui:define name="conteudo">
+		<h:form style="margin-bottom:10px;">
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaContasPagar" header="Contas a Pagar - Consultar"
+				style="margin-bottom:10px;">
+				<p:dataTable id="dtContasPagar" var="contasPagar"
+					value="#{contasPagarMB.contasPagar}" paginator="true" rows="40"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					sortBy="#{contasPagar.dataVencimento}" sortOrder="descending"
+					reflow="true">
+					<f:facet name="header">
+						<p:panel>
+							<p:selectOneRadio id="TipoDespesa"
+								value="#{contasPagarMB.tipoDespesa}" required="true">
+								<f:selectItem itemLabel="Contrato" itemValue="C" />
+								<f:selectItem itemLabel="Empresa" itemValue="E" />
+								<p:ajax update="dtContasPagar" event="valueChange"
+									listener="#{contasPagarMB.selectTipoDespesa}" />
+							</p:selectOneRadio>
+							<p:commandButton value="Adicionar" ajax="false"
+								icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
+								<f:setPropertyActionListener
+									target="#{contasPagarMB.updateMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contasPagarMB.deleteMode}" value="false" />
+							</p:commandButton>
+						</p:panel>
+					</f:facet>
+					<p:column style="text-align: center;"
+						headerText="Data Prevista Pagamento "
+						sortBy="#{contasPagar.dataVencimento}">
+						<h:outputText value="#{contasPagar.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Descrição"
+						filterBy="#{contasPagar.descricao}" filterMatchMode="contains"
+						sortBy="#{contasPagar.descricao}">
+						<h:outputText value="#{contasPagar.descricao}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
 						headerText="Valor">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{contasPagar.valor}"
 							converter="bigDecimalConverter" />
 					</p:column>
-			        <p:column style="text-align: center;" headerText="Contrato">
-			            <h:outputText value="#{contasPagar.contrato.numeroContrato} - #{contasPagar.contrato.pagador.nome}" />
-			        </p:column>	     
-			        <p:column styleClass="colunaResponsiva">        
-           		        <p:commandButton action="#{contasPagarMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" title="Editar">
-		                	<f:setPropertyActionListener target="#{contasPagarMB.objetoContasPagar}" value="#{contasPagar}" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}" value="false" />
-		                </p:commandButton>
-		                <p:spacer width="10" height="10"/>
-		                <p:commandButton action="#{contasPagarMB.clearFieldsEditar}" ajax="false" icon="ui-icon-arrowthickstop-1-s" title="Baixar Conta">
-		                	<f:setPropertyActionListener target="#{contasPagarMB.objetoContasPagar}" value="#{contasPagar}" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}" value="false" />
-		                </p:commandButton>
-		                <p:spacer width="10" height="10"/>
-		                <p:commandButton action="#{contasPagarMB.clearFieldsEditar}" ajax="false" icon="ui-icon-trash" title="Excluir">
-		                	<f:setPropertyActionListener target="#{contasPagarMB.objetoContasPagar}" value="#{contasPagar}" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.updateMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}" value="true" />
-		                </p:commandButton> 
-		            </p:column>			        		               		        			        			           			 		
-					<f:facet name="footer">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
-							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}" value="false" />
-							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}" value="false" />
+					<p:column style="text-align: center;" headerText="Contrato" rendered="#{contasPagarMB.tipoDespesa == 'C'}">
+						<h:outputText
+							value="#{contasPagar.contrato.numeroContrato} - #{contasPagar.contrato.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Devedor" rendered="#{contasPagarMB.tipoDespesa == 'E'}">
+						<h:outputText
+							value="#{contasPagar.pagadorRecebedor.nome}" />
+					</p:column>
+					<p:column styleClass="colunaResponsiva">
+						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-pencil" title="Editar">
+							<f:setPropertyActionListener
+								target="#{contasPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+								value="true" />
+							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="false" />
 						</p:commandButton>
-			        </f:facet> 
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-arrowthickstop-1-s"
+							title="Baixar Conta">
+							<f:setPropertyActionListener
+								target="#{contasPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+								value="true" />
+							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-trash" title="Excluir">
+							<f:setPropertyActionListener
+								target="#{contasPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="true" />
+						</p:commandButton>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
+							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+					</f:facet>
 				</p:dataTable>
 			</p:panel>
-		</h:form>	
+		</h:form>
 	</ui:define>
-</ui:composition>	        
+</ui:composition>

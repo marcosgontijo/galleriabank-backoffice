@@ -15549,4 +15549,5 @@ public class ContratoCobrancaMB {
 	public void setVlrComissaoNew(BigDecimal vlrComissaoNew) {
 		this.vlrComissaoNew = vlrComissaoNew;
 	}
+
 }

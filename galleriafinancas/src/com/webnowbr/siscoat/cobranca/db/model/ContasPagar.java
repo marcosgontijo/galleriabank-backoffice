@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ContasPagar implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private Date dataPrevista;
@@ -15,9 +15,15 @@ public class ContasPagar implements Serializable {
 	private BigDecimal valor;
 	private boolean contaPaga;
 	private Date dataPagamento;
-	
-	public ContasPagar(){
 
+	private Date dataVencimento;
+	private BigDecimal valorPagamento;
+	private String numeroDocumento;
+	private PagadorRecebedor pagadorRecebedor;
+	private String tipoDespesa;
+	private ContaContabil contaContabil;
+
+	public ContasPagar() {
 	}
 
 	/**
@@ -81,4 +87,53 @@ public class ContasPagar implements Serializable {
 	public void setDataPagamento(Date dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	public BigDecimal getValorPagamento() {
+		return valorPagamento;
+	}
+
+	public void setValorPagamento(BigDecimal valorPagamento) {
+		this.valorPagamento = valorPagamento;
+	}
+
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
+	}
+
+	public PagadorRecebedor getPagadorRecebedor() {
+		return pagadorRecebedor;
+	}
+
+	public void setPagadorRecebedor(PagadorRecebedor pagadorRecebedor) {
+		this.pagadorRecebedor = pagadorRecebedor;
+	}
+
+	public String getTipoDespesa() {
+		return tipoDespesa;
+	}
+
+	public void setTipoDespesa(String tipoDespesa) {
+		this.tipoDespesa = tipoDespesa;
+	}
+
+	public ContaContabil getContaContabil() {
+		return contaContabil;
+	}
+
+	public void setContaContabil(ContaContabil contaContabil) {
+		this.contaContabil = contaContabil;
+	}
+
 }

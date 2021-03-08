@@ -13,55 +13,138 @@
 			<p:messages id="mensagens" showDetail="true" />
 			<p:panel id="contasPagar" header="Contas a Pagar"
 				style="margin-bottom:20px;">
-				<h:panelGrid columns="3">
-					<p:outputLabel for="numcontrato" value="Contrato: "
-							styleClass="labelBold"  />
-					<p:inputText id="numcontrato"
-							value="#{contasPagarMB.numeroContrato}" label="Contrato"
-							style="width:50px;" disabled="true"/>
-					<p:commandButton id="botaoContrato" type="button"
-						onclick="PF('contratoDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" disabled="#{contasPagarMB.deleteMode}"/>
-				</h:panelGrid>	
 				<h:panelGrid columns="2">
-					<p:outputLabel for="dataPrevista" value="Data Prevista Pagamento: " styleClass="labelBold" />
-					<p:calendar id="dataPrevista" value="#{contasPagarMB.objetoContasPagar.dataPrevista}"
+					<p:outputLabel value="Tipo Despesa: " styleClass="labelBold"
+						style="margin-right: 59px;" />
+
+					<h:outputText id="TipoDespesaC" value="Contrato "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}" />
+
+					<h:outputText id="TipoDespesaE" value="Empresa"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}" />
+
+					<p:outputLabel for="numcontrato" value="Contrato: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}"
+						styleClass="labelBold" />
+					<h:panelGrid columns="2"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}">
+						<p:inputText id="numcontrato"
+							value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
+							label="Contrato" style="width:110px;" disabled="true" />
+						<p:commandButton id="botaoContrato" type="button"
+							onclick="PF('contratoDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"
+							disabled="#{contasPagarMB.deleteMode}" />
+					</h:panelGrid>
+
+					<p:outputLabel for="pagadorRecebedor" value="Recebedor: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<h:panelGrid columns="2"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}">
+						<p:inputText id="pagadorRecebedor"
+							value="#{contasPagarMB.objetoContasPagar.pagadorRecebedor.nome}"
+							label="Recebedor" style="width:210px;" disabled="true" />
+
+						<p:commandButton id="botaoPagador" type="button"
+							onclick="PF('pagadorRecebedorDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin">
+						</p:commandButton>
+
+
+					</h:panelGrid>
+
+					<p:outputLabel for="contaContabil" value="Conta Contábil: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<h:panelGrid columns="2"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}">
+						<p:inputText id="contaContabil"
+							value="#{contasPagarMB.objetoContasPagar.contaContabil.nome}"
+							label="Conta Contábil" style="width:210px;" disabled="true" />
+
+						<p:commandButton id="botaoContaContabil" type="button"
+							onclick="PF('contaContabilDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" />
+					</h:panelGrid>
+
+					<p:outputLabel for="dataPrevista" value="Data Prevista Pagamento: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}"
+						styleClass="labelBold" />
+					<p:calendar id="dataPrevista"
+						value="#{contasPagarMB.objetoContasPagar.dataVencimento}"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}"
 						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
-						 styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
 					</p:calendar>
+
+					<p:outputLabel for="dataVencimento" value="Data Vencimento: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<p:calendar id="dataVencimento"
+						value="#{contasPagarMB.objetoContasPagar.dataVencimento}"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+					</p:calendar>
+
+					<p:outputLabel for="numeroDocumento" value=" Numero Documento: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<p:inputText id="numeroDocumento"
+						value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						required="true" disabled="#{contasPagarMB.deleteMode}" />
+
 					<p:outputLabel for="descricao" value="Descrição: "
-							styleClass="labelBold" />
-					<p:inputText id="descricao" 
-							value="#{contasPagarMB.objetoContasPagar.descricao}" required="true" 
-							disabled="#{contasPagarMB.deleteMode}"/>
+						styleClass="labelBold" />
+					<p:inputText id="descricao"
+						value="#{contasPagarMB.objetoContasPagar.descricao}"
+						required="true" disabled="#{contasPagarMB.deleteMode}" />
 					<p:outputLabel for="valor" value="Valor (R$): "
-							styleClass="labelBold" />
+						styleClass="labelBold" />
 					<p:inputText id="valor"
-							value="#{contasPagarMB.objetoContasPagar.valor}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);" required="true"
-							converter="bigDecimalConverter" disabled="#{contasPagarMB.deleteMode}"/>
+						value="#{contasPagarMB.objetoContasPagar.valor}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						disabled="#{contasPagarMB.deleteMode}" />
+
+					<p:outputLabel for="valorPagamento" value="Valor Pagamento (R$): "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<p:inputText id="valorPagamento"
+						value="#{contasPagarMB.objetoContasPagar.valorPagamento}"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="false"
+						converter="bigDecimalConverter"
+						disabled="#{contasPagarMB.deleteMode}" />
+
 				</h:panelGrid>
 			</p:panel>
-			<p:commandButton value="Salvar Conta" ajax="false" icon="ui-icon-print"
-				action="#{contasPagarMB.salvarConta}" rendered="#{!contasPagarMB.deleteMode}" />
+			<p:commandButton value="Salvar Conta" ajax="false"
+				icon="ui-icon-print" action="#{contasPagarMB.salvarConta}"
+				rendered="#{!contasPagarMB.deleteMode}" />
 			<p:spacer height="10" rendered="#{!contasPagarMB.deleteMode}" />
-			<p:commandButton value="Baixar Conta" ajax="false" icon="ui-icon-arrowthickstop-1-s"
-				action="#{contasPagarMB.baixarConta}" rendered="#{!contasPagarMB.deleteMode}" />
-			<p:commandButton value="Excluir Conta" ajax="false" icon="ui-icon-print"
-				action="#{contasPagarMB.excluirConta}" rendered="#{contasPagarMB.deleteMode}" />
-			<p:spacer height="10"  />
+			<p:commandButton value="Baixar Conta" ajax="false"
+				icon="ui-icon-arrowthickstop-1-s"
+				action="#{contasPagarMB.baixarConta}"
+				rendered="#{!contasPagarMB.deleteMode}" />
+			<p:commandButton value="Excluir Conta" ajax="false"
+				icon="ui-icon-print" action="#{contasPagarMB.excluirConta}"
+				rendered="#{contasPagarMB.deleteMode}" />
+			<p:spacer height="10" />
 			<p:commandButton value="Cancelar" ajax="false" immediate="true"
-					icon="ui-icon-cancel"
-					action="#{contasPagarMB.clearFields}"
-					style="TEXT-DECORATION: bold; " />
+				icon="ui-icon-cancel" action="#{contasPagarMB.clearFields}"
+				style="TEXT-DECORATION: bold; " />
 		</h:form>
 		<p:dialog header="Contratos" widgetVar="contratoDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formContratos">
 				<p:dataTable id="contratoDialogdlg" var="contratoDialogdlg"
-					value="#{contasPagarMB.listContratos}" paginator="true"
-					rows="10" selectionMode="single"
+					value="#{contasPagarMB.listContratos}" paginator="true" rows="10"
+					selectionMode="single"
 					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					rowsPerPageTemplate="5, 10, 15"
 					selection="#{contasPagarMB.selectedContratoLov}"
@@ -69,7 +152,9 @@
 					rowKey="#{contratoDialogdlg.id}">
 
 					<p:column style="text-align: center;"
-						sortBy="#{contratoDialogdlg.numeroContrato}" filterBy="#{contratoDialogdlg.numeroContrato}" filterMatchMode="contains" >
+						sortBy="#{contratoDialogdlg.numeroContrato}"
+						filterBy="#{contratoDialogdlg.numeroContrato}"
+						filterMatchMode="contains">
 						<f:facet name="header">
 							<h:outputText value="Contrato" />
 						</f:facet>
@@ -78,7 +163,8 @@
 
 					<p:column style="text-align: center;"
 						sortBy="#{contratoDialogdlg.pagador.nome}"
-						filterBy="#{contratoDialogdlg.pagador.nome}" filterMatchMode="contains">
+						filterBy="#{contratoDialogdlg.pagador.nome}"
+						filterMatchMode="contains">
 						<f:facet name="header">
 							<h:outputText value="Pagador" />
 						</f:facet>
@@ -100,6 +186,16 @@
 					</f:facet>
 				</p:dataTable>
 			</h:form>
-		</p:dialog>	
+		</p:dialog>
+
+		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+			<ui:param name="mbean" value="#{contasPagarMB}"></ui:param>
+			<ui:param name="titulo" value="Recebedor"></ui:param>
+		</ui:include>
+
+
+		<ui:include src="../../Dialog/DialogContaContabil.xhtml">
+			<ui:param name="mbean" value="#{contasPagarMB}"></ui:param>
+		</ui:include>
 	</ui:define>
 </ui:composition>
