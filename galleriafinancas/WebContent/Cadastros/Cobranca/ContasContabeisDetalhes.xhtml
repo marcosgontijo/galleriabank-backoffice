@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:panel id="PanelContaContabil"
+				header="Conta Contabil - #{contasContabeisMB.tituloPainel}"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+
+					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" />
+					<h:outputText id="Nome"
+						value="#{contasContabeisMB.contaContabil.nome}"
+						label="Nome" required="true" onblur="" style="width:400px;">
+					</h:outputText>
+
+					<p:outputLabel for="Codigo" value="Codigo: " styleClass="labelBold" />
+					<h:outputText id="Codigo"
+						value="#{contasContabeisMB.contaContabil.codigoContaContabil}"
+						label="Codigo" required="true" onblur="" style="width:400px;">
+					</h:outputText>
+
+					<p:outputLabel for="ContaContabilPai" value="Conta Contábil Pai: " />
+					<h:outputText id="ContaContabilPai"
+						value="#{contasContabeisMB.contaContabil.contaContabilPai.nome}"
+						label="ContaContabilPai" required="true" onblur="" style="width:400px;">
+					</h:outputText>
+				</h:panelGrid>
+			</p:panel>
+
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{contasContabeisMB.excluir}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;" rendered="#{contasContabeisMB.deleteMode}"/>		 						
+				<p:spacer height="10" rendered="#{contasContabeisMB.deleteMode}"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="contasContabeisConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{contasContabeisMB.deleteMode}"/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="contasContabeisConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!contasContabeisMB.deleteMode}"/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

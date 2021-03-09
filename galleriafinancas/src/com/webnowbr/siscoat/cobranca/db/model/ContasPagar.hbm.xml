@@ -3,28 +3,59 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-    <class name="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" table="CONTASPAGAR">
-        <id name="id" type="long">
-            <column name="ID" />
-            <generator class="increment" />
-        </id>
-        <property name="dataPrevista" type="java.util.Date">
-            <column name="dataPrevista" />
-        </property>     			 
-        <property name="descricao" type="java.lang.String">
-            <column name="descricao"/>
-       </property>     
-       <many-to-one name="contrato" class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca" lazy="false">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.ContasPagar"
+		table="CONTASPAGAR">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<!-- Mudara para dataVencimento -->
+		<property name="dataPrevista" type="java.util.Date">
+			<column name="dataPrevista" />
+		</property>		
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao" />
+		</property>		
+		<many-to-one name="contrato"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
 			<column name="contrato" />
-		</many-to-one>               
-       <property name="valor" type="big_decimal">
-            <column name="valor" />
-       </property>            
-       <property name="contaPaga" type="boolean">
-           <column name="contaPaga" />
-       </property> 
-       <property name="dataPagamento" type="java.util.Date">
-            <column name="dataPagamento" />
-        </property> 
-    </class>
+		</many-to-one>
+		<property name="valor" type="big_decimal">
+			<column name="valor" />
+		</property>
+		<property name="contaPaga" type="boolean">
+			<column name="contaPaga" />
+		</property>		
+		<property name="dataPagamento" type="java.util.Date">
+			<column name="dataPagamento" />
+		</property>
+		
+		<!--Novos Campos -->
+		<property name="dataVencimento" type="java.util.Date">
+			<column name="dataVencimento" />
+		</property>		
+		<property name="valorPagamento" type="big_decimal">
+			<column name="valorPagamento" />
+		</property>
+		<property name="numeroDocumento" type="java.lang.String"  length="20">
+			<column name="numeroDocumento" />
+		</property>		
+		<property name="tipoDespesa" type="java.lang.String" length="1">
+			<column name="tipoDespesa" />
+		</property>	
+			
+		<many-to-one name="pagadorRecebedor"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagadorRecebedor" />
+		</many-to-one>
+		
+		<many-to-one name="contaContabil"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContaContabil"
+			lazy="false">
+			<column name="contaContabil" />
+		</many-to-one>
+
+	</class>
 </hibernate-mapping>

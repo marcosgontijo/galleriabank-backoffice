@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+					
+	<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
+		resizable="false" style="FONT-SIZE: 10pt;" width="600">
+		<h:form id="formReceborPagador">
+			<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
+				value="#{mbean.listRecebedorPagador}" paginator="true"
+				rows="10" selectionMode="single"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15"
+				selection="#{mbean.selectedPagador}"
+				style="FONT-SIZE: 10pt;" emptyMessage=""
+				rowKey="#{pagadorDialogdlg.id}">
+
+				<p:column style="text-align: center;"
+					sortBy="#{pagadorDialogdlg.cnpj}"
+					filterBy="#{pagadorDialogdlg.cnpj}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="CNPJ" />
+					</f:facet>
+					<h:outputText value="#{pagadorDialogdlg.cnpj}" />
+				</p:column>
+
+				<p:column style="text-align: center;"
+					sortBy="#{pagadorDialogdlg.cpf}" filterBy="#{pagadorDialogdlg.cpf}"
+					filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="CPF" />
+					</f:facet>
+					<h:outputText value="#{pagadorDialogdlg.cpf}" />
+				</p:column>
+
+				<p:column style="text-align: center;"
+					sortBy="#{pagadorDialogdlg.nome}"
+					filterBy="#{pagadorDialogdlg.nome}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nome" />
+					</f:facet>
+					<h:outputText value="#{pagadorDialogdlg.nome}" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Selecionar"
+						action="#{mbean.populateSelectedPagadorRecebedor}"
+						image="ui-icon ui-icon-check" update=":form"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+					<p:commandButton value="Limpar Seleção"
+						action="#{mbean.clearPagadorRecebedor}"
+						image="ui-icon ui-icon-trash"
+						update=":form pagadorDialogdlg"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+</ui:composition>

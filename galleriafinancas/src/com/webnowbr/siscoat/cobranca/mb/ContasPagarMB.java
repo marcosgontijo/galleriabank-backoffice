@@ -51,6 +51,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
+import com.webnowbr.siscoat.cobranca.db.model.ContaContabil;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -59,6 +60,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.OperacoesIndividualizado;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
+import com.webnowbr.siscoat.cobranca.db.op.ContaContabilDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
@@ -73,87 +75,117 @@ import com.webnowbr.siscoat.security.LoginBean;
 @ManagedBean(name = "contasPagarMB")
 @SessionScoped
 public class ContasPagarMB {
-	
-	private List<ContasPagar> contasPagar; 
+
+	private List<ContasPagar> contasPagar;
+	private Map<String, Object> filters;
 	private ContasPagar objetoContasPagar;
-	
+
 	private boolean updateMode;
 	private boolean deleteMode;
-	
+
+	private String tipoDespesa;
+
 	private List<ContratoCobranca> listContratos;
 	private long idContrato;
-	private String numeroContrato;
+	// private String numeroContrato;
 	private ContratoCobranca selectedContratoLov;
-	
+
+	/** Lista dos Pagadores utilizada pela LOV. */
+	private List<PagadorRecebedor> listRecebedorPagador;
+	/** Objeto selecionado na LoV - Pagador. */
+	private PagadorRecebedor selectedPagador;
+
+	private List<ContaContabil> listContasContabil;
+	/** Objeto selecionado na LoV - Pagador. */
+	private ContaContabil selectedContaContabil;
+
 	public ContasPagarMB() {
-		
+
 	}
-	
+
 	public String clearFieldsInsert() {
 		this.objetoContasPagar = new ContasPagar();
-		
+		objetoContasPagar.setTipoDespesa(tipoDespesa);
 		clearContrato();
-		
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listContratos = cDao.findAll();
-		
+
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
-	
-	public String clearFieldsEditar() {		
+
+	public String clearFieldsEditar() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listContratos = cDao.findAll();
-		
+
 		if (this.objetoContasPagar.getContrato() != null) {
 			this.selectedContratoLov = this.objetoContasPagar.getContrato();
 			populateSelectedContrato();
 		}
-		
+
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
-	
+
 	public String clearFields() {
-		ContasPagarDao cDao = new ContasPagarDao();
-		Map<String, Object> filters = new HashMap<String,Object>();			
+		if (tipoDespesa == null || tipoDespesa.isEmpty())
+			tipoDespesa = "C";
+		filters = new HashMap<String, Object>();
 		filters.put("contaPaga", false);
-		
-		this.contasPagar = cDao.findByFilter(filters);
-		
+		atualizaListagem();
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listRecebedorPagador = pagadorRecebedorDao.findAll();
+
+		ContaContabilDao contaContabilDao = new ContaContabilDao();
+		listContasContabil = contaContabilDao.ContasContabilOrdenadaRaiz();
+
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
 	}
-	
-	public String clearFieldsContasPagas() {
+
+	private void atualizaListagem() {
 		ContasPagarDao cDao = new ContasPagarDao();
-		Map<String, Object> filters = new HashMap<String,Object>();			
+		HashMap<String, Object> filtersConsulta = new HashMap<String, Object>();
+		filtersConsulta.putAll(filters);
+		filtersConsulta.put("tipoDespesa", tipoDespesa);
+		this.contasPagar = cDao.findByFilter(filtersConsulta);
+	}
+
+	public String clearFieldsContasPagas() {
+		filters = new HashMap<String, Object>();
 		filters.put("contaPaga", true);
-		
-		this.contasPagar = cDao.findByFilter(filters);
-		
+		atualizaListagem();
 		return "/Atendimento/Cobranca/ContasPagasConsultar.xhtml";
 	}
-	
+
+	public void selectTipoDespesa() {
+		atualizaListagem();
+	}
+
 	public String baixarConta() {
 		ContasPagarDao cDao = new ContasPagarDao();
-		
+
 		this.objetoContasPagar.setDataPagamento(gerarDataHoje());
 		this.objetoContasPagar.setContaPaga(true);
+		if (this.objetoContasPagar.getValorPagamento() == null)
+			this.objetoContasPagar.setValorPagamento(this.objetoContasPagar.getValor());
 		cDao.merge(this.objetoContasPagar);
-		
+
+		this.contasPagar.remove(this.objetoContasPagar);
+
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
 	}
-	
+
 	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
 		return dataHoje.getTime();
 	}
-	
+
 	public String salvarConta() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ContasPagarDao cDao = new ContasPagarDao();
-		
+
 		if (this.selectedContratoLov != null) {
 			if (this.selectedContratoLov.getId() > 0) {
 				this.objetoContasPagar.setContrato(this.selectedContratoLov);
@@ -163,55 +195,75 @@ public class ContasPagarMB {
 		} else {
 			this.objetoContasPagar.setContrato(null);
 		}
-		
+
 		if (this.objetoContasPagar.getId() > 0) {
 			cDao.merge(this.objetoContasPagar);
-			
-			facesContext.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta alterada com sucesso!", ""));
+
+			facesContext.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta alterada com sucesso!", ""));
 		} else {
 			cDao.create(this.objetoContasPagar);
-			
-			facesContext.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta cadastrada com sucesso!", ""));
+
+			facesContext.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta cadastrada com sucesso!", ""));
 		}
-		
+
 		return clearFields();
 	}
-	
+
 	public String editarConta() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ContasPagarDao cDao = new ContasPagarDao();
-	
+
 		cDao.merge(this.objetoContasPagar);
-			
-		facesContext.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta alterada com sucesso!", ""));
-		
+
+		facesContext.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta alterada com sucesso!", ""));
+
 		return clearFields();
 	}
-	
+
 	public String excluirConta() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ContasPagarDao cDao = new ContasPagarDao();
-	
+
 		cDao.delete(this.objetoContasPagar);
-			
-		facesContext.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta excluída com sucesso!", ""));
-		
+
+		this.contasPagar.remove(this.objetoContasPagar);
+
+		facesContext.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta excluída com sucesso!", ""));
+
 		return clearFields();
 	}
-	
+
 	public final void populateSelectedContrato() {
 		this.idContrato = this.selectedContratoLov.getId();
-		this.numeroContrato = this.selectedContratoLov.getNumeroContrato();
+		this.objetoContasPagar.setNumeroDocumento(this.selectedContratoLov.getNumeroContrato());
 	}
 
 	public void clearContrato() {
 		this.idContrato = 0;
-		this.numeroContrato = null;
+		// this.numeroContrato = null;
 		this.selectedContratoLov = new ContratoCobranca();
+	}
+
+	public void clearPagadorRecebedor() {
+		this.objetoContasPagar.setPagadorRecebedor(null);
+		this.selectedPagador = new PagadorRecebedor();
+	}
+
+	public final void populateSelectedPagadorRecebedor() {
+		this.objetoContasPagar.setPagadorRecebedor(this.selectedPagador);
+	}
+
+	public void ContaContabil() {
+		this.objetoContasPagar.setContaContabil(null);
+		this.selectedContaContabil = new ContaContabil();
+	}
+
+	public final void populateSelectedContaContabil() {
+		this.objetoContasPagar.setContaContabil(this.selectedContaContabil);
 	}
 
 	public List<ContasPagar> getContasPagar() {
@@ -238,6 +290,14 @@ public class ContasPagarMB {
 		this.updateMode = updateMode;
 	}
 
+	public String getTipoDespesa() {
+		return tipoDespesa;
+	}
+
+	public void setTipoDespesa(String tipoDespesa) {
+		this.tipoDespesa = tipoDespesa;
+	}
+
 	public boolean isDeleteMode() {
 		return deleteMode;
 	}
@@ -262,13 +322,13 @@ public class ContasPagarMB {
 		this.idContrato = idContrato;
 	}
 
-	public String getNumeroContrato() {
-		return numeroContrato;
-	}
-
-	public void setNumeroContrato(String numeroContrato) {
-		this.numeroContrato = numeroContrato;
-	}
+//	public String getNumeroContrato() {
+//		return numeroContrato;
+//	}
+//
+//	public void setNumeroContrato(String numeroContrato) {
+//		this.numeroContrato = numeroContrato;
+//	}
 
 	public ContratoCobranca getSelectedContratoLov() {
 		return selectedContratoLov;
@@ -277,4 +337,37 @@ public class ContasPagarMB {
 	public void setSelectedContratoLov(ContratoCobranca selectedContratoLov) {
 		this.selectedContratoLov = selectedContratoLov;
 	}
+
+	public List<PagadorRecebedor> getListRecebedorPagador() {
+		return listRecebedorPagador;
+	}
+
+	public void setListRecebedorPagador(List<PagadorRecebedor> listRecebedorPagador) {
+		this.listRecebedorPagador = listRecebedorPagador;
+	}
+
+	public PagadorRecebedor getSelectedPagador() {
+		return selectedPagador;
+	}
+
+	public void setSelectedPagador(PagadorRecebedor selectedPagador) {
+		this.selectedPagador = selectedPagador;
+	}
+
+	public List<ContaContabil> getListContasContabil() {
+		return listContasContabil;
+	}
+
+	public void setListContasContabil(List<ContaContabil> listContasContabil) {
+		this.listContasContabil = listContasContabil;
+	}
+
+	public ContaContabil getSelectedContaContabil() {
+		return selectedContaContabil;
+	}
+
+	public void setSelectedContaContabil(ContaContabil selectedContaContabil) {
+		this.selectedContaContabil = selectedContaContabil;
+	}
+
 }
