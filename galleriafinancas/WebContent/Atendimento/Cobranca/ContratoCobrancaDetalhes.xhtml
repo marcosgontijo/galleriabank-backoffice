@@ -375,7 +375,7 @@
 							<p:outputLabel value="Valor do Investidor: " styleClass="labelBold" />
 				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRepasse}" converter="bigDecimalConverter"/>															
 																								
-							<p:outputLabel value="Valor da Administração: " styleClass="labelBold" />
+							<p:outputLabel value="Valor da Galeria: " styleClass="labelBold" />
 				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRetencao}" converter="bigDecimalConverter"/>
 				            
 				            <p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
@@ -383,9 +383,13 @@
 				            
 				            <p:outputLabel value="Taxa de Juros (%): " styleClass="labelBold" />
 				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" converter="bigDecimalConverter"/>
+				            <p:spacer></p:spacer>
 				            
 				            <p:outputLabel value="Valor da CCB: " styleClass="labelBold" />
 				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}" converter="bigDecimalConverter"/>
+				            
+				            <p:outputLabel value="Meses Carência: " styleClass="labelBold" />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" />
 				        </h:panelGrid>		
 				        
 						<p:panel id="ParcelaFinal" header="Parcela Final" style="margin-top:10px;margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}">
@@ -398,7 +402,7 @@
 								<h:outputText value="R$"/>						
 				            	<h:outputText value="#{contratoCobrancaMB.vlrRepasseFinal}" converter="bigDecimalConverter"/>																
 																									
-								<p:outputLabel value="Valor da Administração: " styleClass="labelBold" />
+								<p:outputLabel value="Valor da Galeria: " styleClass="labelBold" />
 								<h:outputText value="R$"/>						
 				            	<h:outputText value="#{contratoCobrancaMB.vlrRetencaoFinal}" converter="bigDecimalConverter"/>
 				            	

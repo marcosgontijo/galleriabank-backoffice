@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"	  
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  template="./MenuManutencao.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ProcessamentoEmLote" header="Processamento Em Lote" style="margin-bottom:10px;">		    
+				<p:panel id="JurosAmortizacaoSaldo" header="Efetuar Cálculo Juros, Amortização e Saldo" style="margin-bottom:10px;">		    		    
+	   		        <h:panelGrid columns="2">
+						<p:outputLabel value="Este processo irá recalcular todos os valores de Juros, Amortização e Saldo de todas as parcelas de todos os contratos." styleClass="labelBold"/>
+						<p:spacer></p:spacer>
+					</h:panelGrid>
+					<div align="center" style="margin-bottom: 80px;">	
+						<p:commandButton value="Efetuar Cálculo de TODOS Contratos" ajax="false" action="#{processamentoEmLoteMB.atualizaSaldoJurosAmortizacaoParcelasContratos}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;"/>
+					</div>	
+					<h:panelGrid columns="2">
+						<p:outputLabel value="IMPORTANTE!!! Se utilizar os campos abaixo, o processamento será feito apenas no contrato informado." styleClass="labelBold"/>
+						<p:spacer></p:spacer>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="contrato" value="Número Contrato (Formato: 0XXXX): "
+								styleClass="labelBold" />
+						<p:inputText id="contrato"
+							value="#{processamentoEmLoteMB.numeroContratoCustom}"
+							label="Número Contrato" 
+							style="FONT-SIZE: 10pt;width:50px;" />
+								
+						<p:outputLabel for="txJurosCustom" value="Taxa de Juros (% - Formato: X,XXX): "
+								styleClass="labelBold" />
+						<p:inputText id="txJurosCustom" style="margin-left: 12px;"
+								value="#{processamentoEmLoteMB.txJurosCustom}"
+								converter="bigDecimalConverter" />
+					</h:panelGrid>
+					<div align="center">	
+						<p:commandButton value="Efetuar Cálculo Customizado" ajax="false" action="#{processamentoEmLoteMB.atualizaSaldoJurosAmortizacaoParcelasContratosCustomizado}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;"/>
+					</div>						
+				</p:panel>		    
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

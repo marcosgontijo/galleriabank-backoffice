@@ -17,6 +17,9 @@ public class ContratoCobranca implements Serializable {
 	private Date dataContrato;
 	private int diaMes;
 	private int qtdeParcelas;
+	
+	private int mesesCarencia;
+		
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
 	private BigDecimal vlrInvestimento;
@@ -3028,4 +3031,12 @@ public class ContratoCobranca implements Serializable {
 	public void setLeadCompletoUsuario(String leadCompletoUsuario) {
 		this.leadCompletoUsuario = leadCompletoUsuario;
 	}
+
+	public int getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(int mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}	
 }

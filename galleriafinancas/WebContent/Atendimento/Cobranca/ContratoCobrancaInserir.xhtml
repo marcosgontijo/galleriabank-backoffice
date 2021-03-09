@@ -1411,7 +1411,7 @@
 									update="vlrRetencao" />
 							</p:inputText>
 
-							<p:outputLabel for="vlrRetencao" value="Valor da Administração: "
+							<p:outputLabel for="vlrRetencao" value="Valor da Galleria: "
 								styleClass="labelBold" />
 							<p:inputText id="vlrRetencao" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.vlrRetencao}"
@@ -1442,6 +1442,13 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
+																
+							<p:outputLabel for="mesesCarencia" value="Meses Carência: "
+								styleClass="labelBold" />
+							<p:inputText id="mesesCarencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" required="true"
+								style="width: 30px;margin-left: 12px;">
+							</p:inputText>								
 								
 							<p:outputLabel value="Gerar Boleto das Parcelas "
 								styleClass="labelBold" />
@@ -1500,7 +1507,7 @@
 								</p:inputText>
 
 								<p:outputLabel for="vlrRetencaoFinal"
-									value="Valor da Administração: " styleClass="labelBold" />
+									value="Valor da Galleria: " styleClass="labelBold" />
 								<p:inputText id="vlrRetencaoFinal" style="margin-left: 12px;"
 									value="#{contratoCobrancaMB.vlrRetencaoFinal}"
 									onkeypress="return isNumberKey(event);"

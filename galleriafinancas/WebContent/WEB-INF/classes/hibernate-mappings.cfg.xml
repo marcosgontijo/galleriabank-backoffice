@@ -22,7 +22,8 @@
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContasPagar.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/TransferenciasObservacoesIUGU.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/FilaInvestidores.hbm.xml"/> 	
- 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DebenturesInvestidor.hbm.xml"/> 			
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DebenturesInvestidor.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ErrosProcessamentoEmLote.hbm.xml"/> 	 			
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
         <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 
         <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>

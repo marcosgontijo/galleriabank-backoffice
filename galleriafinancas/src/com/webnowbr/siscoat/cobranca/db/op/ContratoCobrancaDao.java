@@ -2379,14 +2379,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONSULTA_CONTRATOS_ULTIMOS_50 =  	"select cc.id "
+	private static final String QUERY_CONSULTA_CONTRATOS_ULTIMOS_10 =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
-			+ "order by cc.id desc "
-			+ "limit 50 ";
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
+			+ "order by cc.datacontrato desc "
+			+ "limit 10 ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratosUltimos50() {
+	public List<ContratoCobranca> consultaContratosUltimos10() {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2395,7 +2396,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_50;	
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_10;	
 				try {
 					connection = getConnection();
 
@@ -2423,10 +2424,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "and cc.numerocontrato = ? ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratosPorNumero(final String numeroContrato) {
+	public List<ContratoCobranca> consultaContratosPorNumeroNaoGalleria(final String numeroContrato) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2464,14 +2466,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_CONSULTA_CONTRATOS_POR_DATA =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
-			+ "where cc.status = 'Aprovado' "
-			+ "and cc.dataContrato >= ? ::timestamp "
-			+ "and cc.dataContrato <= ? ::timestamp ";
+			+ "where cc.status = 'Aprovado' ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratos(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
-			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
-			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, final long idResponsavel, final boolean grupoPagadores, final long idGrupoPagador, final String empresa) {
+	public List<ContratoCobranca> consultaContratosNaoGalleria(final String numeroContrato, final long idPagador,
+			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4,
+			final long idRecebedor5, final long idRecebedor6, final long idRecebedor7,
+			final long idRecebedor8, final long idRecebedor9, final long idRecebedor10) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2485,117 +2486,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					
-					if (grupoPagadores) {
-						if (idGrupoPagador > 0) {
-							GruposPagadores gp = new GruposPagadores();
-							GruposPagadoresDao gpd = new GruposPagadoresDao();
-							
-							gp = gpd.findById(idGrupoPagador);
-							
-							String pagadores = "";
-							
-							if (gp.getId() > 0) {
-								if (gp.getPagador1() != null) {
-									if (gp.getPagador1().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador1().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador1().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador2() != null) {
-									if (gp.getPagador2().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador2().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador2().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador3() != null) {
-									if (gp.getPagador3().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador3().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador3().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador4() != null) {
-									if (gp.getPagador4().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador4().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador4().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador5() != null) {
-									if (gp.getPagador5().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador5().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador5().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador6() != null) {
-									if (gp.getPagador6().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador6().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador6().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador7() != null) {
-									if (gp.getPagador7().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador7().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador7().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador8() != null) {
-									if (gp.getPagador8().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador8().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador8().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador9() != null) {
-									if (gp.getPagador9().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador9().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador9().getId());			
-										}									
-									}
-								}
-								if (gp.getPagador10() != null) {
-									if (gp.getPagador10().getId() > 0) {
-										if (!pagadores.equals("")) {
-											pagadores = pagadores + ", " + gp.getPagador10().getId();										
-										} else {
-											pagadores = String.valueOf(gp.getPagador10().getId());			
-										}									
-									}
-								}								
-							}
-							
-							if (!pagadores.equals("")) {
-								query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador in (" + pagadores + ") ";	
-							}							
-						}
-					} else {
-						if (idPagador > 0) {
-							query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador = ?";
-						}	
-					}					
+					if (numeroContrato != null && !numeroContrato.equals("")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.numerocontrato = ?";
+					}
+					
+					if (idPagador > 0) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador = ?";
+					}	
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador not in (15, 34,14, 182, 417, 803) ";
 					
 					if (idRecebedor > 0) {
 						query_RELATORIO_FINANCEIRO_RECEBEDORES = 
@@ -2741,39 +2640,32 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and (" + query_RELATORIO_FINANCEIRO_RECEBEDORES + ")";
 					}
 					
+					/*
 					if (idResponsavel > 0) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.responsavel = ?";
 					}
-					
-					if (!empresa.equals("TODAS")) {
-						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
-					}
+					*/
 					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
 					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
-					
 					int params = 0;
 				
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);	
-						
-					params = 2;
-					
-					if (!grupoPagadores) {
-						if (idPagador > 0) {
-							params = params +1;
-							ps.setLong(params, idPagador);
-						}	
+					if (numeroContrato != null && !numeroContrato.equals("")) {
+						params = params +1;
+						ps.setString(params, numeroContrato);
 					}
-					
+
+					if (idPagador > 0) {
+						params = params +1;
+						ps.setLong(params, idPagador);
+					}	
+					/*
 					if (idResponsavel > 0) {
 						params = params +1;
 						ps.setLong(params, idResponsavel);
 					}						
-	
+					*/
 					rs = ps.executeQuery();
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
@@ -3472,6 +3364,47 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosAprovados() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_APROVADOS_ALL;
+					
+					query = query + "where status = 'Aprovado'" ;
+
+					query = query + " order by id";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+		
 	private static final String QUERY_CONTRATOS_APROVADOS = "select c.id from cobranca.contratocobranca c " +
 			"inner join cobranca.responsavel res on c.responsavel = res.id ";
 	
