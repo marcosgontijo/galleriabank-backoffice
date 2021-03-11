@@ -1641,146 +1641,230 @@ public class InvestidorMB {
 		this.files = listaArquivos(contrato);
 	}
 
+	public String getInformacoesDoInvestidorNoContrato(ContratoCobrancaResumoVO contrato) {
+		// get files do contrato
+		this.selectedContrato.setNumeroContrato(contrato.getNumeroContrato());
+
+		this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+				contrato.getListContratoCobrancaParcelasInvestidorSelecionadoEnvelope());
+
+		this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
+				contrato.getListContratoCobrancaParcelasInvestidorSelecionado());
+		
+		return null;
+	}
+
 	public void getInformacoesDoInvestidorNoContrato(ContratoCobranca contrato, ContratoCobrancaResumoVO contratoVO) {
 		this.selectedContrato = contrato;
 
 		// get valor do investidor no contrato
 		if (contrato.getRecebedor() != null) {
 			if (contrato.getRecebedor().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor());
 
 				if (contrato.isRecebedorEnvelope()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor1());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor1());
+
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor1());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor1());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor2() != null) {
 			if (contrato.getRecebedor2().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor2());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor2());
 
 				if (contrato.isRecebedorEnvelope2()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor2());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor2());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor2());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor2());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor3() != null) {
 			if (contrato.getRecebedor3().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor3());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor3());
 
 				if (contrato.isRecebedorEnvelope3()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor3());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor3());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor3());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor3());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor4() != null) {
 			if (contrato.getRecebedor4().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor4());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor4());
 
 				if (contrato.isRecebedorEnvelope4()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor4());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor4());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor4());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor4());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor5() != null) {
 			if (contrato.getRecebedor5().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor5());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor5());
 
 				if (contrato.isRecebedorEnvelope5()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor5());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor5());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor5());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor5());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor6() != null) {
 			if (contrato.getRecebedor6().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor6());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor6());
 
 				if (contrato.isRecebedorEnvelope6()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor6());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor6());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor6());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor6());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor7() != null) {
 			if (contrato.getRecebedor7().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor7());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor7());
 
 				if (contrato.isRecebedorEnvelope7()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor7());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor7());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor7());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor7());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor8() != null) {
 			if (contrato.getRecebedor8().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor8());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor8());
 
 				if (contrato.isRecebedorEnvelope8()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor8());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor8());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor8());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor8());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor9() != null) {
 			if (contrato.getRecebedor9().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor9());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor9());
 
 				if (contrato.isRecebedorEnvelope9()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor9());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor9());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor9());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor9());
 				}
 			}
 		}
 
 		if (contrato.getRecebedor10() != null) {
 			if (contrato.getRecebedor10().getId() == this.idInvestidor) {
-				contratoVO.setValorInvestidor(contrato.getVlrRecebedor10());
+				if (contratoVO != null)
+					contratoVO.setValorInvestidor(contrato.getVlrRecebedor10());
 
 				if (contrato.isRecebedorEnvelope10()) {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor10());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor10());
 				} else {
 					this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 							this.selectedContrato.getListContratoCobrancaParcelasInvestidor10());
+					if (contratoVO != null)
+						contratoVO.setListContratoCobrancaParcelasInvestidorSelecionado(
+								this.selectedContrato.getListContratoCobrancaParcelasInvestidor10());
 				}
 			}
 		}
