@@ -20,10 +20,9 @@ public class ContratoCobrancaResumoVO {
 	private BigDecimal valorInvestido;
 	private BigDecimal valorInvestidor;
 
-	
-		private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
-		private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
-		
+	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
+	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+
 	public void adicionaParcelaAberta() {
 		parcelasAbertas = parcelasAbertas.add(BigInteger.ONE);
 	}
@@ -67,7 +66,7 @@ public class ContratoCobrancaResumoVO {
 
 	public String getPagador() {
 		if (pagador.length() > 30) {
-			return pagador.substring(0,30).concat("...");
+			return pagador.substring(0, 30).concat("...");
 		} else {
 			return pagador;
 		}
