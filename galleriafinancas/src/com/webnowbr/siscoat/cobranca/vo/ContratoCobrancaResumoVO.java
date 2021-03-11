@@ -3,7 +3,9 @@ package com.webnowbr.siscoat.cobranca.vo;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
 public class ContratoCobrancaResumoVO {
@@ -18,6 +20,10 @@ public class ContratoCobrancaResumoVO {
 	private BigDecimal valorInvestido;
 	private BigDecimal valorInvestidor;
 
+	
+		private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
+		private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+		
 	public void adicionaParcelaAberta() {
 		parcelasAbertas = parcelasAbertas.add(BigInteger.ONE);
 	}
@@ -117,6 +123,24 @@ public class ContratoCobrancaResumoVO {
 
 	public void setValorInvestidor(BigDecimal valorInvestidor) {
 		this.valorInvestidor = valorInvestidor;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getListContratoCobrancaParcelasInvestidorSelecionado() {
+		return listContratoCobrancaParcelasInvestidorSelecionado;
+	}
+
+	public void setListContratoCobrancaParcelasInvestidorSelecionado(
+			List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado) {
+		this.listContratoCobrancaParcelasInvestidorSelecionado = listContratoCobrancaParcelasInvestidorSelecionado;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getListContratoCobrancaParcelasInvestidorSelecionadoEnvelope() {
+		return listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
+	}
+
+	public void setListContratoCobrancaParcelasInvestidorSelecionadoEnvelope(
+			List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope) {
+		this.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope = listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
 	}
 
 }
