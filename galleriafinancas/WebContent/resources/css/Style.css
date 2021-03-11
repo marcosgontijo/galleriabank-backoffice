@@ -1009,3 +1009,7 @@
 	color: #000 !important;
 	background-color: #dfdfdf !important;
  }
+ 
+.ui-picklist .ui-picklist-list {
+	width: 250px;
+}

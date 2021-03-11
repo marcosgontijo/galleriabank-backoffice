@@ -924,5 +924,8 @@
 		<property name="txJurosParcelas" type="big_decimal">
 			<column name="txJurosParcelas" />
 		</property>
+		<property name="mesesCarencia" type="int">
+			<column name="mesesCarencia" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -621,7 +621,7 @@ public class InvestidorMB {
 		this.pathPDF = "";
 		this.nomePDF = "";
 		this.file = null;
-
+		
 		return "/Atendimento/Cobranca/InvestidorValorLiquido.xhtml";
 	}
 
@@ -2242,8 +2242,8 @@ public class InvestidorMB {
 		 */
 
 		Document doc = null;
-//		OutputStream os = null;
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		OutputStream os = null;
+		//ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 		try {
 			/*
@@ -2272,6 +2272,8 @@ public class InvestidorMB {
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
 			this.nomePDF = "Informe de rendimentos - " + this.selectedPagador.getNome() + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString();
+			
+			os = new FileOutputStream(this.pathPDF + this.nomePDF); 
 
 			// Associa a stream de saída ao
 			PdfWriter writer = PdfWriter.getInstance(doc, os);
@@ -2826,24 +2828,31 @@ public class InvestidorMB {
 				// fechamento do documento
 				doc.close();
 			}
+			
 			if (os != null) {
-				// fechamento da stream de saída
+				//fechamento da stream de saída
 				try {
-					// os.close();
-
-					os.flush();
 					os.close();
+					
+					// fechamento da stream de saída
+					String caminho = this.pathPDF + this.nomePDF;
+					String arquivo = this.nomePDF;
+					FileInputStream stream = null;
+					try {
+						stream = new FileInputStream(caminho);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					file = new DefaultStreamedContent(stream, caminho, arquivo);
 
-					ByteArrayInputStream stream;
-					stream = new ByteArrayInputStream(os.toByteArray());
-					StreamedContent file = new DefaultStreamedContent(stream, "application/pdf", this.nomePDF);
 					return file;
-
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
+			}			
 		}
 
 		return null;
@@ -9447,5 +9456,4 @@ public class InvestidorMB {
 	public void setExisteContratoQuitado(boolean existeContratoQuitado) {
 		this.existeContratoQuitado = existeContratoQuitado;
 	}
-
 }
