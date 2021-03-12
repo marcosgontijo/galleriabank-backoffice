@@ -1447,65 +1447,56 @@
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
-						<p:column style="text-align: center;" headerText="Investidor (R$)">						
+						<p:column style="text-align: center;" headerText="Juros (R$)">
 							<p:cellEditor>
 								<f:facet name="output">
-									<h:outputText value="#{parcelas.vlrRepasse}"
+									<h:outputText value="#{parcelas.vlrJurosParcela}"
 										converter="bigDecimalConverter">
 										<f:convertNumber type="currency" currencySymbol="R$" />
-									</h:outputText>									
+									</h:outputText>
 								</f:facet>
 								<f:facet name="input">
-									<p:inputText id="vlrRepasse" style="margin-left: 12px;"
-										value="#{parcelas.vlrRepasse}"
+									<p:inputText id="juros" style="margin-left: 12px;"
+										value="#{parcelas.vlrJurosParcela}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter" />
 								</f:facet>
-							</p:cellEditor>							
+							</p:cellEditor>
 						</p:column>
-						<p:column style="text-align: center;"
-							headerText="Administração (R$)">
+						<p:column style="text-align: center;" headerText="Amortização (R$)">
 							<p:cellEditor>
 								<f:facet name="output">
-									<h:outputText value="#{parcelas.vlrRetencao}"
+									<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
 										converter="bigDecimalConverter">
 										<f:convertNumber type="currency" currencySymbol="R$" />
-									</h:outputText>									
+									</h:outputText>
 								</f:facet>
 								<f:facet name="input">
-									<p:inputText id="vlrRetencao" style="margin-left: 12px;"
-										value="#{parcelas.vlrRetencao}"
+									<p:inputText id="amortizacao" style="margin-left: 12px;"
+										value="#{parcelas.vlrAmortizacaoParcela}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter" />
 								</f:facet>
-							</p:cellEditor>								
-						</p:column>
-						<p:column style="text-align: center;" headerText="Repasse (R$)">
+							</p:cellEditor>
+						</p:column>	
+						<p:column style="text-align: center;" headerText="Saldo (R$)">
 							<p:cellEditor>
 								<f:facet name="output">
-									<h:outputText value="#{parcelas.vlrComissao}"
+									<h:outputText value="#{parcelas.vlrSaldoParcela}"
 										converter="bigDecimalConverter">
 										<f:convertNumber type="currency" currencySymbol="R$" />
-									</h:outputText>									
+									</h:outputText>
 								</f:facet>
 								<f:facet name="input">
-									<p:inputText id="vlrComissao" style="margin-left: 12px;"
-										value="#{parcelas.vlrComissao}"
+									<p:inputText id="saldo" style="margin-left: 12px;"
+										value="#{parcelas.vlrSaldoParcela}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter" />
 								</f:facet>
-							</p:cellEditor>									
-						</p:column>
-						<p:column style="text-align: center;" headerText="Pago?">
-							<ui:fragment rendered="#{parcelas.parcelaPaga}">
-								<h:outputText value="Sim" />
-							</ui:fragment>
-							<ui:fragment rendered="#{!parcelas.parcelaPaga}">
-								<h:outputText value="Não" />
-							</ui:fragment>
+							</p:cellEditor>
 						</p:column>
 						<p:column style="width:35px">
 							<p:rowEditor />

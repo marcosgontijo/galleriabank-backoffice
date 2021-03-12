@@ -4935,77 +4935,29 @@ public class InvestidorMB {
 
 			cell1 = new PdfPCell(new Phrase("__________________________________________", normal));
 			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
-			cell1.setPaddingLeft(10);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("__________________________________________", normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
+			cell1.setColspan(8);
 			cell1.setPaddingLeft(5);
 			table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("João Augusto Magatti Alves", header10));
+			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", normal10));
 			cell1.setBorder(0);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
-			cell1.setPaddingLeft(10);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", header10));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
-			cell1.setPaddingLeft(5);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", normal10));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
-			cell1.setPaddingLeft(10);
-			cell1.setPaddingBottom(10);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", normal10));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setColspan(2);
+			cell1.setColspan(8);
 			cell1.setPaddingLeft(5);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.BLACK);
@@ -5471,66 +5423,19 @@ public class InvestidorMB {
 				table.addCell(cell1);
 			}
 
+
+			cell1 = new PdfPCell(new Phrase("______________________________________________", normal));
+			cell1.setBorder(0);
+			cell1.setPaddingRight(20f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(100f);
+			cell1.setColspan(8);
+			table.addCell(cell1);
+
 			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", header10));
-			cell1.setBorder(0);
-			cell1.setPaddingTop(40f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("______________________________________________", normal));
-			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(40f);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("João Augusto Magatti Alves", header10));
-			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", header10));
-			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("______________________________________________", normal));
-			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(40f);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", header10));
-			cell1.setBorder(0);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(8);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", header10));
 			cell1.setBorder(0);
 			cell1.setPaddingRight(20f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -6187,49 +6092,7 @@ public class InvestidorMB {
 			cell1.setColspan(6);
 			table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("João Augusto Magatti Alves", header));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", header));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("______________________________________________", normal));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(40f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", header));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo-Financeiro", header));
+			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", header));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(20f);
 			cell1.setPaddingRight(20f);
@@ -6554,50 +6417,28 @@ public class InvestidorMB {
 			cell1.setColspan(6);
 			table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("_______________________________________", normal));
+			cell1 = new PdfPCell(new Phrase("___________________________________________________", normal));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(10f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(80f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("_______________________________________", normal));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(10f);
 			cell1.setPaddingRight(20f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(80f);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 
 			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", titleBold));
 			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(10f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", titleBold));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(10f);
+			cell1.setPaddingLeft(21f);
 			cell1.setPaddingRight(20f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
-
+/*
 			cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", title));
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(20f);
@@ -6637,7 +6478,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setColspan(3);
 			table.addCell(cell1);
-
+*/
 			doc.add(table);
 
 		} catch (FileNotFoundException e) {

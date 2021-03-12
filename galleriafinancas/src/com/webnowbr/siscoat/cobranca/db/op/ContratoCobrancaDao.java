@@ -847,12 +847,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
@@ -1061,12 +1056,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -1277,12 +1267,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -1619,13 +1604,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
-						
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -1834,12 +1813,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -2057,12 +2031,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -3017,12 +2986,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
@@ -3069,12 +3033,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						for (ContratoCobrancaDetalhes ct : contratoCobranca.getListContratoCobrancaDetalhes()) {
 							
-							if (contratoCobranca.isGeraParcelaFinal()) {
-								int totalParcela = contratoCobranca.getQtdeParcelas();
-								parcela = ct.getNumeroParcela() + " de " + totalParcela;
-							} else {
-								parcela = ct.getNumeroParcela() + " de " + contratoCobranca.getQtdeParcelas();
-							}
+							parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 							
 							if (!ct.isParcelaPaga()) {
 								objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
@@ -3125,12 +3084,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
@@ -3178,12 +3132,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						if (contratoCobranca.isGeraParcelaFinal()) {
-							int totalParcela = contratoCobranca.getQtdeParcelas();
-							parcela = rs.getString(2) + " de " + totalParcela;
-						} else {
-							parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
-						}
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												

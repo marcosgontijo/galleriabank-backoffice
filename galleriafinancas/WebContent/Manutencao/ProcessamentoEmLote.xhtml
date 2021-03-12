@@ -13,19 +13,12 @@
 			<p:messages id="mensagens" showDetail="true"/>							
 			<p:panel id="ProcessamentoEmLote" header="Processamento Em Lote" style="margin-bottom:10px;">		    
 				<p:panel id="JurosAmortizacaoSaldo" header="Efetuar Cálculo Juros, Amortização e Saldo" style="margin-bottom:10px;">		    		    
-	   		        <h:panelGrid columns="2">
-						<p:outputLabel value="Este processo irá recalcular todos os valores de Juros, Amortização e Saldo de todas as parcelas de todos os contratos." styleClass="labelBold"/>
-						<p:spacer></p:spacer>
-					</h:panelGrid>
-					<div align="center" style="margin-bottom: 80px;">	
-						<p:commandButton value="Efetuar Cálculo de TODOS Contratos" ajax="false" action="#{processamentoEmLoteMB.atualizaSaldoJurosAmortizacaoParcelasContratos}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;"/>
-					</div>	
 					<h:panelGrid columns="2">
 						<p:outputLabel value="IMPORTANTE!!! Se utilizar os campos abaixo, o processamento será feito apenas no contrato informado." styleClass="labelBold"/>
 						<p:spacer></p:spacer>
 					</h:panelGrid>
 					<h:panelGrid columns="2">
-						<p:outputLabel for="contrato" value="Número Contrato (Formato: 0XXXX): "
+						<p:outputLabel for="contrato" value="Número Contrato: "
 								styleClass="labelBold" />
 						<p:inputText id="contrato"
 							value="#{processamentoEmLoteMB.numeroContratoCustom}"
@@ -37,7 +30,11 @@
 						<p:inputText id="txJurosCustom" style="margin-left: 12px;"
 								value="#{processamentoEmLoteMB.txJurosCustom}"
 								converter="bigDecimalConverter" />
-					</h:panelGrid>
+					</h:panelGrid>		
+					<h:panelGrid columns="1">						
+						<p:outputLabel value="IMPORTANTE!!! Se a Taxa de Juros acima for IGUAL a ZERO, será utilizado no cálculo a taxa informada no contrato para reprocessamento."
+								styleClass="labelBold" />
+					</h:panelGrid>		
 					<div align="center">	
 						<p:commandButton value="Efetuar Cálculo Customizado" ajax="false" action="#{processamentoEmLoteMB.atualizaSaldoJurosAmortizacaoParcelasContratosCustomizado}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;"/>
 					</div>						
