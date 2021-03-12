@@ -58,7 +58,7 @@ public class ContratoCobranca implements Serializable {
 	private PagadorRecebedor recebedor10;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
 
-	// n√£o persistida a lista abaixo
+	// n„o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
 

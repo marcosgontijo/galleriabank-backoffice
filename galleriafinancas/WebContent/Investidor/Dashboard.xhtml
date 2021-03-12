@@ -25,7 +25,7 @@
 </h:head>
 <h:body onload="#{investidorMB.getContratosInvestidor()}">
 
-	
+
 	<p:messages id="mensagens" showDetail="true" />
 	<div class="navbar-area dashboard-navBar">
 		<div class="ui-g">
@@ -107,14 +107,15 @@
 
 	<div class="slider-area">
 		<h:form id="formDashboard">
-		
+
 			<div style="width: 100%; padding-top: 5px;">
 				<div
 					style="width: 96%; margin: 10px auto; height: 92px; display: flex; justify-content: center;">
 
 
 					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
-						<p:commandLink title="Contratos Ativos" disabled="#{!investidorMB.existeContratoAtivo}"
+						<p:commandLink title="Contratos Ativos"
+							disabled="#{!investidorMB.existeContratoAtivo}"
 							styleClass="dashboard-icone-menu" ajax="true"
 							update="formDashboard dtResumo"
 							action="#{investidorMB.filtrarSituacaoAtivos()}">
@@ -125,7 +126,8 @@
 					</h:panelGrid>
 
 					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
-						<p:commandLink title="Contratos Quitados"  disabled="#{!investidorMB.existeContratoQuitado}"
+						<p:commandLink title="Contratos Quitados"
+							disabled="#{!investidorMB.existeContratoQuitado}"
 							styleClass="dashboard-icone-menu" ajax="true"
 							update="formDashboard dtResumo"
 							action="#{investidorMB.filtrarSituacaoQuitados()}">
@@ -282,11 +284,9 @@
 										oncomplete="PF('detalheContrato').show()"
 										icon="fa fa-fw fa-search"
 										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}"
-										style="padding-left: 10px;">
-										<f:setPropertyActionListener
-											target="#{investidorMB.selectedContrato.numeroContrato}"
-											value="#{contratos.numeroContrato}" />
+										style="padding-left: 10px;">									
 									</p:commandButton>
+
 									<p:spacer width="10" />
 									<p:commandButton value="Envelope"
 										update=":formDetalhesEnvelope:dtParcelasEnvelope"
@@ -295,9 +295,6 @@
 										action="#{investidorMB.getInformacoesDoInvestidorNoContrato(contratos)}"
 										style="padding-left: 10px;"
 										rendered="#{investidorMB.selectedContrato.listContratoCobrancaParcelasInvestidorSelecionadoEnvelope.size() gt 0}">
-										<f:setPropertyActionListener
-											target="#{investidorMB.selectedContrato.numeroContrato}"
-											value="#{contratos.numeroContrato}" />
 									</p:commandButton>
 								</h:panelGrid>
 							</p:panel>
@@ -317,15 +314,14 @@
 						styleClass="labelBold" />
 					<p:commandButton value="Gerar PDF - Informe de Rendimentos"
 						ajax="false" icon="ui-icon-print"
-						action="#{investidorMB.processInformeRendimentosPortalInvestidor}"/>
-				</h:panelGrid>				
+						action="#{investidorMB.processInformeRendimentosPortalInvestidor}" />
+				</h:panelGrid>
 			</p:panel>
 		</h:form>
 	</div>
 
 
-	<ui:include
-		src="/Util/StatusDialog.xhtml"></ui:include>
+	<ui:include src="/Util/StatusDialog.xhtml"></ui:include>
 	<ui:include
 		src="/Investidor/Dashboard-DetalhesInvestidorEnvelope.xhtml"></ui:include>
 	<ui:include src="/Investidor/Dashboard-DetalhesInvestidor.xhtml"></ui:include>
