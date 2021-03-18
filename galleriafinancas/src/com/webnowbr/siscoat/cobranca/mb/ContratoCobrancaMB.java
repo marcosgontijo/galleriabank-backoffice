@@ -644,7 +644,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
-		this.tipoPessoaIsFisica = false;
+		this.tipoPessoaIsFisica = true;
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -1233,7 +1233,7 @@ public class ContratoCobrancaMB {
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.objetoPagadorRecebedor.setEstado("SP");
 		clearRecebedor();
-		this.tipoPessoaIsFisica = false;
+		this.tipoPessoaIsFisica = true;
 		this.tipoPessoaIsFisicaCC = false;
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
@@ -1288,7 +1288,7 @@ public class ContratoCobrancaMB {
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.objetoPagadorRecebedor.setEstado("SP");
 		clearRecebedor();
-		this.tipoPessoaIsFisica = false;
+		this.tipoPessoaIsFisica = true;
 		this.tipoPessoaIsFisicaCC = false;
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
@@ -7227,6 +7227,7 @@ public class ContratoCobrancaMB {
 				 * calcula juros, amortização e saldo 
 				 */				
 				// se a taxa de remuneração for maior que zero
+				/*
 				if (txJurosParcela.compareTo(BigDecimal.ZERO) == 1) {
 					contratoCobrancaDetalhes.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
 					contratoCobrancaDetalhes.setVlrAmortizacaoParcela(contratoCobrancaDetalhes.getVlrParcela().subtract(contratoCobrancaDetalhes.getVlrJurosParcela()));
@@ -7238,7 +7239,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				saldoAtualizado = contratoCobrancaDetalhes.getVlrSaldoParcela();
-
+				 */	
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 
 				// gera boleto
@@ -7276,7 +7277,7 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasseFinal);
 				contratoCobrancaDetalhes.setVlrRetencao(this.vlrRetencaoFinal);
 				contratoCobrancaDetalhes.setVlrComissao(this.vlrComissaoFinal);
-			
+				/*
 				if (txJurosParcela.compareTo(BigDecimal.ZERO) == 1) {
 					contratoCobrancaDetalhes.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
 					contratoCobrancaDetalhes.setVlrAmortizacaoParcela(saldoAtualizado);
@@ -7286,6 +7287,7 @@ public class ContratoCobrancaMB {
 					contratoCobrancaDetalhes.setVlrAmortizacaoParcela(BigDecimal.ZERO);
 					contratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
 				}
+				*/
 
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 
@@ -7315,7 +7317,14 @@ public class ContratoCobrancaMB {
 			 * cNew.setVlrParcelaAtualizada(pp.getVlrParcela());
 			 * cNew.setDataPagamento(pp.getDataPagamento()); } } }
 			 */
-
+			
+			/*****
+			 * 	PROCESSA JUROS AMORTIZAÇÃO E SALDO DEVEDOR
+			 */
+			
+			ProcessamentoEmLoteMB processaParcelas = new ProcessamentoEmLoteMB();			
+			processaParcelas.atualizaSaldoJurosAmortizacaoParcelasNovoContrato(this.objetoContratoCobranca);
+			
 			if (this.isGeraBoletoInclusaoContrato()) {
 				geracaoBoletoMB.geraPDFBoletos(
 						"Boletos Bradesco - Contrato: " + this.objetoContratoCobranca.getNumeroContrato());
@@ -7328,7 +7337,6 @@ public class ContratoCobrancaMB {
 			// valida subcontas
 			// IuguMB iuguMB = new IuguMB();
 			// iuguMB.validaSubcontaRecebedorIugu(this.objetoContratoCobranca);
-
 		} else {
 			// se a quantidade de parcelas for igual, atualiza os valores e refaz as datas
 			// de vencimento

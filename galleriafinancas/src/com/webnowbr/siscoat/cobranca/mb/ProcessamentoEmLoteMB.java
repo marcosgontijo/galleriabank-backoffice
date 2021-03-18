@@ -30,7 +30,7 @@ public class ProcessamentoEmLoteMB {
 		this.txJurosCustom = BigDecimal.ZERO;
 		this.numeroContratoCustom = null;
 		
-		return "/Manutencao/ProcessamentoEmLote.xhtml";
+		return "/Cadastros/Cobranca/ProcessamentoEmLote.xhtml";
 	}
 	
 	public void gravaContratoComErro(String descricao, String contrato) {
@@ -217,6 +217,137 @@ public class ProcessamentoEmLoteMB {
 			}
 
 		}		
+	}	
+	
+	/***
+	 * Efetua o cálculo de Juros, multa e amortização das parcelas de todos os contratos
+	 * 
+	 */		
+	public List<ContratoCobrancaDetalhes> atualizaSaldoJurosAmortizacaoParcelasNovoContrato(ContratoCobranca contrato) {	
+
+		// Pega o valor da CCB
+		BigDecimal saldoAtualizado = BigDecimal.ZERO;
+		saldoAtualizado = contrato.getValorCCB();
+		
+		// verifica se o valor da CCB está preenchido
+		// Só processa se valor maior que ZERO
+		if (saldoAtualizado == null || saldoAtualizado.compareTo(BigDecimal.ZERO) == 0) {
+			// popula a tabela de erro do sistema, contratos que não puderam ser processados
+			gravaContratoComErro("[Valor CCB] Cálculo Juros, Multa e Amortização", contrato.getNumeroContrato());
+		} else {
+			BigDecimal txJurosParcela = BigDecimal.ZERO;
+			
+			txJurosCustom = contrato.getTxJurosParcelas();
+						
+			if (this.txJurosCustom == null || this.txJurosCustom.compareTo(BigDecimal.ZERO) == 0) {
+				// popula a tabela de erro do sistema, contratos que não puderam ser processados
+				gravaContratoComErro("[Taxa de Juros] Cálculo Juros, Multa e Amortização", contrato.getNumeroContrato());
+			} else {
+				/**
+				 * calcula juros, amortização e saldo 
+				 */							
+				txJurosParcela = this.txJurosCustom.divide(BigDecimal.valueOf(100));
+				
+				// se tem meses de carência calcula a carência	
+				/*
+				if (contrato.getMesesCarencia() > 0) {
+					for (int i = 0; i < contrato.getMesesCarencia(); i++) {
+						saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
+					}						
+				} 
+				*/
+				
+				// verifica se o contrato tem carência
+				int countCarencia = 0;
+				if (contrato.getMesesCarencia() > 0) {
+					countCarencia = contrato.getMesesCarencia();
+				}
+				
+				saldoAtualizado = saldoAtualizado.setScale(2, RoundingMode.HALF_EVEN);
+				
+				// Verifica se calcula PGTO ou segue com amortização zero
+				BigDecimal parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
+
+				// verifica se usa PGTO ou faz sem amortização
+				if (contrato.getVlrParcela().compareTo(parcelaCalculadaCCB.subtract(BigDecimal.ONE)) >= 0  && 
+						contrato.getVlrParcela().compareTo(parcelaCalculadaCCB.add(BigDecimal.ONE)) <= 0) {
+					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+						if (countCarencia > 0) {
+							countCarencia = countCarencia - 1;
+							
+							// atualiza saldo com juros
+							saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
+							
+							parcela.setVlrJurosParcela(BigDecimal.ZERO);
+							parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+							parcela.setVlrParcela(BigDecimal.ZERO);
+							parcela.setVlrSaldoParcela(saldoAtualizado);
+						} else {
+							parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
+							parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+							parcela.setVlrSaldoParcela(saldoAtualizado);
+						}
+												
+						parcela.setVlrParcela(parcela.getVlrParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrJurosParcela(parcela.getVlrJurosParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrAmortizacaoParcela(parcela.getVlrAmortizacaoParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrSaldoParcela(parcela.getVlrSaldoParcela().setScale(2, RoundingMode.HALF_EVEN));	
+					}	
+					
+					// seta amortizacao e zera saldo
+					BigDecimal saldoFinal = BigDecimal.ZERO;
+					if (contrato.getListContratoCobrancaDetalhes().size() > 0) {
+						contrato.getListContratoCobrancaDetalhes().get(contrato.getListContratoCobrancaDetalhes().size() - 1).setVlrAmortizacaoParcela(contrato.getListContratoCobrancaDetalhes().get(contrato.getListContratoCobrancaDetalhes().size() - 1).getVlrSaldoParcela());
+						contrato.getListContratoCobrancaDetalhes().get(contrato.getListContratoCobrancaDetalhes().size() - 1).setVlrSaldoParcela(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));										
+					}
+				} else {
+					//PGTO
+					Double parcelaPGTO = FinanceLib.pmt(txJurosParcela.doubleValue(), Double.valueOf(contrato.getListContratoCobrancaDetalhes().size()), saldoAtualizado.doubleValue(), Double.valueOf("0"), false);
+					// Deixa positivo
+					parcelaPGTO = parcelaPGTO - (parcelaPGTO * 2);	
+					BigDecimal parcelaPGTOCalculada = new BigDecimal(parcelaPGTO);
+					
+					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+						if (countCarencia > 0) {
+							countCarencia = countCarencia - 1;
+							
+							// atualiza saldo com juros
+							saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
+							
+							parcela.setVlrJurosParcela(BigDecimal.ZERO);
+							parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+							parcela.setVlrParcela(BigDecimal.ZERO);
+							parcela.setVlrSaldoParcela(saldoAtualizado);
+							
+						} else {
+							parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
+							parcela.setVlrAmortizacaoParcela(parcelaPGTOCalculada.subtract(parcela.getVlrJurosParcela()));
+							parcela.setVlrSaldoParcela(saldoAtualizado.subtract(parcela.getVlrAmortizacaoParcela()));
+							
+							saldoAtualizado = parcela.getVlrSaldoParcela();									
+						}
+						
+						// arredonda valores
+						parcela.setVlrParcela(parcela.getVlrParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrJurosParcela(parcela.getVlrJurosParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrAmortizacaoParcela(parcela.getVlrAmortizacaoParcela().setScale(2, RoundingMode.HALF_EVEN));
+						parcela.setVlrSaldoParcela(parcela.getVlrSaldoParcela().setScale(2, RoundingMode.HALF_EVEN));	
+					}
+					
+					// se Saldo da última parcela for menor que R$ 1 zeramos o saldo
+					BigDecimal saldoFinal = BigDecimal.ZERO;
+					if (contrato.getListContratoCobrancaDetalhes().size() > 0) {
+						saldoFinal = contrato.getListContratoCobrancaDetalhes().get(contrato.getListContratoCobrancaDetalhes().size() - 1).getVlrSaldoParcela();
+						
+						if (saldoFinal.compareTo(BigDecimal.ONE) == -1) {
+							contrato.getListContratoCobrancaDetalhes().get(contrato.getListContratoCobrancaDetalhes().size() - 1).setVlrSaldoParcela(BigDecimal.ZERO);
+						}						
+					}
+				}
+			}
+		}
+		
+		return contrato.getListContratoCobrancaDetalhes();
 	}	
 	
 	public double PV(float rate, float nper, float pmt)
