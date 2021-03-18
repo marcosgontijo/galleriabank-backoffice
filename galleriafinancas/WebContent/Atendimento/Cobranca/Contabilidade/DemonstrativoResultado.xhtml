@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+	
+	<h:outputStylesheet>
+	.row { 
+		width:100%
+	}
+	.columns { 
+		width:20%;
+		max-width:20%;
+		text-align:center;
+	}
+	
+        </h:outputStylesheet>
+	
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../../resources/js/functions.js"></script>
+			<h:outputScript name="../js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="DemonstrativoResultados" header="DRE"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio"
+						value="#{demonstrativoResultadoMB.dataInicio}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" />
+					<p:calendar id="dataFim"
+						value="#{demonstrativoResultadoMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField" />
+				</h:panelGrid>
+
+
+				<p:commandButton value="Consultar"
+					action="#{demonstrativoResultadoMB.gerarDRE}"
+					image="ui-icon ui-icon-check"
+					update=":form:ConsultaResultados mensagens"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaResultados" header="DRE"
+				style="margin-bottom:10px;">
+
+
+				<ui:repeat var="demonstrativoResultado"
+					value="#{demonstrativoResultadoMB.demonstrativoResultado}">
+
+					<ui:repeat var="dre" value="#{demonstrativoResultado.dre}">
+
+
+
+						<p:panel id="dre" header="#{dre.tipo}" style="margin-bottom:10px;">
+							<h:panelGrid columns="3"  styleClass="row" columnClasses="columns,columns,columns">
+								<p:outputLabel for="valorTotal" value="Valor Total "
+									styleClass="labelBold col-4" />
+								<p:outputLabel for="jurosTotal" value="Juros Total "
+									styleClass="labelBold col-4" />
+								<p:outputLabel for="amortizacaoTotal" value="Amortização Total "
+									styleClass="labelBold " />
+
+								<h:outputText id="valorTotal" value="#{dre.valorTotal}"
+									converter="bigDecimalConverter" />
+								<h:outputText id="jurosTotal" value="#{dre.jurosTotal}"
+									converter="bigDecimalConverter" />
+								<h:outputText id="amortizacaoTotal"
+									value="#{dre.amortizacaoTotal}" converter="bigDecimalConverter" />
+
+							</h:panelGrid>
+
+							<p:accordionPanel multiple="true" activeIndex="-1"
+								rendered="#{dre.detalhe.size() >0}"
+								style="margin-bottom: 15px;margin-top: 15px;">
+								<p:tab title="Parcelas"
+									rendered="#{!dre.tipo.equals('Contas Pagas')}">
+									<p:dataTable id="dtParcelas" var="parcela"
+										value="#{dre.detalhe}">
+										
+										<p:columnGroup type="header">
+											<p:column headerText="Contrato" />
+											<p:column headerText="#{dre.tipo.equals('Entradas')?'Devedor':'Recebedor'}"
+												styleClass="text-align: center" />
+											<p:column headerText="Numero Parcela"
+												styleClass="text-align: center" />
+											<p:column headerText="Data" styleClass="text-align: center" />
+											<p:column headerText="Valor" styleClass="text-align: center" />
+											<p:column headerText="Juros" styleClass="text-align: center" />
+											<p:column headerText="Amortização" styleClass="text-align: center" />
+										</p:columnGroup>
+
+										<p:column style="text-align: center;width: 100px;"
+											>
+											<h:outputText value="#{parcela.numeroContrato}" />
+										</p:column>
+
+										<p:column style="text-align: left;width: 100px;"
+											>
+											<h:outputText value="#{parcela.nome}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;"
+											>
+											<h:outputText value="#{parcela.numeroParcela}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;"
+											>
+											<h:outputText value="#{parcela.dataVencimento}">
+												<f:convertDateTime locale="pt_BR" />
+												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="text-align: right;width: 100px;"
+											>
+											<h:outputText value="#{parcela.valor}"
+												converter="bigDecimalConverter" />
+										</p:column>
+										<p:column style="text-align: right;width: 100px;"
+											>
+											<h:outputText value="#{parcela.juros}"
+												converter="bigDecimalConverter" />
+										</p:column>
+										<p:column style="text-align: right;width: 100px;"
+											>
+											<h:outputText value="#{parcela.amortizacao}"
+												converter="bigDecimalConverter" />
+										</p:column>
+
+									</p:dataTable>
+								</p:tab>
+
+								<p:tab title="Contas Pagas"
+									rendered="#{dre.tipo.equals('Contas Pagas')}">
+									<p:dataTable id="dtContasPagas" var="parcela"
+										value="#{dre.detalhe}">
+
+										<p:columnGroup type="header">
+											<p:column headerText="Documento" />
+											<p:column headerText="Recebedor"
+												styleClass="text-align: center" />
+											<p:column headerText="Conta Contátbil"
+												styleClass="text-align: center" />
+											<p:column headerText="Data" styleClass="text-align: center" />
+											<p:column headerText="Valor" styleClass="text-align: center" />
+										</p:columnGroup>
+
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{parcela.numeroContrato}" />
+										</p:column>
+
+										<p:column style="text-align: left;width: 100px;">
+											<h:outputText value="#{parcela.nome}" />
+										</p:column>
+
+										<p:column style="text-align: left;width: 100px;" >
+											<h:outputText
+												value="#{parcela.nomeContaContabilPai} - #{parcela.nomeContaContabil}"
+												rendered="#{parcela.nomeContaContabilPai != null}" />
+											<h:outputText value="#{parcela.nomeContaContabil}"
+												rendered="#{parcela.nomeContaContabilPai == null}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{parcela.dataVencimento}">
+												<f:convertDateTime locale="pt_BR" />
+												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="text-align: right;width: 100px;">
+											<h:outputText value="#{parcela.valor}"
+												converter="bigDecimalConverter" />
+										</p:column>
+
+									</p:dataTable>
+								</p:tab>
+							</p:accordionPanel>
+						</p:panel>
+					</ui:repeat>
+				</ui:repeat>
+
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -18,6 +18,8 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
+import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
@@ -286,7 +288,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "where cc.datacontrato >= ? ::timestamp "
 			+ "	and cc.datacontrato <= ? ::timestamp "
 			+ "	and cc.status = 'Aprovado'  ";
-
+	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> getContratosPorInvestidorInformeRendimentos(final long idInvestidor, final Date dataInicio, final Date dataFim) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -1070,7 +1072,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoContratoTotal(final String numContrato, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
@@ -2044,7 +2045,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotal(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
@@ -3859,9 +3859,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 
-
-	
-	
 	private static final String QUERY_RELATORIO_VENDA_OPERACAO =  	
 			" select coco.id, numerocontrato, datapagamentofim , pare.nome, coco.vlrparcela," + 
 			" cobranca.CalculoContratoAntecipado(coco.vlrparcela, datapagamentoini, vlrparcelafinal , qtdeparcelas ,?::numeric(19,2), ?) valorVenda, " + 
@@ -3879,7 +3876,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			" where cd.parcelapaga = false and cc.status='Aprovado') " ;	
 	
 	@SuppressWarnings("unchecked")
-	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio, Date dataDesagio) throws SQLException {
+	public List<RelatorioVendaOperacaoVO> geraRelatorioVendaOperacao(BigDecimal taxaDesagio, Date dataDesagio) throws Exception {
 
 		List<RelatorioVendaOperacaoVO> result = new ArrayList<RelatorioVendaOperacaoVO>(0);
 
@@ -3921,8 +3918,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		} finally {
 			closeResources(connection, ps, rs);
 		}
@@ -3930,6 +3926,172 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 
 
+	
+	private static final String QUERY_GET_DRE_ENTRADAS =  	"select codj.idContratoCobrancaDetalhes, codj.idContratoCobranca, coco.numeroContrato, pare.nome, ccde.numeroParcela, ccde.vlrparcela, vlrjurosparcela, vlramortizacaoparcela, datavencimento, datavencimentoatual"
+			+ " from cobranca.ContratoCobrancaDetalhes ccde"
+			+ " inner join cobranca.ContratoCobranca_Detalhes_Join codj on ccde.id = codj.idContratoCobrancaDetalhes"
+			+ " inner join cobranca.ContratoCobranca coco on  codj.idContratoCobranca = coco.id"
+			+ " inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id"
+			+ " where datavencimentoatual between  ? ::timestamp and  ? ::timestamp"
+			+ " and parcelapaga = true"
+			+ " and coco.status = 'Aprovado' "
+			+ " and coco.pagador not in (15, 34,14, 182, 417, 803) "
+			+ " order by datavencimentoatual;";
+	@SuppressWarnings("unchecked")
+	public DemonstrativoResultadosGrupo getDreEntradas(final Date dataInicio, final Date dataFim) throws Exception {
+		
+				DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
+				demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
+				demonstrativosResultadosGrupoDetalhe.setTipo("Entradas");
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					String query_QUERY_GET_DRE_ENTRADAS = QUERY_GET_DRE_ENTRADAS;
+
+					ps = connection.prepareStatement(query_QUERY_GET_DRE_ENTRADAS);
+
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+
+						DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+
+						demonstrativoResultadosGrupoDetalhe
+								.setIdDetalhes(rs.getLong("idContratoCobrancaDetalhes"));
+						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
+						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
+						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
+						
+						
+						Date dataVencimento = rs.getDate("datavencimentoatual");
+						if( dataVencimento == null)
+							 dataVencimento = rs.getDate("datavencimento");
+						
+						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
+						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("vlrparcela"));
+						demonstrativoResultadosGrupoDetalhe.setJuros(rs.getBigDecimal("vlrjurosparcela"));
+						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("vlramortizacaoparcela"));
+						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
+						
+						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
+						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
+						demonstrativosResultadosGrupoDetalhe.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+						
+					}
+				} catch (SQLException e) {
+					throw new Exception(e.getMessage());
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return demonstrativosResultadosGrupoDetalhe;
+			
+	}
+	
+	private static final String QUERY_GET_DRE_SAIDAS = "select   ccpi.id , coco.id idContratoCobranca, coco.numeroContrato, pare.nome,  ccpi.numeroParcela, ccpi.parcelamensal,  ccpi.valorbaixado,  ccpi.juros, ccpi.amortizacao, ccpi.databaixa"
+			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_1 ccpi1 on  ccpi.id = ccpi1.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_2 ccpi2 on  ccpi.id = ccpi2.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_3 ccpi3 on  ccpi.id = ccpi3.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_4 ccpi4 on  ccpi.id = ccpi4.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_5 ccpi5 on  ccpi.id = ccpi5.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_6 ccpi6 on  ccpi.id = ccpi6.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_7 ccpi7 on  ccpi.id = ccpi7.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_8 ccpi8 on  ccpi.id = ccpi8.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_9 ccpi9 on  ccpi.id = ccpi9.idContratoCobrancaParcelasInvestidor"
+	 + " left join cobranca.ContratoCobranca_Parcelas_Investidor_Join_10 ccpi10 on  ccpi.id = ccpi10.idContratoCobrancaParcelasInvestidor"
+	 + " inner join  cobranca.contratocobranca coco on  coco.id =  case when ccpi1.idContratoCobrancaParcelasInvestidor is not null then ccpi1.idcontratocobrancaparcelasinvestidor1"
+	 + "                                                                when ccpi2.idContratoCobrancaParcelasInvestidor is not null then ccpi2.idcontratocobrancaparcelasinvestidor2"
+	 + "                                                                when ccpi3.idContratoCobrancaParcelasInvestidor is not null then ccpi3.idcontratocobrancaparcelasinvestidor3"
+	 + "                                                                when ccpi4.idContratoCobrancaParcelasInvestidor is not null then ccpi4.idcontratocobrancaparcelasinvestidor4"
+	 + "                                                                when ccpi5.idContratoCobrancaParcelasInvestidor is not null then ccpi5.idcontratocobrancaparcelasinvestidor5"
+	 + "                                                                when ccpi6.idContratoCobrancaParcelasInvestidor is not null then ccpi6.idcontratocobrancaparcelasinvestidor6"
+	 + "                                                                when ccpi7.idContratoCobrancaParcelasInvestidor is not null then ccpi7.idcontratocobrancaparcelasinvestidor7"
+	 + "                                                                when ccpi8.idContratoCobrancaParcelasInvestidor is not null then ccpi8.idcontratocobrancaparcelasinvestidor8"
+	 + "                                                                when ccpi9.idContratoCobrancaParcelasInvestidor is not null then ccpi9.idcontratocobrancaparcelasinvestidor9"
+	 + "                                                                when ccpi10.idContratoCobrancaParcelasInvestidor is not null then ccpi10.idcontratocobrancaparcelasinvestidor10"
+	 + "                                                           end"
+	 + " inner join cobranca.pagadorrecebedor pare on   pare.id = case when ccpi1.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor"
+	 + "                                                               when ccpi2.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor2"
+	 + "                                                               when ccpi3.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor3"
+	 + "                                                               when ccpi4.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor4"
+	 + "                                                               when ccpi5.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor5"
+	 + "                                                               when ccpi6.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor6"
+	 + "                                                               when ccpi7.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor7"
+	 + "                                                               when ccpi8.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor8"
+	 + "                                                               when ccpi9.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor9"
+	 + "                                                               when ccpi10.idContratoCobrancaParcelasInvestidor is not null then coco.recebedor10"
+	 + "                                                           end"
+	 + " where databaixa between ? ::timestamp and  ? ::timestamp"
+	 + " and coco.status = 'Aprovado'"
+	 + " and coco.pagador in (15, 34,14, 182, 417, 803)" 
+	 + " and baixado = true"
+	 + " order by numerocontrato;";	
+	@SuppressWarnings("unchecked")
+	public DemonstrativoResultadosGrupo getDreSaidas(final Date dataInicio, final Date dataFim) throws Exception {
+		
+				DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
+				demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
+				demonstrativosResultadosGrupoDetalhe.setTipo("Saidas");
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					String query_QUERY_GET_DRE_SAIDAS = QUERY_GET_DRE_SAIDAS;
+
+					ps = connection.prepareStatement(query_QUERY_GET_DRE_SAIDAS);
+
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+
+						DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+
+						demonstrativoResultadosGrupoDetalhe
+								.setIdDetalhes(rs.getLong("id"));
+						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
+						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
+						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
+						Date dataVencimento = rs.getDate("databaixa");						
+						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
+						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));
+						demonstrativoResultadosGrupoDetalhe.setJuros(rs.getBigDecimal("juros"));
+						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("amortizacao"));
+						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
+						
+						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
+						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
+						demonstrativosResultadosGrupoDetalhe.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+						
+					}
+				} catch (SQLException e) {
+					throw new Exception(e.getMessage());
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return demonstrativosResultadosGrupoDetalhe;
+			
+	}
 	
 	
 }
