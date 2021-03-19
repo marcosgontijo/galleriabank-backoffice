@@ -1384,15 +1384,17 @@ public class InvestidorMB {
 			List<ContratoCobrancaParcelasInvestidor> listParcelasInvestidor;
 			listParcelasInvestidor = buscaListaParcelasInvestidor(c);
 
-			boolean parecelasEmAberto = false;
+			String contratoQuitato = "-1";
 
 			for (ContratoCobrancaParcelasInvestidor cd : listParcelasInvestidor) {
 				if (!cd.isBaixado()) {
 					// se parcela paga em aberto, soma qtde de parcelas e valor em aberto
 					contratoVo.adicionaParcelaAberta();
 					contratoVo.addValorReceber(cd.getValorLiquido());
-					parecelasEmAberto = true;
+					if (contratoQuitato.equals("-1"))
+						contratoQuitato = cd.getNumeroParcela();
 				} else {
+					
 					// se parcela paga soma o valor recebido pelo investidor
 					// soma valor a receber
 					BigDecimal valorRecebido;
@@ -1440,11 +1442,11 @@ public class InvestidorMB {
 					}
 
 				}
-
-				if (!parecelasEmAberto) {
-					contratoVo.setSituacao(SiscoatConstants.CONTRATO_QUITADO);
-				}
 			}
+			if (contratoQuitato.equals("-1")) {
+				contratoVo.setSituacao(SiscoatConstants.CONTRATO_QUITADO);
+			}
+			
 		}
 	}
 
