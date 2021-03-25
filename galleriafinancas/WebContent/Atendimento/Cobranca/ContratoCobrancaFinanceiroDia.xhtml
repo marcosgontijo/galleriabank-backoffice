@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+		
+			<p:panel id="PanelPDF"
+				header="Impressão em PDF / XLS Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{contratoCobrancaMB.contratoGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{contratoCobrancaMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaFinanceiro" header="Financeiro - Consultar"
+				style="margin-bottom:10px;">						
+				<h:panelGrid columns="1">
+					<p:outputLabel
+						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado. "
+						styleClass="labelBold" style="margin-right: 59px;color: red" />
+				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{contratoCobrancaMB.geraRelFinanceiroDia}"
+					image="ui-icon ui-icon-check"
+					update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
+					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
+			</p:panel>
+			<p:panel id="ConsultaFinanceiroResultados"
+				header="Financeiro - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="contratos"
+					value="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia}"
+					emptyMessage="" sortBy="#{contratos.numeroContrato}">
+					
+					<f:facet name="header">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDia}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia.size() == 0}" />
+					</f:facet>
+					
+					<p:column style="width: 5px;">
+		                <p:rowToggler/>
+		            </p:column>
+            
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+						<h:outputText value="#{contratos.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+						<h:outputText value="#{contratos.dataContrato}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Pagador" filterBy="#{contratos.nomePagador}"
+						filterMatchMode="contains" sortBy="#{contratos.nomePagador}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{contratos.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="CPF / CNPJ" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{contratos.pagador.cpf}" rendered="#{contratos.pagador.cpf != null}"/>
+						<h:outputText value="#{contratos.pagador.cnpj}" rendered="#{contratos.pagador.cnpj != null}"/>
+					</p:column>				
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor CCB" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.valorCCB}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Taxa de Juros (%)" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{contratos.txJurosParcelas}"
+							converter="bigDecimalConverter" />
+					</p:column>	
+					
+		            <p:rowExpansion>
+		                <div class="product">
+		                    <div class="product-list-item">
+								<p:dataTable id="dtParcelas" var="parcelas"
+									value="#{contratos.listContratoCobrancaDetalhes}"
+									emptyMessage="" sortBy="#{parcelas.id}"
+									sortOrder="ascending"
+									rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}">
+			
+							        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
+							            <h:outputText value="#{parcelas.numeroParcela}" />
+							        </p:column>
+							        <p:column style="text-align: center;width: 70px;" headerText="Vencimento" sortBy="#{parcelas.dataVencimento}">
+							            <h:outputText value="#{parcelas.dataVencimento}" >			            	
+							            	<f:convertDateTime locale="pt_BR"  />
+							            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							            </h:outputText>
+							        </p:column>	
+							        <p:column style="text-align: center;width: 70px;" headerText="Dt. Último Pagto." sortBy="#{parcelas.dataUltimoPagamento}">
+							            <h:outputText value="#{parcelas.dataUltimoPagamento}" >			            	
+							            	<f:convertDateTime locale="pt_BR"  />
+							            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							            </h:outputText>
+							        </p:column>	
+							        <p:column style="text-align: center;width: 110px;" headerText="Valor Total Pago (R$)">
+							            <h:outputText value="#{parcelas.valorTotalPagamento}" converter="bigDecimalConverter">
+							            </h:outputText>
+							        </p:column>	
+							        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
+							            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
+							            </h:outputText>
+							        </p:column>	
+							         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
+							            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
+							            </h:outputText>
+							        </p:column>		
+							         <p:column style="text-align: center;width: 110px;" headerText="Amortização (R$)">
+							            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
+							            </h:outputText>
+							        </p:column>		
+							         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
+							            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
+							            </h:outputText>
+							        </p:column>		
+								</p:dataTable>
+							</div>
+		                </div>
+		            </p:rowExpansion>	
+		            
+		            <f:facet name="footer">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDia}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia.size() == 0}" />
+					</f:facet>				
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		<p:panel id="PanelXLS"
+			header="Impressão em PDF / XLS Gerada com Sucesso"
+			style="margin-bottom:10px;"
+			rendered="#{contratoCobrancaMB.contratoGerado}">
+			<p:focus />
+			<p:messages />
+			<h:panelGrid columns="2">
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+					draggable="false" closable="false" resizable="false">
+					<p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<h:form>
+					<p:commandButton value="Download do Relatório" ajax="false"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{contratoCobrancaMB.file}" />
+					</p:commandButton>
+				</h:form>
+
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+			</h:panelGrid>
+		</p:panel>
+	</ui:define>
+</ui:composition>

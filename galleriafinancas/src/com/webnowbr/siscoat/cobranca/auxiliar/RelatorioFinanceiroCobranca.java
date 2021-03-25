@@ -61,6 +61,10 @@ public class RelatorioFinanceiroCobranca {
 		
 	}
 	
+	public RelatorioFinanceiroCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
+		}
+	
 	public RelatorioFinanceiroCobranca(String numeroContrato, Date dataContrato, String nomeResponsavel, String nomePagador, String nomeRecebedor, String parcela,
 										Date dataVencimento, BigDecimal valor, ContratoCobranca contratoCobranca, BigDecimal valorRetencao, BigDecimal valorComissao, boolean parcelaPaga, Date dataVencimentoAtual, BigDecimal vlrRepasse) {
 		this.numeroContrato = numeroContrato;

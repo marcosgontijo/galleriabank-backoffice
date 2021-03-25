@@ -96,6 +96,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 									<p:menuitem value="Financeiro Baixado"

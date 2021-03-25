@@ -54,6 +54,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -562,6 +563,8 @@ public class ContratoCobrancaMB {
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorCorrespondente;
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorSA;
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope;
+	
+	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
 	/**
 	 * 
 	 * Construtor.
@@ -4665,6 +4668,17 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiro.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroDia() {
+		this.relDataContratoInicio = gerarDataHoje();
+		this.contratoGerado = false;
+		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroDia.xhtml";
+	}
 
 	public void selectedRecebedores() {
 
@@ -5083,7 +5097,561 @@ public class ContratoCobrancaMB {
 
 		this.contratoGerado = false;
 	}
+	
+	public void geraRelFinanceiroDia() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
 
+		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao.relatorioFinanceiroDia();	
+		
+		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataPagamento = dataHoje.getTime();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
+		String auxDataPagamentoStr = sdf.format(dataHoje.getTime());
+		try {
+			auxDataPagamento = sdf.parse(auxDataPagamentoStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// onRowEdit - nova data
+		rowEditNewDate = auxDataPagamento;
+
+		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
+			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+				// se já houve baixa parcial, utiliza a data de vencimento atualizada
+				// senão utiliza a data de vencimento antiga
+				String auxDataVencimentoStr = "";
+				Date auxDataVencimento = null;
+				if (ccd.getDataVencimentoAtual() != null) {
+					auxDataVencimentoStr = sdf.format(ccd.getDataVencimentoAtual());
+					auxDataVencimento = ccd.getDataVencimentoAtual();
+				} else {
+					auxDataVencimentoStr = sdf.format(ccd.getDataVencimento());
+					auxDataVencimento = ccd.getDataVencimento();
+				}
+	
+				try {
+					auxDataVencimento = sdf.parse(auxDataVencimentoStr);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	
+				if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
+					ccd.setParcelaVencida(true);
+	
+					// calcula coluna valor atualizado
+					ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
+					/*
+					 * if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
+					 * contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB( auxDataVencimento,
+					 * auxDataPagamento, ccd.getVlrParcela(), BigDecimal.valueOf(1.00),
+					 * ccd.getTxMulta()); } else { contratoCobrancaUtilsMB = new
+					 * ContratoCobrancaUtilsMB( auxDataVencimento, auxDataPagamento,
+					 * ccd.getVlrParcela(), ccd.getVlrJuros(), ccd.getTxMulta()); }
+					 */
+					if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
+						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+								ccd.getVlrParcela(), BigDecimal.valueOf(1.00), this.objetoContratoCobranca.getTxMulta());
+					} else {
+						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+								ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
+								this.objetoContratoCobranca.getTxMulta());
+					}
+	
+					if (!ccd.isParcelaPaga()) {
+						if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
+							contratoCobrancaUtilsMB.recalculaValorSemMulta();
+						} else {
+							contratoCobrancaUtilsMB.recalculaValor();
+						}
+						ccd.setVlrParcelaAtualizada(contratoCobrancaUtilsMB.getValorAtualizado());
+					} else {
+						ccd.setVlrParcelaAtualizada(null);
+					}
+				}
+	
+				if (auxDataVencimento.equals(auxDataPagamento) && !ccd.isParcelaPaga()) {
+					ccd.setParcelaVencendo(true);
+				}
+				
+				BigDecimal somaBaixas = BigDecimal.ZERO;
+				
+				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+				}
+				
+				ccd.setValorTotalPagamento(somaBaixas);
+			}
+		}
+
+		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
+			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+
+	public void geraXLSFinanceiroDia() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomeContrato = "Relatório Financeiro Dia.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_pago_String = wb.createCellStyle();
+		cell_style_pago_String.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+		cell_style_pago_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_pago_String.setFont(font);
+		cell_style_pago_String.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_pago_String.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_pago_String.setBorderBottom(BorderStyle.THIN);
+		cell_style_pago_String.setBorderTop(BorderStyle.THIN);
+		cell_style_pago_String.setBorderRight(BorderStyle.THIN);
+		cell_style_pago_String.setBorderLeft(BorderStyle.THIN);
+		cell_style_pago_String.setWrapText(true);
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_pago_Date = wb.createCellStyle();
+		cell_style_pago_Date.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+		cell_style_pago_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_pago_Date.setFont(font);
+		cell_style_pago_Date.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_pago_Date.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_pago_Date.setBorderBottom(BorderStyle.THIN);
+		cell_style_pago_Date.setBorderTop(BorderStyle.THIN);
+		cell_style_pago_Date.setBorderRight(BorderStyle.THIN);
+		cell_style_pago_Date.setBorderLeft(BorderStyle.THIN);
+		cell_style_pago_Date.setWrapText(true);
+		cell_style_pago_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_pago_Number = wb.createCellStyle();
+		cell_style_pago_Number.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+		cell_style_pago_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_pago_Number.setFont(font);
+		cell_style_pago_Number.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_pago_Number.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_pago_Number.setBorderBottom(BorderStyle.THIN);
+		cell_style_pago_Number.setBorderTop(BorderStyle.THIN);
+		cell_style_pago_Number.setBorderRight(BorderStyle.THIN);
+		cell_style_pago_Number.setBorderLeft(BorderStyle.THIN);
+		cell_style_pago_Number.setWrapText(true);
+		CreationHelper chNumber = wb.getCreationHelper();
+		cell_style_pago_Number.setDataFormat(
+				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_vencida_String = wb.createCellStyle();
+		cell_style_vencida_String.setFillForegroundColor(IndexedColors.RED.getIndex());
+		cell_style_vencida_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_vencida_String.setFont(font);
+		cell_style_vencida_String.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_vencida_String.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_vencida_String.setBorderBottom(BorderStyle.THIN);
+		cell_style_vencida_String.setBorderTop(BorderStyle.THIN);
+		cell_style_vencida_String.setBorderRight(BorderStyle.THIN);
+		cell_style_vencida_String.setBorderLeft(BorderStyle.THIN);
+		cell_style_vencida_String.setWrapText(true);
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_vencida_Date = wb.createCellStyle();
+		cell_style_vencida_Date.setFillForegroundColor(IndexedColors.RED.getIndex());
+		cell_style_vencida_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_vencida_Date.setFont(font);
+		cell_style_vencida_Date.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_vencida_Date.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_vencida_Date.setBorderBottom(BorderStyle.THIN);
+		cell_style_vencida_Date.setBorderTop(BorderStyle.THIN);
+		cell_style_vencida_Date.setBorderRight(BorderStyle.THIN);
+		cell_style_vencida_Date.setBorderLeft(BorderStyle.THIN);
+		cell_style_vencida_Date.setWrapText(true);
+		cell_style_vencida_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+		
+		// Style para cabeçalho
+		XSSFCellStyle cell_style_vencida_Number = wb.createCellStyle();
+		cell_style_vencida_Number.setFillForegroundColor(IndexedColors.RED.getIndex());
+		cell_style_vencida_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell_style_vencida_Number.setFont(font);
+		cell_style_vencida_Number.setAlignment(HorizontalAlignment.CENTER);
+		cell_style_vencida_Number.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style_vencida_Number.setBorderBottom(BorderStyle.THIN);
+		cell_style_vencida_Number.setBorderTop(BorderStyle.THIN);
+		cell_style_vencida_Number.setBorderRight(BorderStyle.THIN);
+		cell_style_vencida_Number.setBorderLeft(BorderStyle.THIN);
+		cell_style_vencida_Number.setWrapText(true);		
+		chNumber = wb.getCreationHelper();
+		cell_style_vencida_Number.setDataFormat(
+				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+		
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Data Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("CPF/CNPJ");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Valor CCB");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Taxa de Juros (%)");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+		ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+		
+		// cria estilo especifico para coluna type numérico
+		CellStyle numberStyle = wb.createCellStyle();
+		numberStyle.setAlignment(HorizontalAlignment.CENTER);
+		numberStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numberStyle.setBorderBottom(BorderStyle.THIN);
+		numberStyle.setBorderTop(BorderStyle.THIN);
+		numberStyle.setBorderRight(BorderStyle.THIN);
+		numberStyle.setBorderLeft(BorderStyle.THIN);
+		numberStyle.setWrapText(true);
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		int linhaInicioContrato = 0;
+		for (ContratoCobranca record : this.contratoCobrancaFinanceiroDia) {
+			countLine++;
+			linhaInicioContrato = countLine;
+			row = sheet.createRow(countLine);
+
+			// Contrato
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());
+
+			// Data do Contrato
+			cell = row.createCell(1);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataContrato());
+
+			// Pagador
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagador().getNome());
+
+			// CPF CNPJ
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);			
+			if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
+				cell.setCellValue(record.getPagador().getCpf());
+			} else {
+				cell.setCellValue(record.getPagador().getCnpj());
+			}
+			
+			// Valor CCB
+			cell = row.createCell(4);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorCCB() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorCCB()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0"));
+			}
+			
+			// Taxa Juros
+			cell = row.createCell(5);
+			cell.setCellStyle(numberStyle);
+			if (record.getTxJurosParcelas() != null) {			
+				cell.setCellValue(((BigDecimal) record.getTxJurosParcelas()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0"));
+			}
+			
+			int parcelaCount = 0;
+			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
+				if (parcelaCount > 0) {
+					countLine++;
+					row = sheet.createRow(countLine);
+				}
+				parcelaCount = parcelaCount + 1;
+				
+				// Contrato
+				cell = row.createCell(0);
+				cell.setCellStyle(cell_style);
+				cell.setCellValue(record.getNumeroContrato());
+
+				// Data do Contrato
+				cell = row.createCell(1);
+				cell.setCellStyle(dateStyle);
+				cell.setCellValue(record.getDataContrato());
+
+				// Pagador
+				cell = row.createCell(2);
+				cell.setCellStyle(cell_style);
+				cell.setCellValue(record.getPagador().getNome());
+
+				// CPF CNPJ
+				cell = row.createCell(3);
+				cell.setCellStyle(cell_style);			
+				if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
+					cell.setCellValue(record.getPagador().getCpf());
+				} else {
+					cell.setCellValue(record.getPagador().getCnpj());
+				}
+				
+				// Valor CCB
+				cell = row.createCell(4);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (record.getValorCCB() != null) {
+					cell.setCellValue(((BigDecimal) record.getValorCCB()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// Taxa Juros
+				cell = row.createCell(5);
+				cell.setCellStyle(numberStyle);
+				if (record.getTxJurosParcelas() != null) {			
+					cell.setCellValue(((BigDecimal) record.getTxJurosParcelas()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// Parcela
+				cell = row.createCell(6);
+				if (parcelas.isParcelaPaga()) {
+					cell.setCellStyle(cell_style_pago_String);
+				} else {
+					if (parcelas.isParcelaVencida()) {
+						cell.setCellStyle(cell_style_vencida_String);
+					} else {
+						cell.setCellStyle(cell_style);
+					}
+				}
+				cell.setCellValue(parcelas.getNumeroParcela());
+				
+				// Data Vencimento
+				cell = row.createCell(7);
+				if (parcelas.isParcelaPaga()) {
+					cell.setCellStyle(cell_style_pago_Date);
+				} else {
+					if (parcelas.isParcelaVencida()) {
+						cell.setCellStyle(cell_style_vencida_Date);
+					} else {
+						cell.setCellStyle(dateStyle);
+					}
+				}
+				cell.setCellValue(parcelas.getDataVencimento());
+				
+				// Valor Parcela
+				cell = row.createCell(8);
+				if (parcelas.isParcelaPaga()) {
+					cell.setCellStyle(cell_style_pago_Number);
+				} else {
+					if (parcelas.isParcelaVencida()) {
+						cell.setCellStyle(cell_style_vencida_Number);
+					} else {
+						cell.setCellStyle(numericStyle);
+					}
+				}
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrParcela() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrParcela()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+			}
+			
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 0, 0));
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 1, 1));
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 2, 2));
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 3, 3));
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 4, 4));
+			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 5, 5));
+		
+
+			// Style para cabeçalho
+			XSSFCellStyle cell_style_pago = wb.createCellStyle();
+			cell_style_pago = wb.createCellStyle();
+			cell_style_pago.setAlignment(HorizontalAlignment.CENTER);
+			cell_style_pago.setVerticalAlignment(VerticalAlignment.CENTER);
+			cell_style_pago.setBorderBottom(BorderStyle.THIN);
+			cell_style_pago.setBorderTop(BorderStyle.THIN);
+			cell_style_pago.setBorderRight(BorderStyle.THIN);
+			cell_style_pago.setBorderLeft(BorderStyle.THIN);
+			cell_style_pago.setWrapText(true);
+			cell_style_pago.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+			cell_style_pago.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			XSSFCellStyle cell_style_aberto = wb.createCellStyle();
+			cell_style_aberto = wb.createCellStyle();
+			cell_style_aberto.setAlignment(HorizontalAlignment.CENTER);
+			cell_style_aberto.setVerticalAlignment(VerticalAlignment.CENTER);
+			cell_style_aberto.setBorderBottom(BorderStyle.THIN);
+			cell_style_aberto.setBorderTop(BorderStyle.THIN);
+			cell_style_aberto.setBorderRight(BorderStyle.THIN);
+			cell_style_aberto.setBorderLeft(BorderStyle.THIN);
+			cell_style_aberto.setWrapText(true);
+			cell_style_aberto.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+			cell_style_aberto.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			XSSFCellStyle cell_style_atraso = wb.createCellStyle();
+			cell_style_atraso = wb.createCellStyle();
+			cell_style_atraso.setAlignment(HorizontalAlignment.CENTER);
+			cell_style_atraso.setVerticalAlignment(VerticalAlignment.CENTER);
+			cell_style_atraso.setBorderBottom(BorderStyle.THIN);
+			cell_style_atraso.setBorderTop(BorderStyle.THIN);
+			cell_style_atraso.setBorderRight(BorderStyle.THIN);
+			cell_style_atraso.setBorderLeft(BorderStyle.THIN);
+			cell_style_atraso.setWrapText(true);
+			cell_style_atraso.setFillForegroundColor(IndexedColors.RED.getIndex());
+			cell_style_atraso.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			XSSFCellStyle cell_style_bx_parcial = wb.createCellStyle();
+			cell_style_bx_parcial = wb.createCellStyle();
+			cell_style_bx_parcial.setAlignment(HorizontalAlignment.CENTER);
+			cell_style_bx_parcial.setVerticalAlignment(VerticalAlignment.CENTER);
+			cell_style_bx_parcial.setBorderBottom(BorderStyle.THIN);
+			cell_style_bx_parcial.setBorderTop(BorderStyle.THIN);
+			cell_style_bx_parcial.setBorderRight(BorderStyle.THIN);
+			cell_style_bx_parcial.setBorderLeft(BorderStyle.THIN);
+			cell_style_bx_parcial.setWrapText(true);
+			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+/*
+			if (record.isParcelaPaga()) {
+				cell.setCellStyle(cell_style_pago);
+				cell.setCellValue("Pago");
+			} else {
+				ContratoCobrancaDetalhesDao ccdDao = new ContratoCobrancaDetalhesDao();
+				ContratoCobrancaDetalhes ccd = ccdDao.findById(record.getIdParcela());
+
+				Calendar dataParcela = Calendar.getInstance(zone, locale);
+				dataParcela.setTime(ccd.getDataVencimentoAtual());
+				dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+				dataHoje.set(Calendar.MINUTE, 0);
+				dataHoje.set(Calendar.SECOND, 0);
+				dataHoje.set(Calendar.MILLISECOND, 0);
+
+				if (dataParcela.before(dataHoje)) {
+					cell.setCellStyle(cell_style_atraso);
+					cell.setCellValue("Em atraso");
+				} else {
+					if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
+						cell.setCellStyle(cell_style_bx_parcial);
+						cell.setCellValue("Baixado parcialmente");
+					} else {
+						cell.setCellStyle(cell_style_aberto);
+						cell.setCellValue("Em aberto");
+					}
+				}
+			}
+			*/
+		}
+
+		// Resize columns to fit data
+		// TODO MIGRACAO POI
+		/*
+		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
+		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
+		 */
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.contratoGerado = true;
+	}
+	
 	public void geraRelFinanceiroUltimaParcela() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
@@ -15658,5 +16226,13 @@ public class ContratoCobrancaMB {
 	public void setSelectedParcelasInvestidorEnvelope(
 			List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope) {
 		this.selectedParcelasInvestidorEnvelope = selectedParcelasInvestidorEnvelope;
+	}
+
+	public List<ContratoCobranca> getContratoCobrancaFinanceiroDia() {
+		return contratoCobrancaFinanceiroDia;
+	}
+
+	public void setContratoCobrancaFinanceiroDia(List<ContratoCobranca> contratoCobrancaFinanceiroDia) {
+		this.contratoCobrancaFinanceiroDia = contratoCobrancaFinanceiroDia;
 	}	
 }

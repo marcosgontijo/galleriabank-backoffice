@@ -2651,6 +2651,44 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA = "select c.id from cobranca.contratocobranca c "
+			+ "where c.status = 'Aprovado' "
+			+ " order by numerocontrato ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> relatorioFinanceiroDia() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA;	
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtraso(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
