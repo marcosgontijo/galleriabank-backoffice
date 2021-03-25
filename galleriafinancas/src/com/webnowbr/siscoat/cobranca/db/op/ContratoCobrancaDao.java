@@ -3965,16 +3965,30 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 
 	
-	private static final String QUERY_GET_DRE_ENTRADAS =  	"select codj.idContratoCobrancaDetalhes, codj.idContratoCobranca, coco.numeroContrato, pare.nome, ccde.numeroParcela, ccde.vlrparcela, vlrjurosparcela, vlramortizacaoparcela, datavencimento, datavencimentoatual"
+	private static final String QUERY_GET_DRE_ENTRADAS =  	"select codj.idContratoCobrancaDetalhes, codj.idContratoCobranca, coco.numeroContrato, pare.nome, ccde.numeroParcela,"
+			+ "        ccdp.vlrrecebido,      "
+			+ "        ccdp.datapagamento ,"
+			+ "	COALESCE ( ( "
+			+ "          select  sum( vlrrecebido ) "
+			+ "            from  cobranca.contratocobrancadetalhesparcial ccdp2 "
+			+ "                  inner join cobranca.cobranca_detalhes_parcial_join cdpj2 on cdpj2.idcontratocobrancadetalhesparcial = ccdp2.id"
+			+ "            where cdpj2.idcontratocobrancadetalhes  = codj.idContratoCobrancaDetalhes and"
+			+ "                  ccdp2.id < ccdp.id ),0) totalrecebidoAnterior,"
+			+ "	vlrjurosparcela,"
+			+ "	vlramortizacaoparcela,"
+			+ "        ccdp.saldoapagar,"
+			+ "	ccdp.vlrrecebido"
 			+ " from cobranca.ContratoCobrancaDetalhes ccde"
+			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on ccde.id = cdpj.idcontratocobrancadetalhes  "
+			+ " inner join cobranca.contratocobrancadetalhesparcial ccdp on cdpj.idcontratocobrancadetalhesparcial = ccdp.id"
 			+ " inner join cobranca.ContratoCobranca_Detalhes_Join codj on ccde.id = codj.idContratoCobrancaDetalhes"
 			+ " inner join cobranca.ContratoCobranca coco on  codj.idContratoCobranca = coco.id"
 			+ " inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id"
-			+ " where datavencimentoatual between  ? ::timestamp and  ? ::timestamp"
-			+ " and parcelapaga = true"
+			+ " where ccdp.datapagamento between  ? ::timestamp and  ? ::timestamp"
+			//+ "  where  coco.numeroContrato = '01287'"
 			+ " and coco.status = 'Aprovado' "
 			+ " and coco.pagador not in (15, 34,14, 182, 417, 803) "
-			+ " order by datavencimentoatual;";
+			+ " order by ccdp.datapagamento;";
 	@SuppressWarnings("unchecked")
 	public DemonstrativoResultadosGrupo getDreEntradas(final Date dataInicio, final Date dataFim) throws Exception {
 		
@@ -4003,6 +4017,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 
 						DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+						
+						
 
 						demonstrativoResultadosGrupoDetalhe
 								.setIdDetalhes(rs.getLong("idContratoCobrancaDetalhes"));
@@ -4012,14 +4028,75 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						
 						
-						Date dataVencimento = rs.getDate("datavencimentoatual");
-						if( dataVencimento == null)
-							 dataVencimento = rs.getDate("datavencimento");
+						Date dataVencimento = rs.getDate("datapagamento");
 						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("vlrparcela"));
-						demonstrativoResultadosGrupoDetalhe.setJuros(rs.getBigDecimal("vlrjurosparcela"));
-						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("vlramortizacaoparcela"));
+						
+						
+						BigDecimal totalrecebidoAnterior = rs.getBigDecimal("totalrecebidoAnterior");
+						BigDecimal vlrjurosparcela = rs.getBigDecimal("vlrjurosparcela");
+						BigDecimal vlramortizacaoparcela = rs.getBigDecimal("vlramortizacaoparcela");
+						BigDecimal saldoapagar = rs.getBigDecimal("saldoapagar");
+						BigDecimal vlrrecebido = rs.getBigDecimal("vlrrecebido");
+						
+						if ( vlrjurosparcela == null)
+							vlrjurosparcela = BigDecimal.ZERO;
+						if ( vlramortizacaoparcela == null)
+							vlramortizacaoparcela = BigDecimal.ZERO;
+						if ( saldoapagar == null)
+							saldoapagar = BigDecimal.ZERO;
+						if ( vlrrecebido == null)
+							vlrrecebido = BigDecimal.ZERO;
+						
+						demonstrativoResultadosGrupoDetalhe.setValor(vlrrecebido);
+								
+						if ( vlrjurosparcela == BigDecimal.ZERO)						
+							demonstrativoResultadosGrupoDetalhe.setJuros(vlrjurosparcela);						
+						else if ( totalrecebidoAnterior == BigDecimal.ZERO && saldoapagar  == BigDecimal.ZERO ) //recebeu tudo em uma parcela				
+							demonstrativoResultadosGrupoDetalhe.setJuros(vlrjurosparcela);
+						else if ( totalrecebidoAnterior.compareTo(vlrjurosparcela) >=0 )		//recebeu todos os juros
+							demonstrativoResultadosGrupoDetalhe.setJuros( BigDecimal.ZERO);
+						else if ( totalrecebidoAnterior.add(vlrrecebido).compareTo(vlrjurosparcela) >= 0 )		//esta recebendo os juros		
+							demonstrativoResultadosGrupoDetalhe.setJuros(vlrjurosparcela.subtract(totalrecebidoAnterior));
+						else if ( totalrecebidoAnterior.compareTo(vlrjurosparcela) == -1 )			//ainda nao recebeu os juros 
+							demonstrativoResultadosGrupoDetalhe.setJuros(vlrrecebido);
+						
+						else	
+							demonstrativoResultadosGrupoDetalhe.setJuros( BigDecimal.ZERO);	
+						
+						
+						
+						
+						if ( vlramortizacaoparcela == BigDecimal.ZERO)						
+							demonstrativoResultadosGrupoDetalhe.setJuros(vlramortizacaoparcela);
+						
+						else if ( totalrecebidoAnterior.compareTo(vlrjurosparcela.add(vlramortizacaoparcela)) == 1 )		//recebeu todos os juros
+							demonstrativoResultadosGrupoDetalhe.setAmortizacao( BigDecimal.ZERO);
+						
+						else if ( vlrrecebido.subtract(demonstrativoResultadosGrupoDetalhe.getJuros()).compareTo(BigDecimal.ZERO) ==1 &&
+								demonstrativoResultadosGrupoDetalhe.getJuros().compareTo(BigDecimal.ZERO)==1) { 
+							//Sobrou valor pago do juros
+							BigDecimal vlrResidual  =  vlrrecebido.subtract(demonstrativoResultadosGrupoDetalhe.getJuros());
+							if ( vlrResidual.compareTo(vlramortizacaoparcela) >= 0)
+								demonstrativoResultadosGrupoDetalhe.setAmortizacao(vlramortizacaoparcela);
+							else
+								demonstrativoResultadosGrupoDetalhe.setAmortizacao(vlrResidual);
+						} else if( demonstrativoResultadosGrupoDetalhe.getJuros().compareTo(BigDecimal.ZERO)==0) {
+							//Pagou juros
+							BigDecimal vlrResidual  =  totalrecebidoAnterior.subtract( vlrjurosparcela ).add(vlrrecebido);
+							
+							if ( vlrResidual.compareTo(vlramortizacaoparcela) >= 0 )
+								demonstrativoResultadosGrupoDetalhe.setAmortizacao(vlramortizacaoparcela.subtract(totalrecebidoAnterior.subtract( vlrjurosparcela )) );
+							else {
+								demonstrativoResultadosGrupoDetalhe.setAmortizacao(vlrrecebido);
+							}
+							
+						}
+							
+							
+						
+						//demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("vlramortizacaoparcela"));
+						
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 						
 						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
@@ -4072,7 +4149,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	 + "                                                           end"
 	 + " where databaixa between ? ::timestamp and  ? ::timestamp"
 	 + " and coco.status = 'Aprovado'"
-	 + " and coco.pagador in (15, 34,14, 182, 417, 803)" 
+	// + " and coco.pagador not in (15, 34,14, 182, 417, 803)" 
 	 + " and baixado = true"
 	 + " order by numerocontrato;";	
 	@SuppressWarnings("unchecked")
