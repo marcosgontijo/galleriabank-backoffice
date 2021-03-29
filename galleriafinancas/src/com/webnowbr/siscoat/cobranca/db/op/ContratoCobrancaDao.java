@@ -4206,18 +4206,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
 						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
 						demonstrativosResultadosGrupoDetalhe
-								.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
-						
-						
-						
+								.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());						
 					}
 				} catch (SQLException e) {
 					throw new Exception(e.getMessage());
 				} finally {
 					closeResources(connection, ps, rs);
 				}
-				return demonstrativosResultadosGrupoDetalhe;
-			
+				return demonstrativosResultadosGrupoDetalhe;			
 	}
 	
 	
