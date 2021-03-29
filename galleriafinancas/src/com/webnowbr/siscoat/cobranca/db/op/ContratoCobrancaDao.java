@@ -4189,14 +4189,26 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						Date dataVencimento = rs.getDate("databaixa");						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));
+						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("parcelamensal"));
 						demonstrativoResultadosGrupoDetalhe.setJuros(rs.getBigDecimal("juros"));
 						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("amortizacao"));
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
+
+						BigDecimal resto = demonstrativoResultadosGrupoDetalhe.getValor()
+								.subtract(demonstrativoResultadosGrupoDetalhe.getJuros())
+								.subtract(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
 						
+						if (resto.compareTo(BigDecimal.ZERO) > 0) {
+							demonstrativoResultadosGrupoDetalhe
+									.setJuros(demonstrativoResultadosGrupoDetalhe.getJuros().add(resto));
+						}
+
 						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
 						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
-						demonstrativosResultadosGrupoDetalhe.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+						demonstrativosResultadosGrupoDetalhe
+								.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+						
+						
 						
 					}
 				} catch (SQLException e) {
