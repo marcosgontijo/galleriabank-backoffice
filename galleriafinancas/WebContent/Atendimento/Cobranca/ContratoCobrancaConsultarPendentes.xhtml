@@ -29,7 +29,7 @@
 						</p:commandButton>
 						<p:commandButton value="Ficha Conjuge" ajax="false"
 							onclick="PrimeFaces.monitorDownload(start, stop);"
-							icon="ui-icon-arrowthick-1-s">
+							icon="ui-icon-arrowthick-1-s" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaConjugeGerado}">
 							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
 						</p:commandButton>
 					</h:form>
