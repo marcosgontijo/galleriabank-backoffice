@@ -8,7 +8,7 @@
 	template="../../MenuAtendimento.xhtml">
 
 	<ui:define name="conteudo">
-	
+
 		<h:outputStylesheet>
 			.row { 
 				width:100%
@@ -19,7 +19,7 @@
 				text-align:center;
 			}	 
    		</h:outputStylesheet>
-	
+
 		<h:form id="form" style="margin-bottom:10px;">
 			<script src="../../../resources/js/functions.js"></script>
 			<h:outputScript name="../js/locale-primefaces.js" />
@@ -61,7 +61,10 @@
 
 
 						<p:panel id="dre" header="#{dre.tipo}" style="margin-bottom:10px;">
-							<h:panelGrid columns="3"  styleClass="row" columnClasses="columns,columns,columns">
+							<h:panelGrid columns="3" styleClass="row"
+								rendered="#{dre.codigo ne 3 and dre.codigo ne 4}"
+								columnClasses="columns,columns,columns">
+
 								<p:outputLabel for="valorTotal" value="Valor Total "
 									styleClass="labelBold col-4" />
 								<p:outputLabel for="jurosTotal" value="Juros Total "
@@ -75,64 +78,78 @@
 									converter="bigDecimalConverter" />
 								<h:outputText id="amortizacaoTotal"
 									value="#{dre.amortizacaoTotal}" converter="bigDecimalConverter" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="2" styleClass="row"
+								rendered="#{dre.codigo eq 3 or dre.codigo eq 4}"
+								columnClasses="columns,columns">
+
+								<p:outputLabel for="quantidade" value="Quantidade "
+									styleClass="labelBold col-4" />
+								<p:outputLabel for="valorTotal1" value="Valor Total "
+									styleClass="labelBold col-4" />
+
+								<h:outputText id="quantidade" value="#{dre.quantidade}">
+									<f:convertNumber pattern="#,##0" />
+								</h:outputText>
+								<h:outputText id="valorTotal1" value="#{dre.valorTotal}"
+									converter="bigDecimalConverter">
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
 
 							</h:panelGrid>
 
 							<p:accordionPanel multiple="true" activeIndex="-1"
 								rendered="#{dre.detalhe.size() >0}"
 								style="margin-bottom: 15px;margin-top: 15px;">
-								<p:tab title="Parcelas"
-									rendered="#{!dre.tipo.equals('Contas Pagas')}">
+								<p:tab title="Parcelas" rendered="#{dre.codigo eq 1}">
 									<p:dataTable id="dtParcelas" var="parcela"
 										value="#{dre.detalhe}">
-										
+
 										<p:columnGroup type="header">
 											<p:column headerText="Contrato" />
-											<p:column headerText="#{dre.tipo.equals('Entradas')?'Devedor':'Recebedor'}"
+											<p:column
+												headerText="#{dre.tipo.equals('Entradas')?'Devedor':'Recebedor'}"
 												styleClass="text-align: center" />
 											<p:column headerText="Numero Parcela"
 												styleClass="text-align: center" />
 											<p:column headerText="Data" styleClass="text-align: center" />
 											<p:column headerText="Valor" styleClass="text-align: center" />
 											<p:column headerText="Juros" styleClass="text-align: center" />
-											<p:column headerText="Amortização" styleClass="text-align: center" />
+											<p:column headerText="Amortização"
+												styleClass="text-align: center" />
 										</p:columnGroup>
 
-										<p:column style="text-align: center;width: 100px;"
-											>
+										<p:column style="text-align: center;width: 100px;">
 											<h:outputText value="#{parcela.numeroContrato}" />
 										</p:column>
 
-										<p:column style="text-align: left;width: 100px;"
-											>
+										<p:column style="text-align: left;width: 100px;">
 											<h:outputText value="#{parcela.nome}" />
 										</p:column>
 
-										<p:column style="text-align: center;width: 100px;"
-											>
+										<p:column style="text-align: center;width: 100px;">
 											<h:outputText value="#{parcela.numeroParcela}" />
 										</p:column>
 
-										<p:column style="text-align: center;width: 100px;"
-											>
+										<p:column style="text-align: center;width: 100px;">
 											<h:outputText value="#{parcela.dataVencimento}">
 												<f:convertDateTime locale="pt_BR" />
 												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 											</h:outputText>
 										</p:column>
 
-										<p:column style="text-align: right;width: 100px;"
-											>
+										<p:column style="text-align: right;width: 100px;">
 											<h:outputText value="#{parcela.valor}"
-												converter="bigDecimalConverter" />
+												converter="bigDecimalConverter">
+												<f:convertNumber pattern="#,##0.00" />
+											</h:outputText>
 										</p:column>
-										<p:column style="text-align: right;width: 100px;"
-											>
+										<p:column style="text-align: right;width: 100px;">
 											<h:outputText value="#{parcela.juros}"
 												converter="bigDecimalConverter" />
 										</p:column>
-										<p:column style="text-align: right;width: 100px;"
-											>
+										<p:column style="text-align: right;width: 100px;">
 											<h:outputText value="#{parcela.amortizacao}"
 												converter="bigDecimalConverter" />
 										</p:column>
@@ -140,8 +157,7 @@
 									</p:dataTable>
 								</p:tab>
 
-								<p:tab title="Contas Pagas"
-									rendered="#{dre.tipo.equals('Contas Pagas')}">
+								<p:tab title="Contas Pagas" rendered="#{dre.codigo eq 2}">
 									<p:dataTable id="dtContasPagas" var="parcela"
 										value="#{dre.detalhe}">
 
@@ -163,7 +179,7 @@
 											<h:outputText value="#{parcela.nome}" />
 										</p:column>
 
-										<p:column style="text-align: left;width: 100px;" >
+										<p:column style="text-align: left;width: 100px;">
 											<h:outputText
 												value="#{parcela.nomeContaContabilPai} - #{parcela.nomeContaContabil}"
 												rendered="#{parcela.nomeContaContabilPai != null}" />
@@ -180,7 +196,53 @@
 
 										<p:column style="text-align: right;width: 100px;">
 											<h:outputText value="#{parcela.valor}"
-												converter="bigDecimalConverter" />
+												converter="bigDecimalConverter">
+												<f:convertNumber pattern="#,##0.00" />
+											</h:outputText>
+										</p:column>
+
+									</p:dataTable>
+								</p:tab>
+
+								<p:tab title="Contratos"
+									rendered="#{dre.codigo eq 3 or dre.codigo eq 4}">
+									<p:dataTable id="dtContratos" var="parcela"
+										value="#{dre.detalhe}">
+
+										<p:columnGroup type="header">
+											<p:column headerText="Contrato" rendered="#{dre.codigo eq 3}" />
+											<p:column headerText="Cautela" rendered="#{dre.codigo eq 4}" />
+											 
+											
+											<p:column headerText="Pagador" rendered="#{dre.codigo eq 3}"
+												styleClass="text-align: center" />
+											<p:column headerText="Recebedor"
+												rendered="#{dre.codigo eq 4}"
+												styleClass="text-align: center" />
+											<p:column headerText="Data" styleClass="text-align: center" />
+											<p:column headerText="Valor" styleClass="text-align: center" />
+										</p:columnGroup>
+
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{parcela.numeroContrato}" />
+										</p:column>
+
+										<p:column style="text-align: left;width: 100px;">
+											<h:outputText value="#{parcela.nome}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{parcela.dataVencimento}">
+												<f:convertDateTime locale="pt_BR" />
+												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="text-align: right;width: 100px;">
+											<h:outputText value="#{parcela.valor}"
+												converter="bigDecimalConverter">
+												<f:convertNumber pattern="#,##0.00" />
+											</h:outputText>	
 										</p:column>
 
 									</p:dataTable>

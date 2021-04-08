@@ -3995,6 +3995,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
 				demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
 				demonstrativosResultadosGrupoDetalhe.setTipo("Entradas");
+				demonstrativosResultadosGrupoDetalhe.setCodigo(1);
 
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -4158,6 +4159,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
 				demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
 				demonstrativosResultadosGrupoDetalhe.setTipo("Saidas");
+				demonstrativosResultadosGrupoDetalhe.setCodigo(1);
 
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -4189,9 +4191,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						Date dataVencimento = rs.getDate("databaixa");						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("parcelamensal"));
-						demonstrativoResultadosGrupoDetalhe.setJuros(rs.getBigDecimal("juros"));
+						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));						
 						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("amortizacao"));
+						
+						demonstrativoResultadosGrupoDetalhe.setJuros(demonstrativoResultadosGrupoDetalhe.getValor().subtract(demonstrativoResultadosGrupoDetalhe.getAmortizacao()));
+						
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 
 						BigDecimal resto = demonstrativoResultadosGrupoDetalhe.getValor()
@@ -4216,5 +4220,69 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return demonstrativosResultadosGrupoDetalhe;			
 	}
 	
+	private static final String QUERY_GET_DRE_CONTRATOS = "select " 
+			+ "       coco.datacontrato,"
+			+ "       coco.id idContratoCobranca, "
+			+ "       coco.numeroContrato, "
+			+ "       pare.nome,"
+			+ "       valorccb "
+			+ " from cobranca.contratocobranca coco"
+			+ " inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id"
+	 + " where datacontrato between ? ::timestamp and  ? ::timestamp"
+	 + " and coco.status = 'Aprovado'"
+	 + "and pagador not in (15, 34,14, 182, 417, 803)"
+	 + " order by numerocontrato;";	
+
+	@SuppressWarnings("unchecked")
+	public DemonstrativoResultadosGrupo getDreContrato(final Date dataInicio, final Date dataFim)
+			throws Exception {
+		
+		DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
+		demonstrativosResultadosGrupoDetalhe
+				.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
+		demonstrativosResultadosGrupoDetalhe.setTipo("CCBs emitidas");
+		demonstrativosResultadosGrupoDetalhe.setCodigo(3);
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+
+			String query_QUERY_GET_DRE_SAIDAS = QUERY_GET_DRE_CONTRATOS;
+
+			ps = connection.prepareStatement(query_QUERY_GET_DRE_SAIDAS);
+
+			java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+			java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+
+			ps.setDate(1, dtRelInicioSQL);
+			ps.setDate(2, dtRelFimSQL);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+
+				demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
+				demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
+				demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+				Date dataContrato = rs.getDate("datacontrato");
+				demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataContrato);
+				demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorccb"));
+
+					demonstrativosResultadosGrupoDetalhe.getDetalhe()
+							.add(demonstrativoResultadosGrupoDetalhe);
+					demonstrativosResultadosGrupoDetalhe
+							.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
+			}
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return demonstrativosResultadosGrupoDetalhe;
+	}
 	
 }

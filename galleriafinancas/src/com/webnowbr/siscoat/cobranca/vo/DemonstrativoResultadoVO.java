@@ -21,4 +21,11 @@ public class DemonstrativoResultadoVO {
 		}
 		Dre.add(dre);		
 	}
+	
+	public void addDre(List<DemonstrativoResultadosGrupo> dres) {
+		if ( Dre == null) {
+			Dre = new ArrayList<DemonstrativoResultadosGrupo>(0);
+		}
+		Dre.addAll(dres);		
+	}
 }

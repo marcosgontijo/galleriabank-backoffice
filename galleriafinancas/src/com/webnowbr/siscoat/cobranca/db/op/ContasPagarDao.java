@@ -14,10 +14,12 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 
-	private static final String QUERY_GET_DRE_CONTASPAGAR = "select  copa.id ,  copa.numeroDocumento, pare.nome,   copa.valorpagamento,  copa.datapagamento, cont.id contId, cont.nome contNome, contPai.id contPaiId, contPai.nome contPaiNome"
+	private static final String QUERY_GET_DRE_CONTASPAGAR = "select  copa.id, copa.numeroDocumento, pare.nome,"
+			+ " copa.valorpagamento,  copa.datapagamento, cont.id contId, cont.nome contNome, contPai.id contPaiId,"
+			+ " contPai.nome contPaiNome, copa.descricao "
 			+ " from cobranca.contaspagar copa"
-			+ " inner join cobranca.pagadorrecebedor pare on copa.pagadorrecebedor = pare.id"
-			+ " inner join cobranca.contacontabil cont on copa.contacontabil = cont.id"
+			+ " left join cobranca.pagadorrecebedor pare on copa.pagadorrecebedor = pare.id"
+			+ " left join cobranca.contacontabil cont on copa.contacontabil = cont.id"
 			+ " left join cobranca.contacontabil contPai on cont.contacontabilpai = contPai.id"
 			+ " where contapaga = true" + " and datapagamento between  ? ::timestamp and  ? ::timestamp"
 			+ " and tipodespesa = 'E'" + " order by case when  contPai.nome is null then cont.nome"
@@ -29,6 +31,7 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 		DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
 		demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
 		demonstrativosResultadosGrupoDetalhe.setTipo("Contas Pagas");
+		demonstrativosResultadosGrupoDetalhe.setCodigo(2);
 
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -54,7 +57,11 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 
 				demonstrativoResultadosGrupoDetalhe.setIdDetalhes(rs.getInt("id"));
 				demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroDocumento"));
-				demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+				
+				if ( rs.getString("nome") != null)
+					demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+				else
+					demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("descricao"));
 				Date dataVencimento = rs.getDate("datapagamento");
 				demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
 				demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorpagamento"));
