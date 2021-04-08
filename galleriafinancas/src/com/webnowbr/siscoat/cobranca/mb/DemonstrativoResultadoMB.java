@@ -8,6 +8,7 @@ import javax.faces.bean.SessionScoped;
 
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.DebenturesInvestidorDao;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadoVO;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
@@ -33,8 +34,16 @@ public class DemonstrativoResultadoMB {
 		demonstrativoResultado = new DemonstrativoResultadoVO();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		DebenturesInvestidorDao debenturesInvestidorDao = new DebenturesInvestidorDao();
 
 		try {
+			
+			DemonstrativoResultadosGrupo contratos = contratoCobrancaDao.getDreContrato(dataInicio, dataFim);
+			demonstrativoResultado.addDre(contratos);
+			
+			DemonstrativoResultadosGrupo debentures = debenturesInvestidorDao.getDreDebentures(dataInicio, dataFim);
+			demonstrativoResultado.addDre(debentures);
+			
 			DemonstrativoResultadosGrupo entradas = contratoCobrancaDao.getDreEntradas(dataInicio, dataFim);
 			demonstrativoResultado.addDre(entradas);
 			DemonstrativoResultadosGrupo saidas = contratoCobrancaDao.getDreSaidas(dataInicio, dataFim);
