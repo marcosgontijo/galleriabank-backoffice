@@ -148,27 +148,62 @@ public class ProcessamentoEmLoteMB {
 					 */							
 					txJurosParcela = this.txJurosCustom.divide(BigDecimal.valueOf(100));
 					
-					// se tem meses de carência calcula a carência				
+					// se tem meses de carência calcula a carência	
+					/*
 					if (contrato.getMesesCarencia() > 0) {
 						for (int i = 0; i < contrato.getMesesCarencia(); i++) {
 							saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
 						}						
-					} 
+					} */
+					
+					//saldoAtualizado = saldoAtualizado.setScale(2, RoundingMode.HALF_EVEN);
+					
+					// Verifica se calcula PGTO ou segue com amortização zero
+					//BigDecimal parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
 					
 					saldoAtualizado = saldoAtualizado.setScale(2, RoundingMode.HALF_EVEN);
 					
-					// Verifica se calcula PGTO ou segue com amortização zero
-					BigDecimal parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
+					BigDecimal parcelaCalculadaCCB = BigDecimal.ZERO;
+					
+					// verifica se o contrato tem carência
+					int countCarencia = 0;
+					if (contrato.getMesesCarencia() > 0) {
+						countCarencia = contrato.getMesesCarencia();
+						
+						BigDecimal saldoComCarencia = saldoAtualizado;
+						
+						for (int i = 0; i < countCarencia; i++) {						
+							// atualiza saldo com juros
+							saldoComCarencia = saldoComCarencia.add(saldoComCarencia.multiply(txJurosParcela));
+						}
+						
+						parcelaCalculadaCCB = saldoComCarencia.multiply(txJurosParcela);
+					} else {
+						// Verifica se calcula PGTO ou segue com amortização zero
+						parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
+					}
 					
 					//BigDecimal valorPArcela = new BigDecimal("2200.193838");
 
 					// verifica se usa PGTO ou faz sem amortização
 					if (contrato.getVlrParcela().compareTo(parcelaCalculadaCCB.subtract(BigDecimal.ONE)) >= 0  && 
 							contrato.getVlrParcela().compareTo(parcelaCalculadaCCB.add(BigDecimal.ONE)) <= 0) {
-						for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
-							parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
-							parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
-							parcela.setVlrSaldoParcela(saldoAtualizado);
+						for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {							
+							if (countCarencia > 0) {
+								countCarencia = countCarencia - 1;
+								
+								// atualiza saldo com juros
+								saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
+								
+								parcela.setVlrJurosParcela(BigDecimal.ZERO);
+								parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+								parcela.setVlrParcela(BigDecimal.ZERO);
+								parcela.setVlrSaldoParcela(saldoAtualizado);
+							} else {
+								parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
+								parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+								parcela.setVlrSaldoParcela(saldoAtualizado);
+							}
 							
 							parcela.setVlrJurosParcela(parcela.getVlrJurosParcela().setScale(2, RoundingMode.HALF_EVEN));
 							parcela.setVlrAmortizacaoParcela(parcela.getVlrAmortizacaoParcela().setScale(2, RoundingMode.HALF_EVEN));
@@ -189,12 +224,27 @@ public class ProcessamentoEmLoteMB {
 						BigDecimal parcelaPGTOCalculada = new BigDecimal(parcelaPGTO);
 						
 						for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
-							parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
-							parcela.setVlrAmortizacaoParcela(parcelaPGTOCalculada.subtract(parcela.getVlrJurosParcela()));
-							parcela.setVlrSaldoParcela(saldoAtualizado.subtract(parcela.getVlrAmortizacaoParcela()));
+							if (countCarencia > 0) {
+								countCarencia = countCarencia - 1;
+								
+								// atualiza saldo com juros
+								saldoAtualizado = saldoAtualizado.add(saldoAtualizado.multiply(txJurosParcela));
+								
+								parcela.setVlrJurosParcela(BigDecimal.ZERO);
+								parcela.setVlrAmortizacaoParcela(BigDecimal.ZERO);
+								parcela.setVlrParcela(BigDecimal.ZERO);
+								parcela.setVlrSaldoParcela(saldoAtualizado);
+								
+							} else {
+								parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
+								parcela.setVlrAmortizacaoParcela(parcelaPGTOCalculada.subtract(parcela.getVlrJurosParcela()));
+								parcela.setVlrSaldoParcela(saldoAtualizado.subtract(parcela.getVlrAmortizacaoParcela()));
+								
+								saldoAtualizado = parcela.getVlrSaldoParcela();									
+							}
 							
-							saldoAtualizado = parcela.getVlrSaldoParcela();		
-							
+							// arredonda valores
+							parcela.setVlrParcela(parcela.getVlrParcela().setScale(2, RoundingMode.HALF_EVEN));
 							parcela.setVlrJurosParcela(parcela.getVlrJurosParcela().setScale(2, RoundingMode.HALF_EVEN));
 							parcela.setVlrAmortizacaoParcela(parcela.getVlrAmortizacaoParcela().setScale(2, RoundingMode.HALF_EVEN));
 							parcela.setVlrSaldoParcela(parcela.getVlrSaldoParcela().setScale(2, RoundingMode.HALF_EVEN));							
@@ -257,16 +307,27 @@ public class ProcessamentoEmLoteMB {
 				} 
 				*/
 				
+				saldoAtualizado = saldoAtualizado.setScale(2, RoundingMode.HALF_EVEN);
+				
+				BigDecimal parcelaCalculadaCCB = BigDecimal.ZERO;
+				
 				// verifica se o contrato tem carência
 				int countCarencia = 0;
 				if (contrato.getMesesCarencia() > 0) {
 					countCarencia = contrato.getMesesCarencia();
+					
+					BigDecimal saldoComCarencia = saldoAtualizado;
+					
+					for (int i = 0; i < countCarencia; i++) {						
+						// atualiza saldo com juros
+						saldoComCarencia = saldoComCarencia.add(saldoComCarencia.multiply(txJurosParcela));
+					}
+					
+					parcelaCalculadaCCB = saldoComCarencia.multiply(txJurosParcela);
+				} else {
+					// Verifica se calcula PGTO ou segue com amortização zero
+					parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
 				}
-				
-				saldoAtualizado = saldoAtualizado.setScale(2, RoundingMode.HALF_EVEN);
-				
-				// Verifica se calcula PGTO ou segue com amortização zero
-				BigDecimal parcelaCalculadaCCB = saldoAtualizado.multiply(txJurosParcela);
 
 				// verifica se usa PGTO ou faz sem amortização
 				if (contrato.getVlrParcela().compareTo(parcelaCalculadaCCB.subtract(BigDecimal.ONE)) >= 0  && 

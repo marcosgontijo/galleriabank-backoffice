@@ -26,6 +26,10 @@ public class CRMMB {
 	private int qtdeEmAnalise;
 	private BigDecimal valorTotalEmAnalise;
 	
+	private List<ContratoCobranca> analiseReprovada;
+	private int qtdeAnaliseReprovada;
+	private BigDecimal valorAnaliseReprovada;
+	
 	private List<ContratoCobranca> agPagtoBoleto;
 	private int qtdeAgPagtoBoleto;
 	private BigDecimal valorTotalAgPagtoBoleto;
@@ -46,6 +50,12 @@ public class CRMMB {
 	private int qtdeAgAssinatura;
 	private BigDecimal valorTotalAgAssinatura;
 	
+	private List<ContratoCobranca> todosContratos;
+	private int qtdeTodosContratos;
+	private BigDecimal valorTodosContratos;
+	
+	private String tituloPagina = "Todos";
+	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 
@@ -64,6 +74,124 @@ public class CRMMB {
 		
 		return "/Atendimento/Cobranca/CRM.xhtml";
 	}
+	
+	public String clearFieldsDetalhado() {
+		geraConsultaContratosTodos();
+		
+		// popula status
+		this.todosContratos = populaStatus(this.todosContratos);
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
+	}
+	
+	public void consultaContratosCRM(String filtro) {
+		if (filtro.equals("Todos")) {
+			geraConsultaContratosTodos();
+		}
+		if (filtro.equals("NovoLead")) {
+			geraConsultaContratosNovoLead();
+			this.todosContratos = this.novoLead;
+			this.qtdeTodosContratos = this.qtdeLeads;
+			this.valorTodosContratos = this.valorTotalLeads;
+			
+			this.tituloPagina = "Novo Lead";
+		}
+		if (filtro.equals("EmAnalise")) {
+			geraConsultaContratosEmAnalise();
+			this.todosContratos = this.emAnalise;
+			this.qtdeTodosContratos = this.qtdeEmAnalise;
+			this.valorTodosContratos = this.valorTotalEmAnalise;
+			
+			this.tituloPagina = "Em Análise";
+		}
+		
+		if (filtro.equals("AnaliseReprovada")) {
+			geraConsultaContratosAnaliseReprovada();
+			this.todosContratos = this.analiseReprovada;
+			this.qtdeTodosContratos = this.qtdeAnaliseReprovada;
+			this.valorTodosContratos = this.valorAnaliseReprovada;
+			
+			this.tituloPagina = "Análise Reprovada";
+		}
+		
+		if (filtro.equals("AgPagtoBoleto")) {
+			geraConsultaContratosAgPagtoBoleto();
+			this.todosContratos = this.agPagtoBoleto;
+			this.qtdeTodosContratos = this.qtdeAgPagtoBoleto;
+			this.valorTodosContratos = this.valorTotalAgPagtoBoleto;
+			
+			this.tituloPagina = "Ag. Pagto. Boleto";
+		}
+		if (filtro.equals("AgPAJULaudo")) {
+			geraConsultaContratosAgPAJUeLaudo();
+			this.todosContratos = this.agPAJUeLaudo;
+			this.qtdeTodosContratos = this.qtdeAgPAJUeLaudo;
+			this.valorTodosContratos = this.valorTotalAgPAJUeLaudo;
+			
+			this.tituloPagina = "Ag. PAJU e Laudo";
+		}
+		if (filtro.equals("AgDOC")) {
+			geraConsultaContratosAgDOC();
+			this.todosContratos = this.agDOC;
+			this.qtdeTodosContratos = this.qtdeAgDOC;
+			this.valorTodosContratos = this.valorTotalAgDOC;
+			
+			this.tituloPagina = "Ag. DOC";
+		}
+		if (filtro.equals("AgCCB")) {
+			geraConsultaContratosAgCCB();
+			this.todosContratos = this.agCCB;
+			this.qtdeTodosContratos = this.qtdeAgCCB;
+			this.valorTodosContratos = this.valorTotalAgCCB;
+			
+			this.tituloPagina = "Ag. CCB";
+		}
+		if (filtro.equals("AgAssinatura")) {
+			geraConsultaContratosAgAssinatura();
+			this.todosContratos = this.agAssinatura;
+			this.qtdeTodosContratos = this.qtdeAgAssinatura;
+			this.valorTodosContratos = this.valorTotalAgAssinatura;
+			
+			this.tituloPagina = "Ag. Assinatura";
+		}
+		
+		// popula status
+		this.todosContratos = populaStatus(this.todosContratos);
+	}
+	
+	public void geraConsultaContratosTodos() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.todosContratos = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.todosContratos = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Todos");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.todosContratos = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Todos"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeTodosContratos = 0;
+		this.valorTodosContratos = BigDecimal.ZERO;
+		
+		if (this.todosContratos.size() > 0) {
+			this.qtdeTodosContratos = this.todosContratos.size();
+			
+			for (ContratoCobranca c : this.todosContratos) {
+				this.valorTodosContratos = valorTodosContratos.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
 	
 	public void geraConsultaContratosNovoLead() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -98,6 +226,39 @@ public class CRMMB {
 		}
 	}
 	
+	public void geraConsultaContratosAnaliseReprovada() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.analiseReprovada = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.analiseReprovada = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Reprovada");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.analiseReprovada = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Reprovada"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAnaliseReprovada = 0;
+		this.valorAnaliseReprovada = BigDecimal.ZERO;
+		
+		if (this.analiseReprovada.size() > 0) {
+			this.qtdeAnaliseReprovada = this.analiseReprovada.size();
+			
+			for (ContratoCobranca c : this.analiseReprovada) {
+				this.valorAnaliseReprovada = valorAnaliseReprovada.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+
 	public void geraConsultaContratosEmAnalise() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.emAnalise = new ArrayList<ContratoCobranca>();
@@ -295,6 +456,45 @@ public class CRMMB {
 			}
 		}
 	}
+	
+	public List<ContratoCobranca> populaStatus(List<ContratoCobranca> contratos) {
+		// POPULA STATUS
+		for (ContratoCobranca c : contratos) {
+			if (!c.isInicioAnalise()) {
+				c.setStatus("Novo Lead");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && (c.getMatriculaAprovadaValor() == null || c.getMatriculaAprovadaValor().equals(""))) {
+				c.setStatus("Em Análise");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
+				c.setStatus("Ag. Pagto. Boleto");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
+					(!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+				c.setStatus("Ag. PAJU e Laudo");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+					c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isDocumentosCompletos()) {
+				c.setStatus("Ag. DOC");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
+				c.setStatus("Ag. CCB");
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
+				c.setStatus("Ag. Assinatura");
+			}			
+		}
+		
+		return contratos;
+	}
 
 
 	public List<ContratoCobranca> getNovoLead() {
@@ -471,5 +671,61 @@ public class CRMMB {
 
 	public void setValorTotalAgAssinatura(BigDecimal valorTotalAgAssinatura) {
 		this.valorTotalAgAssinatura = valorTotalAgAssinatura;
+	}
+
+	public List<ContratoCobranca> getTodosContratos() {
+		return todosContratos;
+	}
+
+	public void setTodosContratos(List<ContratoCobranca> todosContratos) {
+		this.todosContratos = todosContratos;
+	}
+
+	public int getQtdeTodosContratos() {
+		return qtdeTodosContratos;
+	}
+
+	public void setQtdeTodosContratos(int qtdeTodosContratos) {
+		this.qtdeTodosContratos = qtdeTodosContratos;
+	}
+
+	public BigDecimal getValorTodosContratos() {
+		return valorTodosContratos;
+	}
+
+	public void setValorTodosContratos(BigDecimal valorTodosContratos) {
+		this.valorTodosContratos = valorTodosContratos;
+	}
+
+	public String getTituloPagina() {
+		return tituloPagina;
+	}
+
+	public void setTituloPagina(String tituloPagina) {
+		this.tituloPagina = tituloPagina;
+	}
+
+	public List<ContratoCobranca> getAnaliseReprovada() {
+		return analiseReprovada;
+	}
+
+	public void setAnaliseReprovada(List<ContratoCobranca> analiseReprovada) {
+		this.analiseReprovada = analiseReprovada;
+	}
+
+	public int getQtdeAnaliseReprovada() {
+		return qtdeAnaliseReprovada;
+	}
+
+	public void setQtdeAnaliseReprovada(int qtdeAnaliseReprovada) {
+		this.qtdeAnaliseReprovada = qtdeAnaliseReprovada;
+	}
+
+	public BigDecimal getValorAnaliseReprovada() {
+		return valorAnaliseReprovada;
+	}
+
+	public void setValorAnaliseReprovada(BigDecimal valorAnaliseReprovada) {
+		this.valorAnaliseReprovada = valorAnaliseReprovada;
 	}
 }

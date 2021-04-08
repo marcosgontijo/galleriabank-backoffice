@@ -35,9 +35,11 @@
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
-										action="#{contratoCobrancaMB.geraConsultaContratosCustomizados}"
+										action="#{crmMB.clearFieldsDetalhado}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
 									<p:menuitem value="Leads"
 										action="#{contratoCobrancaMB.geraConsultaLeads('')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

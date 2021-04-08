@@ -64,6 +64,9 @@
         <property name="userCobrancaBaixa" type="boolean">
             <column name="USERCOBRANCABAIXA" />
         </property>  
+        <property name="userCobrancaLead" type="boolean">
+            <column name="userCobrancaLead" />
+        </property> 
         <property name="userCobrancaIugu" type="boolean">
             <column name="USERCOBRANCAIUGU" />
         </property> 

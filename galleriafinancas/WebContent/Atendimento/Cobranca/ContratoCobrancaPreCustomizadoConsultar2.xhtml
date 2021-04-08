@@ -45,52 +45,9 @@
 					</script>
 
 				</h:panelGrid>
-			</p:panel>		
-					
-			<div class="ui-g">
-				<div class="ui-g-8 ui-md-8 ui-lg-8">
-				    <p:fieldset id="opcoes" legend="Opções de Consulta" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
-				        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 70px;padding-top: 17px;">
-					        <p:commandButton value="Todos" ajax="false" action="#{crmMB.consultaContratosCRM('Todos')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Novo Lead" ajax="false" action="#{crmMB.consultaContratosCRM('NovoLead')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Em Análise" ajax="false" action="#{crmMB.consultaContratosCRM('EmAnalise')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Análise Reprovada" ajax="false" action="#{crmMB.consultaContratosCRM('AnaliseReprovada')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. Pagto. Boleto" ajax="false" action="#{crmMB.consultaContratosCRM('AgPagtoBoleto')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. PAJU e Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPAJULaudo')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. DOC" ajax="false" action="#{crmMB.consultaContratosCRM('AgDOC')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. CCB" ajax="false" action="#{crmMB.consultaContratosCRM('AgCCB')}" update="ConsultaContratos" style="padding: 4px; "/>
-							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. Assinatura" ajax="false" action="#{crmMB.consultaContratosCRM('AgAssinatura')}" update="ConsultaContratos" style="padding: 4px; "/>
-				       	</div>					       	
-  					</p:fieldset>					
-				</div>
-				<div class="ui-g-4 ui-md-4 ui-lg-4">
-				    <p:fieldset id="totalContratos" legend="Total Contratos" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
-				        <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #bababa !important; padding: 10px;border-right: 3px solid #fff;">
-				        	Contratos
-				       	</div>
-				       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #bababa !important; padding: 10px;">
-				       		Valor Total
-				       	</div>
-				       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;border-right: 3px solid #fff;margin-bottom: 10px;height: 25px;">
-				        	<h:outputText value="#{crmMB.qtdeTodosContratos}"/>
-				       	</div>
-				       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
-				       		<h:outputText value="#{crmMB.valorTodosContratos}" converter="bigDecimalConverter"/>
-				       	</div>						       	
-  					</p:fieldset>
-				</div>
-			</div>			
-								
-			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+			</p:panel>									
+			<p:panel id="ConsultaContratos" header="Pré-Contratos Pendentes - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
@@ -107,20 +64,20 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>	
-			       	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
-			            <h:outputText value="#{contratos.responsavel.nome}" />
-			        </p:column>	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Valor Solicitado">
+			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
+			            <h:outputText value="#{contratos.responsavel.nome}" />
+			        </p:column>	        
+			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Imóvel" filterBy="#{contratos.imovel.nome}" filterMatchMode="contains" sortBy="#{contratos.imovel.nome}">
+			            <h:outputText value="#{contratos.imovel.nome}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
 			            <h:outputText value="#{contratos.imovel.cidade}" />
-			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Status" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
-			            <h:outputText value="#{contratos.status}" />
 			        </p:column>	
 			        <p:column style="width:180px;">
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	

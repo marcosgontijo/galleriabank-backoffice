@@ -467,6 +467,17 @@
 		<property name="inicioAnalise" type="boolean">
 			<column name="inicioAnalise" />
 		</property>
+		<property name="analiseReprovadaData" type="java.util.Date">
+			<column name="analiseReprovadaData" />
+		</property>
+		<property name="analiseReprovada"
+			type="boolean">
+			<column name="analiseReprovada" />
+		</property>
+		<property name="analiseReprovadaUsuario"
+			type="java.lang.String">
+			<column name="analiseReprovadaUsuario" />
+		</property>		
 		<property name="aguardandoDocumentoData"
 			type="java.util.Date">
 			<column name="aguardandoDocumentoData" />
@@ -927,5 +938,11 @@
 		<property name="mesesCarencia" type="int">
 			<column name="mesesCarencia" />
 		</property>
+		<property name="motivoReprovacaoAnalise" type="text">
+			<column name="motivoReprovacaoAnalise" />
+		</property>
+		<property name="dataPrevistaVistoria" type="java.util.Date">
+			<column name="dataPrevistaVistoria" />
+		</property>		
 	</class>
 </hibernate-mapping>

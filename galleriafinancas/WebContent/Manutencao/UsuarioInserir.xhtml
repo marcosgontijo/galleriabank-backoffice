@@ -90,6 +90,16 @@
 						style="width:60px">
 
 					</p:selectBooleanButton>
+					
+					<h:outputLabel for="GerenciaCobrançaLead"
+						value="Sistema de Cobrança - Leads: " class="labelBold" />
+					<p:selectBooleanButton id="GerenciaCobrançaLead"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userCobrancaLead}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+
+					</p:selectBooleanButton>
 
 					<h:outputLabel for="GerenciaPreContratos"
 						value="Sistema de Cobrança - Gerencia Pré-Contratos: "

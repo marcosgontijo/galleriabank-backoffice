@@ -78,6 +78,28 @@
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
 							</h:panelGrid>
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
+									<p:spacer ></p:spacer>									
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="analiseReprovadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>		
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+										<p:selectBooleanButton id="analiseReprovadaEdit" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px"/>
+									</shiro:hasAnyRoles>		
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="analiseReprovadaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="analiseReprovadaData" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>								
 							<h:panelGrid columns="2" style="background-color: #cfcfcf;margin-left: 20px;width: 250px;height: 110px;-webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
@@ -134,7 +156,9 @@
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>							    								    													    						   
 							</h:panelGrid>
-							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+						</h:panelGrid>
+						<h:panelGrid columns="8" style="margin-top: 20px;">
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Laudo e Parecer Jurídico</p:outputLabel>
@@ -155,9 +179,7 @@
 								          <f:convertDateTime locale="pt_BR"  />
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
-							</h:panelGrid>
-						</h:panelGrid>
-						<h:panelGrid columns="8" style="margin-top: 20px;">
+							</h:panelGrid>						
 							<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
@@ -245,8 +267,10 @@
 								          <f:convertDateTime locale="pt_BR"  />
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
-							</h:panelGrid>	
-							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+							</h:panelGrid>			
+						</h:panelGrid>	
+						<h:panelGrid columns="2" style="margin-top:20px;margin-bottom: 20px;">	
+								<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
@@ -267,10 +291,8 @@
 								          <f:convertDateTime locale="pt_BR"  />
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
-							</h:panelGrid>			
-						</h:panelGrid>	
-						<h:panelGrid columns="2" style="margin-top:20px;margin-bottom: 20px;">	
-							<h:panelGrid columns="2" style="background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
+							</h:panelGrid>	
+							<h:panelGrid columns="2" style="margin-left: 20px;background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
 										<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>
@@ -294,6 +316,23 @@
 						</h:panelGrid>						
 					</p:panel>
 				</shiro:hasAnyRoles>
+				
+				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">
+					<p:panel id="CheckListInformacoesAdicionais" header="Check-List - Informações Adicionais" style="margin-bottom:20px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: " styleClass="labelBold" />
+							<p:inputTextarea id="motivo" rows="10" cols="48" counter="display" maxlength="3000" onblur="" counterTemplate="{0} characters remaining." autoResize="false" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}"/>
+						</h:panelGrid>
+						<h:panelGrid columns="2">	
+							<p:outputLabel for="dataVistoria" value="Data Vistoria Imóvel: " styleClass="labelBold" />
+							<p:calendar id="dataVistoria" showOn="button"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+							required="true" label="Data Vistoria Imóvel" size="100"
+							pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+						</h:panelGrid>
+					</p:panel>
+				</shiro:hasAnyRoles>	
+								
 				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>

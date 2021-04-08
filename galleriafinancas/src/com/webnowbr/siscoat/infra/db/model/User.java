@@ -46,6 +46,7 @@ public final class User implements Serializable {
     private boolean userCobrancaEdita;
     private boolean userCobrancaBaixa;
     private boolean userCobrancaIugu;
+    private boolean userCobrancaLead;
     
     private boolean userPreContrato;
     private boolean userPreContratoIUGU;
@@ -431,5 +432,13 @@ public final class User implements Serializable {
 
 	public void setListResponsavel(List<Responsavel> listResponsavel) {
 		this.listResponsavel = listResponsavel;
+	}
+
+	public boolean isUserCobrancaLead() {
+		return userCobrancaLead;
+	}
+
+	public void setUserCobrancaLead(boolean userCobrancaLead) {
+		this.userCobrancaLead = userCobrancaLead;
 	}
 }

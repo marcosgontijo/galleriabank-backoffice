@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+v<?xml version="1.0" encoding="UTF-8" ?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 			    xmlns:ui="http://java.sun.com/jsf/facelets"
 			    xmlns:f="http://java.sun.com/jsf/core"
@@ -83,7 +83,15 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobrancaBaixa}">
 								<h:outputText value="Não" />
-							</ui:fragment>	
+							</ui:fragment>
+							
+							<p:outputLabel value="Sistema de Cobrança - Lead: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobrancaLead}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!usuarioMB.objetoUsuario.userCobrancaLead}">
+								<h:outputText value="Não" />
+							</ui:fragment>		
 							
 							<p:outputLabel value="Sistema de Cobrança - IUGU: " styleClass="labelBold"/>	
 							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userCobrancaIugu}">

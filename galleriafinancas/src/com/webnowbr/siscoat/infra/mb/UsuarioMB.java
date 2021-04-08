@@ -199,6 +199,15 @@ public class UsuarioMB {
 				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "COBRANCA_LEAD");
+			if (objetoUsuario.isUserCobrancaLead()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_IUGU");
 			if (objetoUsuario.isUserCobrancaIugu()) {				
 				gAdmAux.add(gAdm.get(0));

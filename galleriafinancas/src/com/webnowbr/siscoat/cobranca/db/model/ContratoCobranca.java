@@ -58,7 +58,7 @@ public class ContratoCobranca implements Serializable {
 	private PagadorRecebedor recebedor10;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
 
-	// não persistida a lista abaixo
+	// nï¿½o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
 
@@ -223,6 +223,10 @@ public class ContratoCobranca implements Serializable {
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
+	
+	private Date analiseReprovadaData;
+	private boolean analiseReprovada;
+	private String analiseReprovadaUsuario;
 
 	private Date cadastroAprovadoData;
 	private boolean cadastroAprovado;
@@ -363,6 +367,9 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoAssinadoData;
 	private boolean contratoAssinado;
 	private String contratoAssinadoUsuario;
+	
+	private Date dataPrevistaVistoria;
+	private String motivoReprovacaoAnalise;
 
 	public ContratoCobranca() {
 		super();
@@ -3038,5 +3045,45 @@ public class ContratoCobranca implements Serializable {
 
 	public void setMesesCarencia(int mesesCarencia) {
 		this.mesesCarencia = mesesCarencia;
+	}
+
+	public Date getAnaliseReprovadaData() {
+		return analiseReprovadaData;
+	}
+
+	public void setAnaliseReprovadaData(Date analiseReprovadaData) {
+		this.analiseReprovadaData = analiseReprovadaData;
+	}
+
+	public boolean isAnaliseReprovada() {
+		return analiseReprovada;
+	}
+
+	public void setAnaliseReprovada(boolean analiseReprovada) {
+		this.analiseReprovada = analiseReprovada;
+	}
+
+	public String getAnaliseReprovadaUsuario() {
+		return analiseReprovadaUsuario;
+	}
+
+	public void setAnaliseReprovadaUsuario(String analiseReprovadaUsuario) {
+		this.analiseReprovadaUsuario = analiseReprovadaUsuario;
+	}
+
+	public Date getDataPrevistaVistoria() {
+		return dataPrevistaVistoria;
+	}
+
+	public void setDataPrevistaVistoria(Date dataPrevistaVistoria) {
+		this.dataPrevistaVistoria = dataPrevistaVistoria;
+	}
+
+	public String getMotivoReprovacaoAnalise() {
+		return motivoReprovacaoAnalise;
+	}
+
+	public void setMotivoReprovacaoAnalise(String motivoReprovacaoAnalise) {
+		this.motivoReprovacaoAnalise = motivoReprovacaoAnalise;
 	}	
 }

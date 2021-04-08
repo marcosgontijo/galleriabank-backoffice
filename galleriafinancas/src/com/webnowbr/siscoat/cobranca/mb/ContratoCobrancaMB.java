@@ -470,6 +470,9 @@ public class ContratoCobrancaMB {
 
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
+	
+	@ManagedProperty(value = "#{crmmb}")
+	protected CRMMB crmmb;
 
 	private String exibeSomenteFavorecidosFiltrados;
 
@@ -2213,6 +2216,18 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setStatus("Pendente");
 				this.objetoContratoCobranca.setInicioAnaliseData(gerarDataHoje());
 				this.objetoContratoCobranca.setInicioAnaliseUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isAnaliseReprovada()) {
+			this.objetoContratoCobranca.setAnaliseReprovadaData(null);
+			this.objetoContratoCobranca.setAnaliseReprovadaUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getAnaliseReprovadaData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());
+				this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
 			}
 		}
 
@@ -4891,32 +4906,36 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		if (this.preContratoCustom) {
+			
+			crmmb = new CRMMB();
+			crmmb.geraConsultaContratosTodos();
+			
+			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoConsultar.xhtml";
+		} else {
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
-		if (loginBean != null) {
-			User usuarioLogado = new User();
-			UserDao u = new UserDao();
-			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+			if (loginBean != null) {
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-			if (usuarioLogado != null) {
-				if (usuarioLogado.isAdministrador()) {
-					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null);
-				} else {
-					if (usuarioLogado.getListResponsavel().size() > 0) {
-						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesResponsaveis(
-								usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+				if (usuarioLogado != null) {
+					if (usuarioLogado.isAdministrador()) {
+						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null);
 					} else {
-						this.contratosPendentes = contratoCobrancaDao
-								.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel());
+						if (usuarioLogado.getListResponsavel().size() > 0) {
+							this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesResponsaveis(
+									usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+						} else {
+							this.contratosPendentes = contratoCobrancaDao
+									.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel());
+						}
 					}
 				}
 			}
-		}
-
-		if (this.preContratoCustom) {
-			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoConsultar.xhtml";
-		} else {
+			
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		}
 	}
@@ -5549,14 +5568,15 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 0, 0));
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 1, 1));
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 2, 2));
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 3, 3));
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 4, 4));
-			sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 5, 5));
+			if ((countLine - linhaInicioContrato) > 1) {
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 0, 0));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 1, 1));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 2, 2));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 3, 3));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 4, 4));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 5, 5));
+			}
 		
-
 			// Style para cabeçalho
 			XSSFCellStyle cell_style_pago = wb.createCellStyle();
 			cell_style_pago = wb.createCellStyle();
@@ -16234,5 +16254,13 @@ public class ContratoCobrancaMB {
 
 	public void setContratoCobrancaFinanceiroDia(List<ContratoCobranca> contratoCobrancaFinanceiroDia) {
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaFinanceiroDia;
+	}
+
+	public CRMMB getCrmmb() {
+		return crmmb;
+	}
+
+	public void setCrmmb(CRMMB crmmb) {
+		this.crmmb = crmmb;
 	}	
 }
