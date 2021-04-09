@@ -109,7 +109,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 				demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
 				Date dataContrato = rs.getDate("dataDebentures");
 				demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataContrato);
-				demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("qtdedebentures").multiply(BigDecimal.valueOf(100)));
+				demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("qtdedebentures").multiply(BigDecimal.valueOf(1000)));
 
 					demonstrativosResultadosGrupoDetalhe.getDetalhe()
 							.add(demonstrativoResultadosGrupoDetalhe);
