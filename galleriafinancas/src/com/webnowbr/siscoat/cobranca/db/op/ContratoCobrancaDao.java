@@ -3855,7 +3855,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							
 					// verifica as cláusulas dos repsonsáveis
 					if (codResponsavel != null || listResponsavel != null) {
-						if (!queryResponsavel.equals("")) {
+						if (queryResponsavel.equals("")) {
 							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
 						}
 						
@@ -3864,7 +3864,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							for (Responsavel resp : listResponsavel) {
 								if (!resp.getCodigo().equals("")) { 
 									if (queryGuardaChuva.equals("")) {
-										queryGuardaChuva = " and (res.codigo = '" + resp.getCodigo() + "' ";
+										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
 									} else {
 										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
 									}									
