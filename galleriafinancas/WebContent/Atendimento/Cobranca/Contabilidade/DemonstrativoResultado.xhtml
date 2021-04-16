@@ -62,7 +62,7 @@
 
 						<p:panel id="dre" header="#{dre.tipo}" style="margin-bottom:10px;">
 							<h:panelGrid columns="3" styleClass="row"
-								rendered="#{dre.codigo ne 3 and dre.codigo ne 4}"
+								rendered="#{dre.codigo eq 1}"
 								columnClasses="columns,columns,columns">
 
 								<p:outputLabel for="valorTotal" value="Valor Total "
@@ -78,6 +78,21 @@
 									converter="bigDecimalConverter" />
 								<h:outputText id="amortizacaoTotal"
 									value="#{dre.amortizacaoTotal}" converter="bigDecimalConverter" />
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3" styleClass="row"
+								rendered="#{dre.codigo eq 2}"
+								columnClasses="columns,columns,columns">
+
+								<p:outputLabel for="valorTotalContasPagas" value="Valor Total "
+									styleClass="labelBold col-4" />
+								<p:outputLabel value="" />
+								<p:outputLabel value="" />
+
+								<h:outputText id="valorTotalContasPagas" value="#{dre.valorTotal}"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="" />
+								<p:outputLabel value="" />
 							</h:panelGrid>
 
 							<h:panelGrid columns="2" styleClass="row"
