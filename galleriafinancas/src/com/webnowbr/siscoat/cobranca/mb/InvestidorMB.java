@@ -332,6 +332,7 @@ public class InvestidorMB {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 
 			/****
 			 * BUSCA O SALDO DA ÚLTIMA PARCELA PAGA, IR E JUROS (ano base atual)
@@ -347,57 +348,63 @@ public class InvestidorMB {
 			BigDecimal saldoTotalContrato = BigDecimal.ZERO;
 
 			for (ContratoCobrancaParcelasInvestidor parcela : this.parcelasInvestidor) {
-				// Corrige valores nulos de valores
-				if (parcela.getIrRetido() == null) {
-					parcela.setIrRetido(BigDecimal.ZERO);
-				}
-
-				if (parcela.getJuros() == null) {
-					parcela.setJuros(BigDecimal.ZERO);
-				}
-
-				if (parcela.getSaldoCredorAtualizado() == null) {
-					parcela.setSaldoCredorAtualizado(BigDecimal.ZERO);
-				}
-
-				if (numeroContrato == null) {
-					numeroContrato = parcela.getNumeroContrato();
-					irRetidoTotalContrato = parcela.getIrRetido();
-					jurosTotalContrato = parcela.getJuros();
-
-					saldoTotalContrato = parcela.getSaldoCredorAtualizado();
-					numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-				} else {
-					if (numeroContrato.equals(parcela.getNumeroContrato())) {
-						irRetidoTotalContrato = irRetidoTotalContrato.add(parcela.getIrRetido());
-						jurosTotalContrato = jurosTotalContrato.add(parcela.getJuros());
-
-						// pegar sempre o saldo da última parcela baixada
-						if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
-							numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-							saldoTotalContrato = parcela.getSaldoCredorAtualizado();
-						}
-					} else {
-						// Armazena dados do contrato anterior
-						informeRendimentos = new InvestidorInformeRendimentos();
-						informeRendimentos.setNumeroContrato(numeroContrato);
-						informeRendimentos.setIrRetido(irRetidoTotalContrato);
-						informeRendimentos.setJuros(jurosTotalContrato);
-						informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
-						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-						informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
-								dataFimAnterior, cDao, numeroContrato));
-						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
-						informeRendimentos.setCnpj("34.425.347/0001-06");
-
-						this.investidorInformeRendimentos.add(informeRendimentos);
-
-						// Coleta dados do contrato atual
+				
+				/*******
+				 * VERIFICA SE A DATA DE ENTRADA DO INVESTIDOR NO CONTRATO FOI NO ANO BASE
+				 */
+				if (verificarAnoBaseInvestidor(this.selectedPagador, parcela.getIdContrato(), this.dataInicio, this.dataFim)) {
+					// Corrige valores nulos de valores
+					if (parcela.getIrRetido() == null) {
+						parcela.setIrRetido(BigDecimal.ZERO);
+					}
+	
+					if (parcela.getJuros() == null) {
+						parcela.setJuros(BigDecimal.ZERO);
+					}
+	
+					if (parcela.getSaldoCredorAtualizado() == null) {
+						parcela.setSaldoCredorAtualizado(BigDecimal.ZERO);
+					}
+	
+					if (numeroContrato == null) {
 						numeroContrato = parcela.getNumeroContrato();
 						irRetidoTotalContrato = parcela.getIrRetido();
 						jurosTotalContrato = parcela.getJuros();
+	
 						saldoTotalContrato = parcela.getSaldoCredorAtualizado();
 						numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+					} else {
+						if (numeroContrato.equals(parcela.getNumeroContrato())) {
+							irRetidoTotalContrato = irRetidoTotalContrato.add(parcela.getIrRetido());
+							jurosTotalContrato = jurosTotalContrato.add(parcela.getJuros());
+	
+							// pegar sempre o saldo da última parcela baixada
+							if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+								saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+							}
+						} else {
+							// Armazena dados do contrato anterior
+							informeRendimentos = new InvestidorInformeRendimentos();
+							informeRendimentos.setNumeroContrato(numeroContrato);
+							informeRendimentos.setIrRetido(irRetidoTotalContrato);
+							informeRendimentos.setJuros(jurosTotalContrato);
+							informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
+							informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+							informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
+									dataFimAnterior, cDao, numeroContrato));
+							informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+							informeRendimentos.setCnpj("34.425.347/0001-06");
+	
+							this.investidorInformeRendimentos.add(informeRendimentos);
+	
+							// Coleta dados do contrato atual
+							numeroContrato = parcela.getNumeroContrato();
+							irRetidoTotalContrato = parcela.getIrRetido();
+							jurosTotalContrato = parcela.getJuros();
+							saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+							numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+						}
 					}
 				}
 			}
@@ -449,18 +456,20 @@ public class InvestidorMB {
 
 				// SE CONSIDERA O CONTRATO,
 				if (consideraContrato) {
-					informeRendimentos = new InvestidorInformeRendimentos();
-					informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
-					informeRendimentos.setIrRetido(BigDecimal.ZERO);
-					informeRendimentos.setJuros(BigDecimal.ZERO);
-					informeRendimentos.setSaldoAnoAtual(
-							buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId()));
-					informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-					informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
-					informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
-					informeRendimentos.setCnpj("34.425.347/0001-06");
-
-					this.investidorInformeRendimentos.add(informeRendimentos);
+					if (verificarAnoBaseInvestidor(this.selectedPagador, contrato.getId(), this.dataInicio, this.dataFim)) {
+						informeRendimentos = new InvestidorInformeRendimentos();
+						informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
+						informeRendimentos.setIrRetido(BigDecimal.ZERO);
+						informeRendimentos.setJuros(BigDecimal.ZERO);
+						informeRendimentos.setSaldoAnoAtual(
+								buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId()));
+						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+						informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
+						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+						informeRendimentos.setCnpj("34.425.347/0001-06");
+	
+						this.investidorInformeRendimentos.add(informeRendimentos);
+					}
 				}
 			}
 
@@ -518,6 +527,185 @@ public class InvestidorMB {
 			 * BigDecimal.ZERO; }
 			 */
 		}
+	}
+	
+	public boolean verificarAnoBaseInvestidor(PagadorRecebedor investidor, long idContrato, Date dataInicio, Date dataFim) {
+		boolean retorno = false;
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		ContratoCobranca contrato = new ContratoCobranca();
+		Date dataEntradaInvestidor = null;
+		
+		contrato = cDao.findById(idContrato);
+		
+		// acha o investidorm no contrato
+		if (contrato.getRecebedor() != null) {
+			if (investidor.getId() == contrato.getRecebedor().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor1()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor2() != null) {
+			if (investidor.getId() == contrato.getRecebedor2().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor2()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor3() != null) {
+			if (investidor.getId() == contrato.getRecebedor3().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor3()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor4() != null) {
+			if (investidor.getId() == contrato.getRecebedor4().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor4()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor5() != null) {
+			if (investidor.getId() == contrato.getRecebedor5().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor5()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor6() != null) {
+			if (investidor.getId() == contrato.getRecebedor6().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor6()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor7() != null) {
+			if (investidor.getId() == contrato.getRecebedor7().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor7()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor8() != null) {
+			if (investidor.getId() == contrato.getRecebedor8().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor8()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor9() != null) {
+			if (investidor.getId() == contrato.getRecebedor9().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor9()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		
+		if (contrato.getRecebedor10() != null) {
+			if (investidor.getId() == contrato.getRecebedor10().getId()) {
+				// pega as parcelas dele no contrato
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor10()) {
+					dataEntradaInvestidor = parcela.getDataVencimento();
+					
+					Calendar c = Calendar.getInstance();
+					c.setTime(parcela.getDataVencimento());
+					c.add(Calendar.MONTH, -1);
+					dataEntradaInvestidor = c.getTime();
+					
+					break;
+				}
+			}
+		}
+		// verifica se a data de entrada do investidor está no ano base
+		if (dataEntradaInvestidor != null) {
+			if ((dataEntradaInvestidor.compareTo(dataInicio) == 0 || dataEntradaInvestidor.compareTo(dataInicio) > 0) &&
+					(dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
+				retorno = true;
+			}
+		}
+		
+		return retorno;
 	}
 
 	/***

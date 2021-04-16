@@ -30,6 +30,7 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private PagadorRecebedor pagador;
 
 	private String numeroContrato;
+	private long idContrato;
 
 	// atributos temporarios, sem persistir
 	private boolean parcelaVencendo;
@@ -217,5 +218,13 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setParcelaContratoVencida(boolean parcelaContratoVencida) {
 		this.parcelaContratoVencida = parcelaContratoVencida;
+	}
+
+	public long getIdContrato() {
+		return idContrato;
+	}
+
+	public void setIdContrato(long idContrato) {
+		this.idContrato = idContrato;
 	}
 }

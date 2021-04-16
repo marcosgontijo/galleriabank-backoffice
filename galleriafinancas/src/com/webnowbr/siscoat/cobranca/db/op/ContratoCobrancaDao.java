@@ -287,6 +287,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.datacontrato >= ? ::timestamp "
 			+ "	and cc.datacontrato <= ? ::timestamp "
+			+ " and cc.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " 
 			+ "	and cc.status = 'Aprovado'  ";
 	
 	@SuppressWarnings("unchecked")

@@ -405,85 +405,95 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 		});	
 	}
 	
-	private static final String QUERY_GET_PARCELAS_POR_DATA_BAIXADO_INFORME =  	"select id idparcela, numerocontrato, recebedor from (" + 
-			" select cp.id, c.numerocontrato, c.recebedor recebedor from cobranca.contratocobranca_parcelas_investidor_join_1 cj" + 
+	private static final String QUERY_GET_PARCELAS_POR_DATA_BAIXADO_INFORME =  	"select id idparcela, numerocontrato, recebedor, idContrato from (" + 
+			" select cp.id, c.numerocontrato, c.recebedor recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_1 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor1" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor2 recebedor from cobranca.contratocobranca_parcelas_investidor_join_2 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor2 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_2 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor2" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " +
 			" and c.recebedorenvelope2 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor3 recebedor from cobranca.contratocobranca_parcelas_investidor_join_3 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor3 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_3 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor3" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope3 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor4 recebedor from cobranca.contratocobranca_parcelas_investidor_join_4 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor4 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_4 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor4" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope4 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor5 recebedor from cobranca.contratocobranca_parcelas_investidor_join_5 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor5 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_5 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor5" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " +
 			" and c.recebedorenvelope5 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor6" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope6 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor7 recebedor from cobranca.contratocobranca_parcelas_investidor_join_7 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor7 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_7 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor7" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " +
 			" and c.recebedorenvelope7 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor8 recebedor from cobranca.contratocobranca_parcelas_investidor_join_8 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor8 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_8 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor8" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope8 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor9 recebedor from cobranca.contratocobranca_parcelas_investidor_join_9 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor9 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_9 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor9" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope9 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor, c.id idContrato from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor10" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.databaixa >= ? ::timestamp  " + 
 			" and cp.databaixa <= ? ::timestamp " + 
 			" and c.recebedorenvelope10 = false " + 
+			" and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' " +
 			" and baixado = true " +
 			" ) investidores" + 
 			" order by numerocontrato";
@@ -540,6 +550,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 						contratoCobrancaParcelasInvestidor = contratoCobrancaParcelasInvestidorDao.findById(rs.getLong(1));
 						contratoCobrancaParcelasInvestidor.setNumeroContrato(rs.getString(2));
 						contratoCobrancaParcelasInvestidor.setInvestidor(pagadorRecebedorDao.findById(rs.getLong(3)));
+						contratoCobrancaParcelasInvestidor.setIdContrato(rs.getLong(4));
 
 							if (idInvestidor > 0) {
 								if (contratoCobrancaParcelasInvestidor.getInvestidor().getId() == idInvestidor) {

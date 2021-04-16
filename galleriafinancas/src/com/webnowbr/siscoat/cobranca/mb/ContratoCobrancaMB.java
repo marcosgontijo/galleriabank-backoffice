@@ -2932,15 +2932,14 @@ public class ContratoCobrancaMB {
 		// recupera campo retenção e repasse
 		if (this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() > 0) {
 			if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
-				this.vlrRepasse = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-						.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 2).getVlrRepasse();
-
-				this.vlrRetencao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-						.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 2).getVlrRetencao();
-
-				this.vlrComissao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(0)
-						.getVlrComissao();
-
+				if (this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() >= 2) {
+					this.vlrRepasse = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+							.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 2).getVlrRepasse();
+	
+					this.vlrRetencao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+							.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 2).getVlrRetencao();
+				} 
+				
 				this.vlrParcelaFinal = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 						.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1).getVlrParcela();
 
@@ -2967,11 +2966,11 @@ public class ContratoCobrancaMB {
 					this.vlrRetencao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 							.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
 							.getVlrRetencao();
-				}
-
-				this.vlrComissao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(0)
-						.getVlrComissao();
+				}				
 			}
+			
+			this.vlrComissao = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(0)
+					.getVlrComissao();
 		} else {
 			this.vlrParcelaFinal = this.objetoContratoCobranca.getVlrParcelaFinal();
 		}
