@@ -40,8 +40,16 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
-									<p:menuitem value="Leads"
-										action="#{contratoCobrancaMB.geraConsultaLeads('')}"
+								<p:menuitem value="Leads"
+										action="/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads em Tratamento"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Em Tratamento')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads Reprovados"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Reprovado')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
@@ -51,7 +59,7 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									<p:menuitem value="Leads Completos"
-										action="#{contratoCobrancaMB.geraConsultaLeads('lead_completo')}"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Completo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
@@ -140,9 +148,13 @@
 									<p:menuitem value="Posição Atual"
 										action="#{contabilidadeMB.clearFieldsPosicaoAtual}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
-										<p:menuitem value="DRE"
+									<p:menuitem value="DRE"
 										action="#{demonstrativoResultadoMB.clearFields}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Financeiro"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroContabilidade}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>

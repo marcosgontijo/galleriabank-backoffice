@@ -932,6 +932,9 @@
 		<property name="empresa" type="java.lang.String">
 			<column name="EMPRESA" />
 		</property>
+		<property name="statusLead" type="java.lang.String">
+			<column name="statusLead" />
+		</property>
 		<property name="txJurosParcelas" type="big_decimal">
 			<column name="txJurosParcelas" />
 		</property>
@@ -944,5 +947,14 @@
 		<property name="dataPrevistaVistoria" type="java.util.Date">
 			<column name="dataPrevistaVistoria" />
 		</property>		
+		<property name="urlLead" type="java.lang.String">
+			<column name="urlLead" />
+		</property>
+		<property name="observacaolead" type="java.lang.String">
+			<column name="observacaolead" />
+		</property>
+		<property name="motivoReprovaLead" type="java.lang.String">
+			<column name="motivoReprovaLead" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -9,7 +9,7 @@
 	  template="../MenuAtendimento.xhtml">
 
 	<ui:define name="conteudo">  
-		<h:form style="margin-bottom:10px;">				
+		<h:form id="form" style="margin-bottom:10px;">				
 			<p:messages id="mensagens" showDetail="true"/>	
 			<p:panel id="PanelPDF" header="Impressão em PDF"
 				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
@@ -45,16 +45,12 @@
 					</script>
 
 				</h:panelGrid>
-			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Leads - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">
-   		         	<f:facet name="header">						
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
-							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
-							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-						</p:commandButton>
-			        </f:facet>                 
+			</p:panel>												
+			<p:panel id="ConsultaContratos" header="Leads - Consultar" style="margin-bottom:10px;">					
+			   	<p:dataTable id="dtLeads" var="contratos" value="#{leadsLazyMB.leads}" paginator="true" rows="10" lazy="true"
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="5,10,15" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending">
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
@@ -102,15 +98,9 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
-		            </p:column>	
-					<f:facet name="footer">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
-							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
-							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-						</p:commandButton>
-			        </f:facet>		            		        		               		        			        			           			 		
+		            </p:column>		        	        
 				</p:dataTable>
 			</p:panel>
-		</h:form>	
+		</h:form>
 	</ui:define>
 </ui:composition>	        

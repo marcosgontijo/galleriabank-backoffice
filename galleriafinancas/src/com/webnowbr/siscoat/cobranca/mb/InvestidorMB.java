@@ -699,8 +699,9 @@ public class InvestidorMB {
 		}
 		// verifica se a data de entrada do investidor está no ano base
 		if (dataEntradaInvestidor != null) {
-			if ((dataEntradaInvestidor.compareTo(dataInicio) == 0 || dataEntradaInvestidor.compareTo(dataInicio) > 0) &&
-					(dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
+			//if ((dataEntradaInvestidor.compareTo(dataInicio) == 0 || dataEntradaInvestidor.compareTo(dataInicio) > 0) &&
+			//		(dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
+			if ((dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
 				retorno = true;
 			}
 		}
@@ -721,21 +722,53 @@ public class InvestidorMB {
 			ContratoCobrancaParcelasInvestidorDao cDaoAtual, String numeroContrato) {
 		BigDecimal saldoAnterior = BigDecimal.ZERO;
 
+		/***
+		 * TODOS CONTRATOS QUE TIVERAM BAIXA NO ANNO ANTERIOR
+		 */
 		List<ContratoCobrancaParcelasInvestidor> parcelasInvestidorAnoAnterior = cDaoAtual
 				.getParcelasPorDataInvestidorBaixadasInforme(dataInicioAnoAnterior, dataFimAnoAnterior,
 						this.selectedPagador.getId());
 		int numeroParcela = 0;
 
 		for (ContratoCobrancaParcelasInvestidor parcela : parcelasInvestidorAnoAnterior) {
-			if (numeroContrato.equals(parcela.getNumeroContrato())) {
-				if (numeroParcela == 0) {
-					saldoAnterior = parcela.getSaldoCredorAtualizado();
-					numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-				} else {
-					if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+			if (verificarAnoBaseInvestidor(this.selectedPagador, parcela.getIdContrato(), dataInicioAnoAnterior, dataFimAnoAnterior)) {
+				if (numeroContrato.equals(parcela.getNumeroContrato())) {
+					if (numeroParcela == 0) {
 						saldoAnterior = parcela.getSaldoCredorAtualizado();
 						numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+					} else {
+						if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+							saldoAnterior = parcela.getSaldoCredorAtualizado();
+							numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+						}
 					}
+				}
+			}
+		}
+		
+		/****
+		 * TODOS CONTRATOS GERADOS NO ANTERIOR E QUE NÃO TIVERAM BAIXA
+		 */
+		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
+				this.selectedPagador.getId(), dataInicioAnoAnterior, dataFimAnoAnterior);
+
+		// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
+		// SE SIM, É PQ JÁ HOUVE BAIXA
+		for (ContratoCobranca contrato : listContratos) {
+			boolean consideraContrato = true;
+
+			for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+				if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
+					consideraContrato = false;
+				}
+			}
+
+			// SE CONSIDERA O CONTRATO,
+			if (consideraContrato) {
+				if (verificarAnoBaseInvestidor(this.selectedPagador, contrato.getId(), this.dataInicio, this.dataFim)) {
+					saldoAnterior = 
+							buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId());
 				}
 			}
 		}

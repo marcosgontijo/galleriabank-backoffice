@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelPDF"
+				header="Impressão em PDF / XLS Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{contratoCobrancaMB.contratoGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{contratoCobrancaMB.file}" />
+						</p:commandButton>
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
+			
+						<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+			
+			<p:panel id="ConsultaFinanceiro" header="Financeiro Contabilidade - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">				
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{contratoCobrancaMB.relDataContratoInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{contratoCobrancaMB.relDataContratoFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+				</h:panelGrid>
+				<p:commandButton value="Consultar"
+					action="#{contratoCobrancaMB.geraRelFinanceiroContabilidade}"
+					image="ui-icon ui-icon-check"
+					update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
+					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
+			</p:panel>
+			<p:panel id="ConsultaFinanceiroResultados"
+				header="Financeiro Contabilidade - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="contratos"
+					value="#{contratoCobrancaMB.relObjetoContratoCobranca}"
+					selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"
+					emptyMessage="" sortBy="#{contratos.numeroContrato}">
+					<f:facet name="header">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidade}"
+							update="PanelPDF"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
+					</f:facet>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+						<h:outputText value="#{contratos.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Pagador" filterBy="#{contratos.nomePagador}"
+						filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+						<h:outputText value="#{contratos.nomePagador}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Parcela" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{contratos.parcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Vencimento Original"
+						sortBy="#{contratos.dataVencimento}">
+						<h:outputText value="#{contratos.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.vlrParcela}"
+							converter="bigDecimalConverter" />
+					</p:column>					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Pagamento"
+						sortBy="#{contratos.dataUltimoPagamento}">
+						<h:outputText value="#{contratos.dataUltimoPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Pago">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.vlrTotalPago}"
+							converter="bigDecimalConverter" />
+					</p:column>	
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Juros">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.vlrJurosParcela}"
+							converter="bigDecimalConverter" />
+					</p:column>	
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Amortização">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter" />
+					</p:column>	
+					<f:facet name="footer">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print"
+							action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidade}" 
+							update="PanelPDF"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

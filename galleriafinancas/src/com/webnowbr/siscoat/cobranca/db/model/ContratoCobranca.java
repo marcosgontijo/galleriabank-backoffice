@@ -30,6 +30,8 @@ public class ContratoCobranca implements Serializable {
 	private String acao;
 	private String observacao;
 	private String observacao2;
+	private String urlLead;
+	private String statusLead;
 
 	private BigDecimal txJurosParcelas;
 	
@@ -370,6 +372,9 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataPrevistaVistoria;
 	private String motivoReprovacaoAnalise;
+	
+	private String observacaolead;
+	private String motivoReprovaLead;
 
 	public ContratoCobranca() {
 		super();
@@ -3085,5 +3090,37 @@ public class ContratoCobranca implements Serializable {
 
 	public void setMotivoReprovacaoAnalise(String motivoReprovacaoAnalise) {
 		this.motivoReprovacaoAnalise = motivoReprovacaoAnalise;
-	}	
+	}
+
+	public String getUrlLead() {
+		return urlLead;
+	}
+
+	public void setUrlLead(String urlLead) {
+		this.urlLead = urlLead;
+	}
+
+	public String getStatusLead() {
+		return statusLead;
+	}
+
+	public void setStatusLead(String statusLead) {
+		this.statusLead = statusLead;
+	}
+
+	public String getObservacaolead() {
+		return observacaolead;
+	}
+
+	public void setObservacaolead(String observacaolead) {
+		this.observacaolead = observacaolead;
+	}
+
+	public String getMotivoReprovaLead() {
+		return motivoReprovaLead;
+	}
+
+	public void setMotivoReprovaLead(String motivoReprovaLead) {
+		this.motivoReprovaLead = motivoReprovaLead;
+	}
 }

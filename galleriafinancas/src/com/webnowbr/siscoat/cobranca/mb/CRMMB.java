@@ -460,8 +460,22 @@ public class CRMMB {
 	public List<ContratoCobranca> populaStatus(List<ContratoCobranca> contratos) {
 		// POPULA STATUS
 		for (ContratoCobranca c : contratos) {
-			if (!c.isInicioAnalise()) {
+			c.setStatus("Não Definido");
+			
+			if (c.getStatusLead().equals("Novo Lead")) {
 				c.setStatus("Novo Lead");
+			}
+			
+			if (c.getStatusLead().equals("Em Tratamento")) {
+				c.setStatus("Lead em Tratamento");
+			}
+			
+			if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
+				c.setStatus("Ag. Análise");
+			}
+			
+			if (c.isInicioAnalise()) {
+				c.setStatus("Em Análise");
 			}
 			
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && (c.getMatriculaAprovadaValor() == null || c.getMatriculaAprovadaValor().equals(""))) {

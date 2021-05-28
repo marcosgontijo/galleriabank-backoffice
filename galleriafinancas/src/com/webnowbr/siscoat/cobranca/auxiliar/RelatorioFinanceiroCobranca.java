@@ -20,7 +20,11 @@ public class RelatorioFinanceiroCobranca {
 	public BigDecimal valor;
 	public BigDecimal valorRetencao;
 	public BigDecimal valorComissao;
-	private BigDecimal vlrRepasse;	
+	private BigDecimal vlrRepasse;
+	private BigDecimal vlrJurosParcela;	
+	private BigDecimal vlrAmortizacaoParcela;
+	public Date dataUltimoPagamento;
+	private BigDecimal vlrTotalPago;
 	
 	public ContratoCobranca contratoCobranca;
 	
@@ -170,6 +174,19 @@ public class RelatorioFinanceiroCobranca {
 		this.vlrRepasse = vlrRepasse;		
 		this.vlrParcela = vlrParcela;
 		this.acrescimo = acrescimo;
+	}
+	
+	public RelatorioFinanceiroCobranca(String numeroContrato, String nomePagador, String parcela, Date dataVencimento, BigDecimal vlrParcela, Date dataUltimoPagamento, BigDecimal vlrTotalPago,
+			BigDecimal vlrJurosParcela, BigDecimal vlrAmortizacaoParcela) {
+		this.numeroContrato = numeroContrato;
+		this.nomePagador = nomePagador;
+		this.dataVencimento = dataVencimento;
+		this.vlrParcela = vlrParcela;
+		this.dataUltimoPagamento = dataUltimoPagamento;
+		this.vlrTotalPago = vlrTotalPago;
+		this.vlrJurosParcela = vlrJurosParcela;
+		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
+		this.parcela = parcela;
 	}
 	
 	/**
@@ -697,5 +714,37 @@ public class RelatorioFinanceiroCobranca {
 	 */
 	public void setParcelaPagaStr(String parcelaPagaStr) {
 		this.parcelaPagaStr = parcelaPagaStr;
+	}
+
+	public BigDecimal getVlrJurosParcela() {
+		return vlrJurosParcela;
+	}
+
+	public void setVlrJurosParcela(BigDecimal vlrJurosParcela) {
+		this.vlrJurosParcela = vlrJurosParcela;
+	}
+
+	public BigDecimal getVlrAmortizacaoParcela() {
+		return vlrAmortizacaoParcela;
+	}
+
+	public void setVlrAmortizacaoParcela(BigDecimal vlrAmortizacaoParcela) {
+		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
+	}
+
+	public Date getDataUltimoPagamento() {
+		return dataUltimoPagamento;
+	}
+
+	public void setDataUltimoPagamento(Date dataUltimoPagamento) {
+		this.dataUltimoPagamento = dataUltimoPagamento;
+	}
+
+	public BigDecimal getVlrTotalPago() {
+		return vlrTotalPago;
+	}
+
+	public void setVlrTotalPago(BigDecimal vlrTotalPago) {
+		this.vlrTotalPago = vlrTotalPago;
 	}
 }

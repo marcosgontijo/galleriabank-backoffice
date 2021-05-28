@@ -159,6 +159,17 @@ public class MessageRestService {
 	
 					contratoCobrancaMB.getObjetoContratoCobranca().setFinalidade(lead.getString("finalidade_emprestimo"));
 					
+					if (lead.has("url")) {
+						if (!lead.isNull("url")) {
+							contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("url"));
+						}						
+					}
+					if (lead.has("posted_url")) {
+						if (!lead.isNull("posted_url")) {
+							contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("posted_url"));
+						}						
+					}
+					
 					// popula pagador
 					contratoCobrancaMB.getObjetoPagadorRecebedor().setNome(lead.getString("nome"));
 					contratoCobrancaMB.setTipoPessoaIsFisica(true);
@@ -199,7 +210,7 @@ public class MessageRestService {
 					contratoCobrancaMB.getObjetoImovelCobranca().setTipo(tipoImovel);
 	
 					// salva LEAD
-					contratoCobrancaMB.addPreContrato();
+					contratoCobrancaMB.addPreContratoLeadSite();
 				
 					String message = "{\"retorno\": \"Lead recebido com sucesso!!!\"}";
 		
