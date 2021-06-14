@@ -118,7 +118,7 @@
 							</h:panelGrid>
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas" var="parcelas"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1}"
+									value="#{ contratoCobrancaMB.ordenaParcleasInvstidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1)}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
@@ -129,7 +129,10 @@
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
 									<f:facet name="header">  
-										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>
+																				
+										<p:commandButton action="#{contratoCobrancaMB.anteciparCreditoInvestidor(1)}" oncomplete="PF('anteciparCreditoDialog').show();" update="formAnteciparCredito" ajax="true" icon="ui-icon-transfer-e-w" value="Antecipar Credito" title="Antecipar Credito"/>
+										              
 									</f:facet>  
 					
 									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
@@ -280,6 +283,8 @@
 									
 									<f:facet name="footer">  
 										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>		                             
+										<p:commandButton action="#{contratoCobrancaMB.anteciparCreditoInvestidor(1)}" oncomplete="PF('anteciparCreditoDialog').show();" update="formAnteciparCredito" ajax="true" icon="ui-icon-transfer-e-w" value="Antecipar Credito" title="Antecipar Credito"/>
+																			
 									</f:facet>  
 								</p:dataTable>
 							</h:panelGrid>
@@ -2007,5 +2012,37 @@
 				</p:panel>
 			</p:panel>
 		</h:form>
+
+
+
+		<p:dialog header="Antecipar Crédito"
+			widgetVar="anteciparCreditoDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formAnteciparCredito">
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="dataAdiamento" value="Data do adiantamento"></p:outputLabel>
+					<p:calendar id="dataAdiamento" value="#{contratoCobrancaMB.antecipacao.dataVencimento}"
+						style="margin-left: 12px;" required="true" label="Data Adiantamento"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+
+					<p:outputLabel  for="valorAdiamento" value="Valor do adiantamento (R$)"></p:outputLabel>
+					<p:inputText id="valorAdiamento" style="margin-left: 12px;"
+						value="#{contratoCobrancaMB.antecipacao.parcelaMensal}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" />
+
+				</h:panelGrid>
+
+				<p:commandButton value="Salvar anticipação" ajax="false"
+					icon="ui-icon-print"
+					action="#{contratoCobrancaMB.incluirAntecipacao}" />
+				<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('anteciparCreditoDialog').hide();" />
+
+			</h:form>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>

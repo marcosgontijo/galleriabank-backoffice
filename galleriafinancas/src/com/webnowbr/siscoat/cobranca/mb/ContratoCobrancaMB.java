@@ -16,18 +16,20 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -37,22 +39,15 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -63,23 +58,23 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.FlowEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -102,7 +97,6 @@ import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
@@ -119,14 +113,6 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
-
-import javafx.scene.control.TableColumn.CellEditEvent;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /** ManagedBean. */
 @ManagedBean(name = "contratoCobrancaMB")
@@ -147,6 +133,14 @@ public class ContratoCobrancaMB {
 	private Date dataHoje;
 
 	private boolean contratoGerado = false;
+
+	/************************************************************
+	 * Objetos para antecipacao de parcela
+	 ************************************************************/
+	private int idAntecipacaoInvestidor;
+
+
+
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
 	 ***********************************************************/
@@ -568,6 +562,9 @@ public class ContratoCobrancaMB {
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope;
 	
 	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
+
+	ContratoCobrancaParcelasInvestidor antecipacao;
+
 	/**
 	 * 
 	 * Construtor.
@@ -7094,6 +7091,29 @@ public class ContratoCobrancaMB {
 		geraRelReParcela();
 	}
 
+	public List<ContratoCobrancaParcelasInvestidor> ordenaParcleasInvstidor(
+			List<ContratoCobrancaParcelasInvestidor> lista) {
+
+		Collections.sort(lista, new Comparator<ContratoCobrancaParcelasInvestidor>() {
+			@Override
+			public int compare(ContratoCobrancaParcelasInvestidor one, ContratoCobrancaParcelasInvestidor other) {
+				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
+				if (result == 0) {
+					try {
+						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+						result = oneParcela.compareTo(otherParcela);
+					} catch (Exception e) {
+						result = 0;
+					}
+				}
+				return result;
+			}
+		});
+
+		return lista;
+	}
+	
 	public List<ContratoCobrancaParcelasInvestidor> geraParcelasInvestidor(int investidorPosicao) {
 		List<ContratoCobrancaParcelasInvestidor> parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 		ContratoCobrancaParcelasInvestidor parcelaInvestidor;
@@ -9375,6 +9395,148 @@ public class ContratoCobrancaMB {
 		}
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
+	}
+
+
+	public void anteciparCreditoInvestidor(int iInvestidor) {
+		this.idAntecipacaoInvestidor = iInvestidor;
+		this.antecipacao = new ContratoCobrancaParcelasInvestidor();
+	}
+
+	public String incluirAntecipacao() {
+
+		List<ContratoCobrancaParcelasInvestidor> listaCobrancaParcelas = null;
+		PagadorRecebedor investidor = null;
+		BigDecimal taxaRemuneracao = BigDecimal.ZERO;
+		BigDecimal saldo = BigDecimal.ZERO;
+		boolean isEnvelope = false;
+		BigDecimal saldoAtualizado = BigDecimal.ZERO;
+		BigDecimal parcelaMensal = BigDecimal.ZERO;
+		
+
+		if (idAntecipacaoInvestidor == 1) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor1();
+			investidor = objetoContratoCobranca.getRecebedor();
+			taxaRemuneracao   = objetoContratoCobranca.getTaxaRemuneracaoInvestidor1();
+			saldo = objetoContratoCobranca.getVlrRecebedor();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope();	
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor();		
+		}
+
+		if (listaCobrancaParcelas == null)
+			return null;
+
+		ContratoCobrancaParcelasInvestidor parcelaAnterior = null;
+
+		for (ContratoCobrancaParcelasInvestidor contratoCobrancaParcelasInvestidor : listaCobrancaParcelas) {
+			if (parcelaAnterior == null || contratoCobrancaParcelasInvestidor.getDataVencimento()
+					.compareTo(antecipacao.getDataVencimento()) < 1) {
+				parcelaAnterior = contratoCobrancaParcelasInvestidor;
+				
+			} else {
+
+				break;
+			}
+		}
+
+		antecipacao.setAmortizacao(antecipacao.getParcelaMensal());
+		antecipacao.setValorLiquido(antecipacao.getParcelaMensal());
+		antecipacao.setSaldoCredor(saldo);
+		antecipacao.setSaldoCredorAtualizado(parcelaAnterior.getSaldoCredorAtualizado().subtract(antecipacao.getParcelaMensal()));
+		
+		antecipacao.setJuros(BigDecimal.ZERO);
+		antecipacao.setIrRetido(BigDecimal.ZERO);
+		antecipacao.setBaixado(true);
+		antecipacao.setDataBaixa(new Date());
+		antecipacao.setEnvelope(false);
+		antecipacao.setInvestidor(investidor);
+		antecipacao.setNumeroParcela("Antecipação");
+
+		listaCobrancaParcelas.add(antecipacao);
+		
+		saldoAtualizado = antecipacao.getSaldoCredorAtualizado();
+
+		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
+
+		Date dataParcela = this.objetoContratoCobranca.getDataInicio();
+		
+		for (int i = 0; i < listaCobrancaParcelas.size(); i++) {
+			ContratoCobrancaParcelasInvestidor parcelaInvestidor = listaCobrancaParcelas.get(i);
+
+			if (parcelaInvestidor.isBaixado()
+					|| parcelaInvestidor.getDataVencimento().compareTo(antecipacao.getDataVencimento()) < 0) {
+				continue;
+			}
+
+			if (isEnvelope) {
+				
+				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
+
+				parcelaInvestidor.setParcelaMensal(parcelaMensal);
+				parcelaInvestidor.setValorLiquido(parcelaMensal);
+				
+				parcelaInvestidor.setJuros(BigDecimal.ZERO);
+				parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
+				parcelaInvestidor.setSaldoCredor(BigDecimal.ZERO);
+				parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
+				parcelaInvestidor.setIrRetido(BigDecimal.ZERO);			
+				
+				
+			}else {
+				parcelaInvestidor.setParcelaMensal(parcelaMensal);
+				parcelaInvestidor.setSaldoCredor(saldo);
+				
+				
+				// se a taxa de remuneração for maior que zero
+				if (taxaRemuneracao.compareTo(BigDecimal.ZERO) == 1) {
+					parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
+					parcelaInvestidor.setAmortizacao(parcelaMensal.subtract(parcelaInvestidor.getJuros()));
+					parcelaInvestidor
+							.setSaldoCredorAtualizado(saldoAtualizado.subtract(parcelaInvestidor.getAmortizacao()));
+				} else {
+					parcelaInvestidor.setJuros(BigDecimal.ZERO);
+					parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
+					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
+				}
+
+				saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
+					BigDecimal txIR = BigDecimal.ZERO;
+
+					if ((i + 1) <= 6) {
+						txIR = BigDecimal.valueOf(0.225);
+					}
+
+					if ((i + 1) > 6 && (i + 1) <= 12) {
+						txIR = BigDecimal.valueOf(0.2);
+					}
+
+					if ((i + 1) > 12 && (i + 1) <= 18) {
+						txIR = BigDecimal.valueOf(0.175);
+					}
+
+					if ((i + 1) > 18) {
+						txIR = BigDecimal.valueOf(0.15);
+					}
+
+					parcelaInvestidor.setIrRetido(parcelaInvestidor.getJuros().multiply(txIR));
+
+					parcelaInvestidor.setValorLiquido(parcelaMensal.subtract(parcelaInvestidor.getIrRetido()));
+				} else {
+					parcelaInvestidor.setValorLiquido(parcelaMensal);
+				}
+			}
+		}
+		
+
+		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		contratoDao.merge(this.objetoContratoCobranca);
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Antecipacao do Investidor: Registro salvo com sucesso!", ""));
+
+		return null;
 	}
 
 	public String imprimeContrato() {
@@ -17012,4 +17174,20 @@ public class ContratoCobrancaMB {
 	public void setCrmmb(CRMMB crmmb) {
 		this.crmmb = crmmb;
 	}	
+
+	public int getIdAntecipacaoInvestidor() {
+		return idAntecipacaoInvestidor;
+	}
+
+	public void setIdAntecipacaoInvestidor(int idAntecipacaoInvestidor) {
+		this.idAntecipacaoInvestidor = idAntecipacaoInvestidor;
+	}
+
+	public ContratoCobrancaParcelasInvestidor getAntecipacao() {
+		return antecipacao;
+	}
+
+	public void setAntecipacao(ContratoCobrancaParcelasInvestidor antecipacao) {
+		this.antecipacao = antecipacao;
+	}
 }
