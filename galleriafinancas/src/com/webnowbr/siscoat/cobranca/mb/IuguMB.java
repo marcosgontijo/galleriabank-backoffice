@@ -1290,7 +1290,7 @@ public class IuguMB {
 		this.listRecebedores = pagadorRecebedorDao.getSubContasIugu();	
 		clearRecebedor();
 
-		this.paramAno = "2020";
+		this.paramAno = "2021";
 		this.paramMes = null;
 
 		this.contaMestre = true;
@@ -1451,25 +1451,30 @@ public class IuguMB {
 
 								ContratoCobrancaDao ccDao = new ContratoCobrancaDao();								
 
-								contratoFatura = ccDao.findByFilter("numeroContrato", numeroContrato).get(0);
+								List<ContratoCobranca> contratoFaturaTmp = new ArrayList<ContratoCobranca>();
+								contratoFaturaTmp = ccDao.findByFilter("numeroContrato", numeroContrato);
 
-								for (ContratoCobrancaDetalhes ccd: contratoFatura.getListContratoCobrancaDetalhes()) {
-									if (ccd.getNumeroParcela().equals(numeroParcela)) {
-										contratoDetalhesFatura = ccd;
-									}
-								}		
-
-								faturaIUGU.setNumeroContrato(contratoFatura.getNumeroContrato());
-								faturaIUGU.setValorParcela(contratoDetalhesFatura.getVlrParcela());
-								faturaIUGU.setDue_date(contratoDetalhesFatura.getDataVencimento());
-
-								faturaIUGU.setSacado(contratoFatura.getPagador().getNome());
-
-								faturaTemp.setIdTransacao(idConta);
-								faturaTemp.setNumeroContrato(contratoFatura.getNumeroContrato());
-								faturaTemp.setValorParcela(contratoDetalhesFatura.getVlrParcela());
-								faturaTemp.setDue_date(contratoDetalhesFatura.getDataVencimento());
-								faturaTemp.setSacado(contratoFatura.getPagador().getNome());
+								if (contratoFaturaTmp.size() > 0) {
+									contratoFatura = contratoFaturaTmp.get(0);
+									
+									for (ContratoCobrancaDetalhes ccd: contratoFatura.getListContratoCobrancaDetalhes()) {
+										if (ccd.getNumeroParcela().equals(numeroParcela)) {
+											contratoDetalhesFatura = ccd;
+										}
+									}		
+	
+									faturaIUGU.setNumeroContrato(contratoFatura.getNumeroContrato());
+									faturaIUGU.setValorParcela(contratoDetalhesFatura.getVlrParcela());
+									faturaIUGU.setDue_date(contratoDetalhesFatura.getDataVencimento());
+	
+									faturaIUGU.setSacado(contratoFatura.getPagador().getNome());
+	
+									faturaTemp.setIdTransacao(idConta);
+									faturaTemp.setNumeroContrato(contratoFatura.getNumeroContrato());
+									faturaTemp.setValorParcela(contratoDetalhesFatura.getVlrParcela());
+									faturaTemp.setDue_date(contratoDetalhesFatura.getDataVencimento());
+									faturaTemp.setSacado(contratoFatura.getPagador().getNome());
+								}
 
 								if (!this.contaMestre) {
 									faturaIUGU.setCedente(this.selectedRecebedor.getNome());	
@@ -2338,7 +2343,7 @@ public class IuguMB {
 
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=bd88479c57011124c25638b26572e453");
+			URL myURL = new URL("https://api.iugu.com/v1/invoices?limit=10&api_token=bd88479c57011124c25638b26572e453");
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 			myURLConnection.setUseCaches(false);

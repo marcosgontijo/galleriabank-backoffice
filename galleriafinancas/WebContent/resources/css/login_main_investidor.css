@@ -156,7 +156,7 @@ iframe {
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0,0,0,0.15);
+  background-color: rgba(0,0,0,0.65);
 }
 
 .wrap-login100 {
@@ -213,7 +213,7 @@ iframe {
 .wrap-input100 {
   width: 100%;
   position: relative;
-  border-bottom: 1px solid #2a364c;
+  border-bottom: 1px solid #e6e6e6;
   padding: 29px 0;
 }
 
@@ -221,7 +221,7 @@ iframe {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 500;
   font-size: 20px;
-  color: #2a364c !important;
+  color: #fff !important;
   line-height: 1.2;
   display: block;
   width: 100%;
@@ -235,11 +235,11 @@ iframe {
 }
 
 .ui-inputfield::ms-input-placeholder {
-	color: #2a364c !important;
+	color: #fff !important;
 }
 
 .ui-inputfield::placeholder {
-	color: #2a364c !important;
+	color: #fff !important;
 }
 
 .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
@@ -247,7 +247,7 @@ iframe {
 	border-shadow: none !important;
 	-webkit-box-shadow: none !important;
 	-moz-box-shadow: none !important;
-	  color: #2a364c !important;
+	  color: #fff !important;
 }
 
 .ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-widget-header .ui-inputfield.ui-state-focus {
@@ -256,7 +256,7 @@ iframe {
 	
 	-webkit-box-shadow: none !important;
 	-moz-box-shadow: none !important;
-	  color: #2a364c !important;
+	  color: #fff !important;
 }
 
 /*---------------------------------------------*/ 
@@ -284,18 +284,18 @@ iframe {
   -moz-transition: all 0.4s;
   transition: all 0.4s;
 
-  background: #cdcdcd;
-  background: -webkit-linear-gradient(left, #2a364c, #cdcdcd, #2a364c);
-  background: -o-linear-gradient(left, #2a364c, #cdcdcd, #2a364c);
-  background: -moz-linear-gradient(left, #2a364c, #cdcdcd, #2a364c);
-  background: linear-gradient(left, #2a364c, #cdcdcd, #2a364c);
+  background: #eed789;
+  background: -webkit-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: -o-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: -moz-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: linear-gradient(left, #bf8a43, #eed789, #bf8a43);
 
 }
 
 .focus-input100::after {
   font-family:Arial, FontAwesome;
   font-size: 18px;
-  color: #2a364c;
+  color: #999999;
 
   content: attr(data-placeholder);
   display: block;
@@ -317,7 +317,7 @@ iframe {
 
 .input100:focus + .focus-input100::after {
   left: 23px;
-  color: #455572;
+  color: #eed789;
 }
 
 .input100:focus + .focus-input100::before {
@@ -326,7 +326,7 @@ iframe {
 
 .has-val.input100 + .focus-input100::after {
   left: 23px;
-  color: #455572;
+  color: #eed789;
 }
 
 .has-val.input100 + .focus-input100::before {
@@ -372,11 +372,11 @@ iframe {
   height: 42px;
   border-radius: 21px;
 
-  background: #2a364c;
-  background: -webkit-linear-gradient(left, #2a364c, #435574, #2a364c);
-  background: -o-linear-gradient(left, #2a364c, #435574, #2a364c);
-  background: -moz-linear-gradient(left, #2a364c, #435574, #2a364c);
-  background: linear-gradient(left, #2a364c, #435574, #2a364c);
+  background: #eed789;
+  background: -webkit-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: -o-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: -moz-linear-gradient(left, #bf8a43, #eed789, #bf8a43);
+  background: linear-gradient(left, #bf8a43, #eed789, #bf8a43);
   position: relative;
   z-index: 1;
 

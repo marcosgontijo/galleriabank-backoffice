@@ -67,6 +67,9 @@
 			        <p:column style="text-align: center;" headerText="Status">
 			           <h:outputText value="#{contratos.observacaolead}" />
 			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Origem">
+			           <h:outputText value="#{contratos.urlLead}" />
+			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	

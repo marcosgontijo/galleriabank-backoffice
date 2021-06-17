@@ -55,6 +55,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -85,6 +86,8 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
+import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioContabilidadeEmAberto;
+import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioContabilidadeInvestidor;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -1331,7 +1334,7 @@ public class ContratoCobrancaMB {
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
-
+		
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
 				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
 				+ "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'>\n"
@@ -1341,14 +1344,14 @@ public class ContratoCobrancaMB {
 				+ "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'>\n"
 				+ "<div class='adM'> </div>\n" + "<div align='center'>\n" + "<div class='adM'> </div>\n"
 				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td style='background-color:#262626;height:75px; padding: 15px;' align='center'> <img src='https://galleriafinancas.com.br/wp-content/uploads/2020/04/logo-galleria-financas.png' > </td>\n"
+				+ "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td>\n"
 				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
 				+ "<td width='20'> </td>\n" + "<td>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá\n"
 				+ "<span style='font-weight:bold'>" + this.objetoContratoCobranca.getResponsavel().getNome()
 				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O pré-contrato <b>"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> acaba de ser criado no SisCoAt.</td>\n"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> acaba de ser criado. </td>\n"
 				+ "</tr>\n" + "</tbody>\n" + "</table>\n"
 				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
 				+ "<table width='100%' style='border-left:3px solid #bb7e17'>\n" + "<tbody>\n" + "<tr>\n"
@@ -1364,164 +1367,42 @@ public class ContratoCobrancaMB {
 		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Pagador: <b>" + this.objetoContratoCobranca.getPagador().getNome()
 				+ "</b>\n";
 
-		mensagemHtmlTeste = mensagemHtmlTeste + "</td></tr>\n" + "</tbody>\n" + "</table>\n" + "</td>\n"
-				+ "<td width='20'> </td>\n" + "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n"
-				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n"
-				+ "<tr style='background-color:#262626;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>\n"
-				+ "<td style='padding-left:20px; font-size: 12px;'> © SisCoAt. Todos direitos reservados. </td>\n"
-				+ "<td style='text-align: right;padding-right: 20px;'><a style='color:#fff;font-size: 12px; text-decoration: none;' href='https://siscoat.galleriafinancas.com.br' target='_blank'>Galleria Finanças</a> </td>\n"
-				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<div class='yj6qo'></div>\n" + "<div class='adL'> </div>\n"
-				+ "</div>\n" + "<div class='adL'> </div>\n" + "<div class='adL'> </div>\n" + "</div>\n" + "</body>\n"
-				+ "</html>";
+		mensagemHtmlTeste = mensagemHtmlTeste   + " </td> </tr> </tbody> "
+				+ " </table>"
+				+ " </td>"
+				+ " <td width='20'> </td>"
+				+ " </tr>"
+				+ " </tbod>"
+				+ " </table>"
+				+ " <br>"
+				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>"
+				+ " <tbody>"
+				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
+				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='https://siscoat.galleriafinancas.com.br' target='_blank'>Galleria Finanças</a> </td>"
+				+ " </tr>"
+				+ " </tbody>"
+				+ " </table>"
+				+ " <div class='yj6qo'></div>"
+				+ " <div class='adL'> </div>"
+				+ " </div>"
+				+ " <div class='adL'> </div>"
+				+ " <div class='adL'> </div>"
+				+ " </div>"
+				+ " </body>"
+				+ " </html>";
 
-		try {
-			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
-					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
-					mensagemHtmlTeste);
-
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	/******
-	 * método para envio de emails
-	 */
-	public void enviaEmailAprovacaoPreContrato() {
-		Locale locale = new Locale("pt", "BR");
-		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
-		Date dataHoje = gerarDataHoje();
-
-		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
-				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
-				+ "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'>\n"
-				+ "</head>\n" + "<body>\n"
-				+ "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style='background-color:#f9f7f7'>\n"
-				+ "<div class='adM'> </div>\n"
-				+ "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'>\n"
-				+ "<div class='adM'> </div>\n" + "<div align='center'>\n" + "<div class='adM'> </div>\n"
-				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td style='background-color:#262626;height:75px; padding: 15px;' align='center'> <img src='https://galleriafinancas.com.br/wp-content/uploads/2020/04/logo-galleria-financas.png' > </td>\n"
-				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td width='20'> </td>\n" + "<td>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá\n"
-				+ "<span style='font-weight:bold'>" + this.objetoContratoCobranca.getResponsavel().getNome()
-				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
-				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> (Pagador: <b>"
-				+ this.objetoContratoCobranca.getPagador().getNome() + "</b> foi <b>APROVADO</b>.</td>\n" + "</tr>\n"
-				+ "</tbody>\n" + "</table>\n"
-				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
-				+ "<table width='100%' style='border-left:3px solid #bb7e17'>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>DATA DA ATUALIZAÇÃO\n"
-				+ "</span>\n" + "<br><b>" + sdfDataRelComHoras.format(dataHoje) + "\n" + "</b> </td>\n" + "</tr>\n"
-				+ "<tr>\n"
-				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>ATUALIZAÇÃO\n"
-				+ "</span>\n";
-
-		if (this.objetoContratoCobranca.isInicioAnalise()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Inicio Análise: <b>Sim</b>\n";
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Inicio Análise: <b>Não</b>\n";
-		}
-
-		String precadastro = "";
-
-		if (this.objetoContratoCobranca.getCadastroAprovadoValor() == null) {
-			precadastro = "Não informado";
-		} else {
-			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("")) {
-				precadastro = "Não informado";
-			} else {
-				precadastro = this.objetoContratoCobranca.getCadastroAprovadoValor();
+			try {
+				ResponsavelDao rDao = new ResponsavelDao();
+				EnviaEmail eec = new EnviaEmail();
+				//eec.enviarEmailHtmlResponsavelAdms(rDao.getGuardaChuvaCompletoResponsavelString(this.objetoContratoCobranca.getResponsavel().getId()),
+				eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
+				"[siscoat] Criação do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
+				mensagemHtmlTeste);
+			
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
 			}
-		}
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Pré-Cadastro: <b>" + precadastro + "</b>\n";
-
-		String imovel = "";
-
-		if (this.objetoContratoCobranca.getMatriculaAprovadaValor() == null) {
-			imovel = "Não informado";
-		} else {
-			if (this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("")) {
-				imovel = "Não informado";
-			} else {
-				imovel = this.objetoContratoCobranca.getMatriculaAprovadaValor();
-			}
-		}
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Imóvel: <b>" + imovel + "</b>\n";
-
-		if (this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo e Parecer Jurídico: <b>Pago</b>\n";
-
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo e Parecer Jurídico: <b>Não Pago</b>\n";
-		}
-
-		if (this.objetoContratoCobranca.isLaudoRecebido()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo Recebido: <b>Sim</b>\n";
-
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo Recebido: <b>Não</b>\n";
-		}
-
-		if (this.objetoContratoCobranca.isPajurFavoravel()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Parecer Jurídico Recebido: <b>Sim</b>\n";
-
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Parecer Jurídico Recebido: <b>Não</b>\n";
-		}
-
-		if (this.objetoContratoCobranca.isDocumentosCompletos()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Documentos Completos: <b>Sim</b>\n";
-
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Documentos Completos: <b>Não</b>\n";
-		}
-
-		if (this.objetoContratoCobranca.isCcbPronta()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>CCB Pronta: <b>Sim</b>\n";
-
-		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>CCB Pronta: <b>Não</b>\n";
-		}
-
-		String status = "";
-
-		if (this.objetoContratoCobranca.getStatusContrato() == null) {
-			status = "Não informado";
-		} else {
-			if (this.objetoContratoCobranca.getStatusContrato().equals("")) {
-				status = "Não informado";
-			} else {
-				status = this.objetoContratoCobranca.getStatusContrato();
-			}
-		}
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Status: <b>" + status + "</b>\n";
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "</td></tr>\n" + "</tbody>\n" + "</table>\n" + "</td>\n"
-				+ "<td width='20'> </td>\n" + "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n"
-				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n"
-				+ "<tr style='background-color:#262626;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>\n"
-				+ "<td style='padding-left:20px; font-size: 12px;'> © SisCoAt. Todos direitos reservados. </td>\n"
-				+ "<td style='text-align: right;padding-right: 20px;'><a style='color:#fff;font-size: 12px; text-decoration: none;' href='https://siscoat.galleriafinancas.com.br' target='_blank'>Galleria Finanças</a> </td>\n"
-				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<div class='yj6qo'></div>\n" + "<div class='adL'> </div>\n"
-				+ "</div>\n" + "<div class='adL'> </div>\n" + "<div class='adL'> </div>\n" + "</div>\n" + "</body>\n"
-				+ "</html>";
-
-		try {
-			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
-					"[siscoat] Aprovação do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
-					mensagemHtmlTeste);
-
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
 	}
 
 	/******
@@ -1541,7 +1422,7 @@ public class ContratoCobrancaMB {
 				+ "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'>\n"
 				+ "<div class='adM'> </div>\n" + "<div align='center'>\n" + "<div class='adM'> </div>\n"
 				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n" + "<tr>\n"
-				+ "<td style='background-color:#262626;height:75px; padding: 15px;' align='center'> <img src='https://galleriafinancas.com.br/wp-content/uploads/2020/04/logo-galleria-financas.png' > </td>\n"
+				+ "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td>\n"
 				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
 				+ "<td width='20'> </td>\n" + "<td>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá\n"
@@ -1549,85 +1430,178 @@ public class ContratoCobrancaMB {
 				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> (Pagador: <b>"
-				+ this.objetoContratoCobranca.getPagador().getNome() + "</b> teve uma atualização em seu status.</td>\n"
+				+ this.objetoContratoCobranca.getPagador().getNome() + "</b>) teve atualização. </td>\n"
 				+ "</tr>\n" + "</tbody>\n" + "</table>\n"
 				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
 				+ "<table width='100%' style='border-left:3px solid #bb7e17'>\n" + "<tbody>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>DATA DA ATUALIZAÇÃO\n"
-				+ "</span>\n" + "<br><b>" + sdfDataRelComHoras.format(dataHoje) + "\n" + "</b> </td>\n" + "</tr>\n"
-				+ "<tr>\n"
-				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>ATUALIZAÇÃO\n"
-				+ "</span>\n";
+				+ "</span>\n" + "<br><b>" + sdfDataRelComHoras.format(dataHoje) + "\n" + "</b> </td>\n" + "</tr> </tbody> </table>";
+		
+		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #bb7e17'>" + "<tbody>" + "<tr>";
 
-		if (this.objetoContratoCobranca.isInicioAnalise()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Inicio Análise: <b>Sim</b>\n";
+		// "Em Analise"
+		if (this.objetoContratoCobranca.isInicioAnalise() 
+				//&& this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")
+				/* &&
+				(this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("") || 
+						this.objetoContratoCobranca.getMatriculaAprovadaValor() == null)*/) {
+			
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/EmAnaliseOk.png' height='57' width='120'>"
+					+ "</td>";			
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Inicio Análise: <b>Não</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/EmAnaliseNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
-
-		String precadastro = "";
-
-		if (this.objetoContratoCobranca.getCadastroAprovadoValor() == null) {
-			precadastro = "Não informado";
-		} else {
-			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("")) {
-				precadastro = "Não informado";
+		
+		// "Em Analise"
+		if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
+			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/PreCadastroAprovadoOk.png' height='57' width='120'>"
+						+ "</td>";			
 			} else {
-				precadastro = this.objetoContratoCobranca.getCadastroAprovadoValor();
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/PreCadastroAprovadoNOk.png' height='57' width='120'>"
+						+ "</td>";
+			}
+		} else {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/PreCadastroAprovadoNOk.png' height='57' width='120'>"
+					+ "</td>";
+		}
+		
+		//"Análise Reprovada"
+		if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
+			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Reprovado")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/PreCadastroReprovadoOk.png' height='57' width='120'>"
+						+ "</td>";							
 			}
 		}
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Pré-Cadastro: <b>" + precadastro + "</b>\n";
-
-		String imovel = "";
-
-		if (this.objetoContratoCobranca.getMatriculaAprovadaValor() == null) {
-			imovel = "Não informado";
-		} else {
-			if (this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("")) {
-				imovel = "Não informado";
+		
+		//"Ag. Pagto. Boleto"
+		if (//this.objetoContratoCobranca.isInicioAnalise() &&
+				this.objetoContratoCobranca.getCadastroAprovadoValor() != null  &&
+				this.objetoContratoCobranca.getMatriculaAprovadaValor() != null ) {
+			if (//this.objetoContratoCobranca.isInicioAnalise() &&
+					this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+					this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") 
+					 && this.objetoContratoCobranca.isPagtoLaudoConfirmada()
+					) {
+				
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/AgPagtoBoletoOk.png' height='57' width='120'>"
+						+ "</td>";			
 			} else {
-				imovel = this.objetoContratoCobranca.getMatriculaAprovadaValor();
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/AgPagtoBoletoNOk.png' height='57' width='120'>"
+						+ "</td>";
 			}
-		}
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Imóvel: <b>" + imovel + "</b>\n";
-
-		if (this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo e Parecer Jurídico: <b>Pago</b>\n";
-
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo e Parecer Jurídico: <b>Não Pago</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgPagtoBoletoNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
 
-		if (this.objetoContratoCobranca.isLaudoRecebido()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo Recebido: <b>Sim</b>\n";
-
+		//"Ag. PAJU e Laudo"
+		if (/*this.objetoContratoCobranca.isInicioAnalise() &&
+				this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+				this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") &&
+				*/
+				//this.objetoContratoCobranca.isPagtoLaudoConfirmada() 
+				 this.objetoContratoCobranca.isLaudoRecebido() || this.objetoContratoCobranca.isPajurFavoravel()
+				) {
+			
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgPAJULaudoOk.png' height='57' width='120'>"
+					+ "</td>";			
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Laudo Recebido: <b>Não</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgPAJULaudoNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
-
-		if (this.objetoContratoCobranca.isPajurFavoravel()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Parecer Jurídico Recebido: <b>Sim</b>\n";
-
+		
+		//"Ag. DOC"
+		if (/*this.objetoContratoCobranca.isInicioAnalise() &&
+				this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+				this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") &&
+				this.objetoContratoCobranca.isPagtoLaudoConfirmada() && */
+				//this.objetoContratoCobranca.isLaudoRecebido() &&
+				//this.objetoContratoCobranca.isPajurFavoravel() &&
+				this.objetoContratoCobranca.isDocumentosCompletos()) {
+			
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgDOCOk.png' height='57' width='120'>"
+					+ "</td>";			
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Parecer Jurídico Recebido: <b>Não</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgDOCNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
-
-		if (this.objetoContratoCobranca.isDocumentosCompletos()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Documentos Completos: <b>Sim</b>\n";
-
+		
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> <tr>";
+		
+		//"Ag. CCB"
+		if (/*this.objetoContratoCobranca.isInicioAnalise() &&
+				this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+				this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") &&
+				this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+				this.objetoContratoCobranca.isLaudoRecebido() &&
+				this.objetoContratoCobranca.isPajurFavoravel() &&
+				this.objetoContratoCobranca.isDocumentosCompletos() && */
+				this.objetoContratoCobranca.isCcbPronta()) {
+					
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgCCBOk.png' height='57' width='120'>"
+					+ "</td>";			
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>Documentos Completos: <b>Não</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgCCBNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
-
-		if (this.objetoContratoCobranca.isCcbPronta()) {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>CCB Pronta: <b>Sim</b>\n";
-
+		
+		//"Ag. Assinatura"
+		if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null && this.objetoContratoCobranca.getMatriculaAprovadaValor() != null) {
+			if (this.objetoContratoCobranca.isInicioAnalise() &&
+					this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+					this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") &&
+					this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+					this.objetoContratoCobranca.isLaudoRecebido() &&
+					this.objetoContratoCobranca.isPajurFavoravel() &&
+					this.objetoContratoCobranca.isDocumentosCompletos() &&
+					this.objetoContratoCobranca.isCcbPronta() ) {
+						
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/AgAssinaturaOk.png' height='57' width='120'>"
+						+ "</td>";			
+			} else {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/AgAssinaturaNOk.png' height='57' width='120'>"
+						+ "</td>";
+			}
 		} else {
-			mensagemHtmlTeste = mensagemHtmlTeste + "<br>CCB Pronta: <b>Não</b>\n";
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgAssinaturaNOk.png' height='57' width='120'>"
+					+ "</td>";
 		}
 
+	
+		
+		//"Contrato Aprovado"
+		/*
+		if (this.objetoContratoCobranca.getStatus().equals("Aprovado")) {							
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+													+ "<img src='http://siscoatimagens.galleriabank.com.br/ContratoAprovadoOk.png' height='57' width='120'>"
+													+ "</td>";
+		} else {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/ContratoAprovadoNOk.png' height='57' width='120'>"
+					+ "</td>";
+		}
+		*/
+		/*
 		String status = "";
 
 		if (this.objetoContratoCobranca.getStatusContrato() == null) {
@@ -1641,18 +1615,36 @@ public class ContratoCobrancaMB {
 		}
 
 		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Status: <b>" + status + "</b>\n";
-
-		mensagemHtmlTeste = mensagemHtmlTeste + "</td></tr>\n" + "</tbody>\n" + "</table>\n" + "</td>\n"
-				+ "<td width='20'> </td>\n" + "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n"
-				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n"
-				+ "<tr style='background-color:#262626;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>\n"
-				+ "<td style='padding-left:20px; font-size: 12px;'> © SisCoAt. Todos direitos reservados. </td>\n"
-				+ "<td style='text-align: right;padding-right: 20px;'><a style='color:#fff;font-size: 12px; text-decoration: none;' href='https://siscoat.galleriafinancas.com.br' target='_blank'>Galleria Finanças</a> </td>\n"
-				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<div class='yj6qo'></div>\n" + "<div class='adL'> </div>\n"
-				+ "</div>\n" + "<div class='adL'> </div>\n" + "<div class='adL'> </div>\n" + "</div>\n" + "</body>\n"
-				+ "</html>";
+		 */
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
+		
+		mensagemHtmlTeste = mensagemHtmlTeste   + " </tbody> "
+												+ " </table>"
+												+ " </td>"
+												+ " <td width='20'> </td>"
+												+ " </tr>"
+												+ " </tbod>"
+												+ " </table>"
+												+ " <br>"
+												+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>"
+												+ " <tbody>"
+												+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
+												+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
+												+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='https://siscoat.galleriafinancas.com.br' target='_blank'>Galleria Finanças</a> </td>"
+												+ " </tr>"
+												+ " </tbody>"
+												+ " </table>"
+												+ " <div class='yj6qo'></div>"
+												+ " <div class='adL'> </div>"
+												+ " </div>"
+												+ " <div class='adL'> </div>"
+												+ " <div class='adL'> </div>"
+												+ " </div>"
+												+ " </body>"
+												+ " </html>";
 
 		try {
+			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
 			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
 					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
@@ -2255,13 +2247,7 @@ public class ContratoCobrancaMB {
 
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
-		if (this.objetoContratoCobranca.isAprovado()) {
-			enviaEmailAprovacaoPreContrato();
-		} else {
-			if (validaAlteracaoCheckList()) {
-				enviaEmailAtualizacaoPreContrato();
-			}
-		}
+		enviaEmailAtualizacaoPreContrato();
 
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -12173,6 +12159,216 @@ public class ContratoCobrancaMB {
 		}
 
 	}
+	
+	public void imprimeRelatorioFinanceiroContabilidadeXLS() throws IOException {
+		this.pathContrato = "";
+		this.nomeContrato = "";
+		this.file = null;
+		this.contratoGerado = false;
+		
+		ParametrosDao pDao = new ParametrosDao(); 
+		this.pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+		this.nomeContrato = "Relatório Financeiro - Contador.xlsx";  	
+
+		TimeZone zone = TimeZone.getDefault();  
+		Locale locale = new Locale("pt", "BR");  
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);  
+		dataHoje.set(Calendar.MINUTE, 0);  
+		dataHoje.set(Calendar.SECOND, 0);  
+		dataHoje.set(Calendar.MILLISECOND, 0);
+		
+		//dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+		
+		String excelFileName = this.pathContrato + this.nomeContrato;//name of excel file
+		
+		SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd-MM-yyyy", locale);
+
+		String sheetName = sdfDataRel.format(this.getRelDataContratoInicio()) + " a " + sdfDataRel.format(this.getRelDataContratoFim());//name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName) ;
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);      
+
+		//iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Vencimento Original");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Data Pagamento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Valor Pago");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Valor Juros");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Valor Amortização");
+		cell.setCellStyle(cell_style);
+		
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);  
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();                			
+		numericStyle.setDataFormat(ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short)BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (RelatorioFinanceiroCobranca record : this.relObjetoContratoCobranca) {
+			countLine ++;
+			row = sheet.createRow(countLine);
+
+			// Contrato
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());	
+			
+			// Pagador
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNomePagador());	
+			
+			// Parcela
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getParcela());	
+
+			//Vencimento Original
+			cell = row.createCell(3);
+			cell.setCellStyle(dateStyle);
+			
+			if (record.getDataVencimento() != null) {
+				cell.setCellValue(record.getDataVencimento());
+			} else {
+				cell.setCellValue("");
+			}
+			
+			//Valor
+			cell = row.createCell(4);	
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			
+			if (record.getVlrParcela() != null) {
+				cell.setCellValue(((BigDecimal) record.getVlrParcela()).doubleValue());
+			} else {
+				cell.setCellValue(((BigDecimal) BigDecimal.ZERO).doubleValue());
+			}
+			
+			//Data Pagamento
+			cell = row.createCell(5);
+			cell.setCellStyle(dateStyle);
+			
+			if (record.getDataUltimoPagamento() != null) {
+				cell.setCellValue(record.getDataUltimoPagamento());
+			} else {
+				cell.setCellValue("");
+			}
+			
+			//Valor Pago
+			cell = row.createCell(6);	
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+
+			if (record.getVlrTotalPago() != null) {
+				cell.setCellValue(((BigDecimal) record.getVlrTotalPago()).doubleValue());
+			} else {
+				cell.setCellValue(((BigDecimal) BigDecimal.ZERO).doubleValue());
+			}
+			
+			//Valor Juros
+			cell = row.createCell(7);	
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+
+			if (record.getVlrJurosParcela() != null) {
+				cell.setCellValue(((BigDecimal) record.getVlrJurosParcela()).doubleValue());
+			} else {
+				cell.setCellValue(((BigDecimal) BigDecimal.ZERO).doubleValue());
+			}
+			
+			//Valor Amortizacao
+			cell = row.createCell(8);	
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			
+			if (record.getVlrAmortizacaoParcela() != null) {
+				cell.setCellValue(((BigDecimal) record.getVlrAmortizacaoParcela()).doubleValue());
+			} else {
+				cell.setCellValue(((BigDecimal) BigDecimal.ZERO).doubleValue());
+			}
+		}
+			
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		//write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.contratoGerado = true;
+	}
+	
 	
 	public void imprimeRelatorioFinanceiroContabilidade() {
 		FacesContext context = FacesContext.getCurrentInstance();

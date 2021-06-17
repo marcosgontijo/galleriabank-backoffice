@@ -66,6 +66,9 @@
 			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	        
+			        <p:column style="text-align: center;" headerText="Origem">
+			           <h:outputText value="#{contratos.urlLead}" />
+			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	

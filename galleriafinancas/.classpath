@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-ooxml-3.17.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-ooxml-schemas-3.17.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/primefaces-7.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail-1.4.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

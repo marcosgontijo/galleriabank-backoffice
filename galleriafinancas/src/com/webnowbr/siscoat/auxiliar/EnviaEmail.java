@@ -14,21 +14,14 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+
 /**
  * Classe Utilitária que contém métodos para envio de Email 
  */
 public class EnviaEmail {
  
-    /**
-     * Construtor sem parametros, ao ser chamado já instancia as configuraççoes
-     *
-     */
-    public EnviaEmail() {
-    	this.username = "enviopelosistema@siscoat.com.br";
-    	this.senha = "d4UNV+sHUr0N";
-        ajustaParametros();
-    }
- 
+	 
     /**
      * Variavel local para Sessao
      */
@@ -36,7 +29,18 @@ public class EnviaEmail {
  
     String username = null;
     String senha = null;
- 
+    String comcopia = null;
+    
+    /**
+     * Construtor sem parametros, ao ser chamado já instancia as configuraççoes
+     *
+     */
+    public EnviaEmail() {
+
+        ajustaParametros();
+    }
+
+
     /**
      * Metodo para envio de mensagem com texto simples
      */
@@ -79,7 +83,7 @@ public class EnviaEmail {
     public void enviarEmailHtmlResponsavelAdms(String destinatario, String assunto, String conteudoHtml) throws Exception {
         try {
  
-        	String remetente = "enviopelosistema@siscoat.com.br";
+        	String remetente = this.username;
         			
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(remetente));
@@ -95,8 +99,9 @@ public class EnviaEmail {
             message.setRecipients(javax.mail.Message.RecipientType.TO,  parseTO);
             
             //String cc = "hv.junior@gmail.com,hjunior@cpqd.com.br";
-            String cc = "joao@galleriafinancas.com.br, joaomagatti@me.com";
-            InternetAddress[] parseCC = InternetAddress.parse(cc , true);
+            //String cc = "joao@galleriafinancas.com.br, joaomagatti@me.com";
+            
+            InternetAddress[] parseCC = InternetAddress.parse(this.comcopia, true);
             message.setRecipients(javax.mail.Message.RecipientType.CC,  parseCC);
 
             message.setSubject(assunto);
@@ -131,13 +136,27 @@ public class EnviaEmail {
      * seja chamado de outras classes
      */
     private void ajustaParametros() {
+    	
+		ParametrosDao pDao = new ParametrosDao();
+    	
+    	this.username = pDao.findByFilter("nome", "EMAIL_USERNAME").get(0).getValorString();
+    	this.senha = pDao.findByFilter("nome", "EMAIL_SENHA").get(0).getValorString();
+    	this.comcopia = pDao.findByFilter("nome", "EMAIL_COM_COPIA").get(0).getValorString();
+    	String host = pDao.findByFilter("nome", "EMAIL_HOST").get(0).getValorString();
+    	String port = pDao.findByFilter("nome", "EMAIL_PORT").get(0).getValorString();
+    	String auth = pDao.findByFilter("nome", "EMAIL_AUTH").get(0).getValorString();
+    	String starttls = pDao.findByFilter("nome", "EMAIL_STARTTLS").get(0).getValorString();
  
         Properties props = new Properties();
 
-        props.put("mail.smtp.host", "mail.siscoat.com.br");
-        props.put("mail.smtp.socketFactory.port", "587");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.socketFactory.port", port);
+        props.put("mail.smtp.auth", auth);
+        props.put("mail.smtp.port", port);
+        
+        if (Boolean.valueOf(starttls)) {
+        	props.put("mail.smtp.starttls.enable", "true");
+        }
 
         /**
          * Associa autenticação a sessao de correio

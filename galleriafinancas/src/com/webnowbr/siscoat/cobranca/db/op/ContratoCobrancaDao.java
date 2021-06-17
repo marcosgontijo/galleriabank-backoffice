@@ -15,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
+import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
@@ -4508,4 +4509,102 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		return demonstrativosResultadosGrupoDetalhe;
 	}
 	
+	private static final String QUERY_ORIGEM_LEADS = "select  " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Refinanciamento de Imóvel') refinamento,  " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Empréstimo para negativados') emprestimonegativados, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Empréstimo online') emprestimoonline, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Empréstimo Home Equity') emprestimoequity, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Empréstimo com terreno em garantia') emprestimoterreno, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Empréstimo online YT') emprestimoonlineyt, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead = 'Simulador online') simuladoronline, " 
+			 + " (select count(id) from cobranca.contratocobranca " 
+			 + " where urllead != 'Refinanciamento de Imóvel' and " 
+			 + " urllead != 'Empréstimo para negativados' and " 
+			 + " urllead != 'Empréstimo online' and " 
+			 + " urllead != 'Empréstimo Home Equity' and " 
+			 + " urllead != 'Empréstimo com terreno em garantia' and " 
+			 + " urllead != 'Empréstimo online Y' and " 
+			 + " urllead != 'Simulador online') outros " ;
+	
+
+	@SuppressWarnings("unchecked")
+	public Dashboard getOrigemLeads()
+			throws Exception {
+		
+		Dashboard dashboard = new Dashboard();
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+
+			String query_QUERY_ORIGEM_LEADS = QUERY_ORIGEM_LEADS;
+
+			ps = connection.prepareStatement(query_QUERY_ORIGEM_LEADS);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {	
+				dashboard.setRefinanciamentoDeImovel(rs.getInt("refinamento"));
+				dashboard.setEmprestimoParaNegativados(rs.getInt("emprestimonegativados"));
+				dashboard.setEmprestimoOnline(rs.getInt("emprestimoonline"));
+				dashboard.setEmprestimoHomeEquity(rs.getInt("emprestimoequity"));
+				dashboard.setEmprestimoComTerrenoEmGarantia(rs.getInt("emprestimoterreno"));
+				dashboard.setEmprestimoOnlineYT(rs.getInt("emprestimoonlineyt"));					
+				dashboard.setSimuladorOnline(rs.getInt("simuladoronline"));
+				dashboard.setOutrasOrigens(rs.getInt("outros"));
+			}
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return dashboard;
+	}
+	
+	private static final String QUERY_STATUS_LEADS = "select  " 
+			+ " (select count(id) from cobranca.contratocobranca " 
+			+ " where statusLead = 'Novo Lead') novolead,  " 
+			+ " (select count(id) from cobranca.contratocobranca " 
+			+ " where statusLead = 'Em Tratamento') leademtratamento ";
+
+	@SuppressWarnings("unchecked")
+	public Dashboard getStatusLeads()
+			throws Exception {
+		
+		Dashboard dashboard = new Dashboard();
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+
+			String query_QUERY_STATUS_LEADS = QUERY_STATUS_LEADS;
+
+			ps = connection.prepareStatement(query_QUERY_STATUS_LEADS);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {	
+				dashboard.setNovoLead(rs.getInt("novolead"));
+				dashboard.setLeadEmTratamento(rs.getInt("leademtratamento"));
+			}
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return dashboard;
+	}
 }

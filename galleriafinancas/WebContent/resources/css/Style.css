@@ -66,7 +66,7 @@
 		
 		.usuarioLogin {
 			font-weight: bold;
-			color: #fff;
+			color: #2a364b;
 			font-size: 30px; 
 		}	
 		
@@ -230,7 +230,7 @@
 		/* Customiza��o do Background do Layout PrimeFaces
 		------------------------------------------------------------------------*/
 		.ui-layout-container {
-			background-color: #5d5c5d;
+			background-color: #d0d0d0;
 		}	
 		
 		/*----------------------------------------------------------------------*/
@@ -238,20 +238,21 @@
 		------------------------------------------------------------------------*/
 	   .ui-layout-north, .ui-layout-north .ui-layout, .ui-layout-north .ui-layout-bd, .ui-layout-north .ui-layout-unit, .ui-layout-north .ui-widget-content{
 		    background: #41a1c9 url(../../resources/image/PortalEmpresa/topo.jpg) ;
-		    background-color: #ffffff;
+		    background-color: #41a1c9;
 		    border: none;
+		    color: #2a364b;
 		}
 		
 		/*----------------------------------------------------------------------*/
 		/* Customizacao do Rodap�
 		------------------------------------------------------------------------*/
 		.ui-layout-south, .ui-layout-south .ui-layout, .ui-layout-south .ui-layout-bd, .ui-layout-south .ui-layout-unit, .ui-layout-south .ui-widget-content{
-		    background-color: #5d5c5d;
-		    background: #5d5c5d;
+		    background-color: #d0d0d0;
+		    background: #d0d0d0;
 		    border: none;
 		    FONT-SIZE: 7pt;
 		    text-align: center;
-		    color: #FFFFFF;
+		    color: #2a364b;
 		}	
 		
 		/*----------------------------------------------------------------------*/

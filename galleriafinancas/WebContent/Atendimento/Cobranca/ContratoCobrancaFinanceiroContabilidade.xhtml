@@ -82,6 +82,10 @@
 							action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidade}"
 							update="PanelPDF"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidadeXLS}"
+							update="PanelPDF"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 					</f:facet>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
@@ -141,6 +145,10 @@
 						<p:commandButton value="Gerar PDF" ajax="false"
 							icon="ui-icon-print"
 							action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidade}" 
+							update="PanelPDF"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.imprimeRelatorioFinanceiroContabilidadeXLS}"
 							update="PanelPDF"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 					</f:facet>

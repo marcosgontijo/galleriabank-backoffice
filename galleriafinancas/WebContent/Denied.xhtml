@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:shiro="http://shiro.apache.org/tags"
+      xmlns:f="http://java.sun.com/jsf/core">
 
-<h:head>
-	<title>SisCoAt - WeB NoW br</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
-    <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" />
-    <link rel="stylesheet" type="text/css" href="#{resource['css/login-box.css']}" title="" media="all" />  
-</h:head>
-<h:body>
-	<h:form>
-		<div style="padding: 100px 0 0 250px;">
-			<div id="login-box">
-				<p:spacer width="60" height="130" />	
-				<div align="center" style="color: #ebebeb; font: 25px Arial, Helvetica, sans-serif;">
-					<h:outputLabel for="accessDenied" value="Acesso Negado!" />
+    <h:head>
+	    <title>Galleria Finanças</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
+        <link rel="stylesheet" type="text/css" href="#{resource['css/login_main.css']}" title="" media="all" />
+        <link rel="stylesheet" type="text/css" href="#{resource['css/login_util.css']}" title="" media="all" /> 
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700" rel="stylesheet"  title="" media="all" />    
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>   
+        <h:outputScript name="#{resource['js/login_main.js']}" library="javascript" />
+    </h:head>
+	<h:body>   
+		<h:outputText value="#{loginBean.initialize}"/>  		
+			<div class="limiter">
+				<div class="container-login100" style="background-image: url('#{resource['image/login_images/bg-01.jpg']}');">
+					<div class="wrap-login100 p-t-30 p-b-50">
+						<span class="login100-form-title p-b-41">
+							<img src="#{resource['image/LogoSiscoat.png']}" alt=""/>
+						</span>
+						<h:form id="formLogin" class="login100-form p-b-33 p-t-5">
+						    <p:growl id="messages" showDetail="true" sticky="true" />  
+							
+							<div class="login100-form p-b-33 p-t-5" >						
+								<p:outputLabel value="Acesso Restrito!!!" style="padding-left: 0px !important;" styleClass="input100"/>
+								<p:outputLabel value="Verifique suas permissões de acesso ou efetue o Login novamente." style="padding-left: 0px !important;" styleClass="input100"/>
+							</div>
+							
+							<div class="container-login100-form-btn m-t-32">
+								<p:commandLink id="aa" styleClass="login100-form-btn" action="/Login.xhtml" update="messages" >
+									EFETUAR LOGIN
+								</p:commandLink>
+								<p:defaultCommand target="aa" />	
+							</div>		
+						</h:form>
+					</div>
 				</div>
-				<div align="center">
-					<h:outputLabel for="Mensagem" value="Verifique sua permissões de acesso." />
-				</div>							
-			</div>
-		</div>
-	</h:form>
-</h:body>
+			</div>					
+	</h:body>
 </html>
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" >
+
+<h:head>
+	<title>Galleria Finanças</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
+    <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" />
+    <link rel="stylesheet" type="text/css" href="#{resource['css/login-box.css']}" title="" media="all" />  
+</h:head>
+<h:body style="background: #41a1c9 url(./resources/image/wallpaper-login.jpg);">
+<!--Sem funcao - utilizado para executar a inicializacao do banco de dados -->
+<h:outputText value="#{loginBean.initialize}"/>  
+
+	<h:form id="formLogin">
+		<div style="padding: 100px 0 0 250px;">
+			<div id="login-box">
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>				
+				<div id="login-box-name" style="margin-top:20px;"><p:outputLabel for="username" value="Usuário:" styleClass="labelBold"/></div>
+				<div id="login-box-field" style="margin-top:28px;">						
+					<p:inputText value="#{loginBean.username}" id="username" required="false" label="Usuário" maxlength="10" size="31" alt="Usuário" requiredMessage="Informe o usuário!" style="font-weight: bold;"/>
+				</div>
+				<p:spacer width="20" height="10" />	
+				<div id="login-box-name" style="margin-top:3px;"><p:outputLabel for="password" value="Senha:" styleClass="labelBold"/></div>
+				<div id="login-box-field">
+					<p:password id="password" value="#{loginBean.password}" required="false" maxlength="10" inline="false" feedback= "false" size="31" alt="Senha" requiredMessage="Informe a senha!" onkeypress="if (event.keyCode == 13) { document.getElementById('form:aa').click(); return false; }"/>			
+				</div>
+				<div id="login-box-key" style="margin-top:5px;"><p:outputLabel for="key" value="Código: " styleClass="labelBold"/></div>
+				<div id="login-box-field" style="margin-top:13px;">						
+					<p:inputText value="#{loginBean.key}" id="key" label="Key" maxlength="6" size="10" alt="Key" requiredMessage="Informe o código!" style="font-weight: bold;"/>
+				</div>		
+				<br/>
+				<!-- <span class="login-box-options"><a href="#" style="margin-left:120px;"><h:outputLabel for="esqueceuSenha" value="#{bundle.Login_ForgotPsw}?" /></a></span> -->
+				
+				<div style="margin: 0 auto; width: 50%;;"><p:commandLink id="aa" actionListener="#{loginBean.loginNow}" update="messages"  ajax="true">
+					<img src="./resources/image/login-btn.png" width="140" height="57" style="margin-left:30px;padding-top: 30px" />
+				</p:commandLink>
+				</div>
+				<p:defaultCommand target="aa" />		
+				<p:messages id="messages" display="text"/>					
+			</div>
+		</div>			
+	</h:form>
+</h:body>
+</html>

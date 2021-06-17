@@ -11,6 +11,22 @@
 		 	<script src="../../resources/js/functions.js"></script>
 		 	<h:outputScript name="js/locale-primefaces.js" />	
 			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+	
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+		
 			<p:panel id="CobrancaIugu" header="Consultar Extrato Financeiro SubConta IUGU"
 				style="margin-bottom:10px;">
 				<h:panelGrid columns="2">
@@ -46,7 +62,7 @@
 				<p:commandButton value="Consultar Extrato Financeiro SubConta"
 					action="#{iuguMB.consultarExtratoFinanceiroSubConta}"
 					image="ui-icon ui-icon-check" update="saldoSubConta mensagens"
-					style="TEXT-DECORATION: bold;" />
+					style="TEXT-DECORATION: bold;"  onclick="start();" oncomplete="stop();"/>
 			</p:panel>
 
 			<p:panel id="saldoSubConta"

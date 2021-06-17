@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+	        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 70px;padding-top: 17px;">
+		       <div class="ui-g-6 ui-md-6 ui-lg-6">
+		       		<p:panel id="leadsPorOrigem" header="Origem dos Leads" style="margin-bottom:10px;">	
+						<p:pieChart model="#{dashboardMB.pieOrigemLead}" />
+					</p:panel>
+		       </div>
+		       <div class="ui-g-6 ui-md-6 ui-lg-6">
+		       		<p:panel id="Satuslead" header="Status Leads" style="margin-bottom:10px;">	
+						<p:pieChart model="#{dashboardMB.pieStatusLead}" />
+					</p:panel>
+		       </div>
+	       	</div>	
+		</h:form>
+	</ui:define>
+</ui:composition>

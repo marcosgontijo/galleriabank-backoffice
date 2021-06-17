@@ -25,6 +25,10 @@
 									action="#{contasPagarMB.clearFieldsContasPagas}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+								<p:menuitem value="Dashboard SEO"
+									action="#{dashboardMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
 							<p:menuitem value="CRM"
 								action="#{crmMB.clearFields}"
@@ -73,10 +77,12 @@
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 							<p:submenu label="Contratos" styleClass="titulosMenu">
-								<p:menuitem value="Contratos Quitados"
-									action="#{contratoCobrancaMB.geraConsultaContratosQuitados}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="Contratos Quitados"
+										action="#{contratoCobrancaMB.geraConsultaContratosQuitados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Contratos"
 										action="#{contratoCobrancaMB.clearFieldsContratos}"
