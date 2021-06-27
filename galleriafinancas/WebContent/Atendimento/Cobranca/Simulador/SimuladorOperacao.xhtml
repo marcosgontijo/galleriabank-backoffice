@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+
+		<h:outputStylesheet>
+			.row { 
+				width:100%
+			}
+			.columns { 
+				width:20%;
+				max-width:20%;
+				text-align:center;
+			}	
+			.parametrosLabel { 
+				width:110px
+			}
+			.parametrosValor { 
+				width:200px
+			}  
+   		</h:outputStylesheet>
+
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../../resources/js/functions.js"></script>
+			<h:outputScript name="../js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="DemonstrativoResultados" header="Simular Operação"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<h:panelGrid columns="2"
+						columnClasses="parametrosLabel, parametrosValor">
+						<p:outputLabel for="valorImovel" value="Valor Imóvel: "
+							styleClass="labelBold" />
+						<p:inputText id="valorImovel" value="#{simuladorMB.valorImovel}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter">
+						</p:inputText>
+						<p:outputLabel for="valorCredito" value="Valor Crédito: "
+							styleClass="labelBold" />
+						<p:inputText id="valorCredito" value="#{simuladorMB.valorCredito}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter">
+						</p:inputText>
+
+						<p:outputLabel for="taxaJuros" value="Taxa Juros: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="taxaJuros" value="#{simuladorMB.taxaJuros}"
+							required="true" style="width: 50px;">
+							<f:selectItem itemLabel="1,49%" itemValue="1.49" />
+							<f:selectItem itemLabel="1,69%" itemValue="1.69" />
+							<f:selectItem itemLabel="1,89%" itemValue="1.89" />
+							<f:selectItem itemLabel="2,09%" itemValue="2.09" />
+							<f:selectItem itemLabel="2,29%" itemValue="2.29" />
+							<f:selectItem itemLabel="2,49%" itemValue="2.49" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="prazo" value="Qtd parcelas: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="prazo" value="#{simuladorMB.parcelas}"
+							required="true" style="width: 50px;">
+							<f:selectItem itemLabel="36" itemValue="36" />
+							<f:selectItem itemLabel="48" itemValue="48" />
+							<f:selectItem itemLabel="60" itemValue="60" />
+							<f:selectItem itemLabel="72" itemValue="72" />
+							<f:selectItem itemLabel="84" itemValue="84" />
+							<f:selectItem itemLabel="96" itemValue="96" />
+							<f:selectItem itemLabel="108" itemValue="108" />
+							<f:selectItem itemLabel="120" itemValue="120" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="carencia" value="Carência: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="carencia" value="#{simuladorMB.carencia}"
+							required="true" style="width: 50px;">
+							<f:selectItem itemLabel="0" itemValue="0" />
+							<f:selectItem itemLabel="1" itemValue="1" />
+							<f:selectItem itemLabel="2" itemValue="2" />
+							<f:selectItem itemLabel="3" itemValue="3" />
+							<f:selectItem itemLabel="4" itemValue="4" />
+							<f:selectItem itemLabel="5" itemValue="5" />
+							<f:selectItem itemLabel="6" itemValue="6" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="2"
+						columnClasses="parametrosLabel, parametrosValor">
+						<p:outputLabel for="tipoPessoa" value="Tipo Pessoa: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="tipoPessoa" value="#{simuladorMB.tipoPessoa}"
+							required="true" style="width: 100px;">
+							<f:selectItem itemValue="PF" itemLabel="Pessoa Física" />
+							<f:selectItem itemValue="PJ" itemLabel="Pessoa Jurídica" />
+						</p:selectOneMenu>
+						<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="tipoCalculo"
+							value="#{simuladorMB.tipoCalculo}" required="true"
+							style="width: 50px;">
+							<f:selectItem itemValue="PRICE" itemLabel="Price" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="identificacao" value="Identificação: "
+							styleClass="labelBold" />
+						<p:inputText id="identificacao"
+							value="#{simuladorMB.identificacao}" required="false">
+						</p:inputText>
+
+
+					</h:panelGrid>
+				</h:panelGrid>
+
+
+				<p:commandButton value="Simular" action="#{simuladorMB.simular}"
+					image="ui-icon ui-icon-check"
+					update=":form:ConsultaResultados mensagens"
+					style="TEXT-DECORATION: bold;" />
+
+
+
+			</p:panel>
+
+			<p:panel id="ConsultaResultados" header="Simulação"
+				style="margin-bottom:10px;">
+				<p:dataTable id="dtBpHistorico" var="bpParcela"
+					value="#{simuladorMB.simulacao.parcelas}" emptyMessage=""
+					style="margin-top:20px;">
+					<f:facet name="header">
+						<p:commandButton value="Gerar PDF" ajax="false"
+							icon="ui-icon-print" action="#{simuladorMB.download}" />
+							
+					</f:facet>
+
+					<p:column style="text-align: center;" headerText="Parcela">
+						<h:outputText value="#{bpParcela.numeroParcela}">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Amortizacao (R$)">
+						<h:outputText value="#{bpParcela.amortizacao}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Juros (R$)">
+						<h:outputText value="#{bpParcela.juros}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Seguro MPI (R$)">
+						<h:outputText value="#{bpParcela.seguroMIP}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Seguro DFI (R$)">
+						<h:outputText value="#{bpParcela.seguroDFI}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Valor Parcela (R$)">
+						<h:outputText value="#{bpParcela.valorParcela}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Saldo devedor (R$)">
+						<h:outputText value="#{bpParcela.saldoDevedorInicial}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+
+
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
