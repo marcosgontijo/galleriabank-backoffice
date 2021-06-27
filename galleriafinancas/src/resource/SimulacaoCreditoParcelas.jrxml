@@ -30,11 +30,11 @@
 	<title>
 		<band height="25">
 			<staticText>
-				<reportElement x="-1" y="3" width="321" height="20" uuid="8a8e70c9-92a4-4111-83b2-bac4a998d76e"/>
+				<reportElement x="-1" y="3" width="555" height="20" uuid="8a8e70c9-92a4-4111-83b2-bac4a998d76e"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[* todas as parcelas são calculadas com IPCA a 0%]]></text>
+				<text><![CDATA[* todas as parcelas nessa simulação foram calculadas com IPCA a 0%]]></text>
 			</staticText>
 		</band>
 	</title>
