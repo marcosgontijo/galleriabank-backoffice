@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelPDF"
+				header="XLS Debêntures Emitidas gerado com sucesso!!!"
+				style="margin-bottom:10px;"
+				rendered="#{investidorMB.debenturesEmitidasXLSGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Download Debêntures Emitidas" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{investidorMB.fileXLS}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaFiltrosTitulosQuitados" header="Debêntures Emitidas - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{investidorMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{investidorMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+				</h:panelGrid>
+				<p:commandButton value="Consultar"
+					action="#{investidorMB.consultaDebeturesEmitidas}"
+					image="ui-icon ui-icon-check"
+					update=":form:ConsultaTitulosQuitados PanelPDF"
+					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
+			</p:panel>
+			<p:panel id="ConsultaTitulosQuitados" header="Debêntures Emitidas - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtDebentures" var="debentures" value="#{investidorMB.listDebenturesInvestidor}" 
+   		         emptyMessage="" sortBy="#{contratos.dataDebentures}"
+   		         rowStyleClass="#{debentures.quitado eq 'Sim' ? 'parcelaPaga' : null}">   
+                	<f:facet name="header">
+						<p:commandButton action="#{investidorMB.geraXLSDebenturesEmitidas}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS" value="Gerar XLS">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                </p:commandButton>
+			        </f:facet>       		        
+			        <p:column style="text-align: center;" headerText="Emissão" sortBy="#{debentures.dataDebentures}">
+			            <h:outputText value="#{debentures.dataDebentures}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	              
+			        <p:column style="text-align: center;" headerText="Debenturista" filterBy="#{debentures.recebedor.nome}" filterMatchMode="contains" sortBy="#{debentures.recebedor.nome}">
+			            <h:outputText value="#{debentures.recebedor.nome}" />
+			        </p:column>	
+			        <p:column style="text-align: center;"
+							headerText="Valor Debenture" >
+						<h:outputText value="R$ "/><h:outputText value="#{debentures.valorDebenture}" converter="bigDecimalConverter"/>
+					</p:column>		         	
+			        <p:column style="text-align: center;width:105px;" headerText="Taxa" filterBy="#{debentures.taxa}" filterMatchMode="contains" sortBy="#{debentures.numeroCautela}">
+			            <h:outputText value="#{debentures.taxa}"  converter="bigDecimalConverter"/>
+			        </p:column>
+			        <p:column style="text-align: center;"
+							headerText="Prazo" >
+						<h:outputText value="#{debentures.prazo}"/>
+					</p:column>		
+					<p:column style="text-align: center;"
+							headerText="Parcela Mensal" >
+						<h:outputText value="R$ "/><h:outputText value="#{debentures.parcelaMensal}" converter="bigDecimalConverter"/>
+					</p:column>		
+					<p:column style="text-align: center;"
+							headerText="Parcela Final" >
+						<h:outputText value="R$ "/><h:outputText value="#{debentures.parcelaFinal}" converter="bigDecimalConverter"/>
+					</p:column>		
+					<p:column style="text-align: center;" headerText="Data Última Parcela" sortBy="#{debentures.dataUltimaParcela}">			          
+					  <h:outputText value="#{debentures.dataUltimaParcela}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+			        <p:column style="text-align: center;"
+							headerText="Quitado" >
+						<h:outputText value="#{debentures.quitado}"/>
+					</p:column>		
+			        <f:facet name="footer">
+						<p:commandButton action="#{investidorMB.gerarTitulosQuitadosPDF}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar PDF" value="Gerar PDF">
+		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
+		                </p:commandButton>
+			        </f:facet>             		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage name="image/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<script type="text/javascript">
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+		</script>
+		
+	</ui:define>
+</ui:composition>

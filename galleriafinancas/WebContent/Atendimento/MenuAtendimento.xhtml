@@ -191,7 +191,12 @@
 										action="#{investidorMB.clearFieldsConsultaDebentures}"
 										ajax="false" icon="ui-icon ui-icon-transferthick-e-w"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
+																
+									<p:menuitem value="Debêntures Emitidas"
+											action="#{investidorMB.clearFieldsDebeturesEmitidas}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" /> 
+								</shiro:hasAnyRoles>								
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles

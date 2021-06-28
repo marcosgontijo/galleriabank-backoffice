@@ -15,6 +15,8 @@ public class DebenturesInvestidor implements Serializable {
 	private String serie;
 	private String numeroDocumento;
 	
+	private String quitado;
+	
 	private BigDecimal porcentagemDebentures;
 	
 	private Date dataDebentures;
@@ -30,7 +32,14 @@ public class DebenturesInvestidor implements Serializable {
 	
 	// Não persistido, utilizado no relatorio de Titulos Quitados.
 	private BigDecimal valorFace;
-		
+	
+	private BigDecimal valorDebenture;
+	private BigDecimal taxa;
+	private int prazo;
+	private BigDecimal parcelaMensal;
+	private BigDecimal parcelaFinal;
+	private Date dataUltimaParcela;
+	
 	public DebenturesInvestidor(){
 	}
 
@@ -128,5 +137,61 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setValorFace(BigDecimal valorFace) {
 		this.valorFace = valorFace;
+	}
+
+	public BigDecimal getValorDebenture() {
+		return valorDebenture;
+	}
+
+	public void setValorDebenture(BigDecimal valorDebenture) {
+		this.valorDebenture = valorDebenture;
+	}
+
+	public BigDecimal getTaxa() {
+		return taxa;
+	}
+
+	public void setTaxa(BigDecimal taxa) {
+		this.taxa = taxa;
+	}
+
+	public BigDecimal getParcelaMensal() {
+		return parcelaMensal;
+	}
+
+	public void setParcelaMensal(BigDecimal parcelaMensal) {
+		this.parcelaMensal = parcelaMensal;
+	}
+
+	public BigDecimal getParcelaFinal() {
+		return parcelaFinal;
+	}
+
+	public void setParcelaFinal(BigDecimal parcelaFinal) {
+		this.parcelaFinal = parcelaFinal;
+	}
+
+	public Date getDataUltimaParcela() {
+		return dataUltimaParcela;
+	}
+
+	public void setDataUltimaParcela(Date dataUltimaParcela) {
+		this.dataUltimaParcela = dataUltimaParcela;
+	}
+
+	public int getPrazo() {
+		return prazo;
+	}
+
+	public void setPrazo(int prazo) {
+		this.prazo = prazo;
+	}
+
+	public String getQuitado() {
+		return quitado;
+	}
+
+	public void setQuitado(String quitado) {
+		this.quitado = quitado;
 	}
 }

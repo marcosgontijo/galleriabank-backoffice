@@ -48,7 +48,7 @@
 					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin"/>
 					    	<br></br>
 					    	<br></br>
-					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss" mode="server" />					    	
+					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>					    	
 					    </td>
 					  </tr>
 
@@ -62,11 +62,231 @@
 		    <p:layoutUnit id="menu" position="west" size="255" 
 		    resizable="true" closable="false" collapsible="true" 
 			 maxSize="255" spacingOpen="0" header="Siscoat">
-		    	<ui:insert name="menu" />          			
+		    	<ui:insert name="menu">
+				<h:form style="margin-bottom:10px;">
+					<p:menu style="width: 227px; ">						
+						<p:submenu label="Gerenciamento" styleClass="titulosMenu">
+							<shiro:hasAnyRoles name="ROOT">
+								<p:menuitem value="Contas a Pagar"
+									action="#{contasPagarMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Contas Pagas"
+									action="#{contasPagarMB.clearFieldsContasPagas}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Dashboard SEO"
+									action="#{dashboardMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<p:menuitem value="CRM"
+								action="#{crmMB.clearFields}"
+								ajax="false" icon="ui-icon ui-icon-newwin"
+								styleClass="itemMenu" />
+						</p:submenu>						
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+									<p:menuitem value="Cadastrar Operação"
+										action="#{crmMB.clearFieldsDetalhado}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
+								<p:menuitem value="Leads"
+										action="/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads em Tratamento"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Em Tratamento')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads Reprovados"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Reprovado')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">
+									<p:menuitem value="Pré-Contratos"
+										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Leads Completos"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Completo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
+									<p:menuitem value="Contratos Reprovados"
+										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>				
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+							<p:submenu label="Contratos" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="Contratos Quitados"
+										action="#{contratoCobrancaMB.geraConsultaContratosQuitados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Contratos"
+										action="#{contratoCobrancaMB.clearFieldsContratos}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Debênturistas"
+										action="#{contratoCobrancaMB.consultarContratoCobrancaGalleria}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Re-Parcelar Investidor"
+										action="#{contratoCobrancaMB.clearFieldsAlteraParcelasInvestidor}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Re-Parcelar Contrato"
+										action="#{contratoCobrancaMB.clearFieldsReParcelar}"
+										ajax="false" icon="ui-icon-transferthick-e-w"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<p:submenu label="Financeiro" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Financeiro"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Financeiro Baixado"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixado}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Recebedores"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Pagto. Valor Líquido"
+										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<p:submenu label="Contabilidade" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Debêntures Emitidas"
+										action="#{investidorMB.clearFieldsTitulosQuitados}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Detalhamento Novas Operações"
+										action="#{investidorMB.clearFieldsOperacoesIndividualizado}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="IR Retido Investidores"
+										action="#{investidorMB.clearFieldsIRRetido}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Informe Rendimentos"
+										action="#{investidorMB.clearFieldsInformeRendimentos}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Posição Atual"
+										action="#{contabilidadeMB.clearFieldsPosicaoAtual}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="DRE"
+										action="#{demonstrativoResultadoMB.clearFields}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Financeiro"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroContabilidade}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<p:submenu label="Cálculos" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Recalcula Valor"
+										action="#{contratoCobrancaUtilsMB.clearFieldsRecalculaValor}"
+										ajax="false" icon="ui-icon ui-icon-refresh"
+										styleClass="itemMenu" />
+									<p:menuitem value="Cálculos"
+										action="#{contratoCobrancaUtilsMB.clearFieldsCalculo}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<p:submenu label="Investidores" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Fila de Investidores"
+										action="#{contratoCobrancaMB.clearFieldFilaInvestidores}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+									<p:menuitem value="Debêntures"
+										action="#{investidorMB.clearFieldsConsultaDebentures}"
+										ajax="false" icon="ui-icon ui-icon-transferthick-e-w"
+										styleClass="itemMenu" />
+																
+									<p:menuitem value="Debêntures Emitidas"
+											action="#{investidorMB.clearFieldsDebeturesEmitidas}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" /> 
+								</shiro:hasAnyRoles>	
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles
+								name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
+							<p:submenu label="IUGU" styleClass="titulosMenu">
+								<shiro:hasAnyRoles
+									name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
+									<p:menuitem value="Cobrança Simples Iugu"
+										action="#{iuguMB.clearFieldsGeraCobrancaSimples}" ajax="false"
+										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+									<p:menuitem value="Faturas Período"
+										action="#{iuguMB.clearFieldsFaturasPeriodoIugu}" ajax="false"
+										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="SubContas IUGU"
+										action="#{iuguMB.clearFieldsSubContasIugu}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />
+									<p:menuitem value="Saldo Subcontas"
+										action="#{iuguMB.clearFieldsSaldoSubContaIugu}" ajax="false"
+										icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu" />
+									<p:menuitem value="Extrato Financeiro"
+										action="#{iuguMB.clearFieldsExtratoFinanceiroIugu}"
+										ajax="false" icon="ui-icon ui-icon-search"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAIUGU">
+									<p:menuitem value="Faturas Subcontas"
+										action="#{iuguMB.clearFieldsFaturasSubContaIugu}" ajax="false"
+										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
+						</shiro:hasAnyRoles>
+					</p:menu>
+				</h:form>
+		    	</ui:insert>          			
 		    </p:layoutUnit>   	    			    		
 		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
 				<ui:insert name="conteudo">						
-									    	            		           
+								    	        		           
                 </ui:insert>
 		    </p:layoutUnit>
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">

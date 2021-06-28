@@ -39,6 +39,21 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.primefaces.model.DefaultStreamedContent;
@@ -58,6 +73,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
+import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -216,7 +232,12 @@ public class InvestidorMB {
 	String labelAnoAnterior = "";
 
 	private boolean imprimirHeaderFooter;
-
+	
+	private boolean debenturesEmitidasXLSGerado;
+	private String pathContrato;
+	private String nomeContrato;
+	private StreamedContent fileXLS;
+		
 	public InvestidorMB() {
 
 	}
@@ -2444,6 +2465,179 @@ public class InvestidorMB {
 
 		return qtdeDias;
 	}
+	
+	public void geraXLSDebenturesEmitidas() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomeContrato = "Relatório Debetures Emitidas.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Emissão");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Debenturista");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Valor Debenture");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Taxa");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Prazo");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Vlr. Parcela Mensal");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Vlr. Parcela Final");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Data Última Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Quitado");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (DebenturesInvestidor record : this.listDebenturesInvestidor) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Emissao
+			cell = row.createCell(0);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataDebentures());
+
+			// Debenturista
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getRecebedor().getNome());
+
+			// Valor Debenture
+			cell = row.createCell(2);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getValorDebenture()).doubleValue());
+
+			// Taxa
+			cell = row.createCell(3);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getTaxa()).doubleValue());
+
+			// Prazo
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPrazo());
+
+			// Parcela Mensal
+			cell = row.createCell(5);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getParcelaMensal()).doubleValue());
+
+			// Parcela Final
+			cell = row.createCell(6);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getParcelaFinal()).doubleValue());
+
+			// Data Ultima PArcela
+			cell = row.createCell(7);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataUltimaParcela());
+			
+			// Quitado
+			cell = row.createCell(8);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getQuitado());
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.debenturesEmitidasXLSGerado = true;
+	}
 
 	public StreamedContent geraPDFInformeRendimentos() {
 		/*
@@ -3541,6 +3735,23 @@ public class InvestidorMB {
 
 		return "/Atendimento/Cobranca/TitulosQuitadosConsultar.xhtml";
 	}
+	
+	public final String clearFieldsDebeturesEmitidas() {
+		this.dataInicio = gerarDataHoje();
+		this.dataFim = gerarDataHoje();
+
+		clearTitulosQuitadosPDFParams();
+
+		return "/Atendimento/Cobranca/DebenturesEmitidasConsultar.xhtml";
+	}
+	
+	public void consultaDebeturesEmitidas() {
+		clearTitulosQuitadosPDFParams();
+
+		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
+		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim);
+	}
+
 
 	public void clearTitulosQuitadosPDFParams() {
 		this.titulosQuitadosPDF = null;
@@ -9519,5 +9730,54 @@ public class InvestidorMB {
 
 	public void setExisteContratoQuitado(boolean existeContratoQuitado) {
 		this.existeContratoQuitado = existeContratoQuitado;
+	}
+
+	public boolean isDebenturesEmitidasXLSGerado() {
+		return debenturesEmitidasXLSGerado;
+	}
+
+	public void setDebenturesEmitidasXLSGerado(boolean debenturesEmitidasXLSGerado) {
+		this.debenturesEmitidasXLSGerado = debenturesEmitidasXLSGerado;
+	}
+
+	public String getPathContrato() {
+		return pathContrato;
+	}
+
+	public void setPathContrato(String pathContrato) {
+		this.pathContrato = pathContrato;
+	}
+
+	public String getNomeContrato() {
+		return nomeContrato;
+	}
+
+	public void setNomeContrato(String nomeContrato) {
+		this.nomeContrato = nomeContrato;
+	}
+	
+	/**
+	 * @return the fileRecibo
+	 */
+	public StreamedContent getFileXLS() {
+		String caminho = this.pathContrato + this.nomeContrato;
+		String arquivo = this.nomeContrato;
+		FileInputStream stream = null;
+
+		this.debenturesEmitidasXLSGerado = false;
+		try {
+			stream = new FileInputStream(caminho);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fileXLS = new DefaultStreamedContent(stream, caminho, arquivo);
+
+		return fileXLS;
+	}
+
+
+	public void setFileXLS(StreamedContent fileXLS) {
+		this.fileXLS = fileXLS;
 	}
 }

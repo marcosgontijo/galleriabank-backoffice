@@ -11,6 +11,41 @@
 			<script src="../../resources/js/functions.js"></script>
 			<h:outputScript name="js/locale-primefaces.js" />
 			<p:messages id="mensagens" showDetail="true" />
+						<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Ficha Principal" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.file}" />
+						</p:commandButton>
+						<p:commandButton value="Ficha Conjuge" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
 			<p:panel id="ConsultaContratos" header="Contratos - Consultar"
 				style="margin-bottom:10px;">		
 				<h:panelGrid columns="2">					

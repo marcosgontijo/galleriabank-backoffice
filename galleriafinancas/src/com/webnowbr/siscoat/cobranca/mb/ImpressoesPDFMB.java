@@ -139,7 +139,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastrosbank.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -1934,7 +1934,7 @@ public class ImpressoesPDFMB {
 			table.addCell(cell1);
 			
 			
-			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a Money Plus SCMEPP Ltda a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
+			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a BMP Money Plus Sociedade de Crédito Direto S.A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -1953,17 +1953,6 @@ public class ImpressoesPDFMB {
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(30f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("_____________________________________________________________________", normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
@@ -1972,37 +1961,24 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(30f);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("LOCAL / DATA", normal));
+			cell1 = new PdfPCell(new Phrase("ASSINATURA", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.BLACK);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("ASSINATURA", normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(10f);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 
 			doc.add(table);
@@ -3896,7 +3872,7 @@ public class ImpressoesPDFMB {
 			table.addCell(cell1);
 			
 			
-			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a Money Plus SCMEPP Ltda a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
+			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a BMP Money Plus Sociedade de Crédito Direto S.A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
