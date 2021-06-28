@@ -58,7 +58,7 @@ public class SimuladorMB {
 		taxaJuros = BigDecimal.valueOf(1.49);
 		parcelas = BigInteger.valueOf(24);
 		carencia = BigInteger.valueOf(2);
-		tipoPessoa = "PJ";
+		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
 		simulacao = null;
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";

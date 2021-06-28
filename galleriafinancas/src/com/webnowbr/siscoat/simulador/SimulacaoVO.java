@@ -145,6 +145,116 @@ public class SimulacaoVO {
 			parcelas.add(parcelaCalculo);
 		}
 	}
+	
+	
+	public void calcularAmericano() {
+
+		valorTotalIOF = BigDecimal.ZERO;
+		valorTotalIOFAdicional = BigDecimal.ZERO;
+
+		parcelas = new ArrayList<SimulacaoDetalheVO>();
+
+		BigDecimal saldoDevedorAnterior = this.valorCredito;
+		BigDecimal saldoDevedorCarencia = BigDecimal
+				.valueOf(FinanceLib.fv(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(),
+						this.carencia.intValue(), 0, this.valorCredito.negate().doubleValue(), false));
+
+		BigDecimal parcelaPGTO = BigDecimal
+				.valueOf(FinanceLib.pmt(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
+						this.qtdParcelas.subtract(carencia).intValue(), // prazo
+						saldoDevedorCarencia.negate().doubleValue(), // valor credito - VP
+						Double.valueOf("0"), // VF
+						false // pagamento no inico
+				));
+
+		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO();
+		parcelaCalculo.setNumeroParcela(BigInteger.ZERO);
+		parcelaCalculo.setValorParcela(BigDecimal.ZERO);
+		parcelaCalculo.setJuros(BigDecimal.ZERO);
+		parcelaCalculo.setAmortizacao(BigDecimal.ZERO);
+		parcelaCalculo.setValorParcela(BigDecimal.ZERO);
+		parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
+		parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+		parcelaCalculo.setSaldoDevedorInicial(this.valorCredito);
+		parcelas.add(parcelaCalculo);
+
+		// seguros
+		BigDecimal valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
+		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
+		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
+
+		for (int i = 1; i <= this.qtdParcelas.intValue(); i++) {
+			parcelaCalculo = new SimulacaoDetalheVO();
+
+			BigDecimal juros = BigDecimal
+					.valueOf(FinanceLib.fv(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
+							1, // prazo
+							0, // parcela
+							saldoDevedorAnterior.negate().doubleValue(), // valor presente
+							false));
+			juros = juros.subtract(saldoDevedorAnterior);
+
+			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
+
+			BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(this.seguroMIP.divide(BigDecimal.valueOf(100)));
+
+			valorSeguroMIPParcela = valorSeguroMIPParcela.add(valorSeguroMIP);
+
+			valorSeguroDFIParcela = valorSeguroDFIParcela.add(valorSeguroDFI);
+
+			BigDecimal parcelaAmortizacao = BigDecimal.ZERO;
+
+			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
+				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
+				parcelaCalculo.setJuros(BigDecimal.ZERO);
+				parcelaCalculo.setAmortizacao(BigDecimal.ZERO);
+				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
+				parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
+				parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+			} else {
+
+				if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
+					parcelaCalculo
+							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+				} else {
+					parcelaCalculo.setValorParcela(parcelaPGTO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+					parcelaAmortizacao = parcelaPGTO;
+				}
+				parcelaCalculo.setJuros(juros);
+				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));
+
+				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
+				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
+
+//				long diasVencimento = i * 30l;
+				long diasVencimento = (long) DateUtil.getDaysBetweenDates(dataSimulacao,
+						DateUtil.adicionarPeriodo(dataSimulacao, i, Calendar.MONTH));
+				if (diasVencimento > 365) {
+					diasVencimento = 365l;
+				}
+
+				parcelaCalculo.setValorIOF(parcelaCalculo.getAmortizacao()
+						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento))));
+				parcelaCalculo.setValorIOFAdicional(parcelaCalculo.getAmortizacao().multiply(tarifaIOFAdicional));
+
+				valorTotalIOF = valorTotalIOF.add(parcelaCalculo.getValorIOF());
+				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
+
+				valorSeguroDFIParcela = BigDecimal.ZERO;
+				valorSeguroMIPParcela = BigDecimal.ZERO;
+			}
+
+			BigDecimal saldo = saldoDevedorAnterior.add(juros).subtract(parcelaAmortizacao);
+			if (saldo.compareTo(BigDecimal.ZERO) == -1)
+				saldo = BigDecimal.ZERO;
+
+			parcelaCalculo.setSaldoDevedorInicial(saldo);
+
+			saldoDevedorAnterior = saldo;
+
+			parcelas.add(parcelaCalculo);
+		}
+	}
 
 	public BigDecimal getIOFTotal() {
 		return this.valorTotalIOF.add(this.valorTotalIOFAdicional);

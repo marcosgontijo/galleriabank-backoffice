@@ -32,7 +32,7 @@
 			<staticText>
 				<reportElement x="-1" y="3" width="555" height="20" uuid="8a8e70c9-92a4-4111-83b2-bac4a998d76e"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true" isItalic="true"/>
+					<font fontName="SansSerif" isBold="true" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[* todas as parcelas nessa simulação foram calculadas com IPCA a 0%]]></text>
 			</staticText>
@@ -44,7 +44,7 @@
 			<staticText>
 				<reportElement mode="Opaque" x="-1" y="0" width="41" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="92ee04e5-1f24-4325-b63a-5942e14d4c4a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Parcela]]></text>
 			</staticText>
@@ -55,7 +55,7 @@
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Amortizacao]]></text>
 			</staticText>
@@ -65,7 +65,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Juros]]></text>
 			</staticText>
@@ -75,14 +75,14 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Seguro MIP]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="289" y="0" width="80" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="0ec331e2-d3a8-4413-b51e-ef845258a927"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Seguro DFI]]></text>
 			</staticText>
@@ -92,7 +92,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Valor Parcela]]></text>
 			</staticText>
@@ -101,7 +101,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Saldo Devedor]]></text>
 			</staticText>
@@ -116,7 +116,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroParcela}]]></textFieldExpression>
 			</textField>
@@ -125,7 +125,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amortizacao}]]></textFieldExpression>
 			</textField>
@@ -134,7 +134,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{juros}]]></textFieldExpression>
 			</textField>
@@ -143,7 +143,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{seguroMIP}]]></textFieldExpression>
 			</textField>
@@ -154,7 +154,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{seguroDFI}]]></textFieldExpression>
 			</textField>
@@ -163,7 +163,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorParcela}]]></textFieldExpression>
 			</textField>
@@ -172,7 +172,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{saldoDevedorInicial}]]></textFieldExpression>
 			</textField>
