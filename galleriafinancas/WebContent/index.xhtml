@@ -83,6 +83,10 @@
 							<p:menuitem value="CRM"
 								action="#{crmMB.clearFields}"
 								ajax="false" icon="ui-icon ui-icon-newwin"
+								styleClass="itemMenu" />								
+							<p:menuitem value="Simular Operação"
+								action="#{simuladorMB.clearFields}"
+								ajax="false" icon="ui-icon ui-icon-newwin"
 								styleClass="itemMenu" />
 						</p:submenu>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
