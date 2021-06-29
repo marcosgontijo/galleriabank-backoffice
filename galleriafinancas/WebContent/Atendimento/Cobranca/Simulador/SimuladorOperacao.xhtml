@@ -27,8 +27,9 @@
    		</h:outputStylesheet>
 
 		<h:form id="form" style="margin-bottom:10px;">
-			<script src="../../resources/js/functions.js"></script>
-			<h:outputScript name="../js/locale-primefaces.js" />
+		
+			<script src="resources/js/functions.js"></script>
+			<h:outputScript name="/js/locale-primefaces.js" />
 			<p:messages id="mensagens" showDetail="true" />
 
 			<p:panel id="DemonstrativoResultados" header="Simular Operação"
@@ -107,7 +108,7 @@
 							<f:selectItem itemValue="PRICE" itemLabel="Price" />
 						</p:selectOneMenu>
 
-						<p:outputLabel for="identificacao" value="Identificação: "
+						<p:outputLabel for="identificacao" value="Nome do Cliente: "
 							styleClass="labelBold" />
 						<p:inputText id="identificacao"
 							value="#{simuladorMB.identificacao}" required="false">
