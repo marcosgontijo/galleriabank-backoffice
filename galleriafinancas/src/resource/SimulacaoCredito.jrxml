@@ -126,16 +126,6 @@
 				<text><![CDATA[Valor a ser Liberado]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="260" y="260" width="270" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="4fc1c3dd-3c7d-4029-aa58-cbbf1708dca2">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Valor Total do Empréstimo]]></text>
-			</staticText>
-			<staticText>
 				<reportElement mode="Opaque" x="300" y="65" width="180" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="ab63a49b-c7bc-4107-a6e3-245c72dc20d8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -226,11 +216,22 @@
 				<text><![CDATA[Carência]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="300" y="260" width="180" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="368cf733-4ff1-484d-9b91-95090cca9d52">
+				<reportElement mode="Opaque" x="300" y="260" width="180" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="076327f4-3fa5-4fec-bdb6-2a1b1114d176">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="280" y="260" width="220" height="25" forecolor="#FFFFFF" backcolor="#823549" uuid="4fc1c3dd-3c7d-4029-aa58-cbbf1708dca2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[Valor Total do Empréstimo]]></text>
 			</staticText>
