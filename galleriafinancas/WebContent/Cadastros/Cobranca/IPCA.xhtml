@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="../../resources/js/functions.js"></script>
+			<h:outputScript name="js/locale-primefaces.js" />
+			<p:panel id="PanelIPCA"
+				header="Tabela de IPCA"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<p:panel id="PanelIPCAInputs"
+						header="Dados Atual"
+						style="margin-bottom:10px;margin-top:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="data" value="Data Atualização: "
+						styleClass="labelBold" style="margin-right: 10px;" />
+						<p:datePicker id="data" view="month" value="#{ipcaMB.data}" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+	
+						<p:outputLabel for="taxa" value="Taxa:  " styleClass="labelBold"/>
+						<p:inputText id="taxa"
+							value="#{ipcaMB.taxa}"
+							onkeyup="mascara_num(this);﻿" required="true"
+							converter="bigDecimalConverter"/>
+					</h:panelGrid>
+				</p:panel>
+	
+				<div align="center">
+					<p:commandButton value="Inserir IPCA" ajax="false" icon="ui-icon-check"
+						action="#{ipcaMB.inserirIPCA}" style="TEXT-DECORATION: bold;margin-bottom: 25px;" update="PanelIPCA"/>
+				</div>
+			
+ 				<p:dataTable id="dtIPCA" var="ipca" value="#{ipcaMB.listIPCA}" paginator="true" rows="20" lazy="true"
+	   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{ipca.data}" sortOrder="desc">	        
+			        <p:column style="text-align: center;" headerText="Data" sortBy="#{ipca.data}" sortOrder="desc">
+			            <h:outputText value="#{ipca.data}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Taxa" >
+						<h:outputText value="#{ipca.taxa}"
+							converter="bigDecimalConverter" />
+					</p:column>			        
+			        <p:column style="width:120px;">
+		                <p:commandButton action="#{ipcaMB.excluirIPCA}" icon="ui-icon-trash" title="Excluir" update=":form:PanelIPCA">
+		                	<f:setPropertyActionListener target="#{ipcaMB.selectedIPCA}" value="#{ipca}" />
+		                    <p:confirm header="Confirmação" message="Deseja realmente excluir esta taxa?" icon="ui-icon-alert" />		                	
+		                </p:commandButton> 
+		                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+					    </p:confirmDialog>   
+		            </p:column>			        		               		        			        			           			 		
+				</p:dataTable>				
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
