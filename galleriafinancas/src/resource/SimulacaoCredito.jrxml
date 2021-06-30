@@ -126,7 +126,7 @@
 				<text><![CDATA[Valor a ser Liberado]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="280" y="260" width="220" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="4fc1c3dd-3c7d-4029-aa58-cbbf1708dca2">
+				<reportElement mode="Transparent" x="260" y="260" width="270" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="4fc1c3dd-3c7d-4029-aa58-cbbf1708dca2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
