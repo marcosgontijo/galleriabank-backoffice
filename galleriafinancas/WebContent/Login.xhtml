@@ -15,7 +15,7 @@
         <link rel="stylesheet" type="text/css" href="#{resource['css/login_util.css']}" title="" media="all" /> 
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700" rel="stylesheet"  title="" media="all" />    
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>   
-        <h:outputScript name="#{resource['js/login_main.js']}" library="javascript" />
+        <script src="#{request.contextPath}/resources/js/login_main.js" library="javascript"></script>
     </h:head>
 	<h:body>   
 		<h:outputText value="#{loginBean.initialize}"/>  		

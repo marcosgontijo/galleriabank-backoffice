@@ -6,8 +6,8 @@
 	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
 	<ui:define name="conteudo">
 		<h:form id="form">
-			<script src="../../resources/js/functions.js"></script>
-			<h:outputScript name="js/locale-primefaces.js" />
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:panel id="PanelTaxaJuros"
 				header="Alteração da Taxa de Juros - SubContas IUGU"
 				style="margin-bottom:10px;">

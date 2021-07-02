@@ -9,10 +9,12 @@
 
 <f:view contentType="text/html">
 	<h:head>
+		
 	</h:head>
 	<h:body>
 		<ui:composition template="../index.xhtml">
-			<ui:define name="menu">
+			
+			<ui:define name="menu">  
 				<h:form style="margin-bottom:10px;">
 					<p:menu style="width: 227px; ">						
 						<p:submenu label="Gerenciamento" styleClass="titulosMenu">
@@ -236,7 +238,7 @@
 						</shiro:hasAnyRoles>
 					</p:menu>
 				</h:form>
-			</ui:define>
+			</ui:define>		
 		</ui:composition>
 	</h:body>
 </f:view>

@@ -7,9 +7,9 @@
 			    template="../MenuAtendimento.xhtml">
 	<ui:define name="conteudo">  
 		<h:form id="form">		
-		 	<script src="../../resources/js/functions.js"></script>
-		 	<h:outputScript name="js/locale-primefaces.js" />			
-		 	<link rel="stylesheet" type="text/css" href="../../resources/css/Style.css" title="" media="all" /> 	
+		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	
 			<p:panel id="DadosParcelas" header="Dados da Parcela" style="margin-bottom:10px;">		
 				<p:focus /> 
 				<p:growl id="msgs" showDetail="true"/>
