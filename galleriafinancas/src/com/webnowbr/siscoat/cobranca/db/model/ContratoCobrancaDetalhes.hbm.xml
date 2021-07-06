@@ -28,6 +28,9 @@
 		<property name="vlrJuros" type="big_decimal">
 			<column name="VLRJUROS" />
 		</property>
+		<property name="ipca" type="big_decimal">
+			<column name="ipca" />
+		</property>
 		<property name="txMulta" type="big_decimal">
 			<column name="txMulta" />
 		</property>

@@ -1,6 +1,9 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,7 +17,11 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 
 
@@ -52,6 +59,8 @@ public class IPCAMB {
 					
 			ipcaDao.create(ipca);
 			
+			atualizaValoresContratos();
+			
 			clearFieldsIPCA();
 			
 			context.addMessage(null, new FacesMessage(
@@ -60,6 +69,122 @@ public class IPCAMB {
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "[IPCA] A Data informada já possui Taxa!", ""));
 		}
+	}
+	
+	public void atualizaValoresContratos() {
+		// busca contratos com checkcorrigido
+		//faz calculos
+		// atualiza parcela		
+		
+		// busca contratos com check corrigidoIPCA
+		IPCADao IPCADao = new IPCADao();
+		List<ContratoCobrancaDetalhes> listaParcelas = new ArrayList<ContratoCobrancaDetalhes>();
+		
+		// Prepara as datas para consulta das parcelas
+		// a primeira data deve ser o dia 14 do mês seguinte ao inserido na taxa
+		Date dataInicioConsulta = getDataComAcrescimoDeMes(this.data);
+		// a segunda data deve ser o dia 14 do mês seguinte a data inicio
+		Date dataFimConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
+		
+		listaParcelas = IPCADao.getContratosPorInvestidorInformeRendimentos(dataInicioConsulta, dataFimConsulta);
+		
+		if (listaParcelas.size() > 0) {
+			if (this.taxa.compareTo(BigDecimal.ZERO) == 1) {
+				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
+				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
+					// se primeira parcela calcula com o valor da CCB
+					if (parcela.getNumeroParcela().equals("1")) {
+						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
+											
+						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));					
+					} else {
+						// se não calcula com o saldo devedor
+						parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaCalculo));
+					}
+					
+					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
+					
+					// persistir parcela
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					contratoCobrancaDetalhesDao.merge(parcela);				
+				}
+			}
+		}
+	}
+	
+	public void reProcessaIPCAContrato(ContratoCobranca contrato) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		IPCADao IPCADao = new IPCADao();
+		
+		if (contrato.isCorrigidoIPCA()) {
+			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+				if (!parcela.isParcelaPaga()) {
+					// get a taxa do mês
+					Date dataConsulta = getDataComMesAnterior(parcela.getDataVencimento());
+					BigDecimal taxaMesReferencia = IPCADao.getTaxaIPCAMes(dataConsulta);
+					if (taxaMesReferencia.compareTo(BigDecimal.ZERO) == 1) {									
+						taxaMesReferencia = taxaMesReferencia.divide(BigDecimal.valueOf(100));
+						
+						// se primeira parcela calcula com o valor da CCB
+						if (parcela.getNumeroParcela().equals("1")) {							
+							parcela.setIpca(contrato.getValorCCB().multiply(taxaMesReferencia));					
+						} else {
+							// se não calcula com o saldo devedor
+							parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaMesReferencia));
+						}
+						
+						parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
+						
+						// persistir parcela
+						ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+						contratoCobrancaDetalhesDao.merge(parcela);	
+					}
+				}
+			}
+			
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "[IPCA] Contrato corrigido pelo IPCA com sucesso!", ""));
+		} else {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "[IPCA] Este contrato não está configurado para ser corrigido pelo IPCA!", ""));
+		}		
+	}
+	
+	public Date getDataComMesAnterior(Date dataOriginal) {
+		Date dataRetorno = new Date();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar calendar = Calendar.getInstance(zone, locale);	
+		
+		calendar.setTime(dataOriginal);
+		calendar.add(Calendar.MONTH, -1);		
+		calendar.set(Calendar.DAY_OF_MONTH, 14);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		
+		return calendar.getTime();
+	}
+	
+	public Date getDataComAcrescimoDeMes(Date dataOriginal) {
+		Date dataRetorno = new Date();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar calendar = Calendar.getInstance(zone, locale);	
+		
+		calendar.setTime(dataOriginal);
+		calendar.add(Calendar.MONTH, 1);		
+		calendar.set(Calendar.DAY_OF_MONTH, 14);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		
+		return calendar.getTime();
 	}
 	
 	public void excluirIPCA() {

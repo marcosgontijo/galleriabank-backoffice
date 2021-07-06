@@ -223,6 +223,9 @@
 		<property name="geraParcelaFinal" type="boolean">
 			<column name="GERAPARCELAFINAL" />
 		</property>
+		<property name="corrigidoIPCA" type="boolean">
+			<column name="corrigidoIPCA" />
+		</property>
 		<property name="leadCompleto" type="boolean">
 			<column name="leadCompleto" />
 		</property>
