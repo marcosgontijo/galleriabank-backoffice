@@ -10,8 +10,8 @@
 
 	<ui:define name="conteudo">  
 		<h:form id="form" style="margin-bottom:10px;">	
-			<script src="../../resources/js/functions.js"></script>
-		 	<h:outputScript name="js/locale-primefaces.js" />				
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>				
 			<p:messages id="mensagens" showDetail="true"/>		
 			<p:panel id="PanelPDF" header="Impressão em PDF / XLS Gerada com Sucesso" style="margin-bottom:10px;" rendered="#{geracaoRemessaMB.gerouRemessa}">
 				<p:focus /> 

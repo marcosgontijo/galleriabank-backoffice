@@ -7,10 +7,10 @@
 	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
 
 	<ui:define name="conteudo">
-		<script src="../../resources/js/functions.js"></script>		
+		<script src="#{request.contextPath}/resources/js/functions.js"></script>		
 		<h:form id="form" style="margin-bottom:10px;">
 			<p:messages id="mensagens" showDetail="true" />		
-			<h:outputScript name="js/locale-primefaces.js" />	
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" ></script>	
 			<p:panel id="CobrancaIugu" header="Conciliação de Saques"
 				style="margin-bottom:10px;">
 				<h:panelGrid columns="3">

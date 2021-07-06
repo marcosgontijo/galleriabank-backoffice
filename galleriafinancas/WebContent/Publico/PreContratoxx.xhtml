@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
         <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" /> 
-        <h:outputScript name="#{resource['js/functions.js']}" library="javascript" />
+        <script src="#{request.contextPath}/resources/js/functions.js"></script>
         
         <style>
 	        .ui-layout-west, .ui-layout-west .ui-layout, .ui-layout-west .ui-layout-bd, .ui-layout-west .ui-layout-unit, .ui-layout-west .ui-widget-content{
@@ -25,8 +25,8 @@
         </style>
     </h:head>
 	<h:body>    
-	<script src="../resources/js/functions.js"></script>	
-	<script src="../resources/js/locale-primefaces.js"></script>
+	<script src="#{request.contextPath}/resources/js/functions.js"></script>	
+	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
 		<p:layout fullPage="true" > 		    
 	  		<p:layoutUnit position="north" size="130" resizable="true" collapsible="true" style="BORDER:none; overflow: hidden;FONT-SIZE: 10pt;" spacingOpen="0">
 	  			<h:form id="menuSuperior">
@@ -46,9 +46,9 @@
 		    </p:layoutUnit>   	    			    		
 		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0" style="padding: 15px;">
 				<h:form id="form">		
-				 	<script src="../../resources/js/functions.js"></script>
-				 	<h:outputScript name="js/locale-primefaces.js" />			
-				 	<link rel="stylesheet" type="text/css" href="../../resources/css/Style.css" title="" media="all" /> 	
+				 	<script src="#{request.contextPath}/resources/js/functions.js"></script>				 	
+				 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>	
+				 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" /> 	
 					<p:panel id="PanelLocador" header="Pré-Contrato" style="margin-bottom:10px;">
 						<p:focus /> 
 						<p:messages/>

@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="#{resource['css/Style.css']}" title="" media="all" />
     <link rel="stylesheet" type="text/css" href="#{resource['css/login-box.css']}" title="" media="all" />  
 </h:head>
-<h:body style="background: #41a1c9 url(./resources/image/wallpaper-login.jpg);">
+<h:body style="background: #41a1c9 url(#{request.contextPath}/resources/image/wallpaper-login.jpg);">
 <!--Sem funcao - utilizado para executar a inicializacao do banco de dados -->
 <h:outputText value="#{loginBean.initialize}"/>  
 
@@ -43,7 +43,7 @@
 				<!-- <span class="login-box-options"><a href="#" style="margin-left:120px;"><h:outputLabel for="esqueceuSenha" value="#{bundle.Login_ForgotPsw}?" /></a></span> -->
 				
 				<div style="margin: 0 auto; width: 50%;;"><p:commandLink id="aa" actionListener="#{loginBean.loginNow}" update="messages"  ajax="true">
-					<img src="./resources/image/login-btn.png" width="140" height="57" style="margin-left:30px;padding-top: 30px" />
+					<img src="#{request.contextPath}/resources/image/login-btn.png" width="140" height="57" style="margin-left:30px;padding-top: 30px" />
 				</p:commandLink>
 				</div>
 				<p:defaultCommand target="aa" />		
