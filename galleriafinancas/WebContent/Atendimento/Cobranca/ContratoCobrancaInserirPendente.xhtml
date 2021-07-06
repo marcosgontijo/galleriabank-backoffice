@@ -1111,6 +1111,10 @@
 						<p:inputText id="txHonorario" value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);"  converter="bigDecimalConverter"/>
 						<p:spacer width="10"/>				
 					</h:panelGrid>		
+					<h:panelGrid columns="2">	
+						<p:outputLabel value="Corrigido IPCA: "/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
+					</h:panelGrid>	
 					<h:panelGrid columns="4">		
 						<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "  />
 						<p:inputText id="qtdeParcelas" value="#{contratoCobrancaMB.qtdeParcelas}" style="width: 30px;"/>

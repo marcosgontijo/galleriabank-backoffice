@@ -1357,6 +1357,10 @@
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
 							<p:spacer width="10" />
+							
+							<p:outputLabel value="Corrigido IPCA: "/>
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
+							<p:spacer width="10" />
 						</h:panelGrid>
 					</p:panel>
 
@@ -1586,6 +1590,10 @@
 					            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
 					            </h:outputText>
 					        </p:column>		
+					        <p:column style="text-align: center;width: 110px;" headerText="IPCA (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+					            <h:outputText value="#{parcelas.ipca}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>						        
 					         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
 					            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
 					            </h:outputText>

@@ -129,6 +129,8 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor9;
 	private Date dataInclusaoRecebedor10;
 	
+	private boolean corrigidoIPCA;
+	
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
 	private boolean exibeRecebedor3;
@@ -3122,5 +3124,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setMotivoReprovaLead(String motivoReprovaLead) {
 		this.motivoReprovaLead = motivoReprovaLead;
+	}
+
+	public boolean isCorrigidoIPCA() {
+		return corrigidoIPCA;
+	}
+
+	public void setCorrigidoIPCA(boolean corrigidoIPCA) {
+		this.corrigidoIPCA = corrigidoIPCA;
 	}
 }

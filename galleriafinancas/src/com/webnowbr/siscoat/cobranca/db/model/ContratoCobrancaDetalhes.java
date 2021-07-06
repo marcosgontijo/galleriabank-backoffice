@@ -33,6 +33,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrComissao;
 	private BigDecimal vlrRecebido;
 	
+	private BigDecimal ipca;
+	
 	private BigDecimal vlrJurosParcela;
 	private BigDecimal vlrAmortizacaoParcela;
 	
@@ -55,6 +57,11 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	private Date dataUltimoPagamento;
 	private BigDecimal valorTotalPagamento;
+	
+	/**
+	 * Não persistido
+	 */
+	private long idContrato;
 	
 	public ContratoCobrancaDetalhes(){
 		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
@@ -454,5 +461,21 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setValorTotalPagamento(BigDecimal valorTotalPagamento) {
 		this.valorTotalPagamento = valorTotalPagamento;
+	}
+
+	public BigDecimal getIpca() {
+		return ipca;
+	}
+
+	public void setIpca(BigDecimal ipca) {
+		this.ipca = ipca;
+	}
+
+	public long getIdContrato() {
+		return idContrato;
+	}
+
+	public void setIdContrato(long idContrato) {
+		this.idContrato = idContrato;
 	}
 }

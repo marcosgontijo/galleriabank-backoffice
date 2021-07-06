@@ -1763,6 +1763,10 @@
 				            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
 				        </p:column>		
+				        <p:column style="text-align: center;width: 110px;" headerText="IPCA (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+					            <h:outputText value="#{parcelas.ipca}" converter="bigDecimalConverter">
+					            </h:outputText>
+					        </p:column>	
 				         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
 				            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
