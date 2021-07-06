@@ -24,18 +24,22 @@
 			.parametrosValor { 
 				width:200px
 			}  
+			.padRight20{
+				padding-right: 20px;
+			}
    		</h:outputStylesheet>
 
 		<h:form id="form" style="margin-bottom:10px;">
-		
-		    <script src="#{request.contextPath}/resources/js/functions.js"></script>
-		    <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
-	
+
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script
+				src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+
 			<p:messages id="mensagens" showDetail="true" />
 
 			<p:panel id="DemonstrativoResultados" header="Simular Operação"
 				style="margin-bottom:10px;">
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" columnClasses="padRight20">
 					<h:panelGrid columns="2"
 						columnClasses="parametrosLabel, parametrosValor">
 						<p:outputLabel for="valorImovel" value="Valor Imóvel: "
@@ -55,29 +59,25 @@
 
 						<p:outputLabel for="taxaJuros" value="Taxa Juros: "
 							styleClass="labelBold" />
-						<p:selectOneMenu id="taxaJuros" value="#{simuladorMB.taxaJuros}"
-							required="true" style="width: 50px;">
-							<f:selectItem itemLabel="1,49%" itemValue="1.49" />
-							<f:selectItem itemLabel="1,69%" itemValue="1.69" />
-							<f:selectItem itemLabel="1,89%" itemValue="1.89" />
-							<f:selectItem itemLabel="2,09%" itemValue="2.09" />
-							<f:selectItem itemLabel="2,29%" itemValue="2.29" />
-							<f:selectItem itemLabel="2,49%" itemValue="2.49" />
-						</p:selectOneMenu>
+						<h:panelGrid columns="2">
+							<p:inputText id="taxaJuros" value="#{simuladorMB.taxaJuros}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 3, event, 2);" required="true"
+								converter="bigDecimalConverter">
+							</p:inputText>
+							<p:outputLabel value="%" styleClass="labelBold" />
+						</h:panelGrid>
 
+						
 						<p:outputLabel for="prazo" value="Qtd parcelas: "
 							styleClass="labelBold" />
-						<p:selectOneMenu id="prazo" value="#{simuladorMB.parcelas}"
-							required="true" style="width: 50px;">
-							<f:selectItem itemLabel="36" itemValue="36" />
-							<f:selectItem itemLabel="48" itemValue="48" />
-							<f:selectItem itemLabel="60" itemValue="60" />
-							<f:selectItem itemLabel="72" itemValue="72" />
-							<f:selectItem itemLabel="84" itemValue="84" />
-							<f:selectItem itemLabel="96" itemValue="96" />
-							<f:selectItem itemLabel="108" itemValue="108" />
-							<f:selectItem itemLabel="120" itemValue="120" />
-						</p:selectOneMenu>
+							<h:panelGrid columns="2">
+							<p:inputText id="prazo" value="#{simuladorMB.parcelas}"
+								onkeypress="return isNumberKey(event);"									
+								 required="true"  maxlength="3"								>
+							</p:inputText>
+							<p:outputLabel value="meses" styleClass="labelBold" />
+						</h:panelGrid>						
 
 						<p:outputLabel for="carencia" value="Carência: "
 							styleClass="labelBold" />
@@ -137,7 +137,7 @@
 					<f:facet name="header">
 						<p:commandButton value="Gerar PDF" ajax="false"
 							icon="ui-icon-print" action="#{simuladorMB.download}" />
-							
+
 					</f:facet>
 
 					<p:column style="text-align: center;" headerText="Parcela">

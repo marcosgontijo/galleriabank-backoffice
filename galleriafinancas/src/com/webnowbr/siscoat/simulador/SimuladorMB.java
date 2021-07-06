@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -53,8 +54,8 @@ public class SimuladorMB {
 	private SimulacaoVO simulacao;
 
 	public String clearFields() {
-		valorImovel =  null; //BigDecimal.valueOf(1000000);
-		valorCredito =  null; // BigDecimal.valueOf(200000);  
+		valorImovel = null; // BigDecimal.valueOf(1000000);
+		valorCredito = null; // BigDecimal.valueOf(200000);
 		taxaJuros = BigDecimal.valueOf(1.49);
 		parcelas = BigInteger.valueOf(24);
 		carencia = BigInteger.valueOf(2);
@@ -65,6 +66,34 @@ public class SimuladorMB {
 	}
 
 	public String simular() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+
+		this.simulacao = new SimulacaoVO();
+
+		Map<String, String> validacao = new HashMap<String, String>();
+		if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
+			validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
+		}
+		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 0) {
+			validacao.put("Valor Empréstimo !!", "O valor de empréstimo não foi informado");
+		}
+		if (this.valorImovel.compareTo(BigDecimal.ZERO) == 0) {
+			validacao.put("Valor Imóvel !!", "O valor de imóvel não foi informado");
+		}
+		if (this.valorCredito.compareTo(BigDecimal.ZERO) ==1 && this.valorImovel.compareTo(BigDecimal.ZERO) ==1
+				&& this.valorCredito.compareTo(valorImovel) == 1) {
+			validacao.put("Valores inválidos!!", "O imóvel deve ter valor maior que o empréstimo");
+		}
+		if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
+			validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
+		}
+		if (!CommonsUtil.semValor(validacao)) {
+			for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
+				facesContext.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
+			}
+			return null;
+		}
 
 		BigDecimal custoEmissaoValor = this.custoEmissaoMinimo;
 		if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
@@ -96,15 +125,10 @@ public class SimuladorMB {
 		simulador.setCustoEmissaoValor(custoEmissaoValor);
 		simulador.calcularPMT();
 
-		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128)
-				.add(simulador.getCustoEmissaoValor().divide(simulador.getValorCredito(), MathContext.DECIMAL128));
+	
+		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
 		fator = BigDecimal.ONE.subtract(fator);
-		BigDecimal valorBruto = simulador.getValorCredito().divide(fator, MathContext.DECIMAL128);
-
-		if (valorBruto.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-				.compareTo(this.custoEmissaoMinimo) > 0) {
-			custoEmissaoValor = valorBruto.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-		}
+		BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator, MathContext.DECIMAL128);
 
 		
 		SimulacaoVO simuladorLiquido = new SimulacaoVO();
@@ -119,10 +143,11 @@ public class SimuladorMB {
 		simuladorLiquido.setTaxaJuros(this.taxaJuros);
 		simuladorLiquido.setCarencia(this.carencia);
 		simuladorLiquido.setQtdParcelas(this.parcelas);
-		simuladorLiquido.setValorImovel(this.valorImovel);
+		simuladorLiquido.setValorImovel(this.valorImovel);		
 		simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
 		simuladorLiquido.calcularPMT();
 
+		
 		this.simulacao = simuladorLiquido;
 		return null;
 	}
@@ -139,10 +164,10 @@ public class SimuladorMB {
 					FacesContext.getCurrentInstance());
 
 			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-			if( CommonsUtil.semValor(identificacao) )
+			if (CommonsUtil.semValor(identificacao))
 				gerador.open("Galleria Bank - simulação.pdf");
 			else
-				gerador.open(String.format("Galleria Bank - simulação %s.pdf",  this.identificacao));
+				gerador.open(String.format("Galleria Bank - simulação %s.pdf", this.identificacao));
 			gerador.feed(jp);
 			gerador.close();
 
@@ -156,13 +181,13 @@ public class SimuladorMB {
 
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCredito");
 		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelas");
-		InputStream  logoStream =  getClass().getResourceAsStream("/resource/GalleriaBank.png");
-		
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
-		
-		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));		
-		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));  
+
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
 
 		List<SimulacaoVO> list = new ArrayList<SimulacaoVO>();
 		list.add(simulacao);
