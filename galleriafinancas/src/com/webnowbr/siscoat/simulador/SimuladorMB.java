@@ -56,8 +56,8 @@ public class SimuladorMB {
 	public String clearFields() {
 		valorImovel = null; // BigDecimal.valueOf(1000000);
 		valorCredito = null; // BigDecimal.valueOf(200000);
-		taxaJuros = BigDecimal.valueOf(1.49);
-		parcelas = BigInteger.valueOf(24);
+		taxaJuros =  null; BigDecimal.valueOf(1.49);
+		parcelas  = null; BigInteger.valueOf(24);
 		carencia = BigInteger.valueOf(2);
 		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
