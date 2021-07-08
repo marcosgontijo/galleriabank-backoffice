@@ -143,15 +143,32 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>			        
-			        <p:column styleClass="colunaResponsiva">			        
+			        <p:column styleClass="colunaResponsiva">	
+			       		<shiro:hasAnyRoles name="PRECOBRANCA">  
+				        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>		
+			            </shiro:hasAnyRoles>        
 		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
-		                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-		                </p:commandButton>
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>	
 		                </shiro:hasAnyRoles>	
-						<p:spacer width="10" height="10"/>	
+		                <shiro:hasAnyRoles name="PRECOBRANCA">  	                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>		                	                						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

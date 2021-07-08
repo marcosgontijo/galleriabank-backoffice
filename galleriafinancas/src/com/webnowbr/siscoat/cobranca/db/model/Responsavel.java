@@ -29,6 +29,7 @@ public class Responsavel implements Serializable {
 	private String cnpj;
 	
 	private String cep;
+	private Responsavel donoResponsavel;
 	
 	public Responsavel(){
 	}
@@ -314,5 +315,13 @@ public class Responsavel implements Serializable {
 
 	public void setContato(String contato) {
 		this.contato = contato;
+	}
+
+	public Responsavel getDonoResponsavel() {
+		return donoResponsavel;
+	}
+
+	public void setDonoResponsavel(Responsavel donoResponsavel) {
+		this.donoResponsavel = donoResponsavel;
 	}
 }
