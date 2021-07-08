@@ -56,8 +56,10 @@ public class SimuladorMB {
 	public String clearFields() {
 		valorImovel = null; // BigDecimal.valueOf(1000000);
 		valorCredito = null; // BigDecimal.valueOf(200000);
-		taxaJuros =  null; BigDecimal.valueOf(1.49);
-		parcelas  = null; BigInteger.valueOf(24);
+		taxaJuros = null;
+		BigDecimal.valueOf(1.49);
+		parcelas = null;
+		BigInteger.valueOf(24);
 		carencia = BigInteger.valueOf(2);
 		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
@@ -80,7 +82,7 @@ public class SimuladorMB {
 		if (this.valorImovel.compareTo(BigDecimal.ZERO) == 0) {
 			validacao.put("Valor Imóvel !!", "O valor de imóvel não foi informado");
 		}
-		if (this.valorCredito.compareTo(BigDecimal.ZERO) ==1 && this.valorImovel.compareTo(BigDecimal.ZERO) ==1
+		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 1 && this.valorImovel.compareTo(BigDecimal.ZERO) == 1
 				&& this.valorCredito.compareTo(valorImovel) == 1) {
 			validacao.put("Valores inválidos!!", "O imóvel deve ter valor maior que o empréstimo");
 		}
@@ -123,14 +125,14 @@ public class SimuladorMB {
 		simulador.setQtdParcelas(this.parcelas);
 		simulador.setValorImovel(this.valorImovel);
 		simulador.setCustoEmissaoValor(custoEmissaoValor);
-		simulador.calcularPMT();
+		simulador.setTipoCalculo(tipoCalculo);
+		simulador.calcular();
 
-	
 		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
 		fator = BigDecimal.ONE.subtract(fator);
-		BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator, MathContext.DECIMAL128);
+		BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
+				MathContext.DECIMAL128);
 
-		
 		SimulacaoVO simuladorLiquido = new SimulacaoVO();
 		simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
 		simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
@@ -143,12 +145,14 @@ public class SimuladorMB {
 		simuladorLiquido.setTaxaJuros(this.taxaJuros);
 		simuladorLiquido.setCarencia(this.carencia);
 		simuladorLiquido.setQtdParcelas(this.parcelas);
-		simuladorLiquido.setValorImovel(this.valorImovel);		
+		simuladorLiquido.setValorImovel(this.valorImovel);
 		simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
-		simuladorLiquido.calcularPMT();
+		simuladorLiquido.setTipoCalculo(tipoCalculo);
+		simuladorLiquido.calcular();
 
-		
 		this.simulacao = simuladorLiquido;
+		this.simulacao.setTipoCalculo(tipoCalculo);
+		this.simulacao.setTipoPessoa(tipoPessoa);
 		return null;
 	}
 
