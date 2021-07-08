@@ -2,13 +2,13 @@ package com.webnowbr.siscoat.simulador;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.formula.functions.FinanceLib;
-import org.joda.time.DateTime;
 
 import com.webnowbr.siscoat.common.DateUtil;
 
@@ -21,6 +21,7 @@ public class SimulacaoVO {
 	private BigDecimal seguroDFI;
 	private Date dataSimulacao;
 	private String tipoPessoa;
+	private String tipoCalculo;
 
 	// valores
 	private BigDecimal valorCredito;
@@ -37,7 +38,15 @@ public class SimulacaoVO {
 
 	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 
-	public void calcularPMT() {
+	public void calcular() {
+		if (this.tipoCalculo.equals("Price")) {
+			calcularPrice();
+		}else if (this.tipoCalculo.equals("SAC")) {
+			calcularSac();
+		}
+	}
+	
+	public void calcularPrice() {
 
 		valorTotalIOF = BigDecimal.ZERO;
 		valorTotalIOFAdicional = BigDecimal.ZERO;
@@ -145,9 +154,8 @@ public class SimulacaoVO {
 			parcelas.add(parcelaCalculo);
 		}
 	}
-	
-	
-	public void calcularAmericano() {
+
+	public void calcularSac() {
 
 		valorTotalIOF = BigDecimal.ZERO;
 		valorTotalIOFAdicional = BigDecimal.ZERO;
@@ -158,14 +166,6 @@ public class SimulacaoVO {
 		BigDecimal saldoDevedorCarencia = BigDecimal
 				.valueOf(FinanceLib.fv(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(),
 						this.carencia.intValue(), 0, this.valorCredito.negate().doubleValue(), false));
-
-		BigDecimal parcelaPGTO = BigDecimal
-				.valueOf(FinanceLib.pmt(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
-						this.qtdParcelas.subtract(carencia).intValue(), // prazo
-						saldoDevedorCarencia.negate().doubleValue(), // valor credito - VP
-						Double.valueOf("0"), // VF
-						false // pagamento no inico
-				));
 
 		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO();
 		parcelaCalculo.setNumeroParcela(BigInteger.ZERO);
@@ -183,16 +183,14 @@ public class SimulacaoVO {
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
 
+		// fixo
+		BigDecimal amortizacao = saldoDevedorCarencia.divide(
+				BigDecimal.valueOf((this.qtdParcelas.subtract(this.carencia).longValue())), MathContext.DECIMAL128);
+
 		for (int i = 1; i <= this.qtdParcelas.intValue(); i++) {
 			parcelaCalculo = new SimulacaoDetalheVO();
 
-			BigDecimal juros = BigDecimal
-					.valueOf(FinanceLib.fv(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
-							1, // prazo
-							0, // parcela
-							saldoDevedorAnterior.negate().doubleValue(), // valor presente
-							false));
-			juros = juros.subtract(saldoDevedorAnterior);
+			BigDecimal juros = saldoDevedorAnterior.multiply(this.taxaJuros.divide(BigDecimal.valueOf(100)));
 
 			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
 
@@ -201,8 +199,6 @@ public class SimulacaoVO {
 			valorSeguroMIPParcela = valorSeguroMIPParcela.add(valorSeguroMIP);
 
 			valorSeguroDFIParcela = valorSeguroDFIParcela.add(valorSeguroDFI);
-
-			BigDecimal parcelaAmortizacao = BigDecimal.ZERO;
 
 			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
@@ -217,11 +213,11 @@ public class SimulacaoVO {
 					parcelaCalculo
 							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
 				} else {
-					parcelaCalculo.setValorParcela(parcelaPGTO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
-					parcelaAmortizacao = parcelaPGTO;
+					parcelaCalculo.setValorParcela(juros.add(amortizacao));
 				}
+
 				parcelaCalculo.setJuros(juros);
-				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));
+				parcelaCalculo.setAmortizacao(amortizacao);
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
@@ -244,10 +240,15 @@ public class SimulacaoVO {
 				valorSeguroMIPParcela = BigDecimal.ZERO;
 			}
 
-			BigDecimal saldo = saldoDevedorAnterior.add(juros).subtract(parcelaAmortizacao);
-			if (saldo.compareTo(BigDecimal.ZERO) == -1)
-				saldo = BigDecimal.ZERO;
+			BigDecimal saldo = BigDecimal.ZERO;
 
+			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
+				saldo = saldoDevedorAnterior.add(juros);
+			} else {
+				saldo = saldoDevedorAnterior.subtract(amortizacao);
+				if (saldo.compareTo(BigDecimal.ZERO) == -1)
+					saldo = BigDecimal.ZERO;
+			}
 			parcelaCalculo.setSaldoDevedorInicial(saldo);
 
 			saldoDevedorAnterior = saldo;
@@ -306,6 +307,14 @@ public class SimulacaoVO {
 
 	public void setTipoPessoa(String tipoPessoa) {
 		this.tipoPessoa = tipoPessoa;
+	}
+
+	public String getTipoCalculo() {
+		return tipoCalculo;
+	}
+
+	public void setTipoCalculo(String tipoCalculo) {
+		this.tipoCalculo = tipoCalculo;
 	}
 
 	public BigDecimal getValorCredito() {

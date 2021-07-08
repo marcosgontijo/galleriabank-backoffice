@@ -38,6 +38,9 @@
 	<field name="valorImovel" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[valorImovel]]></fieldDescription>
 	</field>
+	<field name="tipoCalculo" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoCalculo]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -161,15 +164,15 @@
 				</textElement>
 				<text><![CDATA[Custo de Emissão]]></text>
 			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="80" y="90" width="180" height="25" backcolor="#C6E0B4" uuid="e6a7d6c3-31ab-4dac-bfdb-62400127180d">
+			<textField>
+				<reportElement mode="Opaque" x="80" y="90" width="180" height="25" backcolor="#C6E0B4" uuid="94d4bb4e-8104-46e2-bc23-3f534e942178">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12"/>
 				</textElement>
-				<text><![CDATA[Price]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$F{tipoCalculo}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="80" y="65" width="180" height="25" forecolor="#FFFFFF" backcolor="#548235" uuid="98b0ab00-bb1c-49bf-b877-410198cd9ff7">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
