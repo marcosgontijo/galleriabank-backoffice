@@ -73,8 +73,20 @@ public class SimuladorMB {
 		this.simulacao = new SimulacaoVO();
 
 		Map<String, String> validacao = new HashMap<String, String>();
-		if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
-			validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
+		if (CommonsUtil.mesmoValor(this.tipoCalculo, "Americanno")) {
+			if (this.parcelas.compareTo(BigInteger.valueOf(36)) == 1) {
+				validacao.put("Prazo excedido !!", "O prazo máximo é de 36 meses para o tipo de cálculo americano");
+			}
+			if (this.taxaJuros.compareTo(BigDecimal.valueOf(1.99)) < 0) {
+				validacao.put("Juros inválido !!", "A menor taxa de juros é de 1.99% para o tipo de cálculo americano");
+			}
+		} else {
+			if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
+				validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
+			}
+			if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
+				validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
+			}
 		}
 		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 0) {
 			validacao.put("Valor Empréstimo !!", "O valor de empréstimo não foi informado");
@@ -85,9 +97,6 @@ public class SimuladorMB {
 		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 1 && this.valorImovel.compareTo(BigDecimal.ZERO) == 1
 				&& this.valorCredito.compareTo(valorImovel) == 1) {
 			validacao.put("Valores inválidos!!", "O imóvel deve ter valor maior que o empréstimo");
-		}
-		if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
-			validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
 		}
 		if (!CommonsUtil.semValor(validacao)) {
 			for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
