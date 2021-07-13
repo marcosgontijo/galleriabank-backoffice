@@ -69,10 +69,17 @@
 								onkeydown="FormataValor(this, 3, event, 2);" required="true"
 								converter="bigDecimalConverter">
 							</p:inputText>
-							<p:outputLabel value="%" styleClass="labelBold" />							
-							<div class="labelInfo">Valor mínimo de 0,99%</div>
+							<p:outputLabel value="%" styleClass="labelBold" />
+							<h:panelGroup class="labelInfo"
+								rendered="#{simuladorMB.tipoCalculo ne 'Americano'}">
+								Valor mínimo de 0,99%
+							</h:panelGroup>
+							<h:panelGroup class="labelInfo"
+								rendered="#{simuladorMB.tipoCalculo eq 'Americano'}">
+								Valor mínimo de 1,99%
+							</h:panelGroup>
 						</h:panelGrid>
-						
+
 						<p:outputLabel for="prazo" value="Qtd parcelas: "
 							styleClass="labelBold" />
 						<h:panelGrid columns="2">
@@ -81,9 +88,14 @@
 								maxlength="3">
 							</p:inputText>
 							<p:outputLabel value="meses" styleClass="labelBold" />
-							<div class="labelInfo">
+							<h:panelGroup class="labelInfo"
+								rendered="#{simuladorMB.tipoCalculo ne 'Americano'}">
 							Valor máximo de 240 meses
-							</div>
+							</h:panelGroup>
+							<h:panelGroup class="labelInfo"
+								rendered="#{simuladorMB.tipoCalculo eq 'Americano'}">
+							Valor máximo de 36 meses
+							</h:panelGroup>
 						</h:panelGrid>
 
 						<p:outputLabel for="carencia" value="Carência: "
@@ -112,9 +124,12 @@
 							styleClass="labelBold" />
 						<p:selectOneMenu id="tipoCalculo"
 							value="#{simuladorMB.tipoCalculo}" required="true"
-							style="width: 50px;">
+							style="width: 80px;">
 							<f:selectItem itemValue="Price" itemLabel="Price" />
 							<f:selectItem itemValue="SAC" itemLabel="SAC" />
+							<f:selectItem itemValue="Americano" itemLabel="Americano" />
+							<p:ajax event="change" process="@form"
+								update="DemonstrativoResultados" />
 						</p:selectOneMenu>
 
 						<p:outputLabel for="identificacao" value="Nome do Cliente: "
@@ -139,6 +154,20 @@
 
 			<p:panel id="ConsultaResultados" header="Simulação"
 				style="margin-bottom:10px;">
+
+				<h:panelGrid columns="2" columnClasses="padRight20">
+					<p:outputLabel value="Custo Emissão: " styleClass="labelBold" />
+					<h:outputText value="#{simuladorMB.simulacao.custoEmissaoValor}"
+						converter="bigDecimalConverter">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+					<p:outputLabel value="Valor IOF: " styleClass="labelBold" />
+					<h:outputText value="#{simuladorMB.simulacao.IOFTotal}"
+						converter="bigDecimalConverter">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+
+				</h:panelGrid>
 				<p:dataTable id="dtBpHistorico" var="bpParcela"
 					value="#{simuladorMB.simulacao.parcelas}" emptyMessage=""
 					style="margin-top:20px;">
