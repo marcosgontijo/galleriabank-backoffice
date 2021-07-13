@@ -16,6 +16,10 @@ import com.webnowbr.siscoat.db.dao.*;
  */
 public class ResponsavelDao extends HibernateDao <Responsavel,Long> {
 	
+	
+	/*******
+	 * CONSULTA TODO MUNDO QUE POSSUI NO GUARDA CHUVA O RESPONSAVEL "X"
+	 */
 	private static final String QUERY_GET_GUARDA_CHUVA =  "select r.id, r_principal.id "
 			//"select r.id, r.nome membro_guarda_chuva, r.email membro_email_guarda_chuva, r_principal.id, r_principal.nome dono_guarda_chuva, r_principal.email dono_email_guarda_chuva " 
 			+ "	from infra.usuario_responsavel_join ur "
@@ -104,6 +108,47 @@ public class ResponsavelDao extends HibernateDao <Responsavel,Long> {
 					closeResources(connection, ps, rs);					
 				}
 				return guardaChuva;
+			}
+		});	
+	}
+	
+	/*******
+	 * CONSULTA RECURSIVA DOS GUARDA-CHUVAS A PARTIR DE UM RESPONSAVEL (MEMBROS E SUAS LISTAS COM OS RESPECTIVOS MEMBROS)
+	 */
+	private static final String QUERY_GET_GUARDA_CHUVA_RECURSIVO =  " select distinct(r.codigo) from infra.users u " + 
+			"	inner join infra.usuario_responsavel_join ur on ur.idusuario = u.id " + 
+			"	inner join cobranca.responsavel r on r.id = ur.idresponsavel " + 
+			"	where u.codigoresponsavel = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getGuardaChuvaRecursivoPorResponsavel(final String codigoResponsavel) {
+		return (List<String>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<String> guardaChuvaRecursivo = new ArrayList<String>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					
+					String query_QUERY_GET_GUARDA_CHUVA_RECURSIVO = QUERY_GET_GUARDA_CHUVA_RECURSIVO;
+					
+					ps = connection
+							.prepareStatement(query_QUERY_GET_GUARDA_CHUVA_RECURSIVO);		
+	
+					ps.setString(1, codigoResponsavel);
+	
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						guardaChuvaRecursivo.add(rs.getString(1));
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return guardaChuvaRecursivo;
 			}
 		});	
 	}

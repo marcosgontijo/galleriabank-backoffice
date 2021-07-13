@@ -3686,9 +3686,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;			
-				try {
-					connection = getConnection();
-
+				try {		
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
 					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
@@ -3712,7 +3710,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 												queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
 											} else {
 												queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
-											}									
+											}		
+											
+											// busca recursiva no guarda-chuva
+											ResponsavelDao rDao = new ResponsavelDao();
+											List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+											retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
+											for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+												queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
+											}			
 										}
 									}
 								}											
@@ -3732,6 +3738,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					query = query + " order by id desc";
+					
+					connection = getConnection();
 					
 					ps = connection
 							.prepareStatement(query);
@@ -4019,8 +4027,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;			
 				try {
-					connection = getConnection();
-
 					String query = QUERY_CONTRATOS_CRM;
 					
 					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and c.statusLead = 'Completo' " ;
@@ -4038,7 +4044,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null) ";
 					}
 					
-					if (tipoConsulta.equals("Ag. Pagto. Boleto")) {
+					if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
 						query = query + " and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and matriculaAprovadaValor = 'Aprovado' and pagtoLaudoConfirmada = false ";
 					}
@@ -4079,10 +4085,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						if (listResponsavel.size() > 0) {							
 							for (Responsavel resp : listResponsavel) {
 								if (!resp.getCodigo().equals("")) { 
+									// adiciona membro guarda-chuva									
 									if (queryGuardaChuva.equals("")) {
 										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
 									} else {
 										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
+									}		
+									
+									// busca recursiva no guarda-chuva
+									ResponsavelDao rDao = new ResponsavelDao();
+									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
+									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
 									}									
 								}
 							}
@@ -4101,6 +4116,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					query = query + " order by id desc";
 					
+					connection = getConnection();
 					ps = connection
 							.prepareStatement(query);
 					

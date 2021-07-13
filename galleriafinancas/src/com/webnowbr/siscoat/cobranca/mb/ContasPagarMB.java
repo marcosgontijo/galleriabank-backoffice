@@ -84,6 +84,9 @@ public class ContasPagarMB {
 	private boolean deleteMode;
 
 	private String tipoDespesa;
+	
+	private Date relDataContratoInicio;
+	private Date relDataContratoFim;
 
 	private List<ContratoCobranca> listContratos;
 	private long idContrato;
@@ -102,32 +105,64 @@ public class ContasPagarMB {
 	public ContasPagarMB() {
 
 	}
+	
+	public ContratoCobranca getContrato(String numeroContratoParametro) {		
+		if (numeroContratoParametro != null) { 
+			if (!numeroContratoParametro.equals("")) { 
+				List<ContratoCobranca> contratos = new ArrayList<ContratoCobranca>();
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				
+				String numeroContrato = "";
+				
+				if (numeroContratoParametro.length() == 4) {
+					numeroContrato = "0" + numeroContratoParametro;
+				} else {
+					numeroContrato = numeroContratoParametro;
+				}
+				
+				contratos = cDao.findByFilter("numeroContrato", numeroContrato);
+				
+				if (contratos.size() > 0) {
+					return contratos.get(0);	
+				}				
+			}
+		}
+		
+		return null;
+	}
 
 	public String clearFieldsInsert() {
 		this.objetoContasPagar = new ContasPagar();
 		objetoContasPagar.setTipoDespesa(tipoDespesa);
-		clearContrato();
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		this.listContratos = cDao.findAll();
 
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
 
 	public String clearFieldsEditar() {
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		this.listContratos = cDao.findAll();
-
-		if (this.objetoContasPagar.getContrato() != null) {
-			this.selectedContratoLov = this.objetoContasPagar.getContrato();
-			populateSelectedContrato();
-		}
 
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
 
 	public String clearFields() {
+		this.relDataContratoInicio = null;
+		this.relDataContratoFim = null;
+		
 		if (tipoDespesa == null || tipoDespesa.isEmpty())
 			tipoDespesa = "C";
+		filters = new HashMap<String, Object>();
+		filters.put("contaPaga", false);
+		atualizaListagem();
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listRecebedorPagador = pagadorRecebedorDao.findAll();
+
+		ContaContabilDao contaContabilDao = new ContaContabilDao();
+		listContasContabil = contaContabilDao.ContasContabilOrdenadaRaiz();
+
+		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
+	}
+	
+	public String clearFieldsConsultar() {
 		filters = new HashMap<String, Object>();
 		filters.put("contaPaga", false);
 		atualizaListagem();
@@ -143,10 +178,22 @@ public class ContasPagarMB {
 
 	private void atualizaListagem() {
 		ContasPagarDao cDao = new ContasPagarDao();
-		HashMap<String, Object> filtersConsulta = new HashMap<String, Object>();
-		filtersConsulta.putAll(filters);
-		filtersConsulta.put("tipoDespesa", tipoDespesa);
-		this.contasPagar = cDao.findByFilter(filtersConsulta);
+		//HashMap<String, Object> filtersConsulta = new HashMap<String, Object>();
+		//filtersConsulta.putAll(filters);
+		//filtersConsulta.put("tipoDespesa", tipoDespesa);
+		//this.contasPagar = cDao.findByFilter(filtersConsulta);
+		boolean contaPaga = false;
+		
+		if (filters.get("contaPaga") != null) {
+			contaPaga = (Boolean) filters.get("contaPaga");
+		} 
+		
+		try {
+			this.contasPagar = cDao.atualizaListagemContasPagar(tipoDespesa, contaPaga, this.relDataContratoInicio, this.relDataContratoFim);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String clearFieldsContasPagas() {
@@ -185,15 +232,15 @@ public class ContasPagarMB {
 	public String salvarConta() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ContasPagarDao cDao = new ContasPagarDao();
-
-		if (this.selectedContratoLov != null) {
-			if (this.selectedContratoLov.getId() > 0) {
-				this.objetoContasPagar.setContrato(this.selectedContratoLov);
-			} else {
-				this.objetoContasPagar.setContrato(null);
+		
+		if (this.objetoContasPagar.getNumeroDocumento() != null) { 
+			if (!this.objetoContasPagar.getNumeroDocumento().equals("")) { 
+				ContratoCobranca contrato = new ContratoCobranca();				
+				contrato = getContrato(this.objetoContasPagar.getNumeroDocumento());
+				if (contrato != null) {
+					this.objetoContasPagar.setContrato(contrato);
+				}
 			}
-		} else {
-			this.objetoContasPagar.setContrato(null);
 		}
 
 		if (this.objetoContasPagar.getId() > 0) {
@@ -214,6 +261,16 @@ public class ContasPagarMB {
 	public String editarConta() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ContasPagarDao cDao = new ContasPagarDao();
+		
+		if (this.objetoContasPagar.getNumeroDocumento() != null) { 
+			if (!this.objetoContasPagar.getNumeroDocumento().equals("")) { 
+				ContratoCobranca contrato = new ContratoCobranca();				
+				contrato = getContrato(this.objetoContasPagar.getNumeroDocumento());
+				if (contrato != null) {
+					this.objetoContasPagar.setContrato(contrato);
+				}
+			}
+		}
 
 		cDao.merge(this.objetoContasPagar);
 
@@ -235,17 +292,6 @@ public class ContasPagarMB {
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Contas a Pagar: Conta excluída com sucesso!", ""));
 
 		return clearFields();
-	}
-
-	public final void populateSelectedContrato() {
-		this.idContrato = this.selectedContratoLov.getId();
-		this.objetoContasPagar.setNumeroDocumento(this.selectedContratoLov.getNumeroContrato());
-	}
-
-	public void clearContrato() {
-		this.idContrato = 0;
-		// this.numeroContrato = null;
-		this.selectedContratoLov = new ContratoCobranca();
 	}
 
 	public void clearPagadorRecebedor() {
@@ -370,4 +416,19 @@ public class ContasPagarMB {
 		this.selectedContaContabil = selectedContaContabil;
 	}
 
+	public Date getRelDataContratoInicio() {
+		return relDataContratoInicio;
+	}
+
+	public void setRelDataContratoInicio(Date relDataContratoInicio) {
+		this.relDataContratoInicio = relDataContratoInicio;
+	}
+
+	public Date getRelDataContratoFim() {
+		return relDataContratoFim;
+	}
+
+	public void setRelDataContratoFim(Date relDataContratoFim) {
+		this.relDataContratoFim = relDataContratoFim;
+	}
 }

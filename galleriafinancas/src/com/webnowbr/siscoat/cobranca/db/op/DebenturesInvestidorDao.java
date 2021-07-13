@@ -19,33 +19,70 @@ import com.webnowbr.siscoat.db.dao.*;
 
 public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, Long> {
 	
-	private static final String QUERY_DEBENTURES_EMITIDAS = "select iddebenture, idcontrato from ("
+	private static final String QUERY_DEBENTURES_EMITIDAS_PART_1 = "select iddebenture, idcontrato from ("
 			+ "select d.id iddebenture, c.id idcontrato from cobranca.DebenturesInvestidor d "
 			+ "inner join cobranca.contratocobranca c on d.contrato = c.id "
-			+ "where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp "
-			+ "union all  "
-			+ "select 0 iddebenture, ct.id idcontrato from cobranca.contratocobranca ct  "
+			+ "where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp ";
+			
+		private static final String QUERY_DEBENTURES_EMITIDAS_PART_2 = "select 0 iddebenture, ct.id idcontrato from cobranca.contratocobranca ct  "
 			+ "inner join cobranca.responsavel res on ct.responsavel = res.id  "
 			+ "where ct.status = 'Aprovado' "
 			+ "and ct.pagador in (15, 34,14, 182, 417, 803) "
-			+ "and ct.datainicio >= ? ::timestamp and ct.datainicio <= ? ::timestamp ) debentures "
-			+ "order by idcontrato desc";	
-
+			+ "and ct.datainicio >= ? ::timestamp and ct.datainicio <= ? ::timestamp ";
+			
 	@SuppressWarnings("unchecked")
-	public List<DebenturesInvestidor> getDebenturesEmitidasPorPeriodo(final Date dtRelInicio, final Date dtRelFim) {
+	public List<DebenturesInvestidor> getDebenturesEmitidasPorPeriodo(final Date dtRelInicio, final Date dtRelFim, final List<PagadorRecebedor> listInvestidores) {
 		return (List<DebenturesInvestidor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				List<DebenturesInvestidor> objects = new ArrayList<DebenturesInvestidor>();
+				
+				String query_QUERY_DEBENTURES_EMITIDAS = "";
+				String query_INVESTIDORES_DEBENTURES = null;
+				String query_INVESTIDORES_CONTRATO = "";
+				String query_IDs_INVESTIDORES = null;
 
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				try {
+				
+				try {				
+					// prepara filtros de investidores
+					for (PagadorRecebedor investidor : listInvestidores) {						
+						if (query_IDs_INVESTIDORES == null) {
+							query_IDs_INVESTIDORES = String.valueOf(investidor.getId()); 
+						} else {
+							query_IDs_INVESTIDORES = query_IDs_INVESTIDORES + ", " + investidor.getId();
+						}
+					}
+					
+					if (query_IDs_INVESTIDORES != null) {
+						query_INVESTIDORES_DEBENTURES = " and d.recebedor in ( " + query_IDs_INVESTIDORES + ")";
+						
+						query_INVESTIDORES_CONTRATO = " and ( recebedor in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor2 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor3 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor4 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor5 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor6 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor7 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor8 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor9 in ( " + query_IDs_INVESTIDORES + ") or " +
+						" recebedor10 in ( " + query_IDs_INVESTIDORES + ")) ";			
+						
+						query_QUERY_DEBENTURES_EMITIDAS = QUERY_DEBENTURES_EMITIDAS_PART_1 + query_INVESTIDORES_DEBENTURES + " union all " + QUERY_DEBENTURES_EMITIDAS_PART_2 + query_INVESTIDORES_CONTRATO;
+					} else {
+						query_QUERY_DEBENTURES_EMITIDAS =  QUERY_DEBENTURES_EMITIDAS_PART_1 + " union all " + QUERY_DEBENTURES_EMITIDAS_PART_2;
+					}
+										
+					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + " ) debentures ";	
+					
+					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + "order by idcontrato desc";	
+					
 					connection = getConnection();
 
-					ps = connection.prepareStatement(QUERY_DEBENTURES_EMITIDAS);
-
+					ps = connection.prepareStatement(query_QUERY_DEBENTURES_EMITIDAS);
+					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
 
@@ -53,7 +90,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 					ps.setDate(2, dtRelFimSQL);
 					ps.setDate(3, dtRelInicioSQL);
 					ps.setDate(4, dtRelFimSQL);
-
+					
 					rs = ps.executeQuery();
 
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();

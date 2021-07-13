@@ -30,11 +30,7 @@
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}">
 						<p:inputText id="numcontrato"
 							value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
-							label="Contrato" style="width:110px;" disabled="true" />
-						<p:commandButton id="botaoContrato" type="button"
-							onclick="PF('contratoDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin"
-							disabled="#{contasPagarMB.deleteMode}" />
+							label="Contrato" style="width:110px;" />
 					</h:panelGrid>
 
 					<p:outputLabel for="pagadorRecebedor" value="Recebedor: "

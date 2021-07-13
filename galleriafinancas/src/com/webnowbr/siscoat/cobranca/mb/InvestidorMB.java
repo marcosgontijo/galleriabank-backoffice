@@ -57,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.BaseColor;
@@ -237,6 +238,10 @@ public class InvestidorMB {
 	private String pathContrato;
 	private String nomeContrato;
 	private StreamedContent fileXLS;
+	
+	private DualListModel<PagadorRecebedor> dualListModelRecebedores;
+	private List<PagadorRecebedor> listRecebedoresSeleciodados;
+	private List<PagadorRecebedor> listRecebedores;
 		
 	public InvestidorMB() {
 
@@ -2593,13 +2598,21 @@ public class InvestidorMB {
 			cell = row.createCell(2);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
-			cell.setCellValue(((BigDecimal) record.getValorDebenture()).doubleValue());
+			if (record.getValorDebenture() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorDebenture()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
 
 			// Taxa
 			cell = row.createCell(3);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
-			cell.setCellValue(((BigDecimal) record.getTaxa()).doubleValue());
+			if (record.getTaxa() != null) {
+				cell.setCellValue(((BigDecimal) record.getTaxa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
 
 			// Prazo
 			cell = row.createCell(4);
@@ -2610,13 +2623,21 @@ public class InvestidorMB {
 			cell = row.createCell(5);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
-			cell.setCellValue(((BigDecimal) record.getParcelaMensal()).doubleValue());
+			if (record.getParcelaMensal() != null) {
+				cell.setCellValue(((BigDecimal) record.getParcelaMensal()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
 
 			// Parcela Final
 			cell = row.createCell(6);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
-			cell.setCellValue(((BigDecimal) record.getParcelaFinal()).doubleValue());
+			if (record.getParcelaFinal() != null) {
+				cell.setCellValue(((BigDecimal) record.getParcelaFinal()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
 
 			// Data Ultima PArcela
 			cell = row.createCell(7);
@@ -3741,15 +3762,23 @@ public class InvestidorMB {
 		this.dataFim = gerarDataHoje();
 
 		clearTitulosQuitadosPDFParams();
+		
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listRecebedores = pagadorRecebedorDao.findAll();
+		this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
+		
+		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
+				listRecebedores,
+				listRecebedoresSeleciodados);
 
 		return "/Atendimento/Cobranca/DebenturesEmitidasConsultar.xhtml";
 	}
 	
 	public void consultaDebeturesEmitidas() {
 		clearTitulosQuitadosPDFParams();
-
+	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim);
+		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim, this.dualListModelRecebedores.getTarget());
 	}
 
 
@@ -9779,5 +9808,29 @@ public class InvestidorMB {
 
 	public void setFileXLS(StreamedContent fileXLS) {
 		this.fileXLS = fileXLS;
+	}
+
+	public DualListModel<PagadorRecebedor> getDualListModelRecebedores() {
+		return dualListModelRecebedores;
+	}
+
+	public void setDualListModelRecebedores(DualListModel<PagadorRecebedor> dualListModelRecebedores) {
+		this.dualListModelRecebedores = dualListModelRecebedores;
+	}
+
+	public List<PagadorRecebedor> getListRecebedoresSeleciodados() {
+		return listRecebedoresSeleciodados;
+	}
+
+	public void setListRecebedoresSeleciodados(List<PagadorRecebedor> listRecebedoresSeleciodados) {
+		this.listRecebedoresSeleciodados = listRecebedoresSeleciodados;
+	}
+
+	public List<PagadorRecebedor> getListRecebedores() {
+		return listRecebedores;
+	}
+
+	public void setListRecebedores(List<PagadorRecebedor> listRecebedores) {
+		this.listRecebedores = listRecebedores;
 	}
 }

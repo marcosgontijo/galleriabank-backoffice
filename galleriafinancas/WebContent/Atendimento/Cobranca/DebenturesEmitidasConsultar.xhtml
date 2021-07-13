@@ -58,6 +58,23 @@
 						value="#{investidorMB.dataFim}" required="true"
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
 						styleClass="dateTimeField"/>
+						
+       				<p:outputLabel for="Favorecidos" value="Investidores: "
+						styleClass="labelBold" style="width: 40px; margin-top: 20px;"/>
+       				<p:pickList id="Favorecidos"
+						value="#{investidorMB.dualListModelRecebedores}"
+						var="favorecidos"
+						converter="primeFacesPickListConverter"
+						itemValue="#{favorecidos}" itemLabel="#{favorecidos.nome}"
+						showCheckbox="true" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" style="width: 250px;margin-top: 20px;">
+					
+						<f:facet name="sourceCaption">Investidores</f:facet>
+						<f:facet name="targetCaption">Selecionados</f:facet>
+					
+						<p:column style="width:75%;">
+							<h:outputText value="#{favorecidos.nome}" />
+						</p:column>
+					</p:pickList>							
 				</h:panelGrid>
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.consultaDebeturesEmitidas}"

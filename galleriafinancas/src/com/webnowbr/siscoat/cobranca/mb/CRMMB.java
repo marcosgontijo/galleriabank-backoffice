@@ -120,7 +120,7 @@ public class CRMMB {
 			this.qtdeTodosContratos = this.qtdeAgPagtoBoleto;
 			this.valorTodosContratos = this.valorTotalAgPagtoBoleto;
 			
-			this.tituloPagina = "Ag. Pagto. Boleto";
+			this.tituloPagina = "Ag. Pagto. Laudo";
 		}
 		if (filtro.equals("AgPAJULaudo")) {
 			geraConsultaContratosAgPAJUeLaudo();
@@ -303,10 +303,10 @@ public class CRMMB {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Ag. Pagto. Boleto");
+					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Ag. Pagto. Laudo");
 				} else {
 					if (usuarioLogado.getCodigoResponsavel() != null) {
-						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Ag. Pagto. Boleto"); 	 
+						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Ag. Pagto. Laudo"); 	 
 					}
 				}
 			} 
@@ -483,7 +483,7 @@ public class CRMMB {
 			}
 			
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
-				c.setStatus("Ag. Pagto. Boleto");
+				c.setStatus("Ag. Pagto. Laudo");
 			}
 			
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
@@ -504,7 +504,11 @@ public class CRMMB {
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
 				c.setStatus("Ag. Assinatura");
-			}			
+			}	
+
+			if (c.isAnaliseReprovada()) {
+				c.setStatus("Análise Reprovada");
+			}
 		}
 		
 		return contratos;

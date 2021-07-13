@@ -1478,7 +1478,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		//"Ag. Pagto. Boleto"
+		//"Ag. Pagto. Laudo"
 		if (//this.objetoContratoCobranca.isInicioAnalise() &&
 				this.objetoContratoCobranca.getCadastroAprovadoValor() != null  &&
 				this.objetoContratoCobranca.getMatriculaAprovadaValor() != null ) {

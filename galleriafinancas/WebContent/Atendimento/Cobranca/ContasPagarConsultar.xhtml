@@ -11,6 +11,37 @@
 			<p:messages id="mensagens" showDetail="true" />
 			<p:panel id="ConsultaContasPagar" header="Contas a Pagar - Consultar"
 				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Vencimento Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{contasPagarMB.relDataContratoInicio}"
+						label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Vencimento Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{contasPagarMB.relDataContratoFim}" 
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+					<p:outputLabel for="TipoDespesa" value="Tipo Despesa: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoDespesa"
+								value="#{contasPagarMB.tipoDespesa}">
+						<f:selectItem itemLabel="Contrato" itemValue="C" />
+						<f:selectItem itemLabel="Empresa" itemValue="E" />
+					</p:selectOneRadio>						
+				</h:panelGrid>
+				
+				<p:commandButton value="Consultar" ajax="false"
+					icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsConsultar}">
+					<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+						value="false" />
+					<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+						value="false" />
+				</p:commandButton>
+			</p:panel>
+			<p:panel id="ConsultaContasPagarResultados" header="Contas a Pagar - Resultados" style="margin-bottom:10px;">		    		    				
 				<p:dataTable id="dtContasPagar" var="contasPagar"
 					value="#{contasPagarMB.contasPagar}" paginator="true" rows="40"
 					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -19,25 +50,16 @@
 					sortBy="#{contasPagar.dataVencimento}" sortOrder="descending"
 					reflow="true">
 					<f:facet name="header">
-						<p:panel>
-							<p:selectOneRadio id="TipoDespesa"
-								value="#{contasPagarMB.tipoDespesa}" required="true">
-								<f:selectItem itemLabel="Contrato" itemValue="C" />
-								<f:selectItem itemLabel="Empresa" itemValue="E" />
-								<p:ajax update="dtContasPagar" event="valueChange"
-									listener="#{contasPagarMB.selectTipoDespesa}" />
-							</p:selectOneRadio>
-							<p:commandButton value="Adicionar" ajax="false"
-								icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
-								<f:setPropertyActionListener
-									target="#{contasPagarMB.updateMode}" value="false" />
-								<f:setPropertyActionListener
-									target="#{contasPagarMB.deleteMode}" value="false" />
-							</p:commandButton>
-						</p:panel>
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{contasPagarMB.clearFieldsInsert}">
+							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
 					</f:facet>
 					<p:column style="text-align: center;"
-						headerText="Data Prevista Pagamento "
+						headerText="Data Vencimento "
 						sortBy="#{contasPagar.dataVencimento}">
 						<h:outputText value="#{contasPagar.dataVencimento}">
 							<f:convertDateTime locale="pt_BR" />

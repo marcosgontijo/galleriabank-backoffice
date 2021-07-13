@@ -75,7 +75,7 @@
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Análise Reprovada" ajax="false" action="#{crmMB.consultaContratosCRM('AnaliseReprovada')}" update="ConsultaContratos" style="padding: 4px; "/>
 							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. Pagto. Boleto" ajax="false" action="#{crmMB.consultaContratosCRM('AgPagtoBoleto')}" update="ConsultaContratos" style="padding: 4px; "/>
+							<p:commandButton value="Ag. Pagto. Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPagtoBoleto')}" update="ConsultaContratos" style="padding: 4px; "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. PAJU e Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPAJULaudo')}" update="ConsultaContratos" style="padding: 4px; "/>
 							<p:spacer width="6"></p:spacer>
@@ -107,7 +107,7 @@
 								
 			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }">
+   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' }">
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
