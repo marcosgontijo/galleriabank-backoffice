@@ -59,12 +59,13 @@ public class IPCADao extends HibernateDao <IPCA,Long> {
 														+ "inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = c.id  "
 														+ "inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id  "
 														+ "where c.corrigidoipca = true  "
-														+ "and cd.datavencimentoatual >= ? ::timestamp "
-														+ "and cd.datavencimentoatual <= ? ::timestamp ";	 
+														//+ "and cd.datavencimentoatual >= ? ::timestamp "
+														//+ "and cd.datavencimentoatual <= ? ::timestamp ";
+													    + "and date_trunc('month', cd.datavencimentoatual) = date_trunc('month', ? ::timestamp)";
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaDetalhes> getContratosPorInvestidorInformeRendimentos(final Date dataInicioReferenciaIPCA, final Date dataFimReferenciaIPCA) {
+	public List<ContratoCobrancaDetalhes> getContratosPorInvestidorInformeRendimentos(final Date dataInicioReferenciaIPCA) {
 		return (List<ContratoCobrancaDetalhes>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -80,11 +81,9 @@ public class IPCADao extends HibernateDao <IPCA,Long> {
 							.prepareStatement(QUERY_PARCELAS_POR_MES);		
 					
 					java.sql.Date dataInicio = new java.sql.Date(dataInicioReferenciaIPCA.getTime());
-					java.sql.Date dataFim = new java.sql.Date(dataFimReferenciaIPCA.getTime());
-	
+						
 					ps.setDate(1, dataInicio);
-					ps.setDate(2, dataFim);
-	
+						
 					rs = ps.executeQuery();
 					
 					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();

@@ -342,6 +342,18 @@
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: " styleClass="labelBold" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>																																  								
 					</h:panelGrid>
+					<p:outputLabel id="gerenteContaLabel" value="Gerente da Conta?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}"/>
+					<p:overlayPanel id="gerenteConta" for="gerenteContaLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
+                    	dismissable="false" showCloseIcon="true">
+				       	<p:panel id="gerenteContaInfo" header="Gerente da Conta" style="margin-bottom:10px;">
+				       		<h:panelGrid columns="2">
+								<p:outputLabel for="CodigoGerente" value="Código do Gerente: " styleClass="labelBold"  />
+								<h:outputText id="CodigoGerente" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.codigo}" label="Código do Gerente" style="width:150px;" />
+								<p:outputLabel for="NomeGerente" value="Nome do Gerente: " styleClass="labelBold" />
+								<h:outputText id="NomeGerente" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.nome}" label="Nome do Gerente" style="width:150px;"/>
+							</h:panelGrid>
+				       	</p:panel>		
+				    </p:overlayPanel> 
 				</p:panel>	
 				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">
 				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">  

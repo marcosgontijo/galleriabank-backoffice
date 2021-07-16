@@ -48,10 +48,29 @@
 							
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
 							<p:inputMask id="CNPJ" value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" validator="#{responsavelMB.validaCNPJ}" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
-							
+												
 							<p:outputLabel for="Codigo" value="Código do Responsável: " styleClass="labelBold" />													
 							<p:inputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo" required="true" onblur=""  style="width:150px;"/>  					
-																
+										
+						</h:panelGrid>		
+						<h:panelGrid columns="3">	
+							<p:outputLabel for="Responsavel" value="Responsável: " />
+							<p:inputText id="Responsavel"
+								value="#{responsavelMB.nomeResponsavel}"
+								label="Responsável" readonly="TRUE"
+								style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;" />
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />
+						</h:panelGrid>		
+						<h:panelGrid columns="2">							
+							<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): "/>							
+							<p:inputText id="taxaRemuneracao" 
+								value="#{responsavelMB.objetoResponsavel.taxaRemuneracao}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								converter="bigDecimalConverter" />
+									
 							<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
 							<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>													
 							<p:inputText id="Nome" value="#{responsavelMB.objetoResponsavel.nome}" label="Nome" required="true" onblur=""  style="width:400px;"/>  					
@@ -135,5 +154,52 @@
 				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="ResponsavelConsultar.xhtml" style="TEXT-DECORATION: bold; "/>
 			</div>
 		</h:form>
+		
+		<p:dialog header="Responsáveis" widgetVar="responsavelDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formResponsaveis">
+				<p:dataTable id="responsavelDialogdlg" var="responsavelDialogdlg"
+					value="#{responsavelMB.listResponsaveis}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{responsavelMB.selectedResponsavel}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{responsavelDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.codigo}"
+						filterBy="#{responsavelDialogdlg.codigo}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.codigo}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.nome}"
+						filterBy="#{responsavelDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{responsavelMB.populateSelectedResponsavel}"
+							image="ui-icon ui-icon-check" update=":form:Responsavel"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{responsavelMB.clearResponsavel}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Responsavel responsavelDialogdlg"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('responsavelDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

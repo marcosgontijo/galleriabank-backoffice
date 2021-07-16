@@ -59,6 +59,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor
 import com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.OperacoesIndividualizado;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.ContaContabilDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -66,6 +67,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DebenturesInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -101,6 +103,9 @@ public class ContasPagarMB {
 	private List<ContaContabil> listContasContabil;
 	/** Objeto selecionado na LoV - Pagador. */
 	private ContaContabil selectedContaContabil;
+	
+	private Responsavel selectedResponsavel;
+	private List<Responsavel> listResponsavel;
 
 	public ContasPagarMB() {
 
@@ -158,6 +163,9 @@ public class ContasPagarMB {
 
 		ContaContabilDao contaContabilDao = new ContaContabilDao();
 		listContasContabil = contaContabilDao.ContasContabilOrdenadaRaiz();
+		
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsavel = rDao.findAll();
 
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
 	}
@@ -172,6 +180,9 @@ public class ContasPagarMB {
 
 		ContaContabilDao contaContabilDao = new ContaContabilDao();
 		listContasContabil = contaContabilDao.ContasContabilOrdenadaRaiz();
+		
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsavel = rDao.findAll();
 
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
 	}
@@ -302,6 +313,15 @@ public class ContasPagarMB {
 	public final void populateSelectedPagadorRecebedor() {
 		this.objetoContasPagar.setPagadorRecebedor(this.selectedPagador);
 	}
+	
+	public final void populateSelectedResponsavel() {
+		this.objetoContasPagar.setResponsavel(this.selectedResponsavel);
+	}
+	
+	public void clearResponsavel() {
+		this.objetoContasPagar.setResponsavel(null);
+		this.selectedResponsavel = new Responsavel();
+	}
 
 	public void ContaContabil() {
 		this.objetoContasPagar.setContaContabil(null);
@@ -430,5 +450,21 @@ public class ContasPagarMB {
 
 	public void setRelDataContratoFim(Date relDataContratoFim) {
 		this.relDataContratoFim = relDataContratoFim;
+	}
+
+	public Responsavel getSelectedResponsavel() {
+		return selectedResponsavel;
+	}
+
+	public void setSelectedResponsavel(Responsavel selectedResponsavel) {
+		this.selectedResponsavel = selectedResponsavel;
+	}
+
+	public List<Responsavel> getListResponsavel() {
+		return listResponsavel;
+	}
+
+	public void setListResponsavel(List<Responsavel> listResponsavel) {
+		this.listResponsavel = listResponsavel;
 	}
 }

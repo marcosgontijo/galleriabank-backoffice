@@ -56,6 +56,12 @@
 			lazy="false">
 			<column name="contaContabil" />
 		</many-to-one>
+		
+		<many-to-one name="responsavel"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="responsavel" />
+		</many-to-one>   
 
 	</class>
 </hibernate-mapping>

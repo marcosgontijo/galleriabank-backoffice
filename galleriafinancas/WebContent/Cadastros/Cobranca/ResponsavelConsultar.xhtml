@@ -25,6 +25,9 @@
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{Responsavel.nome}" filterMatchMode="contains" sortBy="#{Responsavel.nome}">
 			            <h:outputText value="#{Responsavel.nome}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="Gerente Conta" filterBy="#{Responsavel.donoResponsavel.nome}" filterMatchMode="contains" sortBy="#{Responsavel.donoResponsavel.nome}">
+			            <h:outputText value="#{Responsavel.donoResponsavel.nome}" />
+			        </p:column>
 			        <p:column style="width:120px;">
 			        	<p:commandButton action="#{responsavelMB.clearFieldsView}" ajax="false" icon="ui-icon-search" title="Detalhes">
 			        		<f:setPropertyActionListener target="#{responsavelMB.objetoResponsavel}" value="#{Responsavel}" />  			        		

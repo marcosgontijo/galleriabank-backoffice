@@ -84,6 +84,7 @@ import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioContabilidadeEmAberto;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioContabilidadeInvestidor;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
@@ -98,6 +99,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
@@ -2505,7 +2507,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setStatus("Aprovado");
 				this.objetoContratoCobranca.setAprovado(true);
 				this.objetoContratoCobranca.setAprovadoData(gerarDataHoje());
-				this.objetoContratoCobranca.setAprovadoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setAprovadoUsuario(getNomeUsuarioLogado());				
 			} else {
 				if (this.objetoContratoCobranca.getStatusContrato().equals("Reprovado")) {
 					this.objetoContratoCobranca.setStatus("Reprovado");
@@ -2526,6 +2528,116 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+	}
+	
+	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
+		ResponsavelDao rDao = new ResponsavelDao();
+		Responsavel responsavel = new Responsavel();
+		
+		if (contrato.getResponsavel() != null) {
+			// nivel 1 - pega responsavel contrato
+			responsavel = contrato.getResponsavel();
+			geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+			
+			if (responsavel.getDonoResponsavel() != null) {
+				// nivel 2 - pega responsavel hierarquico
+				responsavel = responsavel.getDonoResponsavel();
+				geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+				
+				if (responsavel.getDonoResponsavel() != null) {
+					// nivel 3 - pega responsavel hierarquico
+					responsavel = responsavel.getDonoResponsavel();
+					geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+					
+					if (responsavel.getDonoResponsavel() != null) {
+						// nivel 4 - pega responsavel hierarquico
+						responsavel = responsavel.getDonoResponsavel();
+						geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+						
+						if (responsavel.getDonoResponsavel() != null) {
+							// nivel 5 - pega responsavel hierarquico
+							responsavel = responsavel.getDonoResponsavel();
+							geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+							
+							if (responsavel.getDonoResponsavel() != null) {
+								// nivel 6 - pega responsavel hierarquico
+								responsavel = responsavel.getDonoResponsavel();
+								geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+								
+								if (responsavel.getDonoResponsavel() != null) {
+									// nivel 7 - pega responsavel hierarquico
+									responsavel = responsavel.getDonoResponsavel();
+									geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+									
+									if (responsavel.getDonoResponsavel() != null) {
+										// nivel 8 - pega responsavel hierarquico
+										responsavel = responsavel.getDonoResponsavel();
+										geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+										
+										if (responsavel.getDonoResponsavel() != null) {
+											// nivel 9 - pega responsavel hierarquico
+											responsavel = responsavel.getDonoResponsavel();
+											geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+											
+											if (responsavel.getDonoResponsavel() != null) {
+												// nivel 10 - pega responsavel hierarquico
+												responsavel = responsavel.getDonoResponsavel();
+												geraContasPagarRemuneracaoResponsavel(contrato, responsavel);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+
+		
+	}
+	
+	public void geraContasPagarRemuneracaoResponsavel(ContratoCobranca contrato, Responsavel responsavel) {
+		BigDecimal valorPagar = BigDecimal.ZERO;
+		BigDecimal taxaRemuneracao = BigDecimal.ZERO;
+		
+		if (responsavel.getTaxaRemuneracao() != null && contrato.getValorCCB() != null) {
+			if (responsavel.getTaxaRemuneracao().compareTo(BigDecimal.ZERO) > 0) {
+				taxaRemuneracao = responsavel.getTaxaRemuneracao().divide(BigDecimal.valueOf(100));
+				valorPagar = contrato.getValorCCB().multiply(taxaRemuneracao);
+				
+				ContasPagarDao cDao = new ContasPagarDao();
+				ContasPagar contaPagar = new ContasPagar();
+				contaPagar.setTipoDespesa("E");
+				contaPagar.setResponsavel(responsavel);
+				contaPagar.setDataVencimento(getDataComMais15Dias(gerarDataHoje()));
+				contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
+				contaPagar.setDescricao("Pagamento de remuneração por aprovação de contrato.");
+				contaPagar.setValor(valorPagar);				
+				cDao.create(contaPagar);
+			}			
+		}
+
+	}
+	
+	public Date getDataComMais15Dias(Date dataOriginal) {
+		Date dataRetorno = new Date();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar calendar = Calendar.getInstance(zone, locale);	
+		
+		calendar.setTime(dataOriginal);
+		calendar.add(Calendar.DAY_OF_MONTH, 15);		
+		//calendar.set(Calendar.DAY_OF_MONTH, 14);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		
+		return calendar.getTime();
 	}
 
 	public User getUsuarioLogado() {
@@ -8094,7 +8206,10 @@ public class ContratoCobrancaMB {
 		 * } }
 		 */
 		if (this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0) {
-
+			//se esta editando pela primeira vez o contrato aprovado
+			// gera remuneracao responsaveis
+			geraContasPagarRemuneracao(this.objetoContratoCobranca);
+			
 			// processa parcelas
 			/*
 			 * todo calculo de juros composto BigDecimal valorParcela = BigDecimal.ZERO;

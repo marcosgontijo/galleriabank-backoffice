@@ -1018,3 +1018,7 @@
 .ui-fieldset .ui-fieldset-legend {
     margin: 0 auto !important;
 }
+
+.ui-widget-overlay {
+    background: none !important;  
+}

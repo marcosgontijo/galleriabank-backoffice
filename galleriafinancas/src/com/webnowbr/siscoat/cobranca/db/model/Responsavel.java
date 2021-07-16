@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Responsavel implements Serializable {
@@ -30,6 +31,8 @@ public class Responsavel implements Serializable {
 	
 	private String cep;
 	private Responsavel donoResponsavel;
+	
+	private BigDecimal taxaRemuneracao;
 	
 	public Responsavel(){
 	}
@@ -323,5 +326,13 @@ public class Responsavel implements Serializable {
 
 	public void setDonoResponsavel(Responsavel donoResponsavel) {
 		this.donoResponsavel = donoResponsavel;
+	}
+
+	public BigDecimal getTaxaRemuneracao() {
+		return taxaRemuneracao;
+	}
+
+	public void setTaxaRemuneracao(BigDecimal taxaRemuneracao) {
+		this.taxaRemuneracao = taxaRemuneracao;
 	}
 }

@@ -51,6 +51,16 @@ public class ImpressoesPDFMB {
 	
 	private ContratoCobranca objetoContratoCobranca;
 	
+	/**+
+	 * PDF Ficha Cadastral
+	 */
+	private boolean tipoPessoaIsFisica;
+	private String nome;
+	private String documento;
+	private String email;
+	private String telefone;
+	private String origemChamada;
+	
 	/**
 	 * Construtor.
 	 */
@@ -68,11 +78,35 @@ public class ImpressoesPDFMB {
 		this.pdfCadastroPessoaFisicaConjugeGerado = false;
 	}
 	
+	public void selectedTipoPessoaPublico() {
+		this.documento = "";
+	}
+	
+	
+	public void clearFieldsFichaIndividual() {
+		this.tipoPessoaIsFisica = true;
+		this.nome = "";
+		this.documento = "";
+		this.email = "";
+		this.telefone = "";
+		this.origemChamada = "FichaIndividual";
+		this.pdfCadastroPessoaFisicaConjugeGerado = false;
+		this.pdfCadastroPessoaFisicaGerado = false;		
+	}
+	
 	/**
 	 * GERA CONTRATO DE PESSOA FISICA
 	 */
 	
 	public void geraPdfCadastroPessoaFisica() {
+		
+		if (this.origemChamada.equals("FichaContrato")) {
+			this.nome = this.objetoContratoCobranca.getPagador().getNome();
+			this.documento = this.objetoContratoCobranca.getPagador().getCpf();
+			this.email = this.objetoContratoCobranca.getPagador().getEmail();
+			this.telefone = this.objetoContratoCobranca.getPagador().getTelCelular();
+		}
+		
 		/*
 		this.transferenciasObservacoesIUGU = new TransferenciasObservacoesIUGU();
 		this.transferenciasObservacoesIUGU.setId(1);
@@ -120,7 +154,7 @@ public class ImpressoesPDFMB {
 			 */
 
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
-			this.nomePDF = "Ficha Cadastral Pessoa Física - " + this.objetoContratoCobranca.getPagador().getNome() + ".pdf";
+			this.nomePDF = "Ficha Cadastral Pessoa Física - " + this.nome + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 
 			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
@@ -153,7 +187,16 @@ public class ImpressoesPDFMB {
 			cell1.setColspan(3);
 			table.addCell(cell1);
 
-			cell1 = new PdfPCell(new Phrase("Ficha Cadastral Pessoa Física", headerFull));
+			if (this.origemChamada.equals("FichaIndividual")) {
+				if (this.tipoPessoaIsFisica) {
+					cell1 = new PdfPCell(new Phrase("Ficha Cadastral Pessoa Física", headerFull));	
+				} else {
+					cell1 = new PdfPCell(new Phrase("Ficha Cadastral Pessoa Jurídica", headerFull));
+				}
+			} else {
+				cell1 = new PdfPCell(new Phrase("Ficha Cadastral Pessoa Física", headerFull));
+			}
+			
 			cell1.setBorder(0);
 			cell1.setPaddingLeft(8f);		
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -179,7 +222,16 @@ public class ImpressoesPDFMB {
 			/*
 			 * LINHA 1
 			 */
-			cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
+			if (this.origemChamada.equals("FichaIndividual")) {
+				if (this.tipoPessoaIsFisica) {
+					cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("RAZÃO SOCIAL", tituloSmall));
+				}
+			} else {
+				cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
+			}
+			
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -193,13 +245,30 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
-			cell1.setColspan(4);
+			cell1.setColspan(6);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(this.nome, normal));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingBottom(5f);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
 			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
 			cell1.setBorderWidthTop(1);
 			cell1.setBorderColorTop(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
@@ -208,219 +277,54 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNome(), normal));
+			cell1 = new PdfPCell(new Phrase(this.email, normal));
 			cell1.setBorder(0);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(5f);
-			cell1.setColspan(4);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmail(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			/*
 			 * LINHA 2
 			 */
-			cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("ESTADO CIVIL", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("SEXO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpf(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRg(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			if (this.objetoContratoCobranca.getPagador().getDataEmissaoRG() != null) {
-				cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRG()), normal));
-			} else {
-				cell1 = new PdfPCell(new Phrase("--", normal));
-			}
-			
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstadocivil(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getSexo(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-			
-			/*
-			 * LINHA 5
-			 */
-			cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			String endereco = ""; 
-			if (this.objetoContratoCobranca.getPagador().getNumero() != null) {
-				if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
-					endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
+			if (this.origemChamada.equals("FichaIndividual")) {
+				if (this.tipoPessoaIsFisica) {
+					cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
+				} else {
+					cell1 = new PdfPCell(new Phrase("CNPJ", tituloSmall));
 				}
 			} else {
-				endereco = this.objetoContratoCobranca.getPagador().getEndereco();
+				cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
 			}
 			
-			cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(6);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(this.documento, normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -433,228 +337,14 @@ public class ImpressoesPDFMB {
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 6
-			 */
-			cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairro(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidade(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstado(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCep(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-			
-			/*
-			 * LINHA 7
-			 */
-			cell1 = new PdfPCell(new Phrase("TELEFONE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase("CELULAR", tituloSmall));
 			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("DATA NASCIMENTO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelResidencial(), normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);		
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelCelular(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			if (this.objetoContratoCobranca.getPagador().getDtNascimento() != null) {
-				cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDtNascimento()), normal));
-			} else {
-				cell1 = new PdfPCell(new Phrase("", normal));
-			}
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);	
-			
-			cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setBorderWidthTop(1);
 			cell1.setBorderColorTop(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
@@ -666,14 +356,14 @@ public class ImpressoesPDFMB {
 			cell1.setColspan(6);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getAtividade(), normal));
+			cell1 = new PdfPCell(new Phrase(this.telefone, normal));
 			cell1.setBorder(0);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -683,1230 +373,12 @@ public class ImpressoesPDFMB {
 			cell1.setColspan(6);
 			table.addCell(cell1);
 			
-			if (this.objetoContratoCobranca.getPagador().getEstadocivil() != null && this.objetoContratoCobranca.getPagador().getEstadocivil().equals("CASADO")) {
-				
-				geraPdfCadastroPessoaFisicaConjugePrincipal();
-				
-				cell1 = new PdfPCell(new Phrase("DADOS DO CÔNJUGE", titulo));
-				cell1.setBorder(0);
-				cell1.setPaddingLeft(8f);		
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(10f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);				
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNomeConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmailConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("SEXO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpfConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRgConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDataEmissaoRGConjuge() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRGConjuge()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("--", normal));
+			if (this.objetoContratoCobranca != null) {
+				if (this.objetoContratoCobranca.getPagador().getEstadocivil() != null && this.objetoContratoCobranca.getPagador().getEstadocivil().equals("CASADO") && this.origemChamada.equals("FichaContrato")) {				
+					geraPdfCadastroPessoaFisicaConjugePrincipal();				
 				}
-								
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getSexoConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEnderecoConjuge() + " - " + this.objetoContratoCobranca.getPagador().getComplementoConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairroConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidadeConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstadoConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCepConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);		
-				
-				cell1 = new PdfPCell(new Phrase("TELEFONE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CELULAR", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA NASCIMENTO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelResidencialConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);		
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelCelularConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDtNascimentoConjuge() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDtNascimentoConjuge()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("", normal));
-				}
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);					
-				
-				cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCargoConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
 			}
-			
-			if (this.objetoContratoCobranca.getPagador().isCoobrigado()) {
-				cell1 = new PdfPCell(new Phrase("DADOS DO COOBRIGADO", titulo));
-				cell1.setBorder(0);
-				cell1.setPaddingLeft(8f);		
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(10f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
 				
-				cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNomeCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmailCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-	
-				cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-	
-				cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpfCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRgCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDataEmissaoRGCoobrigado() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRGCoobrigado()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("--", normal));
-				}
-								
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCargoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEnderecoCoobrigado() + " - " + this.objetoContratoCobranca.getPagador().getComplementoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairroCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidadeCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstadoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCepConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);					
-			}
-			
-			cell1 = new PdfPCell(new Phrase("BANCOS", titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);		
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 1
-			 */
-			cell1 = new PdfPCell(new Phrase("INSTITUIÇÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("AGÊNCIA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CONTA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);		
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBanco(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getAgencia(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getConta(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);		
-			
-			cell1 = new PdfPCell(new Phrase("DADOS DA OPERAÇÃO", titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);		
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("BEM DADO EM GARANTIA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("NÚMERO MATRÍCULA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CARTÓRIO DO IMÓVEL", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getTipo(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getNumeroMatricula(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCartorio(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 5
-			 */
-			cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("POSSUI DÍVIDA?", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getEndereco() + " - " + this.objetoContratoCobranca.getImovel().getComplemento(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getPossuiDivida(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 6
-			 */
-			cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getBairro(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCidade(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getEstado(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCep(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-
 			//PULA LINHA
 			cell1 = new PdfPCell(new Phrase("", titulo));
 			cell1.setBorder(0);
@@ -2014,6 +486,14 @@ public class ImpressoesPDFMB {
 	 */
 	
 	public void geraPdfCadastroPessoaFisicaConjugePrincipal() {
+		
+		if (this.origemChamada.equals("FichaContrato")) {
+			this.nome = this.objetoContratoCobranca.getPagador().getNomeConjuge();
+			this.documento = this.objetoContratoCobranca.getPagador().getCpfConjuge();
+			this.email = this.objetoContratoCobranca.getPagador().getEmailConjuge();
+			this.telefone = this.objetoContratoCobranca.getPagador().getTelCelularConjuge();
+		}
+		
 		/*
 		this.transferenciasObservacoesIUGU = new TransferenciasObservacoesIUGU();
 		this.transferenciasObservacoesIUGU.setId(1);
@@ -2061,7 +541,7 @@ public class ImpressoesPDFMB {
 			 */
 
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
-			this.nomePDFConjuge = "Ficha Cadastral Pessoa Física - " + this.objetoContratoCobranca.getPagador().getNomeConjuge() + ".pdf";
+			this.nomePDFConjuge = "Ficha Cadastral Pessoa Física - " + this.nome + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 
 			os = new FileOutputStream(this.pathPDF + this.nomePDFConjuge);  	
@@ -2080,7 +560,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 
-			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastros.jpg");
+			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logocadastrosbank.jpg");
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
@@ -2134,22 +614,7 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
-			cell1.setColspan(4);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNomeConjuge(), normal));
@@ -2164,20 +629,39 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(5f);
-			cell1.setColspan(4);
+			cell1.setColspan(6);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
+			cell1.setBorder(0);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmailConjuge(), normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			/*
@@ -2197,67 +681,7 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("ESTADO CIVIL", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("SEXO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpfConjuge(), normal));
@@ -2272,340 +696,34 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRgConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			if (this.objetoContratoCobranca.getPagador().getDataEmissaoRGConjuge() != null) {
-				cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRGConjuge()), normal));
-			} else {
-				cell1 = new PdfPCell(new Phrase("--", normal));
-			}
-			
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("CASADO", normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getSexoConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-			
-			/*
-			 * LINHA 5
-			 */
-			cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
 			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEnderecoConjuge() + " - " + this.objetoContratoCobranca.getPagador().getComplementoConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 6
-			 */
-			cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairroConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidadeConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstadoConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCepConjuge(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-			
-			/*
-			 * LINHA 7
-			 */
-			cell1 = new PdfPCell(new Phrase("TELEFONE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase("CELULAR", tituloSmall));
 			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("DATA NASCIMENTO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelResidencialConjuge(), normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);		
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
+			cell1.setPaddingTop(5f);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
 			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelCelularConjuge(), normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			if (this.objetoContratoCobranca.getPagador().getDtNascimentoConjuge() != null) {
-				cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDtNascimentoConjuge()), normal));
-			} else {
-				cell1 = new PdfPCell(new Phrase("", normal));
-			}
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);	
-			
-			cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCargoConjuge(), normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -2614,1237 +732,7 @@ public class ImpressoesPDFMB {
 			cell1.setPaddingBottom(5f);
 			cell1.setColspan(6);
 			table.addCell(cell1);
-			
-			if (this.objetoContratoCobranca.getPagador().getEstadocivil() != null && this.objetoContratoCobranca.getPagador().getEstadocivil().equals("CASADO")) {
-				cell1 = new PdfPCell(new Phrase("DADOS DO CÔNJUGE", titulo));
-				cell1.setBorder(0);
-				cell1.setPaddingLeft(8f);		
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(10f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
 				
-				cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);				
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNome(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmail(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("SEXO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpf(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRg(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDataEmissaoRG() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRG()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("--", normal));
-				}
-								
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getSexo(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-				
-				String endereco = ""; 
-				if (this.objetoContratoCobranca.getPagador().getNumero() != null) {
-					if (!this.objetoContratoCobranca.getPagador().getNumero().equals("")) {
-						endereco = this.objetoContratoCobranca.getPagador().getEndereco() + ", " + this.objetoContratoCobranca.getPagador().getNumero();
-					}
-				} else {
-					endereco = this.objetoContratoCobranca.getPagador().getEndereco();
-				}
-
-				cell1 = new PdfPCell(new Phrase(endereco + " - " + this.objetoContratoCobranca.getPagador().getComplemento(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairro(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidade(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCep(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);		
-				
-				cell1 = new PdfPCell(new Phrase("TELEFONE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CELULAR", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA NASCIMENTO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelResidencial(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);		
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getTelCelular(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDtNascimento() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDtNascimento()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("", normal));
-				}
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);					
-				
-				cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getAtividade(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-			}
-			
-			if (this.objetoContratoCobranca.getPagador().isCoobrigado()) {
-				cell1 = new PdfPCell(new Phrase("DADOS DO COOBRIGADO", titulo));
-				cell1.setBorder(0);
-				cell1.setPaddingLeft(8f);		
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(10f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("NOME", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("EMAIL", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getNomeCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(4);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEmailCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-	
-				cell1 = new PdfPCell(new Phrase("CPF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("RG / CNH", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("DATA EMISSÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-	
-				cell1 = new PdfPCell(new Phrase("CARGO / OCUPAÇÃO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCpfCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getRgCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				if (this.objetoContratoCobranca.getPagador().getDataEmissaoRGCoobrigado() != null) {
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(this.objetoContratoCobranca.getPagador().getDataEmissaoRGCoobrigado()), normal));
-				} else {
-					cell1 = new PdfPCell(new Phrase("--", normal));
-				}
-								
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCargoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEnderecoCoobrigado() + " - " + this.objetoContratoCobranca.getPagador().getComplementoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(6);
-				table.addCell(cell1);
-
-				cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthTop(1);
-				cell1.setBorderColorTop(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBairroCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCidadeCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(2);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getEstadoCoobrigado(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);
-				
-				cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getCepConjuge(), normal));
-				cell1.setBorder(0);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);	
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setPaddingLeft(8f);
-				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell1.setBackgroundColor(BaseColor.WHITE);
-				cell1.setUseBorderPadding(true);
-				cell1.setPaddingBottom(5f);
-				cell1.setColspan(1);
-				table.addCell(cell1);					
-			}
-			
-			cell1 = new PdfPCell(new Phrase("BANCOS", titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);		
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 1
-			 */
-			cell1 = new PdfPCell(new Phrase("INSTITUIÇÃO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("AGÊNCIA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CONTA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);		
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getBanco(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getAgencia(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getPagador().getConta(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);		
-			
-			cell1 = new PdfPCell(new Phrase("DADOS DA OPERAÇÃO", titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);		
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(6);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("BEM DADO EM GARANTIA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("NÚMERO MATRÍCULA", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CARTÓRIO DO IMÓVEL", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getTipo(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getNumeroMatricula(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCartorio(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 5
-			 */
-			cell1 = new PdfPCell(new Phrase("ENDEREÇO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("POSSUI DÍVIDA?", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getEndereco() + " - " + this.objetoContratoCobranca.getImovel().getComplemento(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(5);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getPossuiDivida(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			/*
-			 * LINHA 6
-			 */
-			cell1 = new PdfPCell(new Phrase("BAIRRO", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CIDADE", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("UF", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CEP", tituloSmall));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getBairro(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCidade(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getEstado(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase(this.objetoContratoCobranca.getImovel().getCep(), normal));
-			cell1.setBorder(0);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);	
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(1);
-			table.addCell(cell1);	
-
 			//PULA LINHA
 			cell1 = new PdfPCell(new Phrase("", titulo));
 			cell1.setBorder(0);
@@ -3891,17 +779,6 @@ public class ImpressoesPDFMB {
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(30f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("_____________________________________________________________________", normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
@@ -3910,37 +787,24 @@ public class ImpressoesPDFMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(30f);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase("LOCAL / DATA", normal));
+			cell1 = new PdfPCell(new Phrase("ASSINATURA", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.BLACK);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("ASSINATURA", normal));
-			cell1.setBorder(0);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(10f);
-			cell1.setColspan(3);
+			cell1.setColspan(6);
 			table.addCell(cell1);
 
 			doc.add(table);
@@ -4056,5 +920,53 @@ public class ImpressoesPDFMB {
 
 	public void setPdfCadastroPessoaFisicaConjugeGerado(boolean pdfCadastroPessoaFisicaConjugeGerado) {
 		this.pdfCadastroPessoaFisicaConjugeGerado = pdfCadastroPessoaFisicaConjugeGerado;
+	}
+
+	public boolean isTipoPessoaIsFisica() {
+		return tipoPessoaIsFisica;
+	}
+
+	public void setTipoPessoaIsFisica(boolean tipoPessoaIsFisica) {
+		this.tipoPessoaIsFisica = tipoPessoaIsFisica;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public String getOrigemChamada() {
+		return origemChamada;
+	}
+
+	public void setOrigemChamada(String origemChamada) {
+		this.origemChamada = origemChamada;
 	}
 }

@@ -47,9 +47,23 @@
 							image="ui-icon ui-icon-circle-zoomin">
 						</p:commandButton>
 
+					</h:panelGrid>
+					
+					<p:outputLabel for="responsavel" value="Responsável: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<h:panelGrid columns="2"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}">
+							<p:inputText id="responsavel"
+								value="#{contasPagarMB.objetoContasPagar.responsavel.nome}"
+								label="Responsável" disabled="true" 
+								style="width:210px;" />
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />
 
 					</h:panelGrid>
-
+					
 					<p:outputLabel for="contaContabil" value="Conta Contábil: "
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						styleClass="labelBold" />
@@ -189,6 +203,10 @@
 			<ui:param name="titulo" value="Recebedor"></ui:param>
 		</ui:include>
 
+		<ui:include src="../../Dialog/DialogResponsavel.xhtml">
+			<ui:param name="mbean" value="#{contasPagarMB}"></ui:param>
+			<ui:param name="titulo" value="Responsavel"></ui:param>
+		</ui:include>
 
 		<ui:include src="../../Dialog/DialogContaContabil.xhtml">
 			<ui:param name="mbean" value="#{contasPagarMB}"></ui:param>

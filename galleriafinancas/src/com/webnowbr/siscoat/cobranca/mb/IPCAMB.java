@@ -84,9 +84,43 @@ public class IPCAMB {
 		// a primeira data deve ser o dia 14 do mês seguinte ao inserido na taxa
 		Date dataInicioConsulta = getDataComAcrescimoDeMes(this.data);
 		// a segunda data deve ser o dia 14 do mês seguinte a data inicio
-		Date dataFimConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
+		//Date dataFimConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
 		
-		listaParcelas = IPCADao.getContratosPorInvestidorInformeRendimentos(dataInicioConsulta, dataFimConsulta);
+		//ATUALIZA PARCELAS DO MES VIGENTE
+		listaParcelas = IPCADao.getContratosPorInvestidorInformeRendimentos(dataInicioConsulta);
+		
+		if (listaParcelas.size() > 0) {
+			if (this.taxa.compareTo(BigDecimal.ZERO) == 1) {
+				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
+				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
+					// se primeira parcela calcula com o valor da CCB
+					if (parcela.getNumeroParcela().equals("1")) {
+						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
+											
+						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));					
+					} else {
+						// se não calcula com o saldo devedor
+						parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaCalculo));
+					}
+					
+					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
+					
+					// persistir parcela
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					contratoCobrancaDetalhesDao.merge(parcela);				
+				}
+			}
+		}
+		
+		// Prepara as datas para consulta das parcelas
+		// a primeira data deve ser o dia 14 do mês seguinte ao inserido na taxa
+		dataInicioConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
+		// a segunda data deve ser o dia 14 do mês seguinte a data inicio
+		//dataFimConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
+		
+		//ATUALIZA PARCELAS DO MES SEGUINTE (PROJECAO)
+		listaParcelas = IPCADao.getContratosPorInvestidorInformeRendimentos(dataInicioConsulta);
 		
 		if (listaParcelas.size() > 0) {
 			if (this.taxa.compareTo(BigDecimal.ZERO) == 1) {
@@ -179,7 +213,8 @@ public class IPCAMB {
 		
 		calendar.setTime(dataOriginal);
 		calendar.add(Calendar.MONTH, 1);		
-		calendar.set(Calendar.DAY_OF_MONTH, 14);
+		//calendar.set(Calendar.DAY_OF_MONTH, 14);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);

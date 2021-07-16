@@ -278,11 +278,23 @@
 						</shiro:hasAnyRoles>		
 					</p:panel>				  
 				
-				
 					<p:panel id="CheckListInformacoesAdicionais" header="Check-List - Informações Adicionais" style="margin-bottom:20px;">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: " styleClass="labelBold" />
 							<p:inputText id="motivo" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" label="Motivo Reprovação Analise" onblur="" style="width:400px;" />
+							<p:outputLabel id="quemReprovou" value="Quem analisou?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
+							<p:overlayPanel id="quemReprovouModal" for="quemReprovou" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
+		                    	dismissable="false" showCloseIcon="true">
+						       	<p:panel id="quemReprovouInfo" header="Quem analisou?" style="margin-bottom:10px;">
+						       		<h:panelGrid columns="1">
+										<h:outputText id="quemAnalisouUsuario" value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}" style="font-weight: bold; font-size: 15px;padding-top: 20px;"/>
+										<h:outputText id="quemAnalisouData" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}" style="font-weight: bold; font-size: 15px;padding-top: 20px;">			            	
+									          <f:convertDateTime locale="pt_BR"  />
+									          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+									    </h:outputText>	
+									</h:panelGrid>
+						       	</p:panel>		
+						    </p:overlayPanel> 
 						</h:panelGrid>
 						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
 							<h:panelGrid columns="2">	
@@ -294,8 +306,7 @@
 							</h:panelGrid>
 						</shiro:hasAnyRoles>		
 					</p:panel>
-						
-				
+			
 				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
@@ -305,6 +316,18 @@
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: " styleClass="labelBold" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>																																  								
 					</h:panelGrid>
+					<p:outputLabel id="gerenteContaLabel" value="Gerente da Conta?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}"/>
+					<p:overlayPanel id="gerenteConta" for="gerenteContaLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
+                    	dismissable="false" showCloseIcon="true">
+				       	<p:panel id="gerenteContaInfo" header="Gerente da Conta" style="margin-bottom:10px;">
+				       		<h:panelGrid columns="2">
+								<p:outputLabel for="CodigoGerente" value="Código do Gerente: " styleClass="labelBold"  />
+								<h:outputText id="CodigoGerente" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.codigo}" label="Código do Gerente" style="width:150px;" />
+								<p:outputLabel for="NomeGerente" value="Nome do Gerente: " styleClass="labelBold" />
+								<h:outputText id="NomeGerente" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.nome}" label="Nome do Gerente" style="width:150px;"/>
+							</h:panelGrid>
+				       	</p:panel>		
+				    </p:overlayPanel>   
 				</p:panel>	
 				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">	
 					<p:panel id="PanelNovoPagador" header="Dados Pagador" style="margin-top:10px;margin-bottom:10px;">

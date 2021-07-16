@@ -22,6 +22,8 @@ public class ContasPagar implements Serializable {
 	private PagadorRecebedor pagadorRecebedor;
 	private String tipoDespesa;
 	private ContaContabil contaContabil;
+	
+	private Responsavel responsavel;
 
 	public ContasPagar() {
 	}
@@ -136,4 +138,11 @@ public class ContasPagar implements Serializable {
 		this.contaContabil = contaContabil;
 	}
 
+	public Responsavel getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(Responsavel responsavel) {
+		this.responsavel = responsavel;
+	}
 }

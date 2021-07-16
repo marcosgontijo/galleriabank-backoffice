@@ -34,6 +34,11 @@ public class ResponsavelMB {
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
 	private boolean tipoPessoaIsFisica = false;
+	
+	private long idResponsavel;
+	private String nomeResponsavel = null;
+	private Responsavel selectedResponsavel;
+	private List<Responsavel> listResponsaveis;
 	/**
 	 * Construtor.
 	 */
@@ -64,6 +69,9 @@ public class ResponsavelMB {
 		objetoResponsavel = new Responsavel();
 		this.tituloPainel = "Adicionar";
 		
+		clearResponsavel();
+		loadLovResponsavel();
+				
 		this.tipoPessoaIsFisica = true;
 
 		return "ResponsavelInserir.xhtml";
@@ -75,6 +83,11 @@ public class ResponsavelMB {
 		} else {
 			this.tipoPessoaIsFisica = true;
 		}		
+		
+		if (this.objetoResponsavel.getDonoResponsavel() != null) {
+			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
+			populateSelectedResponsavel();
+		}
 	
 		return "ResponsavelDetalhes.xhtml";
 	}
@@ -85,7 +98,15 @@ public class ResponsavelMB {
 		} else {
 			this.tipoPessoaIsFisica = true;
 		}	
-	
+		
+		clearResponsavel();
+		loadLovResponsavel();
+		
+		if (this.objetoResponsavel.getDonoResponsavel() != null) {
+			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
+			populateSelectedResponsavel();
+		}
+		
 		return "ResponsavelInserir.xhtml";
 	}		
 
@@ -94,6 +115,9 @@ public class ResponsavelMB {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		String msgRetorno = null;
 		try {
+			
+			objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);
+			
 			if (objetoResponsavel.getId() <= 0) {
 				responsavelDao.create(objetoResponsavel);
 				msgRetorno = "inserido";
@@ -155,6 +179,22 @@ public class ResponsavelMB {
 		}
 
 		return "ResponsavelConsultar.xhtml";
+	}
+	
+	public final void populateSelectedResponsavel() {
+		this.idResponsavel = this.selectedResponsavel.getId();
+		this.nomeResponsavel = this.selectedResponsavel.getNome();
+	}
+	
+	public void clearResponsavel() {
+		this.idResponsavel = 0;
+		this.nomeResponsavel = null;
+		this.selectedResponsavel = new Responsavel();
+	}
+	
+	public void loadLovResponsavel() {
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		this.listResponsaveis = responsavelDao.findAll();
 	}
 		
 	public void selectedTipoPessoa() {
@@ -279,5 +319,37 @@ public class ResponsavelMB {
 	 */
 	public void setTipoPessoaIsFisica(boolean tipoPessoaIsFisica) {
 		this.tipoPessoaIsFisica = tipoPessoaIsFisica;
+	}
+
+	public long getIdResponsavel() {
+		return idResponsavel;
+	}
+
+	public void setIdResponsavel(long idResponsavel) {
+		this.idResponsavel = idResponsavel;
+	}
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public Responsavel getSelectedResponsavel() {
+		return selectedResponsavel;
+	}
+
+	public void setSelectedResponsavel(Responsavel selectedResponsavel) {
+		this.selectedResponsavel = selectedResponsavel;
+	}
+
+	public List<Responsavel> getListResponsaveis() {
+		return listResponsaveis;
+	}
+
+	public void setListResponsaveis(List<Responsavel> listResponsaveis) {
+		this.listResponsaveis = listResponsaveis;
 	}	
 }
