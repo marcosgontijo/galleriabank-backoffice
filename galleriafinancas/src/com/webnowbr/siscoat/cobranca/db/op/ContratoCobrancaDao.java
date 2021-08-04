@@ -2837,7 +2837,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_RELATORIO_FINANCEIRO_DIA = "select c.id from cobranca.contratocobranca c "
 			+ "where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' and c.numerocontrato = '01134'"
+			+ "and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI'"
 			+ " order by numerocontrato ";
 	
 	@SuppressWarnings("unchecked")

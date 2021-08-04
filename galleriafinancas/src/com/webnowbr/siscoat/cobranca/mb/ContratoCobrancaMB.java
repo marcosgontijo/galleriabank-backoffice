@@ -5523,7 +5523,7 @@ public class ContratoCobrancaMB {
 			
 			int countParcelas = 0;
 			
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) { 
 				// se já houve baixa parcial, utiliza a data de vencimento atualizada
 				// senão utiliza a data de vencimento antiga
 				String auxDataVencimentoStr = "";
@@ -5591,7 +5591,6 @@ public class ContratoCobrancaMB {
 				ccd.setValorTotalPagamento(somaBaixas);
 				
 				// seta valor original da parcela
-				/*
 				countParcelas = countParcelas + 1; 
 				
 				if (countParcelas < contratos.getListContratoCobrancaDetalhes().size()) {
@@ -5601,7 +5600,6 @@ public class ContratoCobrancaMB {
 						ccd.setVlrParcela(contratos.getVlrParcela());
 					}
 				}
-				*/
 			}
 		}
 
