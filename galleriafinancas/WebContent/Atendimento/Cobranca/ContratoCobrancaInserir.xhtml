@@ -1361,6 +1361,22 @@
 							<p:outputLabel value="Corrigido IPCA: "/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
 							<p:spacer width="10" />
+							
+							<p:outputLabel value="Tem seguro? "/>
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+								<p:ajax update="Dados"
+										event="change" />
+							</p:selectBooleanCheckbox>
+							<p:spacer width="10" />
+							
+							<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:inputText id="vlrImovel"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:spacer width="10" />
 						</h:panelGrid>
 					</p:panel>
 

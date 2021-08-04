@@ -2837,7 +2837,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_RELATORIO_FINANCEIRO_DIA = "select c.id from cobranca.contratocobranca c "
 			+ "where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' "
+			+ "and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' and c.numerocontrato = '01134'"
 			+ " order by numerocontrato ";
 	
 	@SuppressWarnings("unchecked")
@@ -4622,5 +4622,174 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			closeResources(connection, ps, rs);
 		}
 		return dashboard;
+	}
+	
+	private static final String QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL = "select idparcela, numeroparcela, count(idparcela) from ( "
+			+ "select cc.id, cd.id idparcela, cd.numeroparcela numeroparcela, 'parcial' tipobaixa from cobranca.contratocobranca cc "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = cc.id "
+			+ "inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id "
+			+ "inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ "inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial "
+			+ "where cc.id = ?  "
+			+ "and cd.parcelapaga = false ";
+	
+	private static final String QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL = "select cc.id, cd.id idparcela, cd.numeroparcela numeroparcela, 'integral' tipobaixa " + 
+			"			from cobranca.contratocobrancadetalhes cd  " + 
+			"			inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes  " + 
+			"			inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " + 
+			"			where cc.id = ?  " + 
+			"			and cd.parcelapaga = false ";			
+
+	@SuppressWarnings("unchecked")
+	public String getParcelasAtraso(final Date dataHoje, final String filtrarDataVencimento, final long idContratoCobranca) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {	
+				
+				int countParcelas = 0;
+				String baixaParcial = "|| ";
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;
+				String query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL = QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL;	
+				String query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL = QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL;	
+				
+				String retorno = "";
+				
+				try {
+					connection = getConnection();
+				
+					if (filtrarDataVencimento.equals("Atualizada")) {
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL + " and cd.datavencimentoatual <= ? ::timestamp ";
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL + " and cd.datavencimentoatual <= ? ::timestamp ";
+					} 
+					
+					if (filtrarDataVencimento.equals("Original")) {
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL + " and cd.dataVencimento <= ? ::timestamp ";
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL + " and cd.dataVencimento <= ? ::timestamp ";
+					}
+					
+					if (filtrarDataVencimento.equals("Original e Promessa")) {
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL + " and ((cd.dataVencimento <= ? ::timestamp) or (cd.promessaPagamento <= ? ::timestamp)) ";
+						query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL + " and ((cd.dataVencimento <= ? ::timestamp) or (cd.promessaPagamento <= ? ::timestamp)) ";
+					}
+
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_PARCIAL + " union all " +  query_QUERY_GET_PARCELAS_ATRASO_CONTRATO_INTEGRAL;
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " ) atrasos group by idparcela, numeroparcela order by idparcela ";
+										
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					int qtdeParams = 1;
+					
+					ps.setLong(qtdeParams, idContratoCobranca);
+					qtdeParams = qtdeParams + 1;
+					
+					java.sql.Date dtrHojeSQL = new java.sql.Date(dataHoje.getTime());
+					
+					if (filtrarDataVencimento.equals("Atualizada")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 1;
+					} 
+					
+					if (filtrarDataVencimento.equals("Original")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 1;
+					}
+					
+					if (filtrarDataVencimento.equals("Original e Promessa")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 2;
+					}	
+					
+					ps.setLong(qtdeParams, idContratoCobranca);
+					qtdeParams = qtdeParams + 1;
+					
+					if (filtrarDataVencimento.equals("Atualizada")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 1;
+					} 
+					
+					if (filtrarDataVencimento.equals("Original")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 1;
+					}
+					
+					if (filtrarDataVencimento.equals("Original e Promessa")) {
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						ps.setDate(qtdeParams, dtrHojeSQL);
+						qtdeParams = qtdeParams + 2;
+					}	
+	
+					rs = ps.executeQuery();
+			
+					boolean primeiraBaixaParcial = true;	
+					
+					while (rs.next()) {
+						if (rs.getInt(3) > 1) {
+							if (primeiraBaixaParcial) {
+								baixaParcial = baixaParcial + rs.getInt(2);
+								primeiraBaixaParcial = false;
+							} else {
+								baixaParcial = baixaParcial + " - " + rs.getInt(2);
+							}							
+						}
+						countParcelas = countParcelas + 1;											
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				
+				return String.valueOf(countParcelas) + baixaParcial;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONTRATOS_PENDENTES_VALIDACAO_NOVO_CONTRATO = "select c.numerocontrato, imovel.numeromatricula, imovel.cep from cobranca.contratocobranca c " + 
+																					" inner join cobranca.imovelcobranca imovel on imovel.id = c.imovel ";
+	
+	@SuppressWarnings("unchecked")
+	public String validaImovelNovoContrato(final String matriculaLimpa, final String cepLimpo) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				String retorno = null;
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {		
+					String query = QUERY_CONTRATOS_PENDENTES_VALIDACAO_NOVO_CONTRATO;
+					
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
+					
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+				
+					while (rs.next()) {
+						
+						if (rs.getString(2) != null && rs.getString(3) != null) {
+							String matriculaLimpaBD = rs.getString(2).replace(".", "").replace("-", "");
+							String cepLimpoBD = rs.getString(3).replace(".", "").replace("-", "");
+							
+							if (matriculaLimpaBD.equals(matriculaLimpa) && cepLimpoBD.equals(cepLimpo)) {
+								retorno = rs.getString(1);
+							}	
+						}
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return retorno;
+			}
+		});	
 	}
 }

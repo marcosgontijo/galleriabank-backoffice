@@ -74,6 +74,19 @@ public class ContabilidadeMB {
 		
 		return "/Atendimento/Cobranca/ContabilidadePosicaoAtual.xhtml";
 	}
+	
+	public String clearFieldsPosicaoAtualSimplificado() {
+		this.listContratos = new ArrayList<ContratoCobranca>();	
+		this.relatorioContabilidadeEmAberto = new ArrayList<RelatorioContabilidadeEmAberto>();
+		geraRelatorioValoresAReceberSimplificado();
+		
+		this.pathContrato = "";
+		this.nomeContrato = "";
+		this.file = null;
+		this.xlsGerado = false;
+		
+		return "/Atendimento/Cobranca/ContabilidadePosicaoAtualSimplificado.xhtml";
+	}
 		
 	public void geraRelatorioValoresAReceber() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -283,6 +296,534 @@ public class ContabilidadeMB {
 				FacesMessage.SEVERITY_INFO, "Contabilidade: Posição atual gerada com sucesso!!!", ""));
 	}
 	
+	public void geraRelatorioValoresAReceberSimplificado() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		this.relatorioContabilidadeEmAberto = new ArrayList<RelatorioContabilidadeEmAberto>();
+		RelatorioContabilidadeEmAberto relatorioContabilidadeEmAbertoAux = new RelatorioContabilidadeEmAberto();
+		
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.listContratos = new ArrayList<ContratoCobranca>();	
+		
+		//Map<String, Object> filters = new HashMap<String, Object>();
+		//filters.put("numeroContrato", "01003");
+		//this.listContratos = cDao.findByFilter(filters);
+		this.listContratos = cDao.findAll();
+		
+		BigDecimal saldoReceberContrato = BigDecimal.ZERO;
+		
+		for (ContratoCobranca c : this.listContratos) {
+			
+			saldoReceberContrato = BigDecimal.ZERO;
+			
+			relatorioContabilidadeEmAbertoAux = new RelatorioContabilidadeEmAberto();
+			
+			// Utiliza somente os contratos que são da Galleria Securitizadora e que não possuem a Galleria como Pagador
+			if (c.getEmpresa() != null && c.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+				// Dados Básicos
+				relatorioContabilidadeEmAbertoAux.setNumeroContrato(c.getNumeroContrato());
+				relatorioContabilidadeEmAbertoAux.setDataContrato(c.getDataContrato());
+				
+				relatorioContabilidadeEmAbertoAux.setResponsavel(c.getResponsavel());
+				relatorioContabilidadeEmAbertoAux.setPagador(c.getPagador());
+								
+				relatorioContabilidadeEmAbertoAux.setContrato(c);				
+				
+				// Popula Investidores e saldo credores em aberto
+				BigDecimal saldoInvestidoresAberto = BigDecimal.ZERO;
+				List<RelatorioContabilidadeInvestidor> listInvestidores = new ArrayList<RelatorioContabilidadeInvestidor>();
+				RelatorioContabilidadeInvestidor investidor = new RelatorioContabilidadeInvestidor(); 
+				
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor()) != null && !c.isRecebedorEnvelope() && !c.isOcultaRecebedor()) {					
+					investidor.setInvestidor(c.getRecebedor());
+					
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor1(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor1()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor1()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor1().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor1().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor1().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor1().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor1().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+				
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor2()) != null && !c.isRecebedorEnvelope2() && !c.isOcultaRecebedor2()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor2());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor2(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor2()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor2()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor2().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor2().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor2().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor2().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor2().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor3()) != null && !c.isRecebedorEnvelope3() && !c.isOcultaRecebedor3()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor3());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor3(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor3()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor3()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor3().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor3().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor3().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor3().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor3().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor4()) != null && !c.isRecebedorEnvelope4() && !c.isOcultaRecebedor4()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor4());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor4(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor4()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor4()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor4().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor4().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor4().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor4().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor4().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor5()) != null && !c.isRecebedorEnvelope5() && !c.isOcultaRecebedor5()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor5());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor5(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor5()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor5()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor5().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor5().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor5().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor5().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor5().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor6()) != null && !c.isRecebedorEnvelope6() && !c.isOcultaRecebedor6()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor6());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor6(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor6()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor6()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor6().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor6().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor6().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor6().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor6().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor7()) != null && !c.isRecebedorEnvelope7() && !c.isOcultaRecebedor7()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor7());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor7(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor7()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor7()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor7().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor7().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor7().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor7().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor7().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor8()) != null && !c.isRecebedorEnvelope8() && !c.isOcultaRecebedor8()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor8());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor8(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor8()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor8()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor8().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor8().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor8().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor8().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor8().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor9()) != null && !c.isRecebedorEnvelope9() && !c.isOcultaRecebedor9()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor9());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor9(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor9()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor9()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor9().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor9().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor9().get(0).getParcelaMensal());
+
+								if (c.getListContratoCobrancaParcelasInvestidor9().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor9().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+
+				if (pagadorRecebedorNaoGalleria(c.getRecebedor10()) != null && !c.isRecebedorEnvelope10() && !c.isOcultaRecebedor10()) {
+					investidor = new RelatorioContabilidadeInvestidor();
+					investidor.setInvestidor(c.getRecebedor10());
+
+					long idParcela = getSaldoCredorSimplificado(c, c.getListContratoCobrancaParcelasInvestidor10(), 1);
+					
+					// tem parcelas baixadas e abertas
+					if (idParcela > 0) {
+						int numeroParcela = 0;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor10()) {
+							if (idParcela == parcela.getId()) {
+								investidor.setSaldoInvestidoresAberto(parcela.getSaldoCredorAtualizado());
+								investidor.setDataParcela(parcela.getDataVencimento());
+								investidor.setValorParcela(parcela.getParcelaMensal());
+																
+								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+							}
+						}
+						
+						// popula o campo juros com o valor da próxima parcela		
+						numeroParcela = numeroParcela + 1;
+						
+						for (ContratoCobrancaParcelasInvestidor parcela : c.getListContratoCobrancaParcelasInvestidor10()) {
+							if (numeroParcela == Integer.valueOf(parcela.getNumeroParcela())) {
+								investidor.setValorJuros(parcela.getJuros());
+							}								
+						}
+					} else {
+						// não tem parcelas baixadas
+						if (idParcela == 0) {
+							if (c.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
+								investidor.setSaldoInvestidoresAberto(c.getListContratoCobrancaParcelasInvestidor10().get(0).getSaldoCredorAtualizado());
+								investidor.setDataParcela(c.getListContratoCobrancaParcelasInvestidor10().get(0).getDataVencimento());
+								investidor.setValorParcela(c.getListContratoCobrancaParcelasInvestidor10().get(0).getParcelaMensal());
+								
+								if (c.getListContratoCobrancaParcelasInvestidor10().size() > 1) { 
+									investidor.setValorJuros(c.getListContratoCobrancaParcelasInvestidor10().get(1).getJuros());
+								}
+							}
+						}
+					}
+					
+					if (idParcela > 0) {
+						listInvestidores.add(investidor);
+					}
+				}
+				
+				if (listInvestidores.size() > 0) {
+					relatorioContabilidadeEmAbertoAux.setListInvestidores(listInvestidores);
+					this.relatorioContabilidadeEmAberto.add(relatorioContabilidadeEmAbertoAux);
+				}								
+			}			
+		}
+		
+		context.addMessage(null, new FacesMessage(
+				FacesMessage.SEVERITY_INFO, "Contabilidade: Posição atual gerada com sucesso!!!", ""));
+	}
+	
 	public BigDecimal getSaldoCredor(ContratoCobranca contrato, List<ContratoCobrancaParcelasInvestidor> contratoCobrancaParcelasInvestidor, int posicaoInvestidor) {
 		BigDecimal saldoCredor = BigDecimal.ZERO;
 		int countBaixados = 0;
@@ -378,24 +919,34 @@ public class ContabilidadeMB {
 				  saldoCredor = BigDecimal.ZERO;
 			}
 		}
-		
-		// se tem parcelas baixadas e tem parcelas em aberto vencidas
-		// calcular os juros das parcelas vencidas e somar ao saldo credor.
-		BigDecimal jurosParcelasVencidas = BigDecimal.ZERO;
-		
-		if (countBaixados > 0 && countBaixados < contratoCobrancaParcelasInvestidor.size()) {
-			for (ContratoCobrancaParcelasInvestidor parcelaInvestidor : contratoCobrancaParcelasInvestidor) {			
-				if (!parcelaInvestidor.isBaixado()) {
-					if (isParcelaVencida(parcelaInvestidor.getDataVencimento())) {
-						jurosParcelasVencidas = jurosParcelasVencidas.add(parcelaInvestidor.getJuros());						
-					}
-				}
-			}
-			
-			saldoCredor = saldoCredor.add(jurosParcelasVencidas);			
-		}
 	
 		return saldoCredor;
+	}
+	
+	public long getSaldoCredorSimplificado(ContratoCobranca contrato, List<ContratoCobrancaParcelasInvestidor> contratoCobrancaParcelasInvestidor, int posicaoInvestidor) {
+		int countBaixados = 0;
+		
+		long idParcela = 0;
+		
+		// pega sempre o saldo da última parcela baixada
+		for (ContratoCobrancaParcelasInvestidor parcelaInvestidor : contratoCobrancaParcelasInvestidor) {			
+			if (parcelaInvestidor.isBaixado()) {
+				countBaixados = countBaixados + 1;
+				idParcela = parcelaInvestidor.getId();
+			}
+		}
+		
+		// Se o count de parcelas baixadas é igual ao número de parcelas, está quitado
+		// id == -1
+		if (countBaixados == contratoCobrancaParcelasInvestidor.size()) {
+			idParcela = -1;
+		} 
+		
+		// se o count de parcelas baixadas é 0 e a lista de parcelas é maior que zero
+		// pega o valor recebedor final
+		// id == 0
+	
+		return idParcela;
 	}
 
 	public ContratoCobrancaDetalhes calculaJurosParcela(BigDecimal juros, BigDecimal multa, ContratoCobrancaDetalhes parcela) {
@@ -702,6 +1253,244 @@ public class ContabilidadeMB {
 				sheet.addMergedRegion(CellRangeAddress.valueOf(area));
 				
 				area = "G" + ((countLine + 1) - (countInvestidores - 1)) + ":G" + (countLine + 1);
+				sheet.addMergedRegion(CellRangeAddress.valueOf(area));
+			} 
+			
+			if (record.getListInvestidores().size() == 0) {
+				// senão, colocar borda coloca um conteudo vazio mescla as celulas
+				cell = row.createCell(4);
+				cell.setCellStyle(cell_style);
+				cell.setCellValue("--");
+				
+				cell = row.createCell(5);	
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				cell.setCellValue((BigDecimal.ZERO).doubleValue());
+				
+				cell = row.createCell(6);	
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				cell.setCellValue((BigDecimal.ZERO).doubleValue());
+			}
+			
+			// SET border em celulas mescladas
+			List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+			for (CellRangeAddress rangeAddress : mergedRegions) {
+			  RegionUtil.setBorderTop(BorderStyle.THIN, rangeAddress, sheet);
+			  RegionUtil.setBorderLeft(BorderStyle.THIN, rangeAddress, sheet);
+			  RegionUtil.setBorderRight(BorderStyle.THIN, rangeAddress, sheet);
+			  RegionUtil.setBorderBottom(BorderStyle.THIN, rangeAddress, sheet);
+			}
+		}
+			
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		//write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.xlsGerado = true;
+	}
+	
+	public void getXLSPosicaoAtualSimplificado() throws IOException {
+		this.pathContrato = "";
+		this.nomeContrato = "";
+		this.file = null;
+		this.xlsGerado = false;
+		
+		ParametrosDao pDao = new ParametrosDao(); 
+		this.pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+		this.nomeContrato = "Relatório Posição Atual Simplificado.xlsx";  	
+
+		TimeZone zone = TimeZone.getDefault();  
+		Locale locale = new Locale("pt", "BR");  
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);  
+		dataHoje.set(Calendar.MINUTE, 0);  
+		dataHoje.set(Calendar.SECOND, 0);  
+		dataHoje.set(Calendar.MILLISECOND, 0);
+		
+		//dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+		
+		String excelFileName = this.pathContrato + this.nomeContrato;//name of excel file
+
+		String sheetName = "Resultado";//name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName) ;
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);      
+
+		//iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Data Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Investidor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Data Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Valor Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Juros");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Saldo");
+		cell.setCellStyle(cell_style);
+		
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);  
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();                			
+		numericStyle.setDataFormat(ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short)BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (RelatorioContabilidadeEmAberto record : this.relatorioContabilidadeEmAberto) {
+			countLine ++;
+			row = sheet.createRow(countLine);
+
+			// Contrato
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());	
+
+			//Data do Contrato
+			cell = row.createCell(1);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataContrato());
+
+			//Pagador
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+
+			if (record.getPagador() != null) {
+				cell.setCellValue(record.getPagador().getNome());	
+			}	
+						
+			int countInvestidores = 0;
+			
+			for (RelatorioContabilidadeInvestidor investidor : record.getListInvestidores()) {
+				if (countInvestidores > 0) {
+					countLine ++;
+					row = sheet.createRow(countLine);
+				}
+				
+				// Investidor
+				cell = row.createCell(3);
+				cell.setCellStyle(cell_style);
+				cell.setCellValue(investidor.getInvestidor().getNome());	
+				
+				// Data vencimento
+				cell = row.createCell(4);	
+				cell.setCellStyle(dateStyle);
+								
+				if (investidor.getDataParcela() != null) {
+					cell.setCellValue(investidor.getDataParcela());
+				}
+				
+				// Valor Parcela
+				cell = row.createCell(5);	
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				
+				if (investidor.getValorParcela() != null) {
+					cell.setCellValue(((BigDecimal) investidor.getValorParcela()).doubleValue());
+				} else {
+					cell.setCellValue((BigDecimal.ZERO).doubleValue()); 
+				}
+				
+				//Valor Juros
+				cell = row.createCell(6);	
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				
+				if (investidor.getValorJuros() != null) {
+					cell.setCellValue(((BigDecimal) investidor.getValorJuros()).doubleValue());
+				} else {
+					cell.setCellValue((BigDecimal.ZERO).doubleValue()); 
+				}
+				
+				// Saldo aberto Investidor
+				cell = row.createCell(7);	
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				
+				if (investidor.getSaldoInvestidoresAberto() != null) {
+					cell.setCellValue(((BigDecimal) investidor.getSaldoInvestidoresAberto()).doubleValue());
+				} else {
+					cell.setCellValue((BigDecimal.ZERO).doubleValue()); 
+				}
+				
+				countInvestidores = countInvestidores + 1;
+			}
+
+			// se a lista de investidores é maior que zero, mescla as colunas estáticas
+			if (record.getListInvestidores().size() > 1) {
+				String area = "A" + ((countLine + 1) - (countInvestidores - 1)) + ":A" + (countLine + 1);
+				sheet.addMergedRegion(CellRangeAddress.valueOf(area));
+				
+				area = "B" + ((countLine + 1) - (countInvestidores - 1)) + ":B" + (countLine + 1);
+				sheet.addMergedRegion(CellRangeAddress.valueOf(area));
+				
+				area = "C" + ((countLine + 1) - (countInvestidores - 1)) + ":C" + (countLine + 1);
 				sheet.addMergedRegion(CellRangeAddress.valueOf(area));
 			} 
 			

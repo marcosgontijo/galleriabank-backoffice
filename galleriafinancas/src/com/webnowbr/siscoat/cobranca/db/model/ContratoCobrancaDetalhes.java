@@ -58,6 +58,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private Date dataUltimoPagamento;
 	private BigDecimal valorTotalPagamento;
 	
+	private BigDecimal seguroDIF;
+	private BigDecimal seguroMIP;
+	
 	/**
 	 * Não persistido
 	 */
@@ -477,5 +480,21 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setIdContrato(long idContrato) {
 		this.idContrato = idContrato;
+	}
+
+	public BigDecimal getSeguroDIF() {
+		return seguroDIF;
+	}
+
+	public void setSeguroDIF(BigDecimal seguroDIF) {
+		this.seguroDIF = seguroDIF;
+	}
+
+	public BigDecimal getSeguroMIP() {
+		return seguroMIP;
+	}
+
+	public void setSeguroMIP(BigDecimal seguroMIP) {
+		this.seguroMIP = seguroMIP;
 	}
 }

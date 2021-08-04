@@ -1126,6 +1126,17 @@
 					<h:panelGrid columns="2">	
 						<p:outputLabel value="Corrigido IPCA: "/>
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
+						
+						<p:outputLabel value="Tem seguro? "/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+						
+						<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
+								styleClass="labelBold" />
+						<p:inputText id="vlrImovel"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />						
 					</h:panelGrid>	
 					<h:panelGrid columns="4">		
 						<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "  />

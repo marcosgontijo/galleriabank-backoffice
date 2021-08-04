@@ -226,6 +226,12 @@
 		<property name="corrigidoIPCA" type="boolean">
 			<column name="corrigidoIPCA" />
 		</property>
+		<property name="temSeguro" type="boolean">
+			<column name="temSeguro" />
+		</property>
+		<property name="valorImovel" type="big_decimal">
+			<column name="valorImovel" />
+		</property>
 		<property name="leadCompleto" type="boolean">
 			<column name="leadCompleto" />
 		</property>

@@ -59,6 +59,9 @@ public class RelatorioFinanceiroCobranca {
 	private BigDecimal vlrRecebedor9;
 	private BigDecimal vlrRecebedor10;	
 	
+	private String qtdeAtrasos;
+	private String qtdeBaixasParciais;
+	
 	private long idParcela;
 	
 	public RelatorioFinanceiroCobranca() {
@@ -67,6 +70,10 @@ public class RelatorioFinanceiroCobranca {
 	
 	public RelatorioFinanceiroCobranca(ContratoCobranca contratoCobranca) {
 		this.contratoCobranca = contratoCobranca;
+		}
+	
+	public RelatorioFinanceiroCobranca(String qtdeAtrasos) {
+		this.qtdeAtrasos = qtdeAtrasos;
 		}
 	
 	public RelatorioFinanceiroCobranca(String numeroContrato, Date dataContrato, String nomeResponsavel, String nomePagador, String nomeRecebedor, String parcela,
@@ -746,5 +753,21 @@ public class RelatorioFinanceiroCobranca {
 
 	public void setVlrTotalPago(BigDecimal vlrTotalPago) {
 		this.vlrTotalPago = vlrTotalPago;
+	}
+
+	public String getQtdeAtrasos() {
+		return qtdeAtrasos;
+	}
+
+	public void setQtdeAtrasos(String qtdeAtrasos) {
+		this.qtdeAtrasos = qtdeAtrasos;
+	}
+
+	public String getQtdeBaixasParciais() {
+		return qtdeBaixasParciais;
+	}
+
+	public void setQtdeBaixasParciais(String qtdeBaixasParciais) {
+		this.qtdeBaixasParciais = qtdeBaixasParciais;
 	}
 }

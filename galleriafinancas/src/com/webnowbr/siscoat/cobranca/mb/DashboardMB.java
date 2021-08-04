@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -13,6 +14,7 @@ import org.primefaces.model.charts.pie.PieChartModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 
 @ManagedBean(name = "dashboardMB")
 @SessionScoped
@@ -21,7 +23,29 @@ public class DashboardMB {
     private PieChartModel pieOrigemLead;
     private PieChartModel pieStatusLead;
     
+    private Date dataInicio;
+    private Date dataFim;
+    
+    private List<Dashboard> dashContratos;
+    
 	public DashboardMB() {
+		
+	}
+	
+	public String clearFieldsDashContratos() {
+		
+		this.dataInicio = null;
+		this.dataFim = null;
+		
+		this.dashContratos = new ArrayList<Dashboard>();
+		
+		return "/Atendimento/Cobranca/DashboardManager.xhtml";
+	}
+	
+	public void processaDashContratos() {
+		
+		DashboardDao dDao = new DashboardDao();
+		this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim);
 		
 	}
 	
@@ -170,5 +194,29 @@ public class DashboardMB {
 
 	public void setPieStatusLead(PieChartModel pieStatusLead) {
 		this.pieStatusLead = pieStatusLead;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public List<Dashboard> getDashContratos() {
+		return dashContratos;
+	}
+
+	public void setDashContratos(List<Dashboard> dashContratos) {
+		this.dashContratos = dashContratos;
 	}
 }

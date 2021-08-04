@@ -486,6 +486,14 @@
 						<h:outputText value="#{contratos.vlrParcelaAtualizada}"
 							converter="bigDecimalConverter" />
 					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Parcelas em Aberto" rendered="#{contratoCobrancaMB.relIsRelAtraso}">
+						<h:outputText value="#{contratos.qtdeAtrasos}" />
+					</p:column>		
+					<p:column style="text-align: center;width: 90px;"
+						headerText="Com Baixas Parciais (# Parcela)" rendered="#{contratoCobrancaMB.relIsRelAtraso}">
+						<h:outputText value="#{contratos.qtdeBaixasParciais}" />
+					</p:column>				
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Favorecido" styleClass="colunaHiddenRelFinanceiro">
 						<h:outputText value="#{contratos.recebedor1.nomeCC}"

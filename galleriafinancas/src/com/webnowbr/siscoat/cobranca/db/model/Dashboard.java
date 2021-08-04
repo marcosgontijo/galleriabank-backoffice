@@ -19,6 +19,13 @@ public class Dashboard implements Serializable {
 	
 	private int novoLead;
 	private int leadEmTratamento;
+	
+	private String nomeResponsavel;
+	private int totalcontratos;
+	private int totalaprovados;
+	private int totalreprovados;
+	private int totalagpagamento;
+	private int totalpago;
 
 	public Dashboard() {
 	}
@@ -101,5 +108,53 @@ public class Dashboard implements Serializable {
 
 	public void setLeadEmTratamento(int leadEmTratamento) {
 		this.leadEmTratamento = leadEmTratamento;
+	}
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public int getTotalcontratos() {
+		return totalcontratos;
+	}
+
+	public void setTotalcontratos(int totalcontratos) {
+		this.totalcontratos = totalcontratos;
+	}
+
+	public int getTotalaprovados() {
+		return totalaprovados;
+	}
+
+	public void setTotalaprovados(int totalaprovados) {
+		this.totalaprovados = totalaprovados;
+	}
+
+	public int getTotalreprovados() {
+		return totalreprovados;
+	}
+
+	public void setTotalreprovados(int totalreprovados) {
+		this.totalreprovados = totalreprovados;
+	}
+
+	public int getTotalagpagamento() {
+		return totalagpagamento;
+	}
+
+	public void setTotalagpagamento(int totalagpagamento) {
+		this.totalagpagamento = totalagpagamento;
+	}
+
+	public int getTotalpago() {
+		return totalpago;
+	}
+
+	public void setTotalpago(int totalpago) {
+		this.totalpago = totalpago;
 	}
 }

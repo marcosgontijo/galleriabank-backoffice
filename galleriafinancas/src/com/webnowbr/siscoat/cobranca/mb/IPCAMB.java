@@ -92,16 +92,23 @@ public class IPCAMB {
 		if (listaParcelas.size() > 0) {
 			if (this.taxa.compareTo(BigDecimal.ZERO) == 1) {
 				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
+				
+				BigDecimal saldoParcelaAnterior = BigDecimal.ZERO;
+				
 				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
 					// se primeira parcela calcula com o valor da CCB
 					if (parcela.getNumeroParcela().equals("1")) {
 						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
 											
-						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));					
+						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));		
+						
+						saldoParcelaAnterior = contrato.getValorCCB();
 					} else {
 						// se não calcula com o saldo devedor
-						parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaCalculo));
+						parcela.setIpca(saldoParcelaAnterior.multiply(taxaCalculo));
+						
+						saldoParcelaAnterior = parcela.getVlrSaldoParcela();
 					}
 					
 					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
@@ -125,16 +132,23 @@ public class IPCAMB {
 		if (listaParcelas.size() > 0) {
 			if (this.taxa.compareTo(BigDecimal.ZERO) == 1) {
 				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
+				
+				BigDecimal saldoParcelaAnterior = BigDecimal.ZERO;
+				
 				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
 					// se primeira parcela calcula com o valor da CCB
 					if (parcela.getNumeroParcela().equals("1")) {
 						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
 											
-						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));					
+						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));	
+						
+						saldoParcelaAnterior = contrato.getValorCCB();
 					} else {
 						// se não calcula com o saldo devedor
-						parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaCalculo));
+						parcela.setIpca(saldoParcelaAnterior.multiply(taxaCalculo));
+						
+						saldoParcelaAnterior = parcela.getVlrSaldoParcela();
 					}
 					
 					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
@@ -152,6 +166,8 @@ public class IPCAMB {
 		IPCADao IPCADao = new IPCADao();
 		
 		if (contrato.isCorrigidoIPCA()) {
+			BigDecimal saldoParcelaAnterior = BigDecimal.ZERO;
+
 			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 				if (!parcela.isParcelaPaga()) {
 					// get a taxa do mês
@@ -162,10 +178,14 @@ public class IPCAMB {
 						
 						// se primeira parcela calcula com o valor da CCB
 						if (parcela.getNumeroParcela().equals("1")) {							
-							parcela.setIpca(contrato.getValorCCB().multiply(taxaMesReferencia));					
+							parcela.setIpca(contrato.getValorCCB().multiply(taxaMesReferencia));
+							
+							saldoParcelaAnterior = contrato.getValorCCB();
 						} else {
 							// se não calcula com o saldo devedor
-							parcela.setIpca(parcela.getVlrSaldoParcela().multiply(taxaMesReferencia));
+							parcela.setIpca(saldoParcelaAnterior.multiply(taxaMesReferencia));
+							
+							saldoParcelaAnterior = parcela.getVlrSaldoParcela();
 						}
 						
 						parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));

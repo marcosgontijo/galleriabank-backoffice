@@ -377,6 +377,9 @@ public class ContratoCobranca implements Serializable {
 	
 	private String observacaolead;
 	private String motivoReprovaLead;
+	
+	private boolean temSeguro;
+	private BigDecimal valorImovel;
 
 	public ContratoCobranca() {
 		super();
@@ -3132,5 +3135,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setCorrigidoIPCA(boolean corrigidoIPCA) {
 		this.corrigidoIPCA = corrigidoIPCA;
+	}
+
+	public boolean isTemSeguro() {
+		return temSeguro;
+	}
+
+	public void setTemSeguro(boolean temSeguro) {
+		this.temSeguro = temSeguro;
+	}
+
+	public BigDecimal getValorImovel() {
+		return valorImovel;
+	}
+
+	public void setValorImovel(BigDecimal valorImovel) {
+		this.valorImovel = valorImovel;
 	}
 }

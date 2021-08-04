@@ -2523,24 +2523,27 @@ public class InvestidorMB {
 		cell.setCellValue("Debenturista");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(2);
-		cell.setCellValue("Valor Debenture");
+		cell.setCellValue("Contrato");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(3);
-		cell.setCellValue("Taxa");
+		cell.setCellValue("Valor Debenture");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(4);
-		cell.setCellValue("Prazo");
+		cell.setCellValue("Taxa");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(5);
-		cell.setCellValue("Vlr. Parcela Mensal");
+		cell.setCellValue("Prazo");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(6);
-		cell.setCellValue("Vlr. Parcela Final");
+		cell.setCellValue("Vlr. Parcela Mensal");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(7);
-		cell.setCellValue("Data Última Parcela");
+		cell.setCellValue("Vlr. Parcela Final");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(8);
+		cell.setCellValue("Data Última Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
 		cell.setCellValue("Quitado");
 		cell.setCellStyle(cell_style);
 
@@ -2593,9 +2596,14 @@ public class InvestidorMB {
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getRecebedor().getNome());
+			
+			// Contrato
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getContrato().getNumeroContrato());
 
 			// Valor Debenture
-			cell = row.createCell(2);
+			cell = row.createCell(3);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorDebenture() != null) {
@@ -2605,7 +2613,7 @@ public class InvestidorMB {
 			}
 
 			// Taxa
-			cell = row.createCell(3);
+			cell = row.createCell(4);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getTaxa() != null) {
@@ -2615,12 +2623,12 @@ public class InvestidorMB {
 			}
 
 			// Prazo
-			cell = row.createCell(4);
+			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getPrazo());
 
 			// Parcela Mensal
-			cell = row.createCell(5);
+			cell = row.createCell(6);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaMensal() != null) {
@@ -2630,7 +2638,7 @@ public class InvestidorMB {
 			}
 
 			// Parcela Final
-			cell = row.createCell(6);
+			cell = row.createCell(7);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaFinal() != null) {
@@ -2640,12 +2648,12 @@ public class InvestidorMB {
 			}
 
 			// Data Ultima PArcela
-			cell = row.createCell(7);
+			cell = row.createCell(8);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcela());
 			
 			// Quitado
-			cell = row.createCell(8);
+			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQuitado());
 		}

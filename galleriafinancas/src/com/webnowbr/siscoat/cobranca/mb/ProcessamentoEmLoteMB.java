@@ -363,10 +363,10 @@ public class ProcessamentoEmLoteMB {
 					}
 				} else {
 					//PGTO
-					Double parcelaPGTO = FinanceLib.pmt(txJurosParcela.doubleValue(), Double.valueOf(contrato.getListContratoCobrancaDetalhes().size()), saldoAtualizado.doubleValue(), Double.valueOf("0"), false);
+					//Double parcelaPGTO = FinanceLib.pmt(txJurosParcela.doubleValue(), Double.valueOf(contrato.getListContratoCobrancaDetalhes().size() - countCarencia), saldoAtualizado.doubleValue(), Double.valueOf("0"), false);
 					// Deixa positivo
-					parcelaPGTO = parcelaPGTO - (parcelaPGTO * 2);	
-					BigDecimal parcelaPGTOCalculada = new BigDecimal(parcelaPGTO);
+					//parcelaPGTO = parcelaPGTO - (parcelaPGTO * 2);	
+					//BigDecimal parcelaPGTOCalculada = new BigDecimal(parcelaPGTO);
 					
 					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 						if (countCarencia > 0) {
@@ -382,7 +382,7 @@ public class ProcessamentoEmLoteMB {
 							
 						} else {
 							parcela.setVlrJurosParcela(saldoAtualizado.multiply(txJurosParcela));
-							parcela.setVlrAmortizacaoParcela(parcelaPGTOCalculada.subtract(parcela.getVlrJurosParcela()));
+							parcela.setVlrAmortizacaoParcela(contrato.getVlrParcela().subtract(parcela.getVlrJurosParcela()));
 							parcela.setVlrSaldoParcela(saldoAtualizado.subtract(parcela.getVlrAmortizacaoParcela()));
 							
 							saldoAtualizado = parcela.getVlrSaldoParcela();									

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form style="margin-bottom:10px;">
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaDashboardManager" header="Dashboard Manager - Consultar"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{dashboardMB.dataInicio}"
+						label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{dashboardMB.dataFim}" 
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>					
+				</h:panelGrid>
+				
+				<p:commandButton value="Consultar" ajax="false"
+					icon="ui-icon-check" action="#{dashboardMB.processaDashContratos}" update="ConsultaDashboardManagerResultados">
+				</p:commandButton>
+			</p:panel>
+			<p:panel id="ConsultaDashboardManagerResultados" header="Dashboard Manager - Resultados" style="margin-bottom:10px;">		    		    				
+				<p:dataTable id="dtDashboardManager" var="dashContratos"
+					value="#{dashboardMB.dashContratos}" paginator="true" rows="40"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					reflow="true">
+					<p:column style="text-align: center;" headerText="Responsável"
+						filterBy="#{dashContratos.nomeResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.nomeResponsavel}">
+						<h:outputText value="#{dashContratos.nomeResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Total de Contratos">
+						<h:outputText value="#{dashContratos.totalcontratos}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total Aprovados (Análise)">
+						<h:outputText value="#{dashContratos.totalaprovados}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total Reprovados (Análise)">
+						<h:outputText value="#{dashContratos.totalreprovados}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total Ag. Pagamento">
+						<h:outputText value="#{dashContratos.totalagpagamento}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total Pago - Ag. Laudo e PAJU">
+						<h:outputText value="#{dashContratos.totalpago}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

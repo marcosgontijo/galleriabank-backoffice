@@ -1022,3 +1022,7 @@
 .ui-widget-overlay {
     background: none !important;  
 }
+
+.ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
+    background: #98c949 !important;
+}

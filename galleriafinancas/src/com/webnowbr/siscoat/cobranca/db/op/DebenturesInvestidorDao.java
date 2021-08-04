@@ -115,6 +115,8 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							debenturesCompleta.setValorDebenture(BigDecimal.valueOf(db.getQtdeDebentures() * 1000).setScale(2, BigDecimal.ROUND_UP));
 							debenturesCompleta.setPrazo(c.getQtdeParcelas());
 							
+							debenturesCompleta.setContrato(c);
+							
 							if (c.getRecebedor() != null) {
 								if (c.getRecebedor().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
@@ -450,6 +452,8 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							debenturesCompleta.setPrazo(c.getQtdeParcelas());
 							
 							if (c.getRecebedor() != null) {
+								debenturesCompleta.setContrato(c);
+								
 								debenturesCompleta.setRecebedor(c.getRecebedor());
 								debenturesCompleta.setValorDebenture(c.getVlrFinalRecebedor1());
 								debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor1());

@@ -31,6 +31,12 @@
 		<property name="ipca" type="big_decimal">
 			<column name="ipca" />
 		</property>
+		<property name="seguroDIF" type="big_decimal">
+			<column name="seguroDIF" />
+		</property>
+		<property name="seguroMIP" type="big_decimal">
+			<column name="seguroMIP" />
+		</property>
 		<property name="txMulta" type="big_decimal">
 			<column name="txMulta" />
 		</property>

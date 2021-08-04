@@ -16,7 +16,7 @@
 			
 			<ui:define name="menu">  
 				<h:form style="margin-bottom:10px;">
-					<p:menu style="width: 227px; ">						
+					<p:menu style="width: 250px; ">						
 						<p:submenu label="Gerenciamento" styleClass="titulosMenu">
 							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas a Pagar"
@@ -29,6 +29,10 @@
 									styleClass="itemMenu" />
 								<p:menuitem value="Dashboard SEO"
 									action="#{dashboardMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Dashboard Manager"
+									action="#{dashboardMB.clearFieldsDashContratos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
@@ -159,6 +163,9 @@
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
 									<p:menuitem value="Posição Atual"
 										action="#{contabilidadeMB.clearFieldsPosicaoAtual}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Posição Atual Simplificado"
+										action="#{contabilidadeMB.clearFieldsPosicaoAtualSimplificado}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
 									<p:menuitem value="DRE"
 										action="#{demonstrativoResultadoMB.clearFields}" ajax="false"

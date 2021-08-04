@@ -100,6 +100,9 @@
 			        <p:column style="text-align: center;" headerText="Debenturista" filterBy="#{debentures.recebedor.nome}" filterMatchMode="contains" sortBy="#{debentures.recebedor.nome}">
 			            <h:outputText value="#{debentures.recebedor.nome}" />
 			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Contrato" filterBy="#{debentures.contrato.numeroContrato}" filterMatchMode="contains" sortBy="#{debentures.contrato.numeroContrato}">
+			            <h:outputText value="#{debentures.contrato.numeroContrato}" />
+			        </p:column>	
 			        <p:column style="text-align: center;"
 							headerText="Valor Debenture" >
 						<h:outputText value="R$ "/><h:outputText value="#{debentures.valorDebenture}" converter="bigDecimalConverter"/>
@@ -130,7 +133,7 @@
 						<h:outputText value="#{debentures.quitado}"/>
 					</p:column>		
 			        <f:facet name="footer">
-						<p:commandButton action="#{investidorMB.gerarTitulosQuitadosPDF}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar PDF" value="Gerar PDF">
+						<p:commandButton action="#{investidorMB.geraXLSDebenturesEmitidas}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS" value="Gerar XLS">
 		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
 		                </p:commandButton>
 			        </f:facet>             		        			        			           			 		
