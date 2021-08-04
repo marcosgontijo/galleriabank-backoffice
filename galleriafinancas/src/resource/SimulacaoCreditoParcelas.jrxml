@@ -89,7 +89,7 @@
 				<text><![CDATA[Seguro DFI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="371" y="0" width="90" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
+				<reportElement mode="Opaque" x="371" y="0" width="102" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -99,7 +99,7 @@
 				<text><![CDATA[Valor Parcela]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="461" y="0" width="92" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="016d9548-1b42-44de-8445-73d3516a83c2">
+				<reportElement mode="Opaque" x="474" y="0" width="78" height="20" forecolor="#FFFFFF" backcolor="#548235" uuid="016d9548-1b42-44de-8445-73d3516a83c2">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -113,6 +113,13 @@
 		<band height="15">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="446" y="1" width="40" height="13" uuid="5fc8541a-fa06-4145-ab18-5a773ae3aba2"/>
+				<textElement textAlignment="Left">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[+IPCA]]></text>
+			</staticText>
 			<textField>
 				<reportElement x="-1" y="0" width="51" height="15" uuid="a4f9f627-2a84-4011-bba8-e4b1cb0908cf">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -161,7 +168,7 @@
 				<textFieldExpression><![CDATA[$F{seguroDFI}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="371" y="0" width="90" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
+				<reportElement x="371" y="0" width="75" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -170,7 +177,7 @@
 				<textFieldExpression><![CDATA[$F{valorParcela}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="461" y="0" width="93" height="15" uuid="2b45328a-ea65-4f10-9fc9-64c6a6ed80be">
+				<reportElement x="474" y="0" width="80" height="15" uuid="2b45328a-ea65-4f10-9fc9-64c6a6ed80be">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">

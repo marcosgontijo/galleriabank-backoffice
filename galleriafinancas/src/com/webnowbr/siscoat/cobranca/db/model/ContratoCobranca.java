@@ -27,6 +27,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal vlrRepasse;
 	private BigDecimal vlrLucro;
 	private BigDecimal vlrComissao;
+	private String tipoCalculo;
 	private String acao;
 	private String observacao;
 	private String observacao2;
@@ -576,6 +577,14 @@ public class ContratoCobranca implements Serializable {
 	 */
 	public void setAcao(String acao) {
 		this.acao = acao;
+	}
+
+	public String getTipoCalculo() {
+		return tipoCalculo;
+	}
+
+	public void setTipoCalculo(String tipoCalculo) {
+		this.tipoCalculo = tipoCalculo;
 	}
 
 	/**
