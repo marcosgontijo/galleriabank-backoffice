@@ -24,6 +24,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -45,11 +46,7 @@ public class SimuladorMB {
 	private BigInteger parcelas;
 	private BigInteger carencia;
 
-	private BigDecimal custoEmissaoPercentual = BigDecimal.valueOf(3);
-	private final BigDecimal custoEmissaoMinimo = BigDecimal.valueOf(3500);
-	private final BigDecimal seguroMIP = BigDecimal.valueOf(0.021); // seguro MIP: 0,021% sobre saldo devedor parcela
-																	// anterior;
-	private final BigDecimal seguroDFI = BigDecimal.valueOf(0.0037); // seguro DFI: 0,0037% sobre o valor do imóvel;
+	
 
 	private SimulacaoVO simulacao;
 
@@ -106,10 +103,10 @@ public class SimuladorMB {
 			return null;
 		}
 
-		BigDecimal custoEmissaoValor = this.custoEmissaoMinimo;
-		if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-				.compareTo(this.custoEmissaoMinimo) > 0) {
-			custoEmissaoValor = this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+		if (this.valorCredito.multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
+				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+			custoEmissaoValor = this.valorCredito.multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
 		}
 
 		BigDecimal tarifaIOFDiario;
@@ -125,8 +122,8 @@ public class SimuladorMB {
 		simulador.setDataSimulacao(DateUtil.getDataHoje());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
-		simulador.setSeguroMIP(seguroMIP);
-		simulador.setSeguroDFI(seguroDFI);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 		// valores
 		simulador.setValorCredito(this.valorCredito);
 		simulador.setTaxaJuros(this.taxaJuros);
@@ -146,8 +143,8 @@ public class SimuladorMB {
 		simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
 		simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
 		simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
-		simuladorLiquido.setSeguroMIP(seguroMIP);
-		simuladorLiquido.setSeguroDFI(seguroDFI);
+		simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 		// valores
 		simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
 		simuladorLiquido.setValorCredito(valorBruto);
