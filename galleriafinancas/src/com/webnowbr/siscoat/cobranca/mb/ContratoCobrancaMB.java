@@ -5591,6 +5591,7 @@ public class ContratoCobrancaMB {
 				ccd.setValorTotalPagamento(somaBaixas);
 				
 				// seta valor original da parcela
+				/*
 				countParcelas = countParcelas + 1; 
 				
 				if (countParcelas < contratos.getListContratoCobrancaDetalhes().size()) {
@@ -5600,6 +5601,7 @@ public class ContratoCobrancaMB {
 						ccd.setVlrParcela(contratos.getVlrParcela());
 					}
 				}
+				*/
 			}
 		}
 
