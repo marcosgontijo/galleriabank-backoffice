@@ -108,14 +108,14 @@ public class SimuladorMB {
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = this.valorCredito.multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
 		}
-
+		
 		BigDecimal tarifaIOFDiario;
-		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 
 		if ("PF".equals(tipoPessoa)) {
-			tarifaIOFDiario = BigDecimal.valueOf(0.0082).divide(BigDecimal.valueOf(100));
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
 		} else {
-			tarifaIOFDiario = BigDecimal.valueOf(0.0041).divide(BigDecimal.valueOf(100));
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
 		}
 
 		SimulacaoVO simulador = new SimulacaoVO();
@@ -124,6 +124,7 @@ public class SimuladorMB {
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
 		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
 		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setTipoPessoa(tipoPessoa);
 		// valores
 		simulador.setValorCredito(this.valorCredito);
 		simulador.setTaxaJuros(this.taxaJuros);
@@ -145,6 +146,7 @@ public class SimuladorMB {
 		simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
 		simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
 		simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simuladorLiquido.setTipoPessoa(tipoPessoa);
 		// valores
 		simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
 		simuladorLiquido.setValorCredito(valorBruto);

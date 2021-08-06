@@ -52,6 +52,8 @@ public class SimulacaoVO {
 
 		valorTotalIOF = BigDecimal.ZERO;
 		valorTotalIOFAdicional = BigDecimal.ZERO;
+		BigDecimal valorIOFAdicional = valorCredito.multiply(tarifaIOFAdicional)
+				.divide(BigDecimal.valueOf(qtdParcelas.subtract(carencia).doubleValue()), MathContext.DECIMAL128);
 
 		parcelas = new ArrayList<SimulacaoDetalheVO>();
 
@@ -117,16 +119,36 @@ public class SimulacaoVO {
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
 
-//				long diasVencimento = i * 30l;
 				long diasVencimento = (long) DateUtil.getDaysBetweenDates(dataSimulacao,
+
 						DateUtil.adicionarPeriodo(dataSimulacao, i, Calendar.MONTH));
 				if (diasVencimento > 365) {
 					diasVencimento = 365l;
 				}
 
-				parcelaCalculo.setValorIOF(parcelaCalculo.getAmortizacao()
-						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento))));
-				parcelaCalculo.setValorIOFAdicional(parcelaCalculo.getAmortizacao().multiply(tarifaIOFAdicional));
+				BigDecimal valorOParcelaIOF = parcelaCalculo.getAmortizacao()
+						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)));
+
+//				long diasVencimento = i * 30l;
+				boolean calcularIOF = true;
+				if ("PF".equals(tipoPessoa)) {
+					if ((valorTotalIOF.add(valorOParcelaIOF))
+							.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.03d))) == 1) {
+						calcularIOF = false;
+					}
+				} else {
+					if ((valorTotalIOF.add(valorOParcelaIOF))
+							.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.015d))) == 1) {
+						calcularIOF = false;
+					}
+				}
+
+				if (calcularIOF) {
+					parcelaCalculo.setValorIOF(valorOParcelaIOF);
+				} else {
+					parcelaCalculo.setValorIOF(BigDecimal.ZERO);
+				}
+				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
 
 				valorTotalIOF = valorTotalIOF.add(parcelaCalculo.getValorIOF());
 				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
@@ -285,7 +307,8 @@ public class SimulacaoVO {
 					parcelaCalculo
 							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
 				} else if (this.qtdParcelas.compareTo(BigInteger.valueOf((long) i)) == 0) {
-					parcelaCalculo.setValorParcela(saldoDevedorCarencia.add(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela)));
+					parcelaCalculo.setValorParcela(
+							saldoDevedorCarencia.add(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela)));
 					amortizacao = saldoDevedorCarencia;
 				} else {
 					parcelaCalculo.setValorParcela(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));

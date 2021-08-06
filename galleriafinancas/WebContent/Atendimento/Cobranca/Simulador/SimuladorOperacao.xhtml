@@ -167,6 +167,23 @@
 						<f:convertNumber pattern="#,##0.00" />
 					</h:outputText>
 
+<!-- 
+					<p:outputLabel value="ValorTotalIOF: " styleClass="labelBold" />
+					<h:outputText value="#{simuladorMB.simulacao.valorTotalIOF}"
+						converter="bigDecimalConverter">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+
+					<p:outputLabel value="ValorTotalIOFAdicional: "
+						styleClass="labelBold" />
+					<h:outputText
+						value="#{simuladorMB.simulacao.valorTotalIOFAdicional}"
+						converter="bigDecimalConverter">
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+ -->
+
+
 				</h:panelGrid>
 				<p:dataTable id="dtBpHistorico" var="bpParcela"
 					value="#{simuladorMB.simulacao.parcelas}" emptyMessage=""
@@ -211,7 +228,8 @@
 							converter="bigDecimalConverter">
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
-						<h:outputText value=" +IPCA" />
+						<h:outputText value=" +IPCA"
+							rendered="#{bpParcela.valorParcela gt 0}" />
 					</p:column>
 					<p:column style="text-align: center;"
 						headerText="Saldo devedor (R$)">
@@ -220,6 +238,20 @@
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
 					</p:column>
+					<!--	<p:column style="text-align: center;"
+						headerText="Valor IOF (R$)">
+						<h:outputText value="#{bpParcela.valorIOF}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>
+						<p:column style="text-align: center;"
+						headerText="Valor IOF Inicial (R$)">
+						<h:outputText value="#{bpParcela.valorIOFAdicional}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column> -->
 
 				</p:dataTable>
 
