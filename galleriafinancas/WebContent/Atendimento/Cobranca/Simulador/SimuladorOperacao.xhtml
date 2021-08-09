@@ -137,7 +137,12 @@
 						<p:inputText id="identificacao"
 							value="#{simuladorMB.identificacao}" required="false">
 						</p:inputText>
-
+						
+						<p:outputLabel/>
+						<p:selectBooleanCheckbox id="naoCalcularDFI" value="#{simuladorMB.naoCalcularDFI}" itemLabel="Retirar seguro DFI" />
+					
+						<p:outputLabel/>
+						<p:selectBooleanCheckbox id="naoCalcularMIP" value="#{simuladorMB.naoCalcularMIP}" itemLabel="Retirar seguro MIP" />
 
 					</h:panelGrid>
 				</h:panelGrid>
@@ -167,7 +172,7 @@
 						<f:convertNumber pattern="#,##0.00" />
 					</h:outputText>
 
-<!-- 
+
 					<p:outputLabel value="ValorTotalIOF: " styleClass="labelBold" />
 					<h:outputText value="#{simuladorMB.simulacao.valorTotalIOF}"
 						converter="bigDecimalConverter">
@@ -181,7 +186,7 @@
 						converter="bigDecimalConverter">
 						<f:convertNumber pattern="#,##0.00" />
 					</h:outputText>
- -->
+
 
 
 				</h:panelGrid>
@@ -238,15 +243,15 @@
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
 					</p:column>
-					<!--	<p:column style="text-align: center;"
+					<!--<p:column style="text-align: center;"
 						headerText="Valor IOF (R$)">
 						<h:outputText value="#{bpParcela.valorIOF}"
 							converter="bigDecimalConverter">
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
 					</p:column>
-						<p:column style="text-align: center;"
-						headerText="Valor IOF Inicial (R$)">
+					<p:column style="text-align: center;"
+						headerText="Valor IOF Adicional (R$)">
 						<h:outputText value="#{bpParcela.valorIOFAdicional}"
 							converter="bigDecimalConverter">
 							<f:convertNumber pattern="#,##0.00" />

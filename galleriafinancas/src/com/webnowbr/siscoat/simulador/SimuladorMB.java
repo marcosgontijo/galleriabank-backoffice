@@ -45,6 +45,8 @@ public class SimuladorMB {
 	private BigDecimal taxaJuros;
 	private BigInteger parcelas;
 	private BigInteger carencia;
+	private boolean naoCalcularDFI;
+    private boolean naoCalcularMIP;
 
 	
 
@@ -133,6 +135,8 @@ public class SimuladorMB {
 		simulador.setValorImovel(this.valorImovel);
 		simulador.setCustoEmissaoValor(custoEmissaoValor);
 		simulador.setTipoCalculo(tipoCalculo);
+		simulador.setNaoCalcularDFI(this.naoCalcularDFI);
+		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.calcular();
 
 		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
@@ -156,6 +160,8 @@ public class SimuladorMB {
 		simuladorLiquido.setValorImovel(this.valorImovel);
 		simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
 		simuladorLiquido.setTipoCalculo(tipoCalculo);
+		simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
+		simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
 		simuladorLiquido.calcular();
 
 		this.simulacao = simuladorLiquido;
@@ -280,6 +286,22 @@ public class SimuladorMB {
 
 	public void setIdentificacao(String identificacao) {
 		this.identificacao = identificacao;
+	}
+
+	public boolean isNaoCalcularDFI() {
+		return naoCalcularDFI;
+	}
+
+	public void setNaoCalcularDFI(boolean naoCalcularDFI) {
+		this.naoCalcularDFI = naoCalcularDFI;
+	}
+
+	public boolean isNaoCalcularMIP() {
+		return naoCalcularMIP;
+	}
+
+	public void setNaoCalcularMIP(boolean naoCalcularMIP) {
+		this.naoCalcularMIP = naoCalcularMIP;
 	}
 
 }
