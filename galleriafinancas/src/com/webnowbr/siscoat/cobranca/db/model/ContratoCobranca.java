@@ -266,6 +266,10 @@ public class ContratoCobranca implements Serializable {
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
+	
+	private Date agRegistroData;
+	private boolean agRegistro;
+	private String agRegistroUsuario;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -3160,5 +3164,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorImovel(BigDecimal valorImovel) {
 		this.valorImovel = valorImovel;
+	}
+
+	public Date getAgRegistroData() {
+		return agRegistroData;
+	}
+
+	public void setAgRegistroData(Date agRegistroData) {
+		this.agRegistroData = agRegistroData;
+	}
+
+	public boolean isAgRegistro() {
+		return agRegistro;
+	}
+
+	public void setAgRegistro(boolean agRegistro) {
+		this.agRegistro = agRegistro;
+	}
+
+	public String getAgRegistroUsuario() {
+		return agRegistroUsuario;
+	}
+
+	public void setAgRegistroUsuario(String agRegistroUsuario) {
+		this.agRegistroUsuario = agRegistroUsuario;
 	}
 }

@@ -269,7 +269,7 @@
 								    </h:outputText>																    						    
 							</h:panelGrid>			
 						</h:panelGrid>	
-						<h:panelGrid columns="2" style="margin-top:20px;margin-bottom: 20px;">	
+						<h:panelGrid columns="3" style="margin-top:20px;margin-bottom: 20px;">	
 								<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
@@ -292,6 +292,30 @@
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
 							</h:panelGrid>	
+							
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>
+									<p:spacer ></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="agRegistroView" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>		
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+										<p:selectBooleanButton id="agRegistro" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="agRegistroUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="agRegistroData" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>	
+							
 							<h:panelGrid columns="2" style="margin-left: 20px;background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	

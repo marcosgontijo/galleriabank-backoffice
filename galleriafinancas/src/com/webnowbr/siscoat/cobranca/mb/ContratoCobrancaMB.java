@@ -1248,6 +1248,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgRegistro(true);
 
 		this.qtdeParcelas = null;
 		// FIM - Tratamento para Pré-Contrato
@@ -1303,6 +1304,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgRegistro(true);
 
 		this.qtdeParcelas = null;
 		// FIM - Tratamento para Pré-Contrato
@@ -1587,6 +1589,31 @@ public class ContratoCobrancaMB {
 					+ "<img src='http://siscoatimagens.galleriabank.com.br/AgAssinaturaNOk.png' height='57' width='120'>"
 					+ "</td>";
 		}
+		
+		//"Ag. Registro"
+				if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null && this.objetoContratoCobranca.getMatriculaAprovadaValor() != null) {
+					if (this.objetoContratoCobranca.isInicioAnalise() &&
+							this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+							this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("Aprovado") &&
+							this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+							this.objetoContratoCobranca.isLaudoRecebido() &&
+							this.objetoContratoCobranca.isPajurFavoravel() &&
+							this.objetoContratoCobranca.isDocumentosCompletos() &&
+							this.objetoContratoCobranca.isCcbPronta() ) {
+								
+						mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+								+ "<img src='http://siscoatimagens.galleriabank.com.br/AgRegistroOk.png' height='57' width='120'>"
+								+ "</td>";			
+					} else {
+						mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+								+ "<img src='http://siscoatimagens.galleriabank.com.br/AgRegistroNOk.png' height='57' width='120'>"
+								+ "</td>";
+					}
+				} else {
+					mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+							+ "<img src='http://siscoatimagens.galleriabank.com.br/AgRegistroNOk.png' height='57' width='120'>"
+							+ "</td>";
+				}
 
 	
 		
@@ -2514,7 +2541,18 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgAssinaturaUsuario(getNomeUsuarioLogado());
 			}
 		}
-
+		
+		if (this.objetoContratoCobranca.isAgRegistro()) {
+			this.objetoContratoCobranca.setAgRegistroData(null);
+			this.objetoContratoCobranca.setAgRegistroUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getAgRegistroData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setAgRegistroData(gerarDataHoje());
+				this.objetoContratoCobranca.setAgRegistroUsuario(getNomeUsuarioLogado());
+			}
+		}
+	
 		this.objetoContratoCobranca.setStatusContratoData(gerarDataHoje());
 		this.objetoContratoCobranca.setStatusContratoUsuario(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setStatus("Pendente");

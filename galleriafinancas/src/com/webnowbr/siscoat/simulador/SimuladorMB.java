@@ -163,6 +163,12 @@ public class SimuladorMB {
 		simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
 		simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
 		simuladorLiquido.calcular();
+		
+		if(this.valorCredito.add(simuladorLiquido.getIOFTotal()).add(simuladorLiquido.getCustoEmissaoValor()) != valorBruto ) {
+			valorBruto = this.valorCredito.add(simuladorLiquido.getIOFTotal()).add(simuladorLiquido.getCustoEmissaoValor());
+			simuladorLiquido.setValorCredito(valorBruto);
+			simuladorLiquido.calcular();
+		}
 
 		this.simulacao = simuladorLiquido;
 		this.simulacao.setTipoCalculo(tipoCalculo);

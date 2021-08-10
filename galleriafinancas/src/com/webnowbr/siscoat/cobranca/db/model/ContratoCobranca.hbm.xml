@@ -684,6 +684,17 @@
 		<property name="agAssinatura" type="boolean">
 			<column name="agAssinatura" />
 		</property>
+		<property name="agRegistroData"
+			type="java.util.Date">
+			<column name="agRegistroData" />
+		</property>
+		<property name="agRegistroUsuario"
+			type="java.lang.String">
+			<column name="agRegistroUsuario" />
+		</property>
+		<property name="agRegistro" type="boolean">
+			<column name="agRegistro" />
+		</property>
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
 			<column name="visitaImovelAprovadaData" />
