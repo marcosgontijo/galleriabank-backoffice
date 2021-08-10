@@ -23,7 +23,7 @@ public class SimulacaoVO {
 	private String tipoPessoa;
 	private String tipoCalculo;
 	private boolean naoCalcularDFI;
-    private boolean naoCalcularMIP;
+	private boolean naoCalcularMIP;
 
 	// valores
 	private BigDecimal valorCredito;
@@ -55,8 +55,7 @@ public class SimulacaoVO {
 	public void calcularPrice() {
 
 		valorTotalIOF = BigDecimal.ZERO;
-		valorTotalIOFAdicional = BigDecimal.ZERO;
-		BigDecimal valorIOFAdicional = calcularIOFAdicional();
+		valorTotalIOFAdicional = calcularIOFAdicional();
 
 		parcelas = new ArrayList<SimulacaoDetalheVO>();
 
@@ -75,11 +74,11 @@ public class SimulacaoVO {
 		parcelas.add(parcelaCalculo);
 
 		// seguros
-				
-		if (!naoCalcularDFI){
+
+		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
-		
+
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
 
@@ -96,7 +95,7 @@ public class SimulacaoVO {
 
 			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
 
-			if (!naoCalcularMIP){
+			if (!naoCalcularMIP) {
 				valorSeguroMIP = saldoDevedorAnterior.multiply(this.seguroMIP.divide(BigDecimal.valueOf(100)));
 			}
 
@@ -114,7 +113,6 @@ public class SimulacaoVO {
 				parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
 			} else {
-				
 
 				if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
 					parcelaCalculo
@@ -124,20 +122,21 @@ public class SimulacaoVO {
 					parcelaAmortizacao = parcelaPGTO;
 				}
 				parcelaCalculo.setJuros(juros);
-				
-				BigDecimal coeficienteAmortizacao = (parcelaAmortizacao.subtract(parcelaCalculo.getJuros())).divide(saldoDevedorCarencia, MathContext.DECIMAL128);
+
+				BigDecimal coeficienteAmortizacao = (parcelaAmortizacao.subtract(parcelaCalculo.getJuros()))
+						.divide(saldoDevedorCarencia, MathContext.DECIMAL128);
 				parcelaCalculo.setAmortizacao(this.valorCredito.multiply(coeficienteAmortizacao));
-				
+
 //				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
 
 				calcularIOF(parcelaCalculo, i);
-				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
+//				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
 
 				valorTotalIOF = valorTotalIOF.add(parcelaCalculo.getValorIOF());
-				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
+//				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
@@ -156,16 +155,18 @@ public class SimulacaoVO {
 	}
 
 	private void calcularIOF(SimulacaoDetalheVO parcelaCalculo, int i) {
-		long diasVencimento = (long) DateUtil.getDaysBetweenDates(dataSimulacao,
 
+		long diasVencimento = (long) DateUtil.getDaysBetweenDates(dataSimulacao,
 				DateUtil.adicionarPeriodo(dataSimulacao, i, Calendar.MONTH));
+
 		if (diasVencimento > 365) {
 			diasVencimento = 365l;
 		}
-
-		BigDecimal valorOParcelaIOF = parcelaCalculo.getAmortizacao()
-				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)));
-
+		
+		BigDecimal valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
+				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
+				).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
 		if ("PF".equals(tipoPessoa)) {
@@ -188,16 +189,16 @@ public class SimulacaoVO {
 	}
 
 	private BigDecimal calcularIOFAdicional() {
-		BigDecimal valorIOFAdicional = valorCredito.multiply(tarifaIOFAdicional)
-				.divide(BigDecimal.valueOf(qtdParcelas.subtract(carencia).doubleValue()), MathContext.DECIMAL128);
+		BigDecimal valorIOFAdicional = valorCredito.multiply(tarifaIOFAdicional);
+		// .divide(BigDecimal.valueOf(qtdParcelas.subtract(carencia).doubleValue()),
+		// MathContext.DECIMAL128);
 		return valorIOFAdicional;
 	}
 
 	public void calcularSac() {
 
 		valorTotalIOF = BigDecimal.ZERO;
-		valorTotalIOFAdicional = BigDecimal.ZERO;
-		BigDecimal valorIOFAdicional = calcularIOFAdicional();
+		valorTotalIOFAdicional = calcularIOFAdicional();
 
 		parcelas = new ArrayList<SimulacaoDetalheVO>();
 
@@ -209,10 +210,10 @@ public class SimulacaoVO {
 
 		// seguros
 
-		if (!naoCalcularDFI){
+		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
-		
+
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
 
@@ -227,7 +228,7 @@ public class SimulacaoVO {
 
 			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
 
-			if (!naoCalcularMIP){
+			if (!naoCalcularMIP) {
 				valorSeguroMIP = saldoDevedorAnterior.multiply(this.seguroMIP.divide(BigDecimal.valueOf(100)));
 			}
 
@@ -248,7 +249,8 @@ public class SimulacaoVO {
 					parcelaCalculo
 							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
 				} else {
-					parcelaCalculo.setValorParcela(juros.add(amortizacao).add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+					parcelaCalculo.setValorParcela(
+							juros.add(amortizacao).add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
 				}
 
 				parcelaCalculo.setJuros(juros);
@@ -258,10 +260,10 @@ public class SimulacaoVO {
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
 
 				calcularIOF(parcelaCalculo, i);
-				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
+//				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
 
 				valorTotalIOF = valorTotalIOF.add(parcelaCalculo.getValorIOF());
-				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
+//				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
@@ -287,8 +289,7 @@ public class SimulacaoVO {
 	public void calcularAmericano() {
 
 		valorTotalIOF = BigDecimal.ZERO;
-		valorTotalIOFAdicional = BigDecimal.ZERO;
-		BigDecimal valorIOFAdicional = calcularIOFAdicional();
+		valorTotalIOFAdicional = calcularIOFAdicional();
 
 		parcelas = new ArrayList<SimulacaoDetalheVO>();
 		BigDecimal saldoDevedorCarencia = getSaldoDevedorCarencia();
@@ -299,11 +300,10 @@ public class SimulacaoVO {
 
 		// seguros
 
-		if (!naoCalcularDFI){
+		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
-		
-	
+
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
 
@@ -317,7 +317,7 @@ public class SimulacaoVO {
 
 			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
 
-			if (!naoCalcularMIP){
+			if (!naoCalcularMIP) {
 				valorSeguroMIP = saldoDevedorAnterior.multiply(this.seguroMIP.divide(BigDecimal.valueOf(100)));
 			}
 
@@ -351,13 +351,11 @@ public class SimulacaoVO {
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
 
-
-
 				calcularIOF(parcelaCalculo, i);
-				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
+//				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
 
 				valorTotalIOF = valorTotalIOF.add(parcelaCalculo.getValorIOF());
-				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
+//				valorTotalIOFAdicional = valorTotalIOFAdicional.add(parcelaCalculo.getValorIOFAdicional());
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
