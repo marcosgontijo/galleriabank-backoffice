@@ -165,7 +165,7 @@ public class SimulacaoVO {
 		
 		BigDecimal valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
 				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
-				).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+				).setScale(4, BigDecimal.ROUND_HALF_DOWN);
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
