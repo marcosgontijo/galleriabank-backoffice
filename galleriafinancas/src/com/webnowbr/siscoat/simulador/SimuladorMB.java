@@ -139,7 +139,7 @@ public class SimuladorMB {
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.calcular();
 
-		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128).setScale(10);
+		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
 		fator = BigDecimal.ONE.subtract(fator);
 		BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
 				MathContext.DECIMAL128);
