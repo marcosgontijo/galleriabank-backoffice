@@ -50,6 +50,10 @@ public class CRMMB {
 	private int qtdeAgAssinatura;
 	private BigDecimal valorTotalAgAssinatura;
 	
+	private List<ContratoCobranca> agRegistro;
+	private int qtdeAgRegistro;
+	private BigDecimal valorTotalAgRegistro;
+	
 	private List<ContratoCobranca> todosContratos;
 	private int qtdeTodosContratos;
 	private BigDecimal valorTodosContratos;
@@ -71,6 +75,8 @@ public class CRMMB {
 		geraConsultaContratosAgDOC();
 		geraConsultaContratosAgCCB();
 		geraConsultaContratosAgAssinatura();
+		geraConsultaContratosAgRegistro();
+
 		
 		return "/Atendimento/Cobranca/CRM.xhtml";
 	}
@@ -153,6 +159,15 @@ public class CRMMB {
 			this.valorTodosContratos = this.valorTotalAgAssinatura;
 			
 			this.tituloPagina = "Ag. Assinatura";
+		}
+		
+		if (filtro.equals("AgRegistro")) {
+			geraConsultaContratosAgRegistro();
+			this.todosContratos = this.agRegistro;
+			this.qtdeTodosContratos = this.qtdeAgRegistro;
+			this.valorTodosContratos = this.valorTotalAgRegistro;
+			
+			this.tituloPagina = "Ag. Registro";
 		}
 		
 		// popula status
@@ -457,6 +472,39 @@ public class CRMMB {
 		}
 	}
 	
+	public void geraConsultaContratosAgRegistro() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.agRegistro = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.agRegistro = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Ag. Registro");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.agRegistro = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Ag. Registro"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAgRegistro = 0;
+		this.valorTotalAgRegistro = BigDecimal.ZERO;
+		
+		if (this.agRegistro.size() > 0) {
+			this.qtdeAgRegistro = this.agRegistro.size();
+			
+			for (ContratoCobranca c : this.agRegistro) {
+				this.valorTotalAgRegistro = valorTotalAgRegistro.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
 	public List<ContratoCobranca> populaStatus(List<ContratoCobranca> contratos) {
 		// POPULA STATUS
 		for (ContratoCobranca c : contratos) {
@@ -504,7 +552,12 @@ public class CRMMB {
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
 				c.setStatus("Ag. Assinatura");
-			}	
+			}
+			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
+					c.setStatus("Ag. Registro");
+			}
 
 			if (c.isAnaliseReprovada()) {
 				c.setStatus("Análise Reprovada");
@@ -679,6 +732,7 @@ public class CRMMB {
 		return qtdeAgAssinatura;
 	}
 
+	
 	public void setQtdeAgAssinatura(int qtdeAgAssinatura) {
 		this.qtdeAgAssinatura = qtdeAgAssinatura;
 	}
@@ -690,7 +744,35 @@ public class CRMMB {
 	public void setValorTotalAgAssinatura(BigDecimal valorTotalAgAssinatura) {
 		this.valorTotalAgAssinatura = valorTotalAgAssinatura;
 	}
+	
+	
+	
+	public List<ContratoCobranca> getAgRegistro() {
+		return agRegistro;
+	}
 
+	public void setAgRegistro(List<ContratoCobranca> agRegistro) {
+		this.agRegistro = agRegistro;
+	}
+
+	public int getQtdeAgRegistro() {
+		return qtdeAgRegistro;
+	}
+
+	public void setQtdeAgRegistro(int qtdeAgRegistro) {
+		this.qtdeAgRegistro = qtdeAgRegistro;
+	}
+
+	public BigDecimal getValorTotalAgRegistro() {
+		return valorTotalAgRegistro;
+	}
+
+	public void setValorTotalAgRegistro(BigDecimal valorTotalAgRegistro) {
+		this.valorTotalAgRegistro = valorTotalAgRegistro;
+	}
+	
+
+	
 	public List<ContratoCobranca> getTodosContratos() {
 		return todosContratos;
 	}
