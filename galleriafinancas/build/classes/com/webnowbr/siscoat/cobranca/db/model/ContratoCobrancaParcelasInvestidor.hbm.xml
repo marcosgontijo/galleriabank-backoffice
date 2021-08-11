@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class
+		name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor"
+		table="CONTRATOCOBRANCAPARCELASINVESTIDOR">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<many-to-one name="investidor"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="investidor" />
+		</many-to-one>
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>		
+		<property name="numeroParcela" type="java.lang.String">
+			<column name="NUMEROPARCELA" />
+		</property>
+		<property name="dataVencimento" type="java.util.Date">
+			<column name="DATAVENCIMENTO" />
+		</property>
+		<property name="parcelaMensal" type="big_decimal">
+			<column name="parcelaMensal" />
+		</property>
+		<property name="juros" type="big_decimal">
+			<column name="juros" />
+		</property>
+		<property name="amortizacao" type="big_decimal">
+			<column name="amortizacao" />
+		</property>
+		<property name="saldoCredor" type="big_decimal">
+			<column name="saldoCredor" />
+		</property>
+		<property name="saldoCredorAtualizado" type="big_decimal">
+			<column name="saldoCredorAtualizado" />
+		</property>
+		<property name="irRetido" type="big_decimal">
+			<column name="irRetido" />
+		</property>
+		<property name="valorLiquido" type="big_decimal">
+			<column name="valorLiquido" />
+		</property>
+		<property name="baixado" type="boolean">
+			<column name="baixado" />
+		</property>
+		<property name="dataBaixa" type="java.util.Date">
+			<column name="dataBaixa" />
+		</property>
+		<property name="valorBaixado" type="big_decimal">
+			<column name="valorBaixado" />
+		</property>
+	</class>
+</hibernate-mapping>

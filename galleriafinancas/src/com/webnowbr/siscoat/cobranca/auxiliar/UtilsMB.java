@@ -1,6 +1,14 @@
 package com.webnowbr.siscoat.cobranca.auxiliar;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 
 public class UtilsMB {
 

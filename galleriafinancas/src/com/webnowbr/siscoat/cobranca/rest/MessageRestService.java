@@ -202,7 +202,11 @@ public class MessageRestService {
 					// popula pagador
 					contratoCobrancaMB.getObjetoPagadorRecebedor().setNome(lead.getString("nome"));
 					contratoCobrancaMB.setTipoPessoaIsFisica(true);
-					contratoCobrancaMB.getObjetoPagadorRecebedor().setCpf(lead.getString("cpf"));
+					
+					if (lead.has("cpf")) {
+						contratoCobrancaMB.getObjetoPagadorRecebedor().setCpf(lead.getString("cpf"));
+					}
+				
 					contratoCobrancaMB.getObjetoPagadorRecebedor().setTelCelular(lead.getString("telefone"));			
 					contratoCobrancaMB.getObjetoPagadorRecebedor().setEmail(lead.getString("email"));
 					
@@ -222,21 +226,23 @@ public class MessageRestService {
 						contratoCobrancaMB.getObjetoImovelCobranca().setValoEstimado(new BigDecimal(valorImovel));
 					}
 					
-					String tipoImovel = lead.getString("tipo_imovel");
+					if (lead.has("tipo_imovel")) {
+						String tipoImovel = lead.getString("tipo_imovel");
+						
+						if (tipoImovel.equals("Apartamento residencial")) {
+							tipoImovel = "Apartamento";
+						}
+						
+						if (tipoImovel.equals("Casa residencial")) {
+							tipoImovel = "Casa";
+						}
+						
+						if (tipoImovel.equals("Comercial")) {
+							tipoImovel = "Sala Comercial";
+						}					
 					
-					if (tipoImovel.equals("Apartamento residencial")) {
-						tipoImovel = "Apartamento";
+						contratoCobrancaMB.getObjetoImovelCobranca().setTipo(tipoImovel);
 					}
-					
-					if (tipoImovel.equals("Casa residencial")) {
-						tipoImovel = "Casa";
-					}
-					
-					if (tipoImovel.equals("Comercial")) {
-						tipoImovel = "Sala Comercial";
-					}
-					
-					contratoCobrancaMB.getObjetoImovelCobranca().setTipo(tipoImovel);
 	
 					// salva LEAD
 					contratoCobrancaMB.addPreContratoLeadSite();

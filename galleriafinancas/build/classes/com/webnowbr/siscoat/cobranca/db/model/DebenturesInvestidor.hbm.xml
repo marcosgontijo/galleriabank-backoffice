@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor" table="DebenturesInvestidor">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="numeroCautela" type="java.lang.String">
+            <column name="numeroCautela"/>
+        </property>
+        <property name="serie" type="java.lang.String">
+            <column name="serie"/>
+        </property>
+        <property name="numeroDocumento" type="java.lang.String">
+            <column name="numeroDocumento"/>
+        </property>
+        <property name="qtdeDebentures" type="int">
+			<column name="qtdeDebentures" />
+		</property>
+		<property name="dataDebentures" type="java.util.Date">
+			<column name="dataDebentures" />
+		</property>
+		<property name="dataVencimento" type="java.util.Date">
+			<column name="dataVencimento" />
+		</property>
+		<property name="porcentagemDebentures" type="big_decimal">
+			<column name="porcentagemDebentures" />
+		</property>
+		<property name="lastrearTitulos" type="boolean">
+			<column name="lastrearTitulos" />
+		</property>
+		<many-to-one name="recebedor"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="RECEBEDOR" />
+		</many-to-one>   
+		<many-to-one name="contrato"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contrato" />
+		</many-to-one>                                     
+    </class>
+</hibernate-mapping>

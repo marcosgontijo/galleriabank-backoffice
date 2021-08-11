@@ -339,12 +339,12 @@
 					            <p:ajax update="PanelNovoPagador" event="valueChange" listener="#{contratoCobrancaMB.selectedTipoPessoaPublico}"/>
 					        </p:selectOneRadio>		
 		
-							<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-							<p:inputMask id="Cpf" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpf}" label="CPF" mask="999.999.999-99" required="true" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
+							<p:outputLabel for="Cpf" value="CPF: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputMask id="Cpf" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpf}" label="CPF" mask="999.999.999-99"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 							</p:inputMask>
 							
-							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
-							<p:inputMask id="CNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
+							<p:outputLabel for="CNPJ" value="CNPJ: "  rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputMask id="CNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpj}" label="CNPJ" mask="99.999.999/9999-99"  rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur" listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}"/>
 							</p:inputMask>
 							

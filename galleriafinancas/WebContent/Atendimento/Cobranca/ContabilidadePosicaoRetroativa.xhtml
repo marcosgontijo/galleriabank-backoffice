@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" ></script>	
+			<p:messages id="mensagens" showDetail="true"/>	
+			
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+			
+			<p:panel id="PanelXLS"
+				header="Impressão em XLS Gerada com Sucesso"
+				style="margin-bottom:10px;"
+				rendered="#{contabilidadeMB.xlsGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+	
+					<h:form>
+						<p:commandButton value="Download do Relatório" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{contabilidadeMB.file}" />
+						</p:commandButton>
+					</h:form>
+	
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+						</script>
+	
+				</h:panelGrid>
+			</p:panel>		
+			<p:panel id="ConsultaFinanceiro" header="Posição Retroativa - Consultar"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="anofiscal" value="Ano base: "
+						styleClass="labelBold"  />
+					<p:selectOneMenu id="anofiscal"
+							value="#{contabilidadeMB.anoBase}"
+							label="Status" style="width:190px;" required="true">
+							<f:selectItem itemValue="" itemLabel="Selecione" />
+							<f:selectItem itemValue="2020" itemLabel="2020" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{contabilidadeMB.consultaPosicaoRetroativa}"
+					image="ui-icon ui-icon-check"
+					update=":form:PosicaoAtual PanelXLS mensagens"
+					style="TEXT-DECORATION: bold; margin-top: 15px;" onclick="start();" oncomplete="stop();"/>
+			</p:panel>		
+			
+															
+			<p:panel id="PosicaoAtual" header="Posição Retroativa - Consultar" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="contratos"
+					value="#{contabilidadeMB.relatorioContabilidadePosicaoRetroativaInvestidor}"
+					selection=""
+					emptyMessage="" sortBy="#{contratos.contrato.numeroContrato}">
+					
+					<f:facet name="header">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contabilidadeMB.getXLSPosicaoRetroativa}"
+							update="PanelXLS"
+							disabled="#{contabilidadeMB.relatorioContabilidadePosicaoRetroativaInvestidor.size() == 0}" />
+					</f:facet>
+					
+					<f:facet name="footer">
+						<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contabilidadeMB.getXLSPosicaoRetroativa}"
+							update="PanelXLS"
+							disabled="#{contabilidadeMB.relatorioContabilidadePosicaoRetroativaInvestidor.size() == 0}" />
+					</f:facet>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{contratos.contrato.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{contratos.contrato.numeroContrato}">
+						<h:outputText value="#{contratos.contrato.numeroContrato}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Contrato"
+						sortBy="#{contratos.contrato.dataContrato}">
+						<h:outputText value="#{contratos.contrato.dataContrato}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Responsável" filterBy="#{contratos.contrato.responsavel.nome}"
+						filterMatchMode="contains" sortBy="#{contratos.contrato.responsavel.nome}">
+						<h:outputText value="#{contratos.contrato.responsavel.nome}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Pagador" filterBy="#{contratos.contrato.pagador.nome}"
+						filterMatchMode="contains" sortBy="#{contratos.contrato.pagador.nome}">
+						<h:outputText value="#{contratos.contrato.pagador.nome}" />
+					</p:column>
+					
+					 <p:column headerText="Debêntures" >
+				        <p:dataTable var="investidor"
+							value="#{contratos.listContratoCobrancaParcelasInvestidor}"
+							emptyMessage="Não há parcelas!!!" >
+							
+							<p:column style="text-align: center;width: 100px;"
+								headerText="Debenturista" >
+								<h:outputText value="#{investidor.investidor.nome}" />
+							</p:column>
+							
+							<p:column style="text-align: center;width: 100px;"
+								headerText="Data Vencimento"
+								sortBy="#{investidor.dataVencimento}">
+								<h:outputText value="#{investidor.dataVencimento}">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+					        <p:column style="text-align: center;width: 100px;"
+								headerText="Valor Parcela (R$)" >
+								<h:outputText value="#{investidor.parcelaMensal}"
+									converter="bigDecimalConverter" />
+							</p:column>
+						</p:dataTable>
+			        </p:column>						
+				</p:dataTable>
+			</p:panel>	
+		</h:form>					
+	</ui:define>
+</ui:composition>	        

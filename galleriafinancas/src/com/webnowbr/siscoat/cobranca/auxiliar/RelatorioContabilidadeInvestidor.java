@@ -2,7 +2,9 @@ package com.webnowbr.siscoat.cobranca.auxiliar;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 
 public class RelatorioContabilidadeInvestidor {
@@ -14,6 +16,8 @@ public class RelatorioContabilidadeInvestidor {
 	private BigDecimal valorParcela;
 	
 	private BigDecimal valorJuros;
+	
+	private List<ContratoCobrancaParcelasInvestidor> lisContratoCobrancaParcelasInvestidor;
 	
 	public RelatorioContabilidadeInvestidor() {
 		this.investidor = new PagadorRecebedor();
@@ -57,5 +61,14 @@ public class RelatorioContabilidadeInvestidor {
 
 	public void setValorJuros(BigDecimal valorJuros) {
 		this.valorJuros = valorJuros;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getLisContratoCobrancaParcelasInvestidor() {
+		return lisContratoCobrancaParcelasInvestidor;
+	}
+
+	public void setLisContratoCobrancaParcelasInvestidor(
+			List<ContratoCobrancaParcelasInvestidor> lisContratoCobrancaParcelasInvestidor) {
+		this.lisContratoCobrancaParcelasInvestidor = lisContratoCobrancaParcelasInvestidor;
 	}
 }

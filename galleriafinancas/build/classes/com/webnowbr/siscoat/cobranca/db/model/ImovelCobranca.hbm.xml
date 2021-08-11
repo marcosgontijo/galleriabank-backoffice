@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca" table="IMOVELCOBRANCA">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="numeroMatricula" type="java.lang.String">
+            <column name="NUMEROMATRICULA"/>
+        </property>        
+        <property name="nome" type="java.lang.String">
+            <column name="NOME" />
+        </property>
+        <property name="endereco" type="java.lang.String">
+            <column name="ENDERECO"/>
+        </property>   
+        <property name="bairro" type="java.lang.String">
+            <column name="BAIRRO"/>
+        </property>               
+        <property name="complemento" type="java.lang.String">
+            <column name="COMPLEMENTO"/>
+        </property> 
+        <property name="cidade" type="java.lang.String">
+            <column name="CIDADE"/>
+        </property> 
+        <property name="estado" type="java.lang.String">
+            <column name="ESTADO"/>
+        </property>      
+        <property name="telResidencial" type="java.lang.String">
+            <column name="TELRESIDENCIAL"/>
+        </property>  
+        <property name="observacao" type="java.lang.String">
+            <column name="OBSERVACAO"/>
+        </property>       
+        <property name="cep" type="java.lang.String">
+            <column name="CEP"/>
+        </property> 
+        <property name="cartorio" type="java.lang.String">
+            <column name="CARTORIO"/>
+        </property>   
+        <property name="tipo" type="java.lang.String">
+            <column name="TIPO"/>
+        </property>           
+        <property name="areaTotal" type="java.lang.String">
+            <column name="AREATOTAL"/>
+        </property>  
+        <property name="areaConstruida" type="java.lang.String">
+            <column name="AREACONSTRUIDA"/>
+        </property>    
+        <property name="linkGMaps" type="java.lang.String">
+            <column name="linkGMaps" length="600"/>
+        </property>    
+        <property name="possuiDivida" type="java.lang.String">
+            <column name="possuiDivida"/>
+        </property> 
+        <property name="ocupacao" type="java.lang.String">
+            <column name="ocupacao"/>
+        </property>                  
+        <property name="valoEstimado" type="big_decimal">
+			<column name="valoEstimado" />
+		</property>                 
+    </class>
+</hibernate-mapping>

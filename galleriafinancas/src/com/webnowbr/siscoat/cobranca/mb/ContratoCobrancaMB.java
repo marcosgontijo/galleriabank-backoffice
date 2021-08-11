@@ -8305,6 +8305,7 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhes.setVlrJuros(this.objetoContratoCobranca.getTxJuros());
 				contratoCobrancaDetalhes.setTxMulta(this.objetoContratoCobranca.getTxMulta());
 				contratoCobrancaDetalhes.setVlrParcela(this.objetoContratoCobranca.getVlrParcela());
+				contratoCobrancaDetalhes.setVlrParcelaOriginal(this.objetoContratoCobranca.getVlrParcela());
 
 				contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasse);
 				contratoCobrancaDetalhes.setVlrRetencao(this.vlrRetencao);
@@ -8360,6 +8361,7 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhes.setVlrJuros(this.objetoContratoCobranca.getTxJuros());
 				contratoCobrancaDetalhes.setTxMulta(this.objetoContratoCobranca.getTxMulta());
 				contratoCobrancaDetalhes.setVlrParcela(this.getVlrParcelaFinal());
+				contratoCobrancaDetalhes.setVlrParcelaOriginal(this.getVlrParcelaFinal());
 
 				contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasseFinal);
 				contratoCobrancaDetalhes.setVlrRetencao(this.vlrRetencaoFinal);
@@ -13460,6 +13462,17 @@ public class ContratoCobrancaMB {
 		cell = row.createCell(8);
 		cell.setCellValue("Status");
 		cell.setCellStyle(cell_style);
+		
+		if (this.isRelIsRelAtraso()) {
+			cell = row.createCell(50);
+			cell.setCellValue("Parcelas em Aberto");
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(50);
+			cell.setCellValue("Com Baixas Parciais (# Parcela)");
+			cell.setCellStyle(cell_style);
+		}
+		
+		
 		if (this.exibeSomenteFavorecidosFiltrados.equals("Todos")) {
 			cell = row.createCell(9);
 			cell.setCellValue("Favorecido");
@@ -13541,6 +13554,7 @@ public class ContratoCobrancaMB {
 				cell.setCellStyle(cell_style);
 			}
 		}
+		
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
 		cell_style.setAlignment(HorizontalAlignment.CENTER);

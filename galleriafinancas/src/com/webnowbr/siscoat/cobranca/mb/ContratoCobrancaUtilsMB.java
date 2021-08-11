@@ -56,8 +56,11 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.auxiliar.UtilsMB;
 import com.webnowbr.siscoat.cobranca.db.model.Calculos;
 import com.webnowbr.siscoat.cobranca.db.model.CalculosDetalhes;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.CalculoDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
@@ -2098,6 +2101,37 @@ public class ContratoCobrancaUtilsMB {
 		}
 
 	}	
+	
+	
+	/**
+	 * processa o campo valor parcela original...
+	 */
+	/*
+	public void processaValorOriginalParcelas() {		
+		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();	
+			
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		listContratos = cDao.findAll();
+		
+		for (ContratoCobranca contrato : listContratos) {
+			
+			int countParcelas = 0;
+			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+				countParcelas = countParcelas + 1;
+				
+				if (contrato.isGeraParcelaFinal()) {
+					if (countParcelas == contrato.getListContratoCobrancaDetalhes().size()) {
+						parcela.setVlrParcelaOriginal(contrato.getVlrParcelaFinal());
+					} else {
+						parcela.setVlrParcelaOriginal(contrato.getVlrParcela());
+					}
+				} else {
+					parcela.setVlrParcelaOriginal(contrato.getVlrParcela());
+				}
+			}
+		}		
+	}
+	*/
 
 	/**
 	 * @return the valorParcela

@@ -26,6 +26,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private boolean parcelaVencida;
 	private boolean parcelaVencendo;
 	private BigDecimal vlrSaldoParcela;
+	private BigDecimal vlrParcelaOriginal;
 	
 	private BigDecimal vlrRepasse;
 	private BigDecimal vlrRetencao;
@@ -496,5 +497,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setSeguroMIP(BigDecimal seguroMIP) {
 		this.seguroMIP = seguroMIP;
+	}
+
+	public BigDecimal getVlrParcelaOriginal() {
+		return vlrParcelaOriginal;
+	}
+
+	public void setVlrParcelaOriginal(BigDecimal vlrParcelaOriginal) {
+		this.vlrParcelaOriginal = vlrParcelaOriginal;
 	}
 }
