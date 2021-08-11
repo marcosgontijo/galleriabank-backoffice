@@ -384,6 +384,8 @@ public class ContratoCobranca implements Serializable {
 	private String motivoReprovaLead;
 	
 	private boolean temSeguro;
+	private boolean temSeguroDFI;
+	private boolean temSeguroMIP;
 	private BigDecimal valorImovel;
 
 	public ContratoCobranca() {
@@ -3156,6 +3158,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTemSeguro(boolean temSeguro) {
 		this.temSeguro = temSeguro;
+	}
+	
+	public boolean isTemSeguroDFI() {
+		return temSeguroDFI;
+	}
+
+	public void setTemSeguroDFI(boolean temSeguroDFI){
+		this.temSeguroDFI = temSeguroDFI;
+	}
+	
+	public boolean isTemSeguroMIP() {
+		return temSeguroMIP;
+	}
+
+	public void setTemSeguroMIP(boolean temSeguroMIP){
+		this.temSeguroMIP = temSeguroMIP;
 	}
 
 	public BigDecimal getValorImovel() {
