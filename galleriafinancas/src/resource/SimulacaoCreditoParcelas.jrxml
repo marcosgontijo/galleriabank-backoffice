@@ -114,7 +114,9 @@
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="446" y="1" width="40" height="13" uuid="5fc8541a-fa06-4145-ab18-5a773ae3aba2"/>
+				<reportElement x="446" y="1" width="40" height="13" uuid="5fc8541a-fa06-4145-ab18-5a773ae3aba2">
+					<printWhenExpression><![CDATA[$F{valorParcela}.compareTo(BigDecimal.ZERO) == 1]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="9"/>
 				</textElement>
