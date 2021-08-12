@@ -8323,7 +8323,6 @@ public class ContratoCobrancaMB {
 //				custoEmissaoValor = this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
 //			}
 
-			this.objetoContratoCobranca.setTipoCalculo("Price");
 
 			SimulacaoVO simulador = new SimulacaoVO();
 			simulador.setDataSimulacao(DateUtil.getDataHoje());

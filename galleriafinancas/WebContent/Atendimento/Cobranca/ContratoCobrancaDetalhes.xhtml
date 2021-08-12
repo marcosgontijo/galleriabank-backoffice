@@ -337,20 +337,24 @@
 					</h:panelGrid>	
 				</p:panel>										
 				<p:panel id="Dados" header="Dados do Contrato" style="margin-bottom:10px;">	
-					<h:panelGrid columns="3">
+					<h:panelGrid columns="2">
 							<p:outputLabel value="Imóvel: "  styleClass="labelBold"/> 
 							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}" />
-							<p:spacer width="10"/>	
+								
 							<p:outputLabel value="Cartório de Registro: "  styleClass="labelBold"/> 
-							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.cartorio}" />
-							<p:spacer width="10"/>	
-					</h:panelGrid>
-					<h:panelGrid columns="3">		
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.cartorio}" />	
+		
 							<p:outputLabel value="Honorários (%): " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" converter="bigDecimalConverter"/>
+							<h:panelGroup>
+				            	<h:outputText value="R$"/>
+				            	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
 				            								
 							<p:outputLabel value="Taxa de Juros: " styleClass="labelBold" />
-				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}" converter="bigDecimalConverter"/><h:outputText value=" %"/>
+							<h:panelGroup>
+				            	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}" converter="bigDecimalConverter"/>
+				            	<h:outputText value=" %"/>
+				            </h:panelGroup>
 				            
 				            <p:outputLabel value="Corrigido IPCA: " styleClass="labelBold" />
 				        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
@@ -360,53 +364,61 @@
 									<h:outputText value="Não" />
 							</ui:fragment>		
 							
-							 <p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
+							<p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
 				        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 								<h:outputText value="Sim" />
 							</ui:fragment>
 							<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 									<h:outputText value="Não" />
-							</ui:fragment>				
+							</ui:fragment>
+							
+							<p:outputLabel value="Tem Seguro DFI? " styleClass="labelBold" />
+							<ui:fragment>
+								<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI 
+								and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
+							</ui:fragment>
+
+							<p:outputLabel value="Tem SeguroMIP? " styleClass="labelBold" />
+							<ui:fragment>
+								<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP 
+								and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
+							</ui:fragment>	
 							
 							<p:outputLabel value="Valor do Imóvel (R$): " styleClass="labelBold" />
-				            <h:outputText value="R$ "/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}" converter="bigDecimalConverter"/>
+							<h:panelGroup>
+				           		<h:outputText value="R$ "/>
+				          	 	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
 				            										
 						</h:panelGrid>
 					</p:panel>																				
 					
 					<p:panel id="Pagamento" header="Forma de Pagamento" style="margin-bottom:10px;">	
-						<h:panelGrid columns="3">	
+						<h:panelGrid columns="2">	
 							<p:outputLabel value="Data Inicio: " styleClass="labelBold" style="margin-right: 50px;"/>															
 				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}" >			            	
 				            	<f:convertDateTime locale="pt_BR"  />
 				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 				            </h:outputText>	
-				            <p:spacer width="10"/>												
-						</h:panelGrid>
-						<h:panelGrid columns="5">		
+				            
+				            <p:outputLabel value="Tipo Cálculo: "
+							styleClass="labelBold" />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}" />	
+								
 							<p:outputLabel value="Número de Parcelas: " styleClass="labelBold" />
-							<h:outputText value="#{contratoCobrancaMB.qtdeParcelas}" />
-							<p:outputLabel value="de " styleClass="labelBold" />	
-							<h:outputText value="R$"/>						
-				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.vlrParcela}" converter="bigDecimalConverter"/>																									
-						</h:panelGrid>		
-						
-						<h:panelGrid columns="3">		
-							<p:outputLabel value="Valor do Investidor: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRepasse}" converter="bigDecimalConverter"/>															
-																								
-							<p:outputLabel value="Valor da Galeria: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrRetencao}" converter="bigDecimalConverter"/>
-				            
-				            <p:outputLabel value="Valor do Repasse: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.vlrComissao}" converter="bigDecimalConverter"/>
-				            
-				            <p:outputLabel value="Taxa de Juros (%): " styleClass="labelBold" />
-				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" converter="bigDecimalConverter"/>
-				            <p:spacer></p:spacer>
+							<h:outputText value="#{contratoCobrancaMB.qtdeParcelas}" />																								
+								
+				            <p:outputLabel value="Taxa de Juros : " styleClass="labelBold" />
+				            <h:panelGroup>
+				           		<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" converter="bigDecimalConverter"/>
+				            	<h:outputText value="%"/>
+				            </h:panelGroup>
 				            
 				            <p:outputLabel value="Valor da CCB: " styleClass="labelBold" />
-				            <h:outputText value="R$"/><h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}" converter="bigDecimalConverter"/>
+				            <h:panelGroup>
+				            <h:outputText value="R$"/>
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
 				            
 				            <p:outputLabel value="Meses Carência: " styleClass="labelBold" />
 							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" />

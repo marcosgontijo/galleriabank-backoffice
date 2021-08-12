@@ -1555,23 +1555,15 @@
 						</ui:fragment>
 
 						<p:outputLabel value="Tem Seguro DFI? " styleClass="labelBold" />
-						<ui:fragment
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI}">
-							<h:outputText value="Sim" />
-						</ui:fragment>
-						<ui:fragment
-							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI}">
-							<h:outputText value="Não" />
+						<ui:fragment>
+							<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI 
+							and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
 						</ui:fragment>
 
 						<p:outputLabel value="Tem SeguroMIP? " styleClass="labelBold" />
-						<ui:fragment
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP}">
-							<h:outputText value="Sim" />
-						</ui:fragment>
-						<ui:fragment
-							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP}">
-							<h:outputText value="Não" />
+						<ui:fragment>
+							<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP 
+							and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
 						</ui:fragment>
 
 						<p:outputLabel value="Valor do Imóvel (R$): "

@@ -12,6 +12,15 @@
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<link rel="stylesheet" type="text/css"
 				href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
+				
+			<h:outputStylesheet >
+			.labelSeguros{
+				width: 128px;
+			}
+			.ValorSeguros{
+				width: 100px;
+			}
+			</h:outputStylesheet>
 			<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
 				<p:panel id="PanelLocador"
 					header="Contrato - #{contratoCobrancaMB.tituloPainel}"
@@ -1321,15 +1330,17 @@
 					</p:panel>
 					<p:panel id="Dados" header="Dados do Contrato"
 						style="margin-bottom:10px;">
-						<h:panelGrid columns="3">
+						<h:panelGrid columns="2">
 							<p:outputLabel for="Imovel" value="Imóvel: "
 								styleClass="labelBold" />
-							<p:inputText id="Imovel" value="#{contratoCobrancaMB.nomeImovel}"
-								label="Imóvel" readonly="TRUE" required="true"
-								style="FONT-SIZE: 10pt;width:300px;" />
-							<p:commandButton id="botaoImovel" type="button"
-								onclick="PF('imovelDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"  />
+							<h:panelGroup>
+								<p:inputText id="Imovel" value="#{contratoCobrancaMB.nomeImovel}"
+									label="Imóvel" readonly="TRUE" required="true"
+									style="FONT-SIZE: 10pt;width:300px;" />
+								<p:commandButton id="botaoImovel" type="button"
+									onclick="PF('imovelDialog').show();"
+									image="ui-icon ui-icon-circle-zoomin"  />
+							</h:panelGroup>
 
 							<p:outputLabel for="txHonorario" value="Honorários (%): "
 								styleClass="labelBold" />
@@ -1338,7 +1349,7 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
-							<p:spacer width="10" />
+							
 
 							<p:outputLabel for="txJuros" value="Taxa de Juros (%): "
 								styleClass="labelBold" />
@@ -1347,7 +1358,6 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
-							<p:spacer width="10" />
 							
 							<p:outputLabel for="txMulta" value="Multa (%): "
 								styleClass="labelBold" />
@@ -1356,42 +1366,43 @@
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
-							<p:spacer width="10" />
 							
 							<p:outputLabel value="Corrigido IPCA: "/>
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
-							<p:spacer width="10" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+								
+							</p:selectBooleanCheckbox>
 							
+							</h:panelGrid>
+							<h:panelGrid columns="2" id="DadosSeguro" columnClasses="labelSeguros, ValorSeguros">
 						    <p:outputLabel value="Tem seguro? "/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-								<p:ajax update="Dados"
+								<p:ajax update="DadosSeguro"
 										event="change" />
 							</p:selectBooleanCheckbox>
-							<p:spacer width="10" />
 							
 							<p:outputLabel value="Adicionar seguro DFI " rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" >
-								<p:ajax update="Dados"
+								<p:ajax update="DadosSeguro"
 										event="change"/>
 							</p:selectBooleanCheckbox>
-							<p:spacer/>
 							
 							<p:outputLabel value="Adicionar seguro MIP " rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" >
-								<p:ajax update="Dados"
+								<p:ajax update="DadosSeguro"
 										event="change"/>
 							</p:selectBooleanCheckbox>
-							<p:spacer/>
-							
-							
+														
 							<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
 							<p:inputText id="vlrImovel"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
-							<p:spacer width="10" />
+								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+							<p:ajax update="DadosSeguro"
+										event="change" />
+							</p:inputText>
+							
 						</h:panelGrid>
 					</p:panel>
 
@@ -1413,7 +1424,7 @@
 						<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
 							styleClass="labelBold" />
 						<p:selectOneMenu id="tipoCalculo"
-							value="#{simuladorMB.tipoCalculo}" required="true"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}" required="true"
 							style="width: 80px;">
 							<f:selectItem itemValue="Price" itemLabel="Price" />
 							<f:selectItem itemValue="SAC" itemLabel="SAC" />
