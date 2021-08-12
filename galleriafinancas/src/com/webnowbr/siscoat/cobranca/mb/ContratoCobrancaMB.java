@@ -1368,14 +1368,29 @@ public class ContratoCobrancaMB {
 		mensagemHtmlTeste = mensagemHtmlTeste + "<br>Pagador: <b>" + this.objetoContratoCobranca.getPagador().getNome()
 				+ "</b>\n";
 
-		mensagemHtmlTeste = mensagemHtmlTeste + " </td> </tr> </tbody> " + " </table>" + " </td>"
-				+ " <td width='20'> </td>" + " </tr>" + " </tbod>" + " </table>" + " <br>"
-				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
+		mensagemHtmlTeste = mensagemHtmlTeste   + " </td> </tr> </tbody> "
+				+ " </table>"
+				+ " </td>"
+				+ " <td width='20'> </td>"
+				+ " </tr>"
+				+ " </tbod>"
+				+ " </table>"
+				+ " <br>"
+				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>"
+				+ " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
 				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://sistema.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
-				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
-				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
+				+ " </tr>"
+				+ " </tbody>"
+				+ " </table>"
+				+ " <div class='yj6qo'></div>"
+				+ " <div class='adL'> </div>"
+				+ " </div>"
+				+ " <div class='adL'> </div>"
+				+ " <div class='adL'> </div>"
+				+ " </div>"
+				+ " </body>"
 				+ " </html>";
 
 		try {
