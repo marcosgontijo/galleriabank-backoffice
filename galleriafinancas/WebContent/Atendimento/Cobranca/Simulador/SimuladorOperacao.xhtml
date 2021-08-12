@@ -203,6 +203,13 @@
 						<h:outputText value="#{bpParcela.numeroParcela}">
 						</h:outputText>
 					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Saldo devedor (R$)">
+						<h:outputText value="#{bpParcela.saldoDevedorInicial}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:column>	
 					<p:column style="text-align: center;" headerText="Amortizacao (R$)">
 						<h:outputText value="#{bpParcela.amortizacao}"
 							converter="bigDecimalConverter">
@@ -236,13 +243,14 @@
 						<h:outputText value=" +IPCA"
 							rendered="#{bpParcela.valorParcela gt 0}" />
 					</p:column>
-					<p:column style="text-align: center;"
-						headerText="Saldo devedor (R$)">
-						<h:outputText value="#{bpParcela.saldoDevedorInicial}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>
+											
+								
+							
+					
+					
+					
+					
+					
 					<!--<p:column style="text-align: center;"
 						headerText="Valor IOF (R$)">
 						<h:outputText value="#{bpParcela.valorIOF}"

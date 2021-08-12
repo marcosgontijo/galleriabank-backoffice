@@ -1405,12 +1405,11 @@
 								required="true" label="Data Inicio" size="100"
 								pattern="dd/MM/yyyy" 
 								styleClass="dateTimeField"
-								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
+								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}">
 								<p:ajax event="dateSelect"
 									listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
 							</p:calendar>
-						</h:panelGrid>
-						<h:panelGrid columns="2">
+						
 						<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
 							styleClass="labelBold" />
 						<p:selectOneMenu id="tipoCalculo"
@@ -1420,21 +1419,18 @@
 							<f:selectItem itemValue="SAC" itemLabel="SAC" />
 							<f:selectItem itemValue="Americano" itemLabel="Americano" />
 						</p:selectOneMenu>
-						</h:panelGrid>
-						<h:panelGrid columns="4">
+						
 							<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
 								styleClass="labelBold" />
 							<p:inputText id="qtdeParcelas"
 								value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
-								style="width: 30px;" disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
+								style="width: 30px;" disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}">
 							</p:inputText>
 						
-						</h:panelGrid>
-
-						 <h:panelGrid columns="2">
+						
 						     <p:outputLabel for="valorCCB" value="Valor da CCB: "
 								styleClass="labelBold" />
-							<p:inputText id="valorCCB" style="margin-left: 12px;"
+							<p:inputText id="valorCCB"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
@@ -1442,7 +1438,7 @@
 								
 							<p:outputLabel for="taxaJurosParcela" value="Taxa de Juros (%): "
 								styleClass="labelBold" />
-							<p:inputText id="taxaJurosParcela" style="margin-left: 12px;"
+							<p:inputText id="taxaJurosParcela" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
@@ -1452,15 +1448,14 @@
 								styleClass="labelBold" />
 							<p:inputText id="mesesCarencia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" required="true"
-								style="width: 30px;margin-left: 12px;">
+								style="width: 30px;">
 							</p:inputText>								
 								
 							<p:outputLabel value="Gerar Boleto das Parcelas "
 								styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
-								style="margin-left: 12px;"
-								disabled="#{contratoCobrancaMB.objetoContratoCobranca.getId() > 0}" />
+								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}"/>
 						</h:panelGrid>
 					</p:panel>
 
