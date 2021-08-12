@@ -229,6 +229,15 @@
 		<property name="temSeguro" type="boolean">
 			<column name="temSeguro" />
 		</property>
+		<property name="temSeguroDFI" type="boolean">
+			<column name="temSeguroDFI" />
+		</property>
+		<property name="temSeguroMIP" type="boolean"> 
+			<column name="temSeguroMIP" />
+		</property>
+		<property name="tipoCalculo" type="text">
+			<column name="tipoCalculo" />
+		</property>
 		<property name="valorImovel" type="big_decimal">
 			<column name="valorImovel" />
 		</property>

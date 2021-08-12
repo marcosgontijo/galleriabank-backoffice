@@ -1362,12 +1362,27 @@
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"/>
 							<p:spacer width="10" />
 							
-							<p:outputLabel value="Tem seguro? "/>
+						    <p:outputLabel value="Tem seguro? "/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 								<p:ajax update="Dados"
 										event="change" />
 							</p:selectBooleanCheckbox>
 							<p:spacer width="10" />
+							
+							<p:outputLabel value="Adicionar seguro DFI " rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" >
+								<p:ajax update="Dados"
+										event="change"/>
+							</p:selectBooleanCheckbox>
+							<p:spacer/>
+							
+							<p:outputLabel value="Adicionar seguro MIP " rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP}" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" >
+								<p:ajax update="Dados"
+										event="change"/>
+							</p:selectBooleanCheckbox>
+							<p:spacer/>
+							
 							
 							<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
@@ -1395,59 +1410,29 @@
 									listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
 							</p:calendar>
 						</h:panelGrid>
+						<h:panelGrid columns="2">
+						<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="tipoCalculo"
+							value="#{simuladorMB.tipoCalculo}" required="true"
+							style="width: 80px;">
+							<f:selectItem itemValue="Price" itemLabel="Price" />
+							<f:selectItem itemValue="SAC" itemLabel="SAC" />
+							<f:selectItem itemValue="Americano" itemLabel="Americano" />
+						</p:selectOneMenu>
+						</h:panelGrid>
 						<h:panelGrid columns="4">
 							<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
 								styleClass="labelBold" />
 							<p:inputText id="qtdeParcelas"
 								value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
 								style="width: 30px;" disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateDataPagamentoFim}"
-									update="dataPagamentoFim" />
 							</p:inputText>
-							<p:outputLabel value="de " styleClass="labelBold" />
-							<p:inputText id="valorParcela"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.vlrParcela}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter"
-								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0}">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateRetencaoParcela}"
-									update="vlrRetencao" />
-							</p:inputText>
+						
 						</h:panelGrid>
 
-						<h:panelGrid columns="2">
-							<p:outputLabel for="vlrRepasse" value="Valor do Investidor: "
-								styleClass="labelBold" />
-							<p:inputText id="vlrRepasse" style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrRepasse}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateRetencaoParcela}"
-									update="vlrRetencao" />
-							</p:inputText>
-
-							<p:outputLabel for="vlrRetencao" value="Valor da Galleria: "
-								styleClass="labelBold" />
-							<p:inputText id="vlrRetencao" style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrRetencao}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter" />
-
-							<p:outputLabel for="vlrComissao" value="Valor do Repasse: "
-								styleClass="labelBold" />
-							<p:inputText id="vlrComissao" style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrComissao}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter" />
-								
-							<p:outputLabel for="valorCCB" value="Valor da CCB: "
+						 <h:panelGrid columns="2">
+						     <p:outputLabel for="valorCCB" value="Valor da CCB: "
 								styleClass="labelBold" />
 							<p:inputText id="valorCCB" style="margin-left: 12px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
@@ -1477,74 +1462,6 @@
 								style="margin-left: 12px;"
 								disabled="#{contratoCobrancaMB.objetoContratoCobranca.getId() > 0}" />
 						</h:panelGrid>
-
-						<p:panel id="ParcelaFinal" header="Parcela Final"
-							style="margin-top:10px;margin-bottom:10px;">
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Gerar Parcela Final: "
-									styleClass="labelBold" />
-								<p:selectBooleanCheckbox
-									value="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
-									style="margin-left: 12px;">
-									<p:ajax
-										update="vlrParcelaFinal vlrRepasseFinal vlrRetencaoFinal"
-										listener="#{contratoCobrancaMB.gerarParcelaFinal}" />
-								</p:selectBooleanCheckbox>
-
-								<p:outputLabel for="dataPagamentoFim" value="Data Vencimento: "
-									styleClass="labelBold" style="margin-right: 59px;" />
-								<p:calendar id="dataPagamentoFim"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPagamentoFim}"
-									style="margin-left: 12px;" required="true"
-									label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-									 styleClass="dateTimeField"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
-
-								<p:outputLabel for="vlrParcelaFinal" value="Valor da Parcela: "
-									styleClass="labelBold" />
-								<p:inputText id="vlrParcelaFinal" style="margin-left: 12px;"
-									value="#{contratoCobrancaMB.vlrParcelaFinal}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" >
-									<p:ajax event="change"
-										listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
-										update="vlrRetencaoFinal" />
-								</p:inputText>
-
-								<p:outputLabel for="vlrRepasseFinal"
-									value="Valor do Investidor: " styleClass="labelBold" />
-								<p:inputText id="vlrRepasseFinal" style="margin-left: 12px;"
-									value="#{contratoCobrancaMB.vlrRepasseFinal}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" >
-									<p:ajax event="change"
-										listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
-										update="vlrRetencaoFinal" />
-								</p:inputText>
-
-								<p:outputLabel for="vlrRetencaoFinal"
-									value="Valor da Galleria: " styleClass="labelBold" />
-								<p:inputText id="vlrRetencaoFinal" style="margin-left: 12px;"
-									value="#{contratoCobrancaMB.vlrRetencaoFinal}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
-
-								<p:outputLabel for="vlrComissaoFinal" value="Valor do Repasse: "
-									styleClass="labelBold" />
-								<p:inputText id="vlrComissaoFinal" style="margin-left: 12px;"
-									value="#{contratoCobrancaMB.vlrComissaoFinal}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter"
-									disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal || (contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() > 0)}" />
-							</h:panelGrid>
-						</p:panel>
 					</p:panel>
 
 					<p:panel id="AcaoObservacao" header="Motivo e Observação"
