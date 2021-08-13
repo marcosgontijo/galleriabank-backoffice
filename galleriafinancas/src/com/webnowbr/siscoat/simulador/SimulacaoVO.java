@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.simulador;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -125,9 +126,9 @@ public class SimulacaoVO {
 
 				BigDecimal coeficienteAmortizacao = (parcelaAmortizacao.subtract(parcelaCalculo.getJuros()))
 						.divide(saldoDevedorCarencia, MathContext.DECIMAL128);
-				parcelaCalculo.setAmortizacao(this.valorCredito.multiply(coeficienteAmortizacao));
+//				parcelaCalculo.setAmortizacao(this.valorCredito.multiply(coeficienteAmortizacao));
 
-//				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));
+				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
@@ -145,8 +146,8 @@ public class SimulacaoVO {
 			BigDecimal saldo = saldoDevedorAnterior.add(juros).subtract(parcelaAmortizacao);
 			if (saldo.compareTo(BigDecimal.ZERO) == -1)
 				saldo = BigDecimal.ZERO;
-
-			parcelaCalculo.setSaldoDevedorInicial(saldo);
+			
+			parcelaCalculo.setSaldoDevedorInicial(saldo.setScale(2, RoundingMode.HALF_EVEN));
 
 			saldoDevedorAnterior = saldo;
 
@@ -165,7 +166,7 @@ public class SimulacaoVO {
 		
 		BigDecimal valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
 				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
-				).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+				).setScale(2, RoundingMode.HALF_EVEN);
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
@@ -278,7 +279,7 @@ public class SimulacaoVO {
 				if (saldo.compareTo(BigDecimal.ZERO) == -1)
 					saldo = BigDecimal.ZERO;
 			}
-			parcelaCalculo.setSaldoDevedorInicial(saldo);
+			parcelaCalculo.setSaldoDevedorInicial(saldo.setScale(2, RoundingMode.HALF_EVEN));
 
 			saldoDevedorAnterior = saldo;
 
@@ -370,7 +371,7 @@ public class SimulacaoVO {
 				if (saldo.compareTo(BigDecimal.ZERO) == -1)
 					saldo = BigDecimal.ZERO;
 			}
-			parcelaCalculo.setSaldoDevedorInicial(saldo);
+			parcelaCalculo.setSaldoDevedorInicial(saldo.setScale(2, RoundingMode.HALF_EVEN));
 
 			saldoDevedorAnterior = saldo;
 

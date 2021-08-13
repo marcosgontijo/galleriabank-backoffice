@@ -94,21 +94,29 @@ public class IPCAMB {
 				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
 				
 				BigDecimal saldoParcelaAnterior = BigDecimal.ZERO;
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				
 				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
+					
+					ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
+					
 					// se primeira parcela calcula com o valor da CCB
-					if (parcela.getNumeroParcela().equals("1")) {
-						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
-											
+					if (parcela.getNumeroParcela().equals("1")) {																					
 						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));		
 						
 						saldoParcelaAnterior = contrato.getValorCCB();
 					} else {
-						// se não calcula com o saldo devedor
-						parcela.setIpca(saldoParcelaAnterior.multiply(taxaCalculo));
+						int parcelaAtual = Integer.valueOf(parcela.getNumeroParcela());
 						
-						saldoParcelaAnterior = parcela.getVlrSaldoParcela();
+						// Pega Saldo da parcela anterior
+						for (ContratoCobrancaDetalhes parcelaContrato : contrato.getListContratoCobrancaDetalhes()) {
+							
+							if ((Integer.valueOf(parcelaContrato.getNumeroParcela()) == (parcelaAtual - 1))) {
+								// se não calcula com o saldo devedor
+								parcela.setIpca(parcelaContrato.getVlrSaldoParcela().multiply(taxaCalculo));
+							}
+						}
+						
 					}
 					
 					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
@@ -134,21 +142,29 @@ public class IPCAMB {
 				BigDecimal taxaCalculo = this.taxa.divide(BigDecimal.valueOf(100));
 				
 				BigDecimal saldoParcelaAnterior = BigDecimal.ZERO;
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				
 				for (ContratoCobrancaDetalhes parcela : listaParcelas) {
+					
+					ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
+					
 					// se primeira parcela calcula com o valor da CCB
-					if (parcela.getNumeroParcela().equals("1")) {
-						ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-						ContratoCobranca contrato = cDao.findById(parcela.getIdContrato());
-											
-						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));	
+					if (parcela.getNumeroParcela().equals("1")) {																					
+						parcela.setIpca(contrato.getValorCCB().multiply(taxaCalculo));		
 						
 						saldoParcelaAnterior = contrato.getValorCCB();
 					} else {
-						// se não calcula com o saldo devedor
-						parcela.setIpca(saldoParcelaAnterior.multiply(taxaCalculo));
+						int parcelaAtual = Integer.valueOf(parcela.getNumeroParcela());
 						
-						saldoParcelaAnterior = parcela.getVlrSaldoParcela();
+						// Pega Saldo da parcela anterior
+						for (ContratoCobrancaDetalhes parcelaContrato : contrato.getListContratoCobrancaDetalhes()) {
+							
+							if ((Integer.valueOf(parcelaContrato.getNumeroParcela()) == (parcelaAtual - 1))) {
+								// se não calcula com o saldo devedor
+								parcela.setIpca(parcelaContrato.getVlrSaldoParcela().multiply(taxaCalculo));
+							}
+						}
+						
 					}
 					
 					parcela.setVlrParcela(parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()).add(parcela.getIpca()));
@@ -244,7 +260,9 @@ public class IPCAMB {
 	
 	public void excluirIPCA() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		IPCADao ipcaDao = new IPCADao();
+		IPCADao ipcaDao = new IPCADao();		
+		
+		removerTaxaIPCA();
 
 		ipcaDao.delete(this.selectedIPCA);
 			
@@ -252,6 +270,37 @@ public class IPCAMB {
 			
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "[IPCA] Taxa excluída com sucesso!", ""));
+	}
+	
+	
+	public void removerTaxaIPCA() {		
+		// busca contratos com check corrigidoIPCA
+		IPCADao IPCADao = new IPCADao();
+		List<ContratoCobrancaDetalhes> listaParcelas = new ArrayList<ContratoCobrancaDetalhes>();
+		
+		// Prepara as datas para consulta das parcelas
+		// a primeira data deve ser o dia 14 do mês seguinte ao inserido na taxa
+		Date dataInicioConsulta = getDataComAcrescimoDeMes(this.selectedIPCA.getData());
+		// a segunda data deve ser o dia 14 do mês seguinte a data inicio
+		//Date dataFimConsulta = getDataComAcrescimoDeMes(dataInicioConsulta);
+		
+		//ATUALIZA PARCELAS DO MES VIGENTE
+		listaParcelas = IPCADao.getContratosPorInvestidorInformeRendimentos(dataInicioConsulta);
+		
+		if (listaParcelas.size() > 0) {
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			
+			for (ContratoCobrancaDetalhes parcela : listaParcelas) {
+				if (parcela.getIpca() != null) {
+					parcela.setVlrParcela(parcela.getVlrParcela().subtract(parcela.getIpca()));
+					parcela.setIpca(null);
+					
+					// persistir parcela
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					contratoCobrancaDetalhesDao.merge(parcela);				
+				}
+			}
+		}
 	}
 	
 	public Date gerarDataHoje() {
