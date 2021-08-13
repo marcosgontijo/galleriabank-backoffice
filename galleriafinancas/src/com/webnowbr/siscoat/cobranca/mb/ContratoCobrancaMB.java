@@ -417,6 +417,8 @@ public class ContratoCobrancaMB {
 	private StreamedContent fileBoleto;
 
 	private StreamedContent fileRecibo;
+	
+	private SimulacaoVO simuladorParcelas;
 
 	private String pathContrato;
 	private String nomeContrato;
@@ -8316,47 +8318,14 @@ public class ContratoCobrancaMB {
 
 			Date dataParcela = this.objetoContratoCobranca.getDataInicio();
 
-			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+			
 
 			// Adiciona parcelas de pagamento
 			GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
 
 			this.fileBoleto = null;
 
-			BigDecimal tarifaIOFDiario;
-			BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
-
-			if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
-				tarifaIOFDiario = BigDecimal.valueOf(0.0082).divide(BigDecimal.valueOf(100));
-			} else {
-				tarifaIOFDiario = BigDecimal.valueOf(0.0041).divide(BigDecimal.valueOf(100));
-			}
-
-//			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
-//			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
-//					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
-//				custoEmissaoValor = this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
-//			}
-
-
-			SimulacaoVO simulador = new SimulacaoVO();
-			simulador.setDataSimulacao(DateUtil.getDataHoje());
-			simulador.setTarifaIOFDiario(tarifaIOFDiario);
-			simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
-			simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
-			simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
-			// valores
-			simulador.setValorCredito(this.objetoContratoCobranca.getValorCCB());
-			simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
-			simulador.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));
-			simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
-			simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
-//			simulador.setCustoEmissaoValor(custoEmissaoValor);
-			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
-			simulador.setNaoCalcularDFI(!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
-			simulador.setNaoCalcularMIP(!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
-
-			simulador.calcular();
+			SimulacaoVO simulador = calcularParcelas();
 
 			for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 				ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
@@ -8889,6 +8858,58 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
 
+	private SimulacaoVO calcularParcelas() {
+		BigDecimal tarifaIOFDiario;
+		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+		
+		
+		this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+		
+
+//			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+//			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
+//					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+//				custoEmissaoValor = this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
+//			}
+
+		
+		
+		SimulacaoVO simulador = new SimulacaoVO();
+		
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PF");
+		} else {
+			tarifaIOFDiario =  SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PJ");
+		}
+		
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		// valores
+		simulador.setValorCredito(this.objetoContratoCobranca.getValorCCB());
+		simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
+		simulador.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));
+		simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
+		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+//			simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
+		simulador.setNaoCalcularDFI(!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
+		simulador.setNaoCalcularMIP(!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
+
+		simulador.calcular();
+		return simulador;
+	}
+
+	public void mostrarParcela() {
+		try {
+			this.simuladorParcelas = calcularParcelas();
+		} catch (Exception e) {}
+	}
+	
 	public void atualizaVlrPago() {
 		this.listContratoCobrancaFavorecidos.get(0)
 				.setVlrRecebido(this.selectedContratoCobrancaDetalhes.getVlrParcelaAtualizada());
@@ -17770,5 +17791,13 @@ public class ContratoCobrancaMB {
 
 	public void setAntecipacao(ContratoCobrancaParcelasInvestidor antecipacao) {
 		this.antecipacao = antecipacao;
+	}
+
+	public SimulacaoVO getSimuladorParcelas() {
+		return simuladorParcelas;
+	}
+
+	public void setSimuladorParcelas(SimulacaoVO simuladorParcelas) {
+		this.simuladorParcelas = simuladorParcelas;
 	}
 }

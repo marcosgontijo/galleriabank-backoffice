@@ -5,7 +5,7 @@
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
 
-	<h:panelGrid columns="2" columnClasses="padRight20">
+	<h:panelGrid columns="2" columnClasses="padRight20" rendered="#{simulador}">
 		<p:outputLabel value="Custo Emissão: " styleClass="labelBold" />
 		<h:outputText value="#{simulacao.custoEmissaoValor}"
 			converter="bigDecimalConverter">
@@ -35,7 +35,7 @@
 
 
 	</h:panelGrid>
-	<p:dataTable id="dtBpHistorico" var="bpParcela"
+	<p:dataTable id="dtBpHistorico" var="bpParcela"  scrollable="true" scrollHeight="400"
 		value="#{simulacao.parcelas}" emptyMessage=""
 		style="margin-top:20px;">
 		<f:facet name="header">

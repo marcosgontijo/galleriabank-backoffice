@@ -1467,6 +1467,24 @@
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
 								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}"/>
+								
+								
+						<p:commandButton value="Visualizar parcelas" 
+							action="#{contratoCobrancaMB.mostrarParcela()}"
+							oncomplete="PF('parcelasDialog').show()"
+							update = "verParcelaDialog"
+							style="TEXT-DECORATION: bold;" />
+												
+			<p:dialog header="Parcelas" widgetVar="parcelasDialog" id = "verParcelaDialog"
+							 showEffect="fade" hideEffect="fade" resizable="false"
+							responsive="false" width="1000" positionType="center center" closable="true">
+								<ui:include
+									src="/Atendimento/Cobranca/Simulador/SimuladorParcelas.xhtml">
+									<ui:param name="simulador" value="false"></ui:param>
+									<ui:param name="simulacao" value="#{contratoCobrancaMB.simuladorParcelas}"></ui:param>
+								</ui:include>
+						</p:dialog>
+							
 						</h:panelGrid>
 					</p:panel>
 
@@ -1635,7 +1653,6 @@
 					style="TEXT-DECORATION: bold; " />
 			</div>
 		</h:form>
-
 		<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
 		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
