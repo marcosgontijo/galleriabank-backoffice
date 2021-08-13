@@ -160,107 +160,11 @@
 			<p:panel id="ConsultaResultados" header="Simulação"
 				style="margin-bottom:10px;">
 
-				<h:panelGrid columns="2" columnClasses="padRight20">
-					<p:outputLabel value="Custo Emissão: " styleClass="labelBold" />
-					<h:outputText value="#{simuladorMB.simulacao.custoEmissaoValor}"
-						converter="bigDecimalConverter">
-						<f:convertNumber pattern="#,##0.00" />
-					</h:outputText>
-					<p:outputLabel value="Valor IOF: " styleClass="labelBold" />
-					<h:outputText value="#{simuladorMB.simulacao.IOFTotal}"
-						converter="bigDecimalConverter">
-						<f:convertNumber pattern="#,##0.00" />
-					</h:outputText>
-
-
-					<!-- <p:outputLabel value="ValorTotalIOF: " styleClass="labelBold" />
-					<h:outputText value="#{simuladorMB.simulacao.valorTotalIOF}"
-						converter="bigDecimalConverter">
-						<f:convertNumber pattern="#,##0.00" />
-					</h:outputText>
-
-					<p:outputLabel value="ValorTotalIOFAdicional: "
-						styleClass="labelBold" />
-					<h:outputText
-						value="#{simuladorMB.simulacao.valorTotalIOFAdicional}"
-						converter="bigDecimalConverter">
-						<f:convertNumber pattern="#,##0.00" />
-					</h:outputText>
- 					-->
-
-
-				</h:panelGrid>
-				<p:dataTable id="dtBpHistorico" var="bpParcela"
-					value="#{simuladorMB.simulacao.parcelas}" emptyMessage=""
-					style="margin-top:20px;">
-					<f:facet name="header">
-						<p:commandButton value="Gerar PDF" ajax="false"
-							icon="ui-icon-print" action="#{simuladorMB.download}" />
-
-					</f:facet>
-
-					<p:column style="text-align: center;" headerText="Parcela">
-						<h:outputText value="#{bpParcela.numeroParcela}">
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;"
-						headerText="Saldo devedor (R$)">
-						<h:outputText value="#{bpParcela.saldoDevedorInicial}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>	
-					<p:column style="text-align: center;" headerText="Amortizacao (R$)">
-						<h:outputText value="#{bpParcela.amortizacao}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;" headerText="Juros (R$)">
-						<h:outputText value="#{bpParcela.juros}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;" headerText="Seguro MIP (R$)">
-						<h:outputText value="#{bpParcela.seguroMIP}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;" headerText="Seguro DFI (R$)">
-						<h:outputText value="#{bpParcela.seguroDFI}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;"
-						headerText="Valor Parcela (R$)">
-						<h:outputText value="#{bpParcela.valorParcela}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-						<h:outputText value=" +IPCA"
-							rendered="#{bpParcela.valorParcela gt 0}" />
-					</p:column>
-											
-								
-							
-					
-					
-					
-					
-					
-					<!--<p:column style="text-align: center;"
-						headerText="Valor IOF (R$)">
-						<h:outputText value="#{bpParcela.valorIOF}"
-							converter="bigDecimalConverter">
-							<f:convertNumber pattern="#,##0.00" />
-						</h:outputText>
-					</p:column>-->
-
-				</p:dataTable>
-
+				<ui:include
+					src="/Atendimento/Cobranca/Simulador/SimuladorParcelas.xhtml">
+					<ui:param name="simulador" value="true"></ui:param>
+					<ui:param name="simulacao" value="#{simuladorMB.simulacao}"></ui:param>
+					</ui:include>
 
 			</p:panel>
 		</h:form>
