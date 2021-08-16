@@ -61,6 +61,7 @@ import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.expression.impl.ThisExpressionResolver;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
@@ -8928,6 +8929,12 @@ public class ContratoCobrancaMB {
 		
 		
 		SimulacaoVO simulador = new SimulacaoVO();
+		
+
+		if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
+			this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
+			this.objetoContratoCobranca.setGeraParcelaFinal(false);
+		}
 		
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
