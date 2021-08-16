@@ -11,24 +11,21 @@
 			styleClass="labelBold" />
 		<p:inputText id="numeroParcelaReparcelamento" value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
 			onkeypress="return isNumberKey(event);"
-			onkeydown="FormataValor(this, 13, event, 2);" required="true"
-			converter="bigDecimalConverter">
+			onkeydown="FormataValor(this, 13, event, 2);" required="true">
 		</p:inputText>
 		
 		<p:outputLabel for="carenciaReparcelamento" value="Carência:"
 			styleClass="labelBold" />
 		<p:inputText id="carenciaReparcelamento" value="#{contratoCobrancaMB.carenciaReparcelamento}"
 			onkeypress="return isNumberKey(event);"
-			onkeydown="FormataValor(this, 13, event, 2);" required="true"
-			converter="bigDecimalConverter">
+			onkeydown="FormataValor(this, 13, event, 2);" required="true">
 		</p:inputText>
 
 		<p:outputLabel for="saldoDevedorReparcelamento" value="Saldo Dedvedor Atual: "
 			styleClass="labelBold" />
 		<p:inputText id="saldoDevedorReparcelamento" value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
 			onkeypress="return isNumberKey(event);"
-			onkeydown="FormataValor(this, 13, event, 2);" required="true"
-			converter="bigDecimalConverter">
+			onkeydown="FormataValor(this, 13, event, 2);" required="true">
 		</p:inputText>
 	</h:panelGrid>
 	<h:panelGrid columns="3" columnClasses="padRight20">
