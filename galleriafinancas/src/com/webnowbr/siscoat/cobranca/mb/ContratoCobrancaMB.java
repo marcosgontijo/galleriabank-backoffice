@@ -107,6 +107,7 @@ import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.SiscoatConstants;
@@ -146,7 +147,12 @@ public class ContratoCobrancaMB {
 	 ************************************************************/
 	private int idAntecipacaoInvestidor;
 
-
+	/************************************************************
+	 * Objetos para Reparcelamento
+	 ************************************************************/
+	private BigInteger numeroParcelaReparcelamento;
+	private BigDecimal saldoDevedorReparcelamento;
+	private BigInteger carenciaReparcelamento;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -4339,6 +4345,8 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
+		
+		this.simuladorParcelas = null;
 
 		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
 		TimeZone zone = TimeZone.getDefault();
@@ -6923,6 +6931,8 @@ public class ContratoCobrancaMB {
 		clearRecebedorFinal9();
 		clearRecebedorFinal10();
 	}
+	
+	
 
 	public void reParcelarContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -8903,6 +8913,56 @@ public class ContratoCobrancaMB {
 		simulador.calcular();
 		return simulador;
 	}
+	
+	private SimulacaoVO calcularReParcelamento() {
+		BigDecimal tarifaIOFDiario;
+		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+		
+
+//			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+//			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
+//					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+//				custoEmissaoValor = this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
+//			}
+
+		
+		
+		SimulacaoVO simulador = new SimulacaoVO();
+		
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PF");
+		} else {
+			tarifaIOFDiario =  SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PJ");
+		}
+		
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		// valores
+		simulador.setValorCredito(this.saldoDevedorReparcelamento);
+		simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
+		simulador.setCarencia(this.carenciaReparcelamento);
+		simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()).subtract(this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)));
+		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+//			simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
+		simulador.setNaoCalcularDFI(!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
+		simulador.setNaoCalcularMIP(!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
+
+		simulador.calcular();
+		simulador.getParcelas().remove(0);
+		for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
+			parcela.setNumeroParcela(parcela.getNumeroParcela().add(numeroParcelaReparcelamento).subtract(BigInteger.ONE));
+		
+		}
+		return simulador;
+	}
+	
+	
 
 	public void mostrarParcela() {
 		try {
@@ -8910,6 +8970,34 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {}
 	}
 	
+	public void mostrarReParcelamento() {
+		try {
+			this.simuladorParcelas = calcularReParcelamento();
+		} catch (Exception e) {}
+	}
+	
+	public void concluirReparcelamento() {
+		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
+			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+				if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {										
+					detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalhe.setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalhe.setSeguroDIF(parcela.getSeguroDFI());
+					detalhe.setSeguroMIP(parcela.getSeguroMIP());
+					break;
+				}
+			}
+		}
+	}
+	
+//	public void mostrarParcela() {
+//		try {
+//			this.simuladorParcelas = calcularParcelas();
+//		} catch (Exception e) {}
+//	}
+//	
 	public void atualizaVlrPago() {
 		this.listContratoCobrancaFavorecidos.get(0)
 				.setVlrRecebido(this.selectedContratoCobrancaDetalhes.getVlrParcelaAtualizada());
@@ -17800,4 +17888,29 @@ public class ContratoCobrancaMB {
 	public void setSimuladorParcelas(SimulacaoVO simuladorParcelas) {
 		this.simuladorParcelas = simuladorParcelas;
 	}
+
+	public BigInteger getNumeroParcelaReparcelamento() {
+		return numeroParcelaReparcelamento;
+	}
+
+	public void setNumeroParcelaReparcelamento(BigInteger numeroParcelaReparcelamento) {
+		this.numeroParcelaReparcelamento = numeroParcelaReparcelamento;
+	}
+
+	public BigDecimal getSaldoDevedorReparcelamento() {
+		return saldoDevedorReparcelamento;
+	}
+
+	public void setSaldoDevedorReparcelamento(BigDecimal saldoDevedorReparcelamento) {
+		this.saldoDevedorReparcelamento = saldoDevedorReparcelamento;
+	}
+
+	public BigInteger getCarenciaReparcelamento() {
+		return carenciaReparcelamento;
+	}
+
+	public void setCarenciaReparcelamento(BigInteger carenciaReparcelamento) {
+		this.carenciaReparcelamento = carenciaReparcelamento;
+	}
+	
 }

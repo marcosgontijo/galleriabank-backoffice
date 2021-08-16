@@ -882,11 +882,8 @@
 						<p:inputText id="qtdeParcelas"
 							value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
 							style="width: 30px;">
-							<p:ajax event="change"
-								listener="#{contratoCobrancaMB.populateDataPagamentoFim}"
-								update="dataPagamentoFim" />
 						</p:inputText>
-										</h:panelGrid>
+					</h:panelGrid>
 
 					<h:panelGrid columns="2">
 						
@@ -900,83 +897,6 @@
 
 					<p:panel id="ParcelaFinal" header="Parcela Final"
 						style="margin-top:10px;margin-bottom:10px;">
-						<h:panelGrid columns="2">
-							<p:outputLabel value="Gerar Parcela Final: "
-								styleClass="labelBold" />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
-								style="margin-left: 12px;">
-								<p:ajax
-									update="vlrParcelaFinal vlrRepasseFinal vlrRetencaoFinal panelRecebedorFinal1 panelRecebedorFinal2 panelRecebedorFinal3 panelRecebedorFinal4 panelRecebedorFinal5"
-									listener="#{contratoCobrancaMB.gerarParcelaFinal}" />
-							</p:selectBooleanCheckbox>
-
-							<p:outputLabel for="dataPagamentoFim" value="Data Vencimento: "
-								styleClass="labelBold" style="margin-right: 59px;" />
-							<p:calendar id="dataPagamentoFim"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPagamentoFim}"
-								style="margin-left: 12px;" required="true"
-								label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-								 styleClass="dateTimeField" />
-
-							<p:outputLabel for="vlrParcelaFinal" value="Valor da Parcela: "
-								styleClass="labelBold" />
-							<p:inputText id="vlrParcelaFinal"
-								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
-								style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrParcelaFinal}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
-									update="vlrRetencaoFinal" />
-							</p:inputText>
-
-							<p:outputLabel for="vlrRepasseFinal"
-								value="Valor do Investidor: " styleClass="labelBold" />
-							<p:inputText id="vlrRepasseFinal"
-								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
-								style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrRepasseFinal}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter">
-								<p:ajax event="change"
-									listener="#{contratoCobrancaMB.populateRetencaoParcelaFinal}"
-									update="vlrRetencaoFinal" />
-							</p:inputText>
-
-							<p:outputLabel for="vlrRetencaoFinal"
-								value="Valor da Administração: " styleClass="labelBold" />
-							<p:inputText id="vlrRetencaoFinal"
-								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.geraParcelaFinal}"
-								style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrRetencaoFinal}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter" />
-
-							<p:outputLabel for="vlrComissaoFinal" value="Valor do Repasse: "
-								styleClass="labelBold" />
-							<p:inputText id="vlrComissaoFinal" style="margin-left: 12px;"
-								value="#{contratoCobrancaMB.vlrComissaoFinal}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter" />
-						</h:panelGrid>
-
-						<h:panelGrid columns="2">
-							<p:outputLabel value="Quebrar parcela Final: "
-								styleClass="labelBold" />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.renderRecebedorFinais}">
-								<p:ajax
-									update="panelRecebedorFinal1 panelRecebedorFinal2 panelRecebedorFinal3 panelRecebedorFinal4 panelRecebedorFinal5"
-									event="change"
-									listener="#{contratoCobrancaMB.updateRenderFinal(2)}" />
-							</p:selectBooleanCheckbox>
-						</h:panelGrid>
 
 						<p:panel id="panelRecebedorFinal1"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
@@ -1350,6 +1270,12 @@
 							icon="ui-icon-cancel"
 							action="/Atendimento/Cobranca/ContratoCobrancaReParcelar.xhtml"
 							style="TEXT-DECORATION: bold; " />
+						<p:spacer height="10" />
+						
+						<p:commandButton value="Re-Parcelamento Automático"
+							icon="ui-icon-check" type="button" 
+							onclick="PF('reParcelamentoDialog').show()"
+							style="TEXT-DECORATION: bold;" update="DetalheReParcelamento"/>
 					</div>
 				</p:panel>
 
@@ -1390,7 +1316,7 @@
 									value="#{parcelas.dataVencimento}"
 									style="margin-left: 12px;" required="true"
 									label="Data Vencimento" size="100" pattern="dd/MM/yyyy"
-									 styleClass="dateTimeField"/>
+									styleClass="dateTimeField"/>
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
@@ -1469,6 +1395,15 @@
 				</p:panel>
 			</p:panel>
 		</h:form>
+
+		<p:dialog header="Re-parcelar" widgetVar="reParcelamentoDialog"
+			resizable="false" id="DetalheReParcelamento" responsive="false"
+			width="1000" height="660" closable="true">
+			<h:form>
+				<ui:include src="/Atendimento/Cobranca/ContratoCobrancaReParcelarEditarCalculo.xhtml">
+				</ui:include>
+			</h:form>
+		</p:dialog>
 
 		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">

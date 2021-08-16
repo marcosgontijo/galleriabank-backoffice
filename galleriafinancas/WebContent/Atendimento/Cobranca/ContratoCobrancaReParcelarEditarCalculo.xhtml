@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags">
+
+	<h:panelGrid columns="2" columnClasses="padRight20">
+		<p:outputLabel for="numeroParcelaReparcelamento" value="Parcela atual:"
+			styleClass="labelBold" />
+		<p:inputText id="numeroParcelaReparcelamento" value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
+			onkeypress="return isNumberKey(event);"
+			onkeydown="FormataValor(this, 13, event, 2);" required="true"
+			converter="bigDecimalConverter">
+		</p:inputText>
+		
+		<p:outputLabel for="carenciaReparcelamento" value="Carência:"
+			styleClass="labelBold" />
+		<p:inputText id="carenciaReparcelamento" value="#{contratoCobrancaMB.carenciaReparcelamento}"
+			onkeypress="return isNumberKey(event);"
+			onkeydown="FormataValor(this, 13, event, 2);" required="true"
+			converter="bigDecimalConverter">
+		</p:inputText>
+
+		<p:outputLabel for="saldoDevedorReparcelamento" value="Saldo Dedvedor Atual: "
+			styleClass="labelBold" />
+		<p:inputText id="saldoDevedorReparcelamento" value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
+			onkeypress="return isNumberKey(event);"
+			onkeydown="FormataValor(this, 13, event, 2);" required="true"
+			converter="bigDecimalConverter">
+		</p:inputText>
+	</h:panelGrid>
+	<h:panelGrid columns="3" columnClasses="padRight20">
+		<f:facet name="footer">
+			
+			<p:commandButton value="Re-parcelar" action="#{contratoCobrancaMB.mostrarReParcelamento()}"
+				image="ui-icon ui-icon-check" ajax="true"
+				update = "ConsultaReparcelamento" 
+			/> 	<p:spacer></p:spacer>
+			<p:commandButton value="Concluir" action="#{contratoCobrancaMB.concluirReparcelamento()}"
+				image="ui-icon ui-icon-check"
+				update = ":form:DetalheParcelas" 
+				oncomplete="PF('reParcelamentoDialog').hide();" />
+		
+		</f:facet>
+		
+		<p:panel id="ConsultaReparcelamento" headerr="Simulação"
+				style="margin-bottom:10px;">
+
+				<ui:include
+					src="/Atendimento/Cobranca/Simulador/SimuladorParcelas.xhtml">
+					<ui:param name="simulador" value="false"></ui:param>
+					<ui:param name="simulacao" value="#{contratoCobrancaMB.simuladorParcelas}"></ui:param>
+				</ui:include>
+
+		</p:panel>
+	</h:panelGrid>
+</ui:composition>
