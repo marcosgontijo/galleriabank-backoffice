@@ -25,7 +25,8 @@
 			styleClass="labelBold" />
 		<p:inputText id="saldoDevedorReparcelamento" value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
 			onkeypress="return isNumberKey(event);"
-			onkeydown="FormataValor(this, 13, event, 2);" required="true">
+			onkeydown="FormataValor(this, 13, event, 2);" required="true"
+			converter="bigDecimalConverter">
 		</p:inputText>
 	</h:panelGrid>
 	<h:panelGrid columns="3" columnClasses="padRight20">
