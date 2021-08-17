@@ -861,39 +861,95 @@
 						</p:panel>
 					</p:panel>
 				</p:panel>
+				
+				<p:panel id="Dados" header="Dados do Contrato" style="margin-bottom:10px;">	
+					<h:panelGrid columns="2">
+							<p:outputLabel value="Imóvel: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}" />
+								
+							<p:outputLabel value="Cartório de Registro: "  styleClass="labelBold"/> 
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.cartorio}" />	
+		
+							<p:outputLabel value="Honorários (%): " styleClass="labelBold" />
+							<h:panelGroup>
+				            	<h:outputText value="R$"/>
+				            	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txHonorario}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
+				            								
+							<p:outputLabel value="Taxa de Juros: " styleClass="labelBold" />
+							<h:panelGroup>
+				            	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJuros}" converter="bigDecimalConverter"/>
+				            	<h:outputText value=" %"/>
+				            </h:panelGroup>
+				            
+				            <p:outputLabel value="Corrigido IPCA: " styleClass="labelBold" />
+				        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+									<h:outputText value="Não" />
+							</ui:fragment>		
+							
+							<p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
+				        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+									<h:outputText value="Não" />
+							</ui:fragment>
+							
+							<p:outputLabel value="Tem Seguro DFI? " styleClass="labelBold" />
+							<ui:fragment>
+								<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI 
+								and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
+							</ui:fragment>
+
+							<p:outputLabel value="Tem SeguroMIP? " styleClass="labelBold" />
+							<ui:fragment>
+								<h:outputText value="#{(contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP 
+								and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
+							</ui:fragment>	
+							
+							<p:outputLabel value="Valor do Imóvel (R$): " styleClass="labelBold" />
+							<h:panelGroup>
+				           		<h:outputText value="R$ "/>
+				          	 	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorImovel}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
+				            										
+						</h:panelGrid>
+					</p:panel>
 
 				<p:panel id="Pagamento" header="Forma de Pagamento"
 					style="margin-bottom:10px;">
-					<h:panelGrid columns="2">
-						<p:outputLabel for="dataInicio" value="Data Inicio: "
-							styleClass="labelBold" style="margin-right: 59px;" />
-						<p:calendar id="dataInicio"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
-							required="true" label="Data Inicio" size="100"
-							pattern="dd/MM/yyyy" 
-							styleClass="dateTimeField">
-							<p:ajax event="dateSelect"
-								listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
-						</p:calendar>
-					</h:panelGrid>
-					<h:panelGrid columns="4">
-						<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
+					<h:panelGrid columns="2">	
+							<p:outputLabel value="Data Inicio: " styleClass="labelBold" style="margin-right: 50px;"/>															
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				            </h:outputText>	
+				            
+				            <p:outputLabel value="Tipo Cálculo: "
 							styleClass="labelBold" />
-						<p:inputText id="qtdeParcelas"
-							value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
-							style="width: 30px;">
-						</p:inputText>
-					</h:panelGrid>
-
-					<h:panelGrid columns="2">
-						
-						<p:outputLabel value="Gerar Boleto das Parcelas "
-							styleClass="labelBold" />
-						<p:selectBooleanCheckbox
-							value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
-							style="margin-left: 12px;"
-							disabled="#{contratoCobrancaMB.objetoContratoCobranca.getId() > 0}" />
-					</h:panelGrid>
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}" />	
+								
+							<p:outputLabel value="Número de Parcelas: " styleClass="labelBold" />
+							<h:outputText value="#{contratoCobrancaMB.qtdeParcelas}" />																								
+								
+				            <p:outputLabel value="Taxa de Juros : " styleClass="labelBold" />
+				            <h:panelGroup>
+				           		<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" converter="bigDecimalConverter"/>
+				            	<h:outputText value="%"/>
+				            </h:panelGroup>
+				            
+				            <p:outputLabel value="Valor da CCB: " styleClass="labelBold" />
+				            <h:panelGroup>
+				            <h:outputText value="R$"/>
+				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}" converter="bigDecimalConverter"/>
+				            </h:panelGroup>
+				            
+				            <p:outputLabel value="Meses Carência: " styleClass="labelBold" />
+							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" />
+				        </h:panelGrid>
 
 					
 					<div align="center">
