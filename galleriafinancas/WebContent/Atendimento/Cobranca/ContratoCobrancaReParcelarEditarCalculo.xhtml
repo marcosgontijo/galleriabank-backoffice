@@ -7,12 +7,13 @@
 	xmlns:shiro="http://shiro.apache.org/tags">
 
 	<h:panelGrid columns="2" columnClasses="padRight20">
+		
 		<p:outputLabel for="numeroParcelaReparcelamento" value="Parcela atual:"
 			styleClass="labelBold" />
 		<p:inputText id="numeroParcelaReparcelamento" value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
 			onkeypress="return isNumberKey(event);"
 			onkeydown="FormataValor(this, 13, event, 2);" required="true">
-		</p:inputText>
+		</p:inputText> 
 		
 		<p:outputLabel for="carenciaReparcelamento" value="Carência:"
 			styleClass="labelBold" />
@@ -21,7 +22,7 @@
 			onkeydown="FormataValor(this, 13, event, 2);" required="true">
 		</p:inputText>
 
-		<p:outputLabel for="saldoDevedorReparcelamento" value="Saldo Dedvedor Atual: "
+		<p:outputLabel for="saldoDevedorReparcelamento" value="Saldo Devedor Atual: "
 			styleClass="labelBold" />
 		<p:inputText id="saldoDevedorReparcelamento" value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
 			onkeypress="return isNumberKey(event);"
