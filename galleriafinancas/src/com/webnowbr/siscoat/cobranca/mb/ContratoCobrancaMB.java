@@ -51,6 +51,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.NumberComparer;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -8886,7 +8887,7 @@ public class ContratoCobrancaMB {
 
 		SimulacaoVO simulador = new SimulacaoVO();
 
-		if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
+		if (this.objetoContratoCobranca.isGeraParcelaFinal() && !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal()) ) {
 			this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
 			this.setQtdeParcelas(CommonsUtil.stringValue(this.objetoContratoCobranca.getQtdeParcelas()));
 			this.objetoContratoCobranca.setGeraParcelaFinal(false);
@@ -8909,8 +8910,13 @@ public class ContratoCobrancaMB {
 		simulador.setValorCredito(this.saldoDevedorReparcelamento);
 		simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
 		simulador.setCarencia(this.carenciaReparcelamento);
-		simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas())
-				.subtract(this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)));
+		if (this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) == 1 ) {
+			simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas())
+					.subtract(this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)));
+		} else {
+			simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
+		}
+		
 		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
 //			simulador.setCustoEmissaoValor(custoEmissaoValor);
 		simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
