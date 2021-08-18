@@ -1416,7 +1416,7 @@
 								required="true" label="Data Inicio" size="100"
 								pattern="dd/MM/yyyy" 
 								styleClass="dateTimeField"
-								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}">
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}">
 								<p:ajax event="dateSelect"
 									listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
 							</p:calendar>
@@ -1435,7 +1435,7 @@
 								styleClass="labelBold" />
 							<p:inputText id="qtdeParcelas"
 								value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
-								style="width: 30px;" disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}">
+								style="width: 30px;" disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}">
 							</p:inputText>
 						
 						
@@ -1466,16 +1466,15 @@
 								styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
-								disabled="#{!contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.isEmpty()}"/>
-								
-								
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}">
+																
 						<p:commandButton value="Visualizar parcelas" 
 							action="#{contratoCobrancaMB.mostrarParcela()}"
 							oncomplete="PF('parcelasDialog').show()"
 							update = "verParcelaDialog"
 							style="TEXT-DECORATION: bold;" />
 												
-			<p:dialog header="Parcelas" widgetVar="parcelasDialog" id = "verParcelaDialog"
+						<p:dialog header="Parcelas" widgetVar="parcelasDialog" id = "verParcelaDialog"
 							 showEffect="fade" hideEffect="fade" resizable="false"
 							responsive="false" width="1000" positionType="center center" closable="true">
 								<ui:include
