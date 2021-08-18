@@ -953,23 +953,20 @@
 
 					
 					<div align="center">
-						<p:commandButton value="Re-Parcelar Contrato" ajax="true"
-							icon="ui-icon-check"
-							action="#{contratoCobrancaMB.reparcelarPelaUltimaParcelaValidada}"
-							style="TEXT-DECORATION: bold;" update="DetalheReParcelamento"
-							oncomplete ="PF('reParcelamentoDialog').show()" />
-						<p:spacer height="10" />
-						<p:commandButton value="Cancelar" ajax="false" immediate="true"
-							icon="ui-icon-cancel"
-							action="/Atendimento/Cobranca/ContratoCobrancaReParcelar.xhtml"
-							style="TEXT-DECORATION: bold; " />
-						<p:spacer height="10" />
-						
-						<p:commandButton value="Re-Parcelamento Automático"
+						<p:commandButton value="Re-Parcelamento"
 							icon="ui-icon-check" 
 							action="#{contratoCobrancaMB.reparcelarPelaUltimaParcelaValidada}"
 							style="TEXT-DECORATION: bold;" update="DetalheReParcelamento"
 							oncomplete ="PF('reParcelamentoDialog').show()"/>
+						<p:spacer height="10" />
+							
+						<p:commandButton
+							action="#{contratoCobrancaMB.incluirAmortizacaoSaldo}"
+							oncomplete="PF('amortizarSaldoDialog').show();"
+							update="formAmortizarSaldo" ajax="true"
+							icon="ui-icon-transfer-e-w" value="Amortizar Saldo"
+							title="Amortizar Saldo" />							
+							
 					</div>
 				</p:panel>
 
@@ -1088,7 +1085,39 @@
 					</p:dataTable>
 				</p:panel>
 			</p:panel>
+			<div align="center">
+				<p:commandButton
+					action="#{contratoCobrancaMB.concluirReparcelamentoAutomatico}" ajax="true"
+					icon="ui-icon-check" value="Concluir" title="Concluir" update="msgs"/>
+			</div>	
 		</h:form>
+		<p:dialog header="Amortizar Saldo"
+			widgetVar="amortizarSaldoDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formAmortizarSaldo">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataAmortizacao" value="Data da amortização"></p:outputLabel>
+					<p:calendar id="dataAmortizacao"
+						value="#{contratoCobrancaMB.amortizacao.dataVencimento}"
+						style="margin-left: 12px;" required="true"
+						label="Data Adiantamento" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField" />
+
+					<p:outputLabel for="valorAmortizacao"
+						value="Valor da amortização (R$)"></p:outputLabel>
+					<p:inputText id="valorAmortizacao" style="margin-left: 12px;"
+						value="#{contratoCobrancaMB.amortizacao.vlrAmortizacaoParcela}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" />
+				</h:panelGrid>
+				<p:commandButton value="Salvar amortização" ajax="false"
+					icon="ui-icon-print"
+					action="#{contratoCobrancaMB.incluirAmortizacaoSaldo}" />
+				<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					oncomplete="PF('amortizarSaldoDialog').hide();" />
+			</h:form>
+		</p:dialog>
 
 		<p:dialog header="Re-parcelar" widgetVar="reParcelamentoDialog"
 			resizable="true" id="DetalheReParcelamento" responsive="false"

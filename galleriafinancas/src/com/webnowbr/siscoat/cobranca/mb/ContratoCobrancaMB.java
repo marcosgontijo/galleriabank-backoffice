@@ -51,7 +51,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.NumberComparer;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -580,6 +579,7 @@ public class ContratoCobrancaMB {
 	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
 
 	ContratoCobrancaParcelasInvestidor antecipacao;
+	ContratoCobrancaDetalhes amortizacao;
 
 	/**
 	 * 
@@ -4288,6 +4288,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Editar";
 
 		this.hasBaixaParcial = hasBaixaParcial();
+		this.amortizacao = new ContratoCobrancaDetalhes();
 
 		this.renderRecebedorFinais = false;
 
@@ -8333,6 +8334,13 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasse);
 				contratoCobrancaDetalhes.setVlrRetencao(this.vlrRetencao);
 				contratoCobrancaDetalhes.setVlrComissao(this.vlrComissao);
+				
+				if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0 ) {
+					contratoCobrancaDetalhes.setParcelaPaga(true);
+					contratoCobrancaDetalhes.setDataPagamento(dataParcela);
+					contratoCobrancaDetalhes.setVlrParcela(BigDecimal.ZERO);					
+				}
+				
 
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 
@@ -8887,7 +8895,8 @@ public class ContratoCobrancaMB {
 
 		SimulacaoVO simulador = new SimulacaoVO();
 
-		if (this.objetoContratoCobranca.isGeraParcelaFinal() && !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal()) ) {
+		if (this.objetoContratoCobranca.isGeraParcelaFinal()
+				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal())) {
 			this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
 			this.setQtdeParcelas(CommonsUtil.stringValue(this.objetoContratoCobranca.getQtdeParcelas()));
 			this.objetoContratoCobranca.setGeraParcelaFinal(false);
@@ -8910,13 +8919,13 @@ public class ContratoCobrancaMB {
 		simulador.setValorCredito(this.saldoDevedorReparcelamento);
 		simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
 		simulador.setCarencia(this.carenciaReparcelamento);
-		if (this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) == 1 ) {
+		if (this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) == 1) {
 			simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas())
 					.subtract(this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)));
 		} else {
 			simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
 		}
-		
+
 		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
 //			simulador.setCustoEmissaoValor(custoEmissaoValor);
 		simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
@@ -8926,15 +8935,15 @@ public class ContratoCobrancaMB {
 				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
 
 		simulador.calcular();
-		if (this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO)!=0) {
+		if (this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) != 0) {
 			simulador.getParcelas().remove(0);
 			for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 				parcela.setNumeroParcela(
-					parcela.getNumeroParcela().add(numeroParcelaReparcelamento).subtract(BigInteger.ONE));
+						parcela.getNumeroParcela().add(numeroParcelaReparcelamento).subtract(BigInteger.ONE));
 			}
 		}
 		return simulador;
-	
+
 	}
 
 	public void mostrarParcela() {
@@ -8970,20 +8979,42 @@ public class ContratoCobrancaMB {
 
 	public void reparcelarPelaUltimaParcelaValidada() {
 		this.simuladorParcelas = new SimulacaoVO();
-		for( int iDetalhe = 0 ; iDetalhe < this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++ ) {
-			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe);
+		for (int iDetalhe = 0; iDetalhe < this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+				.size(); iDetalhe++) {
+			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+					.get(iDetalhe);
 			if (!detalhe.isParcelaPaga()) {
-				if(CommonsUtil.mesmoValor(iDetalhe, 0)) {
-					this.setNumeroParcelaReparcelamento(BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())));
+				if (CommonsUtil.mesmoValor(iDetalhe, 0)) {
+					this.setNumeroParcelaReparcelamento(
+							BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())));
 					this.setCarenciaReparcelamento(BigInteger.valueOf(objetoContratoCobranca.getMesesCarencia()));
-					this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
-				}
+					if (detalhe.getVlrSaldoParcela() != null) {
+						this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
+					} else {
+						this.setSaldoDevedorReparcelamento(this.objetoContratoCobranca.getValorCCB());
+					}
+				}				
 				break;
 			} else {
-				this.setNumeroParcelaReparcelamento(BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())).add(BigInteger.ONE));
-				this.setCarenciaReparcelamento(BigInteger.ZERO);
 				this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
+				if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Amortização")) {
+					this.setNumeroParcelaReparcelamento(
+						BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())).add(BigInteger.ONE));
+				}
+				this.setCarenciaReparcelamento(BigInteger.ZERO);
 			}
+		}
+	}
+	
+	public void concluirReparcelamentoAutomatico() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		try {
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Contrato Cobrança: As parcelas foram re-geradas com sucesso!!!", ""));
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 		}
 	}
 
@@ -9864,7 +9895,50 @@ public class ContratoCobrancaMB {
 		this.idAntecipacaoInvestidor = iInvestidor;
 		this.antecipacao = new ContratoCobrancaParcelasInvestidor();
 	}
+	
+	public void incluirAmortizacaoSaldo() {
+		ContratoCobrancaDetalhes parcelaAnterior = null;
 
+		for (ContratoCobrancaDetalhes ContratoCobrancaDetalhes : objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			if (parcelaAnterior == null || ContratoCobrancaDetalhes.getDataVencimento()
+					.compareTo(amortizacao.getDataVencimento()) < 1) {
+				parcelaAnterior = ContratoCobrancaDetalhes;
+
+			} else {
+
+				break;
+			}
+		}
+		
+		amortizacao.setVlrSaldoParcela(parcelaAnterior.getVlrSaldoParcela().subtract(amortizacao.getVlrAmortizacaoParcela()));
+		amortizacao.setVlrJurosParcela(BigDecimal.ZERO);
+		amortizacao.setSeguroDIF(BigDecimal.ZERO);
+		amortizacao.setSeguroMIP(BigDecimal.ZERO);
+		amortizacao.setVlrParcela(amortizacao.getVlrAmortizacaoParcela());
+		amortizacao.setNumeroParcela("Amortização");
+		amortizacao.setParcelaPaga(true);
+		amortizacao.setDataPagamento(amortizacao.getDataVencimento());
+		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
+		objetoContratoCobranca.getListContratoCobrancaDetalhes().add(amortizacao);
+		Collections.sort(objetoContratoCobranca.getListContratoCobrancaDetalhes(), new Comparator<ContratoCobrancaDetalhes>() {
+			@Override
+			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
+				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
+				if (result == 0) {
+					try {
+						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+						result = oneParcela.compareTo(otherParcela);
+					} catch (Exception e) {
+						result = 0;
+					}
+				}
+				return result;
+			}
+		});
+
+		
+	}
 	public String incluirAntecipacao() {
 
 		List<ContratoCobrancaParcelasInvestidor> listaCobrancaParcelas = null;
@@ -17904,4 +17978,12 @@ public class ContratoCobrancaMB {
 		this.carenciaReparcelamento = carenciaReparcelamento;
 	}
 
+	public ContratoCobrancaDetalhes getAmortizacao() {
+		return amortizacao;
+	}
+
+	public void setAmortizacao(ContratoCobrancaDetalhes amortizacao) {
+		this.amortizacao = amortizacao;
+	}
+	
 }

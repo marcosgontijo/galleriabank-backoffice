@@ -128,11 +128,19 @@
 									<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.onRowEditInvestidor}" update=":form:msgs" />
 			 				        <p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancelInvestidor}" update=":form:msgs" />
 		
-									<f:facet name="header">  
-										<p:commandButton action="#{contratoCobrancaMB.excluirParcelasInvestidor1}" ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)" title="Excluir Parcela(s)"/>
-																				
-										<p:commandButton action="#{contratoCobrancaMB.anteciparCreditoInvestidor(1)}" oncomplete="PF('anteciparCreditoDialog').show();" update="formAnteciparCredito" ajax="true" icon="ui-icon-transfer-e-w" value="Antecipar Credito" title="Antecipar Credito"/>
-										              
+									<f:facet name="header">
+										<p:commandButton
+											action="#{contratoCobrancaMB.excluirParcelasInvestidor1}"
+											ajax="false" icon="ui-icon-trash" value="Excluir Parcela(s)"
+											title="Excluir Parcela(s)" />
+
+										<p:commandButton
+											action="#{contratoCobrancaMB.anteciparCreditoInvestidor(1)}"
+											oncomplete="PF('anteciparCreditoDialog').show();"
+											update="formAnteciparCredito" ajax="true"
+											icon="ui-icon-transfer-e-w" value="Antecipar Credito"
+											title="Antecipar Credito" />
+
 									</f:facet>  
 					
 									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
