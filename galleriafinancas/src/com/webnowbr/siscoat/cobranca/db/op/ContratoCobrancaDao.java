@@ -2875,6 +2875,59 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL = "select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
+			+ "from cobranca.contratocobrancadetalhes cd "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+			+ "where cc.status = 'Aprovado' "
+			+ "and cd.parcelapaga = false "
+			+ "and cd.datavencimentoatual < ? ::timestamp ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFull(final Date dtRelInicio) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;	
+				
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL;
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					ps.setDate(1, dtRelInicioSQL);					
+	
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					String parcela = "";
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+												
+						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtraso(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 

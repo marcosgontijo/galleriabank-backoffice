@@ -34,11 +34,11 @@
 						<p:outputLabel value="Pagador: " styleClass="labelBold" />
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.cpf}#{contratoCobrancaMB.objetoContratoCobranca.pagador.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.pagador.nome}" />
-						<p:commandButton id="pagadorDetails" value="dados" type="button" />
+						<p:commandButton id="pagadorDetails" value="dados" type="button" icon="ui-icon ui-icon-circle-zoomin" />
 						<p:outputLabel value="Responsável: " styleClass="labelBold" />
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cpf}#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" />
-						<p:commandButton id="responsavelDetails" value="dados"
+						<p:commandButton id="responsavelDetails" value="dados"  icon="ui-icon ui-icon-circle-zoomin"
 							type="button" />
 						<p:overlayPanel id="pagadorDetailsPanel" for="pagadorDetails"
 							hideEffect="fade" dynamic="true" showCloseIcon="true">
@@ -59,7 +59,7 @@
 									style="width:400px;" />
 							</h:panelGrid>
 							<br></br>
-							<p:commandButton value="Salvar" ajax="false"
+							<p:commandButton value="Salvar" ajax="false"  icon="ui-icon-plus"
 								action="#{contratoCobrancaMB.updatePagadorRecebedorDados}"
 								update="pagadorDetailsPanel" />
 						</p:overlayPanel>
@@ -2046,7 +2046,7 @@
 				<p:commandButton value="Salvar anticipação" ajax="false"
 					icon="ui-icon-print"
 					action="#{contratoCobrancaMB.incluirAntecipacao}" />
-				<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+				<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('anteciparCreditoDialog').hide();" />
 
 			</h:form>

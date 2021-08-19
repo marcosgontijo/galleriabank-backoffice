@@ -52,11 +52,11 @@
 						<p:outputLabel value="Pagador: " styleClass="labelBold" />
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.cpf}#{contratoCobrancaMB.objetoContratoCobranca.pagador.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.pagador.nome}" />
-						<p:commandButton id="pagadorDetails" value="dados" type="button" />
+						<p:commandButton id="pagadorDetails" value="dados" type="button"  icon="ui-icon ui-icon-circle-zoomin" />
 						<p:outputLabel value="Responsável: " styleClass="labelBold" />
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cpf}#{contratoCobrancaMB.objetoContratoCobranca.responsavel.cnpj} - #{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" />
-						<p:commandButton id="responsavelDetails" value="dados"
+						<p:commandButton id="responsavelDetails" value="dados"  icon="ui-icon ui-icon-circle-zoomin"
 							type="button" />
 						<p:overlayPanel id="pagadorDetailsPanel" for="pagadorDetails"
 							hideEffect="fade" dynamic="true" showCloseIcon="true">
@@ -76,7 +76,7 @@
 									label="Contato" onblur="" style="width:400px;" />
 							</h:panelGrid>
 							<br></br>
-							<p:commandButton value="Salvar" ajax="false"
+							<p:commandButton value="Salvar" ajax="false"  icon="ui-icon-plus"
 								action="#{contratoCobrancaMB.updatePagadorRecebedorDados}"
 								update="pagadorDetailsPanel" />
 						</p:overlayPanel>
@@ -2109,13 +2109,13 @@
 			<div align="center">
 				<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 					<p:commandButton action="#{contratoCobrancaMB.baixarParcela}"
-						ajax="false" image="ui-icon-transferthick-e-w" value="Baixar"
+						ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar"
 						rendered="#{contratoCobrancaMB.origemTelaBaixar != 'CobrancaQuitados'}" />
 					<p:spacer width="10"
 						rendered="#{contratoCobrancaMB.origemTelaBaixar != 'CobrancaQuitados'}" />
 					<p:commandButton
 						action="#{contratoCobrancaMB.estornarBaixaParcela}" ajax="false"
-						image="ui-icon-arrowreturnthick-1-w" value="Estornar"
+						icon="ui-icon-arrowreturnthick-1-w" value="Estornar"
 						rendered="#{contratoCobrancaMB.origemTelaBaixar != 'CobrancaQuitados'}" />
 					<p:spacer width="10"
 						rendered="#{contratoCobrancaMB.origemTelaBaixar != 'CobrancaQuitados'}" />
@@ -2179,10 +2179,10 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaDoInvestidor}"
-							ajax="false" image="ui-icon-transferthick-e-w" value="Baixar" />
+							ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('baixaParcelaInvestidorDialog').hide();" />
 				</div>
 			</h:form>
@@ -2224,11 +2224,11 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.cancelarBaixaParcelaDoInvestidor}"
-							ajax="false" image="ui-icon-transferthick-e-w"
+							ajax="false" icon="ui-icon-transferthick-e-w"
 							value="Cancelar Baixa" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('cancelaBaixaParcelaInvestidorDialog').hide();" />
 				</div>
 			</h:form>
@@ -2309,7 +2309,7 @@
 							style="FONT-SIZE: 10pt;width:290px;" />
 						<p:commandButton id="botaoRecebedor" type="button"
 							onclick="PF('recebedorDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin" />
+							icon="ui-icon ui-icon-circle-zoomin" />
 					</h:panelGrid>
 					<p:panel id="ConsultaFinanceiroResultados"
 						header="Dados para Pagamento"
@@ -2368,11 +2368,11 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaParcial}" ajax="false"
-							image="ui-icon-transferthick-e-w" value="Baixar"
+							icon="ui-icon-transferthick-e-w" value="Baixar"
 							update=":form:DetalheParcelas" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('baixaParcialDialog').hide();" />
 				</div>
 			</h:form>
@@ -2411,7 +2411,7 @@
 					</h:panelGrid>
 					<p:commandButton
 						action="#{contratoCobrancaMB.geraRecibo(contratoCobrancaMB.contratoCobrancaDetalhesParcialTemp)}"
-						ajax="false" image="ui-icon-transferthick-e-w" value="Baixar"
+						ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar"
 						update=":form:DetalheParcelas" />
 				</p:panel>
 			</h:form>
@@ -2499,7 +2499,7 @@
 					</p:commandButton>
 					<p:spacer width="10" />
 					<p:commandButton value="Voltar"
-						image="ui-icon-arrowreturnthick-1-w"
+						icon="ui-icon-arrowreturnthick-1-w"
 						oncomplete="PF('bpGerarBoletoIUGUDialog').hide();" />
 				</div>
 			</h:form>
@@ -2576,7 +2576,7 @@
 
 				<div align="center" style="margin-top: 20px;">
 					<p:commandButton value="Voltar"
-						image="ui-icon-arrowreturnthick-1-w"
+						icon="ui-icon-arrowreturnthick-1-w"
 						oncomplete="PF('bpHistoricoDialog').hide();" />
 				</div>
 			</h:form>
@@ -2623,15 +2623,15 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedRecebedor}"
-							image="ui-icon ui-icon-check"
+							icon="ui-icon ui-icon-check"
 							update=":formBaixaParcial:Recebedor :formBaixaParcial:Pessoas"
 							oncomplete="PF('recebedorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearRecebedor}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":formBaixaParcial:Recebedor recebedorDialogdlg :formBaixaParcial:Pessoas"
 							oncomplete="PF('recebedorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('recebedorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>
@@ -2716,7 +2716,7 @@
 				</p:panel>
 				<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
 					<p:commandButton value="Voltar"
-						image="ui-icon-arrowreturnthick-1-w"
+						icon="ui-icon-arrowreturnthick-1-w"
 						oncomplete="PF('observacoesDialog').hide();" />
 				</div>
 			</h:form>
@@ -2756,7 +2756,7 @@
 				</p:panel>
 				<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
 					<p:commandButton value="Voltar"
-						image="ui-icon-arrowreturnthick-1-w"
+						icon="ui-icon-arrowreturnthick-1-w"
 						oncomplete="PF('promessaPagamentoDialog').hide();" />
 				</div>
 			</h:form>
