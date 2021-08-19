@@ -63,7 +63,6 @@ import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
@@ -596,15 +595,14 @@ public class ContratoCobrancaMB {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public List<ContratoCobranca> load(final int first, final int pageSize,
-					final String sortField, final SortOrder sortOrder,
-					final Map<String, FilterMeta > filters) {
+			public List<ContratoCobranca> load(final int first, final int pageSize, final String sortField,
+					final SortOrder sortOrder, final Map<String, Object> filters) {
 
 				/*
 				 * Busca usuário logado para restringir retorno dos dados.
 				 */
 
-				filters.put("status", new FilterMeta("status", "Aprovado"));
+				filters.put("status", "Aprovado");
 				if (loginBean != null) {
 					User usuarioLogado = new User();
 					UserDao u = new UserDao();
@@ -612,7 +610,7 @@ public class ContratoCobrancaMB {
 
 					if (usuarioLogado != null) {
 						if (!usuarioLogado.isAdministrador()) {
-							filters.put("contratoRestritoAdm", new FilterMeta("contratoRestritoAdm", "false"));
+							filters.put("contratoRestritoAdm", "false");
 						}
 					}
 				}
@@ -631,9 +629,8 @@ public class ContratoCobrancaMB {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public List<Responsavel> load(final int first, final int pageSize,
-					final String sortField, final SortOrder sortOrder,
-					final Map<String, FilterMeta > filters) {		
+			public List<Responsavel> load(final int first, final int pageSize, final String sortField,
+					final SortOrder sortOrder, final Map<String, Object> filters) {
 
 				ResponsavelDao responsavelDao = new ResponsavelDao();
 
@@ -16715,7 +16712,7 @@ public class ContratoCobrancaMB {
 		}
 
 		// cria o arquivo
-		byte[] conteudo = event.getFile().getContent();
+		byte[] conteudo = event.getFile().getContents();
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
