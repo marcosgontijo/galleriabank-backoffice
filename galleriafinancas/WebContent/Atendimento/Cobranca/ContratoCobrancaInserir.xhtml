@@ -1328,6 +1328,30 @@
 							</p:panel>
 						</p:panel>
 					</p:panel>
+					
+					<p:panel id="SeguradoresPanel" header="Seguradores"
+						style="margin-bottom:10px;">
+						<h:panelGrid columns="2">			
+							<p:outputLabel for="Segurador" value="Segurador: "
+								styleClass="labelBold" />
+							<p:inputText id="Segurador"
+								value="#{contratoCobrancaMB.nomeSegurador}" label="Segurador"
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;" />
+							<p:commandButton id="botaoSegurador" type="button"
+								onclick="PF('seguradorDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />
+								
+							<p:outputLabel for="SeguradorPorcentagem" value="Porcentagem do segurador: "
+								styleClass="labelBold" />	
+							<p:inputText id="SeguradorPorcentagem"
+								value="#{contratoCobrancaMB.porcentagemSegurador}" 
+								readonly="TRUE" required="true"
+								style="FONT-SIZE: 10pt;width:300px;" />
+								
+						</h:panelGrid>
+					</p:panel>
+					
 					<p:panel id="Dados" header="Dados do Contrato"
 						style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
@@ -1654,6 +1678,63 @@
 			</div>
 		</h:form>
 		<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
+		
+		<p:dialog header="Seguradores" widgetVar="seguradorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formSeguradores">
+				<p:dataTable id="seguradorDialogdlg" var="seguradorDialogdlg"
+					value="#{contratoCobrancaMB.listSeguradores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedSegurador}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{seguradorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{seguradorDialogdlg.cnpj}"
+						filterBy="#{seguradorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{seguradorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{seguradorDialogdlg.cpf}"
+						filterBy="#{seguradorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{seguradorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{seguradorDialogdlg.nome}"
+						filterBy="#{seguradorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{seguradorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedSegurador}"
+							image="ui-icon ui-icon-check" update=":form:Segurador"
+							oncomplete="PF('seguradorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearSegurador}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Segurador seguradorDialogdlg"
+							oncomplete="PF('seguradorDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('seguradorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
 		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">
