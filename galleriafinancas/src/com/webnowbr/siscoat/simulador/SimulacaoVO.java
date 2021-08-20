@@ -219,7 +219,7 @@ public class SimulacaoVO {
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
 
 		// fixo
-		BigDecimal amortizacao = this.valorCredito.divide(
+		BigDecimal amortizacao = saldoDevedorCarencia.divide(
 				BigDecimal.valueOf((this.qtdParcelas.subtract(this.carencia).longValue())), MathContext.DECIMAL128);
 
 		for (int i = 1; i <= this.qtdParcelas.intValue(); i++) {
