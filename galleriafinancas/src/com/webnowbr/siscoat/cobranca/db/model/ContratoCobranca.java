@@ -3,8 +3,12 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ContratoCobranca implements Serializable {
 
@@ -415,6 +419,31 @@ public class ContratoCobranca implements Serializable {
 		this.exibeRecebedor8 = true;
 		this.exibeRecebedor9 = true;
 		this.exibeRecebedor10 = true;
+	}
+	
+	
+	
+	private void reordenaListagemDetalhes() {
+		if (CommonsUtil.semValor(listContratoCobrancaDetalhes))
+			return;
+		
+		Collections.sort(this.listContratoCobrancaDetalhes, new Comparator<ContratoCobrancaDetalhes>() {
+			@Override
+			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
+				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
+				if (result == 0) {
+					try {
+						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+						result = oneParcela.compareTo(otherParcela);
+					} catch (Exception e) {
+						result = 0;
+					}
+				}
+				return result;
+			}
+		});
+
 	}
 
 	/**
@@ -1227,6 +1256,7 @@ public class ContratoCobranca implements Serializable {
 	 * @return the listContratoCobrancaDetalhes
 	 */
 	public List<ContratoCobrancaDetalhes> getListContratoCobrancaDetalhes() {
+		reordenaListagemDetalhes();
 		return listContratoCobrancaDetalhes;
 	}
 
