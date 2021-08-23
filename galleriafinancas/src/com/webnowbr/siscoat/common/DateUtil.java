@@ -528,11 +528,46 @@ public final class DateUtil {
 		return adicionarPeriodo(data, quantidade, Calendar.DATE);
 	}
 
+
+	public static Date adicionarMes(Date data, int quantidade) {
+		return adicionarPeriodo(data, quantidade, Calendar.MONTH);
+	}
+	
 	public static Date adicionarPeriodo(Date data, int quantidade, int tipo) {
 
 		Calendar calendar = DateUtil.getZeroHourCal(data);
 		calendar.add(tipo, quantidade);
 		Date result = calendar.getTime();
 		return result;
+	}
+	
+	
+	
+	@SuppressWarnings("deprecation")
+	public static Integer getDaysBetweenDates360(Date FechaIni, Date FechaFin, Boolean MetodoEuro) {
+
+		Integer DiaIni = FechaIni.getDay();
+		Integer DiaFin = FechaFin.getDay();
+
+		if (!MetodoEuro) {
+			if (DiaIni == 31)
+				FechaIni = adicionarDias(FechaIni, -1);
+			if ((DiaFin == 31) && (DiaIni == 31))
+				FechaFin = adicionarDias(FechaFin, -1);
+			else if (DiaFin == 31)
+				FechaFin = adicionarDias(FechaFin, 1);
+		} else {
+			if (DiaIni == 31)
+				FechaIni = adicionarDias(FechaIni, -1);
+			if (DiaFin == 31)
+				FechaFin = adicionarDias(FechaFin, -1);
+		}
+		DiaIni = FechaIni.getDay();
+		DiaFin = FechaFin.getDay();
+		
+		if (FechaFin.getYear() > FechaIni.getYear())
+			FechaFin = adicionarMes(FechaFin, 1);
+
+		return getDaysBetweenDates(FechaIni, FechaFin) * 30 + DiaFin - DiaIni;
 	}
 }

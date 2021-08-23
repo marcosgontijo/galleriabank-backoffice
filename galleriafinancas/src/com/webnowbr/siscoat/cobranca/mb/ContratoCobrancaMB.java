@@ -8591,7 +8591,8 @@ public class ContratoCobrancaMB {
 
 		SimulacaoVO simulador = new SimulacaoVO();
 
-		if (this.objetoContratoCobranca.isGeraParcelaFinal()
+		if ( CommonsUtil.intValue(this.qtdeParcelas) >= this.objetoContratoCobranca.getQtdeParcelas() &&
+				this.objetoContratoCobranca.isGeraParcelaFinal()
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal())) {
 			this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
 			this.setQtdeParcelas(CommonsUtil.stringValue(this.objetoContratoCobranca.getQtdeParcelas()));
@@ -8691,8 +8692,7 @@ public class ContratoCobrancaMB {
 			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização")) {
 				if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > ultimaParcela.intValue()) {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().remove(detalhe);
-				} else
-					break;
+				} 
 			}
 		}
 		
