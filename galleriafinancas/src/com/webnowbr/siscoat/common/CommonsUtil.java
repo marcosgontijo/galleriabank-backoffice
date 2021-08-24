@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.ByteBuffer;
@@ -408,6 +409,10 @@ public class CommonsUtil {
 		return value == null || value.length() == 0;
 	}
 
+	public static final boolean semValor(BigInteger value) {
+		return value == null || value.compareTo(BigInteger.ZERO) == 0;
+	}
+	
 	public static final boolean semValor(Integer value) {
 		return value == null || value.intValue() == 0;
 	}

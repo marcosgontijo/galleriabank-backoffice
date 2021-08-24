@@ -153,6 +153,7 @@ public class ContratoCobrancaMB {
 	private BigInteger numeroParcelaReparcelamento;
 	private BigDecimal saldoDevedorReparcelamento;
 	private BigInteger carenciaReparcelamento;
+	private Date dataParcela;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -8594,7 +8595,7 @@ public class ContratoCobrancaMB {
 		if ( CommonsUtil.intValue(this.qtdeParcelas) >= this.objetoContratoCobranca.getQtdeParcelas() &&
 				this.objetoContratoCobranca.isGeraParcelaFinal()
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal())) {
-			this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
+			//this.objetoContratoCobranca.setQtdeParcelas(this.objetoContratoCobranca.getQtdeParcelas() + 1);
 			this.setQtdeParcelas(CommonsUtil.stringValue(this.objetoContratoCobranca.getQtdeParcelas()));
 			this.objetoContratoCobranca.setGeraParcelaFinal(false);
 		}
@@ -8661,10 +8662,28 @@ public class ContratoCobrancaMB {
 	public void concluirReparcelamento() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		BigInteger ultimaParcela = BigInteger.ZERO;
+		boolean geraDataVencimento = this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO)==0;
+		
+		Date dataVencimentoNova = null;
+		if ( geraDataVencimento) {
+			dataVencimentoNova = this.objetoContratoCobranca.getDataInicio();
+		}else {
+			dataVencimentoNova = this.dataParcela;
+		}
+			
+		
 		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
 			boolean encontrouParcela = false;
 			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 				if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {
+					
+					
+					Date dataParcela = contratoCobrancaDao
+							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
+									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
+
+					detalhe.setDataVencimento(dataParcela);				
+					
 					detalhe.setVlrSaldoParcela(
 							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -8672,6 +8691,11 @@ public class ContratoCobrancaMB {
 					detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setSeguroDIF(parcela.getSeguroDFI());
 					detalhe.setSeguroMIP(parcela.getSeguroMIP());
+					if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
+						detalhe.setParcelaPaga(true);
+						detalhe.setDataPagamento(detalhe.getDataVencimento());
+						detalhe.setVlrParcela(BigDecimal.ZERO);
+					}
 					encontrouParcela = true;
 					break;
 				}
@@ -8701,6 +8725,8 @@ public class ContratoCobrancaMB {
 
 	public void reparcelarPelaUltimaParcelaValidada() {
 		this.simuladorParcelas = new SimulacaoVO();
+		
+		
 		for (int iDetalhe = 0; iDetalhe < this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 				.size(); iDetalhe++) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
@@ -8709,6 +8735,7 @@ public class ContratoCobrancaMB {
 				if (CommonsUtil.mesmoValor(iDetalhe, 0)) {
 					this.setNumeroParcelaReparcelamento(
 							BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())));
+					this.setDataParcela(detalhe.getDataVencimento());
 					this.setCarenciaReparcelamento(BigInteger.valueOf(objetoContratoCobranca.getMesesCarencia()));
 					if (detalhe.getVlrSaldoParcela() != null) {
 						this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
@@ -8720,8 +8747,14 @@ public class ContratoCobrancaMB {
 			} else {
 				this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
 				if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Amortização")) {
-					this.setNumeroParcelaReparcelamento(
-						BigInteger.valueOf(CommonsUtil.intValue(detalhe.getNumeroParcela())).add(BigInteger.ONE));
+					
+					ContratoCobrancaDetalhes detalheProximo = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+							.get(iDetalhe+1);
+					if (!CommonsUtil.mesmoValor(detalheProximo.getNumeroParcela(), "Amortização")) {
+						this.setDataParcela(detalheProximo.getDataVencimento());
+						this.setNumeroParcelaReparcelamento(
+								BigInteger.valueOf(CommonsUtil.intValue(detalheProximo.getNumeroParcela())));
+					}
 				}
 				this.setCarenciaReparcelamento(BigInteger.ZERO);
 			}
@@ -18338,6 +18371,14 @@ public class ContratoCobrancaMB {
 
 	public void setNumeroParcelaReparcelamento(BigInteger numeroParcelaReparcelamento) {
 		this.numeroParcelaReparcelamento = numeroParcelaReparcelamento;
+	}
+
+	public Date getDataParcela() {
+		return dataParcela;
+	}
+
+	public void setDataParcela(Date dataParcela) {
+		this.dataParcela = dataParcela;
 	}
 
 	public BigDecimal getSaldoDevedorReparcelamento() {

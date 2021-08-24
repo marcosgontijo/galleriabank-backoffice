@@ -7,50 +7,100 @@
 	xmlns:shiro="http://shiro.apache.org/tags">
 
 	<h:panelGrid columns="2" columnClasses="padRight20">
-		<h:panelGrid columns="2" >
-			<p:outputLabel for="numeroParcelaReparcelamento"
-				value="Parcela atual:" styleClass="labelBold" />
-			<p:inputText id="numeroParcelaReparcelamento"
-				value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
-				onkeypress="return isNumberKey(event);"
-				onkeydown="FormataValor(this, 13, event, 2);" required="true">
-			</p:inputText>
+		<h:panelGroup>
+			<h:panelGrid columns="2" id="pnlReparcelamento">
+				<p:outputLabel for="dataInicio" value="Data Inicio: "
+					id="lblDataInicio"
+					rendered="#{contratoCobrancaMB.numeroParcelaReparcelamento eq 0}"
+					styleClass="labelBold" style="margin-right: 59px;" />
+				<p:calendar id="dataInicio"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
+					required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy"
+					styleClass="dateTimeField"
+					rendered="#{contratoCobrancaMB.numeroParcelaReparcelamento eq 0}">
+					<p:ajax event="dateSelect"
+						listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
+				</p:calendar>
 
-			<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
-				styleClass="labelBold" />
-			<p:selectOneMenu id="tipoCalculo"
-				value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}"
-				required="true" style="width: 80px;">
-				<f:selectItem itemValue="Price" itemLabel="Price" />
-				<f:selectItem itemValue="SAC" itemLabel="SAC" />
-				<f:selectItem itemValue="Americano" itemLabel="Americano" />
-			</p:selectOneMenu>
+				<p:outputLabel for="dataParcela" value="Data Parcela: "
+					id="lblDataParcela"
+					rendered="#{contratoCobrancaMB.numeroParcelaReparcelamento ne 0}"
+					styleClass="labelBold" style="margin-right: 59px;" />
+				<p:calendar id="dataParcela"
+					value="#{contratoCobrancaMB.dataParcela}" required="true"
+					label="Data Parecela" size="100" pattern="dd/MM/yyyy"
+					styleClass="dateTimeField"
+					rendered="#{contratoCobrancaMB.numeroParcelaReparcelamento ne 0}">
+				</p:calendar>
+			</h:panelGrid>
 
-			<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
-				styleClass="labelBold" />
-			<p:inputText id="qtdeParcelas"
-				value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
-				style="width: 30px;">
-			</p:inputText>
+			<h:panelGrid columns="2">
 
-			<p:outputLabel for="carenciaReparcelamento" value="Carência:"
-				styleClass="labelBold" />
-			<p:inputText id="carenciaReparcelamento"
-				value="#{contratoCobrancaMB.carenciaReparcelamento}"
-				onkeypress="return isNumberKey(event);"
-				onkeydown="FormataValor(this, 13, event, 2);" required="true">
-			</p:inputText>
 
-			<p:outputLabel for="saldoDevedorReparcelamento"
-				value="Saldo Devedor Atual: " styleClass="labelBold" />
-			<p:inputText id="saldoDevedorReparcelamento"
-				value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
-				onkeypress="return isNumberKey(event);"
-				onkeydown="FormataValor(this, 13, event, 2);" required="true"
-				converter="bigDecimalConverter">
-			</p:inputText>
-		</h:panelGrid>
+				<p:outputLabel for="numeroParcelaReparcelamento"
+					value="Parcela atual:" styleClass="labelBold" />
+				<p:inputText id="numeroParcelaReparcelamento"
+					value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
+					onkeypress="return isNumberKey(event);"
+					onkeydown="FormataValor(this, 13, event, 2);" required="true">
+					<p:ajax process="@this" event="change" update="pnlReparcelamento"
+						partialSubmit="true" />
+				</p:inputText>
 
+				<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
+					styleClass="labelBold" />
+				<p:selectOneMenu id="tipoCalculo"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}"
+					required="true" style="width: 80px;">
+					<f:selectItem itemValue="Price" itemLabel="Price" />
+					<f:selectItem itemValue="SAC" itemLabel="SAC" />
+					<f:selectItem itemValue="Americano" itemLabel="Americano" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
+					styleClass="labelBold" />
+				<p:inputText id="qtdeParcelas"
+					value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
+					style="width: 30px;">
+				</p:inputText>
+
+				<p:outputLabel for="taxaJurosParcela" value="Taxa de Juros (%): "
+					styleClass="labelBold" />
+				<p:inputText id="taxaJurosParcela"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}"
+					onkeypress="return isNumberKey(event);"
+					onkeydown="FormataValor(this, 13, event, 2);" required="true"
+					converter="bigDecimalConverter" />
+
+				<p:outputLabel for="carenciaReparcelamento" value="Carência:"
+					styleClass="labelBold" />
+				<p:inputText id="carenciaReparcelamento"
+					value="#{contratoCobrancaMB.carenciaReparcelamento}"
+					onkeypress="return isNumberKey(event);"
+					onkeydown="FormataValor(this, 13, event, 2);" required="true">
+				</p:inputText>
+
+				<p:outputLabel value="Valor da CCB: " styleClass="labelBold" />
+				<h:panelGroup>
+					<h:outputText value="R$" />
+					<h:outputText
+						value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+						converter="bigDecimalConverter" />
+				</h:panelGroup>
+
+				<p:outputLabel for="saldoDevedorReparcelamento"
+					value="Saldo Devedor Atual: " styleClass="labelBold" />
+				<p:inputText id="saldoDevedorReparcelamento"
+					value="#{contratoCobrancaMB.saldoDevedorReparcelamento}"
+					onkeypress="return isNumberKey(event);"
+					onkeydown="FormataValor(this, 13, event, 2);" required="true"
+					converter="bigDecimalConverter">
+				</p:inputText>
+
+
+
+			</h:panelGrid>
+		</h:panelGroup>
 		<h:panelGrid columns="2" id="DadosSeguro"
 			columnClasses="labelSeguros, ValorSeguros">
 			<p:outputLabel value="Tem seguro? " />
