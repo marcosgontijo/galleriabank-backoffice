@@ -8339,7 +8339,7 @@ public class ContratoCobrancaMB {
 		this.vlrRetencaoFinal = this.vlrRetencaoFinalNew;
 		this.vlrComissaoFinal = this.vlrComissaoFinalNew;
 		
-		if (!this.validarProcentagens()) {
+		if (!this.validarProcentagensSeguro()) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"A soma das porcentagens dos segurados não é 100%", ""));
 			erroValidacaoLov = true;
@@ -8822,7 +8822,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListSegurados().remove(segurado);		
 	}
 
-	public boolean validarProcentagens() {
+	private boolean validarProcentagensSeguro() {
+		if ( !this.objetoContratoCobranca.isTemSeguro())
+			return true;
+		
 		BigDecimal totalPorcentagem = BigDecimal.ZERO;	
 		for (Segurado seguro : this.getListSegurado()) {
 			totalPorcentagem = totalPorcentagem.add(seguro.getPorcentagemSegurador());			
