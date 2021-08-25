@@ -2976,8 +2976,7 @@ public class ContratoCobrancaMB {
 			this.tipoPessoaIsFisica = false;
 		}
 	}
-	
-	
+
 	public void clearPagador() {
 		this.idPagador = 0;
 		this.nomePagador = null;
@@ -3343,8 +3342,6 @@ public class ContratoCobrancaMB {
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
-		
-		//this.listSegurado = new ArrayList<>();
 
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
@@ -3392,8 +3389,6 @@ public class ContratoCobrancaMB {
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
-		
-		//this.listSegurado = new ArrayList<>();		
 
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
@@ -4254,9 +4249,6 @@ public class ContratoCobrancaMB {
 
 		files = new ArrayList<FileUploaded>();
 		files = listaArquivos();
-		
-		//this.listSegurado = new ArrayList<>();
-		
 
 		loadLovs();
 
@@ -8488,7 +8480,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		
 		try {
 			if (objetoContratoCobranca.getId() <= 0) {
 				contratoCobrancaDao.create(objetoContratoCobranca);
@@ -9751,6 +9742,8 @@ public class ContratoCobrancaMB {
 		amortizacao.setDataPagamento(amortizacao.getDataVencimento());
 		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
 		objetoContratoCobranca.getListContratoCobrancaDetalhes().add(amortizacao);
+
+		
 		
 	}
 	public String incluirAntecipacao() {
@@ -18460,6 +18453,14 @@ public class ContratoCobrancaMB {
 
 	public void setNumeroParcelaReparcelamento(BigInteger numeroParcelaReparcelamento) {
 		this.numeroParcelaReparcelamento = numeroParcelaReparcelamento;
+	}
+
+	public Date getDataParcela() {
+		return dataParcela;
+	}
+
+	public void setDataParcela(Date dataParcela) {
+		this.dataParcela = dataParcela;
 	}
 
 	public BigDecimal getSaldoDevedorReparcelamento() {

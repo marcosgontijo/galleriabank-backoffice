@@ -1406,6 +1406,7 @@
 						</h:panelGrid>
 					</p:panel>
 
+<<<<<<< HEAD
 					<h:panelGroup  id="SeguradoresPanel">
 						<p:panel header="Seguradores" style="margin-bottom:10px;"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
@@ -1417,6 +1418,88 @@
 									<p:ajax update=":form:SeguradoresPanel" event="change" />
 								</p:selectBooleanButton>
 							</f:facet>
+=======
+					<p:panel id="Pagamento" header="Forma de Pagamento"
+						style="margin-bottom:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="dataInicio" value="Data Inicio: "
+								styleClass="labelBold" style="margin-right: 59px;" />
+							<p:calendar id="dataInicio"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
+								required="true" label="Data Inicio" size="100"
+								pattern="dd/MM/yyyy" 
+								styleClass="dateTimeField"
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}">
+								<p:ajax event="dateSelect"
+									listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
+							</p:calendar>
+						
+						<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="tipoCalculo"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}" required="true"
+							style="width: 80px;">
+							<f:selectItem itemValue="Price" itemLabel="Price" />
+							<f:selectItem itemValue="SAC" itemLabel="SAC" />
+							<f:selectItem itemValue="Americano" itemLabel="Americano" />
+						</p:selectOneMenu>
+						
+							<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
+								styleClass="labelBold" />
+							<p:inputText id="qtdeParcelas"
+								value="#{contratoCobrancaMB.qtdeParcelas}" required="true"
+								style="width: 30px;" disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}">
+							</p:inputText>
+						
+						
+						     <p:outputLabel for="valorCCB" value="Valor da CCB: "
+								styleClass="labelBold" />
+							<p:inputText id="valorCCB"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="taxaJurosParcela" value="Taxa de Juros (%): "
+								styleClass="labelBold" />
+							<p:inputText id="taxaJurosParcela" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+																
+							<p:outputLabel for="mesesCarencia" value="Meses Carência: "
+								styleClass="labelBold" />
+							<p:inputText id="mesesCarencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}" required="true"
+								style="width: 30px;">
+							</p:inputText>								
+								
+							<p:outputLabel value="Gerar Boleto das Parcelas "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
+								disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}"/>
+																
+						<p:commandButton value="Visualizar parcelas" 
+							action="#{contratoCobrancaMB.mostrarParcela()}"
+							oncomplete="PF('parcelasDialog').show()"
+							update = "verParcelaDialog"
+							style="TEXT-DECORATION: bold;" />
+												
+						<p:dialog header="Parcelas" widgetVar="parcelasDialog" id = "verParcelaDialog"
+							 showEffect="fade" hideEffect="fade" resizable="false"
+							responsive="false" width="1000" positionType="center center" closable="true">
+								<ui:include
+									src="/Atendimento/Cobranca/Simulador/SimuladorParcelas.xhtml">
+									<ui:param name="simulador" value="false"></ui:param>
+									<ui:param name="simulacao" value="#{contratoCobrancaMB.simuladorParcelas}"></ui:param>
+								</ui:include>
+						</p:dialog>
+							
+						</h:panelGrid>
+					</p:panel>
+>>>>>>> branch 'Desenvolvimento' of https://Lucaslamr@bitbucket.org/webnowbrhermes/siscoat_galleriafinancas.git
 
 							<p:dataView var="segurado"
 								value="#{contratoCobrancaMB.listSegurado}" paginator="false"

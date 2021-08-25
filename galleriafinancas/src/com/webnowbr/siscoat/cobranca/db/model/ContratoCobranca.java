@@ -425,6 +425,31 @@ public class ContratoCobranca implements Serializable {
 		this.exibeRecebedor9 = true;
 		this.exibeRecebedor10 = true;
 	}
+	
+	
+	
+	private void reordenaListagemDetalhes() {
+		if (CommonsUtil.semValor(listContratoCobrancaDetalhes))
+			return;
+		
+		Collections.sort(this.listContratoCobrancaDetalhes, new Comparator<ContratoCobrancaDetalhes>() {
+			@Override
+			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
+				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
+				if (result == 0) {
+					try {
+						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+						result = oneParcela.compareTo(otherParcela);
+					} catch (Exception e) {
+						result = 0;
+					}
+				}
+				return result;
+			}
+		});
+
+	}
 
 	/**
 	 * @return the id
@@ -1236,6 +1261,7 @@ public class ContratoCobranca implements Serializable {
 	 * @return the listContratoCobrancaDetalhes
 	 */
 	public List<ContratoCobrancaDetalhes> getListContratoCobrancaDetalhes() {
+		reordenaListagemDetalhes();
 		return listContratoCobrancaDetalhes;
 	}
 
