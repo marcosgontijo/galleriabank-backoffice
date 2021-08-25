@@ -5482,6 +5482,7 @@ public class ContratoCobrancaMB {
 		}
 
 		// exclui o registro, quando o pagador é a Galleria SA
+		/*
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			for (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) {
 				if (r.getContratoCobranca().getPagador().getId() != 14) {
@@ -5489,7 +5490,12 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		*/
 
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
+		}
+		
 		processaDadosRelFinanceiroAtrasoFull();
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();

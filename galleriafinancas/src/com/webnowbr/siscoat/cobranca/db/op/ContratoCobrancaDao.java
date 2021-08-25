@@ -2882,7 +2882,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
 			+ "where cc.status = 'Aprovado' "
 			+ "and cd.parcelapaga = false "
-			+ "and cd.datavencimentoatual < ? ::timestamp ";
+			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
+			+ "and cc.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' "
+			+ "and cd.datavencimentoatual < ? ::timestamp order by cd.dataVencimentoatual desc ";
 	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFull(final Date dtRelInicio) {
@@ -2911,13 +2913,27 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					String parcela = "";
 					
+					boolean exiteParcela = false;
+					
 					while (rs.next()) {
+						exiteParcela = false;
+						
 						contratoCobranca = findById(rs.getLong(1));
 												
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+						// verifica se o contrato já está na lista (uma única linha por contrato
+						for (RelatorioFinanceiroCobranca parcelaLista : objects) {
+							if (parcelaLista.getNumeroContrato().equals(contratoCobranca.getNumeroContrato())) {
+								exiteParcela = true;
+								break;
+							}
+						}
+						
+						if (!exiteParcela) {
+							objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+									contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));
+						}																		
 					}
 	
 				} finally {
