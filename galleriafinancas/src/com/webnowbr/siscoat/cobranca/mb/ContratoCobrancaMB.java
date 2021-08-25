@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -97,6 +98,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -173,6 +175,17 @@ public class ContratoCobrancaMB {
 
 	/** Objeto selecionado na LoV - Pagador. */
 	private PagadorRecebedor selectedPagador;
+	
+	/** Objeto selecionado no popup do pesquisa. */
+	private PagadorRecebedor selectedPagadorGenerico;
+	
+	
+	String tipoPesquisaPagadorRecebedor = "";
+	Segurado seguradoSelecionado;
+	String updatePagadorRecebedor = "";
+	
+	private boolean addSegurador;
+	
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -227,6 +240,8 @@ public class ContratoCobrancaMB {
 
 	/** Objeto selecionado na LoV - Recebedor. */
 	private PagadorRecebedor selectedRecebedor10;
+	
+	private List<Segurado> listSegurado;
 
 	/** Lista dos Recebedores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedores;
@@ -3375,6 +3390,11 @@ public class ContratoCobrancaMB {
 
 		clearSelectedRecebedores();
 
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		
+		
+			
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -8318,6 +8338,12 @@ public class ContratoCobrancaMB {
 		this.vlrRepasseFinal = this.vlrRepasseFinalNew;
 		this.vlrRetencaoFinal = this.vlrRetencaoFinalNew;
 		this.vlrComissaoFinal = this.vlrComissaoFinalNew;
+		
+		if (!this.validarProcentagensSeguro()) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"A soma das porcentagens dos segurados não é 100%", ""));
+			erroValidacaoLov = true;
+		}
 
 		if (this.selectedImovel == null) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -8454,7 +8480,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		
 		try {
 			if (objetoContratoCobranca.getId() <= 0) {
 				contratoCobrancaDao.create(objetoContratoCobranca);
@@ -8675,9 +8700,10 @@ public class ContratoCobrancaMB {
 		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
 			boolean encontrouParcela = false;
 			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+				if ( detalhe.isParcelaPaga())
+					continue;
+				
 				if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {
-					
-					
 					Date dataParcela = contratoCobrancaDao
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
@@ -8713,7 +8739,7 @@ public class ContratoCobrancaMB {
 				- 1; iDetalhe >= 0; iDetalhe--) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
-			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização")) {
+			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização") && !detalhe.isParcelaPaga()) {
 				if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > ultimaParcela.intValue()) {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().remove(detalhe);
 				} 
@@ -8772,7 +8798,52 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 		}
 	}
+	
+	public void pesquisaSegurado() {
+		tipoPesquisaPagadorRecebedor = "Segurado";
+		updatePagadorRecebedor = ":form:SeguradoresPanel";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void populateSelectedPagadorRecebedor() {
+		if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
+			this.seguradoSelecionado.setPessoa(this.selectedPagadorGenerico);
+		}
+	}
+	
+	public void concluirSegurado() {
+		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		}
+	
+	public void removerSegurado(Segurado segurado) {
+		this.objetoContratoCobranca.getListSegurados().remove(segurado);		
+	}
 
+	private boolean validarProcentagensSeguro() {
+		if ( !this.objetoContratoCobranca.isTemSeguro())
+			return true;
+		
+		BigDecimal totalPorcentagem = BigDecimal.ZERO;	
+		for (Segurado seguro : this.getListSegurado()) {
+			totalPorcentagem = totalPorcentagem.add(seguro.getPorcentagemSegurador());			
+		} 
+		
+		if (totalPorcentagem.compareTo(BigDecimal.valueOf(100)) != 0){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	
+	public void clearPagadorRecebedor() {
+		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
+			this.seguradoSelecionado.setPessoa(null);
+		this.selectedPagador = new PagadorRecebedor();
+	}}
 //	public void mostrarParcela() {
 //		try {
 //			this.simuladorParcelas = calcularParcelas();
@@ -9675,7 +9746,7 @@ public class ContratoCobrancaMB {
 		amortizacao.setDataPagamento(amortizacao.getDataVencimento());
 		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
 		objetoContratoCobranca.getListContratoCobrancaDetalhes().add(amortizacao);
-		
+
 		
 		
 	}
@@ -15522,6 +15593,14 @@ public class ContratoCobrancaMB {
 	public void setSelectedPagador(PagadorRecebedor selectedPagador) {
 		this.selectedPagador = selectedPagador;
 	}
+	
+	public PagadorRecebedor getSelectedPagadorGenerico() {
+		return selectedPagadorGenerico;
+	}
+
+	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
+		this.selectedPagadorGenerico = selectedPagadorGenerico;
+	}
 
 	/**
 	 * @return the listPagadores
@@ -15586,6 +15665,13 @@ public class ContratoCobrancaMB {
 		return listRecebedores;
 	}
 
+	/**
+	 * @return the ListResposavel listRecebedorPagador
+	 */
+	public List<PagadorRecebedor> getListRecebedorPagador() {
+		return listPagadores;
+	}
+	
 	/**
 	 * @param listRecebedores the listRecebedores to set
 	 */
@@ -18404,5 +18490,46 @@ public class ContratoCobrancaMB {
 	public void setAmortizacao(ContratoCobrancaDetalhes amortizacao) {
 		this.amortizacao = amortizacao;
 	}
+
+	public Set<Segurado> getListSegurado() {
+		return this.objetoContratoCobranca.getListSegurados();
+	}
+
+	public void setListSegurado(Set<Segurado> listSegurado) {
+		this.objetoContratoCobranca.setListSegurados(listSegurado);
+	}
+
+	public String getTipoPesquisaPagadorRecebedor() {
+		return tipoPesquisaPagadorRecebedor;
+	}
+
+	public void setTipoPesquisaPagadorRecebedor(String tipoPesquisaPagadorRecebedor) {
+		this.tipoPesquisaPagadorRecebedor = tipoPesquisaPagadorRecebedor;
+	}
+
+	public Segurado getSeguradoSelecionado() {
+		return seguradoSelecionado;
+	}
+
+	public void setSeguradoSelecionado(Segurado seguradoSelecionado) {
+		this.seguradoSelecionado = seguradoSelecionado;
+	}
+
+	public boolean isAddSegurador() {
+		return addSegurador;
+	}
+
+	public void setAddSegurador(boolean addSegurador) {
+		this.addSegurador = addSegurador;
+	}
+
+	public String getUpdatePagadorRecebedor() {
+		return updatePagadorRecebedor;
+	}
+
+	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
+		this.updatePagadorRecebedor = updatePagadorRecebedor;
+	}
+	
 	
 }

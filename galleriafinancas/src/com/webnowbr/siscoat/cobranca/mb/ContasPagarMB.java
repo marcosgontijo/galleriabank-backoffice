@@ -98,7 +98,7 @@ public class ContasPagarMB {
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedorPagador;
 	/** Objeto selecionado na LoV - Pagador. */
-	private PagadorRecebedor selectedPagador;
+	private PagadorRecebedor selectedPagadorGenerico;
 
 	private List<ContaContabil> listContasContabil;
 	/** Objeto selecionado na LoV - Pagador. */
@@ -307,11 +307,11 @@ public class ContasPagarMB {
 
 	public void clearPagadorRecebedor() {
 		this.objetoContasPagar.setPagadorRecebedor(null);
-		this.selectedPagador = new PagadorRecebedor();
+		this.selectedPagadorGenerico = new PagadorRecebedor();
 	}
 
 	public final void populateSelectedPagadorRecebedor() {
-		this.objetoContasPagar.setPagadorRecebedor(this.selectedPagador);
+		this.objetoContasPagar.setPagadorRecebedor(this.selectedPagadorGenerico);
 	}
 	
 	public final void populateSelectedResponsavel() {
@@ -413,11 +413,11 @@ public class ContasPagarMB {
 	}
 
 	public PagadorRecebedor getSelectedPagador() {
-		return selectedPagador;
+		return selectedPagadorGenerico;
 	}
 
 	public void setSelectedPagador(PagadorRecebedor selectedPagador) {
-		this.selectedPagador = selectedPagador;
+		this.selectedPagadorGenerico = selectedPagador;
 	}
 
 	public List<ContaContabil> getListContasContabil() {
