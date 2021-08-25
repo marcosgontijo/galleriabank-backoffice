@@ -3,8 +3,14 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ContratoCobranca implements Serializable {
 
@@ -60,6 +66,8 @@ public class ContratoCobranca implements Serializable {
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor9;
 	private PagadorRecebedor recebedor10;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
+	
+	private Set<Segurado> listSegurados;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -404,7 +412,8 @@ public class ContratoCobranca implements Serializable {
 		this.responsavel = new Responsavel();
 		this.imovel = new ImovelCobranca();
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
-
+		this.listSegurados = new HashSet<>();
+		
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
 		this.exibeRecebedor3 = true;
@@ -3207,4 +3216,14 @@ public class ContratoCobranca implements Serializable {
 	public void setAgRegistroUsuario(String agRegistroUsuario) {
 		this.agRegistroUsuario = agRegistroUsuario;
 	}
+
+	public Set<Segurado> getListSegurados() {
+		return listSegurados;
+	}
+
+	public void setListSegurados(Set<Segurado> listSegurados) {
+		this.listSegurados = listSegurados;
+	}
+	
+	
 }
