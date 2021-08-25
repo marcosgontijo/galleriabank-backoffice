@@ -985,5 +985,22 @@
 		<property name="motivoReprovaLead" type="java.lang.String">
 			<column name="motivoReprovaLead" />
 		</property>
+		
+		<set name="listSegurados" table="segurado"  cascade="save-update"
+                inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Segurado" />
+        </set>
+        
+		 <!-- <map name="listSegurados">
+        	<key column="id"
+         	   not-null="true"/>
+        	<map-key column="contratoCobranca" 
+        	    type="long"/>
+        	<one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Segurado"/>
+    	</map>
+        	 -->
 	</class>
 </hibernate-mapping>

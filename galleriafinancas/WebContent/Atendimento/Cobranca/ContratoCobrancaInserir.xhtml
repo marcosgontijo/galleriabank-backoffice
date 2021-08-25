@@ -1328,6 +1328,7 @@
 							</p:panel>
 						</p:panel>
 					</p:panel>
+
 					<p:panel id="Dados" header="Dados do Contrato"
 						style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
@@ -1376,7 +1377,7 @@
 							<h:panelGrid columns="2" id="DadosSeguro" columnClasses="labelSeguros, ValorSeguros">
 						    <p:outputLabel value="Tem seguro? "/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-								<p:ajax update="DadosSeguro"
+								<p:ajax update="DadosSeguro,SeguradoresPanel"
 										event="change" />
 							</p:selectBooleanCheckbox>
 							
@@ -1401,11 +1402,23 @@
 								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							<p:ajax update="DadosSeguro"
 										event="change" />
-							</p:inputText>
-							
+							</p:inputText>							
 						</h:panelGrid>
 					</p:panel>
 
+<<<<<<< HEAD
+					<h:panelGroup  id="SeguradoresPanel">
+						<p:panel header="Seguradores" style="margin-bottom:10px;"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+							<f:facet name="header"> Seguradores 
+							<p:outputLabel value="(Adicionar Segurador)" />
+								<p:selectBooleanButton
+									value="#{contratoCobrancaMB.addSegurador}"
+									onLabel="Adicionar Segurador" offLabel="Adicionar Segurador">
+									<p:ajax update=":form:SeguradoresPanel" event="change" />
+								</p:selectBooleanButton>
+							</f:facet>
+=======
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
@@ -1486,76 +1499,222 @@
 							
 						</h:panelGrid>
 					</p:panel>
+>>>>>>> branch 'Desenvolvimento' of https://Lucaslamr@bitbucket.org/webnowbrhermes/siscoat_galleriafinancas.git
 
-					<p:panel id="AcaoObservacao" header="Motivo e Observação"
-						style="margin-bottom:10px;">
-						<h:panelGrid columns="3">
-							<p:outputLabel for="Acao" value="Ação: " />
-							<p:inputText id="Acao"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.acao}"
-								label="Ação" onblur=""
-								style="width:300px;" />
-							<p:spacer width="10" />
+							<p:dataView var="segurado"
+								value="#{contratoCobrancaMB.listSegurado}" paginator="false"
+								layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="Nome: " styleClass="labelBold" />
+									<p:outputLabel value="#{segurado.pessoa.nome}"
+										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;padding:200px,200px" />
+									<p:outputLabel value="|" styleClass="labelBold" />
+									<p:outputLabel for="SeguradorPorcentagem: "
+										value="Porcentagem do segurador: " styleClass="labelBold" style="width:200px;" />
+									<p:inputText id="SeguradorPorcentagem"
+										value="#{segurado.porcentagemSegurador}" required="true"
+										style="FONT-SIZE: 10pt;width:200px;" />
+									<p:commandButton value="Remover"
+										action="#{contratoCobrancaMB.removerSegurado(segurado)}"
+										ajax="true" update=":form:SeguradoresPanel" />
+								</p:dataViewListItem>
+							</p:dataView>
 
-							<p:outputLabel for="Observacao" value="Observação: " />
-							<p:inputTextarea rows="10" cols="50" id="Observacao"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}"
-								label="Observação" onblur=""
-								style="width:300px;" />
-							<p:spacer width="10" />
+							<h:panelGrid columns="2" id="addSegurado" rendered="#{contratoCobrancaMB.addSegurador}">
+								<p:spacer height="10" />
+								<p:spacer height="10" />
+								<p:outputLabel value="Adicionar Segurador"
+									styleClass="labelBold" />
+								<p:spacer height="10" />
+								<p:outputLabel for="SeguradorNome" value="Nome do segurador: "
+									styleClass="labelBold" />
+								<h:panelGroup>
+									<p:inputText id="SeguradorNome"
+										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
+										required="false" style="FONT-SIZE: 10pt;width:300px;" />
+									<p:commandButton ajax="true"
+										action="#{contratoCobrancaMB.pesquisaSegurado()}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update="formReceborPagador" />
+								</h:panelGroup>
 
-							<p:outputLabel for="Observacao2" value=" " />
-							<p:inputTextarea rows="10" cols="50" id="Observacao2"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}"
-								label="Observação" onblur=""
-								style="width:300px;" />
-							<p:spacer width="10" />
-						</h:panelGrid>
-					</p:panel>
+								<p:outputLabel for="SeguradorPorcentagem: "
+									value="Porcentagem do segurador: " styleClass="labelBold" />
+								<p:inputText id="SeguradorPorcentagem"
+									value="#{contratoCobrancaMB.seguradoSelecionado.porcentagemSegurador}"
+									required="flase" style="FONT-SIZE: 10pt;width:300px;" />
+								<p:spacer height="10" />
 
-					<p:panel id="DetalheParcelas"
-						header="Detalhamento - Forma de Pagamento"
-						style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.updateMode}">
-						<p:dataTable id="dtParcelas" var="parcelas"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
-							paginator="true" rows="100"
-							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-							currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
-							rowsPerPageTemplate="100,200,300" selection="" emptyMessage=""
-							sortBy="#{contratos.numeroParcela}"
-							rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}">
-					        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
-					            <h:outputText value="#{parcelas.numeroParcela}" />
-					        </p:column>
-					        <p:column style="text-align: center;width: 70px;" headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
-					            <h:outputText value="#{parcelas.dataVencimento}" >			            	
-					            	<f:convertDateTime locale="pt_BR"  />
-					            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-					            </h:outputText>
-					        </p:column>	
-					        <p:column style="text-align: center;width: 110px;" headerText="Valor (R$)">
-					            <h:outputText value="#{parcelas.vlrParcela}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>	
-					         <p:column style="text-align: center;width: 110px;" headerText="Juros (R$)">
-					            <h:outputText value="#{parcelas.vlrJurosParcela}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>		
-					         <p:column style="text-align: center;width: 110px;" headerText="Amortização (R$)">
-					            <h:outputText value="#{parcelas.vlrAmortizacaoParcela}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>		
-					        <p:column style="text-align: center;width: 110px;" headerText="IPCA (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
-					            <h:outputText value="#{parcelas.ipca}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>						        
-					         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
-					            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
-					            </h:outputText>
-					        </p:column>	
-						</p:dataTable>
-					</p:panel>
+								<p:commandButton value="Adicionar" ajax="true"
+									action="#{contratoCobrancaMB.concluirSegurado()}"
+									update=":form:SeguradoresPanel" image="ui-icon ui-icon-check" />
+
+							</h:panelGrid>
+						</p:panel>
+					</h:panelGroup>
+
+						<p:panel id="Pagamento" header="Forma de Pagamento"
+							style="margin-bottom:10px;">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="dataInicio" value="Data Inicio: "
+									styleClass="labelBold" style="margin-right: 59px;" />
+								<p:calendar id="dataInicio"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
+									required="false" label="Data Inicio" size="100"
+									pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									<p:ajax event="dateSelect"
+										listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />
+								</p:calendar>
+
+								<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="tipoCalculo"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculo}"
+									required="true" style="width: 80px;">
+									<f:selectItem itemValue="Price" itemLabel="Price" />
+									<f:selectItem itemValue="SAC" itemLabel="SAC" />
+									<f:selectItem itemValue="Americano" itemLabel="Americano" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
+									styleClass="labelBold" />
+								<p:inputText id="qtdeParcelas"
+									value="#{contratoCobrancaMB.qtdeParcelas}" required="false"
+									style="width: 30px;">
+								</p:inputText>
+
+
+								<p:outputLabel for="valorCCB" value="Valor da CCB: "
+									styleClass="labelBold" />
+								<p:inputText id="valorCCB"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+
+								<p:outputLabel for="taxaJurosParcela"
+									value="Taxa de Juros (%): " styleClass="labelBold" />
+								<p:inputText id="taxaJurosParcela"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+
+								<p:outputLabel for="mesesCarencia" value="Meses Carência: "
+									styleClass="labelBold" />
+								<p:inputText id="mesesCarencia"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}"
+									required="true" style="width: 30px;">
+								</p:inputText>
+
+								<p:outputLabel value="Gerar Boleto das Parcelas "
+									styleClass="labelBold" />
+								<p:selectBooleanCheckbox
+									value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
+									disabled="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes.size() == 0}" />
+
+								<p:commandButton value="Visualizar parcelas"
+									action="#{contratoCobrancaMB.mostrarParcela()}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+
+								<p:dialog header="Parcelas" widgetVar="parcelasDialog"
+									id="verParcelaDialog" showEffect="fade" hideEffect="fade"
+									resizable="false" responsive="false" width="1000"
+									positionType="center center" closable="true">
+									<ui:include
+										src="/Atendimento/Cobranca/Simulador/SimuladorParcelas.xhtml">
+										<ui:param name="simulador" value="false"></ui:param>
+										<ui:param name="simulacao"
+											value="#{contratoCobrancaMB.simuladorParcelas}"></ui:param>
+									</ui:include>
+								</p:dialog>
+
+							</h:panelGrid>
+						</p:panel>
+
+						<p:panel id="AcaoObservacao" header="Motivo e Observação"
+							style="margin-bottom:10px;">
+							<h:panelGrid columns="3">
+								<p:outputLabel for="Acao" value="Ação: " />
+								<p:inputText id="Acao"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.acao}"
+									label="Ação" onblur="" style="width:300px;" />
+								<p:spacer width="10" />
+
+								<p:outputLabel for="Observacao" value="Observação: " />
+								<p:inputTextarea rows="10" cols="50" id="Observacao"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}"
+									label="Observação" onblur="" style="width:300px;" />
+								<p:spacer width="10" />
+
+								<p:outputLabel for="Observacao2" value=" " />
+								<p:inputTextarea rows="10" cols="50" id="Observacao2"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}"
+									label="Observação" onblur="" style="width:300px;" />
+								<p:spacer width="10" />
+							</h:panelGrid>
+						</p:panel>
+
+						<p:panel id="DetalheParcelas"
+							header="Detalhamento - Forma de Pagamento"
+							style="margin-bottom:10px;"
+							rendered="#{contratoCobrancaMB.updateMode}">
+							<p:dataTable id="dtParcelas" var="parcelas"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
+								paginator="true" rows="100"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+								rowsPerPageTemplate="100,200,300" selection="" emptyMessage=""
+								sortBy="#{contratos.numeroParcela}"
+								rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}">
+								<p:column style="text-align: center;width: 45px;"
+									headerText="Parcela" filterMatchMode="contains"
+									sortBy="#{parcelas.numeroParcela}">
+									<h:outputText value="#{parcelas.numeroParcela}" />
+								</p:column>
+								<p:column style="text-align: center;width: 70px;"
+									headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+									<h:outputText value="#{parcelas.dataVencimento}">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 110px;"
+									headerText="Valor (R$)">
+									<h:outputText value="#{parcelas.vlrParcela}"
+										converter="bigDecimalConverter">
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 110px;"
+									headerText="Juros (R$)">
+									<h:outputText value="#{parcelas.vlrJurosParcela}"
+										converter="bigDecimalConverter">
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 110px;"
+									headerText="Amortização (R$)">
+									<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+										converter="bigDecimalConverter">
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 110px;"
+									headerText="IPCA (R$)"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+									<h:outputText value="#{parcelas.ipca}"
+										converter="bigDecimalConverter">
+									</h:outputText>
+								</p:column>
+								<p:column style="text-align: center;width: 110px;"
+									headerText="Saldo (R$)">
+									<h:outputText value="#{parcelas.vlrSaldoParcela}"
+										converter="bigDecimalConverter">
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</p:panel>
 				</p:panel>
 			</shiro:hasAnyRoles>
 
@@ -1653,7 +1812,13 @@
 			</div>
 		</h:form>
 		<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
-		<p:dialog header="Pagadores" widgetVar="pagadorDialog"
+			
+			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
+				<ui:param name="titulo" value="Segurador"></ui:param>
+			</ui:include>
+
+			<p:dialog header="Pagadores" widgetVar="pagadorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formPagadores">
 				<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
