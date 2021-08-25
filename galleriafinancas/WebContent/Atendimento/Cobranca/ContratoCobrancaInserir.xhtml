@@ -1406,8 +1406,18 @@
 						</h:panelGrid>
 					</p:panel>
 
-					<p:panel id="SeguradoresPanel" header="Segurado"
-						style="margin-bottom:10px;">
+					<h:panelGroup  id="SeguradoresPanel">
+						<p:panel header="Seguradores" style="margin-bottom:10px;"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+							<f:facet name="header"> Seguradores 
+							<p:outputLabel value="(Adicionar Segurador)" />
+								<p:selectBooleanButton
+									value="#{contratoCobrancaMB.addSegurador}"
+									onLabel="Adicionar Segurador" offLabel="Adicionar Segurador">
+									<p:ajax update=":form:SeguradoresPanel" event="change" />
+								</p:selectBooleanButton>
+							</f:facet>
+
 							<p:dataView var="segurado"
 								value="#{contratoCobrancaMB.listSegurado}" paginator="false"
 								layout="list"
@@ -1415,7 +1425,7 @@
 								<p:dataViewListItem>
 									<p:outputLabel value="Nome: " styleClass="labelBold" />
 									<p:outputLabel value="#{segurado.pessoa.nome}"
-										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;padding:200px,200px" />
+										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
 									<p:outputLabel value="|" styleClass="labelBold" />
 									<p:outputLabel for="SeguradorPorcentagem: "
 										value="Porcentagem do segurador: " styleClass="labelBold" style="width:200px;" />
@@ -1460,6 +1470,7 @@
 
 							</h:panelGrid>
 						</p:panel>
+					</h:panelGroup>
 
 						<p:panel id="Pagamento" header="Forma de Pagamento"
 							style="margin-bottom:10px;">
