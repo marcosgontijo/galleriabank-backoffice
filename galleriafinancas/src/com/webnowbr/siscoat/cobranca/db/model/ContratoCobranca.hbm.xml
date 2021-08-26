@@ -987,7 +987,7 @@
 		</property>
 		
 		<set name="listSegurados" table="segurado"  cascade="save-update"
-                inverse="true" lazy="true" fetch="select">
+                inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
             </key>
