@@ -8436,7 +8436,7 @@ public class ContratoCobrancaMB {
 
 			for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 				
-				ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela);
+				ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela, this.objetoContratoCobranca.getDataInicio());
 				
 
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
@@ -8530,11 +8530,11 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
 
-	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela) {
+	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela, Date dataBaseParecela ) {
 		ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
 		Date dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(),
-				this.objetoContratoCobranca.getDataInicio());
+				dataBaseParecela );
 
 		contratoCobrancaDetalhes.setDataVencimento(dataParcela);
 		contratoCobrancaDetalhes.setDataVencimentoAtual(dataParcela);
@@ -8728,13 +8728,24 @@ public class ContratoCobrancaMB {
 						detalhe.setDataPagamento(detalhe.getDataVencimento());
 						detalhe.setVlrParcela(BigDecimal.ZERO);
 					}
+					
+					if (DateUtil.isAfterDate(detalhe.getDataVencimento(), DateUtil.getDataHoje()) && !detalhe.isParcelaPaga()) {
+						detalhe.setParcelaVencida(true);
+					}else 
+						detalhe.setParcelaVencida(false);
+
+					if (DateUtil.isDataHoje(detalhe.getDataVencimento()) && !detalhe.isParcelaPaga()) {
+						detalhe.setParcelaVencendo(true);
+					}else 
+						detalhe.setParcelaVencendo(false);
+					
 					encontrouParcela = true;
 					break;
 				}
 			}
 			if (!encontrouParcela) {
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-						.add(criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela));
+						.add(criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela, dataVencimentoNova));
 			}
 
 			ultimaParcela = parcela.getNumeroParcela();
