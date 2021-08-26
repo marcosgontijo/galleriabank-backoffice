@@ -8714,8 +8714,12 @@ public class ContratoCobrancaMB {
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
 
-					detalhe.setDataVencimento(dataParcela);				
 					
+					detalhe.setDataVencimento(dataParcela);
+					if (detalhe.getDataVencimentoAtual().compareTo(dataParcela) < 0) {
+						detalhe.setDataVencimentoAtual(dataParcela);
+					}
+
 					detalhe.setVlrSaldoParcela(
 							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
