@@ -1409,17 +1409,17 @@
 					<h:panelGroup  id="SeguradoresPanel">
 						<p:panel header="Seguradores" style="margin-bottom:10px;"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-							<f:facet name="header"> Seguradores 
+							<f:facet name="header"> Segurados 
 							<p:outputLabel value="" />
 								<p:selectBooleanButton
 									value="#{contratoCobrancaMB.addSegurador}"
-									onLabel="Adicionar Segurador" offLabel="Adicionar Segurador">
+									onLabel="Adicionar Segurador" offLabel="Adicionar Segurado">
 									<p:ajax update=":form:SeguradoresPanel" event="change" />
 								</p:selectBooleanButton>
 							</f:facet>
 
 							<p:dataView var="segurado"
-								value="#{contratoCobrancaMB.listSegurado}" paginator="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listSegurados}" paginator="false"
 								layout="list"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
@@ -1437,8 +1437,9 @@
 										ajax="true" update=":form:SeguradoresPanel" />
 								</p:dataViewListItem>
 							</p:dataView>
-
+							
 							<h:panelGrid columns="2" id="addSegurado" rendered="#{contratoCobrancaMB.addSegurador}">
+								
 								<p:spacer height="10" />
 								<p:spacer height="10" />
 								<p:outputLabel value="Adicionar Segurador"
@@ -1450,9 +1451,9 @@
 									<p:inputText id="SeguradorNome"
 										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
 										required="false" style="FONT-SIZE: 10pt;width:300px;" />
-									<p:commandButton ajax="true"
-										action="#{contratoCobrancaMB.pesquisaSegurado()}"
-										icon="ui-icon ui-icon-circle-zoomin"
+									<p:commandButton ajax="true" 
+										action="#{contratoCobrancaMB.pesquisaSegurado}"
+										icon="ui-icon ui-icon-circle-zoomin" 
 										oncomplete="PF('pagadorRecebedorDialog').show();"
 										update="formReceborPagador" />
 								</h:panelGroup>
@@ -1728,6 +1729,8 @@
 					style="TEXT-DECORATION: bold; " />
 			</div>
 		</h:form>
+		
+		
 		<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
 			
 			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
