@@ -241,8 +241,6 @@ public class ContratoCobrancaMB {
 	/** Objeto selecionado na LoV - Recebedor. */
 	private PagadorRecebedor selectedRecebedor10;
 	
-	private List<Segurado> listSegurado;
-
 	/** Lista dos Recebedores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedores;
 
@@ -663,6 +661,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1252,6 +1253,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());		
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1308,6 +1312,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -3342,6 +3349,9 @@ public class ContratoCobrancaMB {
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
@@ -3392,7 +3402,7 @@ public class ContratoCobrancaMB {
 
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		
+		this.addSegurador= false;
 		
 			
 		this.vlrParcelaFinal = null;
@@ -6794,6 +6804,10 @@ public class ContratoCobrancaMB {
 
 	public void loadSelectedLovs() {
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
+		
 		this.selectedPagador = this.objetoContratoCobranca.getPagador();
 		this.nomePagador = this.objetoContratoCobranca.getPagador().getNome();
 		this.idPagador = this.objetoContratoCobranca.getPagador().getId();
@@ -7507,8 +7521,14 @@ public class ContratoCobrancaMB {
 
 		saldoAtualizado = saldo;
 		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
+		boolean gerarParcelaFinal = this.objetoContratoCobranca.isGeraParcelaFinal();
+		int iQtdParcelas =  this.objetoContratoCobranca.getQtdeParcelas();
+		if (!isEnvelope && !CommonsUtil.booleanValue(this.objetoContratoCobranca.isGeraParcelaFinal())) {
+			iQtdParcelas--;
+			gerarParcelaFinal = true;
+		}
 
-		for (int i = 0; i < this.objetoContratoCobranca.getQtdeParcelas(); i++) {
+		for (int i = 0; i < iQtdParcelas; i++) {
 			if (isEnvelope) {
 				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
 
@@ -7592,7 +7612,7 @@ public class ContratoCobrancaMB {
 		}
 
 		// gera parcela final
-		if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
+		if (gerarParcelaFinal) {
 			boolean temParcelaFinal = false;
 			PagadorRecebedor investidorFinal = new PagadorRecebedor();
 
@@ -8837,6 +8857,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		}
 	
 	public void removerSegurado(Segurado segurado) {
