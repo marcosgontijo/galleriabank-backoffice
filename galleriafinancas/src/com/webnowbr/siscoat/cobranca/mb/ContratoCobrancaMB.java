@@ -241,8 +241,6 @@ public class ContratoCobrancaMB {
 	/** Objeto selecionado na LoV - Recebedor. */
 	private PagadorRecebedor selectedRecebedor10;
 	
-	private List<Segurado> listSegurado;
-
 	/** Lista dos Recebedores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedores;
 
@@ -5482,6 +5480,7 @@ public class ContratoCobrancaMB {
 		}
 
 		// exclui o registro, quando o pagador é a Galleria SA
+		/*
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			for (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) {
 				if (r.getContratoCobranca().getPagador().getId() != 14) {
@@ -5489,7 +5488,12 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		*/
 
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
+		}
+		
 		processaDadosRelFinanceiroAtrasoFull();
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
@@ -8430,7 +8434,7 @@ public class ContratoCobrancaMB {
 
 			for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 				
-				ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela);
+				ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela, this.objetoContratoCobranca.getDataInicio());
 				
 
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
@@ -8524,11 +8528,11 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
 
-	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela) {
+	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela, Date dataBaseParecela ) {
 		ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
 		Date dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(),
-				this.objetoContratoCobranca.getDataInicio());
+				dataBaseParecela );
 
 		contratoCobrancaDetalhes.setDataVencimento(dataParcela);
 		contratoCobrancaDetalhes.setDataVencimentoAtual(dataParcela);
@@ -8708,8 +8712,12 @@ public class ContratoCobrancaMB {
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
 
-					detalhe.setDataVencimento(dataParcela);				
 					
+					detalhe.setDataVencimento(dataParcela);
+					if (detalhe.getDataVencimentoAtual().compareTo(dataParcela) < 0) {
+						detalhe.setDataVencimentoAtual(dataParcela);
+					}
+
 					detalhe.setVlrSaldoParcela(
 							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -8722,13 +8730,24 @@ public class ContratoCobrancaMB {
 						detalhe.setDataPagamento(detalhe.getDataVencimento());
 						detalhe.setVlrParcela(BigDecimal.ZERO);
 					}
+					
+					if (DateUtil.isAfterDate(detalhe.getDataVencimento(), DateUtil.getDataHoje()) && !detalhe.isParcelaPaga()) {
+						detalhe.setParcelaVencida(true);
+					}else 
+						detalhe.setParcelaVencida(false);
+
+					if (DateUtil.isDataHoje(detalhe.getDataVencimento()) && !detalhe.isParcelaPaga()) {
+						detalhe.setParcelaVencendo(true);
+					}else 
+						detalhe.setParcelaVencendo(false);
+					
 					encontrouParcela = true;
 					break;
 				}
 			}
 			if (!encontrouParcela) {
 				this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-						.add(criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela));
+						.add(criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela, dataVencimentoNova));
 			}
 
 			ultimaParcela = parcela.getNumeroParcela();
