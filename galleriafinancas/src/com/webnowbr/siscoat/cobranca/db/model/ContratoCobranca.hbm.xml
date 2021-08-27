@@ -235,6 +235,9 @@
 		<property name="temSeguroMIP" type="boolean"> 
 			<column name="temSeguroMIP" />
 		</property>
+		<property name="numeroContratoSeguro" type="string">
+			<column name="numeroContratoSeguro"/>
+		</property>
 		<property name="tipoCalculo" type="text">
 			<column name="tipoCalculo" />
 		</property>
