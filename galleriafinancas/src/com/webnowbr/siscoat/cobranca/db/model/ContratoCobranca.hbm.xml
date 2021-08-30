@@ -235,9 +235,6 @@
 		<property name="temSeguroMIP" type="boolean"> 
 			<column name="temSeguroMIP" />
 		</property>
-		<property name="numeroContratoSeguro" type="string">
-			<column name="numeroContratoSeguro"/>
-		</property>
 		<property name="tipoCalculo" type="text">
 			<column name="tipoCalculo" />
 		</property>
@@ -989,7 +986,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="save-update"
+		<set name="listSegurados" table="segurado" cascade="all"
                 inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
