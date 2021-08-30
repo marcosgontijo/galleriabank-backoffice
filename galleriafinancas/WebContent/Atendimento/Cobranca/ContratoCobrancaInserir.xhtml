@@ -78,7 +78,7 @@
 						</h:panelGrid>
 					</shiro:hasAnyRoles>
 
-					<p:panel id="Pessoas" header="Envolvidos"
+			 	 	<p:panel id="Pessoas" header="Envolvidos"
 						style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -193,39 +193,52 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0 and !(contratoCobrancaMB.selectedRecebedor.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
-									<p:inputText id="valorRecebedor" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
+										
 									<p:outputLabel for="taxaRemuneracaoInvestidor1" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
-									<p:inputText id="taxaRemuneracaoInvestidor1" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor1"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor1}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
-									<p:outputLabel for="valorRecebedorFinal" value="Valor Final: "
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />									
+							
+									<p:outputLabel for="qtdeParcelasInv1" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv1"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor1}" required="false">
+										<f:ajax event="change" update="Pagamento" />
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv1" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv1"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor1}"
+										required="true">
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor1" value="Valor Debenture: "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
-									<p:inputText id="valorRecebedorFinal" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor1}"
+									<p:inputText id="valorInvestidor1" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor1}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(1)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																								
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -316,39 +329,51 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0 and !(contratoCobrancaMB.selectedRecebedor2.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor2.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor2" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
-									<p:inputText id="valorRecebedor2" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor2}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor2}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor2" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
-									<p:inputText id="taxaRemuneracaoInvestidor2" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor2" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor2}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
-									<p:outputLabel for="valorRecebedorFinal2" value="Valor Final: "
+									
+										
+									<p:outputLabel for="qtdeParcelasInv2" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv2"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor2}" required="false">
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv2" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv2"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor2}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor2" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0}" />
-									<p:inputText id="valorRecebedorFinal2" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor2}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor2"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor2}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor2.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>																
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(2)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																										
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -439,39 +464,50 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0 and !(contratoCobrancaMB.selectedRecebedor3.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor3.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor3" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
-									<p:inputText id="valorRecebedor3" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor3}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor3}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+										
 									<p:outputLabel for="taxaRemuneracaoInvestidor3" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
-									<p:inputText id="taxaRemuneracaoInvestidor3" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor3" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor3}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor3}" />
-									<p:outputLabel for="valorRecebedorFinal3" value="Valor Final: "
+									
+									<p:outputLabel for="qtdeParcelasInv3" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv3"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor3}" required="false">
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv3" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv3"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor3}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor3" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0}" />
-									<p:inputText id="valorRecebedorFinal3" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor3}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor3" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor3}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>																						
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(3)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																															
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -562,39 +598,52 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0 and !(contratoCobrancaMB.selectedRecebedor4.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor4.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor4" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
-									<p:inputText id="valorRecebedor4" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor4}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor4}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor4" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
-									<p:inputText id="taxaRemuneracaoInvestidor4" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor4"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor4}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor4}" />
-									<p:outputLabel for="valorRecebedorFinal4" value="Valor Final: "
+									
+									
+									<p:outputLabel for="qtdeParcelasInv4" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv4"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor4}" required="false"
+										>
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv4" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv4"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor4}"
+										required="true" style="width: 80px;">
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor4" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0}" />
-									<p:inputText id="valorRecebedorFinal4" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor4}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor4" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor4}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0}" >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>										
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(4)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																		
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -685,46 +734,58 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0 and !(contratoCobrancaMB.selectedRecebedor5.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor5.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor5" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
-									<p:inputText id="valorRecebedor5" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor5}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor5}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
 									<p:outputLabel for="taxaRemuneracaoInvestidor5" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
-									<p:inputText id="taxaRemuneracaoInvestidor5" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor5" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor5}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
-									<p:outputLabel for="valorRecebedorFinal5" value="Valor Final: "
+										
+									
+									<p:outputLabel for="qtdeParcelasInv5" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv5"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor5}" required="false"
+										>
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv5" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv5"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor5}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor5" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0}" />
-									<p:inputText id="valorRecebedorFinal5" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor5}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor5" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor5}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>												
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(5)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																				
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
 						<p:panel id="panelRecebedor6"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor6}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor6" value="Favorecido 6: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor6}" />
@@ -808,46 +869,60 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0 and !(contratoCobrancaMB.selectedRecebedor6.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor6.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor6" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
-									<p:inputText id="valorRecebedor6" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor6}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor6}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor6" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
-									<p:inputText id="taxaRemuneracaoInvestidor6" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor6" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor6}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
-									<p:outputLabel for="valorRecebedorFinal6" value="Valor Final: "
+									
+									
+									<p:outputLabel for="qtdeParcelasInv6" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv6"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor6}" required="false"
+										>
+										<f:ajax event="change" update="Pagamento" />
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv6" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv6"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor6}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor6" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0}" />
-									<p:inputText id="valorRecebedorFinal6" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor6}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor6" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor6}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor6.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>												
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(6)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+																				
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
 						<p:panel id="panelRecebedor7"
 							style="border: none; margin-left: -14px; margin-top: -8px;"
 							disabled="#{contratoCobrancaMB.renderRecebedor7}">
-							<h:panelGrid columns="9">
+							<h:panelGrid columns="11">
 								<p:outputLabel for="Recebedor7" value="Favorecido 7: "
 									styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.renderRecebedor7}" />
@@ -931,39 +1006,52 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0 and !(contratoCobrancaMB.selectedRecebedor7.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor7.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor7" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
-									<p:inputText id="valorRecebedor7" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor7}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor7}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+								
 									<p:outputLabel for="taxaRemuneracaoInvestidor7" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
-									<p:inputText id="taxaRemuneracaoInvestidor7" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor7" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor7}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
-									<p:outputLabel for="valorRecebedorFinal7" value="Valor Final: "
+							
+									
+									<p:outputLabel for="qtdeParcelasInv7" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv7"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor7}" required="false"
+										>
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv7" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv7"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor7}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor7" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0}" />
-									<p:inputText id="valorRecebedorFinal7" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor7}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor7" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor7}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(7)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+										
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -1054,39 +1142,52 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0 and !(contratoCobrancaMB.selectedRecebedor8.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor8.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor8" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
-									<p:inputText id="valorRecebedor8" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor8}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor8}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor8" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
-									<p:inputText id="taxaRemuneracaoInvestidor8" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor8" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor8}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
-									<p:outputLabel for="valorRecebedorFinal8" value="Valor Final: "
+									
+									
+									<p:outputLabel for="qtdeParcelasInv8" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv8"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor8}" required="false"
+										>
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv8" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv8"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor8}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor8" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0}" />
-									<p:inputText id="valorRecebedorFinal8" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor8}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor8" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor8}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor8.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(8)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+									
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -1177,39 +1278,53 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor9.id > 0 and !(contratoCobrancaMB.selectedRecebedor9.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor9.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor9" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
-									<p:inputText id="valorRecebedor9" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor9}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor9}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor9" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
-									<p:inputText id="taxaRemuneracaoInvestidor9" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor9" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor9}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
-									<p:outputLabel for="valorRecebedorFinal9" value="Valor Final: "
+									
+									
+									<p:outputLabel for="qtdeParcelasInv9" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv9"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor9}" required="false"
+										>
+										
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv9" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv9"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor9}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor9" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor9.id > 0}" />
-									<p:inputText id="valorRecebedorFinal9" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor9}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor9" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor9}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor9.id > 0}" >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(9)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+									
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -1291,39 +1406,53 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0 and !(contratoCobrancaMB.selectedRecebedor10.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor10.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									<p:outputLabel for="valorRecebedor10" value="Valor: "
-										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
-									<p:inputText id="valorRecebedor10" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrRecebedor10}"
-										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);" required="true"
-										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.renderRecebedor10}"  >
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor10" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
-									<p:inputText id="taxaRemuneracaoInvestidor10" style="margin-left: 12px;"
+									<p:inputText id="taxaRemuneracaoInvestidor10" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaRemuneracaoInvestidor10}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
 										rendered="#{contratoCobrancaMB.renderRecebedor10}" />
-									<p:outputLabel for="valorRecebedorFinal10" value="Valor Final: "
+									
+									
+									<p:outputLabel for="qtdeParcelasInv10" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="qtdeParcelasInv10"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor10}" required="false"
+										>
+										
+									</p:inputText>				
+									<p:outputLabel for="tipoCalculoInv10" value="Tipo Cálculo: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoCalculoInv10"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoInvestidor10}"
+										required="true" >
+										<f:selectItem itemValue="Price" itemLabel="Price" />
+										<f:selectItem itemValue="SAC" itemLabel="SAC" />
+										<f:selectItem itemValue="Americano" itemLabel="Americano" />
+									</p:selectOneMenu>
+									<p:outputLabel for="valorInvestidor10" value="Valor Debenture: "
 										styleClass="labelBold"
-										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0}" />
-									<p:inputText id="valorRecebedorFinal10" style="margin-left: 12px;"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrFinalRecebedor10}"
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
+									<p:inputText id="valorInvestidor10" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.vlrInvestidor10}"
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter"
-										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0}"  >
+										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}">
 										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}" update="Pagamento" />
-										</p:inputText>	
+											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
+											update="Pagamento" />
+									</p:inputText>
+
+									<p:commandButton value="Visualizar investimento"
+									action="#{contratoCobrancaMB.mostrarInvestimento(10)}"
+									oncomplete="PF('parcelasDialog').show()"
+									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
+									
 								</h:panelGrid>
 							</p:panel>
 						</p:panel>
@@ -1501,8 +1630,8 @@
 								<p:inputText id="qtdeParcelas"
 									value="#{contratoCobrancaMB.qtdeParcelas}" required="false"
 									style="width: 30px;">
+									<f:ajax event="change" update="Pessoas" />
 								</p:inputText>
-
 
 								<p:outputLabel for="valorCCB" value="Valor da CCB: "
 									styleClass="labelBold" />

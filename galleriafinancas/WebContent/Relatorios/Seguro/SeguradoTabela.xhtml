@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="SeguroTabela" header="Seguro"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="SeguroDFI" value="Seguro DFI: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectBooleanCheckbox id="SeguroDFI">
+						<p:ajax update="form" event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:outputLabel for="SeguroMIP" value="Seguro MIP: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectBooleanCheckbox id="SeguroMIP">
+						<p:ajax update="form" event="change" />
+					</p:selectBooleanCheckbox>
+
+
+					<p:outputLabel for="dataCalculo" value="Data Cálculo : "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataCalculo"
+						value="#{relatorioVendaOperacaoMB.dataDesagio}" required="true"
+						label="Data Cálculo" size="60" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField" />
+				</h:panelGrid>
+
+				<p:commandButton value="Consultar"
+					action="#{seguroTabelaMB.carregaListagem()}"
+					update=":form:dtSegurados" image="ui-icon ui-icon-check"
+					style="TEXT-DECORATION: bold;" ajax="false" />				
+			</p:panel>
+			
+			<p:panel id="ConsultaTabelaSeguroDFI"
+				header="Tabela de segurados DFI" style="margin-bottom:10px;">
+				<p:dataTable id="dtSegurados" var="segurado"
+					value="#{seguroTabelaMB.contratosSeguro}"
+					emptyMessage="" sortBy="#{segurado.numeroContratoSeguro}">
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Contrato" filterBy="#{segurado.numeroContratoSeguro}"
+						filterMatchMode="contains" sortBy="#{segurado.numeroContratoSeguro}">
+						<h:outputText value="#{segurado.numeroContratoSeguro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Código segurado" filterBy="#{segurado.codigoSegurado}"
+						filterMatchMode="contains" sortBy="#{segurado.codigoSegurado}">
+						<h:outputText value="#{segurado.codigoSegurado}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas Originais" filterBy="#{segurado.parcelasOriginais}"
+						filterMatchMode="contains" sortBy="#{segurado.parcelasOriginais}">
+						<h:outputText value="#{segurado.parcelasOriginais}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas Faltantes" filterBy="#{segurado.parcelasFaltantes}"
+						filterMatchMode="contains" sortBy="#{segurado.parcelasFaltantes}">
+						<h:outputText value="#{segurado.parcelasFaltantes}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Avaliação" filterBy="#{segurado.avaliacao}"
+						filterMatchMode="contains" sortBy="#{segurado.avaliacao}">
+						<h:outputText value="#{segurado.avaliacao}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="CPF Principal" filterBy="#{segurado.CPFPrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.CPFPrincipal}">
+						<h:outputText value="#{segurado.CPFPrincipal}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nome Principal" filterBy="#{segurado.nomePrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.nomePrincipal}">
+						<h:outputText value="#{segurado.nomePrincipal}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}">
+						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

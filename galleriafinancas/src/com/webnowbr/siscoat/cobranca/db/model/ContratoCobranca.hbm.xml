@@ -989,13 +989,104 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="save-update"
+		<set name="listSegurados" table="segurado"  cascade="all"
                 inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Segurado" />
         </set>
+        
+        <property name="tipoCalculoInvestidor1" type="java.lang.String">
+			<column name="tipoCalculoInvestidor1" />
+		</property>
+		<property name="vlrInvestidor1" type="big_decimal">
+			<column name="vlrInvestidor1" />
+		</property>
+		<property name="qtdeParcelasInvestidor1" type="int">
+			<column name="qtdeParcelasInvestidor1" />
+		</property>
+		<property name="tipoCalculoInvestidor2" type="java.lang.String">
+			<column name="tipoCalculoInvestidor2" />
+		</property>
+		<property name="vlrInvestidor2" type="big_decimal">
+			<column name="vlrInvestidor2" />
+		</property>
+		<property name="qtdeParcelasInvestidor2" type="int">
+			<column name="qtdeParcelasInvestidor2" />
+		</property>	
+		<property name="tipoCalculoInvestidor3" type="java.lang.String">
+			<column name="tipoCalculoInvestidor3" />
+		</property>
+		<property name="vlrInvestidor3" type="big_decimal">
+			<column name="vlrInvestidor3" />
+		</property>
+		<property name="qtdeParcelasInvestidor3" type="int">
+			<column name="qtdeParcelasInvestidor3" />
+		</property>	
+		<property name="tipoCalculoInvestidor4" type="java.lang.String">
+			<column name="tipoCalculoInvestidor4" />
+		</property>
+		<property name="vlrInvestidor4" type="big_decimal">
+			<column name="vlrInvestidor4" />
+		</property>
+		<property name="qtdeParcelasInvestidor4" type="int">
+			<column name="qtdeParcelasInvestidor4" />
+		</property>
+		<property name="tipoCalculoInvestidor5" type="java.lang.String">
+			<column name="tipoCalculoInvestidor5" />
+		</property>
+		<property name="vlrInvestidor5" type="big_decimal">
+			<column name="vlrInvestidor5" />
+		</property>
+		<property name="qtdeParcelasInvestidor5" type="int">
+			<column name="qtdeParcelasInvestidor5" />
+		</property>
+		<property name="tipoCalculoInvestidor6" type="java.lang.String">
+			<column name="tipoCalculoInvestidor6" />
+		</property>
+		<property name="vlrInvestidor6" type="big_decimal">
+			<column name="vlrInvestidor6" />
+		</property>
+		<property name="qtdeParcelasInvestidor6" type="int">
+			<column name="qtdeParcelasInvestidor6" />
+		</property>
+		<property name="tipoCalculoInvestidor7" type="java.lang.String">
+			<column name="tipoCalculoInvestidor7" />
+		</property>
+		<property name="vlrInvestidor7" type="big_decimal">
+			<column name="vlrInvestidor7" />
+		</property>
+		<property name="qtdeParcelasInvestidor7" type="int">
+			<column name="qtdeParcelasInvestidor7" />
+		</property>
+		<property name="tipoCalculoInvestidor8" type="java.lang.String">
+			<column name="tipoCalculoInvestidor8" />
+		</property>
+		<property name="vlrInvestidor8" type="big_decimal">
+			<column name="vlrInvestidor8" />
+		</property>
+		<property name="qtdeParcelasInvestidor8" type="int">
+			<column name="qtdeParcelasInvestidor8" />
+		</property>
+		<property name="tipoCalculoInvestidor9" type="java.lang.String">
+			<column name="tipoCalculoInvestidor9" />
+		</property>
+		<property name="vlrInvestidor9" type="big_decimal">
+			<column name="vlrInvestidor9" />
+		</property>
+		<property name="qtdeParcelasInvestidor9" type="int">
+			<column name="qtdeParcelasInvestidor9" />
+		</property>
+		<property name="tipoCalculoInvestidor10" type="java.lang.String">
+			<column name="tipoCalculoInvestidor10" />
+		</property>
+		<property name="vlrInvestidor10" type="big_decimal">
+			<column name="vlrInvestidor10" />
+		</property>
+		<property name="qtdeParcelasInvestidor10" type="int">
+			<column name="qtdeParcelasInvestidor10" />
+		</property>
         
 		 <!-- <map name="listSegurados">
         	<key column="id"
