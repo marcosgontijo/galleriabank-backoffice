@@ -235,9 +235,6 @@
 		<property name="temSeguroMIP" type="boolean"> 
 			<column name="temSeguroMIP" />
 		</property>
-		<property name="numeroContratoSeguro" type="string">
-			<column name="numeroContratoSeguro"/>
-		</property>
 		<property name="tipoCalculo" type="text">
 			<column name="tipoCalculo" />
 		</property>
@@ -1088,13 +1085,6 @@
 			<column name="qtdeParcelasInvestidor10" />
 		</property>
         
-		 <!-- <map name="listSegurados">
-        	<key column="id"
-         	   not-null="true"/>
-        	<map-key column="contratoCobranca" 
-        	    type="long"/>
-        	<one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Segurado"/>
-    	</map>
-        	 -->
+	
 	</class>
 </hibernate-mapping>

@@ -7523,7 +7523,10 @@ public class ContratoCobrancaMB {
 		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
 		boolean gerarParcelaFinal = this.objetoContratoCobranca.isGeraParcelaFinal();
 		int iQtdParcelas =  this.objetoContratoCobranca.getQtdeParcelas();
-		if (!isEnvelope && !CommonsUtil.booleanValue(this.objetoContratoCobranca.isGeraParcelaFinal())) {
+
+		if (!isEnvelope 
+				&& !CommonsUtil.booleanValue(this.objetoContratoCobranca.isGeraParcelaFinal())  
+				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getVlrParcelaFinal())) {
 			iQtdParcelas--;
 			gerarParcelaFinal = true;
 		}
