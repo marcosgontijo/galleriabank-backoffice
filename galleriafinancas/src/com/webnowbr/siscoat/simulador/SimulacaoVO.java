@@ -164,9 +164,16 @@ public class SimulacaoVO {
 			diasVencimento = 365l;
 		}
 		
-		BigDecimal valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
-				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
-				).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal valorOParcelaIOF = BigDecimal.ZERO;
+		if( this.tipoCalculo.equals("Americano") && parcelaCalculo.getAmortizacao().compareTo(BigDecimal.ZERO)==1) {
+			valorOParcelaIOF = (this.valorCredito
+					.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
+					).setScale(2, RoundingMode.HALF_EVEN);
+		}else {
+			 valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
+						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
+						).setScale(2, RoundingMode.HALF_EVEN);			 
+		}
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
