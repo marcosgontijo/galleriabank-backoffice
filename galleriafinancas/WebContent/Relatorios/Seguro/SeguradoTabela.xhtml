@@ -14,18 +14,13 @@
 				<p:messages />
 				<h:panelGrid columns="2">
 
-					<p:outputLabel for="SeguroDFI" value="Seguro DFI: "
+					<p:outputLabel value="Seguro DFI: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:selectBooleanCheckbox id="SeguroDFI">
-						<p:ajax update="form" event="change" />
-					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{seguroTabelaMB.seguroDFI}"/>
 
-					<p:outputLabel for="SeguroMIP" value="Seguro MIP: "
+					<p:outputLabel value="Seguro MIP: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:selectBooleanCheckbox id="SeguroMIP">
-						<p:ajax update="form" event="change" />
-					</p:selectBooleanCheckbox>
-
+					<p:selectBooleanCheckbox value="#{seguroTabelaMB.seguroMIP}"/>
 
 					<p:outputLabel for="dataCalculo" value="Data Cálculo : "
 						styleClass="labelBold" style="margin-right: 59px;" />
@@ -37,14 +32,18 @@
 
 				<p:commandButton value="Consultar"
 					action="#{seguroTabelaMB.carregaListagem()}"
-					update=":form:dtSegurados" image="ui-icon ui-icon-check"
+					update=":form:dtSeguradosDFI, :form:dtSeguradosMIP" image="ui-icon ui-icon-check"
 					style="TEXT-DECORATION: bold;" ajax="false" />				
 			</p:panel>
 			
-			<p:panel id="ConsultaTabelaSeguroDFI"
+			<p:panel id="ConsultaTabelaSeguroDFI" rendered="#{seguroTabelaMB.seguroDFI}"
 				header="Tabela de segurados DFI" style="margin-bottom:10px;">
-				<p:dataTable id="dtSegurados" var="segurado"
-					value="#{seguroTabelaMB.contratosSeguro}"
+				<f:facet name="header"> Tabela de segurados DFI
+					<p:outputLabel value="" />  
+					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{seguroTabelaMB.readXLSXFileDFI}" ajax="false"/>
+				</f:facet>
+				<p:dataTable id="dtSeguradosDFI" var="segurado"
+					value="#{seguroTabelaMB.contratosSeguroDFI}"
 					emptyMessage="" sortBy="#{segurado.numeroContratoSeguro}">
 					
 					<p:column style="text-align: center;width: 100px;"
@@ -78,9 +77,9 @@
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
-						headerText="CPF Principal" filterBy="#{segurado.CPFPrincipal}"
-						filterMatchMode="contains" sortBy="#{segurado.CPFPrincipal}">
-						<h:outputText value="#{segurado.CPFPrincipal}" />
+						headerText="CPF Principal" filterBy="#{segurado.cpfPrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.cpfPrincipal}">
+						<h:outputText value="#{segurado.cpfPrincipal}" />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
@@ -91,10 +90,166 @@
 					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}" >
+						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+					</p:column>
+					
+				<!-- <p:column style="text-align: center;width: 100px;"
+						headerText="Logradouro" filterBy="#{segurado.logradouro}"
+						filterMatchMode="contains" sortBy="#{segurado.logradouro}">
+						<h:outputText value="#{segurado.logradouro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Residência" filterBy="#{segurado.numeroResidencia}"
+						filterMatchMode="contains" sortBy="#{segurado.numeroResidencia}">
+						<h:outputText value="#{segurado.numeroResidencia}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Complemento" filterBy="#{segurado.complemento}"
+						filterMatchMode="contains" sortBy="#{segurado.complemento}">
+						<h:outputText value="#{segurado.complemento}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Bairro" filterBy="#{segurado.bairro}"
+						filterMatchMode="contains" sortBy="#{segurado.bairro}">
+						<h:outputText value="#{segurado.bairro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Cidade" filterBy="#{segurado.cidade}"
+						filterMatchMode="contains" sortBy="#{segurado.cidade}">
+						<h:outputText value="#{segurado.cidade}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="UF" filterBy="#{segurado.uf}"
+						filterMatchMode="contains" sortBy="#{segurado.uf}">
+						<h:outputText value="#{segurado.uf}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="CEP" filterBy="#{segurado.cep}"
+						filterMatchMode="contains" sortBy="#{segurado.cep}">
+						<h:outputText value="#{segurado.cep}" />
+					</p:column> -->
+				</p:dataTable>
+			</p:panel>
+			
+			<p:panel id="ConsultaTabelaSeguroMIP" rendered="#{seguroTabelaMB.seguroMIP}"
+				header="Tabela de segurados MIP" style="margin-bottom:10px;">
+				<f:facet name="header"> Tabela de segurados MIP
+					<p:outputLabel value="" />  
+					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{seguroTabelaMB.readXLSXFileMIP}" ajax="false"/>
+				</f:facet>
+				<p:dataTable id="dtSeguradosMIP" var="segurado"
+					value="#{seguroTabelaMB.contratosSeguroMIP}"
+					emptyMessage="" sortBy="#{segurado.numeroContratoSeguro}">
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Contrato" filterBy="#{segurado.numeroContratoSeguro}"
+						filterMatchMode="contains" sortBy="#{segurado.numeroContratoSeguro}">
+						<h:outputText value="#{segurado.numeroContratoSeguro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Código segurado" filterBy="#{segurado.codigoSegurado}"
+						filterMatchMode="contains" sortBy="#{segurado.codigoSegurado}">
+						<h:outputText value="#{segurado.codigoSegurado}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas Originais" filterBy="#{segurado.parcelasOriginais}"
+						filterMatchMode="contains" sortBy="#{segurado.parcelasOriginais}">
+						<h:outputText value="#{segurado.parcelasOriginais}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas Faltantes" filterBy="#{segurado.parcelasFaltantes}"
+						filterMatchMode="contains" sortBy="#{segurado.parcelasFaltantes}">
+						<h:outputText value="#{segurado.parcelasFaltantes}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Saldo Devedor" filterBy="#{segurado.saldoDevedor}"
+						filterMatchMode="contains" sortBy="#{segurado.saldoDevedor}">
+						<h:outputText value="#{segurado.saldoDevedor}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="CPF Principal" filterBy="#{segurado.cpfPrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.cpfPrincipal}">
+						<h:outputText value="#{segurado.cpfPrincipal}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nome Principal" filterBy="#{segurado.nomePrincipal}"
+						filterMatchMode="contains" sortBy="#{segurado.nomePrincipal}">
+						<h:outputText value="#{segurado.nomePrincipal}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data de nascimento" filterBy="#{segurado.dataNascimento}"
+						filterMatchMode="contains" sortBy="#{segurado.dataNascimento}">
+						<h:outputText value="#{segurado.dataNascimento}" />
+					</p:column>
+			
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Sexo" filterBy="#{segurado.sexo}"
+						filterMatchMode="contains" sortBy="#{segurado.sexo}">
+						<h:outputText value="#{segurado.sexo}" />
+					</p:column>
+										
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
 						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}">
 						<h:outputText value="#{segurado.porcentagemPrincipal}" />
 					</p:column>
-
+					
+					<!-- <p:column style="text-align: center;width: 100px;"
+						headerText="Logradouro" filterBy="#{segurado.logradouro}"
+						filterMatchMode="contains" sortBy="#{segurado.logradouro}">
+						<h:outputText value="#{segurado.logradouro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Residência" filterBy="#{segurado.numeroResidencia}"
+						filterMatchMode="contains" sortBy="#{segurado.numeroResidencia}">
+						<h:outputText value="#{segurado.numeroResidencia}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Complemento" filterBy="#{segurado.complemento}"
+						filterMatchMode="contains" sortBy="#{segurado.complemento}">
+						<h:outputText value="#{segurado.complemento}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Bairro" filterBy="#{segurado.bairro}"
+						filterMatchMode="contains" sortBy="#{segurado.bairro}">
+						<h:outputText value="#{segurado.bairro}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Cidade" filterBy="#{segurado.cidade}"
+						filterMatchMode="contains" sortBy="#{segurado.cidade}">
+						<h:outputText value="#{segurado.cidade}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="UF" filterBy="#{segurado.uf}"
+						filterMatchMode="contains" sortBy="#{segurado.uf}">
+						<h:outputText value="#{segurado.uf}" />
+					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="CEP" filterBy="#{segurado.cep}"
+						filterMatchMode="contains" sortBy="#{segurado.cep}">
+						<h:outputText value="#{segurado.cep}" />
+					</p:column> -->	
 				</p:dataTable>
 			</p:panel>
 		</h:form>

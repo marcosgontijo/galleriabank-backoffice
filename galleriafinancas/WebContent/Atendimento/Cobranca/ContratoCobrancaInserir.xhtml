@@ -1521,7 +1521,15 @@
 								<p:ajax update="DadosSeguro"
 										event="change"/>
 							</p:selectBooleanCheckbox>
-														
+
+							<p:outputLabel for="numContratoSeguro"
+								value="Numero contrato seguro: "
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"
+								styleClass="labelBold" />
+							<p:inputText id="numContratoSeguro"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContratoSeguro}"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" />
+
 							<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
 							<p:inputText id="vlrImovel"
@@ -1536,13 +1544,13 @@
 					</p:panel>
 
 					<h:panelGroup  id="SeguradoresPanel">
-						<p:panel header="Seguradores" style="margin-bottom:10px;"
+						<p:panel header="Segurados" style="margin-bottom:10px;"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							<f:facet name="header"> Segurados 
 							<p:outputLabel value="" />
 								<p:selectBooleanButton
 									value="#{contratoCobrancaMB.addSegurador}"
-									onLabel="Adicionar Segurador" offLabel="Adicionar Segurado">
+									onLabel="Adicionar Segurado" offLabel="Adicionar Segurado">
 									<p:ajax update=":form:SeguradoresPanel" event="change" />
 								</p:selectBooleanButton>
 							</f:facet>
@@ -1555,9 +1563,11 @@
 									<p:outputLabel value="Nome: " styleClass="labelBold" />
 									<p:outputLabel value="#{segurado.pessoa.nome}"
 										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:spacer height="10" />
 									<p:outputLabel value="|" styleClass="labelBold" />
-									<p:outputLabel for="SeguradorPorcentagem: "
-										value="Porcentagem do segurador: " styleClass="labelBold" style="width:200px;" />
+									<p:spacer height="10" />
+									<p:outputLabel for="SeguradorPorcentagem"
+										value="Porcentagem do segurado: " styleClass="labelBold" style="width:200px;" />
 									<p:inputText id="SeguradorPorcentagem"
 										value="#{segurado.porcentagemSegurador}" required="true"
 										style="FONT-SIZE: 10pt;width:200px;" />
@@ -1571,10 +1581,10 @@
 								
 								<p:spacer height="10" />
 								<p:spacer height="10" />
-								<p:outputLabel value="Adicionar Segurador"
+								<p:outputLabel value="Adicionar Segurado"
 									styleClass="labelBold" />
 								<p:spacer height="10" />
-								<p:outputLabel for="SeguradorNome" value="Nome do segurador: "
+								<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
 									styleClass="labelBold" />
 								<h:panelGroup>
 									<p:inputText id="SeguradorNome"
@@ -1587,8 +1597,8 @@
 										update="formReceborPagador" />
 								</h:panelGroup>
 
-								<p:outputLabel for="SeguradorPorcentagem: "
-									value="Porcentagem do segurador: " styleClass="labelBold" />
+								<p:outputLabel for="SeguradorPorcentagem"
+									value="Porcentagem do segurado: " styleClass="labelBold" />
 								<p:inputText id="SeguradorPorcentagem"
 									value="#{contratoCobrancaMB.seguradoSelecionado.porcentagemSegurador}"
 									required="flase" style="FONT-SIZE: 10pt;width:300px;" />

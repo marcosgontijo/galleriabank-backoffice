@@ -20,43 +20,43 @@ public class ContratoCobranca implements Serializable {
 	
 	private String tipoCalculoInvestidor1;
 	private BigDecimal vlrInvestidor1;
-	private int qtdeParcelasInvestidor1;
+	private Integer qtdeParcelasInvestidor1;
 	
 	private String tipoCalculoInvestidor2;
 	private BigDecimal vlrInvestidor2;
-	private int qtdeParcelasInvestidor2;
+	private Integer qtdeParcelasInvestidor2;
 	
 	private String tipoCalculoInvestidor3;
 	private BigDecimal vlrInvestidor3;
-	private int qtdeParcelasInvestidor3;
+	private Integer qtdeParcelasInvestidor3;
 	
 	private String tipoCalculoInvestidor4;
 	private BigDecimal vlrInvestidor4;
-	private int qtdeParcelasInvestidor4;
+	private Integer qtdeParcelasInvestidor4;
 	
 	private String tipoCalculoInvestidor5;
 	private BigDecimal vlrInvestidor5;
-	private int qtdeParcelasInvestidor5;
+	private Integer qtdeParcelasInvestidor5;
 	
 	private String tipoCalculoInvestidor6;
 	private BigDecimal vlrInvestidor6;
-	private int qtdeParcelasInvestidor6;
+	private Integer qtdeParcelasInvestidor6;
 	
 	private String tipoCalculoInvestidor7;
 	private BigDecimal vlrInvestidor7;
-	private int qtdeParcelasInvestidor7;
+	private Integer qtdeParcelasInvestidor7;
 	
 	private String tipoCalculoInvestidor8;
 	private BigDecimal vlrInvestidor8;
-	private int qtdeParcelasInvestidor8;
+	private Integer qtdeParcelasInvestidor8;
 
 	private String tipoCalculoInvestidor9;
 	private BigDecimal vlrInvestidor9;
-	private int qtdeParcelasInvestidor9;
+	private Integer qtdeParcelasInvestidor9;
 
 	private String tipoCalculoInvestidor10;
 	private BigDecimal vlrInvestidor10;
-	private int qtdeParcelasInvestidor10;
+	private Integer qtdeParcelasInvestidor10;
 	
 	private static final long serialVersionUID = 1L;
 	private long id;
@@ -3323,12 +3323,12 @@ public class ContratoCobranca implements Serializable {
 	}
 
 
-	public int getQtdeParcelasInvestidor1() {
+	public Integer getQtdeParcelasInvestidor1() {
 		return qtdeParcelasInvestidor1;
 	}
 
 
-	public void setQtdeParcelasInvestidor1(int qtdeParcelasInvestidor1) {
+	public void setQtdeParcelasInvestidor1(Integer qtdeParcelasInvestidor1) {
 		this.qtdeParcelasInvestidor1 = qtdeParcelasInvestidor1;
 	}
 
@@ -3358,13 +3358,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor2() {
+	public Integer getQtdeParcelasInvestidor2() {
 		return qtdeParcelasInvestidor2;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor2(int qtdeParcelasInvestidor2) {
+	public void setQtdeParcelasInvestidor2(Integer qtdeParcelasInvestidor2) {
 		this.qtdeParcelasInvestidor2 = qtdeParcelasInvestidor2;
 	}
 
@@ -3394,13 +3394,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor3() {
+	public Integer getQtdeParcelasInvestidor3() {
 		return qtdeParcelasInvestidor3;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor3(int qtdeParcelasInvestidor3) {
+	public void setQtdeParcelasInvestidor3(Integer qtdeParcelasInvestidor3) {
 		this.qtdeParcelasInvestidor3 = qtdeParcelasInvestidor3;
 	}
 
@@ -3430,13 +3430,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor4() {
+	public Integer getQtdeParcelasInvestidor4() {
 		return qtdeParcelasInvestidor4;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor4(int qtdeParcelasInvestidor4) {
+	public void setQtdeParcelasInvestidor4(Integer qtdeParcelasInvestidor4) {
 		this.qtdeParcelasInvestidor4 = qtdeParcelasInvestidor4;
 	}
 
@@ -3466,13 +3466,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor5() {
+	public Integer getQtdeParcelasInvestidor5() {
 		return qtdeParcelasInvestidor5;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor5(int qtdeParcelasInvestidor5) {
+	public void setQtdeParcelasInvestidor5(Integer qtdeParcelasInvestidor5) {
 		this.qtdeParcelasInvestidor5 = qtdeParcelasInvestidor5;
 	}
 
@@ -3502,13 +3502,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor6() {
+	public Integer getQtdeParcelasInvestidor6() {
 		return qtdeParcelasInvestidor6;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor6(int qtdeParcelasInvestidor6) {
+	public void setQtdeParcelasInvestidor6(Integer qtdeParcelasInvestidor6) {
 		this.qtdeParcelasInvestidor6 = qtdeParcelasInvestidor6;
 	}
 
@@ -3538,13 +3538,13 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public int getQtdeParcelasInvestidor7() {
+	public Integer getQtdeParcelasInvestidor7() {
 		return qtdeParcelasInvestidor7;
 	}
 
 
 
-	public void setQtdeParcelasInvestidor7(int qtdeParcelasInvestidor7) {
+	public void setQtdeParcelasInvestidor7(Integer qtdeParcelasInvestidor7) {
 		this.qtdeParcelasInvestidor7 = qtdeParcelasInvestidor7;
 	}
 
@@ -3564,12 +3564,12 @@ public class ContratoCobranca implements Serializable {
 		this.vlrInvestidor8 = vlrInvestidor8;
 	}
 
-	public int getQtdeParcelasInvestidor8() {
+	public Integer getQtdeParcelasInvestidor8() {
 		return qtdeParcelasInvestidor8;
 	}
 
 
-	public void setQtdeParcelasInvestidor8(int qtdeParcelasInvestidor8) {
+	public void setQtdeParcelasInvestidor8(Integer qtdeParcelasInvestidor8) {
 		this.qtdeParcelasInvestidor8 = qtdeParcelasInvestidor8;
 	}
 
@@ -3594,12 +3594,12 @@ public class ContratoCobranca implements Serializable {
 	}
 
 
-	public int getQtdeParcelasInvestidor9() {
+	public Integer getQtdeParcelasInvestidor9() {
 		return qtdeParcelasInvestidor9;
 	}
 
 
-	public void setQtdeParcelasInvestidor9(int qtdeParcelasInvestidor9) {
+	public void setQtdeParcelasInvestidor9(Integer qtdeParcelasInvestidor9) {
 		this.qtdeParcelasInvestidor9 = qtdeParcelasInvestidor9;
 	}
 
@@ -3624,12 +3624,12 @@ public class ContratoCobranca implements Serializable {
 	}
 
 
-	public int getQtdeParcelasInvestidor10() {
+	public Integer getQtdeParcelasInvestidor10() {
 		return qtdeParcelasInvestidor10;
 	}
 
 
-	public void setQtdeParcelasInvestidor10(int qtdeParcelasInvestidor10) {
+	public void setQtdeParcelasInvestidor10(Integer qtdeParcelasInvestidor10) {
 		this.qtdeParcelasInvestidor10 = qtdeParcelasInvestidor10;
 	}
 

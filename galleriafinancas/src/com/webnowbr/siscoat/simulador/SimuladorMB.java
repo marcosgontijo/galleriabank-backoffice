@@ -72,7 +72,7 @@ public class SimuladorMB {
 		this.simulacao = new SimulacaoVO();
 
 		Map<String, String> validacao = new HashMap<String, String>();
-		if (CommonsUtil.mesmoValor(this.tipoCalculo, "Americanno")) {
+		if (CommonsUtil.mesmoValor(this.tipoCalculo, "Americano")) {
 			if (this.parcelas.compareTo(BigInteger.valueOf(36)) == 1) {
 				validacao.put("Prazo excedido !!", "O prazo máximo é de 36 meses para o tipo de cálculo americano");
 			}
