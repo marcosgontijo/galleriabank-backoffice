@@ -17,6 +17,66 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
+	
+	private String tipoCalculoInvestidor1;
+	private BigDecimal vlrInvestidor1;
+	private Integer qtdeParcelasInvestidor1;
+	private Integer carenciaInvestidor1;
+	
+	private String tipoCalculoInvestidor2;
+	private BigDecimal vlrInvestidor2;
+	private Integer qtdeParcelasInvestidor2;
+	private Integer carenciaInvestidor2;
+
+	
+	private String tipoCalculoInvestidor3;
+	private BigDecimal vlrInvestidor3;
+	private Integer qtdeParcelasInvestidor3;
+	private Integer carenciaInvestidor3;
+
+	
+	private String tipoCalculoInvestidor4;
+	private BigDecimal vlrInvestidor4;
+	private Integer qtdeParcelasInvestidor4;
+	private Integer carenciaInvestidor4;
+
+	
+	private String tipoCalculoInvestidor5;
+	private BigDecimal vlrInvestidor5;
+	private Integer qtdeParcelasInvestidor5;
+	private Integer carenciaInvestidor5;
+
+	
+	private String tipoCalculoInvestidor6;
+	private BigDecimal vlrInvestidor6;
+	private Integer qtdeParcelasInvestidor6;
+	private Integer carenciaInvestidor6;
+
+	
+	private String tipoCalculoInvestidor7;
+	private BigDecimal vlrInvestidor7;
+	private Integer qtdeParcelasInvestidor7;
+	private Integer carenciaInvestidor7;
+
+	
+	private String tipoCalculoInvestidor8;
+	private BigDecimal vlrInvestidor8;
+	private Integer qtdeParcelasInvestidor8;
+	private Integer carenciaInvestidor8;
+
+
+	private String tipoCalculoInvestidor9;
+	private BigDecimal vlrInvestidor9;
+	private Integer qtdeParcelasInvestidor9;
+	private Integer carenciaInvestidor9;
+
+
+	private String tipoCalculoInvestidor10;
+	private BigDecimal vlrInvestidor10;
+	private Integer qtdeParcelasInvestidor10;
+	private Integer carenciaInvestidor10;
+
+	
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private Date dataInicio;
@@ -395,6 +455,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean temSeguroDFI;
 	private boolean temSeguroMIP;
 	private BigDecimal valorImovel;
+	private String numeroContratoSeguro;
 
 	public ContratoCobranca() {
 		super();
@@ -3250,6 +3311,470 @@ public class ContratoCobranca implements Serializable {
 	public void setListSegurados(Set<Segurado> listSegurados) {
 		this.listSegurados = listSegurados;
 	}
+
+	public String getNumeroContratoSeguro() {
+		return numeroContratoSeguro;
+	}
+
+
+	public void setNumeroContratoSeguro(String numeroContratoSeguro) {
+		this.numeroContratoSeguro = numeroContratoSeguro;
+	}
+
+
+	public String getTipoCalculoInvestidor1() {
+		return tipoCalculoInvestidor1;
+	}
+
+
+	public void setTipoCalculoInvestidor1(String tipoCalculoInvestidor1) {
+		this.tipoCalculoInvestidor1 = tipoCalculoInvestidor1;
+	}
+
+
+	public BigDecimal getVlrInvestidor1() {
+		return vlrInvestidor1;
+	}
+
+
+	public void setVlrInvestidor1(BigDecimal vlrInvestidor1) {
+		this.vlrInvestidor1 = vlrInvestidor1;
+	}
+
+
+	public Integer getQtdeParcelasInvestidor1() {
+		return qtdeParcelasInvestidor1;
+	}
+
+
+	public void setQtdeParcelasInvestidor1(Integer qtdeParcelasInvestidor1) {
+		this.qtdeParcelasInvestidor1 = qtdeParcelasInvestidor1;
+	}
+
+
+
+	public String getTipoCalculoInvestidor2() {
+		return tipoCalculoInvestidor2;
+	}
+
+
+
+	public void setTipoCalculoInvestidor2(String tipoCalculoInvestidor2) {
+		this.tipoCalculoInvestidor2 = tipoCalculoInvestidor2;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor2() {
+		return vlrInvestidor2;
+	}
+
+
+
+	public void setVlrInvestidor2(BigDecimal vlrInvestidor2) {
+		this.vlrInvestidor2 = vlrInvestidor2;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor2() {
+		return qtdeParcelasInvestidor2;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor2(Integer qtdeParcelasInvestidor2) {
+		this.qtdeParcelasInvestidor2 = qtdeParcelasInvestidor2;
+	}
+
+
+
+	public String getTipoCalculoInvestidor3() {
+		return tipoCalculoInvestidor3;
+	}
+
+
+
+	public void setTipoCalculoInvestidor3(String tipoCalculoInvestidor3) {
+		this.tipoCalculoInvestidor3 = tipoCalculoInvestidor3;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor3() {
+		return vlrInvestidor3;
+	}
+
+
+
+	public void setVlrInvestidor3(BigDecimal vlrInvestidor3) {
+		this.vlrInvestidor3 = vlrInvestidor3;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor3() {
+		return qtdeParcelasInvestidor3;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor3(Integer qtdeParcelasInvestidor3) {
+		this.qtdeParcelasInvestidor3 = qtdeParcelasInvestidor3;
+	}
+
+
+
+	public String getTipoCalculoInvestidor4() {
+		return tipoCalculoInvestidor4;
+	}
+
+
+
+	public void setTipoCalculoInvestidor4(String tipoCalculoInvestidor4) {
+		this.tipoCalculoInvestidor4 = tipoCalculoInvestidor4;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor4() {
+		return vlrInvestidor4;
+	}
+
+
+
+	public void setVlrInvestidor4(BigDecimal vlrInvestidor4) {
+		this.vlrInvestidor4 = vlrInvestidor4;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor4() {
+		return qtdeParcelasInvestidor4;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor4(Integer qtdeParcelasInvestidor4) {
+		this.qtdeParcelasInvestidor4 = qtdeParcelasInvestidor4;
+	}
+
+
+
+	public String getTipoCalculoInvestidor5() {
+		return tipoCalculoInvestidor5;
+	}
+
+
+
+	public void setTipoCalculoInvestidor5(String tipoCalculoInvestidor5) {
+		this.tipoCalculoInvestidor5 = tipoCalculoInvestidor5;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor5() {
+		return vlrInvestidor5;
+	}
+
+
+
+	public void setVlrInvestidor5(BigDecimal vlrInvestidor5) {
+		this.vlrInvestidor5 = vlrInvestidor5;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor5() {
+		return qtdeParcelasInvestidor5;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor5(Integer qtdeParcelasInvestidor5) {
+		this.qtdeParcelasInvestidor5 = qtdeParcelasInvestidor5;
+	}
+
+
+
+	public String getTipoCalculoInvestidor6() {
+		return tipoCalculoInvestidor6;
+	}
+
+
+
+	public void setTipoCalculoInvestidor6(String tipoCalculoInvestidor6) {
+		this.tipoCalculoInvestidor6 = tipoCalculoInvestidor6;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor6() {
+		return vlrInvestidor6;
+	}
+
+
+
+	public void setVlrInvestidor6(BigDecimal vlrInvestidor6) {
+		this.vlrInvestidor6 = vlrInvestidor6;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor6() {
+		return qtdeParcelasInvestidor6;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor6(Integer qtdeParcelasInvestidor6) {
+		this.qtdeParcelasInvestidor6 = qtdeParcelasInvestidor6;
+	}
+
+
+
+	public String getTipoCalculoInvestidor7() {
+		return tipoCalculoInvestidor7;
+	}
+
+
+
+	public void setTipoCalculoInvestidor7(String tipoCalculoInvestidor7) {
+		this.tipoCalculoInvestidor7 = tipoCalculoInvestidor7;
+	}
+
+
+
+	public BigDecimal getVlrInvestidor7() {
+		return vlrInvestidor7;
+	}
+
+
+
+	public void setVlrInvestidor7(BigDecimal vlrInvestidor7) {
+		this.vlrInvestidor7 = vlrInvestidor7;
+	}
+
+
+
+	public Integer getQtdeParcelasInvestidor7() {
+		return qtdeParcelasInvestidor7;
+	}
+
+
+
+	public void setQtdeParcelasInvestidor7(Integer qtdeParcelasInvestidor7) {
+		this.qtdeParcelasInvestidor7 = qtdeParcelasInvestidor7;
+	}
+
+	public String getTipoCalculoInvestidor8() {
+		return tipoCalculoInvestidor8;
+	}
+
+	public void setTipoCalculoInvestidor8(String tipoCalculoInvestidor8) {
+		this.tipoCalculoInvestidor8 = tipoCalculoInvestidor8;
+	}
+
+	public BigDecimal getVlrInvestidor8() {
+		return vlrInvestidor8;
+	}
+
+	public void setVlrInvestidor8(BigDecimal vlrInvestidor8) {
+		this.vlrInvestidor8 = vlrInvestidor8;
+	}
+
+	public Integer getQtdeParcelasInvestidor8() {
+		return qtdeParcelasInvestidor8;
+	}
+
+
+	public void setQtdeParcelasInvestidor8(Integer qtdeParcelasInvestidor8) {
+		this.qtdeParcelasInvestidor8 = qtdeParcelasInvestidor8;
+	}
+
+
+	public String getTipoCalculoInvestidor9() {
+		return tipoCalculoInvestidor9;
+	}
+
+
+	public void setTipoCalculoInvestidor9(String tipoCalculoInvestidor9) {
+		this.tipoCalculoInvestidor9 = tipoCalculoInvestidor9;
+	}
+
+
+	public BigDecimal getVlrInvestidor9() {
+		return vlrInvestidor9;
+	}
+
+
+	public void setVlrInvestidor9(BigDecimal vlrInvestidor9) {
+		this.vlrInvestidor9 = vlrInvestidor9;
+	}
+
+
+	public Integer getQtdeParcelasInvestidor9() {
+		return qtdeParcelasInvestidor9;
+	}
+
+
+	public void setQtdeParcelasInvestidor9(Integer qtdeParcelasInvestidor9) {
+		this.qtdeParcelasInvestidor9 = qtdeParcelasInvestidor9;
+	}
+
+
+	public String getTipoCalculoInvestidor10() {
+		return tipoCalculoInvestidor10;
+	}
+
+
+	public void setTipoCalculoInvestidor10(String tipoCalculoInvestidor10) {
+		this.tipoCalculoInvestidor10 = tipoCalculoInvestidor10;
+	}
+
+
+	public BigDecimal getVlrInvestidor10() {
+		return vlrInvestidor10;
+	}
+
+
+	public void setVlrInvestidor10(BigDecimal vlrInvestidor10) {
+		this.vlrInvestidor10 = vlrInvestidor10;
+	}
+
+
+	public Integer getQtdeParcelasInvestidor10() {
+		return qtdeParcelasInvestidor10;
+	}
+
+
+	public void setQtdeParcelasInvestidor10(Integer qtdeParcelasInvestidor10) {
+		this.qtdeParcelasInvestidor10 = qtdeParcelasInvestidor10;
+	}
+
+
+
+	public Integer getCarenciaInvestidor1() {
+		return carenciaInvestidor1;
+	}
+
+
+
+	public void setCarenciaInvestidor1(Integer carenciaInvestidor1) {
+		this.carenciaInvestidor1 = carenciaInvestidor1;
+	}
+
+
+
+	public Integer getCarenciaInvestidor2() {
+		return carenciaInvestidor2;
+	}
+
+
+
+	public void setCarenciaInvestidor2(Integer carenciaInvestidor2) {
+		this.carenciaInvestidor2 = carenciaInvestidor2;
+	}
+
+
+
+	public Integer getCarenciaInvestidor3() {
+		return carenciaInvestidor3;
+	}
+
+
+
+	public void setCarenciaInvestidor3(Integer carenciaInvestidor3) {
+		this.carenciaInvestidor3 = carenciaInvestidor3;
+	}
+
+
+
+	public Integer getCarenciaInvestidor4() {
+		return carenciaInvestidor4;
+	}
+
+
+
+	public void setCarenciaInvestidor4(Integer carenciaInvestidor4) {
+		this.carenciaInvestidor4 = carenciaInvestidor4;
+	}
+
+
+
+	public Integer getCarenciaInvestidor5() {
+		return carenciaInvestidor5;
+	}
+
+
+
+	public void setCarenciaInvestidor5(Integer carenciaInvestidor5) {
+		this.carenciaInvestidor5 = carenciaInvestidor5;
+	}
+
+
+
+	public Integer getCarenciaInvestidor6() {
+		return carenciaInvestidor6;
+	}
+
+
+
+	public void setCarenciaInvestidor6(Integer carenciaInvestidor6) {
+		this.carenciaInvestidor6 = carenciaInvestidor6;
+	}
+
+
+
+	public Integer getCarenciaInvestidor7() {
+		return carenciaInvestidor7;
+	}
+
+
+
+	public void setCarenciaInvestidor7(Integer carenciaInvestidor7) {
+		this.carenciaInvestidor7 = carenciaInvestidor7;
+	}
+
+
+
+	public Integer getCarenciaInvestidor8() {
+		return carenciaInvestidor8;
+	}
+
+
+
+	public void setCarenciaInvestidor8(Integer carenciaInvestidor8) {
+		this.carenciaInvestidor8 = carenciaInvestidor8;
+	}
+
+
+
+	public Integer getCarenciaInvestidor9() {
+		return carenciaInvestidor9;
+	}
+
+
+
+	public void setCarenciaInvestidor9(Integer carenciaInvestidor9) {
+		this.carenciaInvestidor9 = carenciaInvestidor9;
+	}
+
+
+
+	public Integer getCarenciaInvestidor10() {
+		return carenciaInvestidor10;
+	}
+
+
+
+	public void setCarenciaInvestidor10(Integer carenciaInvestidor10) {
+		this.carenciaInvestidor10 = carenciaInvestidor10;
+	}
 	
 	
+
+
+
+
 }
