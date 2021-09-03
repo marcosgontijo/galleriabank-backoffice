@@ -5,9 +5,10 @@ import java.math.BigInteger;
 import java.sql.Date;
 
 public class SeguroTabelaVO {
+	Date dataContrato;
 	String numeroContratoSeguro;
 	String codigoSegurado;
-	String  parcelasOriginais;
+	String parcelasOriginais;
 	String parcelasFaltantes;
 	BigDecimal avaliacao;
 	String cpfPrincipal;
@@ -249,4 +250,11 @@ public class SeguroTabelaVO {
 	public void setSexo4(String sexo4) {
 		this.sexo4 = sexo4;
 	}
+	public Date getDataContrato() {
+		return dataContrato;
+	}
+	public void setDataContrato(Date dataContrato) {
+		this.dataContrato = dataContrato;
+	}
+	
 }

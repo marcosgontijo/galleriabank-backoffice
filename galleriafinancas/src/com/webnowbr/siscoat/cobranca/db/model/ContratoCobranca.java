@@ -21,42 +21,61 @@ public class ContratoCobranca implements Serializable {
 	private String tipoCalculoInvestidor1;
 	private BigDecimal vlrInvestidor1;
 	private Integer qtdeParcelasInvestidor1;
+	private Integer carenciaInvestidor1;
 	
 	private String tipoCalculoInvestidor2;
 	private BigDecimal vlrInvestidor2;
 	private Integer qtdeParcelasInvestidor2;
+	private Integer carenciaInvestidor2;
+
 	
 	private String tipoCalculoInvestidor3;
 	private BigDecimal vlrInvestidor3;
 	private Integer qtdeParcelasInvestidor3;
+	private Integer carenciaInvestidor3;
+
 	
 	private String tipoCalculoInvestidor4;
 	private BigDecimal vlrInvestidor4;
 	private Integer qtdeParcelasInvestidor4;
+	private Integer carenciaInvestidor4;
+
 	
 	private String tipoCalculoInvestidor5;
 	private BigDecimal vlrInvestidor5;
 	private Integer qtdeParcelasInvestidor5;
+	private Integer carenciaInvestidor5;
+
 	
 	private String tipoCalculoInvestidor6;
 	private BigDecimal vlrInvestidor6;
 	private Integer qtdeParcelasInvestidor6;
+	private Integer carenciaInvestidor6;
+
 	
 	private String tipoCalculoInvestidor7;
 	private BigDecimal vlrInvestidor7;
 	private Integer qtdeParcelasInvestidor7;
+	private Integer carenciaInvestidor7;
+
 	
 	private String tipoCalculoInvestidor8;
 	private BigDecimal vlrInvestidor8;
 	private Integer qtdeParcelasInvestidor8;
+	private Integer carenciaInvestidor8;
+
 
 	private String tipoCalculoInvestidor9;
 	private BigDecimal vlrInvestidor9;
 	private Integer qtdeParcelasInvestidor9;
+	private Integer carenciaInvestidor9;
+
 
 	private String tipoCalculoInvestidor10;
 	private BigDecimal vlrInvestidor10;
 	private Integer qtdeParcelasInvestidor10;
+	private Integer carenciaInvestidor10;
+
 	
 	private static final long serialVersionUID = 1L;
 	private long id;
@@ -3632,6 +3651,128 @@ public class ContratoCobranca implements Serializable {
 	public void setQtdeParcelasInvestidor10(Integer qtdeParcelasInvestidor10) {
 		this.qtdeParcelasInvestidor10 = qtdeParcelasInvestidor10;
 	}
+
+
+
+	public Integer getCarenciaInvestidor1() {
+		return carenciaInvestidor1;
+	}
+
+
+
+	public void setCarenciaInvestidor1(Integer carenciaInvestidor1) {
+		this.carenciaInvestidor1 = carenciaInvestidor1;
+	}
+
+
+
+	public Integer getCarenciaInvestidor2() {
+		return carenciaInvestidor2;
+	}
+
+
+
+	public void setCarenciaInvestidor2(Integer carenciaInvestidor2) {
+		this.carenciaInvestidor2 = carenciaInvestidor2;
+	}
+
+
+
+	public Integer getCarenciaInvestidor3() {
+		return carenciaInvestidor3;
+	}
+
+
+
+	public void setCarenciaInvestidor3(Integer carenciaInvestidor3) {
+		this.carenciaInvestidor3 = carenciaInvestidor3;
+	}
+
+
+
+	public Integer getCarenciaInvestidor4() {
+		return carenciaInvestidor4;
+	}
+
+
+
+	public void setCarenciaInvestidor4(Integer carenciaInvestidor4) {
+		this.carenciaInvestidor4 = carenciaInvestidor4;
+	}
+
+
+
+	public Integer getCarenciaInvestidor5() {
+		return carenciaInvestidor5;
+	}
+
+
+
+	public void setCarenciaInvestidor5(Integer carenciaInvestidor5) {
+		this.carenciaInvestidor5 = carenciaInvestidor5;
+	}
+
+
+
+	public Integer getCarenciaInvestidor6() {
+		return carenciaInvestidor6;
+	}
+
+
+
+	public void setCarenciaInvestidor6(Integer carenciaInvestidor6) {
+		this.carenciaInvestidor6 = carenciaInvestidor6;
+	}
+
+
+
+	public Integer getCarenciaInvestidor7() {
+		return carenciaInvestidor7;
+	}
+
+
+
+	public void setCarenciaInvestidor7(Integer carenciaInvestidor7) {
+		this.carenciaInvestidor7 = carenciaInvestidor7;
+	}
+
+
+
+	public Integer getCarenciaInvestidor8() {
+		return carenciaInvestidor8;
+	}
+
+
+
+	public void setCarenciaInvestidor8(Integer carenciaInvestidor8) {
+		this.carenciaInvestidor8 = carenciaInvestidor8;
+	}
+
+
+
+	public Integer getCarenciaInvestidor9() {
+		return carenciaInvestidor9;
+	}
+
+
+
+	public void setCarenciaInvestidor9(Integer carenciaInvestidor9) {
+		this.carenciaInvestidor9 = carenciaInvestidor9;
+	}
+
+
+
+	public Integer getCarenciaInvestidor10() {
+		return carenciaInvestidor10;
+	}
+
+
+
+	public void setCarenciaInvestidor10(Integer carenciaInvestidor10) {
+		this.carenciaInvestidor10 = carenciaInvestidor10;
+	}
+	
+	
 
 
 

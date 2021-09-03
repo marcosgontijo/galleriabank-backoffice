@@ -1,6 +1,8 @@
 package com.webnowbr.siscoat.common;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
@@ -17,4 +19,5 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
 	public static final BigDecimal IOF_ADICIONAL = BigDecimal.valueOf(0.38);
 
+	public static final List<Long> PAGADOR_GALLERIA = Arrays.asList(15l, 34l, 14l, 182l, 417l, 803l);
 }

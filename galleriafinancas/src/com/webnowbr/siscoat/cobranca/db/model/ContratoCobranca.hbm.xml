@@ -1006,6 +1006,11 @@
 		<property name="qtdeParcelasInvestidor1" type="int">
 			<column name="qtdeParcelasInvestidor1" />
 		</property>
+		
+		<property name="carenciaInvestidor1" type="int">
+			<column name="carenciaInvestidor1" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor2" type="java.lang.String">
 			<column name="tipoCalculoInvestidor2" />
 		</property>
@@ -1015,6 +1020,11 @@
 		<property name="qtdeParcelasInvestidor2" type="int">
 			<column name="qtdeParcelasInvestidor2" />
 		</property>	
+		
+		<property name="carenciaInvestidor2" type="int">
+			<column name="carenciaInvestidor2" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor3" type="java.lang.String">
 			<column name="tipoCalculoInvestidor3" />
 		</property>
@@ -1024,6 +1034,11 @@
 		<property name="qtdeParcelasInvestidor3" type="int">
 			<column name="qtdeParcelasInvestidor3" />
 		</property>	
+		
+		<property name="carenciaInvestidor3" type="int">
+			<column name="carenciaInvestidor3" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor4" type="java.lang.String">
 			<column name="tipoCalculoInvestidor4" />
 		</property>
@@ -1033,6 +1048,11 @@
 		<property name="qtdeParcelasInvestidor4" type="int">
 			<column name="qtdeParcelasInvestidor4" />
 		</property>
+		
+		<property name="carenciaInvestidor4" type="int">
+			<column name="carenciaInvestidor4" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor5" type="java.lang.String">
 			<column name="tipoCalculoInvestidor5" />
 		</property>
@@ -1042,6 +1062,11 @@
 		<property name="qtdeParcelasInvestidor5" type="int">
 			<column name="qtdeParcelasInvestidor5" />
 		</property>
+		
+		<property name="carenciaInvestidor5" type="int">
+			<column name="carenciaInvestidor5" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor6" type="java.lang.String">
 			<column name="tipoCalculoInvestidor6" />
 		</property>
@@ -1051,6 +1076,11 @@
 		<property name="qtdeParcelasInvestidor6" type="int">
 			<column name="qtdeParcelasInvestidor6" />
 		</property>
+		
+		<property name="carenciaInvestidor6" type="int">
+			<column name="carenciaInvestidor6" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor7" type="java.lang.String">
 			<column name="tipoCalculoInvestidor7" />
 		</property>
@@ -1060,6 +1090,11 @@
 		<property name="qtdeParcelasInvestidor7" type="int">
 			<column name="qtdeParcelasInvestidor7" />
 		</property>
+		
+		<property name="carenciaInvestidor7" type="int">
+			<column name="carenciaInvestidor7" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor8" type="java.lang.String">
 			<column name="tipoCalculoInvestidor8" />
 		</property>
@@ -1069,6 +1104,11 @@
 		<property name="qtdeParcelasInvestidor8" type="int">
 			<column name="qtdeParcelasInvestidor8" />
 		</property>
+		
+		<property name="carenciaInvestidor8" type="int">
+			<column name="carenciaInvestidor8" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor9" type="java.lang.String">
 			<column name="tipoCalculoInvestidor9" />
 		</property>
@@ -1078,6 +1118,11 @@
 		<property name="qtdeParcelasInvestidor9" type="int">
 			<column name="qtdeParcelasInvestidor9" />
 		</property>
+		
+		<property name="carenciaInvestidor9" type="int">
+			<column name="carenciaInvestidor9" />
+		</property>
+		
 		<property name="tipoCalculoInvestidor10" type="java.lang.String">
 			<column name="tipoCalculoInvestidor10" />
 		</property>
@@ -1087,6 +1132,11 @@
 		<property name="qtdeParcelasInvestidor10" type="int">
 			<column name="qtdeParcelasInvestidor10" />
 		</property>
+		
+		<property name="carenciaInvestidor10" type="int">
+			<column name="carenciaInvestidor10" />
+		</property>
+		
         
 	
 	</class>

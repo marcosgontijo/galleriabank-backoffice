@@ -113,7 +113,9 @@
 								onclick="PF('responsavelDialog').show();"
 								image="ui-icon ui-icon-circle-zoomin"  />
 							<p:spacer width="10" />
-						</h:panelGrid>
+							
+							
+					  </h:panelGrid>
 						<p:panel id="panelRecebedor"
 							style="border: none; margin-left: -14px; margin-top: -8px;">
 							<h:panelGrid columns="10">
@@ -209,7 +211,7 @@
 										styleClass="labelBold" />
 									<p:inputText id="qtdeParcelasInv1"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor1}" required="false">
-										<f:ajax event="change" update="Pagamento" />
+										
 									</p:inputText>				
 									<p:outputLabel for="tipoCalculoInv1" value="Tipo Cálculo: "
 										styleClass="labelBold" />
@@ -233,10 +235,16 @@
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
 									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv1" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv1"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor1}" required="false">
+									</p:inputText>				
 
 									<p:commandButton value="Visualizar investimento"
 									action="#{contratoCobrancaMB.mostrarInvestimento(1)}"
-									oncomplete="PF('parcelasDialog').show()"
+									oncomplete="PF('parcelasDialog').show()" ajax="true"
 									update="verParcelaDialog" style="TEXT-DECORATION: bold;" />
 																								
 								</h:panelGrid>
@@ -367,6 +375,12 @@
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
+									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv2" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv2"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor2}" required="false">
 									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
@@ -501,6 +515,12 @@
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
+									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv3" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv3"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor3}" required="false">
 									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
@@ -638,6 +658,12 @@
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
 									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv4" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv4"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor4}" required="false">
+									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
 									action="#{contratoCobrancaMB.mostrarInvestimento(4)}"
@@ -773,6 +799,12 @@
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
 									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv5" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv5"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor5}" required="false">
+									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
 									action="#{contratoCobrancaMB.mostrarInvestimento(5)}"
@@ -886,7 +918,7 @@
 									<p:inputText id="qtdeParcelasInv6"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.qtdeParcelasInvestidor6}" required="false"
 										>
-										<f:ajax event="change" update="Pagamento" />
+										
 									</p:inputText>				
 									<p:outputLabel for="tipoCalculoInv6" value="Tipo Cálculo: "
 										styleClass="labelBold" />
@@ -909,6 +941,12 @@
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
+									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv6" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv6"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor6}" required="false">
 									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
@@ -1046,6 +1084,12 @@
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
 									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv7" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv7"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor7}" required="false">
+									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
 									action="#{contratoCobrancaMB.mostrarInvestimento(7)}"
@@ -1181,6 +1225,12 @@
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
+									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv8" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv8"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor8}" required="false">
 									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
@@ -1319,6 +1369,12 @@
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
 									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv9" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv9"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor9}" required="false">
+									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
 									action="#{contratoCobrancaMB.mostrarInvestimento(9)}"
@@ -1446,6 +1502,12 @@
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.calculaValoresContratoParcelaRecebedorTela}"
 											update="Pagamento" />
+									</p:inputText>
+									
+									<p:outputLabel for="carenciaInv10" value="Número de Parcelas: "
+										styleClass="labelBold" />
+									<p:inputText id="carenciaInv10"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaInvestidor10}" required="false">
 									</p:inputText>
 
 									<p:commandButton value="Visualizar investimento"
@@ -1619,7 +1681,7 @@
 									styleClass="labelBold" style="margin-right: 59px;" />
 								<p:calendar id="dataInicio"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}"
-									required="false" label="Data Inicio" size="100"
+									required="true" label="Data Inicio" size="100"
 									pattern="dd/MM/yyyy" styleClass="dateTimeField">
 									<p:ajax event="dateSelect"
 										listener="#{contratoCobrancaMB.populateDataPagamentoInicio}" />

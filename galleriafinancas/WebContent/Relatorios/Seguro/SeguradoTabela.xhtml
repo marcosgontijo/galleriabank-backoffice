@@ -24,10 +24,8 @@
 
 					<p:outputLabel for="dataCalculo" value="Data Cálculo : "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataCalculo"
-						value="#{relatorioVendaOperacaoMB.dataDesagio}" required="true"
-						label="Data Cálculo" size="60" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField" />
+					<p:datePicker id="dataCalculo" view="month" value="#{seguroTabelaMB.dataDesagio}" locale="pt" pattern="MM/yyyy" yearNavigator="true" yearRange="#{seguroTabelaMB.yearRange}" />
+					
 				</h:panelGrid>
 
 				<p:commandButton value="Consultar"

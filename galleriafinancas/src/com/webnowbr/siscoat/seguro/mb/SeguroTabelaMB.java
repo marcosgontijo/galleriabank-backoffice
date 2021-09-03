@@ -21,8 +21,10 @@ import org.primefaces.model.StreamedContent;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
+
 
 
 
@@ -33,6 +35,7 @@ public class SeguroTabelaMB {
 	
 	boolean seguroDFI;
 	boolean seguroMIP;
+	private Date dataDesagio = new Date();
 
 	
 	
@@ -48,8 +51,8 @@ public class SeguroTabelaMB {
 		this.contratosSeguroMIP = new ArrayList<SeguroTabelaVO>(0); 
 			try {
 				SeguradoDAO seguroDAO = new SeguradoDAO();
-				this.contratosSeguroDFI = seguroDAO.listaSeguradosDFI(0);
-				this.contratosSeguroMIP = seguroDAO.listaSeguradosMIP(0);
+				this.contratosSeguroDFI = seguroDAO.listaSeguradosDFI(0, dataDesagio);				
+				this.contratosSeguroMIP = seguroDAO.listaSeguradosMIP(0, dataDesagio);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -128,6 +131,13 @@ public class SeguroTabelaMB {
 		return null;
 		
 	}
+	
+	public String getYearRange() {		
+		Integer anoAtual = DateUtil.getDataHoje().getYear() + 1900;
+		Integer anoAnterior = anoAtual - 2;
+		return  anoAnterior + ":" + anoAtual;
+	}
+	
 
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
@@ -258,6 +268,16 @@ public class SeguroTabelaMB {
 	public void setSeguroMIP(boolean seguroMIP) {
 		this.seguroMIP = seguroMIP;
 	}
+
+	public Date getDataDesagio() {
+		return dataDesagio;
+	}
+
+	public void setDataDesagio(Date dataDesagio) {
+		this.dataDesagio = dataDesagio;
+	}
+	
+	
 	
 	
 	

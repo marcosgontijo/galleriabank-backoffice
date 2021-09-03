@@ -36,6 +36,8 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
@@ -110,6 +112,15 @@ public class RelatorioVendaOperacaoMB {
 		return "";
 
 	}
+	
+	
+	public String getYearRange() {		
+		Integer anoAtual = DateUtil.getDataHoje().getYear() + 1900;
+		Integer anoAnterior = anoAtual - 2;
+		return  anoAnterior + ":" + anoAtual;
+	}
+	
+	
 
 	/** Get/Set */
 
