@@ -8480,6 +8480,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor1());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor1()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor1());
 		} else if (numeroInvestidor == 2) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor2());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor2());
@@ -8487,6 +8488,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor2());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope2();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor2()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor2());
 		} else if (numeroInvestidor == 3) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor3());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor3());
@@ -8494,6 +8496,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor3());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope3();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor3()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor3());
 		} else if (numeroInvestidor == 4) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor4());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor4());
@@ -8501,6 +8504,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor4());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope4();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor4()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor4());
 		} else if (numeroInvestidor == 5) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor5());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor5());
@@ -8508,6 +8512,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor5());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope5();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor5()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor5());
 		} else if (numeroInvestidor == 6) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor6());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor6());
@@ -8515,6 +8520,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor6());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope6();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor6()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor6());
 		} else if (numeroInvestidor == 7) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor7());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor7());
@@ -8522,6 +8528,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor7());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope7();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor7()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor7());
 		} else if (numeroInvestidor == 8) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor8());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor8());
@@ -8529,6 +8536,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor8());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope8();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor8()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor8());
 		} else if (numeroInvestidor == 9) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor9());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor9());
@@ -8536,6 +8544,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor9());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope9();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor9()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor9());
 		} else if (numeroInvestidor == 10) {
 			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor10());
 			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor10());
@@ -8543,6 +8552,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor10());
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope10();
 			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor10()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor10());
 		}
 		
 		if( simulador.getQtdParcelas().compareTo(BigInteger.ZERO)==0) {

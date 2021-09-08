@@ -195,8 +195,15 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0 and !(contratoCobrancaMB.selectedRecebedor.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
-									
-										
+
+									<p:outputLabel for="dataInicio1" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio1"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor1}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+
 									<p:outputLabel for="taxaRemuneracaoInvestidor1" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.selectedRecebedor.id > 0}" />
@@ -338,6 +345,14 @@
 								</h:panelGrid>
 								<h:panelGrid columns="2">
 									
+									<p:outputLabel for="dataInicio2" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio2"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor2}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor2" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor2}" />
@@ -478,6 +493,13 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor3.id > 0 and !(contratoCobrancaMB.selectedRecebedor3.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor3.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
+									<p:outputLabel for="dataInicio3" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio3"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor3}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
 										
 									<p:outputLabel for="taxaRemuneracaoInvestidor3" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
@@ -618,6 +640,14 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor4.id > 0 and !(contratoCobrancaMB.selectedRecebedor4.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor4.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataInicio4" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio4"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor4}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
 									
 									<p:outputLabel for="taxaRemuneracaoInvestidor4" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
@@ -760,6 +790,15 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor5.id > 0 and !(contratoCobrancaMB.selectedRecebedor5.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor5.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataInicio5" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio5"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor5}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor5" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor5}" />
@@ -902,6 +941,14 @@
 								</h:panelGrid>
 								<h:panelGrid columns="2">
 									
+									<p:outputLabel for="dataInicio6" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio6"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor6}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor6" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor6}" />
@@ -1043,8 +1090,16 @@
 										value="#{contratoCobrancaMB.selectedRecebedor7.cnpjCC}"
 										rendered="#{contratoCobrancaMB.selectedRecebedor7.id > 0 and !(contratoCobrancaMB.selectedRecebedor7.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor7.cnpjCC == null)}" />
 								</h:panelGrid>
-								<h:panelGrid columns="2">
+								<h:panelGrid columns="2">								
 								
+									<p:outputLabel for="dataInicio7" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio7"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor7}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor7" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor7}" />
@@ -1187,6 +1242,13 @@
 								</h:panelGrid>
 								<h:panelGrid columns="2">
 									
+									<p:outputLabel for="dataInicio8" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio8"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor8}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
 									<p:outputLabel for="taxaRemuneracaoInvestidor8" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor8}" />
@@ -1329,6 +1391,14 @@
 								</h:panelGrid>
 								<h:panelGrid columns="2">
 									
+									<p:outputLabel for="dataInicio9" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio9"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor9}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
+									
 									<p:outputLabel for="taxaRemuneracaoInvestidor9" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.renderRecebedor9}" />
@@ -1462,6 +1532,14 @@
 										rendered="#{contratoCobrancaMB.selectedRecebedor10.id > 0 and !(contratoCobrancaMB.selectedRecebedor10.cnpjCC == '' or contratoCobrancaMB.selectedRecebedor10.cnpjCC == null)}" />
 								</h:panelGrid>
 								<h:panelGrid columns="2">
+									
+									<p:outputLabel for="dataInicio10" value="Data Inicio: "
+										styleClass="labelBold" style="margin-right: 59px;" />
+									<p:calendar id="dataInicio10"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicioInvestidor10}"
+										required="true" label="Data Inicio" size="100"
+										pattern="dd/MM/yyyy" styleClass="dateTimeField">
+									</p:calendar>
 									
 									<p:outputLabel for="taxaRemuneracaoInvestidor10" value="Taxa Remuneração (%): "
 										styleClass="labelBold"
