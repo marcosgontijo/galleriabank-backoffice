@@ -7521,7 +7521,7 @@ public class ContratoCobrancaMB {
 
 				// se a taxa de remuneração for maior que zero
 				if (taxaRemuneracao.compareTo(BigDecimal.ZERO) == 1) {
-					parcelaInvestidor.setJuros(parcela.getJuros().multiply(taxaRemuneracao));
+					parcelaInvestidor.setJuros(parcela.getJuros());
 					parcelaInvestidor.setAmortizacao(parcela.getAmortizacao());
 					parcelaInvestidor
 							.setSaldoCredorAtualizado(parcela.getSaldoDevedorInicial());
@@ -8391,7 +8391,7 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDetalhes
 				.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-		contratoCobrancaDetalhes.setSeguroDIF(parcela.getSeguroDFI().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		contratoCobrancaDetalhes.setSeguroDFI(parcela.getSeguroDFI().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		contratoCobrancaDetalhes.setSeguroMIP(parcela.getSeguroMIP().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
 //		contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasse);
@@ -8688,7 +8688,7 @@ public class ContratoCobrancaMB {
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalhe.setSeguroDIF(parcela.getSeguroDFI());
+					detalhe.setSeguroDFI(parcela.getSeguroDFI());
 					detalhe.setSeguroMIP(parcela.getSeguroMIP());
 					if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
 						detalhe.setParcelaPaga(true);
@@ -9724,7 +9724,7 @@ public class ContratoCobrancaMB {
 		
 		amortizacao.setVlrSaldoParcela(parcelaAnterior.getVlrSaldoParcela().subtract(amortizacao.getVlrAmortizacaoParcela()));
 		amortizacao.setVlrJurosParcela(BigDecimal.ZERO);
-		amortizacao.setSeguroDIF(BigDecimal.ZERO);
+		amortizacao.setSeguroDFI(BigDecimal.ZERO);
 		amortizacao.setSeguroMIP(BigDecimal.ZERO);
 		amortizacao.setVlrParcela(amortizacao.getVlrAmortizacaoParcela());
 		amortizacao.setNumeroParcela("Amortização");

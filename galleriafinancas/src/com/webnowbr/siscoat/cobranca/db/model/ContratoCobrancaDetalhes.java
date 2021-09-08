@@ -59,7 +59,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private Date dataUltimoPagamento;
 	private BigDecimal valorTotalPagamento;
 	
-	private BigDecimal seguroDIF;
+	private BigDecimal seguroDFI;
 	private BigDecimal seguroMIP;
 	
 	/**
@@ -483,12 +483,12 @@ public class ContratoCobrancaDetalhes implements Serializable {
 		this.idContrato = idContrato;
 	}
 
-	public BigDecimal getSeguroDIF() {
-		return seguroDIF;
+	public BigDecimal getSeguroDFI() {
+		return seguroDFI;
 	}
 
-	public void setSeguroDIF(BigDecimal seguroDIF) {
-		this.seguroDIF = seguroDIF;
+	public void setSeguroDFI(BigDecimal seguroDFI) {
+		this.seguroDFI = seguroDFI;
 	}
 
 	public BigDecimal getSeguroMIP() {
