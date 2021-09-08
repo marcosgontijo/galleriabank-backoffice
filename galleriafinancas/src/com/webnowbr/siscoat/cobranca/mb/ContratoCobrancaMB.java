@@ -7538,17 +7538,11 @@ public class ContratoCobrancaMB {
 
 					if ((parcela.getNumeroParcela().intValue()) <= 6) {
 						txIR = BigDecimal.valueOf(0.225);
-					}
-
-					if ((parcela.getNumeroParcela().intValue()) > 6 && (parcela.getNumeroParcela().intValue()) <= 12) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 6 && (parcela.getNumeroParcela().intValue()) <= 12) {
 						txIR = BigDecimal.valueOf(0.2);
-					}
-
-					if ((parcela.getNumeroParcela().intValue()) > 12 && (parcela.getNumeroParcela().intValue()) <= 18) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 12 && (parcela.getNumeroParcela().intValue()) <= 24) {
 						txIR = BigDecimal.valueOf(0.175);
-					}
-
-					if ((parcela.getNumeroParcela().intValue()) > 18) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 24) {
 						txIR = BigDecimal.valueOf(0.15);
 					}
 
