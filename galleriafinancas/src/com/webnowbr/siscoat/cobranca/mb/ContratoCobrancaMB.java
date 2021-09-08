@@ -7491,7 +7491,7 @@ public class ContratoCobrancaMB {
 			if (isEnvelope) {
 				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
 
-				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), this.objetoContratoCobranca.getDataInicio());
+				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), simulador.getDataSimulacao());
 
 				parcelaInvestidor.setDataVencimento(dataParcela);
 				parcelaInvestidor.setNumeroParcela(CommonsUtil.stringValue(parcela.getNumeroParcela()));
@@ -7512,7 +7512,7 @@ public class ContratoCobrancaMB {
 			} else {
 				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
 
-				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), this.objetoContratoCobranca.getDataInicio());
+				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), simulador.getDataSimulacao());
 
 				parcelaInvestidor.setDataVencimento(dataParcela);
 				parcelaInvestidor.setNumeroParcela(CommonsUtil.stringValue(parcela.getNumeroParcela()));
@@ -8563,7 +8563,7 @@ public class ContratoCobrancaMB {
 			simulador.setTipoCalculo("Envelope");
 		}
 		
-		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		//simulador.setDataSimulacao(DateUtil.getDataHoje());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
 		simulador.setSeguroMIP(BigDecimal.ZERO);
