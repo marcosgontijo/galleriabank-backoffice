@@ -6229,7 +6229,7 @@ public class ContratoCobrancaMB {
 			IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
 			ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao.findById(relatorioFinanceiraCobranca.getIdParcela());
 			ContratoCobranca contratoCobranca = contratoCobrancaDao.findById(parcelaIpca.getIdContrato());
-			if(parcelaIpca.getIpca() == null && contratoCobranca.isCorrigidoIPCA()) {
+			if(parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
 				BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela())).multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
 				parcelaIpca.setVlrParcela((parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 				parcelaIpca.setIpca(valorIpca);
