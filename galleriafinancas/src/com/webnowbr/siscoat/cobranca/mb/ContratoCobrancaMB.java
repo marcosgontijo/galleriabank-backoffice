@@ -42,6 +42,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -6223,18 +6224,31 @@ public class ContratoCobrancaMB {
 	public void atualizaIPCA() {
 		IPCADao ipcaDao = new IPCADao();
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-		
-		for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
-			IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
-			ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao.findById(relatorioFinanceiraCobranca.getIdParcela());
-			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
-			if(parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
-				BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela())).multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
-				parcelaIpca.setVlrParcela((parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-				parcelaIpca.setIpca(valorIpca);
-				contratoCobrancaDetalhesDao.update(parcelaIpca);
-				relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
+		try {
+			for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
+				IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
+				ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao
+						.findById(relatorioFinanceiraCobranca.getIdParcela());
+
+				// primeira condição é para meses de mesmo ano; segunda condição é para os meses jan e fev da parcela IPCA
+				if (parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
+						|| parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
+
+					ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
+					if (parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
+						BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela()))
+								.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
+						parcelaIpca.setVlrParcela(
+								(parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						parcelaIpca.setIpca(valorIpca);
+						contratoCobrancaDetalhesDao.update(parcelaIpca);
+						relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
+					}
+				}
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
