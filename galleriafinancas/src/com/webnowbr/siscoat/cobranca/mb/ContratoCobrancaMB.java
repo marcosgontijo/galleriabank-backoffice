@@ -6223,12 +6223,11 @@ public class ContratoCobrancaMB {
 	public void atualizaIPCA() {
 		IPCADao ipcaDao = new IPCADao();
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
+		
 		for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
 			IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
 			ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao.findById(relatorioFinanceiraCobranca.getIdParcela());
-			ContratoCobranca contratoCobranca = contratoCobrancaDao.findById(parcelaIpca.getIdContrato());
+			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
 			if(parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
 				BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela())).multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
 				parcelaIpca.setVlrParcela((parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
