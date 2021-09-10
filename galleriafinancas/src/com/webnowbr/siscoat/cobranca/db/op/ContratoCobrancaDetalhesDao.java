@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
-import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -76,6 +77,45 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 					closeResources(connection, ps, rs);					
 				}
 				return objects;
+			}
+		});	
+	}	
+	
+	
+	private static final String QUERY_CONTRATO_COBRANCA_FROM_DETALHES = 	"SELECT coco.id " +
+			" FROM cobranca.ContratoCobranca_Detalhes_join ccdj " +
+			" inner join cobranca.contratocobranca coco on ccdj.idcontratocobranca = coco.id " +
+			" where idcontratocobrancadetalhes = ?; "; 
+			
+	@SuppressWarnings("unchecked")
+	public ContratoCobranca getContratoCobranca(final long idContratoCobrancaDetalhes) {
+		return (ContratoCobranca) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				ContratoCobranca object = new ContratoCobranca();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_CONTRATO_COBRANCA_FROM_DETALHES);
+					
+					ps.setLong(1, idContratoCobrancaDetalhes);
+
+					rs = ps.executeQuery();
+					
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					while (rs.next()) {
+						object = contratoCobrancaDao.findById(rs.getLong(1));												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return object;
 			}
 		});	
 	}	

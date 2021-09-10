@@ -55,6 +55,46 @@ public class IPCADao extends HibernateDao <IPCA,Long> {
 		});	
 	}
 	
+	private static final String QUERY_ULTIMO_IPCA = "select * from cobranca.ipca where date_trunc('day', data) < date_trunc('day', ? ::timestamp) order by data desc limit 1";
+	
+	@SuppressWarnings("unchecked")
+	public IPCA getUltimoIPCA(final Date dataReferencia) {
+		return (IPCA) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				
+				final IPCA ipca = new IPCA();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(QUERY_ULTIMO_IPCA);	
+					
+					java.sql.Date data = new java.sql.Date(dataReferencia.getTime());
+					
+					ps.setDate(1, data);
+					
+					rs = ps.executeQuery();
+										
+					while (rs.next()) {
+						
+						ipca.setId(rs.getLong("id"));
+						ipca.setData(rs.getDate("data"));				
+						ipca.setTaxa(rs.getBigDecimal("taxa"));
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return ipca;
+			}
+		});	
+	}
+	
+	
 	private static final String QUERY_PARCELAS_POR_MES = "select cd.id, c.id from cobranca.contratocobranca c "
 														+ "inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = c.id  "
 														+ "inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id  "

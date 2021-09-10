@@ -42,6 +42,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -94,6 +95,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
+import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
@@ -106,6 +108,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
+import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
@@ -6214,6 +6217,39 @@ public class ContratoCobrancaMB {
 		fileOut.close();
 
 		this.contratoGerado = true;
+	}
+	
+	
+	
+	public void atualizaIPCA() {
+		IPCADao ipcaDao = new IPCADao();
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		try {
+			for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
+				IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
+				ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao
+						.findById(relatorioFinanceiraCobranca.getIdParcela());
+
+				// primeira condição é para meses de mesmo ano; segunda condição é para os meses jan e fev da parcela IPCA
+				if (parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
+						|| parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
+
+					ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
+					if (parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
+						BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela()))
+								.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
+						parcelaIpca.setVlrParcela(
+								(parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						parcelaIpca.setIpca(valorIpca);
+						contratoCobrancaDetalhesDao.update(parcelaIpca);
+						relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void geraRelFinanceiroUltimaParcela() {
