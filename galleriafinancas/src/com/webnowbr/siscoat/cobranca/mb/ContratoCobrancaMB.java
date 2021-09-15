@@ -7568,13 +7568,13 @@ public class ContratoCobrancaMB {
 				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 					BigDecimal txIR = BigDecimal.ZERO;
 
-					if ((parcela.getNumeroParcela().intValue()) <= 6) {
+					if ((parcela.getNumeroParcela().intValue()) < 6) {
 						txIR = BigDecimal.valueOf(0.225);
-					}else if ((parcela.getNumeroParcela().intValue()) > 6 && (parcela.getNumeroParcela().intValue()) <= 12) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 6 && (parcela.getNumeroParcela().intValue()) < 12) {
 						txIR = BigDecimal.valueOf(0.2);
-					}else if ((parcela.getNumeroParcela().intValue()) > 12 && (parcela.getNumeroParcela().intValue()) <= 24) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 12 && (parcela.getNumeroParcela().intValue()) < 24) {
 						txIR = BigDecimal.valueOf(0.175);
-					}else if ((parcela.getNumeroParcela().intValue()) > 24) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 24) {
 						txIR = BigDecimal.valueOf(0.15);
 					}
 
