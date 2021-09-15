@@ -159,11 +159,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
 			+ "where cc.status = 'Aprovado' ";
 	
-	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
-			+ "from cobranca.contratocobrancadetalhes cd "
-			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
-			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+//	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
+//			+ "from cobranca.contratocobrancadetalhes cd "
+//			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+//			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+//			+ "where cc.status = 'Aprovado' ";
+	
+	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cc.id idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse " 
+			+ " from cobranca.contratocobranca cc "
+			+ " left join cobranca.contratocobranca_detalhes_join cdj on cc.id = cdj.idcontratocobranca "  
+			+ " left join cobranca.contratocobrancadetalhes cd  on cd.id = cdj.idcontratocobrancadetalhes "
 			+ "where cc.status = 'Aprovado' ";
+	
+	
 	/*
 	private static final String QUERY_ULTIMO_NUMERO_CONTRATO = "select numerocontrato from cobranca.contratocobranca " +
 			"order by id desc limit 1"; 

@@ -908,11 +908,7 @@ public class ContratoCobrancaMB {
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 
 		/* Se filtro somente por numero do contrato */
-		if (this.numContrato.length() == 4) {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela("0" + this.numContrato);
-		} else {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(this.numContrato);
-		}
+		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(CommonsUtil.strZero(this.numContrato, 5));
 
 		int totalQtedParcelas = 0;
 		this.totalVlrParcelas = BigDecimal.ZERO;
@@ -3421,7 +3417,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
-		this.objetoContratoCobranca.setStatus("Aprovado");
+		this.objetoContratoCobranca.setStatus("Aprovado");		
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
 
