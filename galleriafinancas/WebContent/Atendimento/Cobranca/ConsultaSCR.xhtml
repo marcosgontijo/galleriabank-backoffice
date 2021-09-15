@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+						<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{bmpDigitalMB.pdfGerado}">
+				<p:focus />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Consulta SCR" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{bmpDigitalMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaSCR" header="Consulta - SCR"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="documento" value="CNPJ / CPF: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="documento"
+						value="#{bmpDigitalMB.documento}" label="Documento"
+						style="width:150px;" required="true"/>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1">
+					<p:commandButton value="Consultar"
+						ajax="false"
+						action="#{bmpDigitalMB.consultaSCR}"
+						image="ui-icon ui-icon-check"
+						update=":form:mensagens"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
