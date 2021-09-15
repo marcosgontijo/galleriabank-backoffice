@@ -50,6 +50,8 @@ public class SimulacaoVO {
 			calcularSac();
 		} else if (this.tipoCalculo.equals("Americano")) {
 			calcularAmericano();
+		} else if (this.tipoCalculo.equals("Envelope")) {
+			calcularEnvelope();
 		}
 	}
 
@@ -163,10 +165,17 @@ public class SimulacaoVO {
 		if (diasVencimento > 365) {
 			diasVencimento = 365l;
 		}
+		BigDecimal valorOParcelaIOF = BigDecimal.ZERO;
 		
-		BigDecimal valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
-				.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
-				).setScale(2, RoundingMode.HALF_EVEN);
+		if( this.tipoCalculo.equals("Americano") && parcelaCalculo.getAmortizacao().compareTo(BigDecimal.ZERO)==1) {
+			valorOParcelaIOF = (this.valorCredito
+					.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
+					).setScale(2, RoundingMode.HALF_EVEN);
+		}else {
+			 valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
+						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
+						).setScale(2, RoundingMode.HALF_EVEN);			 
+		}
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
@@ -384,6 +393,33 @@ public class SimulacaoVO {
 				.valueOf(FinanceLib.fv(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(),
 						this.carencia.intValue(), 0, this.valorCredito.negate().doubleValue(), false));
 		return saldoDevedorCarencia;
+	}
+	
+	public void calcularEnvelope() {
+
+		parcelas = new ArrayList<SimulacaoDetalheVO>();
+
+		BigDecimal parcelaPGTO = this.valorCredito.divide(new BigDecimal(this.qtdParcelas.subtract(this.carencia)));
+
+		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO(this.valorCredito);
+
+		for (int i = 1; i <= this.qtdParcelas.intValue(); i++) {
+
+			parcelaCalculo = new SimulacaoDetalheVO();
+			parcelaCalculo.setNumeroParcela(BigInteger.valueOf(i));
+			parcelaCalculo.setValorParcela(parcelaPGTO);
+			parcelaCalculo.setJuros(BigDecimal.ZERO);
+			parcelaCalculo.setAmortizacao(BigDecimal.ZERO);
+			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
+				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
+			} else {
+				parcelaCalculo.setValorParcela(parcelaPGTO);
+			}
+			parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
+			parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+
+			parcelas.add(parcelaCalculo);
+		}
 	}
 
 	public BigDecimal getIOFTotal() {

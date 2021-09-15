@@ -384,6 +384,9 @@
 								and contratoCobrancaMB.objetoContratoCobranca.temSeguro)?'Sim':'Não'}" />
 							</ui:fragment>	
 							
+							<p:outputLabel value="Numero contrato seguro" styleClass="labelBold" />
+				          	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContratoSeguro}"/>
+							
 							<p:outputLabel value="Valor do Imóvel (R$): " styleClass="labelBold" />
 							<h:panelGroup>
 				           		<h:outputText value="R$ "/>
@@ -391,9 +394,31 @@
 				            </h:panelGroup>
 				            										
 						</h:panelGrid>
-					</p:panel>																				
-					
-					<p:panel id="Pagamento" header="Forma de Pagamento" style="margin-bottom:10px;">	
+					</p:panel>
+
+				<p:panel id="Segurador" header="Seguradores"
+					style="margin-bottom:10px;">
+					<p:dataTable  var="segurado"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.listSegurados}"
+						paginator="true" rows="10"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+						rowsPerPageTemplate="10,20,30" selection="" style="width: 95%;"
+						emptyMessage="" rowKey="#{segurado.pessoa.nome}">
+						<p:column style="text-align: center;width: 45px;"
+							headerText="Nome" filterMatchMode="contains"
+							sortBy="#{segurado.pessoa.nome}">
+							<h:outputText value="#{segurado.pessoa.nome}" />
+						</p:column>
+						<p:column style="text-align: center;width: 45px;"
+							headerText="Porcentagem" filterMatchMode="contains"
+							sortBy="#{segurado.porcentagemSegurador}">
+							<h:outputText value="#{segurado.porcentagemSegurador}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+
+				<p:panel id="Pagamento" header="Forma de Pagamento" style="margin-bottom:10px;">	
 						<h:panelGrid columns="2">	
 							<p:outputLabel value="Data Inicio: " styleClass="labelBold" style="margin-right: 50px;"/>															
 				            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.dataInicio}" >			            	
@@ -600,8 +625,8 @@
 					            <h:outputText value="#{parcelas.ipca}" converter="bigDecimalConverter">
 					            </h:outputText>
 					        </p:column>	
-					    <p:column style="text-align: center;width: 110px;" headerText="Seguro DIF (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-					            <h:outputText value="#{parcelas.seguroDIF}" converter="bigDecimalConverter">
+					    <p:column style="text-align: center;width: 110px;" headerText="Seguro DFI (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+					            <h:outputText value="#{parcelas.seguroDFI}" converter="bigDecimalConverter">
 					            </h:outputText>
 					    </p:column>	
 					    <p:column style="text-align: center;width: 110px;" headerText="Seguro MIP (R$)" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">

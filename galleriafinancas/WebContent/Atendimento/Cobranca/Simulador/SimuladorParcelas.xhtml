@@ -66,13 +66,13 @@
 				<f:convertNumber pattern="#,##0.00" />
 			</h:outputText>
 		</p:column>
-		<p:column style="text-align: center;" headerText="Seguro MIP (R$)">
+		<p:column style="text-align: center;" headerText="Seguro MIP (R$)" rendered="!simulacao.naoCalcularDFI">
 			<h:outputText value="#{bpParcela.seguroMIP}"
 				converter="bigDecimalConverter">
 				<f:convertNumber pattern="#,##0.00" />
 			</h:outputText>
 		</p:column>
-		<p:column style="text-align: center;" headerText="Seguro DFI (R$)">
+		<p:column style="text-align: center;" headerText="Seguro DFI (R$)" rendered="!simulacao.naoCalcularMIP">
 			<h:outputText value="#{bpParcela.seguroDFI}"
 				converter="bigDecimalConverter">
 				<f:convertNumber pattern="#,##0.00" />

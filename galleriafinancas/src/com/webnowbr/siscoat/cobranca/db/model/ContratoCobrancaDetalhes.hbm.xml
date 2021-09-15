@@ -34,8 +34,8 @@
 		<property name="ipca" type="big_decimal">
 			<column name="ipca" />
 		</property>
-		<property name="seguroDIF" type="big_decimal">
-			<column name="seguroDIF" />
+		<property name="seguroDFI" type="big_decimal">
+			<column name="seguroDFI" />
 		</property>
 		<property name="seguroMIP" type="big_decimal">
 			<column name="seguroMIP" />

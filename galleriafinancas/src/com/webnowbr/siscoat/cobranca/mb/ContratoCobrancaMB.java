@@ -42,6 +42,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -94,6 +95,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
+import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
@@ -106,6 +108,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
+import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
@@ -241,8 +244,6 @@ public class ContratoCobrancaMB {
 	/** Objeto selecionado na LoV - Recebedor. */
 	private PagadorRecebedor selectedRecebedor10;
 	
-	private List<Segurado> listSegurado;
-
 	/** Lista dos Recebedores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedores;
 
@@ -663,6 +664,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1252,6 +1256,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());		
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1308,6 +1315,9 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 		this.qtdeParcelas = null;
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -3342,6 +3352,9 @@ public class ContratoCobrancaMB {
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
@@ -3392,7 +3405,7 @@ public class ContratoCobrancaMB {
 
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		
+		this.addSegurador= false;
 		
 			
 		this.vlrParcelaFinal = null;
@@ -6205,6 +6218,39 @@ public class ContratoCobrancaMB {
 
 		this.contratoGerado = true;
 	}
+	
+	
+	
+	public void atualizaIPCA() {
+		IPCADao ipcaDao = new IPCADao();
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		try {
+			for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
+				IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
+				ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao
+						.findById(relatorioFinanceiraCobranca.getIdParcela());
+
+				// primeira condição é para meses de mesmo ano; segunda condição é para os meses jan e fev da parcela IPCA
+				if (parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
+						|| parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
+
+					ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
+					if (parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
+						BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela()))
+								.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
+						parcelaIpca.setVlrParcela(
+								(parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						parcelaIpca.setIpca(valorIpca);
+						contratoCobrancaDetalhesDao.update(parcelaIpca);
+						relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void geraRelFinanceiroUltimaParcela() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -6794,6 +6840,10 @@ public class ContratoCobrancaMB {
 
 	public void loadSelectedLovs() {
 		clearSelectedRecebedores();
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
+		
 		this.selectedPagador = this.objetoContratoCobranca.getPagador();
 		this.nomePagador = this.objetoContratoCobranca.getPagador().getNome();
 		this.idPagador = this.objetoContratoCobranca.getPagador().getId();
@@ -7364,160 +7414,125 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		Date dataParcela;
-		BigDecimal parcelaMensal = BigDecimal.ZERO;
 		BigDecimal taxaRemuneracao = BigDecimal.ZERO;
-		BigDecimal saldo = BigDecimal.ZERO;
-		BigDecimal saldoAtualizado = BigDecimal.ZERO;
+		
+		String tipoCalculoInvestidor;
+		BigDecimal vlrInvestidor;
+		Integer qtdeParcelasInvestidor;
+
 		PagadorRecebedor investidor = new PagadorRecebedor();
 		boolean isEnvelope = false;
 
 		switch (investidorPosicao) {
 		case 1:
 			investidor = this.objetoContratoCobranca.getRecebedor();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor1();
-			investidor = this.objetoContratoCobranca.getRecebedor();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor1();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor1();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor1();
 			break;
 		case 2:
 			investidor = this.objetoContratoCobranca.getRecebedor2();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor2();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor2();
-			investidor = this.objetoContratoCobranca.getRecebedor2();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope2();
+
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor2();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor2();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor2();
 			break;
 		case 3:
 			investidor = this.objetoContratoCobranca.getRecebedor3();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor3();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor3();
-			investidor = this.objetoContratoCobranca.getRecebedor3();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope3();
+
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor3();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor3();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor3();
 			break;
 		case 4:
 			investidor = this.objetoContratoCobranca.getRecebedor4();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor4();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor4();
-			investidor = this.objetoContratoCobranca.getRecebedor4();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope4();
+
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor4();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor4();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor4();
 			break;
 		case 5:
 			investidor = this.objetoContratoCobranca.getRecebedor5();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor5();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor5();
-			investidor = this.objetoContratoCobranca.getRecebedor5();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope5();
+
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor5();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor5();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor5();
 			break;
 		case 6:
 			investidor = this.objetoContratoCobranca.getRecebedor6();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor6();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor6();
-			investidor = this.objetoContratoCobranca.getRecebedor6();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope6();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor6();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor6();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor6();
 			break;
 		case 7:
 			investidor = this.objetoContratoCobranca.getRecebedor7();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor7();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor7();
-			investidor = this.objetoContratoCobranca.getRecebedor7();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope7();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor7();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor7();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor7();
 			break;
 		case 8:
 			investidor = this.objetoContratoCobranca.getRecebedor8();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor8();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor8();
-			investidor = this.objetoContratoCobranca.getRecebedor8();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope8();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor8();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor8();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor8();
 			break;
 		case 9:
 			investidor = this.objetoContratoCobranca.getRecebedor9();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor9();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor9();
-			investidor = this.objetoContratoCobranca.getRecebedor9();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope9();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor9();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor9();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor9();
 			break;
 		case 10:
 			investidor = this.objetoContratoCobranca.getRecebedor10();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor10();
 			taxaRemuneracao = this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor10();
-			investidor = this.objetoContratoCobranca.getRecebedor10();
 			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope10();
+			
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor10();			
+			vlrInvestidor = this.objetoContratoCobranca.getVlrInvestidor10();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor10();
 			break;
 		}
 
-		// GET SALDO DO RECEBDOR FINAL
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal1() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal1().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor1();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal2() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal2().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor2();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal3() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal3().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor3();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal4() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal4().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor4();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal5() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal5().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor5();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal6() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal6().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor6();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal7() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal7().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor7();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal8() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal8().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor8();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal9() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal9().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor9();
-			}
-		}
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal10() != null) {
-			if (investidor.getId() == this.objetoContratoCobranca.getRecebedorParcelaFinal10().getId()) {
-				saldo = this.objetoContratoCobranca.getVlrFinalRecebedor10();
-			}
-		}
-
-		saldoAtualizado = saldo;
-		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
-
-		for (int i = 0; i < this.objetoContratoCobranca.getQtdeParcelas(); i++) {
+		//calcular simulador 
+		SimulacaoVO simulador = calcularInvestimento(investidorPosicao);
+		if( simulador == null)
+			return new ArrayList<ContratoCobrancaParcelasInvestidor>();
+		
+		for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
+			
+//		for (int i = 0; i < iQtdParcelas; i++) {
 			if (isEnvelope) {
 				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
 
-				dataParcela = contratoCobrancaDao.geraDataParcela(i + 1, this.objetoContratoCobranca.getDataInicio());
+				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), simulador.getDataSimulacao());
 
 				parcelaInvestidor.setDataVencimento(dataParcela);
-				parcelaInvestidor.setNumeroParcela(String.valueOf(i + 1));
-				parcelaInvestidor.setParcelaMensal(parcelaMensal);
-				parcelaInvestidor.setValorLiquido(parcelaMensal);
+				parcelaInvestidor.setNumeroParcela(CommonsUtil.stringValue(parcela.getNumeroParcela()));
+				parcelaInvestidor.setParcelaMensal(parcela.getValorParcela());
+				parcelaInvestidor.setValorLiquido(parcela.getValorParcela());
 				parcelaInvestidor.setBaixado(false);
 				parcelaInvestidor.setInvestidor(investidor);
 				parcelaInvestidor.setNumeroContrato(this.objetoContratoCobranca.getNumeroContrato());
@@ -7533,51 +7548,45 @@ public class ContratoCobrancaMB {
 			} else {
 				parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
 
-				dataParcela = contratoCobrancaDao.geraDataParcela(i + 1, this.objetoContratoCobranca.getDataInicio());
+				dataParcela = contratoCobrancaDao.geraDataParcela(parcela.getNumeroParcela().intValue(), simulador.getDataSimulacao());
 
 				parcelaInvestidor.setDataVencimento(dataParcela);
-				parcelaInvestidor.setNumeroParcela(String.valueOf(i + 1));
-				parcelaInvestidor.setParcelaMensal(parcelaMensal);
-				parcelaInvestidor.setSaldoCredor(saldo);
+				parcelaInvestidor.setNumeroParcela(CommonsUtil.stringValue(parcela.getNumeroParcela()));
+				parcelaInvestidor.setParcelaMensal(parcela.getValorParcela());
+				parcelaInvestidor.setSaldoCredor(parcela.getSaldoDevedorInicial());
 
 				// se a taxa de remuneração for maior que zero
 				if (taxaRemuneracao.compareTo(BigDecimal.ZERO) == 1) {
-					parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setAmortizacao(parcelaMensal.subtract(parcelaInvestidor.getJuros()));
+					parcelaInvestidor.setJuros(parcela.getJuros());
+					parcelaInvestidor.setAmortizacao(parcela.getAmortizacao());
 					parcelaInvestidor
-							.setSaldoCredorAtualizado(saldoAtualizado.subtract(parcelaInvestidor.getAmortizacao()));
+							.setSaldoCredorAtualizado(parcela.getSaldoDevedorInicial());
 				} else {
 					parcelaInvestidor.setJuros(BigDecimal.ZERO);
 					parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
 					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
 				}
 
-				saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+
 
 				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 					BigDecimal txIR = BigDecimal.ZERO;
 
-					if ((i + 1) <= 6) {
+					if ((parcela.getNumeroParcela().intValue()) <= 6) {
 						txIR = BigDecimal.valueOf(0.225);
-					}
-
-					if ((i + 1) > 6 && (i + 1) <= 12) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 6 && (parcela.getNumeroParcela().intValue()) <= 12) {
 						txIR = BigDecimal.valueOf(0.2);
-					}
-
-					if ((i + 1) > 12 && (i + 1) <= 18) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 12 && (parcela.getNumeroParcela().intValue()) <= 24) {
 						txIR = BigDecimal.valueOf(0.175);
-					}
-
-					if ((i + 1) > 18) {
+					}else if ((parcela.getNumeroParcela().intValue()) > 24) {
 						txIR = BigDecimal.valueOf(0.15);
 					}
 
 					parcelaInvestidor.setIrRetido(parcelaInvestidor.getJuros().multiply(txIR));
 
-					parcelaInvestidor.setValorLiquido(parcelaMensal.subtract(parcelaInvestidor.getIrRetido()));
+					parcelaInvestidor.setValorLiquido(parcela.getValorParcela().subtract(parcelaInvestidor.getIrRetido()));
 				} else {
-					parcelaInvestidor.setValorLiquido(parcelaMensal);
+					parcelaInvestidor.setValorLiquido(parcela.getValorParcela());
 				}
 
 				parcelaInvestidor.setBaixado(false);
@@ -7590,152 +7599,6 @@ public class ContratoCobrancaMB {
 				parcelasInvestidor.add(parcelaInvestidor);
 			}
 		}
-
-		// gera parcela final
-		if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
-			boolean temParcelaFinal = false;
-			PagadorRecebedor investidorFinal = new PagadorRecebedor();
-
-			// verifica se o recebedor tem parcela final a receber
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal1() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal1().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal2() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal2().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal3() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal3().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal4() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal4().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal5() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal5().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal6() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal6().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal7() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal7().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal8() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal8().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal9() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal9().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-			if (this.objetoContratoCobranca.getRecebedorParcelaFinal10() != null) {
-				if (this.objetoContratoCobranca.getRecebedorParcelaFinal10().getId() == investidor.getId()) {
-					temParcelaFinal = true;
-				}
-			}
-
-			if (temParcelaFinal) {
-				if (isEnvelope) {
-					parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
-
-					dataParcela = contratoCobrancaDao.geraDataParcela(parcelasInvestidor.size() + 1,
-							this.objetoContratoCobranca.getDataInicio());
-
-					parcelaInvestidor.setDataVencimento(dataParcela);
-					parcelaInvestidor.setNumeroParcela(String.valueOf(parcelasInvestidor.size() + 1));
-
-					if (parcelaInvestidor.getJuros() != null) {
-						parcelaInvestidor.setParcelaMensal(saldoAtualizado.add(parcelaInvestidor.getJuros()));
-					}
-
-					if (parcelaInvestidor.getParcelaMensal() != null) {
-						parcelaInvestidor.setValorLiquido(parcelaInvestidor.getParcelaMensal());
-					}
-
-					parcelaInvestidor.setBaixado(false);
-					parcelaInvestidor.setInvestidor(investidor);
-					parcelaInvestidor.setNumeroContrato(this.objetoContratoCobranca.getNumeroContrato());
-
-					parcelaInvestidor.setJuros(BigDecimal.ZERO);
-					parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
-					parcelaInvestidor.setSaldoCredor(BigDecimal.ZERO);
-					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
-					parcelaInvestidor.setIrRetido(BigDecimal.ZERO);
-
-					// adiciona a lista de retorno
-					parcelasInvestidor.add(parcelaInvestidor);
-				} else {
-					parcelaInvestidor = new ContratoCobrancaParcelasInvestidor();
-
-					dataParcela = contratoCobrancaDao.geraDataParcela(parcelasInvestidor.size() + 1,
-							this.objetoContratoCobranca.getDataInicio());
-
-					parcelaInvestidor.setDataVencimento(dataParcela);
-					parcelaInvestidor.setNumeroParcela(String.valueOf(parcelasInvestidor.size() + 1));
-					parcelaInvestidor.setSaldoCredor(saldo);
-
-					parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setAmortizacao(saldoAtualizado);
-
-					parcelaInvestidor.setParcelaMensal(saldoAtualizado.add(parcelaInvestidor.getJuros()));
-
-					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
-
-					saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
-
-					if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
-						BigDecimal txIR = BigDecimal.ZERO;
-
-						if ((parcelasInvestidor.size() + 1) <= 6) {
-							txIR = BigDecimal.valueOf(0.225);
-						}
-
-						if ((parcelasInvestidor.size() + 1) > 6 && (parcelasInvestidor.size() + 1) <= 12) {
-							txIR = BigDecimal.valueOf(0.2);
-						}
-
-						if ((parcelasInvestidor.size() + 1) > 12 && (parcelasInvestidor.size() + 1) <= 18) {
-							txIR = BigDecimal.valueOf(0.175);
-						}
-
-						if ((parcelasInvestidor.size() + 1) > 18) {
-							txIR = BigDecimal.valueOf(0.15);
-						}
-
-						parcelaInvestidor.setIrRetido(parcelaInvestidor.getJuros().multiply(txIR));
-
-						parcelaInvestidor.setValorLiquido(
-								parcelaInvestidor.getParcelaMensal().subtract(parcelaInvestidor.getIrRetido()));
-					} else {
-						parcelaInvestidor.setValorLiquido(parcelaInvestidor.getParcelaMensal());
-					}
-
-					parcelaInvestidor.setBaixado(false);
-
-					parcelaInvestidor.setInvestidor(investidor);
-
-					parcelaInvestidor.setNumeroContrato(this.objetoContratoCobranca.getNumeroContrato());
-
-					// adiciona a lista de retorno
-					parcelasInvestidor.add(parcelaInvestidor);
-				}
-			}
-		}
-
 		return parcelasInvestidor;
 	}
 
@@ -8031,7 +7894,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setPagador(pagadorRecebedorDao.findById(this.selectedPagador.getId()));
 		}
 
-		if (this.selectedRecebedor == null) {
+		if (this.selectedRecebedor == null && SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Erro de validação: é obrigatória a seleção do Recebedor.", ""));
 			erroValidacaoLov = true;
@@ -8045,11 +7908,20 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setRecebedorParcelaFinal1(this.selectedRecebedor);
 			}
 
-			this.objetoContratoCobranca.setRecebedor(pagadorRecebedorDao.findById(this.selectedRecebedor.getId()));
-			this.objetoContratoCobranca.setDataInclusaoRecebedor1(dataHoje);
-			if (verificaSeGeraParcelasInvestidor(
-					this.objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor1(), 1)) {
-				this.objetoContratoCobranca.setListContratoCobrancaParcelasInvestidor1(geraParcelasInvestidor(1));
+			if( this.selectedRecebedor == null) {
+				this.objetoContratoCobranca.setRecebedor(null);
+				this.objetoContratoCobranca.setVlrRecebedor(null);
+				this.objetoContratoCobranca.setDataInclusaoRecebedor1(null);
+				this.objetoContratoCobranca
+						.setListContratoCobrancaParcelasInvestidor1(new ArrayList<ContratoCobrancaParcelasInvestidor>());
+				this.objetoContratoCobranca.setRecebedorParcelaFinal1(null);
+			} else {
+				this.objetoContratoCobranca.setRecebedor(pagadorRecebedorDao.findById(this.selectedRecebedor.getId()));
+				this.objetoContratoCobranca.setDataInclusaoRecebedor1(dataHoje);
+				if (verificaSeGeraParcelasInvestidor(
+						this.objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor1(), 1)) {
+					this.objetoContratoCobranca.setListContratoCobrancaParcelasInvestidor1(geraParcelasInvestidor(1));
+				}
 			}
 		}
 
@@ -8432,30 +8304,35 @@ public class ContratoCobrancaMB {
 
 			this.fileBoleto = null;
 
-			SimulacaoVO simulador = calcularParcelas();
+			if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
 
-			for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
-				
-				ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela, this.objetoContratoCobranca.getDataInicio());
-				
+				SimulacaoVO simulador = calcularParcelas();
 
-				this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
+				for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 
-				// gera boleto
-				if (this.isGeraBoletoInclusaoContrato()) {
-					geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getPagador().getCpf(),
-							this.objetoContratoCobranca.getPagador().getCnpj(),
-							this.objetoContratoCobranca.getPagador().getEndereco()
-									+ this.objetoContratoCobranca.getPagador().getNumero(),
-							this.objetoContratoCobranca.getPagador().getBairro(),
-							this.objetoContratoCobranca.getPagador().getCep(),
-							this.objetoContratoCobranca.getPagador().getCidade(),
-							this.objetoContratoCobranca.getPagador().getEstado(), contratoCobrancaDetalhes.getDataVencimento(),
-							this.objetoContratoCobranca.getVlrParcela(), contratoCobrancaDetalhes.getNumeroParcela());
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao,
+							parcela, this.objetoContratoCobranca.getDataInicio());
+
+					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
+
+					// gera boleto
+					if (this.isGeraBoletoInclusaoContrato()) {
+						geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getPagador().getCpf(),
+								this.objetoContratoCobranca.getPagador().getCnpj(),
+								this.objetoContratoCobranca.getPagador().getEndereco()
+										+ this.objetoContratoCobranca.getPagador().getNumero(),
+								this.objetoContratoCobranca.getPagador().getBairro(),
+								this.objetoContratoCobranca.getPagador().getCep(),
+								this.objetoContratoCobranca.getPagador().getCidade(),
+								this.objetoContratoCobranca.getPagador().getEstado(),
+								contratoCobrancaDetalhes.getDataVencimento(),
+								this.objetoContratoCobranca.getVlrParcela(),
+								contratoCobrancaDetalhes.getNumeroParcela());
+					}
+
 				}
-
 			}
 
 
@@ -8550,7 +8427,7 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDetalhes
 				.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-		contratoCobrancaDetalhes.setSeguroDIF(parcela.getSeguroDFI().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		contratoCobrancaDetalhes.setSeguroDFI(parcela.getSeguroDFI().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		contratoCobrancaDetalhes.setSeguroMIP(parcela.getSeguroMIP().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
 //		contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasse);
@@ -8607,6 +8484,131 @@ public class ContratoCobrancaMB {
 		simulador.setNaoCalcularMIP(
 				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
 
+		simulador.calcular();
+		return simulador;
+	}
+	
+	private SimulacaoVO calcularInvestimento(int numeroInvestidor){
+		BigDecimal tarifaIOFDiario;
+		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+
+//			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+//			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
+//					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+//				custoEmissaoValor = this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)));
+//			}
+		boolean isEnvelope = false;
+		
+		SimulacaoVO simulador = new SimulacaoVO();
+
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PF");
+		} else {
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			simulador.setTipoPessoa("PJ");
+		}
+		
+		if (numeroInvestidor == 1) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor1());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor1());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor1())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor1());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor1()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor1());
+		} else if (numeroInvestidor == 2) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor2());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor2());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor2())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor2());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope2();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor2()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor2());
+		} else if (numeroInvestidor == 3) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor3());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor3());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor3())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor3());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope3();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor3()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor3());
+		} else if (numeroInvestidor == 4) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor4());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor4());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor4())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor4());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope4();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor4()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor4());
+		} else if (numeroInvestidor == 5) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor5());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor5());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor5())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor5());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope5();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor5()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor5());
+		} else if (numeroInvestidor == 6) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor6());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor6());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor6())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor6());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope6();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor6()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor6());
+		} else if (numeroInvestidor == 7) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor7());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor7());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor7())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor7());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope7();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor7()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor7());
+		} else if (numeroInvestidor == 8) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor8());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor8());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor8())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor8());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope8();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor8()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor8());
+		} else if (numeroInvestidor == 9) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor9());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor9());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor9())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor9());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope9();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor9()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor9());
+		} else if (numeroInvestidor == 10) {
+			simulador.setValorCredito(this.objetoContratoCobranca.getVlrInvestidor10());
+			simulador.setTaxaJuros(this.objetoContratoCobranca.getTaxaRemuneracaoInvestidor10());
+			simulador.setQtdParcelas(BigInteger.valueOf(CommonsUtil.intValue(this.objetoContratoCobranca.getQtdeParcelasInvestidor10())));
+			simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculoInvestidor10());
+			isEnvelope = this.objetoContratoCobranca.isRecebedorEnvelope10();
+			simulador.setCarencia(BigInteger.valueOf( this.objetoContratoCobranca.getCarenciaInvestidor10()));
+			simulador.setDataSimulacao(this.objetoContratoCobranca.getDataInicioInvestidor10());
+		}
+		
+		if( simulador.getQtdParcelas().compareTo(BigInteger.ZERO)==0) {
+			return null;
+		}
+		
+		if (isEnvelope) {
+			simulador.setTipoCalculo("Envelope");
+		}
+		
+		//simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(BigDecimal.ZERO);
+		simulador.setSeguroDFI(BigDecimal.ZERO);
+		// valores		
+		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+//			simulador.setCustoEmissaoValor(custoEmissaoValor);		
+		simulador.setNaoCalcularDFI(true);
+		simulador.setNaoCalcularMIP(true);
 		simulador.calcular();
 		return simulador;
 	}
@@ -8681,6 +8683,13 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 		}
 	}
+	
+	public void mostrarInvestimento(int numeroInvestidor) {
+		try {
+			this.simuladorParcelas = calcularInvestimento(numeroInvestidor);
+		} catch (Exception e) {
+		}
+	}
 
 	public void mostrarReParcelamento() {
 		try {			
@@ -8725,7 +8734,7 @@ public class ContratoCobrancaMB {
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalhe.setSeguroDIF(parcela.getSeguroDFI());
+					detalhe.setSeguroDFI(parcela.getSeguroDFI());
 					detalhe.setSeguroMIP(parcela.getSeguroMIP());
 					if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
 						detalhe.setParcelaPaga(true);
@@ -8834,9 +8843,11 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirSegurado() {
+		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador= false;
 		}
 	
 	public void removerSegurado(Segurado segurado) {
@@ -9759,7 +9770,7 @@ public class ContratoCobrancaMB {
 		
 		amortizacao.setVlrSaldoParcela(parcelaAnterior.getVlrSaldoParcela().subtract(amortizacao.getVlrAmortizacaoParcela()));
 		amortizacao.setVlrJurosParcela(BigDecimal.ZERO);
-		amortizacao.setSeguroDIF(BigDecimal.ZERO);
+		amortizacao.setSeguroDFI(BigDecimal.ZERO);
 		amortizacao.setSeguroMIP(BigDecimal.ZERO);
 		amortizacao.setVlrParcela(amortizacao.getVlrAmortizacaoParcela());
 		amortizacao.setNumeroParcela("Amortização");

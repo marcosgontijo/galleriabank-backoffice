@@ -405,6 +405,10 @@ public class CommonsUtil {
 		return value == null;
 	}
 
+	public static final boolean semValor(BigDecimal value) {
+		return value == null || value.compareTo(BigDecimal.ZERO) == 0;
+	}
+	
 	public static boolean semValor(StringBuilder value) {
 		return value == null || value.length() == 0;
 	}
