@@ -8436,6 +8436,16 @@ public class ContratoCobrancaMB {
 			contratoCobrancaDetalhes.setVlrParcela(BigDecimal.ZERO);
 		}
 		
+		if (DateUtil.isAfterDate(contratoCobrancaDetalhes.getDataVencimento(), DateUtil.getDataHoje()) && !contratoCobrancaDetalhes.isParcelaPaga()) {
+			contratoCobrancaDetalhes.setParcelaVencida(true);
+		}else 
+			contratoCobrancaDetalhes.setParcelaVencida(false);
+
+		if (DateUtil.isDataHoje(contratoCobrancaDetalhes.getDataVencimento()) && !contratoCobrancaDetalhes.isParcelaPaga()) {
+			contratoCobrancaDetalhes.setParcelaVencendo(true);
+		}else 
+			contratoCobrancaDetalhes.setParcelaVencendo(false);
+		
 		return contratoCobrancaDetalhes;
 		
 	}
