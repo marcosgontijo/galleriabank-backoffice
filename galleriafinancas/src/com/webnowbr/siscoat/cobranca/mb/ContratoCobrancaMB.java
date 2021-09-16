@@ -59,6 +59,9 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -418,6 +421,9 @@ public class ContratoCobrancaMB {
 	private ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcialTemp;
 
 	/** Atributos relatórios */
+	private Date relDataContratoInicioAtraso;
+	private Date relDataContratoFimAtraso;
+	
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
 	private List<RelatorioFinanceiroCobranca> relObjetoContratoCobranca;
@@ -4317,6 +4323,32 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserir.xhtml";
 	}
+	
+	public String clearFieldsDocumentoWord() {
+		return "/Atendimento/Cobranca/DocumentoWord.xhtml";
+	}
+	
+	public void geraDocumentoWord() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+
+		/* Se filtro somente por numero do contrato */
+		if (this.numContrato.length() == 4) {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela("0" + this.numContrato);
+		} else {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(this.numContrato);
+		}
+		
+		RelatorioFinanceiroCobranca rfc =  new RelatorioFinanceiroCobranca();
+
+		this.objetoContratoCobranca.setDataContrato(rfc.getDataContrato());
+		
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+	}
 
 	public String clearFieldsEditarReParcelar() {
 		this.tituloPainel = "Editar";
@@ -5051,7 +5083,12 @@ public class ContratoCobrancaMB {
 
 	
 	public String clearFieldsRelFinanceiroAtraso() {
-		this.relDataContratoInicio = gerarDataHoje();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
 		
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
@@ -5473,7 +5510,18 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
+	
 
+	/*
+	 * public void alteraContratoParaCartorio() { ContratoCobrancaDao
+	 * contratoCobrancaDao = new ContratoCobrancaDao();
+	 * this.relObjetoContratoCobranca = new
+	 * ArrayList<RelatorioFinanceiroCobranca>(); List<RelatorioFinanceiroCobranca>
+	 * relObjetoContratoCobrancaAux = new ArrayList<RelatorioFinanceiroCobranca>();
+	 * 
+	 * contratoCobrancaDao.s }
+	 */
+	
 	public void geraRelFinanceiroAtraso() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
@@ -5481,7 +5529,7 @@ public class ContratoCobrancaMB {
 
 		// Busca Contratos com Parcelas que vencem no dia atual
 		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFull(
-				this.relDataContratoInicio);
+				this.relDataContratoInicioAtraso,this.relDataContratoFimAtraso);
 		
 		for (RelatorioFinanceiroCobranca parcelas : relObjetoContratoCobrancaAux) {
 			// chamada para contar parcelas em atraso
@@ -5504,7 +5552,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 		*/
-
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
 		}
@@ -5519,6 +5566,8 @@ public class ContratoCobrancaMB {
 
 		this.contratoGerado = false;
 	}
+	
+	
 	
 	public void geraRelFinanceiro() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -13736,6 +13785,22 @@ public class ContratoCobrancaMB {
 		}
 
 	}
+	
+	public void writeXWPFileBaixado() throws IOException {
+		String wordFileName = "Relatório Financeiro Baixado Cobranças.docx";// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XWPFDocument document = new XWPFDocument();
+		XWPFTable sheet = document.createTable();
+		sheet.setWidth(25);
+		
+		FileOutputStream fileOut = new FileOutputStream(wordFileName);
+
+		// write this workbook to an Outputstream.
+		document.write(fileOut);
+
+	}
 
 	public void writeXLSXFileBaixado() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
@@ -18562,6 +18627,24 @@ public class ContratoCobrancaMB {
 	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
 		this.updatePagadorRecebedor = updatePagadorRecebedor;
 	}
+
+	public Date getRelDataContratoInicioAtraso() {
+		return relDataContratoInicioAtraso;
+	}
+
+	public void setRelDataContratoInicioAtraso(Date relDataContratoInicioAtraso) {
+		this.relDataContratoInicioAtraso = relDataContratoInicioAtraso;
+	}
+
+	public Date getRelDataContratoFimAtraso() {
+		return relDataContratoFimAtraso;
+	}
+
+	public void setRelDataContratoFimAtraso(Date relDataContratoFimAtraso) {
+		this.relDataContratoFimAtraso = relDataContratoFimAtraso;
+	}
+	
+	
 	
 	
 }

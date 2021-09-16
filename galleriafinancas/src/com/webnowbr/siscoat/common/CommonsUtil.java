@@ -573,6 +573,11 @@ public class CommonsUtil {
 	public static final String formataValorMonetario(Number valor) {
 		return formataNumero(valor, "#,##0.00");
 	}
+	
+	public static final String formataValorMonetario(BigDecimal valor, String moeda) {
+		DecimalFormat df = new DecimalFormat("#,##0.00");
+		return moeda + df.format(valor);	
+	}
 
 	/**
 	 * Formata a data no padrão dd/MM/yyyy
@@ -1532,6 +1537,22 @@ public class CommonsUtil {
 			String mesExtenso = meses.substring(mesPosicao, mesPosicao + 9);
 
 			mesAno = mesExtenso.trim() + "/" + ano;
+		}
+		return mesAno;
+	}
+	public static final String formataMesExtenso(Date data) {
+		String mesAno = formataData(data, "MMyyyy");
+		if (mesAno == null) {
+			mesAno = "";
+		}
+		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno)) ) {
+			Integer mes = Integer.parseInt(mesAno.substring(0, 2));
+			Integer mesPosicao = ((mes - 1) * 9);
+
+			String meses = "Janeiro  FevereiroMarço    Abril    Maio     Junho    Julho    Agosto   Setembro Outubro  Novembro Dezembro ";
+			String mesExtenso = meses.substring(mesPosicao, mesPosicao + 9);
+
+			mesAno = mesExtenso.trim();
 		}
 		return mesAno;
 	}

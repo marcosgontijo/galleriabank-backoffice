@@ -699,6 +699,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoque(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
 			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, 
@@ -713,6 +714,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				String query_RELATORIO_FINANCEIRO_CUSTOM = null;
 				String query_RELATORIO_FINANCEIRO_RECEBEDORES = null;
+	
 				try {
 					connection = getConnection();
 					
@@ -2884,10 +2886,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "and cd.parcelapaga = false "
 			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
 			+ "and cc.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' "
-			+ "and cd.datavencimentoatual < ? ::timestamp order by cd.dataVencimentoatual desc ";
+			+ "and cd.datavencimentoatual >= ? ::timestamp "
+			+ "and cd.datavencimentoatual <= ? ::timestamp ";
 	
 	@SuppressWarnings("unchecked")
-	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFull(final Date dtRelInicio) {
+	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFull(final Date dtRelInicio, final Date dtRelFim) {
 		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2897,7 +2900,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				String query_RELATORIO_FINANCEIRO_CUSTOM = null;	
-				
+			
 				try {
 					connection = getConnection();
 					
@@ -2907,7 +2910,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
-					ps.setDate(1, dtRelInicioSQL);					
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+					
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);	
+					
 	
 					rs = ps.executeQuery();
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
