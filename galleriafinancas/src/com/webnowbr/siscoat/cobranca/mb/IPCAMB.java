@@ -59,7 +59,7 @@ public class IPCAMB {
 					
 			ipcaDao.create(ipca);
 			
-			atualizaValoresContratos();
+			//atualizaValoresContratos();
 			
 			clearFieldsIPCA();
 			

@@ -914,11 +914,7 @@ public class ContratoCobrancaMB {
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 
 		/* Se filtro somente por numero do contrato */
-		if (this.numContrato.length() == 4) {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela("0" + this.numContrato);
-		} else {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(this.numContrato);
-		}
+		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(CommonsUtil.strZero(this.numContrato, 5));
 
 		int totalQtedParcelas = 0;
 		this.totalVlrParcelas = BigDecimal.ZERO;
@@ -3427,7 +3423,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
-		this.objetoContratoCobranca.setStatus("Aprovado");
+		this.objetoContratoCobranca.setStatus("Aprovado");		
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
 
@@ -5567,8 +5563,6 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = false;
 	}
 	
-	
-	
 	public void geraRelFinanceiro() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
@@ -7621,13 +7615,13 @@ public class ContratoCobrancaMB {
 				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 					BigDecimal txIR = BigDecimal.ZERO;
 
-					if ((parcela.getNumeroParcela().intValue()) <= 6) {
+					if ((parcela.getNumeroParcela().intValue()) < 6) {
 						txIR = BigDecimal.valueOf(0.225);
-					}else if ((parcela.getNumeroParcela().intValue()) > 6 && (parcela.getNumeroParcela().intValue()) <= 12) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 6 && (parcela.getNumeroParcela().intValue()) < 12) {
 						txIR = BigDecimal.valueOf(0.2);
-					}else if ((parcela.getNumeroParcela().intValue()) > 12 && (parcela.getNumeroParcela().intValue()) <= 24) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 12 && (parcela.getNumeroParcela().intValue()) < 24) {
 						txIR = BigDecimal.valueOf(0.175);
-					}else if ((parcela.getNumeroParcela().intValue()) > 24) {
+					}else if ((parcela.getNumeroParcela().intValue()) >= 24) {
 						txIR = BigDecimal.valueOf(0.15);
 					}
 
@@ -8488,6 +8482,16 @@ public class ContratoCobrancaMB {
 			contratoCobrancaDetalhes.setDataPagamento(dataParcela);
 			contratoCobrancaDetalhes.setVlrParcela(BigDecimal.ZERO);
 		}
+		
+		if (DateUtil.isAfterDate(contratoCobrancaDetalhes.getDataVencimento(), DateUtil.getDataHoje()) && !contratoCobrancaDetalhes.isParcelaPaga()) {
+			contratoCobrancaDetalhes.setParcelaVencida(true);
+		}else 
+			contratoCobrancaDetalhes.setParcelaVencida(false);
+
+		if (DateUtil.isDataHoje(contratoCobrancaDetalhes.getDataVencimento()) && !contratoCobrancaDetalhes.isParcelaPaga()) {
+			contratoCobrancaDetalhes.setParcelaVencendo(true);
+		}else 
+			contratoCobrancaDetalhes.setParcelaVencendo(false);
 		
 		return contratoCobrancaDetalhes;
 		

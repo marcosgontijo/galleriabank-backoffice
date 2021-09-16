@@ -159,11 +159,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
 			+ "where cc.status = 'Aprovado' ";
 	
-	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
-			+ "from cobranca.contratocobrancadetalhes cd "
-			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
-			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+//	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
+//			+ "from cobranca.contratocobrancadetalhes cd "
+//			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+//			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+//			+ "where cc.status = 'Aprovado' ";
+	
+	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cc.id idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse " 
+			+ " from cobranca.contratocobranca cc "
+			+ " left join cobranca.contratocobranca_detalhes_join cdj on cc.id = cdj.idcontratocobranca "  
+			+ " left join cobranca.contratocobrancadetalhes cd  on cd.id = cdj.idcontratocobrancadetalhes "
 			+ "where cc.status = 'Aprovado' ";
+	
+	
 	/*
 	private static final String QUERY_ULTIMO_NUMERO_CONTRATO = "select numerocontrato from cobranca.contratocobranca " +
 			"order by id desc limit 1"; 
@@ -1037,8 +1045,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
 					}
 	
 				} finally {
@@ -2887,7 +2900,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
 			+ "and cc.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' "
 			+ "and cd.datavencimentoatual >= ? ::timestamp "
-			+ "and cd.datavencimentoatual <= ? ::timestamp ";
+			+ "and cd.datavencimentoatual <= ? ::timestamp "
+			+ " order by cd.dataVencimentoatual desc ";
 	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFull(final Date dtRelInicio, final Date dtRelFim) {
