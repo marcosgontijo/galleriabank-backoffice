@@ -134,6 +134,13 @@
 							<p:inputText id="cepEmitente" value="#{ccbMB.cepEmitente}"
 								label="Contrato" />
 
+							<p:outputLabel for="emailEmitente" value="Email do emitente: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="emailEmitente" value="#{ccbMB.emailEmitente}"
+								label="Contrato" />
+
+
 						</h:panelGrid>
 
 						<h:panelGroup id="conjugueEmitente">
@@ -469,7 +476,6 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputNumber id="cetMes" value="#{ccbMB.cetMes}"
 										decimalPlaces="4" />
-
 
 									<p:outputLabel for="cetAno" value="CET(Ano%): "
 										styleClass="labelBold"
