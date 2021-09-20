@@ -604,7 +604,17 @@ public class CcbMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			
-			gerador.open(String.format("teste %s.docx", ""));
+			if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
+				gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"Anuente")) {
+	    		gerador.open(String.format("Galleria Bank - Modelo_Anuente %s.docx", ""));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
+	    		gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
+	    	} else {
+	    		gerador.open(String.format("teste %s.docx", ""));	    	
+	    	}
+
+			
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 	    }
