@@ -60,6 +60,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.OperacoesIndividualizado;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.ContaContabilDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -99,6 +100,8 @@ public class ContasPagarMB {
 	private List<PagadorRecebedor> listRecebedorPagador;
 	/** Objeto selecionado na LoV - Pagador. */
 	private PagadorRecebedor selectedPagadorGenerico;
+	String updatePagadorRecebedor = "";
+
 
 	private List<ContaContabil> listContasContabil;
 	/** Objeto selecionado na LoV - Pagador. */
@@ -314,6 +317,10 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setPagadorRecebedor(this.selectedPagadorGenerico);
 	}
 	
+	public final void pesquisaPagador() {		
+		updatePagadorRecebedor = ":form:pagadorPanel";		
+	}
+	
 	public final void populateSelectedResponsavel() {
 		this.objetoContasPagar.setResponsavel(this.selectedResponsavel);
 	}
@@ -332,6 +339,9 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setContaContabil(this.selectedContaContabil);
 	}
 
+	
+	
+	
 	public List<ContasPagar> getContasPagar() {
 		return contasPagar;
 	}
@@ -466,5 +476,21 @@ public class ContasPagarMB {
 
 	public void setListResponsavel(List<Responsavel> listResponsavel) {
 		this.listResponsavel = listResponsavel;
+	}
+
+	public PagadorRecebedor getSelectedPagadorGenerico() {
+		return selectedPagadorGenerico;
+	}
+
+	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
+		this.selectedPagadorGenerico = selectedPagadorGenerico;
+	}
+
+	public String getUpdatePagadorRecebedor() {
+		return updatePagadorRecebedor;
+	}
+
+	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
+		this.updatePagadorRecebedor = updatePagadorRecebedor;
 	}
 }
