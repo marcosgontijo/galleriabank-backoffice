@@ -15,18 +15,21 @@
 			<ui:define name="menu">
 				<h:form style="margin-bottom:10px;">
 					<p:menu style="width: 250px;">
-						<p:submenu label="Venda" styleClass="titulosMenu">
+						<shiro:hasAnyRoles name="ROOT, POSTO">
+							<p:submenu label="Venda" styleClass="titulosMenu">
 								<p:menuitem value="Operacao"
-									action="#{relatorioVendaOperacaoMB.clearFields}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-						</p:submenu>
-						<p:submenu label="Seguro" styleClass="titulosMenu">
+									action="#{relatorioVendaOperacaoMB.clearFields}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						
+						<shiro:hasAnyRoles name="ROOT, POSTO, COBRANCA, PRECOBRANCA">
+							<p:submenu label="Seguro" styleClass="titulosMenu">
 								<p:menuitem value="Tabela"
-									action="#{seguroTabelaMB.clearFields}" 
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-						</p:submenu>
+									action="#{seguroTabelaMB.clearFields}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
 					</p:menu>
 				</h:form>
 			</ui:define>
