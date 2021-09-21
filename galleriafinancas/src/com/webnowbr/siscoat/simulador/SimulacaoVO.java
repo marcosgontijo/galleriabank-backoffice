@@ -179,17 +179,17 @@ public class SimulacaoVO {
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
-		if ("PF".equals(tipoPessoa)) {
-			if ((valorTotalIOF.add(valorOParcelaIOF))
-					.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.03d))) == 1) {
-				calcularIOF = false;
-			}
-		} else {
-			if ((valorTotalIOF.add(valorOParcelaIOF))
-					.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.015d))) == 1) {
-				calcularIOF = false;
-			}
-		}
+//		if ("PF".equals(tipoPessoa)) {
+//			if ((valorTotalIOF.add(valorOParcelaIOF))
+//					.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.03d))) == 1) {
+//				calcularIOF = false;
+//			}
+//		} else {
+//			if ((valorTotalIOF.add(valorOParcelaIOF))
+//					.compareTo(valorCredito.multiply(BigDecimal.valueOf(0.015d))) == 1) {
+//				calcularIOF = false;
+//			}
+//		}
 
 		if (calcularIOF) {
 			parcelaCalculo.setValorIOF(valorOParcelaIOF);

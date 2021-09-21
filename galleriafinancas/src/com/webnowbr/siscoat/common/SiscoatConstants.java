@@ -15,8 +15,11 @@ public class SiscoatConstants {
 
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL = BigDecimal.valueOf(3);
 	public static final BigDecimal CUSTO_EMISSAO_MINIMO 	 = BigDecimal.valueOf(3500);
-	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.0041);
-	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
+	//public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.0041);
+	//public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
+	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0112);
+	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00559);
+
 	public static final BigDecimal IOF_ADICIONAL = BigDecimal.valueOf(0.38);
 
 	public static final List<Long> PAGADOR_GALLERIA = Arrays.asList(15l, 34l, 14l, 182l, 417l, 803l);
