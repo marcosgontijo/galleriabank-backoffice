@@ -25,7 +25,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
-			<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+			<shiro:hasAnyRoles name= "ROOT, COBRANCA, PRECOBRANCA">
 				<p:panel id="PanelLocador" header="Contrato"
 					style="margin-bottom:10px;">
 					<p:focus />
@@ -83,7 +83,7 @@
 								<f:selectItem itemValue="UNIÃO ESTÁVEL"
 									itemLabel="UNIÃO ESTÁVEL" />
 								<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
-								<p:ajax update=":form:conjugueEmitente" event="change" />
+								<p:ajax update=":form:emitentePanel" event="change" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="numeroRgEmitente"
@@ -139,8 +139,17 @@
 								style="font-weight: bold; font-size: 18px;" />
 							<p:inputText id="emailEmitente" value="#{ccbMB.emailEmitente}"
 								label="Contrato" />
-
-
+								
+							<p:outputLabel for="regimeCasamentoEmitente" value="RegimeCasamento: "
+								styleClass="labelBold" rendered="#{ccbMB.estadoCivilEmitente == 'CASADO'}"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="regimeCasamentoEmitente" rendered="#{ccbMB.estadoCivilEmitente == 'CASADO'}"
+								value="#{ccbMB.regimeCasamentoEmitente}" ajax="true">
+								<f:selectItem itemValue="regime universal de bens, antes da vigência da lei 6.515 de 1977" itemLabel="Universal de bens" />
+								<f:selectItem itemValue="Parcial" itemLabel="Comunhão parcial de bens" />
+								<f:selectItem itemValue="SeparacaoTotal" itemLabel="Separação total de bens" />
+								<f:selectItem itemValue="ObrigatorioSeparacao" itemLabel="Obrigatório de separação de bens" />
+							</p:selectOneMenu>
 						</h:panelGrid>
 
 						<h:panelGroup id="conjugueEmitente">
@@ -684,6 +693,8 @@
 							label="Contrato" style="width:150px;" /> -->
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 						icon="ui-icon ui-icon-print" value="Fazer Download" />
+					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsEmitirCcb}"
+						icon="ui-icon ui-icon-print" value="LimparCampos" />
 				</p:panel>
 			</shiro:hasAnyRoles>
 		</h:form>

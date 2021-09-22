@@ -54,6 +54,8 @@ public class CcbMB {
 	private String cidadeEmitente;
 	private String cepEmitente;
 	private String emailEmitente;
+	private String regimeCasamentoEmitente;
+	private boolean isFiduciante;
 
 
 	private String nomeConjugeEmitente;
@@ -623,9 +625,6 @@ public class CcbMB {
 	        e.printStackTrace();
 	    }
 	    
-        this.intervenienteSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
-		this.selectedPagador = new PagadorRecebedor();
 	    return null;
 	}
 
@@ -647,6 +646,84 @@ public class CcbMB {
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
+		
+		this.setNomeEmitente(null);
+		this.setProfissaoEmitente(null);
+		this.setEstadoCivilEmitente(null);
+		this.setNumeroRgEmitente(null);
+		this.setUfEmitente(null);
+		this.setCpfEmitente(null);
+		this.setLogradouroEmitente(null);
+		this.setNumeroEmitente(null);
+		this.setComplementoEmitente(null);
+		this.setCidadeEmitente(null);
+		this.setCepEmitente(null);
+		this.setEmailEmitente(null);
+		if (this.getNomeConjugeEmitente() != null) {
+			this.setNomeConjugeEmitente(null);
+			this.setProfissaoConjugeEmitente(null);
+			this.setNumeroRgConjugeEmitente(null);
+			this.setUfConjugeEmitente(null);
+			this.setCpfConjugeEmitente(null);
+			this.setLogradouroEmitente(null);
+			this.setComplementoConjugeEmitente(null);
+			this.setCidadeConjugeEmitente(null);
+			this.setCepConjugeEmitente(null);
+			this.setEmailConjugeEmitente(null);
+		}
+		this.setNomeInterveniente(null);
+		this.setProfissaoInterveniente(null);
+		this.setEstadoCivilInterveniente(null);
+		this.setNumeroRgInterveniente(null);
+		this.setUfInterveniente(null);
+		this.setCpfInterveniente(null);
+		this.setLogradouroInterveniente(null);
+		this.setNumeroInterveniente(null);
+		this.setComplementoInterveniente(null);
+		this.setCidadeInterveniente(null);
+		this.setCepInterveniente(null);
+		if (this.getNomeConjugeInterveniente() != null) {
+			this.setNomeConjugeInterveniente(null);
+			this.setProfissaoConjugeInterveniente(null);
+			this.setNumeroRgConjugeInterveniente(null);
+			this.setUfConjugeInterveniente(null);
+			this.setCpfConjugeInterveniente(null);
+			this.setLogradouroInterveniente(null);
+			this.setComplementoConjugeInterveniente(null);
+			this.setCidadeConjugeInterveniente(null);
+			this.setCepConjugeInterveniente(null);
+		}
+		 valorLiquidoCredito = null;
+		 valorCredito = null;
+		 custoEmissao = null;
+		 valorIOF = null;
+		 valorDespesas = null;	
+		 taxaDeJurosMes = null;
+		 taxaDeJurosAno = null;
+		 cetMes = null;
+		 cetAno = null;
+		 contaCorrente = null;
+		 agencia = null;
+		 numeroBanco = null;
+		 nomeBanco = null;
+		 numeroParcelasPagamento = null;
+		 vencimentoPrimeiraParcelaPagamento = null;
+		 vencimentoUltimaParcelaPagamento = null;
+		 montantePagamento = null;
+		 numeroParcelasDFI = null;
+		 vencimentoPrimeiraParcelaDFI = null;
+		 vencimentoUltimaParcelaDFI = null;
+		 montanteDFI = null;
+		 numeroParcelasMIP = null;
+		 vencimentoPrimeiraParcelaMIP = null;
+		 vencimentoUltimaParcelaMIP = null;
+		 montanteMIP = null;
+		 tarifaAntecipada = null;
+		 dataDeEmissao = null;
+		 numeroImovel = null;
+		 cartorioImovel = null;
+		 cidadeImovel = null;
+		 ufImovel = null;
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 
@@ -1362,6 +1439,23 @@ public class CcbMB {
 	public void setEmailConjugeEmitente(String emailConjugeEmitente) {
 		this.emailConjugeEmitente = emailConjugeEmitente;
 	}
+
+	public String getRegimeCasamentoEmitente() {
+		return regimeCasamentoEmitente;
+	}
+
+	public void setRegimeCasamentoEmitente(String regimeCasamentoEmitente) {
+		this.regimeCasamentoEmitente = regimeCasamentoEmitente;
+	}
+
+	public boolean isFiduciante() {
+		return isFiduciante;
+	}
+
+	public void setFiduciante(boolean isFiduciante) {
+		this.isFiduciante = isFiduciante;
+	}
+	
 	
 
 }
