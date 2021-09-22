@@ -1259,8 +1259,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
 					}
 	
 				} finally {
@@ -1469,8 +1474,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
 					}
 	
 				} finally {
@@ -1806,8 +1815,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome,recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
 					}
 	
 				} finally {
@@ -2952,8 +2965,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 						
 						if (!exiteParcela) {
-							objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-									contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));
+							String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+							String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+							String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+							
+							
+							objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+									pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));
 						}																		
 					}
 	
@@ -3302,8 +3320,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 												
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
 					}
 	
 				} finally {
@@ -3350,8 +3373,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 							
 							if (!ct.isParcelaPaga()) {
-								objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-										contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, ct.getDataVencimento(), ct.getVlrParcela(), contratoCobranca, ct.getVlrRetencao(), ct.getVlrComissao(), ct.isParcelaPaga(), ct.getDataVencimentoAtual(), ct.getId(), ct.getVlrRepasse()));
+								String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+								String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+								String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+								
+								
+								objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+										pagadorNome, recebedorNome, parcela, ct.getDataVencimento(), ct.getVlrParcela(), contratoCobranca, ct.getVlrRetencao(), ct.getVlrComissao(), ct.isParcelaPaga(), ct.getDataVencimentoAtual(), ct.getId(), ct.getVlrRepasse()));
 							}
 						}																
 					}
@@ -3400,8 +3428,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 												
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(),  responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
 					}
 	
 				} finally {
@@ -3448,8 +3481,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 												
 						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
 						
-						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+						
+						
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10)));												
 					}
 	
 				} finally {
