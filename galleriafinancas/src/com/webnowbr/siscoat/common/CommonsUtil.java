@@ -578,6 +578,10 @@ public class CommonsUtil {
 		DecimalFormat df = new DecimalFormat("#,##0.00");
 		return moeda + df.format(valor);	
 	}
+	
+	public static final String formataValorTaxa(BigDecimal valor) {
+		return formataNumero(valor, "#,##0.0000");
+	}
 
 	/**
 	 * Formata a data no padrão dd/MM/yyyy

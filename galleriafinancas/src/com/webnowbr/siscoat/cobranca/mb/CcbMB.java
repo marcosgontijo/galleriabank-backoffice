@@ -8,12 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.IntegerConverter;
 import javax.xml.crypto.Data;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -51,6 +53,10 @@ public class CcbMB {
 	private String complementoEmitente;
 	private String cidadeEmitente;
 	private String cepEmitente;
+	private String emailEmitente;
+	private String regimeCasamentoEmitente;
+	private boolean isFiduciante;
+
 
 	private String nomeConjugeEmitente;
 	private String nacionalidadeConjugeEmitente;
@@ -63,6 +69,8 @@ public class CcbMB {
 	private String complementoConjugeEmitente;
 	private String cidadeConjugeEmitente;
 	private String cepConjugeEmitente;
+	private String emailConjugeEmitente;
+
 
 //--------------------------------------------------------------------
 	private String nomeInterveniente;
@@ -78,17 +86,17 @@ public class CcbMB {
 	private String cidadeInterveniente;
 	private String cepInterveniente;
 
-	private String nomeIntervenienteConjuge;
-	private String nacionalidadeIntervenienteConjuge;
-	private String profissaoIntervenienteConjuge;
-	private String numeroRgIntervenienteConjuge;
-	private String ufIntervenienteConjuge;
-	private String cpfIntervenienteConjuge;
-	private String logradouroIntervenienteConjuge;
-	private String numeroIntervenienteConjuge;
-	private String complementoIntervenienteConjuge;
-	private String cidadeIntervenienteConjuge;
-	private String cepIntervenienteConjuge;
+	private String nomeConjugeInterveniente;
+	private String nacionalidadeConjugeInterveniente;
+	private String profissaoConjugeInterveniente;
+	private String numeroRgConjugeInterveniente;
+	private String ufConjugeInterveniente;
+	private String cpfConjugeInterveniente;
+	private String logradouroConjugeInterveniente;
+	private String numeroConjugeInterveniente;
+	private String complementoConjugeInterveniente;
+	private String cidadeConjugeInterveniente;
+	private String cepConjugeInterveniente;
 
 //--------------------------------------------------------------------
 
@@ -130,19 +138,97 @@ public class CcbMB {
 
 	private BigDecimal tarifaAntecipada;
 	private Date dataDeEmissao;
-	private String imovel;
+
 	private String numeroImovel;
 	private String cartorioImovel;
 	private String cidadeImovel;
 	private String ufImovel;
 
 	private String tipoPesquisa;
+	private String tipoDownload;
 	
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 
 
 	String updatePagadorRecebedor = ":form";
+	public void populateEndereço() {
+		if (this.tipoPesquisa == "Emitente") {
+			if(this.getCidadeEmitente() == null) {
+				this.setCidadeEmitente(getCidadeConjugeEmitente());
+			}
+			if(this.getUfEmitente() == null) {
+				this.setUfEmitente(this.getUfConjugeEmitente());
+			}
+			if(this.getLogradouroEmitente() == null) {
+				this.setLogradouroEmitente(this.getLogradouroConjugeEmitente());
+			}
+			if(this.getNumeroEmitente() == null) {
+				this.setNumeroEmitente(this.getNumeroConjugeEmitente());
+			}
+			if(this.getComplementoEmitente() == null) {
+				this.setComplementoEmitente(this.getComplementoConjugeEmitente());
+			}
+			if(this.getCepEmitente() == null) {
+				this.setCepEmitente(this.getCepConjugeEmitente());
+			}
+			if(this.getCidadeConjugeEmitente() == null) {
+				this.setCidadeEmitente(getCidadeEmitente());
+			}
+			if(this.getUfConjugeEmitente() == null) {
+				this.setUfConjugeEmitente(this.getUfEmitente());
+			}
+			if(this.getLogradouroConjugeEmitente() == null) {
+				this.setLogradouroConjugeEmitente(this.getLogradouroEmitente());
+			}
+			if(this.getNumeroConjugeEmitente() == null) {
+				this.setNumeroConjugeEmitente(this.getNumeroEmitente());
+			}
+			if(this.getComplementoConjugeEmitente() == null) {
+				this.setComplementoConjugeEmitente(this.getComplementoEmitente());
+			}
+			if(this.getCepConjugeEmitente() == null) {
+				this.setCepConjugeEmitente(this.getCepEmitente());
+			}
+		} else if (this.tipoPesquisa == "Interveniente") {
+			if(this.getCidadeInterveniente() == null) {
+				this.setCidadeInterveniente(getCidadeConjugeInterveniente());
+			}
+			if(this.getUfInterveniente() == null) {
+				this.setUfInterveniente(this.getUfConjugeInterveniente());
+			}
+			if(this.getLogradouroInterveniente() == null) {
+				this.setLogradouroInterveniente(this.getLogradouroConjugeInterveniente());
+			}
+			if(this.getNumeroInterveniente() == null) {
+				this.setNumeroInterveniente(this.getNumeroConjugeInterveniente());
+			}
+			if(this.getComplementoInterveniente() == null) {
+				this.setComplementoInterveniente(this.getComplementoConjugeInterveniente());
+			}
+			if(this.getCepInterveniente() == null) {
+				this.setCepInterveniente(this.getCepConjugeInterveniente());
+			}
+			if(this.getCidadeConjugeInterveniente() == null) {
+				this.setCidadeInterveniente(getCidadeInterveniente());
+			}
+			if(this.getUfConjugeInterveniente() == null) {
+				this.setUfConjugeInterveniente(this.getUfInterveniente());
+			}
+			if(this.getLogradouroConjugeInterveniente() == null) {
+				this.setLogradouroConjugeInterveniente(this.getLogradouroInterveniente());
+			}
+			if(this.getNumeroConjugeInterveniente() == null) {
+				this.setNumeroConjugeInterveniente(this.getNumeroInterveniente());
+			}
+			if(this.getComplementoConjugeInterveniente() == null) {
+				this.setComplementoConjugeInterveniente(this.getComplementoInterveniente());
+			}
+			if(this.getCepConjugeInterveniente() == null) {
+				this.setCepConjugeInterveniente(this.getCepInterveniente());
+			}
+		}
+	}
 
 	public void pesquisaEmitente() {
 		this.tipoPesquisa = "Emitente";
@@ -154,6 +240,27 @@ public class CcbMB {
 		this.tipoPesquisa = "Interveniente";
 		this.updatePagadorRecebedor = ":form:intervenientePanel";
 		this.emitenteSelecionado = new PagadorRecebedor();
+	}
+	
+	public void populateParcelaSeguro() {
+		if(this.numeroParcelasPagamento != null) {
+			this.setNumeroParcelasDFI(this.getNumeroParcelasPagamento());
+			this.setNumeroParcelasMIP(this.getNumeroParcelasPagamento());
+		} if(this.vencimentoPrimeiraParcelaPagamento != null) {
+			this.setVencimentoPrimeiraParcelaDFI(this.getVencimentoPrimeiraParcelaPagamento());
+			this.setVencimentoPrimeiraParcelaMIP(this.getVencimentoPrimeiraParcelaPagamento());
+		} if(this.vencimentoUltimaParcelaPagamento != null) {
+			this.setVencimentoUltimaParcelaDFI(this.getVencimentoUltimaParcelaPagamento());
+			this.setVencimentoUltimaParcelaMIP(this.getVencimentoUltimaParcelaPagamento());
+		}
+	}
+	
+	public void calculaDatavencimentoFinal() {
+		Integer parcelas = CommonsUtil.integerValue(getNumeroParcelasPagamento());	
+		Calendar c = Calendar.getInstance();
+		c.setTime(this.vencimentoPrimeiraParcelaPagamento);
+		c.add(Calendar.MONTH, parcelas);
+		this.setVencimentoUltimaParcelaPagamento(c.getTime());
 	}
 
 	public void populateSelectedPagadorRecebedor() {
@@ -170,6 +277,7 @@ public class CcbMB {
 			this.setComplementoEmitente(this.emitenteSelecionado.getComplemento());
 			this.setCidadeEmitente(this.emitenteSelecionado.getCidade());
 			this.setCepEmitente(this.emitenteSelecionado.getCep());
+			this.setEmailEmitente(this.emitenteSelecionado.getEmail());
 			if (this.emitenteSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
 				this.setProfissaoConjugeEmitente(this.emitenteSelecionado.getCargoConjuge());
@@ -180,6 +288,8 @@ public class CcbMB {
 				this.setComplementoConjugeEmitente(this.emitenteSelecionado.getComplementoConjuge());
 				this.setCidadeConjugeEmitente(this.emitenteSelecionado.getCidadeConjuge());
 				this.setCepConjugeEmitente(this.emitenteSelecionado.getCepConjuge());
+				this.setEmailConjugeEmitente(this.emitenteSelecionado.getEmailConjuge());
+				this.populateEndereço();
 			} else {
 				this.setNomeConjugeEmitente(null);
 				this.setProfissaoConjugeEmitente(null);
@@ -190,6 +300,7 @@ public class CcbMB {
 				this.setComplementoConjugeEmitente(null);
 				this.setCidadeConjugeEmitente(null);
 				this.setCepConjugeEmitente(null);
+				this.setEmailConjugeEmitente(null);
 			}
 		}
 
@@ -207,15 +318,27 @@ public class CcbMB {
 			this.setCidadeInterveniente(this.intervenienteSelecionado.getCidade());
 			this.setCepInterveniente(this.intervenienteSelecionado.getCep());
 			if (this.intervenienteSelecionado.getNomeConjuge() != null) {
-				this.setNomeIntervenienteConjuge(this.intervenienteSelecionado.getNomeConjuge());
-				this.setProfissaoIntervenienteConjuge(this.intervenienteSelecionado.getCargoConjuge());
-				this.setNumeroRgIntervenienteConjuge(this.intervenienteSelecionado.getRgConjuge());
-				this.setUfIntervenienteConjuge(this.intervenienteSelecionado.getEstadoConjuge());
-				this.setCpfIntervenienteConjuge(this.intervenienteSelecionado.getCpfConjuge());
+				this.setNomeConjugeInterveniente(this.intervenienteSelecionado.getNomeConjuge());
+				this.setProfissaoConjugeInterveniente(this.intervenienteSelecionado.getCargoConjuge());
+				this.setNumeroRgConjugeInterveniente(this.intervenienteSelecionado.getRgConjuge());
+				this.setUfConjugeInterveniente(this.intervenienteSelecionado.getEstadoConjuge());
+				this.setCpfConjugeInterveniente(this.intervenienteSelecionado.getCpfConjuge());
 				this.setLogradouroInterveniente(this.intervenienteSelecionado.getEnderecoConjuge());
-				this.setComplementoIntervenienteConjuge(this.intervenienteSelecionado.getComplementoConjuge());
-				this.setCidadeIntervenienteConjuge(this.intervenienteSelecionado.getCidadeConjuge());
-				this.setCepIntervenienteConjuge(this.intervenienteSelecionado.getCepConjuge());
+				this.setComplementoConjugeInterveniente(this.intervenienteSelecionado.getComplementoConjuge());
+				this.setCidadeConjugeInterveniente(this.intervenienteSelecionado.getCidadeConjuge());
+				this.setCepConjugeInterveniente(this.intervenienteSelecionado.getCepConjuge());
+				this.populateEndereço();
+			} else {
+				this.setNomeConjugeInterveniente(null);
+				this.setProfissaoConjugeInterveniente(null);
+				this.setNumeroRgConjugeInterveniente(null);
+				this.setUfConjugeInterveniente(null);
+				this.setCpfConjugeInterveniente(null);
+				this.setLogradouroInterveniente(null);
+				this.setComplementoConjugeInterveniente(null);
+				this.setCidadeConjugeInterveniente(null);
+				this.setCepConjugeInterveniente(null);
+				this.populateEndereço();
 			}
 		}
 	}
@@ -238,7 +361,11 @@ public class CcbMB {
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever) {
 		if (text != null && text.contains(valorEscrito)) {
+			if(CommonsUtil.mesmoValor(valorEscrito, "tarifaAntecipada")) {
 				text = text.replace(valorEscrito, CommonsUtil.formataValorMonetario(valorSobrescrever));
+			} else {
+				text = text.replace(valorEscrito, CommonsUtil.formataValorTaxa(valorSobrescrever));
+			}
 			r.setText(text, 0);
 		}
 		return text;
@@ -287,13 +414,25 @@ public class CcbMB {
 		return text;
 	}
 
+	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
 
 	    try
 	    {
-	    	//XWPFDocument document = new XWPFDocument(OPCPackage.open("/resource/CCB-EMITENTE_GALLERIA.docx"));
+	    	String tipoDownload = this.getTipoDownload();
+	    	
+	    	XWPFDocument document = new XWPFDocument();
+	    	
+	    	if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
+	    		document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCB-EMITENTE_GALLERIA.docx"));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"Anuente")) {
+	    		document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCB-EMITENTE_ANUENTE_GALLERIA.docx"));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
+	    		document = new XWPFDocument(getClass().getResourceAsStream("/resource/AF_GALLERIA.docx"));
+	    	} else {
+	    		return null;
+	    	}
 
-			XWPFDocument document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCB-EMITENTE_GALLERIA.docx"));
 
 			ByteArrayOutputStream  out = new ByteArrayOutputStream ();
 			
@@ -304,7 +443,10 @@ public class CcbMB {
 			            String text = r.getText(0);
 			            
 						if(this.getNomeConjugeEmitente() != null) {
-							text = trocaValoresXWPF(text, r, "ConjugeDados","nomeConjugeEmitente, nacionalidadeConjugeEmitente, profissaoConjugeEmitente, estadoCivilEmitente (nomeEmitente , cpfEmitente), portador(a) da Cédula de Identidade RG nº numeroRgConjugeEmitente SSP/ufConjugeEmitente, inscrito(a) no CPF/MF sob o nº cpfConjugeEmitente, residente e domiciliado à logradouroConjugeEmitente, nº numeroConjugeEmitente, complementoConjugeEmitente, cidadeConjugeEmitente/ufConjugeEmitente, CEP cepConjugeEmitente;"); 	
+							text = trocaValoresXWPF(text, r, "FiducianteConjugue","Rua logradouroConjugeEmitente, nº numeroConjugeEmitente, Qd. XX - Lote XX, Cond. Residencial XXXXXX, Bairro - cidadeConjugeEmitente - ufConjugeEmitente -  \r"
+									+ "CEP cepConjugeEmitente \r"
+									+ "Email: emailConjugeEmitente");
+							text = trocaValoresXWPF(text, r, "ConjugeDados","nacionalidadeConjugeEmitente, profissaoConjugeEmitente, estadoCivilEmitente (nomeEmitente , cpfEmitente), portador(a) da Cédula de Identidade RG nº numeroRgConjugeEmitente SSP/ufConjugeEmitente, inscrito(a) no CPF/MF sob o nº cpfConjugeEmitente, residente e domiciliado à logradouroConjugeEmitente, nº numeroConjugeEmitente, complementoConjugeEmitente, cidadeConjugeEmitente/ufConjugeEmitente, CEP cepConjugeEmitente;"); 	
 							text = trocaValoresXWPF(text, r, "nomeConjugeEmitente", this.nomeConjugeEmitente);	 
 							text = trocaValoresXWPF(text, r, "cpfConjugeEmitente", this.cpfConjugeEmitente);
 							text = trocaValoresXWPF(text, r, "nacionalidadeConjugeEmitente",this.nacionalidadeConjugeEmitente);
@@ -317,12 +459,35 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "complementoConjugeEmitente", this.complementoConjugeEmitente);
 							text = trocaValoresXWPF(text, r, "cidadeConjugeEmitente", this.cidadeConjugeEmitente);
 							text = trocaValoresXWPF(text, r, "cepConjugeEmitente", this.cepConjugeEmitente);
-							
+							text = trocaValoresXWPF(text, r, "emailConjugeEmitente", this.emailConjugeEmitente);
 						} else {
+							text = trocaValoresXWPF(text, r, "nomeConjugeEmitente,", "");
+							text = trocaValoresXWPF(text, r, "nomeConjugeEmitente", "");		 
 							text = trocaValoresXWPF(text, r, "(nomeConjugeEmitente,","");
 							text = trocaValoresXWPF(text, r, "cpfConjugeEmitente)","");
-							text = trocaValoresXWPF(text, r, "CONJUGE:","");
 							text = trocaValoresXWPF(text, r, "ConjugeDados","");
+							text = trocaValoresXWPF(text, r, "FiducianteConjugue","");
+							
+						}
+						if(this.getNomeConjugeInterveniente() != null) {
+							text = trocaValoresXWPF(text, r, "ConjugeIntervenienteDados","nacionalidadeConjugeInterveniente, profissaoConjugeInterveniente, estadoCivilInterveniente (nomeInterveniente , cpfInterveniente), portador(a) da Cédula de Identidade RG nº numeroRgConjugeInterveniente SSP/ufConjugeInterveniente, inscrito(a) no CPF/MF sob o nº cpfConjugeInterveniente, residente e domiciliado à logradouroConjugeInterveniente, nº numeroConjugeInterveniente, complementoConjugeInterveniente, cidadeConjugeInterveniente/ufConjugeInterveniente, CEP cepConjugeInterveniente;"); 	
+							text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente", this.nomeConjugeInterveniente);	 
+							text = trocaValoresXWPF(text, r, "cpfConjugeInterveniente", this.cpfConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "nacionalidadeConjugeInterveniente",this.nacionalidadeConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "profissaoConjugeInterveniente",this.profissaoConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "numeroRgConjugeInterveniente", this.numeroRgConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "ufConjugeInterveniente", this.ufConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "cpfConjugeInterveniente", this.cpfConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "logradouroConjugeInterveniente", this.logradouroConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "numeroConjugeInterveniente", this.numeroConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "complementoConjugeInterveniente", this.complementoConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "cidadeConjugeInterveniente", this.cidadeConjugeInterveniente);
+							text = trocaValoresXWPF(text, r, "cepConjugeInterveniente", this.cepConjugeInterveniente);
+						} else {
+							text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente", "");	 
+							text = trocaValoresXWPF(text, r, "(nomeConjugeInterveniente,","");
+							text = trocaValoresXWPF(text, r, "cpfConjugeInterveniente)","");
+							text = trocaValoresXWPF(text, r, "ConjugeIntervenienteDados","");
 						}
 						text = trocaValoresXWPF(text, r, "estadoCivilEmitente", this.estadoCivilEmitente);	 
 						text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 
@@ -337,6 +502,21 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "complementoEmitente", this.complementoEmitente);
 						text = trocaValoresXWPF(text, r, "cidadeEmitente", this.cidadeEmitente);
 						text = trocaValoresXWPF(text, r, "cepEmitente", this.cepEmitente);
+						text = trocaValoresXWPF(text, r, "emailEmitente", this.emailEmitente);
+						
+						text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);
+						text = trocaValoresXWPF(text, r, "estadoCivilInterveniente", this.estadoCivilInterveniente);	 
+						text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
+						text = trocaValoresXWPF(text, r, "nacionalidadeInterveniente",this.nacionalidadeInterveniente);
+						text = trocaValoresXWPF(text, r, "profissaoInterveniente",this.profissaoInterveniente);
+						text = trocaValoresXWPF(text, r, "numeroRgInterveniente", this.numeroRgInterveniente);
+						text = trocaValoresXWPF(text, r, "ufInterveniente", this.ufInterveniente);
+						text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
+						text = trocaValoresXWPF(text, r, "logradouroInterveniente", this.logradouroInterveniente);
+						text = trocaValoresXWPF(text, r, "numeroInterveniente", this.numeroInterveniente);
+						text = trocaValoresXWPF(text, r, "complementoInterveniente", this.complementoInterveniente);
+						text = trocaValoresXWPF(text, r, "cidadeInterveniente", this.cidadeInterveniente);
+						text = trocaValoresXWPF(text, r, "cepInterveniente", this.cepInterveniente);
 						
 						text = trocaValoresXWPF(text, r, "valorCredito", this.valorCredito, "R$ ");
 						text = trocaValoresXWPF(text, r, "custoEmissao", this.custoEmissao, "R$ ");
@@ -370,16 +550,14 @@ public class CcbMB {
 						
 						text = trocaValoresXWPF(text, r, "tarifaAntecipada", this.tarifaAntecipada);
 						text = trocaValoresXWPF(text, r, "dataDeEmissao", this.dataDeEmissao);
-						
-						
-						text = trocaValoresXWPF(text, r, "imovel", this.imovel);
+								
 						text = trocaValoresXWPF(text, r, "numeroImovel", this.numeroImovel);
 						text = trocaValoresXWPF(text, r, "cartorioImovel", this.cartorioImovel);
 						text = trocaValoresXWPF(text, r, "cidadeImovel", this.cidadeImovel);
 						text = trocaValoresXWPF(text, r, "ufImovel", this.ufImovel);
 						
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.dataDeEmissao.getDate());
-						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(dataDeEmissao));
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase());
 						text = trocaValoresXWPF(text, r, "emissaoAno", (this.dataDeEmissao.getYear() + 1900));
 						
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.valorCredito);
@@ -405,11 +583,13 @@ public class CcbMB {
 						for (XWPFParagraph p : cell.getParagraphs()) {
 							for (XWPFRun r : p.getRuns()) {
 								String text = r.getText(0);
+								
 								text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 
+								text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);	 
 								if (this.getNomeConjugeEmitente() != null) {
 									text = trocaValoresXWPF(text, r, "nomeConjugeEmitente", this.nomeConjugeEmitente);
 									text = trocaValoresXWPF(text, r, "____________________________________c", "____________________________________");
-									text = trocaValoresXWPF(text, r, "CONJUGEEMITENTE", "CONJUGE EMITENTE");
+									text = trocaValoresXWPF(text, r, "CONJUGEEMITENTE", "CONJUGE");
 								} else {
 									text = trocaValoresXWPF(text, r, "____________________________________c", "");
 									text = trocaValoresXWPF(text, r, "CONJUGEEMITENTE", "");
@@ -426,7 +606,17 @@ public class CcbMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			
-			gerador.open(String.format("teste %s.docx", ""));
+			if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
+				gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"Anuente")) {
+	    		gerador.open(String.format("Galleria Bank - Modelo_Anuente %s.docx", ""));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
+	    		gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
+	    	} else {
+	    		gerador.open(String.format("teste %s.docx", ""));	    	
+	    	}
+
+			
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 	    }
@@ -435,9 +625,6 @@ public class CcbMB {
 	        e.printStackTrace();
 	    }
 	    
-        this.intervenienteSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
-		this.selectedPagador = new PagadorRecebedor();
 	    return null;
 	}
 
@@ -459,6 +646,84 @@ public class CcbMB {
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
+		
+		this.setNomeEmitente(null);
+		this.setProfissaoEmitente(null);
+		this.setEstadoCivilEmitente(null);
+		this.setNumeroRgEmitente(null);
+		this.setUfEmitente(null);
+		this.setCpfEmitente(null);
+		this.setLogradouroEmitente(null);
+		this.setNumeroEmitente(null);
+		this.setComplementoEmitente(null);
+		this.setCidadeEmitente(null);
+		this.setCepEmitente(null);
+		this.setEmailEmitente(null);
+		if (this.getNomeConjugeEmitente() != null) {
+			this.setNomeConjugeEmitente(null);
+			this.setProfissaoConjugeEmitente(null);
+			this.setNumeroRgConjugeEmitente(null);
+			this.setUfConjugeEmitente(null);
+			this.setCpfConjugeEmitente(null);
+			this.setLogradouroEmitente(null);
+			this.setComplementoConjugeEmitente(null);
+			this.setCidadeConjugeEmitente(null);
+			this.setCepConjugeEmitente(null);
+			this.setEmailConjugeEmitente(null);
+		}
+		this.setNomeInterveniente(null);
+		this.setProfissaoInterveniente(null);
+		this.setEstadoCivilInterveniente(null);
+		this.setNumeroRgInterveniente(null);
+		this.setUfInterveniente(null);
+		this.setCpfInterveniente(null);
+		this.setLogradouroInterveniente(null);
+		this.setNumeroInterveniente(null);
+		this.setComplementoInterveniente(null);
+		this.setCidadeInterveniente(null);
+		this.setCepInterveniente(null);
+		if (this.getNomeConjugeInterveniente() != null) {
+			this.setNomeConjugeInterveniente(null);
+			this.setProfissaoConjugeInterveniente(null);
+			this.setNumeroRgConjugeInterveniente(null);
+			this.setUfConjugeInterveniente(null);
+			this.setCpfConjugeInterveniente(null);
+			this.setLogradouroInterveniente(null);
+			this.setComplementoConjugeInterveniente(null);
+			this.setCidadeConjugeInterveniente(null);
+			this.setCepConjugeInterveniente(null);
+		}
+		 valorLiquidoCredito = null;
+		 valorCredito = null;
+		 custoEmissao = null;
+		 valorIOF = null;
+		 valorDespesas = null;	
+		 taxaDeJurosMes = null;
+		 taxaDeJurosAno = null;
+		 cetMes = null;
+		 cetAno = null;
+		 contaCorrente = null;
+		 agencia = null;
+		 numeroBanco = null;
+		 nomeBanco = null;
+		 numeroParcelasPagamento = null;
+		 vencimentoPrimeiraParcelaPagamento = null;
+		 vencimentoUltimaParcelaPagamento = null;
+		 montantePagamento = null;
+		 numeroParcelasDFI = null;
+		 vencimentoPrimeiraParcelaDFI = null;
+		 vencimentoUltimaParcelaDFI = null;
+		 montanteDFI = null;
+		 numeroParcelasMIP = null;
+		 vencimentoPrimeiraParcelaMIP = null;
+		 vencimentoUltimaParcelaMIP = null;
+		 montanteMIP = null;
+		 tarifaAntecipada = null;
+		 dataDeEmissao = null;
+		 numeroImovel = null;
+		 cartorioImovel = null;
+		 cidadeImovel = null;
+		 ufImovel = null;
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 
@@ -799,92 +1064,92 @@ public class CcbMB {
 		this.cepInterveniente = cepInterveniente;
 	}
 
-	public String getNomeIntervenienteConjuge() {
-		return nomeIntervenienteConjuge;
+	public String getNomeConjugeInterveniente() {
+		return nomeConjugeInterveniente;
 	}
 
-	public void setNomeIntervenienteConjuge(String nomeIntervenienteConjuge) {
-		this.nomeIntervenienteConjuge = nomeIntervenienteConjuge;
+	public void setNomeConjugeInterveniente(String nomeConjugeInterveniente) {
+		this.nomeConjugeInterveniente = nomeConjugeInterveniente;
 	}
 
-	public String getNacionalidadeIntervenienteConjuge() {
-		return nacionalidadeIntervenienteConjuge;
+	public String getNacionalidadeConjugeInterveniente() {
+		return nacionalidadeConjugeInterveniente;
 	}
 
-	public void setNacionalidadeIntervenienteConjuge(String nacionalidadeIntervenienteConjuge) {
-		this.nacionalidadeIntervenienteConjuge = nacionalidadeIntervenienteConjuge;
+	public void setNacionalidadeConjugeInterveniente(String nacionalidadeConjugeInterveniente) {
+		this.nacionalidadeConjugeInterveniente = nacionalidadeConjugeInterveniente;
 	}
 
-	public String getProfissaoIntervenienteConjuge() {
-		return profissaoIntervenienteConjuge;
+	public String getProfissaoConjugeInterveniente() {
+		return profissaoConjugeInterveniente;
 	}
 
-	public void setProfissaoIntervenienteConjuge(String profissaoIntervenienteConjuge) {
-		this.profissaoIntervenienteConjuge = profissaoIntervenienteConjuge;
+	public void setProfissaoConjugeInterveniente(String profissaoConjugeInterveniente) {
+		this.profissaoConjugeInterveniente = profissaoConjugeInterveniente;
 	}
 
-	public String getNumeroRgIntervenienteConjuge() {
-		return numeroRgIntervenienteConjuge;
+	public String getNumeroRgConjugeInterveniente() {
+		return numeroRgConjugeInterveniente;
 	}
 
-	public void setNumeroRgIntervenienteConjuge(String numeroRgIntervenienteConjuge) {
-		this.numeroRgIntervenienteConjuge = numeroRgIntervenienteConjuge;
+	public void setNumeroRgConjugeInterveniente(String numeroRgConjugeInterveniente) {
+		this.numeroRgConjugeInterveniente = numeroRgConjugeInterveniente;
 	}
 
-	public String getUfIntervenienteConjuge() {
-		return ufIntervenienteConjuge;
+	public String getUfConjugeInterveniente() {
+		return ufConjugeInterveniente;
 	}
 
-	public void setUfIntervenienteConjuge(String ufIntervenienteConjuge) {
-		this.ufIntervenienteConjuge = ufIntervenienteConjuge;
+	public void setUfConjugeInterveniente(String ufConjugeInterveniente) {
+		this.ufConjugeInterveniente = ufConjugeInterveniente;
 	}
 
-	public String getCpfIntervenienteConjuge() {
-		return cpfIntervenienteConjuge;
+	public String getCpfConjugeInterveniente() {
+		return cpfConjugeInterveniente;
 	}
 
-	public void setCpfIntervenienteConjuge(String cpfIntervenienteConjuge) {
-		this.cpfIntervenienteConjuge = cpfIntervenienteConjuge;
+	public void setCpfConjugeInterveniente(String cpfConjugeInterveniente) {
+		this.cpfConjugeInterveniente = cpfConjugeInterveniente;
 	}
 
-	public String getLogradouroIntervenienteConjuge() {
-		return logradouroIntervenienteConjuge;
+	public String getLogradouroConjugeInterveniente() {
+		return logradouroConjugeInterveniente;
 	}
 
-	public void setLogradouroIntervenienteConjuge(String logradouroIntervenienteConjuge) {
-		this.logradouroIntervenienteConjuge = logradouroIntervenienteConjuge;
+	public void setLogradouroConjugeInterveniente(String logradouroConjugeInterveniente) {
+		this.logradouroConjugeInterveniente = logradouroConjugeInterveniente;
 	}
 
-	public String getNumeroIntervenienteConjuge() {
-		return numeroIntervenienteConjuge;
+	public String getNumeroConjugeInterveniente() {
+		return numeroConjugeInterveniente;
 	}
 
-	public void setNumeroIntervenienteConjuge(String numeroIntervenienteConjuge) {
-		this.numeroIntervenienteConjuge = numeroIntervenienteConjuge;
+	public void setNumeroConjugeInterveniente(String numeroConjugeInterveniente) {
+		this.numeroConjugeInterveniente = numeroConjugeInterveniente;
 	}
 
-	public String getComplementoIntervenienteConjuge() {
-		return complementoIntervenienteConjuge;
+	public String getComplementoConjugeInterveniente() {
+		return complementoConjugeInterveniente;
 	}
 
-	public void setComplementoIntervenienteConjuge(String complementoIntervenienteConjuge) {
-		this.complementoIntervenienteConjuge = complementoIntervenienteConjuge;
+	public void setComplementoConjugeInterveniente(String complementoConjugeInterveniente) {
+		this.complementoConjugeInterveniente = complementoConjugeInterveniente;
 	}
 
-	public String getCidadeIntervenienteConjuge() {
-		return cidadeIntervenienteConjuge;
+	public String getCidadeConjugeInterveniente() {
+		return cidadeConjugeInterveniente;
 	}
 
-	public void setCidadeIntervenienteConjuge(String cidadeIntervenienteConjuge) {
-		this.cidadeIntervenienteConjuge = cidadeIntervenienteConjuge;
+	public void setCidadeConjugeInterveniente(String cidadeConjugeInterveniente) {
+		this.cidadeConjugeInterveniente = cidadeConjugeInterveniente;
 	}
 
-	public String getCepIntervenienteConjuge() {
-		return cepIntervenienteConjuge;
+	public String getCepConjugeInterveniente() {
+		return cepConjugeInterveniente;
 	}
 
-	public void setCepIntervenienteConjuge(String cepIntervenienteConjuge) {
-		this.cepIntervenienteConjuge = cepIntervenienteConjuge;
+	public void setCepConjugeInterveniente(String cepConjugeInterveniente) {
+		this.cepConjugeInterveniente = cepConjugeInterveniente;
 	}
 
 	public PagadorRecebedor getIntervenienteSelecionado() {
@@ -1119,14 +1384,6 @@ public class CcbMB {
 		this.dataDeEmissao = dataDeEmissao;
 	}
 
-	public String getImovel() {
-		return imovel;
-	}
-
-	public void setImovel(String imovel) {
-		this.imovel = imovel;
-	}
-
 	public String getNumeroImovel() {
 		return numeroImovel;
 	}
@@ -1158,5 +1415,47 @@ public class CcbMB {
 	public void setUfImovel(String ufImovel) {
 		this.ufImovel = ufImovel;
 	}
+
+	public String getTipoDownload() {
+		return tipoDownload;
+	}
+
+	public void setTipoDownload(String tipoDownload) {
+		this.tipoDownload = tipoDownload;
+	}
+
+	public String getEmailEmitente() {
+		return emailEmitente;
+	}
+
+	public void setEmailEmitente(String emailEmitente) {
+		this.emailEmitente = emailEmitente;
+	}
+
+	public String getEmailConjugeEmitente() {
+		return emailConjugeEmitente;
+	}
+
+	public void setEmailConjugeEmitente(String emailConjugeEmitente) {
+		this.emailConjugeEmitente = emailConjugeEmitente;
+	}
+
+	public String getRegimeCasamentoEmitente() {
+		return regimeCasamentoEmitente;
+	}
+
+	public void setRegimeCasamentoEmitente(String regimeCasamentoEmitente) {
+		this.regimeCasamentoEmitente = regimeCasamentoEmitente;
+	}
+
+	public boolean isFiduciante() {
+		return isFiduciante;
+	}
+
+	public void setFiduciante(boolean isFiduciante) {
+		this.isFiduciante = isFiduciante;
+	}
+	
+	
 
 }
