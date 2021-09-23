@@ -18,8 +18,8 @@
 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriafinancas</property>
 	<property name="hibernate.connection.username">postgres</property>
 	<property name="hibernate.connection.password">postgres</property>
-	-->	
- 	
+
+ 		-->	
     <property name="hibernate.hbm2ddl.auto">update</property> 
     <property name="current_session_context_class">thread</property>    
     <property name="hibernate.show_sql">false</property>

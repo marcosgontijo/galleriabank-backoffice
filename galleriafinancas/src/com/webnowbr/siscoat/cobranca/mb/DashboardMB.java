@@ -13,8 +13,10 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
+import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 
 @ManagedBean(name = "dashboardMB")
 @SessionScoped
@@ -28,14 +30,31 @@ public class DashboardMB {
     
     private List<Dashboard> dashContratos;
     
+	private Responsavel selectedResponsavel;
+	private List<Responsavel> listResponsavel;
+    
+	private String updatePagadorRecebedor = "";
+	
 	public DashboardMB() {
 		
+	}
+	
+	public final void populateSelectedResponsavel() {
+		this.selectedResponsavel = this.selectedResponsavel;
+	}
+	
+	public void clearResponsavel() {
+		this.selectedResponsavel = new Responsavel();
+		this.updatePagadorRecebedor = ":form:responsavel";
 	}
 	
 	public String clearFieldsDashContratos() {
 		
 		this.dataInicio = null;
 		this.dataFim = null;
+		
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsavel = rDao.findAll();
 		
 		this.dashContratos = new ArrayList<Dashboard>();
 		
@@ -45,7 +64,7 @@ public class DashboardMB {
 	public void processaDashContratos() {
 		
 		DashboardDao dDao = new DashboardDao();
-		this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim);
+		this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, 0);
 		
 	}
 	
@@ -218,5 +237,29 @@ public class DashboardMB {
 
 	public void setDashContratos(List<Dashboard> dashContratos) {
 		this.dashContratos = dashContratos;
+	}
+
+	public Responsavel getSelectedResponsavel() {
+		return selectedResponsavel;
+	}
+
+	public void setSelectedResponsavel(Responsavel selectedResponsavel) {
+		this.selectedResponsavel = selectedResponsavel;
+	}
+
+	public List<Responsavel> getListResponsavel() {
+		return listResponsavel;
+	}
+
+	public void setListResponsavel(List<Responsavel> listResponsavel) {
+		this.listResponsavel = listResponsavel;
+	}
+
+	public String getUpdatePagadorRecebedor() {
+		return updatePagadorRecebedor;
+	}
+
+	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
+		this.updatePagadorRecebedor = updatePagadorRecebedor;
 	}
 }
