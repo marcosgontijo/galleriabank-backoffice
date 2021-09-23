@@ -36,17 +36,19 @@
 					<p:outputLabel for="pagadorRecebedor" value="Recebedor: "
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						styleClass="labelBold" />
-					<h:panelGrid columns="2"
+					<h:panelGrid columns="2" id="pagadorPanel"
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}">
 						<p:inputText id="pagadorRecebedor"
 							value="#{contasPagarMB.objetoContasPagar.pagadorRecebedor.nome}"
 							label="Recebedor" style="width:210px;" disabled="true" />
 
-						<p:commandButton id="botaoPagador" type="button"
-							onclick="PF('pagadorRecebedorDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin">
+						<p:commandButton ajax="true" 
+							action="#{contasPagarMB.pesquisaPagador}"							
+							icon="ui-icon ui-icon-circle-zoomin"  process="@this" 
+							oncomplete="PF('pagadorRecebedorDialog').show();"
+							update="formReceborPagador">
 						</p:commandButton>
-
+										
 					</h:panelGrid>
 					
 					<p:outputLabel for="responsavel" value="Responsável: "

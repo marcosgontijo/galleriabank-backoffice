@@ -33,7 +33,7 @@
 					    	</shiro:hasAnyRoles>
 					    </td>
 					    <td>
-					    	<shiro:hasAnyRoles name="ROOT, POSTO">
+					    	<shiro:hasAnyRoles name="ROOT, POSTO, COBRANCA, PRECOBRANCA">
 					    		<p:commandLink title="Relatórios" action="/Relatorios/MenuRelatorio.xhtml" ajax="false"><img src="#{resource['image/Commons/logoRelatorios.png']}" alt=""/></p:commandLink>
 					    	</shiro:hasAnyRoles>
 					    </td>					   
@@ -165,6 +165,12 @@
 										ajax="false" icon="ui-icon-transferthick-e-w"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+									<p:menuitem value="Emitir CCB"
+										action="#{ccbMB.clearFieldsEmitirCcb}"
+										ajax="false" icon= "ui-icon ui-icon-newwin"
+										styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA">
@@ -200,7 +206,7 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+						<shiro:hasAnyRoles name="ROOT">
 							<p:submenu label="Contabilidade" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Debêntures Emitidas"

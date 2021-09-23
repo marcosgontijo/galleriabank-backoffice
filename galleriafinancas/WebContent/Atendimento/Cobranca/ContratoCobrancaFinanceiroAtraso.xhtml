@@ -66,12 +66,28 @@
 						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado. "
 						styleClass="labelBold" style="margin-right: 59px;color: red" />
 				</h:panelGrid>
-				<p:commandButton value="Consultar"
-					action="#{contratoCobrancaMB.geraRelFinanceiroAtraso}"
-					image="ui-icon ui-icon-check"
-					update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
-					 onclick="start();" oncomplete="stop();"
-					style="TEXT-DECORATION: bold;" />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{contratoCobrancaMB.relDataContratoInicioAtraso}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{contratoCobrancaMB.relDataContratoFimAtraso}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+						
+					<p:commandButton value="Consultar"
+						action="#{contratoCobrancaMB.geraRelFinanceiroAtraso}"
+						image="ui-icon ui-icon-check"
+						update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
+						 onclick="start();" oncomplete="stop();"
+						style="TEXT-DECORATION: bold;" />
+						
+				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaFinanceiroResultados"
 				header="Financeiro Atraso - Resultados" style="margin-bottom:10px;">
@@ -89,33 +105,13 @@
 							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtraso}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
+							
+						<p:commandButton value="Gerar docx" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.writeXWPFileBaixado}"
+							update="PanelPDF PanelXLS" />
+							
 					</f:facet>
-					<p:column style="width:70px;" exportable="false">
-						<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
-							ajax="false" icon="ui-icon-zoomin" title="Detalhes">
-							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.objetoContratoCobranca}"
-								value="#{contratos.contratoCobranca}" />
-							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.updateMode}" value="false" />
-							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.deleteMode}" value="false" />
-							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.origemTelaBaixar}"
-								value="CobrancaFinanceiro" />
-						</p:commandButton>
-						<p:commandButton action="#{iuguMB.redirecionTelaOperacao}"
-							ajax="false" icon="ui-icon-transferthick-e-w"
-							title="Operação Contrato" onclick="this.form.target='_blank'">
-							<f:setPropertyActionListener target="#{iuguMB.contratoCobranca}"
-								value="#{contratos.contratoCobranca}" />
-							<f:setPropertyActionListener target="#{iuguMB.relIsContrato}"
-								value="true" />
-							<f:setPropertyActionListener
-								target="#{iuguMB.operacaoContratoIUGU}" value="" />
-						</p:commandButton>
-					</p:column>
-					<p:column style="text-align: center;width: 100px;"
+					<p:column style="text-align: center;width: 65px;"
 						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 						<h:outputText value="#{contratos.numeroContrato}" />
@@ -180,12 +176,12 @@
 						headerText="Parcelas em Aberto" >
 						<h:outputText value="#{contratos.qtdeAtrasos}" />
 					</p:column>		
-					<p:column style="text-align: center;width: 90px;"
+					<p:column style="text-align: center;width: 65px;"
 						headerText="Com Baixas Parciais (# Parcela)">
 						<h:outputText value="#{contratos.qtdeBaixasParciais}" />
 					</p:column>				
 
-					<p:column style="width:70px;" exportable="false">
+					<p:column style="width:90px;" exportable="false">
 						<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
 							ajax="false" icon="ui-icon-zoomin" title="Detalhes">
 							<f:setPropertyActionListener
@@ -207,7 +203,12 @@
 							<f:setPropertyActionListener target="#{iuguMB.relIsContrato}"
 								value="true" />
 						</p:commandButton>
+						<p:commandButton 
+							ajax="false" icon="ui-icon-transferthick-e-w"
+							title="Alterar para Cartório" update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF" > 
+						</p:commandButton>
 					</p:column>
+					
 					<f:facet name="footer">
 						<p:commandButton value="Gerar PDF" ajax="false"
 							icon="ui-icon-print"

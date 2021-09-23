@@ -26,6 +26,8 @@ public class RelatorioFinanceiroCobranca {
 	public Date dataUltimoPagamento;
 	private BigDecimal vlrTotalPago;
 	
+	private boolean cartorio = false;
+	
 	public ContratoCobranca contratoCobranca;
 	
 	public Date dataPagamento;
@@ -770,4 +772,14 @@ public class RelatorioFinanceiroCobranca {
 	public void setQtdeBaixasParciais(String qtdeBaixasParciais) {
 		this.qtdeBaixasParciais = qtdeBaixasParciais;
 	}
+
+	public boolean isCartorio() {
+		return cartorio;
+	}
+
+	public void setCartorio(boolean cartorio) {
+		this.cartorio = cartorio;
+	}
+	
+	
 }

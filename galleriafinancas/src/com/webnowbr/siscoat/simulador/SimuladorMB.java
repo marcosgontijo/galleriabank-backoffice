@@ -112,7 +112,7 @@ public class SimuladorMB {
 		}
 		
 		BigDecimal tarifaIOFDiario;
-		BigDecimal tarifaIOFAdicional = SiscoatConstants.IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 
 		if ("PF".equals(tipoPessoa)) {
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));

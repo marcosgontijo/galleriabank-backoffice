@@ -117,6 +117,12 @@
 										ajax="false" icon="ui-icon-transferthick-e-w"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+									<p:menuitem value="Emitir CCB"
+										action="#{ccbMB.clearFieldsEmitirCcb}"
+										ajax="false" icon= "ui-icon ui-icon-newwin"
+										styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA">
@@ -152,7 +158,7 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+						<shiro:hasAnyRoles name="ROOT">
 							<p:submenu label="Contabilidade" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Debêntures Emitidas"
