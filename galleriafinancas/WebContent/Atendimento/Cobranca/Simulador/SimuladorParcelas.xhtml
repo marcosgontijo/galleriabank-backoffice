@@ -17,8 +17,8 @@
 			<f:convertNumber pattern="#,##0.00" />
 		</h:outputText>
 
-
-		<!-- <p:outputLabel value="ValorTotalIOF: " styleClass="labelBold" />
+<!-- 
+		 <p:outputLabel value="ValorTotalIOF: " styleClass="labelBold" />
 					<h:outputText value="#{simulacao.valorTotalIOF}"
 						converter="bigDecimalConverter">
 						<f:convertNumber pattern="#,##0.00" />
@@ -30,8 +30,8 @@
 						value="#{simulacao.valorTotalIOFAdicional}"
 						converter="bigDecimalConverter">
 						<f:convertNumber pattern="#,##0.00" />
-					</h:outputText>
- 					-->
+					</h:outputText> -->
+ 		
 
 
 	</h:panelGrid>
@@ -86,14 +86,14 @@
 			<h:outputText value=" +IPCA"
 				rendered="#{bpParcela.valorParcela gt 0 and simulador} " />
 		</p:column>
-
-		<!--<p:column style="text-align: center;"
+<!-- 
+		<p:column style="text-align: center;"
 						headerText="Valor IOF (R$)">
 						<h:outputText value="#{bpParcela.valorIOF}"
 							converter="bigDecimalConverter">
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
-					</p:column>-->
+					</p:column> -->
 
 	</p:dataTable>
 </ui:composition>

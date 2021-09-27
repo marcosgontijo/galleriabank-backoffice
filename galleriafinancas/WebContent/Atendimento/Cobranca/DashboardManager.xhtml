@@ -7,7 +7,7 @@
 	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form style="margin-bottom:10px;">
+		<h:form id="form" style="margin-bottom:10px;">
 			<p:messages id="mensagens" showDetail="true" />
 			<p:panel id="ConsultaDashboardManager" header="Dashboard Manager - Consultar"
 				style="margin-bottom:10px;">
@@ -23,7 +23,19 @@
 					<p:calendar id="dataFim"
 						value="#{dashboardMB.dataFim}" 
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField"/>					
+						styleClass="dateTimeField"/>	
+					
+					<p:outputLabel for="responsavel" value="Responsável: "
+						styleClass="labelBold" />
+					<h:panelGrid columns="2">
+							<p:inputText id="responsavel"
+								value="#{dashboardMB.selectedResponsavel.nome}"
+								label="Responsável" disabled="true" 
+								style="width:210px;" />
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />
+					</h:panelGrid>			
 				</h:panelGrid>
 				
 				<p:commandButton value="Consultar" ajax="false"
@@ -43,23 +55,30 @@
 						<h:outputText value="#{dashContratos.nomeResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Total de Contratos">
-						<h:outputText value="#{dashContratos.totalcontratos}" />
+					<p:column style="text-align: center;" headerText="Gerente"
+						filterBy="#{dashContratos.gerenteResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.gerenteResponsavel}">
+						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Aprovados (Análise)">
-						<h:outputText value="#{dashContratos.totalaprovados}" />
+					
+					<p:column style="text-align: center;" headerText="Total Novos Contratos">
+						<h:outputText value="#{dashContratos.totalNovosContratos}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Reprovados (Análise)">
-						<h:outputText value="#{dashContratos.totalreprovados}" />
+					<p:column style="text-align: center;" headerText="Total Em Análise">
+						<h:outputText value="#{dashContratos.totalaEmAnalise}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Ag. Pagamento">
-						<h:outputText value="#{dashContratos.totalagpagamento}" />
+					<p:column style="text-align: center;" headerText="Total Aprovados">
+						<h:outputText value="#{dashContratos.totalAprovados}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Pago - Ag. Laudo e PAJU">
-						<h:outputText value="#{dashContratos.totalpago}" />
+					<p:column style="text-align: center;" headerText="Total Reprovados">
+						<h:outputText value="#{dashContratos.totalReprovados}" />
 					</p:column>
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<ui:include src="../../Dialog/DialogResponsavel.xhtml">
+			<ui:param name="mbean" value="#{dashboardMB}"></ui:param>
+			<ui:param name="titulo" value="Gerente Responsável"></ui:param>
+		</ui:include>
 	</ui:define>
 </ui:composition>

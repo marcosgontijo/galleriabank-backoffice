@@ -20,11 +20,13 @@ public class Dashboard implements Serializable {
 	private int novoLead;
 	private int leadEmTratamento;
 	
+	private Responsavel responsavel;
 	private String nomeResponsavel;
-	private int totalcontratos;
-	private int totalaprovados;
-	private int totalreprovados;
-	private int totalagpagamento;
+	private String gerenteResponsavel;
+	private int totalNovosContratos;
+	private int totalAprovados;
+	private int totalReprovados;
+	private int totalaEmAnalise;
 	private int totalpago;
 
 	public Dashboard() {
@@ -117,37 +119,37 @@ public class Dashboard implements Serializable {
 	public void setNomeResponsavel(String nomeResponsavel) {
 		this.nomeResponsavel = nomeResponsavel;
 	}
-
-	public int getTotalcontratos() {
-		return totalcontratos;
+	
+	public int getTotalNovosContratos() {
+		return totalNovosContratos;
 	}
 
-	public void setTotalcontratos(int totalcontratos) {
-		this.totalcontratos = totalcontratos;
+	public void setTotalNovosContratos(int totalNovosContratos) {
+		this.totalNovosContratos = totalNovosContratos;
 	}
 
-	public int getTotalaprovados() {
-		return totalaprovados;
+	public int getTotalAprovados() {
+		return totalAprovados;
 	}
 
-	public void setTotalaprovados(int totalaprovados) {
-		this.totalaprovados = totalaprovados;
+	public void setTotalAprovados(int totalAprovados) {
+		this.totalAprovados = totalAprovados;
 	}
 
-	public int getTotalreprovados() {
-		return totalreprovados;
+	public int getTotalReprovados() {
+		return totalReprovados;
 	}
 
-	public void setTotalreprovados(int totalreprovados) {
-		this.totalreprovados = totalreprovados;
+	public void setTotalReprovados(int totalReprovados) {
+		this.totalReprovados = totalReprovados;
 	}
 
-	public int getTotalagpagamento() {
-		return totalagpagamento;
+	public int getTotalaEmAnalise() {
+		return totalaEmAnalise;
 	}
 
-	public void setTotalagpagamento(int totalagpagamento) {
-		this.totalagpagamento = totalagpagamento;
+	public void setTotalaEmAnalise(int totalaEmAnalise) {
+		this.totalaEmAnalise = totalaEmAnalise;
 	}
 
 	public int getTotalpago() {
@@ -156,5 +158,21 @@ public class Dashboard implements Serializable {
 
 	public void setTotalpago(int totalpago) {
 		this.totalpago = totalpago;
+	}
+
+	public String getGerenteResponsavel() {
+		return gerenteResponsavel;
+	}
+
+	public void setGerenteResponsavel(String gerenteResponsavel) {
+		this.gerenteResponsavel = gerenteResponsavel;
+	}
+
+	public Responsavel getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(Responsavel responsavel) {
+		this.responsavel = responsavel;
 	}
 }

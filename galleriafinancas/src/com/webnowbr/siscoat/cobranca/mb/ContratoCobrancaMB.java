@@ -42,7 +42,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.ss.formula.ptg.SubtractPtg;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -60,7 +59,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
@@ -3677,10 +3675,13 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
-
-			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-				somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+			if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+				somaBaixas = ccd.getVlrParcela();
+			} else {
+				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+				}
 			}
 
 			ccd.setValorTotalPagamento(somaBaixas);
@@ -5677,8 +5678,15 @@ public class ContratoCobrancaMB {
 		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
 
 			int countParcelas = 0;
+			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
 
 			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+				
+				if ( CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+					somaAmortizacoes.add(ccd.getVlrParcela());
+					continue;
+				}
+				
 				// se já houve baixa parcial, utiliza a data de vencimento atualizada
 				// senão utiliza a data de vencimento antiga
 				String auxDataVencimentoStr = "";
@@ -5743,8 +5751,7 @@ public class ContratoCobrancaMB {
 					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
 					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
 				}
-
-				ccd.setValorTotalPagamento(somaBaixas);
+				ccd.setValorTotalPagamento(somaBaixas.add(somaAmortizacoes));
 
 				// seta valor original da parcela
 				/*
@@ -8512,10 +8519,18 @@ public class ContratoCobrancaMB {
 		SimulacaoVO simulador = new SimulacaoVO();
 
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PF");
 		} else {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PJ");
 		}
 
@@ -8555,10 +8570,18 @@ public class ContratoCobrancaMB {
 		SimulacaoVO simulador = new SimulacaoVO();
 
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PF");
 		} else {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PJ");
 		}
 		
@@ -8668,7 +8691,7 @@ public class ContratoCobrancaMB {
 
 	private SimulacaoVO calcularReParcelamento() {
 		BigDecimal tarifaIOFDiario;
-		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 
 //			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 //			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
@@ -8687,10 +8710,18 @@ public class ContratoCobrancaMB {
 		}
 
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PF");
 		} else {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			}
 			simulador.setTipoPessoa("PJ");
 		}
 
@@ -8768,10 +8799,15 @@ public class ContratoCobrancaMB {
 		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
 			boolean encontrouParcela = false;
 			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
-				if ( detalhe.isParcelaPaga())
-					continue;
+				
 				
 				if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {
+					
+					if ( detalhe.isParcelaPaga()) {
+						encontrouParcela = true;
+						break;						
+					}
+					
 					Date dataParcela = contratoCobrancaDao
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
@@ -9534,6 +9570,12 @@ public class ContratoCobrancaMB {
 
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			
+			if ( CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+				ccd.setValorTotalPagamento(ccd.getVlrParcela());
+				continue;
+			}
+			
 			dataVencimentoParcela.setTime(ccd.getDataVencimentoAtual());
 
 			if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
@@ -9827,8 +9869,9 @@ public class ContratoCobrancaMB {
 		amortizacao.setSeguroMIP(BigDecimal.ZERO);
 		amortizacao.setVlrParcela(amortizacao.getVlrAmortizacaoParcela());
 		amortizacao.setNumeroParcela("Amortização");
-		amortizacao.setParcelaPaga(true);
+		amortizacao.setParcelaPaga(true);		
 		amortizacao.setDataPagamento(amortizacao.getDataVencimento());
+		//amortizacao.setVlrRecebido(amortizacao.getVlrParcela());
 		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
 		objetoContratoCobranca.getListContratoCobrancaDetalhes().add(amortizacao);
 

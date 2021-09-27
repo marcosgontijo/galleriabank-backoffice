@@ -177,14 +177,14 @@ public class SeguroTabelaMB {
 			gravaCelula(5, CommonsUtil.doubleValue(CommonsUtil.somenteNumeros(seguroTabelaVO.getCpfPrincipal())), linha);
 			gravaCelula(6, seguroTabelaVO.getNomePrincipal(), linha);
 			gravaCelula(7, CommonsUtil.dateValue(seguroTabelaVO.getDataNascimento(), "yyyy-MM-dd"), linha);
-			gravaCelula(8, seguroTabelaVO.getSexo().substring(0, 1), linha);
+			gravaCelula(8, (CommonsUtil.semValor(seguroTabelaVO.getSexo()))?"":seguroTabelaVO.getSexo().substring(0, 1), linha);
 			gravaCelula(9, seguroTabelaVO.getPorcentagemPrincipal().doubleValue(), linha);
 			
 			if(!CommonsUtil.semValor(seguroTabelaVO.getCpf2())) {
 				gravaCelula(10, CommonsUtil.doubleValue(CommonsUtil.somenteNumeros(seguroTabelaVO.getCpf2())), linha);
 				gravaCelula(11, seguroTabelaVO.getNome2(), linha);
 				gravaCelula(12, CommonsUtil.dateValue(seguroTabelaVO.getDataNascimento2(), "yyyy-MM-dd"), linha);
-				gravaCelula(13, seguroTabelaVO.getSexo2().substring(0, 1), linha);
+				gravaCelula(13, (CommonsUtil.semValor(seguroTabelaVO.getSexo2()))?"":seguroTabelaVO.getSexo2().substring(0, 1), linha);
 				gravaCelula(14, seguroTabelaVO.getPorcentagem2().doubleValue(), linha);
 			}
 			
@@ -192,7 +192,7 @@ public class SeguroTabelaMB {
 				gravaCelula(15, CommonsUtil.doubleValue(CommonsUtil.somenteNumeros(seguroTabelaVO.getCpf3())), linha);
 				gravaCelula(16, seguroTabelaVO.getNome3(), linha);
 				gravaCelula(17, CommonsUtil.dateValue(seguroTabelaVO.getDataNascimento3(), "yyyy-MM-dd"), linha);
-				gravaCelula(18, seguroTabelaVO.getSexo3().substring(0, 1), linha);
+				gravaCelula(18, (CommonsUtil.semValor(seguroTabelaVO.getSexo3()))?"":seguroTabelaVO.getSexo3().substring(0, 1), linha);
 				gravaCelula(19, seguroTabelaVO.getPorcentagem3().doubleValue(), linha);
 			}
 			
@@ -200,7 +200,7 @@ public class SeguroTabelaMB {
 				gravaCelula(20, CommonsUtil.doubleValue(CommonsUtil.somenteNumeros(seguroTabelaVO.getCpf4())), linha);
 				gravaCelula(21, seguroTabelaVO.getNome4(), linha);
 				gravaCelula(22, CommonsUtil.dateValue(seguroTabelaVO.getDataNascimento4(), "yyyy-MM-dd"), linha);
-				gravaCelula(23, seguroTabelaVO.getSexo4().substring(0, 1), linha);
+				gravaCelula(23, (CommonsUtil.semValor(seguroTabelaVO.getSexo4()))?"":seguroTabelaVO.getSexo4().substring(0, 1), linha);
 				gravaCelula(24, seguroTabelaVO.getPorcentagem4().doubleValue(), linha);
 			}
 						

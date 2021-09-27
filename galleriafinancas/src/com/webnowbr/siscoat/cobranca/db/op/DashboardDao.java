@@ -38,51 +38,84 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 	// contratos analise reprovada
 	// aguardando pagamento
 	// pagamento confirmando, aguardando laudo e paju
-	private static final String QUERY_DASH_CONTRATOS =  	" select idresponsavel, nomeresponsavel, sum(total) totalcontratos, sum(totalaprovados) totalaprovados, sum(totalreprovados) totalreprovados, sum(totalagpagamento) totalagpagamento, sum(totalpago) totalpago  from ( "
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) total, 0 totalaprovados, 0 totalreprovados, 0 totalagpagamento, 0 totalpago"
+	private static final String QUERY_DASH_CONTRATOS =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where c.datacontrato >= ? ::timestamp "
-			+ " and c.datacontrato <= ? ::timestamp "
-			+ " group by r.id, r.nome"
+			+ " where c.status = 'Ag. Análise' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ "   and datacontrato <= ? ::timestamp "
+			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 total, count(c.id) totalaprovados, 0 totalreprovados, 0 totalagpagamento, 0 totalpago"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where c.analisereprovada = false and c.cadastroAprovadoValor = 'Aprovado'"
-			+ " and c.cadastroAprovadoData >= ? ::timestamp "
-			+ " and c.cadastroAprovadoData <= ? ::timestamp "
-			+ " group by r.id, r.nome"
+			+ " where c.status = 'Em Análise' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ "   and datacontrato <= ? ::timestamp "
+			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 total, 0 totalaprovados, count(c.id) totalreprovados, 0 totalagpagamento, 0 totalpago"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where c.analisereprovada = true"
-			+ " and c.analiseReprovadaData >= ? ::timestamp "
-			+ " and c.analiseReprovadaData <= ? ::timestamp "
-			+ " group by r.id, r.nome"
+			+ " where c.status = 'Aprovado' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ "   and datacontrato <= ? ::timestamp "
+			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 total, 0 totalaprovados, 0 totalreprovados, count(c.id) totalagpagamento, 0 totalpago"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where cadastroAprovadoValor = 'Aprovado' and matriculaAprovadaValor = 'Aprovado' and pagtoLaudoConfirmada = false" 
-			+ " and c.datacontrato >= ? ::timestamp "
-			+ " and c.datacontrato <= ? ::timestamp "
-			+ " group by r.id, r.nome"
+			+ " where c.status = 'Reprovado' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ "   and datacontrato <= ? ::timestamp "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " ) totais"
+			+ " group by idresponsavel, nomeresponsavel "
+			+ " order by nomeresponsavel";
+	
+	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " where c.status = 'Ag. Análise' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ " and datacontrato <= ? ::timestamp "
+			+ " r.donoResponsavel = ? "
+			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 total, 0 totalaprovados, 0 totalreprovados, 0 totalagpagamento, count(c.id) totalpago"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where cadastroAprovadoValor = 'Aprovado' and matriculaAprovadaValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false)"
-			+ " and c.datacontrato >= ? ::timestamp "
-			+ " and c.datacontrato <= ? ::timestamp "
-			+ " group by r.id, r.nome"
+			+ " where c.status = 'Em Análise' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ " and datacontrato <= ? ::timestamp "
+			+ " r.donoResponsavel = ? "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " where c.status = 'Aprovado' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ " and datacontrato <= ? ::timestamp "
+			+ " r.donoResponsavel = ? "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " where c.status = 'Reprovado' "
+			+ " and datacontrato >= ? ::timestamp "
+			+ " and datacontrato <= ? ::timestamp "
+			+ " r.donoResponsavel = ? "
+			+ " group by r.id, r.nome, c.datacontrato"
 			+ " ) totais"
 			+ " group by idresponsavel, nomeresponsavel "
 			+ " order by nomeresponsavel";
 			
 	@SuppressWarnings("unchecked")
-	public List<Dashboard> getDashboardContratos(final Date dataInicio, final Date dataFim) {
+	public List<Dashboard> getDashboardContratos(final Date dataInicio, final Date dataFim, final long idGerenteResponsavel) {
 		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -94,40 +127,76 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 				
 				try {
 					connection = getConnection();
-
-					ps = connection
-							.prepareStatement(QUERY_DASH_CONTRATOS);		
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
 	
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);	
-					
-					ps.setDate(3, dtRelInicioSQL);
-					ps.setDate(4, dtRelFimSQL);	
-	
-					ps.setDate(5, dtRelInicioSQL);
-					ps.setDate(6, dtRelFimSQL);	
-	
-					ps.setDate(7, dtRelInicioSQL);
-					ps.setDate(8, dtRelFimSQL);	
-	
-					ps.setDate(9, dtRelInicioSQL);
-					ps.setDate(10, dtRelFimSQL);	
+					if (idGerenteResponsavel > 0) {						
+						ps = connection
+								.prepareStatement(QUERY_DASH_CONTRATOS_POR_GERENTE);	
+						
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setLong(3, idGerenteResponsavel);	
+						
+						ps.setDate(4, dtRelInicioSQL);
+						ps.setDate(5, dtRelFimSQL);	
+						ps.setLong(6, idGerenteResponsavel);	
+						
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+						ps.setLong(9, idGerenteResponsavel);	
+		
+						ps.setDate(10, dtRelInicioSQL);
+						ps.setDate(11, dtRelFimSQL);
+						ps.setLong(12, idGerenteResponsavel);	
+					} else {						
+						ps = connection
+								.prepareStatement(QUERY_DASH_CONTRATOS);	
+						
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);	
+						
+						ps.setDate(3, dtRelInicioSQL);
+						ps.setDate(4, dtRelFimSQL);	
+		
+						ps.setDate(5, dtRelInicioSQL);
+						ps.setDate(6, dtRelFimSQL);	
+		
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);	
+					}
 	
 					rs = ps.executeQuery();
 					
 					Dashboard dashboard = new Dashboard();
 					
+					ResponsavelDao responsavelDao = new ResponsavelDao();
+					Responsavel responsavel = new Responsavel();
+					
+					if (idGerenteResponsavel > 0) {
+						responsavel = responsavelDao.findById(idGerenteResponsavel);
+					}
+					
 					while (rs.next()) {
 						dashboard = new Dashboard();
 						dashboard.setNomeResponsavel(rs.getString(2));
-						dashboard.setTotalcontratos(rs.getInt(3));
-						dashboard.setTotalaprovados(rs.getInt(4));
-						dashboard.setTotalreprovados(rs.getInt(5));
-						dashboard.setTotalagpagamento(rs.getInt(6));
-						dashboard.setTotalpago(rs.getInt(7));	
+						
+						responsavel = responsavelDao.findById(rs.getLong(1));
+						dashboard.setResponsavel(responsavel);
+						
+						if (idGerenteResponsavel > 0) {
+							dashboard.setGerenteResponsavel(responsavel.getNome());
+						} else {
+							if (responsavel.getDonoResponsavel() != null) {
+								dashboard.setGerenteResponsavel(responsavel.getDonoResponsavel().getNome());
+							}							
+						}
+
+						dashboard.setTotalNovosContratos(rs.getInt(3));
+						dashboard.setTotalaEmAnalise(rs.getInt(4));
+						dashboard.setTotalAprovados(rs.getInt(5));
+						dashboard.setTotalReprovados(rs.getInt(6));
 						
 						objects.add(dashboard);
 					}
