@@ -970,7 +970,14 @@
 							</p:panel>
 							<p:panel header="Testemunhas">
 								<h:panelGrid columns="2">
-								
+
+									<p:commandButton ajax="true" action="#{ccbMB.pesquisaTestemunha1}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update=":formReceborPagador" />
+									<p:spacer height="10" />
+
+
 									<p:outputLabel for="nomeTestemunha1" value="Nome da Testemunha 1: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
@@ -986,7 +993,14 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="rgTestemunha1" value="#{ccbMB.rgTestemunha1}"
 										label="Contrato" />
-										
+
+									<p:commandButton ajax="true"
+										action="#{ccbMB.pesquisaTestemunha2}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update=":formReceborPagador" />
+									<p:spacer height="10" />
+
 									<p:outputLabel for="nomeTestemunha2" value="Nome da Testemunha 2: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />

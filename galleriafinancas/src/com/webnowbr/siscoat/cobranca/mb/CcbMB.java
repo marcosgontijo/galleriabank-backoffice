@@ -138,6 +138,8 @@ public class CcbMB {
 	private PagadorRecebedor intervenienteSelecionado;
 	private PagadorRecebedor terceiroGSelecionado;
 	private PagadorRecebedor avalistaSelecionado;
+	private PagadorRecebedor testemunha1Selecionado;
+	private PagadorRecebedor testemunha2Selecionado;
 	private List<PagadorRecebedor> listPagadores;
 
 	private BigDecimal valorLiquidoCredito;
@@ -207,6 +209,7 @@ public class CcbMB {
 		this.updatePagadorRecebedor = ":form:emitentePanel";
 		this.emitenteSelecionado = new PagadorRecebedor();
 	}
+	
 
 	public void pesquisaInterveniente() {
 		this.tipoPesquisa = "Interveniente";
@@ -226,6 +229,20 @@ public class CcbMB {
 		this.tipoPesquisa = "Avalista";
 		this.updatePagadorRecebedor = ":form:avalistaPanel";
 		this.avalistaSelecionado = new PagadorRecebedor();
+		this.emitenteSelecionado = new PagadorRecebedor();
+	}
+	
+	public void pesquisaTestemunha1() {
+		this.tipoPesquisa = "Testemunha1";
+		this.updatePagadorRecebedor = ":form:Dados";
+		this.testemunha1Selecionado = new PagadorRecebedor();
+		this.emitenteSelecionado = new PagadorRecebedor();
+	}
+	
+	public void pesquisaTestemunha2() {
+		this.tipoPesquisa = "Testemunha2";
+		this.updatePagadorRecebedor = ":form:Dados";
+		this.testemunha2Selecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
@@ -355,6 +372,20 @@ public class CcbMB {
 				this.setNomeConjugeAvalista(null);
 				this.setCpfConjugeAvalista(null);
 			}
+		}
+		
+		else if (CommonsUtil.mesmoValor(this.tipoPesquisa ,"Testemunha1")) {
+			this.testemunha1Selecionado = (this.selectedPagadorGenerico);
+			this.setNomeTestemunha1(this.testemunha1Selecionado.getNome());
+			this.setCpfTestemunha1(this.testemunha1Selecionado.getCpf());
+			this.setRgTestemunha1(this.testemunha1Selecionado.getRg());
+		}
+		
+		else if (CommonsUtil.mesmoValor(this.tipoPesquisa ,"Testemunha2")) {
+			this.testemunha2Selecionado = (this.selectedPagadorGenerico);
+			this.setNomeTestemunha2(this.testemunha2Selecionado.getNome());
+			this.setCpfTestemunha2(this.testemunha2Selecionado.getCpf());
+			this.setRgTestemunha2(this.testemunha2Selecionado.getRg());
 		}
 	}
 	
@@ -858,8 +889,146 @@ public class CcbMB {
 		}
 
 	}
-
+	
 	public String clearFieldsEmitirCcb() {
+		loadLovs();
+		this.intervenienteSelecionado = new PagadorRecebedor();
+		this.emitenteSelecionado = new PagadorRecebedor();
+		this.selectedPagador = new PagadorRecebedor();
+		this.numeroContrato = null;
+		this.nomeEmitente = null;
+		this.nacionalidadeEmitente = null;
+		this.profissaoEmitente = null;
+		this.estadoCivilEmitente = null;
+		this.numeroRgEmitente = null;
+		this.ufEmitente = null;
+		this.cpfEmitente = null;
+		this.logradouroEmitente = null;
+		this.numeroEmitente = null;
+		this.complementoEmitente = null;
+		this.cidadeEmitente = null;
+		this.cepEmitente = null;
+		this.emailEmitente = null;
+		this.regimeCasamentoEmitente = null;
+		this.fiduciante = false;
+		this.femininoEmitente = false;
+		if (this.getNomeConjugeEmitente() != null) {
+			this.setNomeConjugeEmitente(null);
+			this.setCpfConjugeEmitente(null);
+		}
+		this.nomeInterveniente = null;
+		this.nacionalidadeInterveniente = null;
+		this.profissaoInterveniente = null;
+		this.estadoCivilInterveniente = null;
+		this.numeroRgInterveniente = null;
+		this.ufInterveniente = null;
+		this.cpfInterveniente = null;
+		this.logradouroInterveniente = null;
+		this.numeroInterveniente = null;
+		this.complementoInterveniente = null;
+		this.cidadeInterveniente = null;
+		this.cepInterveniente = null;
+		this.addInterveniente = false;
+		this.emailInterveniente = null;
+		this.regimeCasamentoInterveniente = null;
+		this.femininoInterveniente = false;
+		if (this.getNomeConjugeInterveniente() != null) {
+			this.setNomeConjugeInterveniente(null);
+			this.setCpfConjugeInterveniente(null);
+		}
+		this.nomeTerceiroG = null;
+		this.nacionalidadeTerceiroG = null;
+		this.profissaoTerceiroG = null;
+		this.estadoCivilTerceiroG = null;
+		this.numeroRgTerceiroG = null;
+		this.ufTerceiroG = null;
+		this.cpfTerceiroG = null;
+		this.logradouroTerceiroG = null;
+		this.numeroTerceiroG = null;
+		this.complementoTerceiroG = null;
+		this.cidadeTerceiroG = null;
+		this.cepTerceiroG = null;
+		this.addTerceiro = false;
+		this.emailTerceiroG = null;
+		this.regimeCasamentoTerceiroG = null;
+		this.femininoTerceiroG = false;	
+		if (this.getNomeConjugeTerceiroG() != null) {
+			this.setNomeConjugeTerceiroG(null);
+			this.setCpfConjugeTerceiroG(null);
+		}
+		this.nomeAvalista = null;
+		this.nacionalidadeAvalista = null;
+		this.profissaoAvalista = null;
+		this.estadoCivilAvalista = null;
+		this.numeroRgAvalista = null;
+		this.ufAvalista = null;
+		this.cpfAvalista = null;
+		this.logradouroAvalista = null;
+		this.numeroAvalista = null;
+		this.complementoAvalista = null;
+		this.cidadeAvalista = null;
+		this.cepAvalista = null;
+		this.addAvalista = false;
+		this.emailAvalista = null;
+		this.regimeCasamentoAvalista = null;
+		this.femininoAvalista = false;	
+		if (this.getNomeConjugeAvalista() != null) {
+			this.setNomeConjugeAvalista(null);
+			this.setCpfConjugeAvalista(null);
+		}
+		this.selectedPagadorGenerico = null;
+		this.selectedPagador = null;
+		this.emitenteSelecionado = null;
+		this.intervenienteSelecionado = null;
+		this.terceiroGSelecionado = null;
+		this.avalistaSelecionado = null;
+		this.valorLiquidoCredito = null;
+		this.valorCredito = null;
+		this.custoEmissao = null;
+		this.valorIOF = null;
+		this.valorDespesas = null;
+		this.taxaDeJurosMes = null;
+		this.taxaDeJurosAno = null;
+		this.cetMes = null;
+		this.cetAno = null;
+		this.contaCorrente = null;
+		this.agencia = null;
+		this.numeroBanco = null;
+		this.nomeBanco = null;
+		this.numeroParcelasPagamento = null;
+		this.vencimentoPrimeiraParcelaPagamento = null;
+		this.vencimentoUltimaParcelaPagamento = null;
+		this.montantePagamento = null;
+		this.numeroParcelasDFI = null;
+		this.vencimentoPrimeiraParcelaDFI = null;
+		this.vencimentoUltimaParcelaDFI = null;
+		this.montanteDFI = null;
+		this.numeroParcelasMIP = null;
+		this.vencimentoPrimeiraParcelaMIP = null;
+		this.vencimentoUltimaParcelaMIP = null;
+		this.montanteMIP = null;
+		this.tarifaAntecipada = null;
+		this.dataDeEmissao = null;
+		this.numeroImovel = null;
+		this.cartorioImovel = null;
+		this.cidadeImovel = null;
+		this.ufImovel = null;
+		this.vendaLeilao = null;
+		this.elaboradorNome = null;
+		this.elaboradorCrea = null;
+		this.responsavelNome = null;
+		this.responsavelCrea = null;
+		this.porcentagemImovel = null;
+		this.nomeTestemunha1 = null;
+		this.cpfTestemunha1 = null;
+		this.rgTestemunha1 = null;
+		this.nomeTestemunha2 = null;
+		this.cpfTestemunha2 = null;
+		this.rgTestemunha2 = null;	
+		return "/Atendimento/Cobranca/Ccb.xhtml";
+	}
+	
+	/*public String clearFieldsEmitirCcb() {
 		loadLovs();
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
@@ -929,7 +1098,7 @@ public class CcbMB {
 		 ufImovel = null;
 		 
 		 return "/Atendimento/Cobranca/Ccb.xhtml";
-	}
+	}*/
 
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
