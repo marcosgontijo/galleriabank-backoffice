@@ -8,10 +8,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
@@ -206,10 +209,9 @@ public class CcbMB {
 
 	public void pesquisaEmitente() {
 		this.tipoPesquisa = "Emitente";
-		this.updatePagadorRecebedor = ":form:emitentePanel";
+		this.updatePagadorRecebedor = ":form:emitentePanel :form:Dados";
 		this.emitenteSelecionado = new PagadorRecebedor();
 	}
-	
 
 	public void pesquisaInterveniente() {
 		this.tipoPesquisa = "Interveniente";
@@ -299,6 +301,9 @@ public class CcbMB {
 			this.setCidadeEmitente(this.emitenteSelecionado.getCidade());
 			this.setCepEmitente(this.emitenteSelecionado.getCep());
 			this.setEmailEmitente(this.emitenteSelecionado.getEmail());
+			this.setAgencia(this.emitenteSelecionado.getAgencia());
+			this.setNomeBanco(this.emitenteSelecionado.getBanco());
+			this.setContaCorrente(this.emitenteSelecionado.getConta());
 			if (this.emitenteSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
 				this.setCpfConjugeEmitente(this.emitenteSelecionado.getCpfConjuge());
@@ -483,6 +488,18 @@ public class CcbMB {
 		}
 	}
 	
+	public String verificaNacionalidade(Boolean sexo, String nacionalidade) {
+		if(sexo == true) {
+			if(CommonsUtil.mesmoValor(nacionalidade, "brasileiro")) {
+				return "brasileira";
+			} else {
+				return nacionalidade;
+			}
+		} else {
+			return nacionalidade;
+		}
+	}
+	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
 
@@ -593,7 +610,7 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "estadoCivilEmitente", verificaEstadoCivil(this.femininoEmitente,this.estadoCivilEmitente).toLowerCase());	 
 						text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 
 						text = trocaValoresXWPF(text, r, "cpfEmitente", this.cpfEmitente);
-						text = trocaValoresXWPF(text, r, "nacionalidadeEmitente",this.nacionalidadeEmitente);
+						text = trocaValoresXWPF(text, r, "nacionalidadeEmitente",verificaNacionalidade(this.femininoEmitente, this.nacionalidadeEmitente));
 						text = trocaValoresXWPF(text, r, "profissaoEmitente",this.profissaoEmitente.toLowerCase());
 						text = trocaValoresXWPF(text, r, "numeroRgEmitente", this.numeroRgEmitente);
 						text = trocaValoresXWPF(text, r, "ufEmitente", this.ufEmitente);
@@ -627,7 +644,7 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "estadoCivilInterveniente", verificaEstadoCivil(this.femininoInterveniente, this.estadoCivilInterveniente).toLowerCase());
 							text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);
 							text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
-							text = trocaValoresXWPF(text, r, "nacionalidadeInterveniente", this.nacionalidadeInterveniente);
+							text = trocaValoresXWPF(text, r, "nacionalidadeInterveniente", verificaNacionalidade(this.femininoInterveniente, this.nacionalidadeInterveniente));
 							text = trocaValoresXWPF(text, r, "profissaoInterveniente", this.profissaoInterveniente.toLowerCase());
 							text = trocaValoresXWPF(text, r, "numeroRgInterveniente", this.numeroRgInterveniente);
 							text = trocaValoresXWPF(text, r, "ufInterveniente", this.ufInterveniente);
@@ -664,7 +681,7 @@ public class CcbMB {
 									verificaEstadoCivil(this.femininoAvalista, this.estadoCivilAvalista).toLowerCase());
 							text = trocaValoresXWPF(text, r, "nomeAvalista", this.nomeAvalista);
 							text = trocaValoresXWPF(text, r, "cpfAvalista", this.cpfAvalista);
-							text = trocaValoresXWPF(text, r, "nacionalidadeAvalista", this.nacionalidadeAvalista);
+							text = trocaValoresXWPF(text, r, "nacionalidadeAvalista", verificaNacionalidade(this.femininoAvalista, this.nacionalidadeAvalista));
 							text = trocaValoresXWPF(text, r, "profissaoAvalista", this.profissaoAvalista.toLowerCase());
 							text = trocaValoresXWPF(text, r, "numeroRgAvalista", this.numeroRgAvalista);
 							text = trocaValoresXWPF(text, r, "ufAvalista", this.ufAvalista);
@@ -704,7 +721,7 @@ public class CcbMB {
 											.toLowerCase());
 							text = trocaValoresXWPF(text, r, "nomeTerceiroG", this.nomeTerceiroG);
 							text = trocaValoresXWPF(text, r, "cpfTerceiroG", this.cpfTerceiroG);
-							text = trocaValoresXWPF(text, r, "nacionalidadeTerceiroG", this.nacionalidadeTerceiroG);
+							text = trocaValoresXWPF(text, r, "nacionalidadeTerceiroG", verificaNacionalidade(this.femininoTerceiroG, this.nacionalidadeTerceiroG));
 							text = trocaValoresXWPF(text, r, "profissaoTerceiroG",
 									this.profissaoTerceiroG.toLowerCase());
 							text = trocaValoresXWPF(text, r, "numeroRgTerceiroG", this.numeroRgTerceiroG);
@@ -885,9 +902,19 @@ public class CcbMB {
 	
 	public void calculaPorcentagemImovel() {
 		if (this.valorCredito != null && vendaLeilao != null) {
-				this.setPorcentagemImovel((this.vendaLeilao.divide(this.valorCredito)).multiply(BigDecimal.valueOf(100)));
+				this.setPorcentagemImovel(((this.vendaLeilao.divide(this.valorCredito, MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));
+						
 		}
 
+	}
+	
+	public Date getDataHoje() {
+		TimeZone zone = TimeZone.getDefault(); 
+		Locale locale = new Locale("pt", "BR");  
+		Calendar dataHojeCalendar = Calendar.getInstance(zone, locale);
+		Date dataHoje = dataHojeCalendar.getTime();
+		
+		return dataHoje;
 	}
 	
 	public String clearFieldsEmitirCcb() {
@@ -897,7 +924,7 @@ public class CcbMB {
 		this.selectedPagador = new PagadorRecebedor();
 		this.numeroContrato = null;
 		this.nomeEmitente = null;
-		this.nacionalidadeEmitente = null;
+		this.nacionalidadeEmitente = "brasileiro";
 		this.profissaoEmitente = null;
 		this.estadoCivilEmitente = null;
 		this.numeroRgEmitente = null;
@@ -917,7 +944,7 @@ public class CcbMB {
 			this.setCpfConjugeEmitente(null);
 		}
 		this.nomeInterveniente = null;
-		this.nacionalidadeInterveniente = null;
+		this.nacionalidadeInterveniente = "brasileiro";
 		this.profissaoInterveniente = null;
 		this.estadoCivilInterveniente = null;
 		this.numeroRgInterveniente = null;
@@ -937,7 +964,7 @@ public class CcbMB {
 			this.setCpfConjugeInterveniente(null);
 		}
 		this.nomeTerceiroG = null;
-		this.nacionalidadeTerceiroG = null;
+		this.nacionalidadeTerceiroG = "brasileiro";
 		this.profissaoTerceiroG = null;
 		this.estadoCivilTerceiroG = null;
 		this.numeroRgTerceiroG = null;
@@ -957,7 +984,7 @@ public class CcbMB {
 			this.setCpfConjugeTerceiroG(null);
 		}
 		this.nomeAvalista = null;
-		this.nacionalidadeAvalista = null;
+		this.nacionalidadeAvalista = "brasileiro";
 		this.profissaoAvalista = null;
 		this.estadoCivilAvalista = null;
 		this.numeroRgAvalista = null;
@@ -1007,8 +1034,8 @@ public class CcbMB {
 		this.vencimentoPrimeiraParcelaMIP = null;
 		this.vencimentoUltimaParcelaMIP = null;
 		this.montanteMIP = null;
-		this.tarifaAntecipada = null;
-		this.dataDeEmissao = null;
+		this.tarifaAntecipada = BigDecimal.ZERO;
+		this.dataDeEmissao = getDataHoje();
 		this.numeroImovel = null;
 		this.cartorioImovel = null;
 		this.cidadeImovel = null;
@@ -1027,78 +1054,7 @@ public class CcbMB {
 		this.rgTestemunha2 = null;	
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
-	
-	/*public String clearFieldsEmitirCcb() {
-		loadLovs();
-		this.intervenienteSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
-		this.selectedPagador = new PagadorRecebedor();
-		
-		this.setNomeEmitente(null);
-		this.setProfissaoEmitente(null);
-		this.setEstadoCivilEmitente(null);
-		this.setNumeroRgEmitente(null);
-		this.setUfEmitente(null);
-		this.setCpfEmitente(null);
-		this.setLogradouroEmitente(null);
-		this.setNumeroEmitente(null);
-		this.setComplementoEmitente(null);
-		this.setCidadeEmitente(null);
-		this.setCepEmitente(null);
-		this.setEmailEmitente(null);
-		if (this.getNomeConjugeEmitente() != null) {
-			this.setNomeConjugeEmitente(null);
-			this.setCpfConjugeEmitente(null);
-		}
-		this.setNomeInterveniente(null);
-		this.setProfissaoInterveniente(null);
-		this.setEstadoCivilInterveniente(null);
-		this.setNumeroRgInterveniente(null);
-		this.setUfInterveniente(null);
-		this.setCpfInterveniente(null);
-		this.setLogradouroInterveniente(null);
-		this.setNumeroInterveniente(null);
-		this.setComplementoInterveniente(null);
-		this.setCidadeInterveniente(null);
-		this.setCepInterveniente(null);
-		if (this.getNomeConjugeInterveniente() != null) {
-			this.setNomeConjugeInterveniente(null);	
-			this.setCpfConjugeInterveniente(null);
-		}
-		 valorLiquidoCredito = null;
-		 valorCredito = null;
-		 custoEmissao = null;
-		 valorIOF = null;
-		 valorDespesas = null;	
-		 taxaDeJurosMes = null;
-		 taxaDeJurosAno = null;
-		 cetMes = null;
-		 cetAno = null;
-		 contaCorrente = null;
-		 agencia = null;
-		 numeroBanco = null;
-		 nomeBanco = null;
-		 numeroParcelasPagamento = null;
-		 vencimentoPrimeiraParcelaPagamento = null;
-		 vencimentoUltimaParcelaPagamento = null;
-		 montantePagamento = null;
-		 numeroParcelasDFI = null;
-		 vencimentoPrimeiraParcelaDFI = null;
-		 vencimentoUltimaParcelaDFI = null;
-		 montanteDFI = null;
-		 numeroParcelasMIP = null;
-		 vencimentoPrimeiraParcelaMIP = null;
-		 vencimentoUltimaParcelaMIP = null;
-		 montanteMIP = null;
-		 tarifaAntecipada = null;
-		 dataDeEmissao = null;
-		 numeroImovel = null;
-		 cartorioImovel = null;
-		 cidadeImovel = null;
-		 ufImovel = null;
-		 
-		 return "/Atendimento/Cobranca/Ccb.xhtml";
-	}*/
+
 
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();

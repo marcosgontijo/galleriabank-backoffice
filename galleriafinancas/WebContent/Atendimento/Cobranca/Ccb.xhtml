@@ -106,9 +106,9 @@
 
 							<p:outputLabel for="cpfEmitente" value="CPF do emitente: "
 								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cpfEmitente" value="#{ccbMB.cpfEmitente}"
-								label="Contrato" />
+								style="font-weight: bold; font-size: 18px;" />						
+							<p:inputMask id="cpfEmitente" value="#{ccbMB.cpfEmitente}"
+										label="Contrato" mask="999.999.999-99"/>
 
 							<p:outputLabel for="logradouroEmitente"
 								value="Logradouro do emitente: " styleClass="labelBold"
@@ -185,9 +185,9 @@
 
 									<p:outputLabel for="cpfConjugeEmitente"
 										value="CPF do emitente: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cpfConjugeEmitente"
-										value="#{ccbMB.cpfConjugeEmitente}" label="Contrato" />
+										style="font-weight: bold; font-size: 18px;" />						
+									<p:inputMask id="cpfConjugeEmitente" value="#{ccbMB.cpfConjugeEmitente}"
+										label="Contrato" mask="999.999.999-99"/>
 
 								</h:panelGrid>
 							</p:panel>
@@ -263,8 +263,8 @@
 							<p:outputLabel for="cpfInterveniente"
 								value="CPF do interveniente " styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cpfInterveniente"
-								value="#{ccbMB.cpfInterveniente}" label="Contrato" />
+							<p:inputMask id="cpfInterveniente" value="#{ccbMB.cpfInterveniente}"
+										label="Contrato" mask="999.999.999-99"/>
 
 							<p:outputLabel for="logradouroInterveniente"
 								value="Logradouro do interveniente " styleClass="labelBold"
@@ -337,10 +337,10 @@
 
 									<p:outputLabel for="cpfConjugeInterveniente"
 										value="CPF do interveniente " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cpfConjugeInterveniente"
-										value="#{ccbMB.cpfConjugeInterveniente}" label="Contrato" />
-
+										style="font-weight: bold; font-size: 18px;" />						
+									<p:inputMask id="cpfConjugeInterveniente" value="#{ccbMB.cpfConjugeInterveniente}"
+										label="Contrato" mask="999.999.999-99"/>
+										
 								</h:panelGrid>
 							</p:panel>
 						</h:panelGroup>
@@ -416,9 +416,9 @@
 							<p:outputLabel for="cpfTerceiroG"
 								value="CPF do Terceiro Garantidor: " styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cpfTerceiroG"
-								value="#{ccbMB.cpfTerceiroG}" label="Contrato" />
-
+							<p:inputMask id="cpfTerceiroG" value="#{ccbMB.cpfTerceiroG}"
+										label="Contrato" mask="999.999.999-99"/>
+										
 							<p:outputLabel for="logradouroTerceiroG"
 								value="Logradouro do Terceiro Garantidor:" styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
@@ -490,8 +490,8 @@
 									<p:outputLabel for="cpfConjugeTerceiroG"
 										value="CPF do Terceiro Garantidor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cpfConjugeTerceiroG"
-										value="#{ccbMB.cpfConjugeTerceiroG}" label="Contrato" />
+									<p:inputMask id="cpfConjugeTerceiroG" value="#{ccbMB.cpfConjugeTerceiroG}"
+										label="Contrato" mask="999.999.999-99"/>
 						</h:panelGrid>
 						</p:panel>
 						</h:panelGroup>
@@ -565,10 +565,9 @@
 
 							<p:outputLabel for="cpfAvalista" value="CPF do Avalista "
 								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cpfAvalista" value="#{ccbMB.cpfAvalista}"
-								label="Contrato" />
-
+								style="font-weight: bold; font-size: 18px;" />			
+							<p:inputMask id="cpfAvalista" value="#{ccbMB.cpfAvalista}"
+										label="Contrato" mask="999.999.999-99"/>
 							<p:outputLabel for="logradouroAvalista"
 								value="Logradouro do Avalista " styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
@@ -638,8 +637,11 @@
 									<p:outputLabel for="cpfConjugeAvalista"
 										value="CPF do Avalista " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cpfConjugeAvalista"
-										value="#{ccbMB.cpfConjugeAvalista}" label="Contrato" />
+
+									<p:inputMask id="cpfConjugeAvalista"
+										value="#{ccbMB.cpfConjugeAvalista}" label="Contrato"
+										mask="999.999.999-99"  />
+
 								</h:panelGrid>
 							</p:panel>
 						</h:panelGroup>
@@ -986,8 +988,10 @@
 									<p:outputLabel for="cpfTestemunha1" value="CPF da Testemunha 1: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cpfTestemunha1" value="#{ccbMB.cpfTestemunha1}"
-										label="Contrato" />
+										
+									<p:inputMask id="cpfTestemunha1" value="#{ccbMB.cpfTestemunha1}"
+										label="Contrato" mask="999.999.999-99"/>
+								
 									<p:outputLabel for="rgTestemunha1" value="Rg da Testemunha 1: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
@@ -1009,8 +1013,8 @@
 									<p:outputLabel for="cpfTestemunha2" value="CPF da Testemunha 2: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />
-									<p:inputText id="cpfTestemunha2" value="#{ccbMB.cpfTestemunha2}"
-										label="Contrato" />
+									<p:inputMask id="cpfTestemunha2" value="#{ccbMB.cpfTestemunha2}"
+										label="Contrato" mask="999.999.999-99"/>
 									<p:outputLabel for="rgTestemunha2" value="Rg da Testemunha 2: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />
