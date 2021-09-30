@@ -143,6 +143,8 @@ public class ContratoCobrancaMB {
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
+	
+	private String tituloTelaConsultaPreStatus;
 
 	private Date dataHoje;
 
@@ -5364,6 +5366,59 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		}
 	}
+	
+	public String geraConsultaContratosPorStatus(String status) {
+		this.tituloTelaConsultaPreStatus = status;
+		
+		if (status.equals("Lead")) {
+			this.tituloTelaConsultaPreStatus = "Novo Lead";
+		}
+		if (status.equals("Análise Reprovada")) {
+			this.tituloTelaConsultaPreStatus = "Análise Reprovada";
+		}
+		if (status.equals("Em Analise")) {
+			this.tituloTelaConsultaPreStatus = "Em Análise";
+		}
+		if (status.equals("Ag. Pagto. Laudo")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagto. Laudo";
+		}
+		if (status.equals("Ag. PAJU e Laudo")) {
+			this.tituloTelaConsultaPreStatus = "Ag. PAJU e Laudo";
+		}
+		if (status.equals("Ag. DOC")) {
+			this.tituloTelaConsultaPreStatus = "Ag. DOC";
+		}
+		if (status.equals("Ag. CCB")) {
+			this.tituloTelaConsultaPreStatus = "Ag. CCB";
+		}
+		if (status.equals("Ag. Assinatura")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Assinatura";
+		}
+		if (status.equals("Ag. Registro")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Registro";
+		}
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+			
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), status); 	 
+					}
+				}
+			} 
+		}
+
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+	}
 
 	public String geraConsultaLeads(String statuslead) {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -6142,7 +6197,7 @@ public class ContratoCobrancaMB {
 				 */
 				cell.setCellStyle(numericStyle);
 				cell.setCellType(CellType.NUMERIC);
-				if (parcelas.getVlrParcela() != null) {
+				if (parcelas.getValorTotalPagamento() != null) {
 					cell.setCellValue(((BigDecimal) parcelas.getValorTotalPagamento()).doubleValue());
 				} else {
 					cell.setCellValue(Double.valueOf("0"));
@@ -18690,8 +18745,12 @@ public class ContratoCobrancaMB {
 	public void setRelDataContratoFimAtraso(Date relDataContratoFimAtraso) {
 		this.relDataContratoFimAtraso = relDataContratoFimAtraso;
 	}
-	
-	
-	
-	
+
+	public String getTituloTelaConsultaPreStatus() {
+		return tituloTelaConsultaPreStatus;
+	}
+
+	public void setTituloTelaConsultaPreStatus(String tituloTelaConsultaPreStatus) {
+		this.tituloTelaConsultaPreStatus = tituloTelaConsultaPreStatus;
+	}
 }

@@ -93,24 +93,24 @@ public class BmpDigitalMB {
 	/****
 	 * 
 		
-		{
-		  "auth": {
-		    "Usuario": " JOAO@GALLERIAFINANCAS.COM.BR",
-		    "Senha": "Scr!2021",
-		    "CodigoParametro": "GALLERIA_SCR ",
-		    "Chave": "2443e03c-211a-418d-b72e-8d7ce7e37cef "
-		  },
-		
-		
-		•	URL de Homologação
-		o	Integração
-		https://bmpteste.moneyp.com.br/api/BMPDigital/ <- concatenando o serviço
-		o	Swagger
-		https://bmpteste.moneyp.com.br/swagger/ui/index
-		o	Dashboard
-		https://bmpteste.moneyp.com.br/
-		Para acessarem podem utilizar o mesmo login e senha da integração
-		Caso necessitem de outros usuários podem solicitar que liberamos
+	{
+	  "auth": {
+	    "Usuario": "joao@galleriafinancas.com.br",
+	    "Senha": "Scr!2021",
+	    "CodigoParametro": "GALLERIA_SCR",
+	    "Chave": "eb11110f-9f0e-4a16-83d7-6229c949da4a"
+	  },
+	
+	
+	•	URL de Produção
+	o	Integração
+	https://bmpdigital.moneyp.com.br/api/BMPDigital/ <- concatenando o serviço
+	o	Swagger
+			https://bmpteste.moneyp.com.br/swagger/ui/index
+	o	Dashboard
+		https://bmpdigital.moneyp.com.br/
+		Para acessarem podem utilizar o mesmo login e senha da integração
+		Caso necessitem de outros usuários podem solicitar que liberamos
 
 	 */
 
@@ -159,7 +159,7 @@ public class BmpDigitalMB {
 		String mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 1);
 		String anoReferencia = String.valueOf(calendar.get(Calendar.YEAR));
 		
-		json = "{\"auth\":{\"Usuario\":\"JOAO@GALLERIAFINANCAS.COM.BR\",\"Senha\":\"Scr!2021\",\"CodigoParametro\":\"GALLERIA_SCR\",\"Chave\":\"2443e03c-211a-418d-b72e-8d7ce7e37cef\"}, " +
+		json = "{\"auth\":{\"Usuario\":\"JOAO@GALLERIAFINANCAS.COM.BR\",\"Senha\":\"Scr!2021\",\"CodigoParametro\":\"GALLERIA_SCR\",\"Chave\":\"eb11110f-9f0e-4a16-83d7-6229c949da4a\"}, " +
 			    "\"consulta\":{\"Documento\":\"" + this.documento + "\",\"DataBaseMes\":\"" + mesReferencia + "\",\"DataBaseAno\":\"" + anoReferencia + "\"}}";
 		
 		return json;
@@ -205,7 +205,7 @@ public class BmpDigitalMB {
 			System.out.println(" INICIO DO PROCESSO ");
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/ConsultaSCR");
+			URL myURL = new URL("https://bmpdigital.moneyp.com.br/api/BMPDigital/ConsultaSCR");
 
 			String dados = composeJSONPayload();			
 

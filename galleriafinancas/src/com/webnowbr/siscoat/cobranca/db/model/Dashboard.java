@@ -28,7 +28,8 @@ public class Dashboard implements Serializable {
 	private int totalReprovados;
 	private int totalaEmAnalise;
 	private int totalpago;
-
+	private BigDecimal totalCCB;
+	
 	public Dashboard() {
 	}
 
@@ -174,5 +175,13 @@ public class Dashboard implements Serializable {
 
 	public void setResponsavel(Responsavel responsavel) {
 		this.responsavel = responsavel;
+	}
+
+	public BigDecimal getTotalCCB() {
+		return totalCCB;
+	}
+
+	public void setTotalCCB(BigDecimal totalCCB) {
+		this.totalCCB = totalCCB;
 	}
 }

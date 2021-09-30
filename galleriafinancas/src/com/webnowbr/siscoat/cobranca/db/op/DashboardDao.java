@@ -38,8 +38,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 	// contratos analise reprovada
 	// aguardando pagamento
 	// pagamento confirmando, aguardando laudo e paju
-	private static final String QUERY_DASH_CONTRATOS =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados from ( "
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
+	private static final String QUERY_DASH_CONTRATOS =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados, sum(valorccb) valorccb from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Ag. Análise' "
@@ -47,7 +47,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "   and datacontrato <= ? ::timestamp "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Em Análise' "
@@ -55,7 +55,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "   and datacontrato <= ? ::timestamp "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Aprovado' "
@@ -63,7 +63,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "   and datacontrato <= ? ::timestamp "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Reprovado' "
@@ -74,8 +74,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " group by idresponsavel, nomeresponsavel "
 			+ " order by nomeresponsavel";
 	
-	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados from ( "
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
+	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE =  	" select idresponsavel, nomeresponsavel, sum(totalNovosContratos) totalNovosContratos, sum(totalaEmAnalise) totalaEmAnalise, sum(totalAprovados) totalAprovados, sum(totalReprovados) totalReprovados, sum(valorccb) valorccb from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Ag. Análise' "
@@ -84,7 +84,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " r.donoResponsavel = ? "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, count(c.id) totalaEmAnalise, 0 totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Em Análise' "
@@ -93,7 +93,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " r.donoResponsavel = ? "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, count(c.id) totalAprovados, 0 totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Aprovado' "
@@ -102,7 +102,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " r.donoResponsavel = ? "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 totalNovosContratos, 0 totalaEmAnalise, 0 totalAprovados, count(c.id) totalReprovados, sum(c.valorccb) valorccb"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " where c.status = 'Reprovado' "
@@ -197,6 +197,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						dashboard.setTotalaEmAnalise(rs.getInt(4));
 						dashboard.setTotalAprovados(rs.getInt(5));
 						dashboard.setTotalReprovados(rs.getInt(6));
+						dashboard.setTotalCCB(rs.getBigDecimal(7));
 						
 						objects.add(dashboard);
 					}
