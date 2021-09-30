@@ -575,7 +575,7 @@ public class CommonsUtil {
 	}
 	
 	public static final String formataValorMonetario(BigDecimal valor, String moeda) {
-		DecimalFormat df = new DecimalFormat("#,##0.00");
+		DecimalFormat df = new DecimalFormat("#,##0.00",  PT_BR_SYMBOLS);
 		return moeda + df.format(valor);	
 	}
 	
