@@ -5401,21 +5401,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
-		if (loginBean != null) {
-			User usuarioLogado = new User();
-			UserDao u = new UserDao();
-			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-			
-			if (usuarioLogado != null) {
-				if (usuarioLogado.isAdministrador()) {
-					this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-				} else {
-					if (usuarioLogado.getCodigoResponsavel() != null) {
-						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), status); 	 
-					}
-				}
-			} 
-		}
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
