@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -37,6 +38,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -2740,8 +2742,11 @@ public class InvestidorMB {
 				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
 				writer.setPageEvent(event);
 
-				Image img = Image.getInstance(
-						"http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logo-galleria-relatorios-pdf.png");
+				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logocadastrosbanksmall.png"));
+		        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		        ImageIO.write(buff, "png", bos);
+		        Image img = Image.getInstance(bos.toByteArray());
+		        
 				img.setAlignment(Element.ALIGN_CENTER);
 				img.scaleAbsolute(90, 65);
 				cell1 = new PdfPCell(img);

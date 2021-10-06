@@ -603,6 +603,8 @@ public class ContratoCobrancaMB {
 
 	ContratoCobrancaParcelasInvestidor antecipacao;
 	ContratoCobrancaDetalhes amortizacao;
+	
+	private int indexStepsStatusContrato;
 
 	/**
 	 * 
@@ -2324,6 +2326,80 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	
+	public void editPreContratoPorStatus() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		if (this.objetoPagadorRecebedor.getSite() != null) {
+			if (!this.objetoPagadorRecebedor.getSite().contains("http")
+					&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
+				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+			}
+		}
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		imovelCobrancaDao.merge(this.objetoImovelCobranca);
+
+		this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
+		this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
+
+		if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
+			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+		}
+
+		if (this.objetoContratoCobranca.getVlrParcela() != null) {
+			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+
+			this.objetoContratoCobranca.setVlrParcelaStr(
+					bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
+		}
+
+		updateCheckList();
+
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+		// verifica se o contrato for aprovado, manda um tipo de email..
+		// senao valida se houve alteração no checklist para envio de email.
+		enviaEmailAtualizacaoPreContrato();
+
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		
+		if (this.tituloTelaConsultaPreStatus.equals("Lead")) {
+			geraConsultaContratosPorStatus("Lead");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
+			geraConsultaContratosPorStatus("Análise Reprovada");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Em Analise")) {
+			geraConsultaContratosPorStatus("Em Analise");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
+			geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. PAJU e Laudo")) {
+			geraConsultaContratosPorStatus("Ag. PAJU e Laudo");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
+			geraConsultaContratosPorStatus("Ag. DOC");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
+			geraConsultaContratosPorStatus("Ag. CCB");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
+			geraConsultaContratosPorStatus("Ag. Assinatura");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
+			geraConsultaContratosPorStatus("Ag. Registro");
+		}
+	}
+	
 	public String cancelarEdicaoPreContrato() {
 		if (!this.preContratoCustom) {
 			return geraConsultaContratosPendentes();
@@ -2556,6 +2632,12 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setStatus("Pendente");
 				this.objetoContratoCobranca.setAgRegistroData(gerarDataHoje());
 				this.objetoContratoCobranca.setAgRegistroUsuario(getNomeUsuarioLogado());
+				
+				this.objetoContratoCobranca.getStatusContrato().equals("Aprovado");
+				this.objetoContratoCobranca.setStatus("Aprovado");
+				this.objetoContratoCobranca.setAprovado(true);
+				this.objetoContratoCobranca.setAprovadoData(gerarDataHoje());
+				this.objetoContratoCobranca.setAprovadoUsuario(getNomeUsuarioLogado());
 			}
 		}
 
@@ -4187,6 +4269,119 @@ public class ContratoCobrancaMB {
 		saveEstadoCheckListAtual();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
+	}
+	
+	public String clearFieldsEditarPendentesAnalistas() {
+		this.tituloPainel = "Editar";
+
+		files = new ArrayList<FileUploaded>();
+		files = listaArquivos();
+
+		loadLovs();
+
+		loadSelectedLovsPendentes();
+
+		if (this.objetoContratoCobranca.getPagador() != null) {
+			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
+					&& !this.objetoContratoCobranca.getPagador().getCnpj().equals("")) {
+				this.tipoPessoaIsFisica = false;
+			} else {
+				this.tipoPessoaIsFisica = true;
+			}
+		}
+
+		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
+
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
+
+		saveEstadoCheckListAtual();	
+		
+		getIndexStepContrato();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+	}
+	
+	public void getIndexStepContrato() {
+		this.indexStepsStatusContrato = 0;
+		
+		if (!this.objetoContratoCobranca.isInicioAnalise()) {
+			this.indexStepsStatusContrato = 0;
+		}
+		
+		if (this.objetoContratoCobranca.isAnaliseReprovada()) {
+			this.indexStepsStatusContrato = 1;
+		} else {			
+			if (this.objetoContratoCobranca.isInicioAnalise() && this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
+				this.indexStepsStatusContrato = 1;
+			}
+			
+			if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						!this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
+					this.indexStepsStatusContrato = 2;
+				}
+				
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						(!this.objetoContratoCobranca.isLaudoRecebido() || !this.objetoContratoCobranca.isPajurFavoravel())) {
+					this.indexStepsStatusContrato = 3;
+				}
+
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						!this.objetoContratoCobranca.isDocumentosCompletos()) {
+					this.indexStepsStatusContrato = 4;
+				}
+				
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						!this.objetoContratoCobranca.isCcbPronta()) {
+					this.indexStepsStatusContrato = 5;
+				}
+				
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						this.objetoContratoCobranca.isCcbPronta() &&
+						this.objetoContratoCobranca.isAgAssinatura()) {
+					this.indexStepsStatusContrato = 6;
+				}
+				
+				if (this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						this.objetoContratoCobranca.isCcbPronta() &&
+						!this.objetoContratoCobranca.isAgAssinatura() &&
+						this.objetoContratoCobranca.isAgRegistro()) {
+					this.indexStepsStatusContrato = 7;
+				}
+			}
+			
+			//coloca todos no status a frente
+			/*
+			if (indexStepsStatusContrato < 9) {
+				indexStepsStatusContrato = indexStepsStatusContrato + 1;	
+			}	
+			*/
+		}
 	}
 
 	public String clearFieldsEditarPendentesSimples() {
@@ -18738,5 +18933,13 @@ public class ContratoCobrancaMB {
 
 	public void setTituloTelaConsultaPreStatus(String tituloTelaConsultaPreStatus) {
 		this.tituloTelaConsultaPreStatus = tituloTelaConsultaPreStatus;
+	}
+
+	public int getIndexStepsStatusContrato() {
+		return indexStepsStatusContrato;
+	}
+
+	public void setIndexStepsStatusContrato(int indexStepsStatusContrato) {
+		this.indexStepsStatusContrato = indexStepsStatusContrato;
 	}
 }

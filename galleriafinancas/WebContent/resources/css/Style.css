@@ -1026,3 +1026,8 @@
 .ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
     background: #98c949 !important;
 }
+
+.ui-steps 
+.ui-steps-item .ui-state-default  {
+	background: #61c954 !important;
+}

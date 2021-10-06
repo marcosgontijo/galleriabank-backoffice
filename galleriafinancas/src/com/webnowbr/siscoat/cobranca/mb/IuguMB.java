@@ -1,6 +1,8 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +36,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -4497,7 +4500,11 @@ public class IuguMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
 			table.setWidthPercentage(50.0f); 
 			
-			Image img = Image.getInstance("http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/iugu.jpg");
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/iugu.jpg"));
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        ImageIO.write(buff, "jpg", bos);
+	        Image img = Image.getInstance(bos.toByteArray());
+	        
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
