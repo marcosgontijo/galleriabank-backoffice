@@ -217,8 +217,6 @@ public class MessageRestService {
 					contratoCobrancaMB.getObjetoImovelCobranca().setBairro("");
 					contratoCobrancaMB.getObjetoImovelCobranca().setCidade(lead.getString("cidade"));
 					contratoCobrancaMB.getObjetoImovelCobranca().setEstado(lead.getString("estado"));
-					contratoCobrancaMB.getObjetoImovelCobranca().setOcupacao(lead.getString("ocupacao"));
-					contratoCobrancaMB.getObjetoImovelCobranca().setPossuiDivida(lead.getString("quitado")); 
 					
 					String valorImovel = lead.getString("valor_imovel").replace(".", "").replace(",", ".");
 					
