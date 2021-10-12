@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -37,6 +38,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -90,6 +92,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.vo.ContratoCobrancaResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.DashboardInvestidorResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.Util;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -119,6 +122,7 @@ public class InvestidorMB {
 	private List<ExtratoVO> extrato;
 	private List<Long> idContratosQuitado;
 	private ContratoCobranca selectedContrato;
+	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private ContratoCobrancaDetalhes selectedContratoCobrancaDetalhes;
 
 	private long idInvestidor;
@@ -1475,7 +1479,7 @@ public class InvestidorMB {
 
 			for (ContratoCobrancaParcelasInvestidor cd : listParcelasInvestidor) {
 				if (cd.isBaixado()) {
-					// valorInvestidoContrato = cd.getSaldoCredorAtualizado();
+					// valorInvestidoContrato = cd.getSaldoCredorAtualizado();					
 					contratoVo.setValorInvestido(cd.getSaldoCredorAtualizado());
 				} else {
 					break;
@@ -1486,34 +1490,64 @@ public class InvestidorMB {
 				// valorInvestidoContrato = c.getVlrFinalRecebedor1();
 				switch (this.posicaoInvestidorNoContrato) {
 				case 1:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor1()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor1()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor1()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor1()));
 					break;
 				case 2:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor2()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor2()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor2()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor2()));
 					break;
 				case 3:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor3()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor3()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor3()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor3()));
 					break;
 				case 4:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor4()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor4()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor4()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor4()));
 					break;
 				case 5:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor5()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor5()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor5()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor5()));
 					break;
 				case 6:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor6()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor6()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor6()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor6()));
 					break;
 				case 7:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor7()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor7()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor7()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor7()));
 					break;
 				case 8:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor8()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor8()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor8()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor8()));
 					break;
 				case 9:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor9()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor9()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor9()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor9()));
 					break;
 				case 10:
-					contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor10()));
+					if ( CommonsUtil.semValor(c.getVlrInvestidor10()))
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor10()));
+					else
+						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor10()));
 					break;
 				}
 			}
@@ -2740,8 +2774,11 @@ public class InvestidorMB {
 				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
 				writer.setPageEvent(event);
 
-				Image img = Image.getInstance(
-						"http://siscoatimagens.galleriafinancas.com.br/LogoIUGU/logo-galleria-relatorios-pdf.png");
+				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logocadastrosbanksmall.png"));
+		        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		        ImageIO.write(buff, "png", bos);
+		        Image img = Image.getInstance(bos.toByteArray());
+		        
 				img.setAlignment(Element.ALIGN_CENTER);
 				img.scaleAbsolute(90, 65);
 				cell1 = new PdfPCell(img);
@@ -9039,6 +9076,27 @@ public class InvestidorMB {
 
 	public void setSelectedContrato(ContratoCobranca selectedContrato) {
 		this.selectedContrato = selectedContrato;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getListContratoCobrancaParcelasInvestidorSelecionado() {
+		if(CommonsUtil.semValor(this.listContratoCobrancaParcelasInvestidorSelecionado) ) {
+			BigDecimal capitalizacaoAcumulada = BigDecimal.ZERO;
+
+			for (ContratoCobrancaParcelasInvestidor parcela : this.selectedContrato
+					.getListContratoCobrancaParcelasInvestidorSelecionado()) {
+				if (parcela.getParcelaMensal().compareTo(BigDecimal.ZERO) == 0) {
+					capitalizacaoAcumulada = capitalizacaoAcumulada
+							.add(CommonsUtil.bigDecimalValue(parcela.getCapitalizacao()));
+					parcela.setSaldoCredor(parcela.getSaldoCredor().add(capitalizacaoAcumulada));
+				}
+				this.listContratoCobrancaParcelasInvestidorSelecionado.add(parcela);
+
+			}
+			;			
+		}
+		
+		return this.listContratoCobrancaParcelasInvestidorSelecionado;
+		
 	}
 
 	public LoginBean getLoginBean() {
