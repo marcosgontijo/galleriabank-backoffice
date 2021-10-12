@@ -32,6 +32,9 @@
 		<property name="juros" type="big_decimal">
 			<column name="juros" />
 		</property>
+		<property name="capitalizacao" type="big_decimal">
+			<column name="capitalizacao" />
+		</property>
 		<property name="amortizacao" type="big_decimal">
 			<column name="amortizacao" />
 		</property>
