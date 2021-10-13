@@ -4207,6 +4207,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = true";
 					}
 					
+					query = query + " and res.codigo != 'lead' ";
+					
 					String queryResponsavel = "";
 							
 					// verifica as cláusulas dos repsonsáveis
