@@ -3,6 +3,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SimulacaoCreditoParcelas" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fc97a963-c0b6-4c19-a348-7e2773e092a3">
 	<property name="template.engine" value="tabular_template"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter "/>
+	<parameter name="MOSTRARIPCA" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -116,12 +117,12 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15">
+		<band height="20">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
 				<reportElement x="525" y="1" width="40" height="13" uuid="5fc8541a-fa06-4145-ab18-5a773ae3aba2">
-					<printWhenExpression><![CDATA[$F{valorParcela}.compareTo(BigDecimal.ZERO) == 1]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{MOSTRARIPCA}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="9"/>
@@ -178,6 +179,7 @@
 			<textField pattern="#,##0.00">
 				<reportElement x="450" y="0" width="75" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$P{MOSTRARIPCA}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
@@ -192,6 +194,16 @@
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{saldoDevedorInicial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="451" y="0" width="101" height="15" uuid="ffff1489-c860-48bd-b658-dee5e07482dc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$P{MOSTRARIPCA}==false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valorParcela}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

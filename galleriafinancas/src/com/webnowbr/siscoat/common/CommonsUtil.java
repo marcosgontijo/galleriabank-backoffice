@@ -175,6 +175,14 @@ public class CommonsUtil {
 		}
 		return Double.parseDouble(object.toString());
 	}
+	
+	public static BigDecimal bigDecimalValue(Object object) {
+		if (object == null) {
+			return BigDecimal.ZERO;
+		}		
+		return BigDecimal.valueOf(doubleValue(object));
+	}
+	
 
 	public static Date dateValue(Object object) {
 		if (object == null) {

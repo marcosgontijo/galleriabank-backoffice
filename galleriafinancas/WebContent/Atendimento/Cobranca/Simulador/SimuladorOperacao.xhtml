@@ -46,6 +46,20 @@
 				<h:panelGrid columns="2" columnClasses="padRight20">
 					<h:panelGrid columns="2"
 						columnClasses="parametrosLabel, parametrosValor">
+						<p:outputLabel for="TipoCalculoFinal" value="Tipo Cálculo: "
+							styleClass="labelBold" style="margin-right: 59px;white-space: nowrap;" />
+						<p:selectOneRadio id="TipoCalculoFinal"
+							value="#{simuladorMB.tipoCalculoFinal}">
+							<f:selectItem itemLabel="Liquido" itemValue="L" />
+							<f:selectItem itemLabel="Bruto" itemValue="B" />
+						</p:selectOneRadio>
+						<p:outputLabel for="MostrarIPCA" value="Incluir IPCA: "
+							styleClass="labelBold" style="margin-right: 59px;white-space: nowrap;" />
+						<p:selectOneRadio id="MostrarIPCA"
+							value="#{simuladorMB.mostrarIPCA}">
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+						</p:selectOneRadio>
 						<p:outputLabel for="valorImovel" value="Valor Imóvel: "
 							styleClass="labelBold" />
 						<p:inputText id="valorImovel" value="#{simuladorMB.valorImovel}"

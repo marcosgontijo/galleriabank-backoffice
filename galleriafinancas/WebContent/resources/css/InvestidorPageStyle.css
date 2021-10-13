@@ -6709,6 +6709,7 @@ dashboard-extrato-table table, td, tr, th, tbody, thead {
 }
 
 .dashboard-dataview-grid .ui-dataview-content {
-	border: none;
+	border: none;    padding-bottom: 84px;
+	
 }
 

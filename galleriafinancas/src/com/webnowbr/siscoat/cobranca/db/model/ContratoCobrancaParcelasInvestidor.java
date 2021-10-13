@@ -15,6 +15,7 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private String empresa;
 	private Date dataVencimento;
 	private BigDecimal parcelaMensal;
+	private BigDecimal capitalizacao;
 	private BigDecimal juros;
 	private BigDecimal amortizacao;
 	private BigDecimal saldoCredor;
@@ -82,6 +83,14 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setJuros(BigDecimal juros) {
 		this.juros = juros;
+	}
+
+	public BigDecimal getCapitalizacao() {
+		return capitalizacao;
+	}
+
+	public void setCapitalizacao(BigDecimal capitalizacao) {
+		this.capitalizacao = capitalizacao;
 	}
 
 	public BigDecimal getAmortizacao() {
