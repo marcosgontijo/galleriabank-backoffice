@@ -4165,6 +4165,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					// Verifica o tipo da consulta de contratos
 					if (tipoConsulta.equals("Todos")) {
 						//
+						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 					}
 					if (tipoConsulta.equals("Lead")) {
 						query = query + " and inicioanalise = false and c.statusLead != 'Completo' ";
@@ -4206,8 +4207,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Análise Reprovada")) {
 						query = query + " and analiseReprovada = true";
 					}
-					
-					query = query + " and res.codigo != 'lead' ";
 					
 					String queryResponsavel = "";
 							
