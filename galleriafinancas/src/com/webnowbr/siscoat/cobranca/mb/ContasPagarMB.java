@@ -77,7 +77,7 @@ import com.webnowbr.siscoat.security.LoginBean;
 
 @ManagedBean(name = "contasPagarMB")
 @SessionScoped
-public class ContasPagarMB {
+public class {simuladorMB.valorImovel {
 
 	private List<ContasPagar> contasPagar;
 	private Map<String, Object> filters;

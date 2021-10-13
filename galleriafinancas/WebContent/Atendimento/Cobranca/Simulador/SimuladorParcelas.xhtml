@@ -84,7 +84,7 @@
 				<f:convertNumber pattern="#,##0.00" />
 			</h:outputText>
 			<h:outputText value=" +IPCA"
-				rendered="#{bpParcela.valorParcela gt 0 and simulador} " />
+				rendered="#{bpParcela.valorParcela gt 0 and simulador and simulacao.mostrarIPCA} " />
 		</p:column>
 <!-- 
 		<p:column style="text-align: center;"

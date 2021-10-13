@@ -25,6 +25,7 @@ public class SimulacaoVO {
 	private String tipoCalculo;
 	private boolean naoCalcularDFI;
 	private boolean naoCalcularMIP;
+	private boolean mostrarIPCA;
 
 	// valores
 	private BigDecimal valorCredito;
@@ -496,6 +497,14 @@ public class SimulacaoVO {
 
 	public void setNaoCalcularMIP(boolean naoCalcularMIP) {
 		this.naoCalcularMIP = naoCalcularMIP;
+	}
+
+	public boolean isMostrarIPCA() {
+		return mostrarIPCA;
+	}
+
+	public void setMostrarIPCA(boolean mostrarIPCA) {
+		this.mostrarIPCA = mostrarIPCA;
 	}
 
 	public BigDecimal getValorCredito() {

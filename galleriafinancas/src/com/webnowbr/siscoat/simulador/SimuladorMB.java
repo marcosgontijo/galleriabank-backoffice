@@ -47,6 +47,8 @@ public class SimuladorMB {
 	private BigInteger carencia;
 	private boolean naoCalcularDFI;
     private boolean naoCalcularMIP;
+    private char tipoCalculoFinal;
+    private boolean mostrarIPCA;
 
 	
 
@@ -63,6 +65,9 @@ public class SimuladorMB {
 		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
 		simulacao = null;
+		tipoCalculoFinal= 'L';
+		mostrarIPCA= true;
+		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
 
@@ -139,38 +144,45 @@ public class SimuladorMB {
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.calcular();
 
-		BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
-		fator = BigDecimal.ONE.subtract(fator);
-		BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
-				MathContext.DECIMAL128);
+		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
+			BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
+			fator = BigDecimal.ONE.subtract(fator);
+			BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
+					MathContext.DECIMAL128);
 
-		SimulacaoVO simuladorLiquido = new SimulacaoVO();
-		simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
-		simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
-		simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
-		simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
-		simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
-		simuladorLiquido.setTipoPessoa(tipoPessoa);
-		// valores
-		simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
-		simuladorLiquido.setValorCredito(valorBruto);
-		simuladorLiquido.setTaxaJuros(this.taxaJuros);
-		simuladorLiquido.setCarencia(this.carencia);
-		simuladorLiquido.setQtdParcelas(this.parcelas);
-		simuladorLiquido.setValorImovel(this.valorImovel);
-		simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
-		simuladorLiquido.setTipoCalculo(tipoCalculo);
-		simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
-		simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
-		simuladorLiquido.calcular();
-		
-		if(this.valorCredito.add(simuladorLiquido.getIOFTotal()).add(simuladorLiquido.getCustoEmissaoValor()) != valorBruto ) {
-			valorBruto = this.valorCredito.add(simuladorLiquido.getIOFTotal()).add(simuladorLiquido.getCustoEmissaoValor());
+			SimulacaoVO simuladorLiquido = new SimulacaoVO();
+			simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
+			simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
+			simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
+			simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+			simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+			simuladorLiquido.setTipoPessoa(tipoPessoa);
+			// valores
+			simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
 			simuladorLiquido.setValorCredito(valorBruto);
+			simuladorLiquido.setTaxaJuros(this.taxaJuros);
+			simuladorLiquido.setCarencia(this.carencia);
+			simuladorLiquido.setQtdParcelas(this.parcelas);
+			simuladorLiquido.setValorImovel(this.valorImovel);
+			simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
+			simuladorLiquido.setTipoCalculo(tipoCalculo);
+			simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
+			simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
 			simuladorLiquido.calcular();
-		}
 
-		this.simulacao = simuladorLiquido;
+			if (this.valorCredito.add(simuladorLiquido.getIOFTotal())
+					.add(simuladorLiquido.getCustoEmissaoValor()) != valorBruto) {
+				valorBruto = this.valorCredito.add(simuladorLiquido.getIOFTotal())
+						.add(simuladorLiquido.getCustoEmissaoValor());
+				simuladorLiquido.setValorCredito(valorBruto);
+				simuladorLiquido.calcular();
+			}
+
+			this.simulacao = simuladorLiquido;
+		}else {
+			this.simulacao = simulador;
+		}
+		this.simulacao.setMostrarIPCA(mostrarIPCA);
 		this.simulacao.setTipoCalculo(tipoCalculo);
 		this.simulacao.setTipoPessoa(tipoPessoa);
 		return null;
@@ -212,6 +224,7 @@ public class SimuladorMB {
 
 		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
 		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", this.mostrarIPCA);
 
 		List<SimulacaoVO> list = new ArrayList<SimulacaoVO>();
 		list.add(simulacao);
@@ -308,6 +321,22 @@ public class SimuladorMB {
 
 	public void setNaoCalcularMIP(boolean naoCalcularMIP) {
 		this.naoCalcularMIP = naoCalcularMIP;
+	}
+
+	public char getTipoCalculoFinal() {
+		return tipoCalculoFinal;
+	}
+
+	public void setTipoCalculoFinal(char tipoCalculoFinal) {
+		this.tipoCalculoFinal = tipoCalculoFinal;
+	}
+
+	public boolean isMostrarIPCA() {
+		return mostrarIPCA;
+	}
+
+	public void setMostrarIPCA(boolean mostrarIPCA) {
+		this.mostrarIPCA = mostrarIPCA;
 	}
 
 }

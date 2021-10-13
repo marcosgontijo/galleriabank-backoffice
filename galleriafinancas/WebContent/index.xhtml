@@ -134,6 +134,44 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>	
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
+									<p:menuitem value="Pré-Cont Novo Lead"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Lead')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Análise Reprovada"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+									<p:menuitem value="Pré-Cont Em Análise"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+									<p:menuitem value="Pré-Cont Ag. Pagto. Laudo"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Pagto. Laudo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+									<p:menuitem value="Pré-Cont Ag. PAJU e Laudo"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU e Laudo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Ag. DOC"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Ag. CCB"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. CCB')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Ag. Assinatura"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Assinatura')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Ag. Registro"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>				
 							</p:submenu>
 						</shiro:hasAnyRoles>
