@@ -4142,7 +4142,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome from cobranca.contratocobranca c " +
+	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.analiseReprovada " +
+			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
 			"inner join cobranca.imovelcobranca im on c.imovel = im.id ";
@@ -4270,7 +4272,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
 						contratoCobranca.setStatusLead(rs.getString(7));
 						contratoCobranca.setNomePagador(rs.getString(8));
-						
+						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
+						contratoCobranca.setCcbPronta(rs.getBoolean(16));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
+						contratoCobranca.setAgRegistro(rs.getBoolean(18));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(19)); 
+						 
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
