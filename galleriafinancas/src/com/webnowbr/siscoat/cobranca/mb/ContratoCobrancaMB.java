@@ -4241,6 +4241,9 @@ public class ContratoCobrancaMB {
 	}
 
 	public String clearFieldsEditarPendentes() {
+			
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+			
 		this.tituloPainel = "Editar";
 
 		files = new ArrayList<FileUploaded>();
@@ -4272,6 +4275,8 @@ public class ContratoCobrancaMB {
 	}
 	
 	public String clearFieldsEditarPendentesAnalistas() {
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		
 		this.tituloPainel = "Editar";
 
 		files = new ArrayList<FileUploaded>();
@@ -4314,25 +4319,26 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.isAnaliseReprovada()) {
 			this.indexStepsStatusContrato = 1;
 		} else {			
-			if (this.objetoContratoCobranca.isInicioAnalise() && this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
+			if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.getStatusLead().equals("Completo") &&
+					(this.objetoContratoCobranca.getCadastroAprovadoValor() == null || this.objetoContratoCobranca.getCadastroAprovadoValor().equals(""))) {
 				this.indexStepsStatusContrato = 1;
 			}
 			
 			if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						!this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
 					this.indexStepsStatusContrato = 2;
 				}
 				
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						(!this.objetoContratoCobranca.isLaudoRecebido() || !this.objetoContratoCobranca.isPajurFavoravel())) {
 					this.indexStepsStatusContrato = 3;
 				}
 
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
@@ -4341,7 +4347,7 @@ public class ContratoCobrancaMB {
 					this.indexStepsStatusContrato = 4;
 				}
 				
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
@@ -4351,7 +4357,7 @@ public class ContratoCobrancaMB {
 					this.indexStepsStatusContrato = 5;
 				}
 				
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
@@ -4362,7 +4368,7 @@ public class ContratoCobrancaMB {
 					this.indexStepsStatusContrato = 6;
 				}
 				
-				if (this.objetoContratoCobranca.isInicioAnalise() && 
+				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
@@ -4383,8 +4389,21 @@ public class ContratoCobrancaMB {
 			*/
 		}
 	}
+	
+	public ContratoCobranca getContratoById(long idContrato) {
+		ContratoCobranca contrato = new ContratoCobranca();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				
+		contrato = cDao.findById(idContrato);
+		
+		return contrato;
+	}
 
 	public String clearFieldsEditarPendentesSimples() {
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		
 		this.tituloPainel = "Editar";
 
 		files = new ArrayList<FileUploaded>();

@@ -12,17 +12,18 @@
 		
 	</h:head>
 	<h:body>
-		<ui:composition template="../index.xhtml">
-			
+		<ui:composition template="../index.xhtml">			
 			<ui:define name="menu">  
 				<h:form style="margin-bottom:10px;">
 					<p:menu style="width: 250px; ">						
 						<p:submenu label="Gerenciamento" styleClass="titulosMenu">
-							<shiro:hasAnyRoles name="ROOT">
+							<shiro:hasAnyRoles name="ROOT, ASSISTENTEFINANCEIRO">
 								<p:menuitem value="Contas a Pagar"
 									action="#{contasPagarMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas Pagas"
 									action="#{contasPagarMB.clearFieldsContasPagas}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
@@ -36,10 +37,6 @@
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
-							<p:menuitem value="CRM"
-								action="#{crmMB.clearFields}"
-								ajax="false" icon="ui-icon ui-icon-newwin"
-								styleClass="itemMenu" />
 							<p:menuitem value="Simulador"
 								action="#{simuladorMB.clearFields}"
 								ajax="false" icon="ui-icon ui-icon-newwin"
@@ -127,7 +124,7 @@
 								</shiro:hasAnyRoles>					
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO">
 							<p:submenu label="Contratos" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Contratos Quitados"
@@ -135,11 +132,13 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Contratos"
 										action="#{contratoCobrancaMB.clearFieldsContratos}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Debênturistas"
 										action="#{contratoCobrancaMB.consultarContratoCobrancaGalleria}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -163,7 +162,7 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Financeiro"
@@ -189,7 +188,7 @@
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"
 										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
@@ -268,13 +267,16 @@
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles
-								name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
+								name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU, ASSISTENTEFINANCEIRO">
 							<p:submenu label="IUGU" styleClass="titulosMenu">
 								<shiro:hasAnyRoles
-									name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
+									name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Cobrança Simples Iugu"
 										action="#{iuguMB.clearFieldsGeraCobrancaSimples}" ajax="false"
 										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles
+									name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
 									<p:menuitem value="Faturas Período"
 										action="#{iuguMB.clearFieldsFaturasPeriodoIugu}" ajax="false"
 										icon="ui-icon ui-icon-search" styleClass="itemMenu" />

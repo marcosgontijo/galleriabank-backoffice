@@ -28,18 +28,20 @@
 			        		<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
 			        		<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
 		                </p:commandButton>
-		                <p:spacer width="10" height="10"/>
-		                <p:commandButton action="#{pagadorRecebedorMB.clearFieldsUpdate}" ajax="false" icon="ui-icon-pencil" title="Editar">
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
-		                </p:commandButton>
-		                <p:spacer width="10" height="10"/>
-		                <p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-trash" title="Excluir">
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="true" />
-		                </p:commandButton> 
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA">
+			                <p:spacer width="10" height="10"/>
+			                <p:commandButton action="#{pagadorRecebedorMB.clearFieldsUpdate}" ajax="false" icon="ui-icon-pencil" title="Editar">
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>
+			                <p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-trash" title="Excluir">
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="true" />
+			                </p:commandButton> 
+		               	</shiro:hasAnyRoles>
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}">

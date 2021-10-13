@@ -109,6 +109,10 @@ public class ContratoCobranca implements Serializable {
 	private String observacao2;
 	private String urlLead;
 	private String statusLead;
+	
+	private String nomePagador;
+	private String nomeCidadeImovel;
+	private String nomeResponsavel;
 
 	private BigDecimal txJurosParcelas;
 	
@@ -3730,4 +3734,27 @@ public class ContratoCobranca implements Serializable {
 		this.dataInicioInvestidor10 = dataInicioInvestidor10;
 	}
 
+	public String getNomePagador() {
+		return nomePagador;
+	}
+
+	public void setNomePagador(String nomePagador) {
+		this.nomePagador = nomePagador;
+	}
+
+	public String getNomeCidadeImovel() {
+		return nomeCidadeImovel;
+	}
+
+	public void setNomeCidadeImovel(String nomeCidadeImovel) {
+		this.nomeCidadeImovel = nomeCidadeImovel;
+	}
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
 }

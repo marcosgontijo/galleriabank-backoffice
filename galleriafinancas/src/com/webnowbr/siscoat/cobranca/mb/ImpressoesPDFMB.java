@@ -34,6 +34,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -97,11 +98,22 @@ public class ImpressoesPDFMB {
 		this.pdfCadastroPessoaFisicaGerado = false;		
 	}
 	
+	public ContratoCobranca getContratoById(long idContrato) {
+		ContratoCobranca contrato = new ContratoCobranca();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				
+		contrato = cDao.findById(idContrato);
+		
+		return contrato;
+	}
+	
 	/**
 	 * GERA CONTRATO DE PESSOA FISICA
 	 */
 	
 	public void geraPdfCadastroPessoaFisica() {
+		
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		
 		if (this.origemChamada.equals("FichaContrato")) {
 			this.nome = this.objetoContratoCobranca.getPagador().getNome();
@@ -567,7 +579,7 @@ public class ImpressoesPDFMB {
 			PdfPTable table = new PdfPTable(new float[] { 0.16f, 0.16f, 0.16f, 0.16f, 0.16f, 0.16f });
 			table.setWidthPercentage(100.0f); 
 		
-			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logocadastrosbank.png"));
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logocadastrosbanksmall.png"));
 	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        ImageIO.write(buff, "png", bos);
 	        Image img = Image.getInstance(bos.toByteArray());

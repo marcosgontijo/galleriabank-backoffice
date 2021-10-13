@@ -109,7 +109,12 @@
 								
 			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' }">
+   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' }"
+   		         rows="50"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="50,100,150">                 
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -125,17 +130,17 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>	
-			       	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
-			            <h:outputText value="#{contratos.responsavel.nome}" />
+			       	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>	  
-			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
-			            <h:outputText value="#{contratos.pagador.nome}" />
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
-			            <h:outputText value="#{contratos.imovel.cidade}" />
+			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.nomeCidadeImovel}" filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+			            <h:outputText value="#{contratos.nomeCidadeImovel}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Status" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
 			            <h:outputText value="#{contratos.status}" />

@@ -52,6 +52,9 @@ public final class User implements Serializable {
     private boolean userPreContratoIUGU;
     private boolean userPreContratoAnalista;
     private boolean userInvestidor;
+    
+    private boolean assistFinanceiro;
+    
     private String codigoResponsavel;
 
     private Date ultimoAcesso;
@@ -440,5 +443,13 @@ public final class User implements Serializable {
 
 	public void setUserCobrancaLead(boolean userCobrancaLead) {
 		this.userCobrancaLead = userCobrancaLead;
+	}
+
+	public boolean isAssistFinanceiro() {
+		return assistFinanceiro;
+	}
+
+	public void setAssistFinanceiro(boolean assistFinanceiro) {
+		this.assistFinanceiro = assistFinanceiro;
 	}
 }
