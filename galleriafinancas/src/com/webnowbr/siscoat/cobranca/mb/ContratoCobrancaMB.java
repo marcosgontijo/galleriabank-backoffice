@@ -6511,31 +6511,41 @@ public class ContratoCobrancaMB {
 		IPCADao ipcaDao = new IPCADao();
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		try {
-			for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {
-				IPCA ultimoIpca = ipcaDao.getUltimoIPCA(relatorioFinanceiraCobranca.getDataVencimento());
-				ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao
-						.findById(relatorioFinanceiraCobranca.getIdParcela());
-
-				// primeira condição é para meses de mesmo ano; segunda condição é para os meses jan e fev da parcela IPCA
-				if (parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
-						|| parcelaIpca.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
-
-					ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(parcelaIpca.getId());
-					if (parcelaIpca.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
-						BigDecimal valorIpca = (parcelaIpca.getVlrSaldoParcela().add(parcelaIpca.getVlrAmortizacaoParcela()))
-								.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
-						parcelaIpca.setVlrParcela(
-								(parcelaIpca.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						parcelaIpca.setIpca(valorIpca);
-						contratoCobrancaDetalhesDao.update(parcelaIpca);
-						relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
-					}
+			for (RelatorioFinanceiroCobranca relatorioFinanceiraCobranca : this.relObjetoContratoCobranca) {				
+				ContratoCobrancaDetalhes parcelaIpca = contratoCobrancaDetalhesDao.findById(relatorioFinanceiraCobranca.getIdParcela());
+				if (calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, parcelaIpca)) {
+					relatorioFinanceiraCobranca.setValor(parcelaIpca.getVlrParcela());
+					contratoCobrancaDetalhesDao.update(parcelaIpca);
 				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private boolean calcularIPCA(IPCADao ipcaDao,
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao, ContratoCobrancaDetalhes contratoCobrancaDetalhes) {
+
+		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(contratoCobrancaDetalhes.getDataVencimento());
+
+		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
+		// jan e fev da parcela IPCA
+		if (contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
+				|| contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
+
+			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(contratoCobrancaDetalhes.getId());
+			if (contratoCobrancaDetalhes.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
+				BigDecimal valorIpca = (contratoCobrancaDetalhes.getVlrSaldoParcela().add(contratoCobrancaDetalhes.getVlrAmortizacaoParcela()))
+						.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
+				contratoCobrancaDetalhes.setVlrParcela(
+						(contratoCobrancaDetalhes.getVlrParcela().add(valorIpca)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+				contratoCobrancaDetalhes.setIpca(valorIpca);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public void geraRelFinanceiroUltimaParcela() {
@@ -9038,6 +9048,9 @@ public class ContratoCobrancaMB {
 
 	public void concluirReparcelamento() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		IPCADao ipcaDao = new IPCADao();
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		
 		BigInteger ultimaParcela = BigInteger.ZERO;
 		boolean geraDataVencimento = this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO)==0;
 		
@@ -9093,6 +9106,11 @@ public class ContratoCobrancaMB {
 						detalhe.setParcelaVencendo(true);
 					}else 
 						detalhe.setParcelaVencendo(false);
+					
+					if (!CommonsUtil.semValor(detalhe.getIpca()) ) {
+						detalhe.setIpca(null);
+						calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao,detalhe);						
+					}
 					
 					encontrouParcela = true;
 					break;

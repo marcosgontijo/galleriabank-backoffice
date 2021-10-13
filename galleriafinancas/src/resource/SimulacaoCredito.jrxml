@@ -5,6 +5,7 @@
 		<defaultValueExpression><![CDATA["SimulacaoCreditoParcelas.jasper"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="IMAGEMLOGO" class="java.lang.Object"/>
+	<parameter name="MOSTRARIPCA" class="java.lang.Boolean"/>
 	<queryString language="SQL">
 		<![CDATA[]]>
 	</queryString>
@@ -108,7 +109,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxaJuros}.toString())) +  "% + IPCA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxaJuros}.toString())) + (($P{MOSTRARIPCA})?"% + IPCA":"" )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement mode="Opaque" x="300" y="284" width="180" height="25" backcolor="#C6E0B4" uuid="20409e6a-a596-45a9-9b55-b81e37d2a75c">
@@ -247,6 +248,9 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
+				<subreportParameter name="MOSTRARIPCA">
+					<subreportParameterExpression><![CDATA[$P{MOSTRARIPCA}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{parcelas})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE}]]></subreportExpression>
 			</subreport>
