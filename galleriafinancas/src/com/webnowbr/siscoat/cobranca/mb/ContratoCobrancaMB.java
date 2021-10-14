@@ -605,6 +605,14 @@ public class ContratoCobrancaMB {
 	ContratoCobrancaDetalhes amortizacao;
 	
 	private int indexStepsStatusContrato;
+	
+	private Date dataPrevistaVistoria;
+	private BigDecimal valorBoletoPreContrato;
+	private BigDecimal taxaPreAprovada;
+	private Date prazoMaxPreAprovado;
+	private BigDecimal valorMercadoImovel;
+	private BigDecimal valorVendaForçadaImóvel;
+	private String comentarioJuridico;
 
 	/**
 	 * 
@@ -1344,6 +1352,14 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
+		
+		this.dataPrevistaVistoria = null;
+		this.valorBoletoPreContrato = null;
+		this.taxaPreAprovada = null;
+		this.prazoMaxPreAprovado = null;
+		this.valorMercadoImovel = null;
+		this.valorVendaForçadaImóvel = null;
+		this.comentarioJuridico = null;
 
 		this.qtdeParcelas = null;
 		// FIM - Tratamento para Pré-Contrato
@@ -18977,4 +18993,62 @@ public class ContratoCobrancaMB {
 	public void setIndexStepsStatusContrato(int indexStepsStatusContrato) {
 		this.indexStepsStatusContrato = indexStepsStatusContrato;
 	}
+
+	public Date getDataPrevistaVistoria() {
+		return dataPrevistaVistoria;
+	}
+
+	public void setDataPrevistaVistoria(Date dataPrevistaVistoria) {
+		this.dataPrevistaVistoria = dataPrevistaVistoria;
+	}
+
+	public BigDecimal getValorBoletoPreContrato() {
+		return valorBoletoPreContrato;
+	}
+
+	public void setValorBoletoPreContrato(BigDecimal valorBoletoPreContrato) {
+		this.valorBoletoPreContrato = valorBoletoPreContrato;
+	}
+
+	public BigDecimal getTaxaPreAprovada() {
+		return taxaPreAprovada;
+	}
+
+	public void setTaxaPreAprovada(BigDecimal taxaPreAprovada) {
+		this.taxaPreAprovada = taxaPreAprovada;
+	}
+
+	public BigDecimal getValorMercadoImovel() {
+		return valorMercadoImovel;
+	}
+
+	public void setValorMercadoImovel(BigDecimal valorMercadoImovel) {
+		this.valorMercadoImovel = valorMercadoImovel;
+	}
+
+	public BigDecimal getValorVendaForçadaImóvel() {
+		return valorVendaForçadaImóvel;
+	}
+
+	public void setValorVendaForçadaImóvel(BigDecimal valorVendaForçadaImóvel) {
+		this.valorVendaForçadaImóvel = valorVendaForçadaImóvel;
+	}
+
+	public String getComentarioJuridico() {
+		return comentarioJuridico;
+	}
+
+	public void setComentarioJuridico(String comentarioJuridico) {
+		this.comentarioJuridico = comentarioJuridico;
+	}
+
+	public Date getPrazoMaxPreAprovado() {
+		return prazoMaxPreAprovado;
+	}
+
+	public void setPrazoMaxPreAprovado(Date prazoMaxPreAprovado) {
+		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
+	}
+	
+	
 }
