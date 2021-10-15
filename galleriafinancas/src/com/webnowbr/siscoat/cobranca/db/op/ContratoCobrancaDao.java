@@ -2563,12 +2563,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONSULTA_CONTRATOS_ULTIMOS_10 =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
-			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "order by cc.datacontrato desc "
-			+ "limit 10 ";
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratosUltimos10() {
+	public List<ContratoCobranca> consultaContratosUltimos10(String empresa) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2579,6 +2577,24 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_10;	
 				try {
+					
+					if (empresa.equals("Todas")) {
+					}
+					
+					if (empresa.equals("Securitizadora")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
+					}
+				
+					if (empresa.equals("FIDC")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'FIDC GALLERIA' ";
+					}
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc "
+					+ "limit 10 ";
+					
 					connection = getConnection();
 
 					ps = connection
@@ -2653,7 +2669,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	public List<ContratoCobranca> consultaContratosNaoGalleria(final String numeroContrato, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4,
 			final long idRecebedor5, final long idRecebedor6, final long idRecebedor7,
-			final long idRecebedor8, final long idRecebedor9, final long idRecebedor10) {
+			final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, String empresa) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2676,6 +2692,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}	
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador not in (15, 34,14, 182, 417, 803) ";
+					
+					if (empresa.equals("Todas")) {
+					}
+					
+					if (empresa.equals("Securitizadora")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
+					}
+				
+					if (empresa.equals("FIDC")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'FIDC GALLERIA' ";
+					}
 					
 					if (idRecebedor > 0) {
 						query_RELATORIO_FINANCEIRO_RECEBEDORES = 
@@ -4170,7 +4199,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 					}
 					if (tipoConsulta.equals("Lead")) {
-						query = query + " and inicioanalise = false and c.statusLead != 'Completo' ";
+						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' "; 
 					}
 					
 					if (tipoConsulta.equals("Em Analise")) {

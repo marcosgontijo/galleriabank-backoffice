@@ -112,8 +112,11 @@ public class ImpressoesPDFMB {
 	 */
 	
 	public void geraPdfCadastroPessoaFisica() {
-		
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		if (this.objetoContratoCobranca != null) {
+			if (this.objetoContratoCobranca.getId() > 0) {
+				this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());		
+			}
+		}		
 		
 		if (this.origemChamada.equals("FichaContrato")) {
 			this.nome = this.objetoContratoCobranca.getPagador().getNome();

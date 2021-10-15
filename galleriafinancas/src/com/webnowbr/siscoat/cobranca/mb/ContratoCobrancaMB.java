@@ -190,8 +190,7 @@ public class ContratoCobrancaMB {
 	Segurado seguradoSelecionado;
 	String updatePagadorRecebedor = "";
 	
-	private boolean addSegurador;
-	
+	private boolean addSegurador;	
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -2327,7 +2326,7 @@ public class ContratoCobrancaMB {
 	}
 
 	
-	public void editPreContratoPorStatus() {
+	public String editPreContratoPorStatus() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
@@ -2369,35 +2368,34 @@ public class ContratoCobrancaMB {
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));
+						""));	
 		
-		if (this.tituloTelaConsultaPreStatus.equals("Lead")) {
-			geraConsultaContratosPorStatus("Lead");
+		if (this.tituloTelaConsultaPreStatus.equals("Novo Lead")) {
+			return geraConsultaContratosPorStatus("Lead");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
-			geraConsultaContratosPorStatus("Análise Reprovada");
+			return geraConsultaContratosPorStatus("Análise Reprovada");
 		}
-		if (this.tituloTelaConsultaPreStatus.equals("Em Analise")) {
-			geraConsultaContratosPorStatus("Em Analise");
+		if (this.tituloTelaConsultaPreStatus.equals("Em Análise")) {
+			return geraConsultaContratosPorStatus("Em Analise");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
-			geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. PAJU e Laudo")) {
-			geraConsultaContratosPorStatus("Ag. PAJU e Laudo");
+			return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
-			geraConsultaContratosPorStatus("Ag. DOC");
+			return geraConsultaContratosPorStatus("Ag. DOC");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
-			geraConsultaContratosPorStatus("Ag. CCB");
+			return geraConsultaContratosPorStatus("Ag. CCB");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
-			geraConsultaContratosPorStatus("Ag. Assinatura");
+			return geraConsultaContratosPorStatus("Ag. Assinatura");
 		}
 		if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
-			geraConsultaContratosPorStatus("Ag. Registro");
+			return geraConsultaContratosPorStatus("Ag. Registro");
 		}
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
 	
 	public String cancelarEdicaoPreContrato() {
@@ -4244,6 +4242,9 @@ public class ContratoCobrancaMB {
 			
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 			
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		
 		this.tituloPainel = "Editar";
 
 		files = new ArrayList<FileUploaded>();
@@ -4276,6 +4277,8 @@ public class ContratoCobrancaMB {
 	
 	public String clearFieldsEditarPendentesAnalistas() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
 		this.tituloPainel = "Editar";
 
@@ -5085,7 +5088,7 @@ public class ContratoCobrancaMB {
 		this.hasBaixaParcial = hasBaixaParcial;
 	}
 
-	public String clearFieldsContratos() {
+	public String clearFieldsContratos(String empresa) {
 		this.filtrarDataVencimento = "Atualizada";
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -5125,8 +5128,24 @@ public class ContratoCobrancaMB {
 
 		this.contratos = new ArrayList<ContratoCobranca>();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratos = contratoCobrancaDao.consultaContratosUltimos10();
-
+		
+		this.tituloPainel = "";
+		
+		if (empresa.equals("Todas")) {
+			this.tituloPainel = "GERAL";
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+		}
+		
+		if (empresa.equals("Securitizadora")) {
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
+		}
+		
+		if (empresa.equals("FIDC")) {
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			this.tituloPainel = "FIDC GALLERIA";
+		}
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
 	}
 
@@ -5213,7 +5232,7 @@ public class ContratoCobrancaMB {
 		this.contratos = contratoCobrancaDao.consultaContratosNaoGalleria(numeroContrato, this.getIdPagador(),
 				this.getIdRecebedor(), this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(),
 				this.getIdRecebedor5(), this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(),
-				this.getIdRecebedor9(), this.getIdRecebedor10());
+				this.getIdRecebedor9(), this.getIdRecebedor10(), this.tituloPainel);
 	}
 
 	public void clearFiltersConsultaContratos() {
