@@ -1353,13 +1353,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		
-		this.dataPrevistaVistoria = null;
-		this.valorBoletoPreContrato = null;
-		this.taxaPreAprovada = null;
-		this.prazoMaxPreAprovado = null;
-		this.valorMercadoImovel = null;
-		this.valorVendaForçadaImóvel = null;
-		this.comentarioJuridico = null;
+		
 
 		this.qtdeParcelas = null;
 		// FIM - Tratamento para Pré-Contrato
@@ -1384,6 +1378,8 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
 	}
+	
+	
 
 	/******
 	 * método para envio de emails
@@ -6544,13 +6540,15 @@ public class ContratoCobrancaMB {
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao, ContratoCobrancaDetalhes contratoCobrancaDetalhes) {
 
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(contratoCobrancaDetalhes.getDataVencimento());
-
+		
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
 		if (contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
 				|| contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
 
 			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(contratoCobrancaDetalhes.getId());
+			//usar o reparcelamento aqui.
+			
 			if (contratoCobrancaDetalhes.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
 				BigDecimal valorIpca = (contratoCobrancaDetalhes.getVlrSaldoParcela().add(contratoCobrancaDetalhes.getVlrAmortizacaoParcela()))
 						.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
@@ -8734,6 +8732,26 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
+	}
+	
+	public void geraBoletoPrecontrato( ){
+		
+		GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
+
+		geracaoBoletoMB.geraBoleto("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				this.objetoContratoCobranca.getPagador().getCpf(),
+				this.objetoContratoCobranca.getPagador().getCnpj(),
+				this.objetoContratoCobranca.getPagador().getEndereco(),
+				this.objetoContratoCobranca.getPagador().getBairro(),
+				this.objetoContratoCobranca.getPagador().getCep(),
+				this.objetoContratoCobranca.getPagador().getCidade(),
+				this.objetoContratoCobranca.getPagador().getEstado(),
+				contratoCobrancaDetalhes.getDataVencimento(),
+				this.objetoContratoCobranca.getVlrParcela(),
+				contratoCobrancaDetalhes.getNumeroParcela(),  
+				"enderecoEmpresa", " BairroEmpresa","  CepEmpresa",  "CidadeEmpresa", " EstadoEmpresa",  " NomeEmpresa","  CnpjEmpresa", " AgenciaEmpresa", " DigitoAgenciaEmpresa","  CodigoBeneficiarioEmpresa", 
+	    		"DigitoBeneficiarioEmpresa",  "NumeroConvenioEmpresa", " CarteiraEmpresa", " Instrucao1Empresa","  Instrucao2Empresa", " Instrucao3Empresa", " Instrucao4Empresa", " Instrucao5Empresa",  "LocalPagamentoEmpresa");
 	}
 
 	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela, Date dataBaseParecela ) {
