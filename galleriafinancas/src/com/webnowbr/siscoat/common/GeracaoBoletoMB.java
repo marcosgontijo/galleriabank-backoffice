@@ -46,6 +46,8 @@ public class GeracaoBoletoMB {
 	
 	private StreamedContent file;
 	
+	private EmpresaCobranca empresaCobranca;
+	
 	private String pathBoleto;
 	private String nomeBoleto;
 	
@@ -69,6 +71,204 @@ public class GeracaoBoletoMB {
 		this.boletos = new ArrayList<Boleto>();
 		this.boletosRemessaLote = new ArrayList<BoletosRemessa>();
 	}
+	
+	 public void geraBoleto(String sistema, String contrato, String nome, String cpf, String cnpj,
+	    		String endereco, String bairro, String cep, String cidade, String uf, Date dataVencimento, BigDecimal valor, String numeroParcela,
+	    		String enderecoEmpresa, String BairroEmpresa, String CepEmpresa, String CidadeEmpresa, String EstadoEmpresa,  String NomeEmpresa, String CnpjEmpresa, String AgenciaEmpresa, String DigitoAgenciaEmpresa, String CodigoBeneficiarioEmpresa, 
+	    		String DigitoBeneficiarioEmpresa, String NumeroConvenioEmpresa, String CarteiraEmpresa, String Instrucao1Empresa, String Instrucao2Empresa, String Instrucao3Empresa, String Instrucao4Empresa, String Instrucao5Empresa, String LocalPagamentoEmpresa ){  
+	        
+
+			FacesContext context = FacesContext.getCurrentInstance();
+
+	    	Map<String, Object> filters = new HashMap<String, Object>();
+	    	filters.put("sistema", sistema);
+	    	
+	    		
+	    		this.pathBoleto = null;
+	    		this.nomeBoleto = null;
+	    		this.gerouBoleto = true;
+
+	    		// Dados do Beneficiario
+	    		// Classe Endereço
+		        Endereco enderecoBeneficiario = Endereco.novoEndereco()
+		                .comLogradouro(empresaCobranca.getEndereco())  
+		                .comBairro(BairroEmpresa)  
+		                .comCep(CepEmpresa)  
+		                .comCidade(CidadeEmpresa)
+		                .comUf(EstadoEmpresa);
+		        // Classe Beneficiario
+		        Beneficiario beneficiario = Beneficiario.novoBeneficiario()
+		        		.comNomeBeneficiario(NomeEmpresa + " - CNPJ: " + CnpjEmpresa)  
+		                .comAgencia(AgenciaEmpresa).comDigitoAgencia(DigitoAgenciaEmpresa)  
+		                .comCodigoBeneficiario(CodigoBeneficiarioEmpresa)  
+		                .comDigitoCodigoBeneficiario(DigitoBeneficiarioEmpresa)  
+		                .comNumeroConvenio(NumeroConvenioEmpresa)  
+		                .comCarteira(CarteiraEmpresa)  
+		                .comEndereco(enderecoBeneficiario)
+		                .comNossoNumero(contrato + String.format("%02d", Integer.valueOf(numeroParcela)));
+
+		        // Datas do boleto
+		        // Vencimento
+		        Locale locale = new Locale("pt-br", "BR");  
+		        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
+				String dataVencimentoStr = sdf.format(dataVencimento.getTime());	        
+		        
+		        TimeZone zone = TimeZone.getDefault();  	        
+				Calendar calEmissao = Calendar.getInstance(zone, locale);
+				String calEmissaoStr = sdf.format(calEmissao.getTime());	
+
+		        Datas datas = Datas.novasDatas()
+		                .comDocumento(Integer.valueOf(calEmissaoStr.substring(0, 2)), Integer.valueOf(calEmissaoStr.substring(3, 5)), Integer.valueOf(calEmissaoStr.substring(6,10)))
+		                .comProcessamento(Integer.valueOf(calEmissaoStr.substring(0, 2)), Integer.valueOf(calEmissaoStr.substring(3, 5)), Integer.valueOf(calEmissaoStr.substring(6, 10)))
+		                .comVencimento(Integer.valueOf(dataVencimentoStr.substring(0, 2)), Integer.valueOf(dataVencimentoStr.substring(3, 5)), Integer.valueOf(dataVencimentoStr.substring(6, 10))); 
+		        	
+		        // Dados do Pagador
+		        Endereco enderecoPagador = Endereco.novoEndereco()
+		                .comLogradouro(endereco)  
+		                .comBairro(bairro)  
+		                .comCep(cep)  
+		                .comCidade(cidade)  
+		                .comUf(uf);  
+		        
+		        String documento = "";
+		        if (cnpj != null) {
+		        	documento = cnpj;
+		        } else {
+		        	documento = cpf;
+		        }
+		        
+		        Pagador pagador = Pagador.novoPagador()  
+		                .comNome(nome)  
+		                .comDocumento(documento)
+		                .comEndereco(enderecoPagador);
+		
+		        // Dados do Boleto
+		        Banco banco = new Bradesco(); 
+
+		        Boleto boleto = Boleto.novoBoleto()  
+		                .comBanco(banco)  
+		                .comDatas(datas)  
+		                .comBeneficiario(beneficiario)  
+		                .comPagador(pagador)  
+		                .comValorBoleto(valor)  
+		                .comNumeroDoDocumento(contrato + String.format("%02d", Integer.valueOf(numeroParcela)))  
+		                .comInstrucoes(Instrucao1Empresa, Instrucao2Empresa, Instrucao3Empresa, Instrucao4Empresa, Instrucao5Empresa)  
+		                .comLocaisDePagamento(LocalPagamentoEmpresa, ""); 
+
+
+		        GeradorDeBoleto gerador = new GeradorDeBoleto(boleto);  
+
+		        // Para gerar um boleto em PDF  
+		        gerador.geraPDF("BancoDoBrasil.pdf");  
+    
+		        
+				calEmissao.set(Calendar.HOUR_OF_DAY, 0);  
+				calEmissao.set(Calendar.MINUTE, 0);  
+				calEmissao.set(Calendar.SECOND, 0);  
+				calEmissao.set(Calendar.MILLISECOND, 0);
+				
+
+		        // Para gerar um array de bytes a partir de um PDF  
+		        byte[] bPDF = gerador.geraPDF();  
+
+
+				
+
+		        
+				calEmissao.set(Calendar.HOUR_OF_DAY, 0);  
+				calEmissao.set(Calendar.MINUTE, 0);  
+				calEmissao.set(Calendar.SECOND, 0);  
+				calEmissao.set(Calendar.MILLISECOND, 0);
+
+	    } 
+	
+	
+	/*
+	 * public void geraBoleto(String sistema, String contrato, String nome, String
+	 * cpf, String cnpj, String endereco, String bairro, String cep, String cidade,
+	 * String uf, Date dataVencimento, BigDecimal valor, String numeroParcela) {
+	 * 
+	 * EmpresaCobrancaDao empresaCobrancaDao = new EmpresaCobrancaDao();
+	 * EmpresaCobranca empresaCobranca = new EmpresaCobranca(); FacesContext context
+	 * = FacesContext.getCurrentInstance();
+	 * 
+	 * Map<String, Object> filters = new HashMap<String, Object>();
+	 * filters.put("sistema", sistema);
+	 * 
+	 * List<EmpresaCobranca> listEmpresaCobranca = new ArrayList<EmpresaCobranca>();
+	 * 
+	 * listEmpresaCobranca = empresaCobrancaDao.findByFilter(filters); this.file =
+	 * null;
+	 * 
+	 * this.pathBoleto = null; this.nomeBoleto = null; this.gerouBoleto = true;
+	 * 
+	 * empresaCobranca = listEmpresaCobranca.get(0);
+	 * 
+	 * 
+	 * Endereco enderecoBeneficiario = Endereco.novoEndereco()
+	 * .comLogradouro(empresaCobranca.getEndereco())
+	 * .comBairro(empresaCobranca.getBairro()) .comCep(empresaCobranca.getCep())
+	 * .comCidade(empresaCobranca.getCidade()) .comUf(empresaCobranca.getEstado());
+	 * 
+	 * Beneficiario beneficiario = Beneficiario.novoBeneficiario()
+	 * .comNomeBeneficiario(empresaCobranca.getNome() + " - CNPJ: " +
+	 * empresaCobranca.getCnpj())
+	 * .comAgencia(empresaCobranca.getAgencia()).comDigitoAgencia(empresaCobranca.
+	 * getDigitoAgencia())
+	 * .comCodigoBeneficiario(empresaCobranca.getCodigoBeneficiario())
+	 * .comDigitoCodigoBeneficiario(empresaCobranca.getDigitoBeneficiario())
+	 * .comNumeroConvenio(empresaCobranca.getNumeroConvenio())
+	 * .comCarteira(empresaCobranca.getCarteira())
+	 * .comEndereco(enderecoBeneficiario) .comNossoNumero(contrato +
+	 * String.format("%02d", Integer.valueOf(numeroParcela)));
+	 * 
+	 * 
+	 * Locale locale = new Locale("pt-br", "BR"); SimpleDateFormat sdf = new
+	 * SimpleDateFormat("dd/MM/yyyy", locale); String dataVencimentoStr =
+	 * sdf.format(dataVencimento.getTime());
+	 * 
+	 * TimeZone zone = TimeZone.getDefault(); Calendar calEmissao =
+	 * Calendar.getInstance(zone, locale); String calEmissaoStr =
+	 * sdf.format(calEmissao.getTime());
+	 * 
+	 * Datas datas = Datas.novasDatas()
+	 * .comDocumento(Integer.valueOf(calEmissaoStr.substring(0, 2)),
+	 * Integer.valueOf(calEmissaoStr.substring(3, 5)),
+	 * Integer.valueOf(calEmissaoStr.substring(6,10)))
+	 * .comProcessamento(Integer.valueOf(calEmissaoStr.substring(0, 2)),
+	 * Integer.valueOf(calEmissaoStr.substring(3, 5)),
+	 * Integer.valueOf(calEmissaoStr.substring(6, 10)))
+	 * .comVencimento(Integer.valueOf(dataVencimentoStr.substring(0, 2)),
+	 * Integer.valueOf(dataVencimentoStr.substring(3, 5)),
+	 * Integer.valueOf(dataVencimentoStr.substring(6, 10)));
+	 * 
+	 * 
+	 * Endereco enderecoPagador = Endereco.novoEndereco() .comLogradouro(endereco)
+	 * .comBairro(bairro) .comCep(cep) .comCidade(cidade) .comUf(uf);
+	 * 
+	 * String documento = ""; if (cnpj != null) { documento = cnpj; } else {
+	 * documento = cpf; }
+	 * 
+	 * Pagador pagador = Pagador.novoPagador() .comNome(nome)
+	 * .comDocumento(documento) .comEndereco(enderecoPagador);
+	 * 
+	 * 
+	 * Banco banco = new BancoDoBrasil();
+	 * 
+	 * Boleto boleto = Boleto.novoBoleto() .comBanco(banco) .comDatas(datas)
+	 * .comBeneficiario(beneficiario) .comPagador(pagador) .comValorBoleto(valor)
+	 * .comNumeroDoDocumento(contrato + String.format("%02d",
+	 * Integer.valueOf(numeroParcela)))
+	 * .comInstrucoes(empresaCobranca.getInstrucao1(),
+	 * empresaCobranca.getInstrucao2(), empresaCobranca.getInstrucao3(),
+	 * empresaCobranca.getInstrucao4(), empresaCobranca.getInstrucao5())
+	 * .comLocaisDePagamento(empresaCobranca.getLocalPagamento(), "");
+	 * 
+	 * GeradorDeBoleto gerador = new GeradorDeBoleto(boleto);
+	 * 
+	 * gerador.geraPDF("BancoDoBrasil.pdf"); }
+	 */
+	
 	
 	// armazena boletos em série para geração unica
     public void geraBoletosBancoDoBrasil(String sistema, String contrato, String nome, String cpf, String cnpj,

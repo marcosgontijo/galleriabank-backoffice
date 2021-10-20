@@ -6548,6 +6548,8 @@ public class ContratoCobrancaMB {
 				|| contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
 
 			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao.getContratoCobranca(contratoCobrancaDetalhes.getId());
+			//usar o reparcelamento aqui.
+			
 			if (contratoCobrancaDetalhes.getIpca() == null && CommonsUtil.booleanValue(contratoCobranca.isCorrigidoIPCA())) {
 				BigDecimal valorIpca = (contratoCobrancaDetalhes.getVlrSaldoParcela().add(contratoCobrancaDetalhes.getVlrAmortizacaoParcela()))
 						.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100)));
@@ -8733,25 +8735,6 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
 	
-	public void geraBoletoPrecontrato( ){
-		
-		GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
-
-		geracaoBoletoMB.geraBoleto("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getPagador().getCpf(),
-				this.objetoContratoCobranca.getPagador().getCnpj(),
-				this.objetoContratoCobranca.getPagador().getEndereco(),
-				this.objetoContratoCobranca.getPagador().getBairro(),
-				this.objetoContratoCobranca.getPagador().getCep(),
-				this.objetoContratoCobranca.getPagador().getCidade(),
-				this.objetoContratoCobranca.getPagador().getEstado(),
-				contratoCobrancaDetalhes.getDataVencimento(),
-				this.objetoContratoCobranca.getVlrParcela(),
-				contratoCobrancaDetalhes.getNumeroParcela(),  
-				"enderecoEmpresa", " BairroEmpresa","  CepEmpresa",  "CidadeEmpresa", " EstadoEmpresa",  " NomeEmpresa","  CnpjEmpresa", " AgenciaEmpresa", " DigitoAgenciaEmpresa","  CodigoBeneficiarioEmpresa", 
-	    		"DigitoBeneficiarioEmpresa",  "NumeroConvenioEmpresa", " CarteiraEmpresa", " Instrucao1Empresa","  Instrucao2Empresa", " Instrucao3Empresa", " Instrucao4Empresa", " Instrucao5Empresa",  "LocalPagamentoEmpresa");
-	}
 
 	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela, Date dataBaseParecela ) {
 		ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
