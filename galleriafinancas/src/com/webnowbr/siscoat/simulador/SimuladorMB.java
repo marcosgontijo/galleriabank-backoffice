@@ -143,6 +143,8 @@ public class SimuladorMB {
 		simulador.setNaoCalcularDFI(this.naoCalcularDFI);
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.calcular();
+		
+		simulador.setValorCreditoLiberado(simulador.getValorCredito().subtract(simulador.getIOFTotal()).subtract(simulador.getCustoEmissaoValor()));
 
 		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
 			BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
