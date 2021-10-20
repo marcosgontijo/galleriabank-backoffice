@@ -174,7 +174,7 @@
 									<p:outputLabel styleClass="labelBold">Laudo e Parecer Jurídico</p:outputLabel>
 									<p:spacer ></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
-										<p:selectBooleanButton id="pagtoLaudoConfirmadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:80px" disabled="true">
+										<p:selectBooleanButton id="pagtoLaudoConfirmada" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:80px" disabled="true">
 											<p:ajax update="dataVistoriaPG" event="change" />
 										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>		
