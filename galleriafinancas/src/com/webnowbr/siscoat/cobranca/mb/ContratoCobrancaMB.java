@@ -93,6 +93,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
+import com.webnowbr.siscoat.cobranca.db.model.EmpresaCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -1353,13 +1354,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		
-		this.dataPrevistaVistoria = null;
-		this.valorBoletoPreContrato = null;
-		this.taxaPreAprovada = null;
-		this.prazoMaxPreAprovado = null;
-		this.valorMercadoImovel = null;
-		this.valorVendaForçadaImóvel = null;
-		this.comentarioJuridico = null;
+		
 
 		this.qtdeParcelas = null;
 		// FIM - Tratamento para Pré-Contrato
@@ -1384,6 +1379,8 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
 	}
+	
+	
 
 	/******
 	 * método para envio de emails
@@ -8734,6 +8731,26 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
+	}
+	
+	public void geraBoletoPrecontrato( ){
+		
+		GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
+
+		geracaoBoletoMB.geraBoleto("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				this.objetoContratoCobranca.getPagador().getCpf(),
+				this.objetoContratoCobranca.getPagador().getCnpj(),
+				this.objetoContratoCobranca.getPagador().getEndereco(),
+				this.objetoContratoCobranca.getPagador().getBairro(),
+				this.objetoContratoCobranca.getPagador().getCep(),
+				this.objetoContratoCobranca.getPagador().getCidade(),
+				this.objetoContratoCobranca.getPagador().getEstado(),
+				contratoCobrancaDetalhes.getDataVencimento(),
+				this.objetoContratoCobranca.getVlrParcela(),
+				contratoCobrancaDetalhes.getNumeroParcela(),  
+				"enderecoEmpresa", " BairroEmpresa","  CepEmpresa",  "CidadeEmpresa", " EstadoEmpresa",  " NomeEmpresa","  CnpjEmpresa", " AgenciaEmpresa", " DigitoAgenciaEmpresa","  CodigoBeneficiarioEmpresa", 
+	    		"DigitoBeneficiarioEmpresa",  "NumeroConvenioEmpresa", " CarteiraEmpresa", " Instrucao1Empresa","  Instrucao2Empresa", " Instrucao3Empresa", " Instrucao4Empresa", " Instrucao5Empresa",  "LocalPagamentoEmpresa");
 	}
 
 	private ContratoCobrancaDetalhes criaContratoCobrancaDetalhe(ContratoCobrancaDao contratoCobrancaDao, SimulacaoDetalheVO parcela, Date dataBaseParecela ) {
