@@ -4202,6 +4202,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' "; 
 					}
 					
+					if (tipoConsulta.equals("Aguardando Análise")) {
+						query = query + " and inicioanalise = false and c.statusLead = 'Completo' "; 
+					}
+					
 					if (tipoConsulta.equals("Em Analise")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null)  and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)";
 					}

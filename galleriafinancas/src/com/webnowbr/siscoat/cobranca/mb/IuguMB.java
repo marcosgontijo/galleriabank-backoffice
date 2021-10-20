@@ -974,7 +974,7 @@ public class IuguMB {
 				dataVencimento.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
 
 		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
-				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + "}";
+				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}
@@ -4982,6 +4982,9 @@ public class IuguMB {
 			endereco = this.selectedRecebedor.getEndereco();
 		}
 
+	
+		            		
+		            		
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
@@ -4992,10 +4995,10 @@ public class IuguMB {
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
 		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
-				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
-				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + "}";
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}

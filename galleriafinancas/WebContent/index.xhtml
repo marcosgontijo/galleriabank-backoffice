@@ -114,6 +114,10 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">
+									<p:menuitem value="Leads Completos"
+										action="#{contratoCobrancaMB.geraConsultaLeads('Completo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -121,11 +125,7 @@
 									<p:menuitem value="Pré-Contratos"
 										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Leads Completos"
-										action="#{contratoCobrancaMB.geraConsultaLeads('Completo')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
+										styleClass="itemMenu" />									
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Contratos Reprovados"
@@ -134,14 +134,10 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-									<p:menuitem value="Pré-Cont Novo Lead"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Lead')}"
+									<p:menuitem value="Pré-Cont Ag. Análise"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Pré-Cont Análise Reprovada"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
+										styleClass="itemMenu" />									
 									<p:menuitem value="Pré-Cont Em Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -170,6 +166,10 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<p:menuitem value="Pré-Cont Análise Reprovada"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
 								</shiro:hasAnyRoles>					
 							</p:submenu>
 						</shiro:hasAnyRoles>
