@@ -470,6 +470,14 @@ public class ContratoCobranca implements Serializable {
 	private boolean temSeguroMIP;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
+	
+	private Date vencimentoBoleto;
+	private BigDecimal valorBoletoPreContrato;
+	private BigDecimal taxaPreAprovada;
+	private BigInteger prazoMaxPreAprovado;
+	private BigDecimal valorMercadoImovel;
+	private BigDecimal valorVendaForcadaImovel;
+	private String comentarioJuridico;
 
 	public ContratoCobranca() {
 		super();
@@ -3733,6 +3741,63 @@ public class ContratoCobranca implements Serializable {
 	public void setDataInicioInvestidor10(Date dataInicioInvestidor10) {
 		this.dataInicioInvestidor10 = dataInicioInvestidor10;
 	}
+	
+	public BigDecimal getValorBoletoPreContrato() {
+		return valorBoletoPreContrato;
+	}
+
+	public void setValorBoletoPreContrato(BigDecimal valorBoletoPreContrato) {
+		this.valorBoletoPreContrato = valorBoletoPreContrato;
+	}
+
+	public BigDecimal getTaxaPreAprovada() {
+		return taxaPreAprovada;
+	}
+
+	public void setTaxaPreAprovada(BigDecimal taxaPreAprovada) {
+		this.taxaPreAprovada = taxaPreAprovada;
+	}
+
+	public BigDecimal getValorMercadoImovel() {
+		return valorMercadoImovel;
+	}
+
+	public void setValorMercadoImovel(BigDecimal valorMercadoImovel) {
+		this.valorMercadoImovel = valorMercadoImovel;
+	}
+
+	public BigDecimal getValorVendaForcadaImovel() {
+		return valorVendaForcadaImovel;
+	}
+
+	public void setValorVendaForcadaImovel(BigDecimal valorVendaForcadaImovel) {
+		this.valorVendaForcadaImovel = valorVendaForcadaImovel;
+	}
+
+	public String getComentarioJuridico() {
+		return comentarioJuridico;
+	}
+ 	
+	public void setComentarioJuridico(String comentarioJuridico) {
+		this.comentarioJuridico = comentarioJuridico;
+	}
+
+	public Date getVencimentoBoleto() {
+		return vencimentoBoleto;
+	}
+
+	public void setVencimentoBoleto(Date vencimentoBoleto) {
+		this.vencimentoBoleto = vencimentoBoleto;
+	}
+
+	public BigInteger getPrazoMaxPreAprovado() {
+		return prazoMaxPreAprovado;
+	}
+	
+	public void setPrazoMaxPreAprovado(BigInteger prazoMaxPreAprovado) {
+		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
+	}
+
 
 	public String getNomePagador() {
 		return nomePagador;

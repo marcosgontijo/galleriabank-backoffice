@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+	version="2.0">
+
+	<pre-processing-commands>
+		<delete-jobs-in-group>*</delete-jobs-in-group>  <!-- clear all jobs in scheduler -->
+		<delete-triggers-in-group>*</delete-triggers-in-group> <!-- clear all triggers in scheduler -->
+	</pre-processing-commands>
+
+	<processing-directives>
+		<overwrite-existing-data>true</overwrite-existing-data>
+		<ignore-duplicates>false</ignore-duplicates>
+	</processing-directives>
+
+	<schedule>
+		<job>
+			<name>IpcaJob</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
+		</job>
+		<trigger>
+			<simple>
+				<name>IpcaTrigger</name>
+				<job-name>IpcaJob</job-name>
+				<!-- <repeat-count>1</repeat-count> repeat indefinitely
+				<repeat-interval>60000</repeat-interval>				every 60 seconds -->
+			</simple>
+		</trigger>
+	</schedule>
+
+	<!-- <schedule> <job> <name>ResumoFichaFinanceiraJob</name> <job-class>br.com.banicred.banisys.faces.tasks.ResumoFichaFinanceiraJob</job-class> 
+		</job> <trigger> <cron> <name>ResumoFichaFinanceiraTrigger</name> <job-name>ResumoFichaFinanceiraJob</job-name> 
+		<cron-expression>0 0/5 2-23 * * ?</cron-expression> </cron> </trigger> </schedule> -->
+
+</job-scheduling-data>

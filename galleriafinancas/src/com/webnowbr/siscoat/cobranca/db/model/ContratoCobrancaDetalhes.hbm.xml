@@ -31,6 +31,11 @@
 		<property name="vlrJuros" type="big_decimal">
 			<column name="VLRJUROS" />
 		</property>
+		<many-to-one name="ipcaAtualizou"
+			class="com.webnowbr.siscoat.cobranca.db.model.IPCA"
+			lazy="false">
+			<column name="ipcaAtualizou" />
+		</many-to-one>
 		<property name="ipca" type="big_decimal">
 			<column name="ipca" />
 		</property>
@@ -48,7 +53,10 @@
 		</property>
 		<property name="vlrSaldoParcela" type="big_decimal">
 			<column name="VLRSALDOPARCELA" />
-		</property>
+		</property>		
+		<property name="vlrSaldoInicial" type="big_decimal">
+			<column name="VLRSALDOINICIAL" />
+		</property>		
 		<property name="vlrRepasse" type="big_decimal">
 			<column name="VLRREPASSE" />
 		</property>

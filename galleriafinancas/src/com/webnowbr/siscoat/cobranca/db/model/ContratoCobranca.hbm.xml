@@ -1135,8 +1135,6 @@
 		<property name="carenciaInvestidor10" type="int">
 			<column name="carenciaInvestidor10" />
 		</property>
-		
-		
 		<property name="dataInicioInvestidor1" type="java.util.Date">
 			<column name="DATAINICIOINVESTIDOR1" />
 		</property>
@@ -1167,5 +1165,33 @@
 		<property name="dataInicioInvestidor10" type="java.util.Date">
 			<column name="DATAINICIOINVESTIDOR10" />
 		</property>
+		
+		<property name="vencimentoBoleto" type="java.util.Date">
+			<column name="VENCIMENTOBOLETO" />
+		</property>
+		
+		<property name="valorBoletoPreContrato" type="big_decimal">
+			<column name="VALORBOLETOPRECONTRATO" />
+		</property>
+	
+		<property name="taxaPreAprovada" type="big_decimal">
+			<column name="TAXAPREAPROVADA" />
+		</property>
+						
+		<property name="prazoMaxPreAprovado" type="big_integer">
+			<column name="PRAZOMAXPREAPROVADO" />
+		</property>
+
+		<property name="valorMercadoImovel" type="big_decimal">
+			<column name="VALORMERCADOIMOVEL" />
+		</property>			
+					
+		<property name="valorVendaForcadaImovel" type="big_decimal">
+			<column name="VALORVENDAFORCADAIMOVEL" />
+		</property>	
+
+		<property name="comentarioJuridico" type="java.lang.String">
+			<column name="COMENTARIOJURIDICO" />
+		</property>						
 	</class>
 </hibernate-mapping>

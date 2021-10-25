@@ -1,29 +1,40 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.IntegerConverter;
+import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import javax.xml.crypto.Data;
 
+import org.apache.commons.fileupload.RequestContext;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -31,7 +42,14 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.hamcrest.core.Is;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
@@ -39,8 +57,11 @@ import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 
 /** ManagedBean. */
 @ManagedBean(name = "ccbMB")
@@ -62,7 +83,21 @@ public class CcbMB {
 	private String emailEmitente;
 	private String regimeCasamentoEmitente;
 	private boolean fiduciante;
-	private boolean femininoEmitente = false;
+	private boolean femininoEmitente;
+	private boolean empresaEmitente;
+	private String paiEmitente;
+	private String maeEmitente;
+	
+	private String razaoSocialEmitente;
+	private String tipoEmpresaEmitente;
+	private String cnpjEmitente;
+	private String municipioEmpresaEmitente;
+	private String estadoEmpresaEmitente;
+	private String ruaEmpresaEmitente;
+	private String numeroEmpresaEmitente;
+	private String salaEmpresaEmitente;
+	private String bairroEmpresaEmitente;
+	private String cepEmpresaEmitente;
 
 	private String nomeConjugeEmitente;	
 	private String cpfConjugeEmitente;	
@@ -81,10 +116,24 @@ public class CcbMB {
 	private String cidadeInterveniente;
 	private String cepInterveniente;
 	private boolean addInterveniente;
+	private boolean empresaInterveniente;
+	private String paiInterveniente;
+	private String maeInterveniente;
+	
+	private String razaoSocialInterveniente;
+	private String tipoEmpresaInterveniente;
+	private String cnpjInterveniente;
+	private String municipioEmpresaInterveniente;
+	private String estadoEmpresaInterveniente;
+	private String ruaEmpresaInterveniente;
+	private String numeroEmpresaInterveniente;
+	private String salaEmpresaInterveniente;
+	private String bairroEmpresaInterveniente;
+	private String cepEmpresaInterveniente;
 	
 	private String emailInterveniente;
 	private String regimeCasamentoInterveniente;
-	private boolean femininoInterveniente = false;
+	private boolean femininoInterveniente;
 
 	private String nomeConjugeInterveniente;
 	private String cpfConjugeInterveniente;
@@ -103,10 +152,25 @@ public class CcbMB {
 	private String cidadeTerceiroG;
 	private String cepTerceiroG;
 	private boolean addTerceiro;
+	private boolean empresaTerceiroG;
+	private String paiTerceiroG;
+	private String maeTerceiroG;
+	
+	
+	private String razaoSocialTerceiroG;
+	private String tipoEmpresaTerceiroG;
+	private String cnpjTerceiroG;
+	private String municipioEmpresaTerceiroG;
+	private String estadoEmpresaTerceiroG;
+	private String ruaEmpresaTerceiroG;
+	private String numeroEmpresaTerceiroG;
+	private String salaEmpresaTerceiroG;
+	private String bairroEmpresaTerceiroG;
+	private String cepEmpresaTerceiroG;
 	
 	private String emailTerceiroG;
 	private String regimeCasamentoTerceiroG;
-	private boolean femininoTerceiroG = false;
+	private boolean femininoTerceiroG;
 	
 	private String nomeConjugeTerceiroG;
 	private String cpfConjugeTerceiroG;
@@ -125,10 +189,24 @@ public class CcbMB {
 	private String cidadeAvalista;
 	private String cepAvalista;
 	private boolean addAvalista;
+	private boolean empresaAvalista;
+	private String paiAvalista;
+	private String maeAvalista;
+	
+	private String razaoSocialAvalista;
+	private String tipoEmpresaAvalista;
+	private String cnpjAvalista;
+	private String municipioEmpresaAvalista;
+	private String estadoEmpresaAvalista;
+	private String ruaEmpresaAvalista;
+	private String numeroEmpresaAvalista;
+	private String salaEmpresaAvalista;
+	private String bairroEmpresaAvalista;
+	private String cepEmpresaAvalista;
 	
 	private String emailAvalista;
 	private String regimeCasamentoAvalista;
-	private boolean femininoAvalista = false;
+	private boolean femininoAvalista;
 	
 	private String nomeConjugeAvalista;
 	private String cpfConjugeAvalista;
@@ -201,9 +279,61 @@ public class CcbMB {
 	private String tipoPesquisa;
 	private String tipoDownload;
 	
+	public UploadedFile uploadedFile;
+    public String fileName;
+    public String fileType;
+    public int fileTypeInt;
+	
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
+	
+	private List<SelectItem> listaBancosNome;
+	private List<SelectItem> listaBancosCodigo;
+	
+	public void pesquisaBancosListaNome() {
+		this.listaBancosNome = new ArrayList<>();
+		for(BancosEnum banco : BancosEnum.values()) {
+			SelectItem item = new SelectItem(banco.getNome());
+			this.listaBancosNome.add(item);
+		}
+	}
+	
+	public void pesquisaBancosListaCodigo() {
+		this.listaBancosCodigo = new ArrayList<>();
+		for(BancosEnum banco : BancosEnum.values()) {
+			SelectItem item = new SelectItem(banco.getCodigo());
+			this.listaBancosCodigo.add(item);
+		}
+	}
+	
+	public void populateCodigosBanco() {
+		for(BancosEnum banco : BancosEnum.values()) {
+			if(CommonsUtil.mesmoValor(this.nomeBanco,banco.getNome())) {
+				this.setNumeroBanco(banco.getCodigo());
+				//PrimeFaces.current().ajax().update(":numeroBanco");
+				break;
+			}
+		}
+	}
+	
+	public void populateNomesBanco() {
+		for(BancosEnum banco : BancosEnum.values()) {
+			if(CommonsUtil.mesmoValor(this.numeroBanco,banco.getCodigo())) {
+				this.setNomeBanco(banco.getNome());
+				//PrimeFaces.current().ajax().update(":nomeBanco");
+				break;
+			}
+		}
+	}
+	
+		
+	
+	public void complementaBancoDados(){
+		if (this.numeroBanco == null) {
+			
+		}
+	}
 
 	String updatePagadorRecebedor = ":form";
 
@@ -285,7 +415,7 @@ public class CcbMB {
 		listaCrea.add("CAU A40301-6");
 		return listaCrea;
 	}
-
+	
 	public void populateSelectedPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Emitente")) {
 			this.emitenteSelecionado = (this.selectedPagadorGenerico);
@@ -301,9 +431,6 @@ public class CcbMB {
 			this.setCidadeEmitente(this.emitenteSelecionado.getCidade());
 			this.setCepEmitente(this.emitenteSelecionado.getCep());
 			this.setEmailEmitente(this.emitenteSelecionado.getEmail());
-			this.setAgencia(this.emitenteSelecionado.getAgencia());
-			this.setNomeBanco(this.emitenteSelecionado.getBanco());
-			this.setContaCorrente(this.emitenteSelecionado.getConta());
 			if (this.emitenteSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
 				this.setCpfConjugeEmitente(this.emitenteSelecionado.getCpfConjuge());
@@ -400,6 +527,25 @@ public class CcbMB {
 			r.setText(text, 0);
 		}
 		return text;
+	}
+
+	public void handleFileUpload(FileUploadEvent event) {
+		uploadedFile = event.getFile();
+	    fileName = uploadedFile.getFileName();
+	    fileType = uploadedFile.getContentType();
+	    if(fileType.contains("png")) {
+	    	fileTypeInt = 6;
+	    	fileType = "png";
+	    } else if(fileType.contains("jpeg")) {
+	    	fileTypeInt = 5;
+	    	fileType = "jpeg";
+	    }
+    }
+	
+	public void clearFiles() {
+		uploadedFile = null;
+	    fileName = null;
+	    fileType = null;
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
@@ -509,6 +655,8 @@ public class CcbMB {
 	    	
 	    	XWPFDocument document = new XWPFDocument();
 	    	
+	    	
+	    			
 	    	if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
 	    		if(CommonsUtil.mesmoValor(this.addTerceiro, true)) {
 	    			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TG.docx"));
@@ -517,12 +665,33 @@ public class CcbMB {
 	    		}
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
 	    		document = new XWPFDocument(getClass().getResourceAsStream("/resource/AF.docx"));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NC")) {
+	    		document = new XWPFDocument(getClass().getResourceAsStream("/resource/NC.docx"));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"Excel")) {
+	    		this.readXLSXFile();
+	    		return null;
 	    	} else {
 	    		return null;
 	    	}
-
 	    	
-			ByteArrayOutputStream  out = new ByteArrayOutputStream ();
+	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
+	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
+	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			if (uploadedFile != null) {
+				RenderedImage picture = ImageIO.read((uploadedFile.getInputstream()));
+				ImageIO.write(picture, "png", baos);
+				baos.flush();
+				
+				// InputStream is = new ByteArrayInputStream(baos.toByteArray());
+				baos.close();
+			}
+			ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
+	    	
+	    	
+	    	
+			
+			
+			
 			
 			/*text = trocaValoresXWPF(text, r, "FiducianteConjugue","Rua logradouroConjugeEmitente, nº numeroConjugeEmitente, Qd. XX - Lote XX, Cond. Residencial XXXXXX, Bairro - cidadeConjugeEmitente - ufConjugeEmitente -  \r"
 									+ "CEP cepConjugeEmitente \r"
@@ -536,65 +705,90 @@ public class CcbMB {
 			
 			for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();
-			    if (runs != null) {
-			        for (XWPFRun r : runs) {
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
 			            String text = r.getText(0);
+
+
 						if (CommonsUtil.mesmoValor(tipoDownload, "CCB")) {
-							if (this.addInterveniente == true) {
-								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\r IX – INTERVENIENTE ANUENTE: nomeInterveniente, nacionalidadeInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente, cpfConjugeInterveniente,portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \r");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
-							}
 							if (this.addTerceiro == true) {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										"\r IX – TERCEIRO GARANTIDOR: nomeTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG, cpfConjugeTerceiroG,portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG; \r");
+										"\rIX – TERCEIRO GARANTIDOR: nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG; \r");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
 							}
+							if (this.addInterveniente == true) {
+								text = trocaValoresXWPF(text, r, "criaInterveniente",
+										"\rIX – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \r");
+							} else {
+								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
+							}
 							if (this.addAvalista == true) {
 								text = trocaValoresXWPF(text, r, "criaAvalista",
-										"\r IX – AVALISTA: nomeAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista, cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \r");
+										"\rIX – AVALISTA: nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \r");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaAvalista", "");
-							}
+							}		
 						} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
 							if (this.addTerceiro == true) {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										" nomeTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG;");
+										" nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG;");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
 							}
+							if(CommonsUtil.mesmoValor(fiduciante, true)) {
+								text = trocaValoresXWPF(text, r, "criaFiduciante", "nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
+								text = trocaValoresXWPF(text, r, "criaDevedor", "");
+								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "nomeEmitente \r"
+										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \r"
+										+ "CEP cepEmitente \r" 
+										+ "Email: emailEmitente\r");
+								text = trocaValoresXWPF(text, r, "devedorEmitente","");
+								
+							} else {
+								text = trocaValoresXWPF(text, r, "criaDevedor", "\rX) DEVEDOR: nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
+								text = trocaValoresXWPF(text, r, "criaFiduciante", "");
+								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "");
+								text = trocaValoresXWPF(text, r, "devedorEmitente", "\rPelo DEVEDOR: \r" + "nomeEmitente \r"
+										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \r"
+										+ "CEP cepEmitente \r"
+										+ "Email: emailEmitente\r");
+							}
+							
 							if (this.addInterveniente == true) {
 								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\r IX – INTERVENIENTE ANUENTE: nomeInterveniente, nacionalidadeInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente, cpfConjugeInterveniente,portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \r");
+										"\r3) – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \r");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
 							}
 							if (this.addAvalista == true) {
 								text = trocaValoresXWPF(text, r, "criaAvalista",
-										"\r IX – AVALISTA: nomeAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista, cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \r");
+										" nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista;");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaAvalista", "");
-							}
-							if(CommonsUtil.mesmoValor(fiduciante, true)) {
-								text = trocaValoresXWPF(text, r, "criaFiduciante", "nomeEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente, cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
-								text = trocaValoresXWPF(text, r, "criaDevedor", "");
-								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "nomeEmitente \r"
-										+ "Rua logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \r"
-										+ "CEP cepEmitente \r" 
-										+ "Email: emailEmitente");
-								text = trocaValoresXWPF(text, r, "devedorEmitente","");
-								
+							}	
+						}
+						
+						if(this.empresaEmitente) {
+							text = trocaValoresXWPF(text, r, "nomeEmpresaEmitente", this.razaoSocialEmitente + ",");
+							text = trocaValoresXWPF(text, r, "dadosEmpresaEmitente", "tipoEmpresaEmitente, inscrita no CNPJ/MF sob o nº cnpjEmitente, com sede e foro no município de municipioEmpresaEmitente no Estado de estadoEmpresaEmitente, na ruaEmpresaEmitente, nº numeroEmpresaEmitente, Sala salaEmpresaEmitente, Bairro: bairroEmpresaEmitente, CEP cepEmpresaEmitente, neste ato representada na forma do seu contrato social socioEmitente,");
+							text = trocaValoresXWPF(text, r, "tipoEmpresaEmitente", this.tipoEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "cnpjEmitente", this.cnpjEmitente);
+							text = trocaValoresXWPF(text, r, "municipioEmpresaEmitente", this.municipioEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "estadoEmpresaEmitente", this.estadoEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "ruaEmpresaEmitente", this.ruaEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "numeroEmpresaEmitente", this.numeroEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "salaEmpresaEmitente", this.salaEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "bairroEmpresaEmitente", this.bairroEmpresaEmitente);
+							text = trocaValoresXWPF(text, r, "cepEmpresaEmitente", this.cepEmpresaEmitente);
+							if(this.femininoEmitente) {
+								text = trocaValoresXWPF(text, r, "socioEmitente", "pela sua única sósia");
 							} else {
-								text = trocaValoresXWPF(text, r, "criaDevedor", "DEVEDOR: nomeEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente, cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
-								text = trocaValoresXWPF(text, r, "criaFiduciante", "");
-								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "");
-								text = trocaValoresXWPF(text, r, "devedorEmitente", "Pelo DEVEDOR: \r" + "nomeEmitente \r"
-										+ "Rua logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \r"
-										+ "CEP cepEmitente \r"
-										+ "Email: emailEmitente");
+								text = trocaValoresXWPF(text, r, "socioEmitente", "pelo seu único sósio");
 							}
+						} else {
+								text = trocaValoresXWPF(text, r, "nomeEmpresaEmitente", "");
+								text = trocaValoresXWPF(text, r, "dadosEmpresaEmitente", "");
 						}
 			            
 						if(this.getNomeConjugeEmitente() != null) { 	
@@ -621,12 +815,20 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "cidadeEmitente", this.cidadeEmitente);
 						text = trocaValoresXWPF(text, r, "cepEmitente", this.cepEmitente);
 						text = trocaValoresXWPF(text, r, "emailEmitente", this.emailEmitente);
+						if(this.femininoEmitente) {
+							text = trocaValoresXWPF(text, r, "filhoEmitente", "filha");
+						} else {
+							text = trocaValoresXWPF(text, r, "filhoEmitente", "filho");
+						}
+						text = trocaValoresXWPF(text, r, "paiEmitente", this.paiEmitente);
+						text = trocaValoresXWPF(text, r, "maeEmitente", this.maeEmitente);
+
 						
 						if (this.addInterveniente == true) {
-							text = trocaValoresXWPF(text, r, "fiducianteInterveniente","nomeInterveniente	 \r"
-									+ "Rua logradouroInterveniente, nº numeroInterveniente,  cidadeInterveniente - ufInterveniente - \r"
+							text = trocaValoresXWPF(text, r,"fiducianteInterveniente", "\rPelo Anuente: \r" +  "nomeInterveniente	 \r"
+									+ "logradouroInterveniente, nº numeroInterveniente,  cidadeInterveniente - ufInterveniente - \r"
 									+ "CEP cepInterveniente \r"
-									+ "Email: emailInterveniente ");
+									+ "Email: emailInterveniente \r");
 							
 							if (this.getNomeConjugeInterveniente() != null) {
 								text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente",
@@ -641,6 +843,29 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
 								text = trocaValoresXWPF(text, r, "regimeCasamentoInterveniente", "");					
 							}
+							
+							if(this.empresaInterveniente) {
+								text = trocaValoresXWPF(text, r, "nomeEmpresaInterveniente", this.razaoSocialInterveniente + ",");
+								text = trocaValoresXWPF(text, r, "dadosEmpresaInterveniente", "tipoEmpresaInterveniente, inscrita no CNPJ/MF sob o nº cnpjInterveniente, com sede e foro no município de municipioEmpresaInterveniente no Estado de estadoEmpresaInterveniente, na ruaEmpresaInterveniente, nº numeroEmpresaInterveniente, Sala salaEmpresaInterveniente, Bairro: bairroEmpresaInterveniente, CEP cepEmpresaInterveniente, neste ato representada na forma do seu contrato social socioInterveniente,");
+								text = trocaValoresXWPF(text, r, "tipoEmpresaInterveniente", this.tipoEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "cnpjInterveniente", this.cnpjInterveniente);
+								text = trocaValoresXWPF(text, r, "municipioEmpresaInterveniente", this.municipioEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "estadoEmpresaInterveniente", this.estadoEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "ruaEmpresaInterveniente", this.ruaEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "numeroEmpresaInterveniente", this.numeroEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "salaEmpresaInterveniente", this.salaEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "bairroEmpresaInterveniente", this.bairroEmpresaInterveniente);
+								text = trocaValoresXWPF(text, r, "cepEmpresaInterveniente", this.cepEmpresaInterveniente);
+								if(this.femininoInterveniente) {
+									text = trocaValoresXWPF(text, r, "socioInterveniente", "pela sua única sósia");
+								} else {
+									text = trocaValoresXWPF(text, r, "socioInterveniente", "pelo seu único sósio");
+								}
+							} else {
+									text = trocaValoresXWPF(text, r, "nomeEmpresaInterveniente", "");
+									text = trocaValoresXWPF(text, r, "dadosEmpresaInterveniente", "");
+							}
+							
 							text = trocaValoresXWPF(text, r, "estadoCivilInterveniente", verificaEstadoCivil(this.femininoInterveniente, this.estadoCivilInterveniente).toLowerCase());
 							text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);
 							text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
@@ -655,14 +880,22 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "cidadeInterveniente", this.cidadeInterveniente);
 							text = trocaValoresXWPF(text, r, "cepInterveniente", this.cepInterveniente);
 							text = trocaValoresXWPF(text, r, "emailInterveniente", this.emailInterveniente);
+							if(this.femininoInterveniente) {
+								text = trocaValoresXWPF(text, r, "filhoInterveniente", "filha");
+							} else {
+								text = trocaValoresXWPF(text, r, "filhoInterveniente", "filho");
+							}
+							text = trocaValoresXWPF(text, r, "paiInterveniente", this.paiInterveniente);
+							text = trocaValoresXWPF(text, r, "maeInterveniente", this.maeInterveniente);
+
 						} else {
 							text = trocaValoresXWPF(text, r, "fiducianteInterveniente","");
 						}
 						if (this.addAvalista == true) {
 							text = trocaValoresXWPF(text, r, "fiducianteAvalista","nomeAvalista	 \r"
-									+ "Rua logradouroAvalista, nº numeroAvalista,  cidadeAvalista - ufAvalista - \r"
+									+ "logradouroAvalista, nº numeroAvalista,  cidadeAvalista - ufAvalista - \r"
 									+ "CEP cepAvalista \r"
-									+ "Email: emailAvalista ");
+									+ "Email: emailAvalista \r");
 							
 							if (this.getNomeConjugeAvalista() != null) {
 								text = trocaValoresXWPF(text, r, "nomeConjugeAvalista",
@@ -677,8 +910,30 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
 								text = trocaValoresXWPF(text, r, "regimeCasamentoAvalista", "");
 							}
-							text = trocaValoresXWPF(text, r, "estadoCivilAvalista",
-									verificaEstadoCivil(this.femininoAvalista, this.estadoCivilAvalista).toLowerCase());
+							
+							if(this.empresaAvalista) {
+								text = trocaValoresXWPF(text, r, "nomeEmpresaAvalista", this.razaoSocialAvalista + ",");
+								text = trocaValoresXWPF(text, r, "dadosEmpresaAvalista", "tipoEmpresaAvalista, inscrita no CNPJ/MF sob o nº cnpjAvalista, com sede e foro no município de municipioEmpresaAvalista no Estado de estadoEmpresaAvalista, na ruaEmpresaAvalista, nº numeroEmpresaAvalista, Sala salaEmpresaAvalista, Bairro: bairroEmpresaAvalista, CEP cepEmpresaAvalista, neste ato representada na forma do seu contrato social socioAvalista,");
+								text = trocaValoresXWPF(text, r, "tipoEmpresaAvalista", this.tipoEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "cnpjAvalista", this.cnpjAvalista);
+								text = trocaValoresXWPF(text, r, "municipioEmpresaAvalista", this.municipioEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "estadoEmpresaAvalista", this.estadoEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "ruaEmpresaAvalista", this.ruaEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "numeroEmpresaAvalista", this.numeroEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "salaEmpresaAvalista", this.salaEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "bairroEmpresaAvalista", this.bairroEmpresaAvalista);
+								text = trocaValoresXWPF(text, r, "cepEmpresaAvalista", this.cepEmpresaAvalista);
+								if(this.femininoAvalista) {
+									text = trocaValoresXWPF(text, r, "socioAvalista", "pela sua única sósia");
+								} else {
+									text = trocaValoresXWPF(text, r, "socioAvalista", "pelo seu único sósio");
+								}
+							} else {
+									text = trocaValoresXWPF(text, r, "nomeEmpresaAvalista", "");
+									text = trocaValoresXWPF(text, r, "dadosEmpresaAvalista", "");
+							}
+							
+							text = trocaValoresXWPF(text, r, "estadoCivilAvalista", verificaEstadoCivil(this.femininoAvalista, this.estadoCivilAvalista).toLowerCase());
 							text = trocaValoresXWPF(text, r, "nomeAvalista", this.nomeAvalista);
 							text = trocaValoresXWPF(text, r, "cpfAvalista", this.cpfAvalista);
 							text = trocaValoresXWPF(text, r, "nacionalidadeAvalista", verificaNacionalidade(this.femininoAvalista, this.nacionalidadeAvalista));
@@ -692,15 +947,22 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "cidadeAvalista", this.cidadeAvalista);
 							text = trocaValoresXWPF(text, r, "cepAvalista", this.cepAvalista);
 							text = trocaValoresXWPF(text, r, "emailAvalista", this.emailAvalista);
+							if(this.femininoAvalista) {
+								text = trocaValoresXWPF(text, r, "filhoAvalista", "filha");
+							} else {
+								text = trocaValoresXWPF(text, r, "filhoAvalista", "filho");
+							}
+							text = trocaValoresXWPF(text, r, "paiAvalista", this.paiAvalista);
+							text = trocaValoresXWPF(text, r, "maeAvalista", this.maeAvalista);
 						} else {
 							text = trocaValoresXWPF(text, r, "fiducianteAvalista","");
 						}
 						
 						if (this.addTerceiro == true) {
 							text = trocaValoresXWPF(text, r, "fiducianteTerceiroG","nomeTerceiroG	 \r"
-									+ "Rua logradouroTerceiroG, nº numeroTerceiroG,  cidadeTerceiroG - ufTerceiroG - \r"
+									+ "logradouroTerceiroG, nº numeroTerceiroG,  cidadeTerceiroG - ufTerceiroG - \r"
 									+ "CEP cepTerceiroG \r"
-									+ "Email: emailTerceiroG");
+									+ "Email: emailTerceiroG\r");
 							
 							if (this.getNomeConjugeTerceiroG() != null) {
 								text = trocaValoresXWPF(text, r, "nomeConjugeTerceiroG",
@@ -716,6 +978,29 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
 								text = trocaValoresXWPF(text, r, "regimeCasamentoTerceiroG", "");
 							}
+							
+							if(this.empresaTerceiroG) {
+								text = trocaValoresXWPF(text, r, "nomeEmpresaTerceiroG", this.razaoSocialTerceiroG + ",");
+								text = trocaValoresXWPF(text, r, "dadosEmpresaTerceiroG", "tipoEmpresaTerceiroG, inscrita no CNPJ/MF sob o nº cnpjTerceiroG, com sede e foro no município de municipioEmpresaTerceiroG no Estado de estadoEmpresaTerceiroG, na ruaEmpresaTerceiroG, nº numeroEmpresaTerceiroG, Sala salaEmpresaTerceiroG, Bairro: bairroEmpresaTerceiroG, CEP cepEmpresaTerceiroG, neste ato representada na forma do seu contrato social socioTerceiroG,");
+								text = trocaValoresXWPF(text, r, "tipoEmpresaTerceiroG", this.tipoEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "cnpjTerceiroG", this.cnpjTerceiroG);
+								text = trocaValoresXWPF(text, r, "municipioEmpresaTerceiroG", this.municipioEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "estadoEmpresaTerceiroG", this.estadoEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "ruaEmpresaTerceiroG", this.ruaEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "numeroEmpresaTerceiroG", this.numeroEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "salaEmpresaTerceiroG", this.salaEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "bairroEmpresaTerceiroG", this.bairroEmpresaTerceiroG);
+								text = trocaValoresXWPF(text, r, "cepEmpresaTerceiroG", this.cepEmpresaTerceiroG);
+								if(this.femininoTerceiroG) {
+									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pela sua única sósia");
+								} else {
+									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pelo seu único sósio");
+								}
+							} else {
+									text = trocaValoresXWPF(text, r, "nomeEmpresaTerceiroG", "");
+									text = trocaValoresXWPF(text, r, "dadosEmpresaTerceiroG", "");
+							}
+							
 							text = trocaValoresXWPF(text, r, "estadoCivilTerceiroG",
 									verificaEstadoCivil(this.femininoTerceiroG, this.estadoCivilTerceiroG)
 											.toLowerCase());
@@ -733,6 +1018,13 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "cidadeTerceiroG", this.cidadeTerceiroG);
 							text = trocaValoresXWPF(text, r, "cepTerceiroG", this.cepTerceiroG);
 							text = trocaValoresXWPF(text, r, "emailTerceiroG", this.emailTerceiroG);
+							if(this.femininoTerceiroG) {
+								text = trocaValoresXWPF(text, r, "socioTerceiroG", "pela sua única sósia");
+							} else {
+								text = trocaValoresXWPF(text, r, "socioTerceiroG", "pelo seu único sósio");
+							}
+							text = trocaValoresXWPF(text, r, "paiTerceiroG", this.paiTerceiroG);
+							text = trocaValoresXWPF(text, r, "maeTerceiroG", this.maeTerceiroG);
 						} else {
 							text = trocaValoresXWPF(text, r, "fiducianteTerceiroG","");
 						}
@@ -779,6 +1071,10 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase());
 						text = trocaValoresXWPF(text, r, "emissaoAno", (this.dataDeEmissao.getYear() + 1900));
 						
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDia", this.vencimentoPrimeiraParcelaPagamento.getDate());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMes", CommonsUtil.formataMesExtenso(vencimentoPrimeiraParcelaPagamento).toLowerCase());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaAno", (this.vencimentoPrimeiraParcelaPagamento.getYear() + 1900));
+						
 						text = trocaValoresXWPF(text, r, "vendaLeilao", this.vendaLeilao, "R$ ");
 						text = trocaValoresXWPF(text, r, "elaboradorNome", this.elaboradorNome);
 						text = trocaValoresXWPF(text, r, "elaboradorCrea", this.elaboradorCrea);
@@ -800,8 +1096,13 @@ public class CcbMB {
 						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasDFI", this.numeroParcelasDFI);						
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteDFI", this.montanteDFI);
 						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.tarifaAntecipada);
-						
-
+								 
+						if (text != null && text.contains("ImagemImovel") && uploadedFile != null) {
+							r.addBreak();
+							r.addPicture(bis, fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+							r.addBreak();
+						} 				
+						text = trocaValoresXWPF(text, r, "ImagemImovel", "");
 			        }
 			    }
 			}
@@ -861,6 +1162,9 @@ public class CcbMB {
 					}
 				}
 			}
+			
+			
+			ByteArrayOutputStream  out = new ByteArrayOutputStream ();
 
 			document.write(out); 
 			document.close();
@@ -871,6 +1175,8 @@ public class CcbMB {
 				gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
 	    		gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NC")) {
+	    		gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
 	    	} else {
 	    		gerador.open(String.format("teste %s.docx", ""));	    	
 	    	}
@@ -886,7 +1192,66 @@ public class CcbMB {
 	    
 	    return null;
 	}
+	
+	
+	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
 
+	private void gravaCelula(Integer celula, Date value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
+
+	private void gravaCelula(Integer celula, Double value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
+
+	public StreamedContent readXLSXFile() throws IOException {
+
+		// String sheetName
+		// =getClass().getResource("/resource/SeguroDFI.xlsx").getPath();
+		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/Excel.xlsx"));
+
+		XSSFSheet sheet = wb.getSheetAt(0);
+
+		int iLinha = 0;
+		XSSFRow linha = sheet.getRow(iLinha);
+		
+		
+		linha.getCell(0).setCellValue(this.getNomeEmitente());
+		linha.removeCell(linha.getCell(4));
+		sheet.removeRow(sheet.getRow(1));
+		sheet.removeRowBreak(1);
+	
+
+		iLinha++;
+
+		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+
+		// escrever tudo o que foi feito no arquivo
+		wb.write(fileOut);
+
+		// fecha a escrita de dados nessa planilha
+		wb.close();
+
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+
+		gerador.open(String.format("Galleria Bank - SeguradoTabelaMIP %s.xlsx", ""));
+		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+	}
+	
 	public void clearPagadorRecebedor() {
 
 		this.emitenteSelecionado = new PagadorRecebedor();
@@ -939,10 +1304,22 @@ public class CcbMB {
 		this.regimeCasamentoEmitente = null;
 		this.fiduciante = false;
 		this.femininoEmitente = false;
-		if (this.getNomeConjugeEmitente() != null) {
-			this.setNomeConjugeEmitente(null);
-			this.setCpfConjugeEmitente(null);
-		}
+		this.empresaEmitente = false;
+		this.paiEmitente = null;
+		this.maeEmitente = null;
+		
+		this.razaoSocialEmitente = null;
+		this.tipoEmpresaEmitente = null;
+		this.cnpjEmitente = null;
+		this.municipioEmpresaEmitente = null;
+		this.estadoEmpresaEmitente = null;
+		this.ruaEmpresaEmitente = null;
+		this.numeroEmpresaEmitente = null;
+		this.salaEmpresaEmitente = null;
+		this.bairroEmpresaEmitente = null;
+		this.cepEmpresaEmitente = null;
+
+	//--------------------------------------------------------------------
 		this.nomeInterveniente = null;
 		this.nacionalidadeInterveniente = "brasileiro";
 		this.profissaoInterveniente = null;
@@ -956,13 +1333,29 @@ public class CcbMB {
 		this.cidadeInterveniente = null;
 		this.cepInterveniente = null;
 		this.addInterveniente = false;
+		this.empresaInterveniente = false;
+		this.paiInterveniente = null;
+		this.maeInterveniente = null;
+		
+		this.razaoSocialInterveniente = null;
+		this.tipoEmpresaInterveniente = null;
+		this.cnpjInterveniente = null;
+		this.municipioEmpresaInterveniente = null;
+		this.estadoEmpresaInterveniente = null;
+		this.ruaEmpresaInterveniente = null;
+		this.numeroEmpresaInterveniente = null;
+		this.salaEmpresaInterveniente = null;
+		this.bairroEmpresaInterveniente = null;
+		this.cepEmpresaInterveniente = null;
+		
 		this.emailInterveniente = null;
 		this.regimeCasamentoInterveniente = null;
 		this.femininoInterveniente = false;
-		if (this.getNomeConjugeInterveniente() != null) {
-			this.setNomeConjugeInterveniente(null);
-			this.setCpfConjugeInterveniente(null);
-		}
+
+		this.nomeConjugeInterveniente = null;
+		this.cpfConjugeInterveniente = null;
+		
+	//--------------------------------------------------------------------
 		this.nomeTerceiroG = null;
 		this.nacionalidadeTerceiroG = "brasileiro";
 		this.profissaoTerceiroG = null;
@@ -976,13 +1369,30 @@ public class CcbMB {
 		this.cidadeTerceiroG = null;
 		this.cepTerceiroG = null;
 		this.addTerceiro = false;
+		this.empresaTerceiroG = false;
+		this.paiTerceiroG = null;
+		this.maeTerceiroG = null;
+		
+		
+		this.razaoSocialTerceiroG = null;
+		this.tipoEmpresaTerceiroG = null;
+		this.cnpjTerceiroG = null;
+		this.municipioEmpresaTerceiroG = null;
+		this.estadoEmpresaTerceiroG = null;
+		this.ruaEmpresaTerceiroG = null;
+		this.numeroEmpresaTerceiroG = null;
+		this.salaEmpresaTerceiroG = null;
+		this.bairroEmpresaTerceiroG = null;
+		this.cepEmpresaTerceiroG = null;
+		
 		this.emailTerceiroG = null;
 		this.regimeCasamentoTerceiroG = null;
-		this.femininoTerceiroG = false;	
-		if (this.getNomeConjugeTerceiroG() != null) {
-			this.setNomeConjugeTerceiroG(null);
-			this.setCpfConjugeTerceiroG(null);
-		}
+		this.femininoTerceiroG = false;
+		
+		this.nomeConjugeTerceiroG = null;
+		this.cpfConjugeTerceiroG = null;
+	//--------------------------------------------------------------------
+		
 		this.nomeAvalista = null;
 		this.nacionalidadeAvalista = "brasileiro";
 		this.profissaoAvalista = null;
@@ -996,28 +1406,50 @@ public class CcbMB {
 		this.cidadeAvalista = null;
 		this.cepAvalista = null;
 		this.addAvalista = false;
+		this.empresaAvalista = false;
+		this.paiAvalista = null;
+		this.maeAvalista = null;
+		
+		this.razaoSocialAvalista = null;
+		this.tipoEmpresaAvalista = null;
+		this.cnpjAvalista = null;
+		this.municipioEmpresaAvalista = null;
+		this.estadoEmpresaAvalista = null;
+		this.ruaEmpresaAvalista = null;
+		this.numeroEmpresaAvalista = null;
+		this.salaEmpresaAvalista = null;
+		this.bairroEmpresaAvalista = null;
+		this.cepEmpresaAvalista = null;
+		
 		this.emailAvalista = null;
 		this.regimeCasamentoAvalista = null;
-		this.femininoAvalista = false;	
-		if (this.getNomeConjugeAvalista() != null) {
-			this.setNomeConjugeAvalista(null);
-			this.setCpfConjugeAvalista(null);
-		}
+		this.femininoAvalista = false;
+		
+		this.nomeConjugeAvalista = null;
+		this.cpfConjugeAvalista = null;
+
+	//--------------------------------------------------------------------
+
 		this.selectedPagadorGenerico = null;
 		this.selectedPagador = null;
 		this.emitenteSelecionado = null;
 		this.intervenienteSelecionado = null;
 		this.terceiroGSelecionado = null;
 		this.avalistaSelecionado = null;
+		this.testemunha1Selecionado = null;
+		this.testemunha2Selecionado = null;
+
 		this.valorLiquidoCredito = null;
 		this.valorCredito = null;
 		this.custoEmissao = null;
 		this.valorIOF = null;
 		this.valorDespesas = null;
+		
 		this.taxaDeJurosMes = null;
 		this.taxaDeJurosAno = null;
 		this.cetMes = null;
 		this.cetAno = null;
+		
 		this.contaCorrente = null;
 		this.agencia = null;
 		this.numeroBanco = null;
@@ -1026,35 +1458,50 @@ public class CcbMB {
 		this.vencimentoPrimeiraParcelaPagamento = null;
 		this.vencimentoUltimaParcelaPagamento = null;
 		this.montantePagamento = null;
+
 		this.numeroParcelasDFI = null;
 		this.vencimentoPrimeiraParcelaDFI = null;
 		this.vencimentoUltimaParcelaDFI = null;
 		this.montanteDFI = null;
+
 		this.numeroParcelasMIP = null;
 		this.vencimentoPrimeiraParcelaMIP = null;
 		this.vencimentoUltimaParcelaMIP = null;
 		this.montanteMIP = null;
+
 		this.tarifaAntecipada = BigDecimal.ZERO;
-		this.dataDeEmissao = getDataHoje();
+		this.dataDeEmissao =  getDataHoje();
+
 		this.numeroImovel = null;
 		this.cartorioImovel = null;
 		this.cidadeImovel = null;
 		this.ufImovel = null;
+		
 		this.vendaLeilao = null;
 		this.elaboradorNome = null;
 		this.elaboradorCrea = null;
 		this.responsavelNome = null;
 		this.responsavelCrea = null;
 		this.porcentagemImovel = null;
+		
 		this.nomeTestemunha1 = null;
 		this.cpfTestemunha1 = null;
 		this.rgTestemunha1 = null;
+		
 		this.nomeTestemunha2 = null;
 		this.cpfTestemunha2 = null;
-		this.rgTestemunha2 = null;	
+		this.rgTestemunha2 = null;
+		
+		this.uploadedFile = null;
+	    this.fileName = null;
+	    this.fileType = null;
+	    this.fileTypeInt = 0;
+	    
+	    pesquisaBancosListaNome();
+	    pesquisaBancosListaCodigo();
+		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
-
 
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -2070,8 +2517,488 @@ public class CcbMB {
 	}
 
 	public void setFemininoAvalista(boolean femininoAvalista) {
+
 		this.femininoAvalista = femininoAvalista;
 	}
-	
+
+	public PagadorRecebedor getTestemunha1Selecionado() {
+		return testemunha1Selecionado;
+	}
+
+	public void setTestemunha1Selecionado(PagadorRecebedor testemunha1Selecionado) {
+		this.testemunha1Selecionado = testemunha1Selecionado;
+	}
+
+	public PagadorRecebedor getTestemunha2Selecionado() {
+		return testemunha2Selecionado;
+	}
+
+	public void setTestemunha2Selecionado(PagadorRecebedor testemunha2Selecionado) {
+		this.testemunha2Selecionado = testemunha2Selecionado;
+	}
+
+	public List<SelectItem> getListaBancosNome() {
+		return listaBancosNome;
+	}
+
+	public void setListaBancosNome(List<SelectItem> listaBancosNome) {
+		this.listaBancosNome = listaBancosNome;
+	}
+
+	public List<SelectItem> getListaBancosCodigo() {
+		return listaBancosCodigo;
+	}
+
+	public void setListaBancosCodigo(List<SelectItem> listaBancosCodigo) {
+		this.listaBancosCodigo = listaBancosCodigo;
+	}
+
+	public boolean isEmpresaEmitente() {
+		return empresaEmitente;
+	}
+
+	public void setEmpresaEmitente(boolean empresaEmitente) {
+		this.empresaEmitente = empresaEmitente;
+	}
+
+	public String getRazaoSocialEmitente() {
+		return razaoSocialEmitente;
+	}
+
+	public void setRazaoSocialEmitente(String razaoSocialEmitente) {
+		this.razaoSocialEmitente = razaoSocialEmitente;
+	}
+
+	public String getTipoEmpresaEmitente() {
+		return tipoEmpresaEmitente;
+	}
+
+	public void setTipoEmpresaEmitente(String tipoEmpresaEmitente) {
+		this.tipoEmpresaEmitente = tipoEmpresaEmitente;
+	}
+
+	public String getCnpjEmitente() {
+		return cnpjEmitente;
+	}
+
+	public void setCnpjEmitente(String cnpjEmitente) {
+		this.cnpjEmitente = cnpjEmitente;
+	}
+
+	public String getMunicipioEmpresaEmitente() {
+		return municipioEmpresaEmitente;
+	}
+
+	public void setMunicipioEmpresaEmitente(String municipioEmpresaEmitente) {
+		this.municipioEmpresaEmitente = municipioEmpresaEmitente;
+	}
+
+	public String getEstadoEmpresaEmitente() {
+		return estadoEmpresaEmitente;
+	}
+
+	public void setEstadoEmpresaEmitente(String estadoEmpresaEmitente) {
+		this.estadoEmpresaEmitente = estadoEmpresaEmitente;
+	}
+
+	public String getRuaEmpresaEmitente() {
+		return ruaEmpresaEmitente;
+	}
+
+	public void setRuaEmpresaEmitente(String ruaEmpresaEmitente) {
+		this.ruaEmpresaEmitente = ruaEmpresaEmitente;
+	}
+
+	public String getNumeroEmpresaEmitente() {
+		return numeroEmpresaEmitente;
+	}
+
+	public void setNumeroEmpresaEmitente(String numeroEmpresaEmitente) {
+		this.numeroEmpresaEmitente = numeroEmpresaEmitente;
+	}
+
+	public String getSalaEmpresaEmitente() {
+		return salaEmpresaEmitente;
+	}
+
+	public void setSalaEmpresaEmitente(String salaEmpresaEmitente) {
+		this.salaEmpresaEmitente = salaEmpresaEmitente;
+	}
+
+	public String getBairroEmpresaEmitente() {
+		return bairroEmpresaEmitente;
+	}
+
+	public void setBairroEmpresaEmitente(String bairroEmpresaEmitente) {
+		this.bairroEmpresaEmitente = bairroEmpresaEmitente;
+	}
+
+	public String getCepEmpresaEmitente() {
+		return cepEmpresaEmitente;
+	}
+
+	public void setCepEmpresaEmitente(String cepEmpresaEmitente) {
+		this.cepEmpresaEmitente = cepEmpresaEmitente;
+	}
+
+	public boolean isEmpresaInterveniente() {
+		return empresaInterveniente;
+	}
+
+	public void setEmpresaInterveniente(boolean empresaInterveniente) {
+		this.empresaInterveniente = empresaInterveniente;
+	}
+
+	public String getRazaoSocialInterveniente() {
+		return razaoSocialInterveniente;
+	}
+
+	public void setRazaoSocialInterveniente(String razaoSocialInterveniente) {
+		this.razaoSocialInterveniente = razaoSocialInterveniente;
+	}
+
+	public String getTipoEmpresaInterveniente() {
+		return tipoEmpresaInterveniente;
+	}
+
+	public void setTipoEmpresaInterveniente(String tipoEmpresaInterveniente) {
+		this.tipoEmpresaInterveniente = tipoEmpresaInterveniente;
+	}
+
+	public String getCnpjInterveniente() {
+		return cnpjInterveniente;
+	}
+
+	public void setCnpjInterveniente(String cnpjInterveniente) {
+		this.cnpjInterveniente = cnpjInterveniente;
+	}
+
+	public String getMunicipioEmpresaInterveniente() {
+		return municipioEmpresaInterveniente;
+	}
+
+	public void setMunicipioEmpresaInterveniente(String municipioEmpresaInterveniente) {
+		this.municipioEmpresaInterveniente = municipioEmpresaInterveniente;
+	}
+
+	public String getEstadoEmpresaInterveniente() {
+		return estadoEmpresaInterveniente;
+	}
+
+	public void setEstadoEmpresaInterveniente(String estadoEmpresaInterveniente) {
+		this.estadoEmpresaInterveniente = estadoEmpresaInterveniente;
+	}
+
+	public String getRuaEmpresaInterveniente() {
+		return ruaEmpresaInterveniente;
+	}
+
+	public void setRuaEmpresaInterveniente(String ruaEmpresaInterveniente) {
+		this.ruaEmpresaInterveniente = ruaEmpresaInterveniente;
+	}
+
+	public String getNumeroEmpresaInterveniente() {
+		return numeroEmpresaInterveniente;
+	}
+
+	public void setNumeroEmpresaInterveniente(String numeroEmpresaInterveniente) {
+		this.numeroEmpresaInterveniente = numeroEmpresaInterveniente;
+	}
+
+	public String getSalaEmpresaInterveniente() {
+		return salaEmpresaInterveniente;
+	}
+
+	public void setSalaEmpresaInterveniente(String salaEmpresaInterveniente) {
+		this.salaEmpresaInterveniente = salaEmpresaInterveniente;
+	}
+
+	public String getBairroEmpresaInterveniente() {
+		return bairroEmpresaInterveniente;
+	}
+
+	public void setBairroEmpresaInterveniente(String bairroEmpresaInterveniente) {
+		this.bairroEmpresaInterveniente = bairroEmpresaInterveniente;
+	}
+
+	public String getCepEmpresaInterveniente() {
+		return cepEmpresaInterveniente;
+	}
+
+	public void setCepEmpresaInterveniente(String cepEmpresaInterveniente) {
+		this.cepEmpresaInterveniente = cepEmpresaInterveniente;
+	}
+
+	public boolean isEmpresaTerceiroG() {
+		return empresaTerceiroG;
+	}
+
+	public void setEmpresaTerceiroG(boolean empresaTerceiroG) {
+		this.empresaTerceiroG = empresaTerceiroG;
+	}
+
+	public String getRazaoSocialTerceiroG() {
+		return razaoSocialTerceiroG;
+	}
+
+	public void setRazaoSocialTerceiroG(String razaoSocialTerceiroG) {
+		this.razaoSocialTerceiroG = razaoSocialTerceiroG;
+	}
+
+	public String getTipoEmpresaTerceiroG() {
+		return tipoEmpresaTerceiroG;
+	}
+
+	public void setTipoEmpresaTerceiroG(String tipoEmpresaTerceiroG) {
+		this.tipoEmpresaTerceiroG = tipoEmpresaTerceiroG;
+	}
+
+	public String getCnpjTerceiroG() {
+		return cnpjTerceiroG;
+	}
+
+	public void setCnpjTerceiroG(String cnpjTerceiroG) {
+		this.cnpjTerceiroG = cnpjTerceiroG;
+	}
+
+	public String getMunicipioEmpresaTerceiroG() {
+		return municipioEmpresaTerceiroG;
+	}
+
+	public void setMunicipioEmpresaTerceiroG(String municipioEmpresaTerceiroG) {
+		this.municipioEmpresaTerceiroG = municipioEmpresaTerceiroG;
+	}
+
+	public String getEstadoEmpresaTerceiroG() {
+		return estadoEmpresaTerceiroG;
+	}
+
+	public void setEstadoEmpresaTerceiroG(String estadoEmpresaTerceiroG) {
+		this.estadoEmpresaTerceiroG = estadoEmpresaTerceiroG;
+	}
+
+	public String getRuaEmpresaTerceiroG() {
+		return ruaEmpresaTerceiroG;
+	}
+
+	public void setRuaEmpresaTerceiroG(String ruaEmpresaTerceiroG) {
+		this.ruaEmpresaTerceiroG = ruaEmpresaTerceiroG;
+	}
+
+	public String getNumeroEmpresaTerceiroG() {
+		return numeroEmpresaTerceiroG;
+	}
+
+	public void setNumeroEmpresaTerceiroG(String numeroEmpresaTerceiroG) {
+		this.numeroEmpresaTerceiroG = numeroEmpresaTerceiroG;
+	}
+
+	public String getSalaEmpresaTerceiroG() {
+		return salaEmpresaTerceiroG;
+	}
+
+	public void setSalaEmpresaTerceiroG(String salaEmpresaTerceiroG) {
+		this.salaEmpresaTerceiroG = salaEmpresaTerceiroG;
+	}
+
+	public String getBairroEmpresaTerceiroG() {
+		return bairroEmpresaTerceiroG;
+	}
+
+	public void setBairroEmpresaTerceiroG(String bairroEmpresaTerceiroG) {
+		this.bairroEmpresaTerceiroG = bairroEmpresaTerceiroG;
+	}
+
+	public String getCepEmpresaTerceiroG() {
+		return cepEmpresaTerceiroG;
+	}
+
+	public void setCepEmpresaTerceiroG(String cepEmpresaTerceiroG) {
+		this.cepEmpresaTerceiroG = cepEmpresaTerceiroG;
+	}
+
+	public boolean isEmpresaAvalista() {
+		return empresaAvalista;
+	}
+
+	public void setEmpresaAvalista(boolean empresaAvalista) {
+		this.empresaAvalista = empresaAvalista;
+	}
+
+	public String getRazaoSocialAvalista() {
+		return razaoSocialAvalista;
+	}
+
+	public void setRazaoSocialAvalista(String razaoSocialAvalista) {
+		this.razaoSocialAvalista = razaoSocialAvalista;
+	}
+
+	public String getTipoEmpresaAvalista() {
+		return tipoEmpresaAvalista;
+	}
+
+	public void setTipoEmpresaAvalista(String tipoEmpresaAvalista) {
+		this.tipoEmpresaAvalista = tipoEmpresaAvalista;
+	}
+
+	public String getCnpjAvalista() {
+		return cnpjAvalista;
+	}
+
+	public void setCnpjAvalista(String cnpjAvalista) {
+		this.cnpjAvalista = cnpjAvalista;
+	}
+
+	public String getMunicipioEmpresaAvalista() {
+		return municipioEmpresaAvalista;
+	}
+
+	public void setMunicipioEmpresaAvalista(String municipioEmpresaAvalista) {
+		this.municipioEmpresaAvalista = municipioEmpresaAvalista;
+	}
+
+	public String getEstadoEmpresaAvalista() {
+		return estadoEmpresaAvalista;
+	}
+
+	public void setEstadoEmpresaAvalista(String estadoEmpresaAvalista) {
+		this.estadoEmpresaAvalista = estadoEmpresaAvalista;
+	}
+
+	public String getRuaEmpresaAvalista() {
+		return ruaEmpresaAvalista;
+	}
+
+	public void setRuaEmpresaAvalista(String ruaEmpresaAvalista) {
+		this.ruaEmpresaAvalista = ruaEmpresaAvalista;
+	}
+
+	public String getNumeroEmpresaAvalista() {
+		return numeroEmpresaAvalista;
+	}
+
+	public void setNumeroEmpresaAvalista(String numeroEmpresaAvalista) {
+		this.numeroEmpresaAvalista = numeroEmpresaAvalista;
+	}
+
+	public String getSalaEmpresaAvalista() {
+		return salaEmpresaAvalista;
+	}
+
+	public void setSalaEmpresaAvalista(String salaEmpresaAvalista) {
+		this.salaEmpresaAvalista = salaEmpresaAvalista;
+	}
+
+	public String getBairroEmpresaAvalista() {
+		return bairroEmpresaAvalista;
+	}
+
+	public void setBairroEmpresaAvalista(String bairroEmpresaAvalista) {
+		this.bairroEmpresaAvalista = bairroEmpresaAvalista;
+	}
+
+	public String getCepEmpresaAvalista() {
+		return cepEmpresaAvalista;
+	}
+
+	public void setCepEmpresaAvalista(String cepEmpresaAvalista) {
+		this.cepEmpresaAvalista = cepEmpresaAvalista;
+	}
+
+	public String getPaiEmitente() {
+		return paiEmitente;
+	}
+
+	public void setPaiEmitente(String paiEmitente) {
+		this.paiEmitente = paiEmitente;
+	}
+
+	public String getMaeEmitente() {
+		return maeEmitente;
+	}
+
+	public void setMaeEmitente(String maeEmitente) {
+		this.maeEmitente = maeEmitente;
+	}
+
+	public String getPaiInterveniente() {
+		return paiInterveniente;
+	}
+
+	public void setPaiInterveniente(String paiInterveniente) {
+		this.paiInterveniente = paiInterveniente;
+	}
+
+	public String getMaeInterveniente() {
+		return maeInterveniente;
+	}
+
+	public void setMaeInterveniente(String maeInterveniente) {
+		this.maeInterveniente = maeInterveniente;
+	}
+
+	public String getPaiTerceiroG() {
+		return paiTerceiroG;
+	}
+
+	public void setPaiTerceiroG(String paiTerceiroG) {
+		this.paiTerceiroG = paiTerceiroG;
+	}
+
+	public String getMaeTerceiroG() {
+		return maeTerceiroG;
+	}
+
+	public void setMaeTerceiroG(String maeTerceiroG) {
+		this.maeTerceiroG = maeTerceiroG;
+	}
+
+	public String getPaiAvalista() {
+		return paiAvalista;
+	}
+
+	public void setPaiAvalista(String paiAvalista) {
+		this.paiAvalista = paiAvalista;
+	}
+
+	public String getMaeAvalista() {
+		return maeAvalista;
+	}
+
+	public void setMaeAvalista(String maeAvalista) {
+		this.maeAvalista = maeAvalista;
+	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public int getFileTypeInt() {
+		return fileTypeInt;
+	}
+
+	public void setFileTypeInt(int fileTypeInt) {
+		this.fileTypeInt = fileTypeInt;
+	}
 	
 }
