@@ -25,6 +25,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private boolean parcelaPaga;
 	private boolean parcelaVencida;
 	private boolean parcelaVencendo;
+	private BigDecimal vlrSaldoInicial;
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrParcelaOriginal;
 	
@@ -34,6 +35,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrComissao;
 	private BigDecimal vlrRecebido;
 	
+	//com qual ipca esta atualizado a parcela
+	private IPCA ipcaAtualizou;
+	//valor do ipca atualizado
 	private BigDecimal ipca;
 	
 	private BigDecimal vlrJurosParcela;
@@ -224,6 +228,14 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	 */
 	public void setVlrSaldoParcela(BigDecimal vlrSaldoParcela) {
 		this.vlrSaldoParcela = vlrSaldoParcela;
+	}
+
+	public BigDecimal getVlrSaldoInicial() {
+		return vlrSaldoInicial;
+	}
+
+	public void setVlrSaldoInicial(BigDecimal vlrSaldoInicial) {
+		this.vlrSaldoInicial = vlrSaldoInicial;
 	}
 
 	/**
@@ -465,6 +477,14 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setValorTotalPagamento(BigDecimal valorTotalPagamento) {
 		this.valorTotalPagamento = valorTotalPagamento;
+	}
+
+	public IPCA getIpcaAtualizou() {
+		return ipcaAtualizou;
+	}
+
+	public void setIpcaAtualizou(IPCA ipcaAtualizou) {
+		this.ipcaAtualizou = ipcaAtualizou;
 	}
 
 	public BigDecimal getIpca() {

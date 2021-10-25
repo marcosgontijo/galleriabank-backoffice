@@ -1919,6 +1919,12 @@
 							sortBy="#{parcelas.numeroParcela}">
 							<h:outputText value="#{parcelas.numeroParcela}" />
 						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Saldo Inicial (R$)">
+							<h:outputText value="#{parcelas.vlrSaldoInicial}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
 						<p:column style="text-align: center;width: 70px;"
 							headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
