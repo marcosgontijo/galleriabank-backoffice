@@ -475,6 +475,20 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
+	
+	private String cobrarComissaoCliente;
+	private BigDecimal comissaoClientePorcentagem;
+	private BigDecimal comissaoClienteValorFixo;
+	private Boolean pagadorDonoGarantia;
+	
+	private Boolean rgDocumentosCheklist;
+	private Boolean comprovanteEnderecoDocumentosCheklist;
+	private Boolean certidaoCasamentoNascimentoDocumentosCheklist;
+	private Boolean fichaCadastralDocumentosCheklist;
+	private Boolean bancoDocumentosCheklist;
+	private Boolean agDocumentosCheklist;
+	private Boolean ccDocumentosCheklist;
+	private Boolean telefoneEmailDocumentosCheklist;
 
 	public ContratoCobranca() {
 		super();
@@ -3796,6 +3810,150 @@ public class ContratoCobranca implements Serializable {
 	}
 
 
+
+	public String getCobrarComissaoCliente() {
+		return cobrarComissaoCliente;
+	}
+
+
+
+	public void setCobrarComissaoCliente(String cobrarComissaoCliente) {
+		this.cobrarComissaoCliente = cobrarComissaoCliente;
+	}
+
+
+
+	public BigDecimal getComissaoClientePorcentagem() {
+		return comissaoClientePorcentagem;
+	}
+
+
+
+	public void setComissaoClientePorcentagem(BigDecimal comissaoClientePorcentagem) {
+		this.comissaoClientePorcentagem = comissaoClientePorcentagem;
+	}
+
+
+
+	public BigDecimal getComissaoClienteValorFixo() {
+		return comissaoClienteValorFixo;
+	}
+
+
+
+	public void setComissaoClienteValorFixo(BigDecimal comissaoClienteValorFixo) {
+		this.comissaoClienteValorFixo = comissaoClienteValorFixo;
+	}
+
+
+
+	public Boolean getPagadorDonoGarantia() {
+		return pagadorDonoGarantia;
+	}
+
+
+
+	public void setPagadorDonoGarantia(Boolean pagadorDonoGarantia) {
+		this.pagadorDonoGarantia = pagadorDonoGarantia;
+	}
+
+
+
+	public Boolean getRgDocumentosCheklist() {
+		return rgDocumentosCheklist;
+	}
+
+
+
+	public void setRgDocumentosCheklist(Boolean rgDocumentosCheklist) {
+		this.rgDocumentosCheklist = rgDocumentosCheklist;
+	}
+
+
+
+	public Boolean getComprovanteEnderecoDocumentosCheklist() {
+		return comprovanteEnderecoDocumentosCheklist;
+	}
+
+
+
+	public void setComprovanteEnderecoDocumentosCheklist(Boolean comprovanteEnderecoDocumentosCheklist) {
+		this.comprovanteEnderecoDocumentosCheklist = comprovanteEnderecoDocumentosCheklist;
+	}
+
+
+
+	public Boolean getCertidaoCasamentoNascimentoDocumentosCheklist() {
+		return certidaoCasamentoNascimentoDocumentosCheklist;
+	}
+
+
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheklist(Boolean certidaoCasamentoNascimentoDocumentosCheklist) {
+		this.certidaoCasamentoNascimentoDocumentosCheklist = certidaoCasamentoNascimentoDocumentosCheklist;
+	}
+
+
+
+	public Boolean getFichaCadastralDocumentosCheklist() {
+		return fichaCadastralDocumentosCheklist;
+	}
+
+
+
+	public void setFichaCadastralDocumentosCheklist(Boolean fichaCadastralDocumentosCheklist) {
+		this.fichaCadastralDocumentosCheklist = fichaCadastralDocumentosCheklist;
+	}
+
+
+
+	public Boolean getBancoDocumentosCheklist() {
+		return bancoDocumentosCheklist;
+	}
+
+
+
+	public void setBancoDocumentosCheklist(Boolean bancoDocumentosCheklist) {
+		this.bancoDocumentosCheklist = bancoDocumentosCheklist;
+	}
+
+
+
+	public Boolean getAgDocumentosCheklist() {
+		return agDocumentosCheklist;
+	}
+
+
+
+	public void setAgDocumentosCheklist(Boolean agDocumentosCheklist) {
+		this.agDocumentosCheklist = agDocumentosCheklist;
+	}
+
+
+
+	public Boolean getCcDocumentosCheklist() {
+		return ccDocumentosCheklist;
+	}
+
+
+
+	public void setCcDocumentosCheklist(Boolean ccDocumentosCheklist) {
+		this.ccDocumentosCheklist = ccDocumentosCheklist;
+	}
+
+
+
+	public Boolean getTelefoneEmailDocumentosCheklist() {
+		return telefoneEmailDocumentosCheklist;
+	}
+
+
+
+	public void setTelefoneEmailDocumentosCheklist(Boolean telefoneEmailDocumentosCheklist) {
+		this.telefoneEmailDocumentosCheklist = telefoneEmailDocumentosCheklist;
+	}
+	
+	
 	
 	
 }

@@ -132,7 +132,7 @@
 		<property name="estadocivil" type="java.lang.String">
             <column name="estadocivil"/>
         </property>       	     
-      			<property name="coobrigado" type="boolean">
+      	<property name="coobrigado" type="boolean">
            <column name="coobrigado" />
       	</property> 
       	<property name="idIugu" type="java.lang.String">
@@ -283,6 +283,35 @@
 			class="com.webnowbr.siscoat.infra.db.model.User"
 			lazy="false">
 			<column name="USUARIO" />
-		</many-to-one>                                                                                                            
+		</many-to-one>
+		
+		<property name="nomeSecundario" type="java.lang.String">
+            <column name="nomeSecundario"/>
+        </property> 
+        
+        <property name="cpfSecundario" type="java.lang.String">
+            <column name="cpfSecundario"/>
+        </property> 
+        
+        <property name="cnpjSecundario" type="java.lang.String">
+            <column name="cnpjSecundario"/>
+        </property> 
+        
+        <property name="telCelularSecundario" type="java.lang.String">
+            <column name="telCelularSecundario"/>
+        </property> 
+        
+        <property name="emailSecundario" type="java.lang.String">
+            <column name="emailSecundario"/>
+        </property> 
+        
+        <property name="relaçãoComTomador" type="java.lang.String">
+            <column name="relaçãoComTomador"/>
+        </property> 
+        
+        <property name="tipoPessoaSecundarioIsFisica" type="boolean">
+           <column name="tipoPessoaSecundarioIsFisica" />
+      	</property> 
+		                                                                                                            
     </class>
 </hibernate-mapping>

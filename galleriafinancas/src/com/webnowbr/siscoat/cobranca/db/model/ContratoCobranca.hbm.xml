@@ -1192,6 +1192,59 @@
 
 		<property name="comentarioJuridico" type="java.lang.String">
 			<column name="COMENTARIOJURIDICO" />
-		</property>						
+		</property>	
+		
+		
+		
+		
+		
+		<property name="cobrarComissaoCliente" type="java.lang.String">
+			<column name="cobrarComissaoCliente" />
+		</property>
+		
+		<property name="comissaoClientePorcentagem" type="big_decimal">
+			<column name="comissaoClientePorcentagem" />
+		</property>	
+		
+		<property name="comissaoClienteValorFixo" type="big_decimal">
+			<column name="comissaoClienteValorFixo" />
+		</property>	
+		
+		<property name="pagadorDonoGarantia" type="boolean">
+			<column name="pagadorDonoGarantia" />
+		</property>
+	
+		<property name="rgDocumentosCheklist" type="boolean">
+			<column name="rgDocumentosCheklist" />
+		</property>
+		
+		<property name="comprovanteEnderecoDocumentosCheklist" type="boolean">
+			<column name="comprovanteEnderecoDocumentosCheklist" />
+		</property>
+		
+		<property name="certidaoCasamentoNascimentoDocumentosCheklist" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosCheklist" />
+		</property>
+		
+		<property name="fichaCadastralDocumentosCheklist" type="boolean">
+			<column name="fichaCadastralDocumentosCheklist" />
+		</property>
+		
+		<property name="bancoDocumentosCheklist" type="boolean">
+			<column name="bancoDocumentosCheklist" />
+		</property>
+		
+		<property name="agDocumentosCheklist" type="boolean">
+			<column name="agDocumentosCheklist" />
+		</property>
+		
+		<property name="ccDocumentosCheklist" type="boolean">
+			<column name="ccDocumentosCheklist" />
+		</property>
+		
+		<property name="telefoneEmailDocumentosCheklist" type="boolean">
+			<column name="telefoneEmailDocumentosCheklist" />
+		</property>		
+		
 	</class>
 </hibernate-mapping>

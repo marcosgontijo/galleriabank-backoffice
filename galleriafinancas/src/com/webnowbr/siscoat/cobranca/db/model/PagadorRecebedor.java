@@ -119,6 +119,15 @@ public class PagadorRecebedor implements Serializable {
 	private String telCelularCoobrigado;
 	private String sexoCoobrigado;
 	
+	
+	private String nomeSecundario;
+	private String cpfSecundario;
+	private String cnpjSecundario;
+	private String telCelularSecundario;
+	private String emailSecundario;
+	private String relaçãoComTomador;
+	private Boolean tipoPessoaSecundarioIsFisica;
+	
 	private User usuario;
 	
 	private BigDecimal saldoInvestidor;
@@ -1102,4 +1111,62 @@ public class PagadorRecebedor implements Serializable {
 	public void setSaldoInvestidor(BigDecimal saldoInvestidor) {
 		this.saldoInvestidor = saldoInvestidor;
 	}
+
+	public String getNomeSecundario() {
+		return nomeSecundario;
+	}
+
+	public void setNomeSecundario(String nomeSecundario) {
+		this.nomeSecundario = nomeSecundario;
+	}
+
+	public String getCpfSecundario() {
+		return cpfSecundario;
+	}
+
+	public void setCpfSecundario(String cpfSecundario) {
+		this.cpfSecundario = cpfSecundario;
+	}
+
+	public String getCnpjSecundario() {
+		return cnpjSecundario;
+	}
+
+	public void setCnpjSecundario(String cnpjSecundario) {
+		this.cnpjSecundario = cnpjSecundario;
+	}
+
+	public String getTelCelularSecundario() {
+		return telCelularSecundario;
+	}
+
+	public void setTelCelularSecundario(String telCelularSecundario) {
+		this.telCelularSecundario = telCelularSecundario;
+	}
+
+	public String getEmailSecundario() {
+		return emailSecundario;
+	}
+
+	public void setEmailSecundario(String emailSecundario) {
+		this.emailSecundario = emailSecundario;
+	}
+
+	public String getRelaçãoComTomador() {
+		return relaçãoComTomador;
+	}
+
+	public void setRelaçãoComTomador(String relaçãoComTomador) {
+		this.relaçãoComTomador = relaçãoComTomador;
+	}
+
+	public Boolean getTipoPessoaSecundarioIsFisica() {
+		return tipoPessoaSecundarioIsFisica;
+	}
+
+	public void setTipoPessoaSecundarioIsFisica(Boolean tipoPessoaSecundarioIsFisica) {
+		this.tipoPessoaSecundarioIsFisica = tipoPessoaSecundarioIsFisica;
+	}
+	
+	
 }

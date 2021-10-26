@@ -609,10 +609,12 @@ public class ContratoCobrancaMB {
 	private Date dataPrevistaVistoria;
 	private BigDecimal valorBoletoPreContrato;
 	private BigDecimal taxaPreAprovada;
-	private Date prazoMaxPreAprovado;
+	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
+	
+	private Boolean addPagadorPreContrato;
 
 	/**
 	 * 
@@ -18828,13 +18830,20 @@ public class ContratoCobrancaMB {
 		this.comentarioJuridico = comentarioJuridico;
 	}
 
-	public Date getPrazoMaxPreAprovado() {
+	public void setAddPagadorPreContrato(Boolean addPagadorPreContrato) {
+		this.addPagadorPreContrato = addPagadorPreContrato;
+	}
+
+	public Boolean getAddPagadorPreContrato() {
+		return addPagadorPreContrato;
+	}
+
+	public BigInteger getPrazoMaxPreAprovado() {
 		return prazoMaxPreAprovado;
 	}
 
-	public void setPrazoMaxPreAprovado(Date prazoMaxPreAprovado) {
+	public void setPrazoMaxPreAprovado(BigInteger prazoMaxPreAprovado) {
 		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
 	}
-	
 	
 }
