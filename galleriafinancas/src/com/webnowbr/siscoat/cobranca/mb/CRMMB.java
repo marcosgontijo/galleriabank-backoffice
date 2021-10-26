@@ -526,35 +526,35 @@ public class CRMMB {
 				c.setStatus("Em Análise");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && (c.getMatriculaAprovadaValor() == null || c.getMatriculaAprovadaValor().equals(""))) {
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
 				c.setStatus("Em Análise");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
 				c.setStatus("Ag. Pagto. Laudo");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
 					(!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
 				c.setStatus("Ag. PAJU e Laudo");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 					c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isDocumentosCompletos()) {
 				c.setStatus("Ag. DOC");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
 				c.setStatus("Ag. CCB");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
 				c.setStatus("Ag. Assinatura");
 			}
 			
-			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.getMatriculaAprovadaValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
 					c.setStatus("Ag. Registro");
 			}
