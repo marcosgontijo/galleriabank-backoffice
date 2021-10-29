@@ -226,6 +226,9 @@
 		<property name="corrigidoIPCA" type="boolean">
 			<column name="corrigidoIPCA" />
 		</property>
+		<property name="recalculaIPCA" type="boolean">
+			<column name="recalculaIPCA" />
+		</property>
 		<property name="temSeguro" type="boolean">
 			<column name="temSeguro" />
 		</property>
@@ -1178,7 +1181,7 @@
 			<column name="TAXAPREAPROVADA" />
 		</property>
 						
-		<property name="prazoMaxPreAprovado" type="big_integer">
+		<property name="prazoMaxPreAprovado" type="long">
 			<column name="PRAZOMAXPREAPROVADO" />
 		</property>
 

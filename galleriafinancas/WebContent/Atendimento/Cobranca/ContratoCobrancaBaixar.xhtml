@@ -1914,83 +1914,7 @@
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 						rowKey="#{parcelas.id}">
 
-						<p:column style="text-align: center;width: 45px;"
-							headerText="Parcela" filterMatchMode="contains"
-							sortBy="#{parcelas.numeroParcela}">
-							<h:outputText value="#{parcelas.numeroParcela}" />
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Saldo Inicial (R$)">
-							<h:outputText value="#{parcelas.vlrSaldoInicial}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 70px;"
-							headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
-							<h:outputText value="#{parcelas.dataVencimento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 70px;"
-							headerText="Dt. Último Pagto."
-							sortBy="#{parcelas.dataUltimoPagamento}">
-							<h:outputText value="#{parcelas.dataUltimoPagamento}">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Valor Total Pago (R$)">
-							<h:outputText value="#{parcelas.valorTotalPagamento}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Valor (R$)">
-							<h:outputText value="#{parcelas.vlrParcela}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Juros (R$)">
-							<h:outputText value="#{parcelas.vlrJurosParcela}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Amortização (R$)">
-							<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="IPCA (R$)"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
-							<h:outputText value="#{parcelas.ipca}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Seguro DFI (R$)"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-							<h:outputText value="#{parcelas.seguroDFI}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Seguro MIP (R$)"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-							<h:outputText value="#{parcelas.seguroMIP}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
-						<p:column style="text-align: center;width: 110px;"
-							headerText="Saldo (R$)">
-							<h:outputText value="#{parcelas.vlrSaldoParcela}"
-								converter="bigDecimalConverter">
-							</h:outputText>
-						</p:column>
+
 						<p:column style="width:150px" headerText="Ações"
 							styleClass="colunaResponsivaRelFinanceiro">
 							<shiro:hasAnyRoles name="ROOT">
@@ -2054,6 +1978,77 @@
 									target="#{contratoCobrancaMB.observacaoContratoDetalhes}"
 									value="#{contratoCobrancaMB.tituloPainel}" />
 							</p:commandButton>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 45px;"
+							headerText="Parcela" filterMatchMode="contains"
+							sortBy="#{parcelas.numeroParcela}">
+							<h:outputText value="#{parcelas.numeroParcela}" />
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Saldo Inicial (R$)">
+							<h:outputText value="#{parcelas.vlrSaldoInicial}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 70px;"
+							headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+							<h:outputText value="#{parcelas.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 70px;"
+							headerText="Dt. Último Pagto."
+							sortBy="#{parcelas.dataUltimoPagamento}">
+							<h:outputText value="#{parcelas.dataUltimoPagamento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Valor Total Pago (R$)">
+							<h:outputText value="#{parcelas.valorTotalPagamento}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Valor (R$)">
+							<h:outputText value="#{parcelas.vlrParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Juros (R$)">
+							<h:outputText value="#{parcelas.vlrJurosParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Amortização (R$)">
+							<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>						
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Seguro DFI (R$)"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+							<h:outputText value="#{parcelas.seguroDFI}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Seguro MIP (R$)"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+							<h:outputText value="#{parcelas.seguroMIP}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Saldo (R$)">
+							<h:outputText value="#{parcelas.vlrSaldoParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
 						</p:column>
 					</p:dataTable>
 				</p:panel>

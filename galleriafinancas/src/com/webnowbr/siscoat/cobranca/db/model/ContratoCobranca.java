@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -213,6 +214,7 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor10;
 	
 	private boolean corrigidoIPCA;
+	private boolean recalculaIPCA;
 	
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
@@ -474,7 +476,7 @@ public class ContratoCobranca implements Serializable {
 	private Date vencimentoBoleto;
 	private BigDecimal valorBoletoPreContrato;
 	private BigDecimal taxaPreAprovada;
-	private BigInteger prazoMaxPreAprovado;
+	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -3270,6 +3272,14 @@ public class ContratoCobranca implements Serializable {
 		this.corrigidoIPCA = corrigidoIPCA;
 	}
 
+	public boolean isRecalculaIPCA() {
+		return recalculaIPCA;
+	}
+	
+	public void setRecalculaIPCA(boolean recalculaIPCA) {
+		this.recalculaIPCA = recalculaIPCA;
+	}
+	
 	public boolean isTemSeguro() {
 		return temSeguro;
 	}
