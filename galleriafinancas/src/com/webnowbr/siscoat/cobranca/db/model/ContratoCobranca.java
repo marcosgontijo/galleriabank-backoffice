@@ -481,14 +481,21 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal comissaoClienteValorFixo;
 	private Boolean pagadorDonoGarantia;
 	
-	private Boolean rgDocumentosCheklist;
-	private Boolean comprovanteEnderecoDocumentosCheklist;
-	private Boolean certidaoCasamentoNascimentoDocumentosCheklist;
-	private Boolean fichaCadastralDocumentosCheklist;
-	private Boolean bancoDocumentosCheklist;
-	private Boolean agDocumentosCheklist;
-	private Boolean ccDocumentosCheklist;
-	private Boolean telefoneEmailDocumentosCheklist;
+	private String nomeParticipanteCheckList;
+	private Boolean rgDocumentosCheckList;
+	private Boolean comprovanteEnderecoDocumentosCheckList;
+	private Boolean certidaoCasamentoNascimentoDocumentosCheckList;
+	private Boolean fichaCadastralDocumentosCheckList;
+	private Boolean bancoDocumentosCheckList;
+	private Boolean telefoneEmailDocumentosCheckList;
+	
+	private String nomeParticipanteSecundarioCheckList;
+	private Boolean rgDocumentosSecundarioCheckList;
+	private Boolean comprovanteEnderecoDocumentosSecundarioCheckList;
+	private Boolean certidaoCasamentoNascimentoDocumentosSecundarioCheckList;
+	private Boolean fichaCadastralDocumentosSecundarioCheckList;
+	private Boolean bancoDocumentosSecundarioCheckList;
+	private Boolean telefoneEmailDocumentosSecundarioCheckList;
 
 	public ContratoCobranca() {
 		super();
@@ -3859,99 +3866,173 @@ public class ContratoCobranca implements Serializable {
 
 
 
-	public Boolean getRgDocumentosCheklist() {
-		return rgDocumentosCheklist;
+	public Boolean getRgDocumentosCheckList() {
+		return rgDocumentosCheckList;
 	}
 
 
 
-	public void setRgDocumentosCheklist(Boolean rgDocumentosCheklist) {
-		this.rgDocumentosCheklist = rgDocumentosCheklist;
+	public void setRgDocumentosCheckList(Boolean rgDocumentosCheckList) {
+		this.rgDocumentosCheckList = rgDocumentosCheckList;
 	}
 
 
 
-	public Boolean getComprovanteEnderecoDocumentosCheklist() {
-		return comprovanteEnderecoDocumentosCheklist;
+	public Boolean getComprovanteEnderecoDocumentosCheckList() {
+		return comprovanteEnderecoDocumentosCheckList;
 	}
 
 
 
-	public void setComprovanteEnderecoDocumentosCheklist(Boolean comprovanteEnderecoDocumentosCheklist) {
-		this.comprovanteEnderecoDocumentosCheklist = comprovanteEnderecoDocumentosCheklist;
+	public void setComprovanteEnderecoDocumentosCheckList(Boolean comprovanteEnderecoDocumentosCheckList) {
+		this.comprovanteEnderecoDocumentosCheckList = comprovanteEnderecoDocumentosCheckList;
 	}
 
 
 
-	public Boolean getCertidaoCasamentoNascimentoDocumentosCheklist() {
-		return certidaoCasamentoNascimentoDocumentosCheklist;
+	public Boolean getCertidaoCasamentoNascimentoDocumentosCheckList() {
+		return certidaoCasamentoNascimentoDocumentosCheckList;
 	}
 
 
 
-	public void setCertidaoCasamentoNascimentoDocumentosCheklist(Boolean certidaoCasamentoNascimentoDocumentosCheklist) {
-		this.certidaoCasamentoNascimentoDocumentosCheklist = certidaoCasamentoNascimentoDocumentosCheklist;
+	public void setCertidaoCasamentoNascimentoDocumentosCheckList(Boolean certidaoCasamentoNascimentoDocumentosCheckList) {
+		this.certidaoCasamentoNascimentoDocumentosCheckList = certidaoCasamentoNascimentoDocumentosCheckList;
 	}
 
 
 
-	public Boolean getFichaCadastralDocumentosCheklist() {
-		return fichaCadastralDocumentosCheklist;
+	public Boolean getFichaCadastralDocumentosCheckList() {
+		return fichaCadastralDocumentosCheckList;
 	}
 
 
 
-	public void setFichaCadastralDocumentosCheklist(Boolean fichaCadastralDocumentosCheklist) {
-		this.fichaCadastralDocumentosCheklist = fichaCadastralDocumentosCheklist;
+	public void setFichaCadastralDocumentosCheckList(Boolean fichaCadastralDocumentosCheckList) {
+		this.fichaCadastralDocumentosCheckList = fichaCadastralDocumentosCheckList;
 	}
 
 
 
-	public Boolean getBancoDocumentosCheklist() {
-		return bancoDocumentosCheklist;
+	public Boolean getBancoDocumentosCheckList() {
+		return bancoDocumentosCheckList;
 	}
 
 
 
-	public void setBancoDocumentosCheklist(Boolean bancoDocumentosCheklist) {
-		this.bancoDocumentosCheklist = bancoDocumentosCheklist;
+	public void setBancoDocumentosCheckList(Boolean bancoDocumentosCheckList) {
+		this.bancoDocumentosCheckList = bancoDocumentosCheckList;
+	}
+
+
+	public Boolean getTelefoneEmailDocumentosCheckList() {
+		return telefoneEmailDocumentosCheckList;
 	}
 
 
 
-	public Boolean getAgDocumentosCheklist() {
-		return agDocumentosCheklist;
+	public void setTelefoneEmailDocumentosCheckList(Boolean telefoneEmailDocumentosCheckList) {
+		this.telefoneEmailDocumentosCheckList = telefoneEmailDocumentosCheckList;
 	}
 
 
 
-	public void setAgDocumentosCheklist(Boolean agDocumentosCheklist) {
-		this.agDocumentosCheklist = agDocumentosCheklist;
+	public String getNomeParticipanteCheckList() {
+		return nomeParticipanteCheckList;
 	}
 
 
 
-	public Boolean getCcDocumentosCheklist() {
-		return ccDocumentosCheklist;
+	public void setNomeParticipanteCheckList(String nomeParticipanteCheckList) {
+		this.nomeParticipanteCheckList = nomeParticipanteCheckList;
 	}
 
 
 
-	public void setCcDocumentosCheklist(Boolean ccDocumentosCheklist) {
-		this.ccDocumentosCheklist = ccDocumentosCheklist;
+	public String getNomeParticipanteSecundarioCheckList() {
+		return nomeParticipanteSecundarioCheckList;
 	}
 
 
 
-	public Boolean getTelefoneEmailDocumentosCheklist() {
-		return telefoneEmailDocumentosCheklist;
+	public void setNomeParticipanteSecundarioCheckList(String nomeParticipanteSecundarioCheckList) {
+		this.nomeParticipanteSecundarioCheckList = nomeParticipanteSecundarioCheckList;
 	}
 
 
 
-	public void setTelefoneEmailDocumentosCheklist(Boolean telefoneEmailDocumentosCheklist) {
-		this.telefoneEmailDocumentosCheklist = telefoneEmailDocumentosCheklist;
+	public Boolean getRgDocumentosSecundarioCheckList() {
+		return rgDocumentosSecundarioCheckList;
 	}
+
+
+
+	public void setRgDocumentosSecundarioCheckList(Boolean rgDocumentosSecundarioCheckList) {
+		this.rgDocumentosSecundarioCheckList = rgDocumentosSecundarioCheckList;
+	}
+
+
+
+	public Boolean getComprovanteEnderecoDocumentosSecundarioCheckList() {
+		return comprovanteEnderecoDocumentosSecundarioCheckList;
+	}
+
+
+
+	public void setComprovanteEnderecoDocumentosSecundarioCheckList(
+			Boolean comprovanteEnderecoDocumentosSecundarioCheckList) {
+		this.comprovanteEnderecoDocumentosSecundarioCheckList = comprovanteEnderecoDocumentosSecundarioCheckList;
+	}
+
+
+
+	public Boolean getCertidaoCasamentoNascimentoDocumentosSecundarioCheckList() {
+		return certidaoCasamentoNascimentoDocumentosSecundarioCheckList;
+	}
+
+
+
+	public void setCertidaoCasamentoNascimentoDocumentosSecundarioCheckList(
+			Boolean certidaoCasamentoNascimentoDocumentosSecundarioCheckList) {
+		this.certidaoCasamentoNascimentoDocumentosSecundarioCheckList = certidaoCasamentoNascimentoDocumentosSecundarioCheckList;
+	}
+
+
+
+	public Boolean getFichaCadastralDocumentosSecundarioCheckList() {
+		return fichaCadastralDocumentosSecundarioCheckList;
+	}
+
+
+
+	public void setFichaCadastralDocumentosSecundarioCheckList(Boolean fichaCadastralDocumentosSecundarioCheckList) {
+		this.fichaCadastralDocumentosSecundarioCheckList = fichaCadastralDocumentosSecundarioCheckList;
+	}
+
+
+
+	public Boolean getBancoDocumentosSecundarioCheckList() {
+		return bancoDocumentosSecundarioCheckList;
+	}
+
+
+
+	public void setBancoDocumentosSecundarioCheckList(Boolean bancoDocumentosSecundarioCheckList) {
+		this.bancoDocumentosSecundarioCheckList = bancoDocumentosSecundarioCheckList;
+	}
+
+
+	public Boolean getTelefoneEmailDocumentosSecundarioCheckList() {
+		return telefoneEmailDocumentosSecundarioCheckList;
+	}
+
+
+
+	public void setTelefoneEmailDocumentosSecundarioCheckList(Boolean telefoneEmailDocumentosSecundarioCheckList) {
+		this.telefoneEmailDocumentosSecundarioCheckList = telefoneEmailDocumentosSecundarioCheckList;
+	}
+	
+	
 	
 	
 	

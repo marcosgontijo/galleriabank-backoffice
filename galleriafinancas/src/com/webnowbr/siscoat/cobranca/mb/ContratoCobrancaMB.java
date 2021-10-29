@@ -8281,43 +8281,45 @@ public class ContratoCobrancaMB {
 			//Date dataParcela = this.objetoContratoCobranca.getDataInicio();
 
 			// Adiciona parcelas de pagamento
-			GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
-
-			this.fileBoleto = null;
-
-			if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
-
-				SimulacaoVO simulador = calcularParcelas();
-
-				BigDecimal saldoAnterior = BigDecimal.ZERO;
-				for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
-
-					ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(contratoCobrancaDao,
-							parcela, this.objetoContratoCobranca.getDataInicio(),saldoAnterior);
-
-					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
-					saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
-
-					// gera boleto
-					if (this.isGeraBoletoInclusaoContrato()) {
-						geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getPagador().getNome(),
-								this.objetoContratoCobranca.getPagador().getCpf(),
-								this.objetoContratoCobranca.getPagador().getCnpj(),
-								this.objetoContratoCobranca.getPagador().getEndereco()
-										+ this.objetoContratoCobranca.getPagador().getNumero(),
-								this.objetoContratoCobranca.getPagador().getBairro(),
-								this.objetoContratoCobranca.getPagador().getCep(),
-								this.objetoContratoCobranca.getPagador().getCidade(),
-								this.objetoContratoCobranca.getPagador().getEstado(),
-								contratoCobrancaDetalhes.getDataVencimento(),
-								this.objetoContratoCobranca.getVlrParcela(),
-								contratoCobrancaDetalhes.getNumeroParcela());
-					}
-
-				}
-			}
-
+			
+			 GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
+			 /* 
+			 * this.fileBoleto = null;
+			 * 
+			 * if
+			 * (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
+			 * 
+			 * SimulacaoVO simulador = calcularParcelas();
+			 * 
+			 * BigDecimal saldoAnterior = BigDecimal.ZERO; for (SimulacaoDetalheVO parcela :
+			 * simulador.getParcelas()) {
+			 * 
+			 * ContratoCobrancaDetalhes contratoCobrancaDetalhes =
+			 * criaContratoCobrancaDetalhe(contratoCobrancaDao, parcela,
+			 * this.objetoContratoCobranca.getDataInicio(),saldoAnterior);
+			 * 
+			 * this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(
+			 * contratoCobrancaDetalhes); saldoAnterior =
+			 * contratoCobrancaDetalhes.getVlrSaldoParcela();
+			 * 
+			 * // gera boleto if (this.isGeraBoletoInclusaoContrato()) {
+			 * geracaoBoletoMB.geraBoletosBradesco("Locação",
+			 * this.objetoContratoCobranca.getNumeroContrato(),
+			 * this.objetoContratoCobranca.getPagador().getNome(),
+			 * this.objetoContratoCobranca.getPagador().getCpf(),
+			 * this.objetoContratoCobranca.getPagador().getCnpj(),
+			 * this.objetoContratoCobranca.getPagador().getEndereco() +
+			 * this.objetoContratoCobranca.getPagador().getNumero(),
+			 * this.objetoContratoCobranca.getPagador().getBairro(),
+			 * this.objetoContratoCobranca.getPagador().getCep(),
+			 * this.objetoContratoCobranca.getPagador().getCidade(),
+			 * this.objetoContratoCobranca.getPagador().getEstado(),
+			 * contratoCobrancaDetalhes.getDataVencimento(),
+			 * this.objetoContratoCobranca.getVlrParcela(),
+			 * contratoCobrancaDetalhes.getNumeroParcela()); }
+			 * 
+			 * } }
+			 */
 
 
 			if (this.isGeraBoletoInclusaoContrato()) {

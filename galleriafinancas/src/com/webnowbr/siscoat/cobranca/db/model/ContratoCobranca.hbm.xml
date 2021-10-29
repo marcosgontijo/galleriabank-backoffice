@@ -1194,10 +1194,6 @@
 			<column name="COMENTARIOJURIDICO" />
 		</property>	
 		
-		
-		
-		
-		
 		<property name="cobrarComissaoCliente" type="java.lang.String">
 			<column name="cobrarComissaoCliente" />
 		</property>
@@ -1213,38 +1209,64 @@
 		<property name="pagadorDonoGarantia" type="boolean">
 			<column name="pagadorDonoGarantia" />
 		</property>
+
+
+
+		<property name="nomeParticipanteCheckList" type="java.lang.String">
+			<column name="nomeParticipanteCheckList" />
+		</property>	
 	
-		<property name="rgDocumentosCheklist" type="boolean">
-			<column name="rgDocumentosCheklist" />
+		<property name="rgDocumentosCheckList" type="boolean">
+			<column name="rgDocumentosCheckList" />
 		</property>
 		
-		<property name="comprovanteEnderecoDocumentosCheklist" type="boolean">
-			<column name="comprovanteEnderecoDocumentosCheklist" />
+		<property name="comprovanteEnderecoDocumentosCheckList" type="boolean">
+			<column name="comprovanteEnderecoDocumentosCheckList" />
 		</property>
 		
-		<property name="certidaoCasamentoNascimentoDocumentosCheklist" type="boolean">
-			<column name="certidaoCasamentoNascimentoDocumentosCheklist" />
+		<property name="certidaoCasamentoNascimentoDocumentosCheckList" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosCheckList" />
 		</property>
 		
-		<property name="fichaCadastralDocumentosCheklist" type="boolean">
-			<column name="fichaCadastralDocumentosCheklist" />
+		<property name="fichaCadastralDocumentosCheckList" type="boolean">
+			<column name="fichaCadastralDocumentosCheckList" />
 		</property>
 		
-		<property name="bancoDocumentosCheklist" type="boolean">
-			<column name="bancoDocumentosCheklist" />
+		<property name="bancoDocumentosCheckList" type="boolean">
+			<column name="bancoDocumentosCheckList" />
 		</property>
 		
-		<property name="agDocumentosCheklist" type="boolean">
-			<column name="agDocumentosCheklist" />
-		</property>
-		
-		<property name="ccDocumentosCheklist" type="boolean">
-			<column name="ccDocumentosCheklist" />
-		</property>
-		
-		<property name="telefoneEmailDocumentosCheklist" type="boolean">
-			<column name="telefoneEmailDocumentosCheklist" />
+		<property name="telefoneEmailDocumentosCheckList" type="boolean">
+			<column name="telefoneEmailDocumentosCheckList" />
 		</property>		
 		
+	
+		<property name="nomeParticipanteSecundarioCheckList" type="java.lang.String">
+			<column name="nomeParticipanteSecundarioCheckList" />
+		</property>	
+	
+		<property name="rgDocumentosSecundarioCheckList" type="boolean">
+			<column name="rgDocumentosSecundarioCheckList" />
+		</property>
+		
+		<property name="comprovanteEnderecoDocumentosSecundarioCheckList" type="boolean">
+			<column name="comprovanteEnderecoDocumentosSecundarioCheckList" />
+		</property>
+		
+		<property name="certidaoCasamentoNascimentoDocumentosSecundarioCheckList" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosSecundarioCheckList" />
+		</property>
+		
+		<property name="fichaCadastralDocumentosSecundarioCheckList" type="boolean">
+			<column name="fichaCadastralDocumentosSecundarioCheckList" />
+		</property>
+		
+		<property name="bancoDocumentosSecundarioCheckList" type="boolean">
+			<column name="bancoDocumentosSecundarioCheckList" />
+		</property>
+		
+		<property name="telefoneEmailDocumentosSecundarioCheckList" type="boolean">
+			<column name="telefoneEmailDocumentosSecundarioCheckList" />
+		</property>
 	</class>
 </hibernate-mapping>
