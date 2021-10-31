@@ -1181,7 +1181,7 @@
 			<column name="TAXAPREAPROVADA" />
 		</property>
 						
-		<property name="prazoMaxPreAprovado" type="long">
+		<property name="prazoMaxPreAprovado" type="big_integer">
 			<column name="PRAZOMAXPREAPROVADO" />
 		</property>
 
