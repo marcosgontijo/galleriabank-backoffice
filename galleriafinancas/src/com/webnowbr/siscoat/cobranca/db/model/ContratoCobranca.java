@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger; 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

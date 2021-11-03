@@ -186,6 +186,12 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
+								
+								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
+										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+									</p:commandButton>	
+								</h:panelGrid>	
 							</h:panelGrid>
 						</ui:fragment>	
 						
