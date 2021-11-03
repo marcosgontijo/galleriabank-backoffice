@@ -13,7 +13,6 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -22,7 +21,6 @@ import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
-import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
@@ -4985,4 +4983,45 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	
+	
+	
+
+	private static final String QUERY_ATUALIZACAO_IPCA = 	"select cont.id "
+			+ " from cobranca.contratocobranca cont"
+			+ " where tipocalculo in ( 'Price', 'SAC')" 
+			+ " and cont.corrigidoipca = true"
+			+ " and cont.recalculaIPCA = true"
+			;
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratosCalculoIpca() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_ATUALIZACAO_IPCA);
+	
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}	
+
 }
