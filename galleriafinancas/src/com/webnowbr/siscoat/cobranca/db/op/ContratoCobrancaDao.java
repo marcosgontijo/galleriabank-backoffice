@@ -2919,7 +2919,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						objects.add(contratoCobranca);												
+						objects.add(contratoCobranca);		
 					}
 	
 				} finally {
