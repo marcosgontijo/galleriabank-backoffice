@@ -171,6 +171,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
+		                <!-- 
 		                <p:spacer height="10"/>
 		                <p:commandButton onclick="PF('bpGerarBoletoIUGUDialog').show();"
 								icon="ui-icon-video"
@@ -181,6 +182,7 @@
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.splitBoletoIugu}" value="false" />
 							</p:commandButton>
+						 --> 
 		            </p:column>	
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
