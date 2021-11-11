@@ -109,7 +109,12 @@
 								
 			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' }">
+   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' }"
+   		         rows="50"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="50,100,150">                 
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -125,22 +130,25 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>	
-			       	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
-			            <h:outputText value="#{contratos.responsavel.nome}" />
+			       	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>	  
-			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
-			            <h:outputText value="#{contratos.pagador.nome}" />
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
-			            <h:outputText value="#{contratos.imovel.cidade}" />
+			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.nomeCidadeImovel}" filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+			            <h:outputText value="#{contratos.nomeCidadeImovel}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Status" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
 			            <h:outputText value="#{contratos.status}" />
 			        </p:column>	
-			        <p:column style="width:180px;">
+			        <p:column style="text-align: center;" headerText="Link Fatura">
+			            <h:outputText value="#{contratos.iuguLaudoPaju}" />
+			        </p:column>	
+			        <p:column style="width:200px;">
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Operação" title="Editar Simples">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -163,6 +171,18 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
+		                <!-- 
+		                <p:spacer height="10"/>
+		                <p:commandButton onclick="PF('bpGerarBoletoIUGUDialog').show();"
+								icon="ui-icon-video"
+								update=":formBpGerarBoletoIUGU"
+								style="height: 25px;width: 70px;"
+								rendered="#{!parcelas.parcelaPaga}" value="IUGU" title="IUGU">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.splitBoletoIugu}" value="false" />
+							</p:commandButton>
+						 --> 
 		            </p:column>	
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
@@ -172,6 +192,51 @@
 			        </f:facet>		            		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
-		</h:form>	
+		</h:form>
+		<p:dialog header="Gerar Boleto IUGU - Laudo e PAJU"
+			widgetVar="bpGerarBoletoIUGUDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="460">
+			<h:form id="formBpGerarBoletoIUGU">
+				<div style="float: left; width: 75%;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataVencimento" value="Data do Vencimento: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="dataVencimento"
+							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
+							required="true" label="Data do Vencimento" size="100"
+							pattern="dd/MM/yyyy" styleClass="dateTimeField">
+							<p:ajax event="dateSelect" update="formBpGerarBoletoIUGU"
+								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
+						</p:calendar>
+						<p:outputLabel for="valorBoleto" value="Valor Boleto: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="valorBoleto"
+							value="#{contratoCobrancaMB.valorBoletoStr}"
+							label="Status" style="width:135px;" required="true">
+							<f:selectItem itemValue="825,00" itemLabel="825,00" />
+							<f:selectItem itemValue="1.650,00" itemLabel="1.650,00" />						
+						</p:selectOneMenu>	
+					</h:panelGrid>
+				</div>
+				<div style="float: right; width: 25%; text-align: right;">
+					<img src="#{resource['image/boleto.jpg']}" alt="" />
+				</div>
+				<div align="center"
+					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
+					<p:commandButton value="Gerar Boleto IUGU"
+						action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca,
+																	contratoCobrancaMB.dataVencimentoBoleto,																	
+																	contratoCobrancaMB.valorBoletoStr
+																	)}"
+						update=":form:msgs :form:PanelRecibo :form:dtParcelas :form:dtContratosdtContratos"
+						ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU">
+					</p:commandButton>
+					<p:spacer width="10" />
+					<p:commandButton value="Voltar"
+						icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('bpGerarBoletoIUGUDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>	
 	</ui:define>
 </ui:composition>	        

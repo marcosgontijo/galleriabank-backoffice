@@ -85,6 +85,9 @@
         <property name="userInvestidor" type="boolean">
             <column name="userInvestidor" />
         </property>   
+         <property name="assistFinanceiro" type="boolean">
+            <column name="assistFinanceiro" />
+        </property> 
 		<property name="codigoResponsavel" type="java.lang.String">
             <column name="CODIGORESPONSAVEL" />
         </property>  

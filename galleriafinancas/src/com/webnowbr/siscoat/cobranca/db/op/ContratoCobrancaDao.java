@@ -13,7 +13,6 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -22,7 +21,6 @@ import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
-import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
@@ -2568,7 +2566,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "limit 10 ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaContratosUltimos10() {
+	public List<ContratoCobranca> consultaContratosUltimos10(String empresa) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2579,6 +2577,24 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_10;	
 				try {
+					
+					if (empresa.equals("Todas")) {
+					}
+					
+					if (empresa.equals("Securitizadora")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
+					}
+				
+					if (empresa.equals("FIDC")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'FIDC GALLERIA' ";
+					}
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc "
+					+ "limit 10 ";
+					
 					connection = getConnection();
 
 					ps = connection
@@ -2653,7 +2669,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	public List<ContratoCobranca> consultaContratosNaoGalleria(final String numeroContrato, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4,
 			final long idRecebedor5, final long idRecebedor6, final long idRecebedor7,
-			final long idRecebedor8, final long idRecebedor9, final long idRecebedor10) {
+			final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, String empresa) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2676,6 +2692,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}	
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.pagador not in (15, 34,14, 182, 417, 803) ";
+					
+					if (empresa.equals("Todas")) {
+					}
+					
+					if (empresa.equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
+					}
+				
+					if (empresa.equals("FIDC GALLERIA")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'FIDC GALLERIA' ";
+					}
 					
 					if (idRecebedor > 0) {
 						query_RELATORIO_FINANCEIRO_RECEBEDORES = 
@@ -2892,7 +2921,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						objects.add(contratoCobranca);												
+						objects.add(contratoCobranca);		
 					}
 	
 				} finally {
@@ -4142,8 +4171,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select c.id from cobranca.contratocobranca c " +
-			"inner join cobranca.responsavel res on c.responsavel = res.id ";
+	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.analiseReprovada " +
+			"from cobranca.contratocobranca c " +		
+			"inner join cobranca.responsavel res on c.responsavel = res.id " +
+			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
+			"inner join cobranca.imovelcobranca im on c.imovel = im.id ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosCRM(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
@@ -4158,47 +4191,51 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					String query = QUERY_CONTRATOS_CRM;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and c.statusLead = 'Completo' " ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' " ;
 					
 					// Verifica o tipo da consulta de contratos
 					if (tipoConsulta.equals("Todos")) {
 						//
+						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 					}
 					if (tipoConsulta.equals("Lead")) {
-						query = query + " and inicioanalise = false ";
+						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' "; 
+					}
+					
+					if (tipoConsulta.equals("Aguardando Análise")) {
+						query = query + " and inicioanalise = false and c.statusLead = 'Completo' "; 
 					}
 					
 					if (tipoConsulta.equals("Em Analise")) {
-						query = query + " and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null) ";
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null)  and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)";
 					}
 					
 					if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
-						query = query + " and inicioanalise = true"
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. PAJU e Laudo")) {
-						query = query + " and inicioanalise = true"
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false) ";
 					}
 					
 					if (tipoConsulta.equals("Ag. DOC")) {
-						query = query + " and inicioanalise = true"
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. CCB")) {
-						query = query + " and inicioanalise = true"
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and ccbPronta = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. Assinatura")) {
-						query = query + " and inicioanalise = true"
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and ccbPronta = true  and agAssinatura = true";
 					}
 					if (tipoConsulta.equals("Ag. Registro")) {
-						query = query + " and inicioanalise = true"
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
 					}
 					
@@ -4257,7 +4294,30 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						
+						contratoCobranca = new ContratoCobranca();
+						
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						contratoCobranca.setDataContrato(rs.getDate(3));
+						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
+						contratoCobranca.setStatusLead(rs.getString(7));
+						contratoCobranca.setNomePagador(rs.getString(8));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
+						contratoCobranca.setCcbPronta(rs.getBoolean(16));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
+						contratoCobranca.setAgRegistro(rs.getBoolean(18));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(19)); 
+						 
+						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
 					}
@@ -4925,4 +4985,45 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	
+	
+	
+
+	private static final String QUERY_ATUALIZACAO_IPCA = 	"select cont.id "
+			+ " from cobranca.contratocobranca cont"
+			+ " where tipocalculo in ( 'Price', 'SAC')" 
+			+ " and cont.corrigidoipca = true"
+			+ " and cont.recalculaIPCA = true"
+			;
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratosCalculoIpca() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_ATUALIZACAO_IPCA);
+	
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}	
+
 }

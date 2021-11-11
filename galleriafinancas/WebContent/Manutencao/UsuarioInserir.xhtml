@@ -143,6 +143,15 @@
 						style="width:60px">
 
 					</p:selectBooleanButton>
+					
+					<h:outputLabel for="AssistenteFinanceiro"
+						value="Sistema de Cobrança - Assistente Financeiro:" class="labelBold" />
+					<p:selectBooleanButton id="AssistenteFinanceiro"
+						disabled="!#{usuarioMB.objetoUsuario.assistFinanceiro}"
+						value="#{usuarioMB.objetoUsuario.assistFinanceiro}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
 
 					<h:outputLabel for="IuguPosto" value="Cobranças IUGU Postos "
 						class="labelBold" />

@@ -252,6 +252,15 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "ASSISTENTEFINANCEIRO");
+			if (objetoUsuario.isAssistFinanceiro()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			gAdm = gDao.findByFilter("acronym", "INVESTIDOR");
 			if (objetoUsuario.isUserInvestidor()) {				

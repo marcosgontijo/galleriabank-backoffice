@@ -8,31 +8,30 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
-
-
-
-
-public class IpcaJob implements Job {
+public class IpcaJobContrato implements Job {
 	/** Logger instance. */
-	private static final Log LOGGER = LogFactory.getLog(IpcaJob.class);
+	private static final Log LOGGER = LogFactory.getLog(IpcaJobContrato.class);
 	// private static final Boolean JOB_ATIVO = false;
 
-	private final  IpcaJobCalcular ipcaJobCalcular; 
+	private final IpcaJobCalcular ipcaJobCalcular; 
 	
 	/**
 	 * Empty constructor for job initilization
 	 */
-	public IpcaJob() {
+	public IpcaJobContrato() {
 		ipcaJobCalcular = new IpcaJobCalcular();
-		LOGGER.debug("IpcaJob: NEW INSTANCE");
-	}
 
+		LOGGER.debug("IpcaJobContrato: NEW INSTANCE");
+	}
+	
 	/**
 	 * Dispara calculo de dias. Acionado pelo
 	 * <code>{@link org.quartz.Scheduler}</code> conforme configuração em
@@ -45,46 +44,49 @@ public class IpcaJob implements Job {
 		if (context != null) {
 			jobKey = "" + context.getJobDetail().getKey();
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("IpcaJob.execute: jobKey=" + jobKey + " disparado pelo trigger ["
+				LOGGER.debug("IpcaJobContrato.execute: jobKey=" + jobKey + " disparado pelo trigger ["
 						+ context.getTrigger().getKey() + "]");
 			}
 		}
 
 		try {
-			atualizaIPCA();
+			atualizaIPCAInicioContrato();
 		} catch (Exception e) {
-			LOGGER.error("IpcaJob.execute (jobKey=" + jobKey + "): EXCEPTION", e);
+			LOGGER.error("IpcaJobContrato.execute (jobKey=" + jobKey + "): EXCEPTION", e);
 		}
 	}
-
 	
-
-	private void atualizaIPCA() {
+	private void atualizaIPCAInicioContrato() {
 		try {
 			IPCADao ipcaDao = new IPCADao();
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
-			
-			List<ContratoCobrancaDetalhes> contratoCobrancaDetalhes = contratoCobrancaDetalhesDao
-					.getParcelasCalculoIpca();
-			LOGGER.info("incio job");
-			for (ContratoCobrancaDetalhes parcelaIpca : contratoCobrancaDetalhes) {
-				try {
-					ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca);
-				} catch (Exception e) {
-					LOGGER.error("IpcaJob.execute " + "atualizaIPCA: EXCEPTION", e);
-					continue;
-				}
-			}
 
-			LOGGER.info("Fim job");
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.getContratosCalculoIpca();
+			LOGGER.info("incio job atualizaIPCAInicioContrato");
+			for (ContratoCobranca contratoCobranca : contratosCobranca) {
+				for (ContratoCobrancaDetalhes parcelaIpca : contratoCobranca.getListContratoCobrancaDetalhes()) {
+					if (CommonsUtil.mesmoValor( parcelaIpca.getNumeroParcela() , "0") )
+						continue;
+					
+					try {
+						if (!ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca))
+							break;
+					} catch (Exception e) {
+						LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
+						continue;
+					}
+				}
+				contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
+				contratoCobranca.setRecalculaIPCA(false);
+				contratoCobrancaDao.merge(contratoCobranca);
+			}
+			LOGGER.info("Fim job atualizaIPCAInicioContrato");
 
 		} catch (Exception e) {
-			LOGGER.error("IpcaJob.execute " + "atualizaIPCA: EXCEPTION", e);
+			LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
 		}
 	}
-
-
-
+	
 }

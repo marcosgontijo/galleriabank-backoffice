@@ -974,7 +974,7 @@ public class IuguMB {
 				dataVencimento.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
 
 		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
-				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + "}";
+				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}
@@ -4982,6 +4982,9 @@ public class IuguMB {
 			endereco = this.selectedRecebedor.getEndereco();
 		}
 
+	
+		            		
+		            		
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
@@ -4992,10 +4995,10 @@ public class IuguMB {
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
 		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
-				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
-				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + "}";
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}
@@ -5070,6 +5073,191 @@ public class IuguMB {
 								String secureURL =  myResponse.getString("secure_url");
 
 								setIdFaturaParcelaIugu(this.idParcela, idFaturaIugu, this.splitBoletoIugu, secureURL, idCedente);
+							}							
+						}
+
+						context.addMessage(null, new FacesMessage(
+								FacesMessage.SEVERITY_INFO, "Cobrança Iugu: Cobrança gerada com sucesso!", ""));
+					}
+
+					myURLConnection.disconnect();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Favor selecionar um favorecido!", ""));
+		}
+	}
+	
+	public String composeJSONCobrancaContrato() {
+		String jsonFavorecido = "";
+		String jsonItens = "";
+		String jsonPayer = "";
+		String jsonCustomVariables = "";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");  
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		dataHoje.setTime(this.dataVencimento);
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);  
+		dataHoje.set(Calendar.MINUTE, 0);  
+		dataHoje.set(Calendar.SECOND, 0);  
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		String mes = String.valueOf(dataHoje.get(Calendar.MONTH) + 1);
+		if (mes.length() == 1) {
+			mes = "0" + mes;
+		}
+
+		String dia = String.valueOf(dataHoje.get(Calendar.DAY_OF_MONTH));
+		if (dia.length() == 1) {
+			dia = "0" + dia;
+		}		
+
+		String documento = "";
+		if (this.selectedRecebedor.getCpf() == null) {
+			documento = this.selectedRecebedor.getCnpj().replace(".", "").replace("-", "").replace("/", "");
+		} else {
+			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
+		}
+
+		String descricaoCompleta = "Laudo + Parecer Jurídico";
+
+		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
+
+		String bairro = "";
+
+		if (this.selectedRecebedor.getBairro() != null) {
+			if (this.selectedRecebedor.getBairro().length() > 0) {
+				bairro = this.selectedRecebedor.getBairro();
+			} else {
+				bairro = "Bairro";
+			}
+		} else {
+			bairro = "Bairro";
+		}
+		
+		String endereco = ""; 
+		if (this.selectedRecebedor.getNumero() != null) {
+			if (!this.selectedRecebedor.getNumero().equals("")) {
+				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
+			}
+		} else {
+			endereco = this.selectedRecebedor.getEndereco();
+		}       		
+		            		
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
+		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
+		+ "\",\"district\":\"" + bairro
+		+ "\",\"number\":\"" + 000 + "\"}}";
+
+
+		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
+				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
+
+		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
+
+		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
+				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
+
+		return jsonFavorecido;
+	}
+	
+	public void geraCobrancaSimplesContrato(String idLiveTokenIugu, long idCedente) {
+		int HTTP_COD_SUCESSO = 200;
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (this.selectedRecebedor != null) {
+			boolean dadosValidos = true;
+
+			// validações
+			if (this.selectedRecebedor.getCpf() == null && this.selectedRecebedor.getCnpj() == null) {
+				dadosValidos = false;
+
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Dados do cliente incorretos (CPF ou CNPJ inválidos) !", ""));				
+			}
+
+			if (this.selectedRecebedor.getEndereco() == null) {
+				this.selectedRecebedor.setEndereco("Endereço");
+			}
+			
+			if (this.selectedRecebedor.getCep() == null) {
+				this.selectedRecebedor.setCep("13091-611");
+			}
+			
+			if (this.selectedRecebedor.getEmail() == null || this.selectedRecebedor.getEmail().equals("")) {
+				this.selectedRecebedor.setEmail("galleriafinancas@galleriabank.com.br");
+			} 
+			
+			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
+				dadosValidos = false;
+	
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Dados do cliente incorretos (Endereço ou CEP inválidos) !", ""));	
+			}
+
+			if (dadosValidos) {
+				try {							
+					URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + idLiveTokenIugu);
+
+					String dados = composeJSONCobrancaContrato();
+					//JSONObject jsonObj = new JSONObject("{\"email\":\"webnowbr@gmail.com\",\"due_date\":\"20181212\",\"items\":[{\"description\":\"Cobrança\",\"quantity\":1,\"price_cents\":1486}],\"payer\":{\"cpf_cnpj\":\"31255904852\",\"name\":\"HERMES VIEIRA JUNIOR\",\"address\":{\"zip_code\":\"13073035\",\"street\":\"ENDEREÇO COMPLETO\",\"number\":\"1111\"}}}");
+					JSONObject jsonObj = new JSONObject(dados);
+					byte[] postDataBytes = jsonObj.toString().getBytes();
+
+					HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+					myURLConnection.setUseCaches(false);
+					myURLConnection.setRequestMethod("POST");
+					myURLConnection.setRequestProperty("Accept", "application/json");
+					myURLConnection.setRequestProperty("Content-Type", "application/json");
+					myURLConnection.setDoOutput(true);
+					myURLConnection.getOutputStream().write(postDataBytes); 
+					/*
+					
+					OkHttpClient client = new OkHttpClient();
+
+					MediaType mediaType = MediaType.parse("application/json");
+					RequestBody body = RequestBody.create(mediaType, "{\"ensure_workday_due_date\":false}");
+					Request request = new Request.Builder()
+					  .url("https://api.iugu.com/v1/invoices")
+					  .post(body)
+					  .addHeader("Accept", "application/json")
+					  .addHeader("Content-Type", "application/json")
+					  .build();
+
+					Response response = client.newCall(request).execute();
+*/
+					//myURLConnection.setDoInput(true);
+
+					// LEITURA DOS DADOS EM STRING
+					Thread.sleep(500);
+					if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+						context.addMessage(null, new FacesMessage(
+								FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Erro na geração da Cobrança! " + myURLConnection.getResponseCode() + ": " + getErroIugu(myURLConnection.getErrorStream()), ""));
+						//throw new RuntimeException("HTTP error code : "+ myURLConnection.getResponseCode() + ": " + myResponse.getString("error"));				
+					} else {
+						// Seta o ID da fatura na Parcela do Siscoat
+						JSONObject myResponse = null;
+
+						myResponse = getJsonSucessoIugu(myURLConnection.getInputStream()); 
+
+						this.urlFatura = myResponse.getString("secure_url");
+
+						if (!this.idParcela.equals("")) {
+
+							if ( myResponse != null ) {
+								String idFaturaIugu =  myResponse.getString("id");
+								String secureURL =  myResponse.getString("secure_url");
+
+								setContratoFaturaIugu(secureURL);
 							}							
 						}
 
@@ -5775,6 +5963,14 @@ public class IuguMB {
 		}		
 
 		contratoCobrancaDetalhesDao.merge(contratoCobrancaDetalhes);
+	}
+	
+	public void setContratoFaturaIugu(String secureURL) {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+
+		this.contratoCobranca.setIuguLaudoPaju(secureURL);
+
+		cDao.merge(this.contratoCobranca);
 	}
 
 	/****

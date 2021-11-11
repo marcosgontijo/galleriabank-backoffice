@@ -15,23 +15,36 @@
 		<ignore-duplicates>false</ignore-duplicates>
 	</processing-directives>
 
+	<!-- <schedule> <job> <name>IpcaJob</name> <job-class>com.webnowbr.siscoat.job.IpcaJob</job-class> 
+		</job> <trigger> <simple> <name>IpcaTrigger</name> <job-name>IpcaJob</job-name> 
+		<repeat-count>1</repeat-count> repeat indefinitely <repeat-interval>60000</repeat-interval> 
+		every 60 seconds </simple> </trigger> </schedule> -->
 	<schedule>
 		<job>
 			<name>IpcaJob</name>
 			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
 		</job>
 		<trigger>
-			<simple>
-				<name>IpcaTrigger</name>
+			<cron>
+				<name>IpcaJobTrigger</name>
 				<job-name>IpcaJob</job-name>
-				<!-- <repeat-count>1</repeat-count> repeat indefinitely
-				<repeat-interval>60000</repeat-interval>				every 60 seconds -->
-			</simple>
+				<cron-expression>0 0 2 * * ?</cron-expression>
+			</cron>
 		</trigger>
 	</schedule>
-
-	<!-- <schedule> <job> <name>ResumoFichaFinanceiraJob</name> <job-class>br.com.banicred.banisys.faces.tasks.ResumoFichaFinanceiraJob</job-class> 
-		</job> <trigger> <cron> <name>ResumoFichaFinanceiraTrigger</name> <job-name>ResumoFichaFinanceiraJob</job-name> 
-		<cron-expression>0 0/5 2-23 * * ?</cron-expression> </cron> </trigger> </schedule> -->
+	
+	<schedule>
+		<job>
+			<name>IpcaJobContrato</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>IpcaJobContratoTrigger</name>
+				<job-name>IpcaJobContrato</job-name>
+				<cron-expression>0 0 0/1 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
 
 </job-scheduling-data>

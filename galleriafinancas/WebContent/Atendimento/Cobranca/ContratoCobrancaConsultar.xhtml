@@ -46,7 +46,7 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="ConsultaContratos" header="Contratos - Consultar"
+			<p:panel id="ConsultaContratos" header="Contratos - Consultar | #{contratoCobrancaMB.tituloPainel}"
 				style="margin-bottom:10px;">		
 				<h:panelGrid columns="2">					
 					<p:outputLabel for="contrato" value="Contrato: "
@@ -144,7 +144,7 @@
 			            </h:outputText>
 			        </p:column>			        
 			        <p:column styleClass="colunaResponsiva">	
-			       		<shiro:hasAnyRoles name="PRECOBRANCA">  
+			       		<shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  
 				        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
 				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
 				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -160,7 +160,7 @@
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>	
 		                </shiro:hasAnyRoles>	
-		                <shiro:hasAnyRoles name="PRECOBRANCA">  	                
+		                <shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />

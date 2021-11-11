@@ -67,14 +67,14 @@
 					<p:panel id="Status" header="Check-List" style="margin-bottom:20px;">	
 						<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 							<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
-								<p:menuitem id="inicioAnaliseStepRep" value="Inicio Análise" ajax="false" action="#{contratoCobrancaMB.indexStepsStatusContrato}" />
+								<p:menuitem id="agAnaliseStepRep" value="Inicio Análise" ajax="false" action="#{contratoCobrancaMB.indexStepsStatusContrato}" />
 								<p:menuitem id="analiseReprovadaStep" value="Análise Reprovada" rendered="true"/>
 							</p:steps>
 					 	</ui:fragment>		
 					 	<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 					 		<h:panelGrid columns="12">	
 								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
-								    <p:menuitem id="inicioAnaliseStep" value="Novo Lead" />						   				   
+								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
 								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
 								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
 								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>
@@ -85,53 +85,29 @@
 								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
 								</p:steps>
 								
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 0}">
-									<h:panelGrid columns="2" style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
-												-moz-border-radius: 5px;
-												border-radius: 5px; padding: 2px;">	
-												<p:outputLabel styleClass="labelBold">Lead</p:outputLabel>	
-												<p:selectOneRadio id="lead" value="#{contratoCobrancaMB.objetoContratoCobranca.statusLead}" layout="responsive" columns="1" style="font-weight: bold;" >
-										            <f:selectItem itemLabel="Novo Lead" itemValue="Novo Lead" />
-										            <f:selectItem itemLabel="Em Tratamento" itemValue="Em Tratamento" />
-										            <f:selectItem itemLabel="Completo" itemValue="Completo" />
-										            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										            <p:ajax event="change" update="Status"/>  
-										        </p:selectOneRadio>
-										        <p:outputLabel for="statusLeadTratamento" value="Status " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
-												<p:inputText id="statusLeadTratamento" value="#{contratoCobrancaMB.objetoContratoCobranca.observacaolead}" label="Status Lead em Tratamento" onblur="" style="width:250px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
-												<p:outputLabel for="motivoReprova" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
-												<p:selectOneMenu id="motivoReprova" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaLead}" label="Tipo" style="width:250px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">
-													<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-													<f:selectItem itemLabel="Imóvel Ruim" itemValue="Imóvel Ruim" />
-										            <f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />
-										            <f:selectItem itemLabel="Cliente desistiu" itemValue="Cliente desistiu" />
-										            <f:selectItem itemLabel="Cliente fora do perfil" itemValue="Cliente fora do perfil" />
-										            <f:selectItem itemLabel="Imóvel fora do perfil" itemValue="Imóvel fora do perfil" />
-										            <p:ajax event="change" update="Status"/>  							    
-												</p:selectOneMenu>											    						    
-									</h:panelGrid>	
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 0}">								
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>	
+										<p:spacer ></p:spacer>
+										<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" />
+									</h:panelGrid>								
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
+										<p:spacer ></p:spacer>						
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
+											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
+									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+									        </p:selectOneRadio>
+										</shiro:hasAnyRoles>						    								    													    						   
+									</h:panelGrid>
 								</ui:fragment>
 								
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 1}">
-									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
-										<p:spacer height="50"></p:spacer>	
-										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="inicioAnalise" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px"/>
-										</shiro:hasAnyRoles>																    						    
-									</h:panelGrid>
-									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-									-moz-border-radius: 5px;
-									border-radius: 5px; padding: 10px;">	
-									<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
-									<p:spacer ></p:spacer>											
-									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-										<p:selectBooleanButton id="analiseReprovadaEdit" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px"/>
-									</shiro:hasAnyRoles>																	    						    
-									</h:panelGrid>	
-									<h:panelGrid columns="2" style="background-color: #cfcfcf;margin-left: 20px;width: 250px;height: 110px;-webkit-border-radius: 5px;
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
 										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
@@ -220,10 +196,16 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
+								
+								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
+										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+									</p:commandButton>	
+								</h:panelGrid>	
 							</h:panelGrid>
 						</ui:fragment>	
 						
-						<p:tooltip id="toolTipContentinicioAnaliseStep" for="inicioAnaliseStep" position="bottom">
+						<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -1525,23 +1507,17 @@
 			</p:panel>	
 					
 			<div align="center">
-				<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.addPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{!contratoCobrancaMB.updateMode and !contratoCobrancaMB.deleteMode}">
-					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
-				</p:commandButton>			 						
-				<p:spacer height="10" />
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 				</p:commandButton>		 						
 				<p:spacer height="10" />
-				<p:commandButton value="Voltar ao CRM" ajax="false" immediate="true" icon="ui-icon-arrowreturn-1-w" action="/Atendimento/Cobranca/CRM.xhtml" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.crmMode}"/>		 						
-				<p:spacer height="10" rendered="#{contratoCobrancaMB.crmMode}"/>
 				<shiro:hasAnyRoles name="ROOT"> 
 					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}">
 						<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 					</p:commandButton>		 						
 					<p:spacer height="10" />
 				</shiro:hasAnyRoles>
-				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml" style="TEXT-DECORATION: bold; "/>								
+				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>	
 		<p:dialog header="Recebedores" widgetVar="recebedorDialog"

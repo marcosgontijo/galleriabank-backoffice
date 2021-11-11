@@ -2,7 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.BigInteger; 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,6 +110,11 @@ public class ContratoCobranca implements Serializable {
 	private String observacao2;
 	private String urlLead;
 	private String statusLead;
+	private String iuguLaudoPaju;
+	
+	private String nomePagador;
+	private String nomeCidadeImovel;
+	private String nomeResponsavel;
 
 	private BigDecimal txJurosParcelas;
 	
@@ -210,6 +215,7 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor10;
 	
 	private boolean corrigidoIPCA;
+	private boolean recalculaIPCA;
 	
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
@@ -471,7 +477,7 @@ public class ContratoCobranca implements Serializable {
 	private Date vencimentoBoleto;
 	private BigDecimal valorBoletoPreContrato;
 	private BigDecimal taxaPreAprovada;
-	private BigInteger prazoMaxPreAprovado;
+	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -3288,6 +3294,14 @@ public class ContratoCobranca implements Serializable {
 		this.corrigidoIPCA = corrigidoIPCA;
 	}
 
+	public boolean isRecalculaIPCA() {
+		return recalculaIPCA;
+	}
+	
+	public void setRecalculaIPCA(boolean recalculaIPCA) {
+		this.recalculaIPCA = recalculaIPCA;
+	}
+	
 	public boolean isTemSeguro() {
 		return temSeguro;
 	}
@@ -3759,7 +3773,7 @@ public class ContratoCobranca implements Serializable {
 	public void setDataInicioInvestidor10(Date dataInicioInvestidor10) {
 		this.dataInicioInvestidor10 = dataInicioInvestidor10;
 	}
-
+	
 	public BigDecimal getValorBoletoPreContrato() {
 		return valorBoletoPreContrato;
 	}
@@ -3815,7 +3829,6 @@ public class ContratoCobranca implements Serializable {
 	public void setPrazoMaxPreAprovado(BigInteger prazoMaxPreAprovado) {
 		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
 	}
-
 
 
 	public String getCobrarComissaoCliente() {
@@ -4034,7 +4047,35 @@ public class ContratoCobranca implements Serializable {
 	
 	
 	
-	
-	
-	
+	public String getNomePagador() {
+		return nomePagador;
+	}
+
+	public void setNomePagador(String nomePagador) {
+		this.nomePagador = nomePagador;
+	}
+
+	public String getNomeCidadeImovel() {
+		return nomeCidadeImovel;
+	}
+
+	public void setNomeCidadeImovel(String nomeCidadeImovel) {
+		this.nomeCidadeImovel = nomeCidadeImovel;
+	}
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public String getIuguLaudoPaju() {
+		return iuguLaudoPaju;
+	}
+
+	public void setIuguLaudoPaju(String iuguLaudoPaju) {
+		this.iuguLaudoPaju = iuguLaudoPaju;
+	}
 }

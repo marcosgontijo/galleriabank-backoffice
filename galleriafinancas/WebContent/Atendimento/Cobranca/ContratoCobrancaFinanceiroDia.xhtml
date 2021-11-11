@@ -105,22 +105,52 @@
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Pagador" filterBy="#{contratos.nomePagador}"
 						filterMatchMode="contains" sortBy="#{contratos.nomePagador}"
-						styleClass="colunaHiddenRelFinanceiro">
+						>
 						<h:outputText value="#{contratos.pagador.nome}" />
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
-						headerText="CPF / CNPJ" styleClass="colunaHiddenRelFinanceiro">
+						headerText="CPF / CNPJ" >
 						<h:outputText value="#{contratos.pagador.cpf}" rendered="#{contratos.pagador.cpf != null}"/>
 						<h:outputText value="#{contratos.pagador.cnpj}" rendered="#{contratos.pagador.cnpj != null}"/>
-					</p:column>				
+					</p:column>	
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Dt. Nascimento Pagador"
+						>
+						<h:outputText value="#{contratos.pagador.dtNascimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Endereço Pagador"
+						>
+						<h:outputText value="#{contratos.pagador.endereco}, #{contratos.pagador.numero} - #{contratos.pagador.cidade}/#{contratos.pagador.estado} (CEP: #{contratos.pagador.cep})" />
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Nome Cônjuge" filterBy="#{contratos.pagador.nomeConjuge}"
+						filterMatchMode="contains" sortBy="#{contratos.pagador.nomeConjuge}"
+						>
+						<h:outputText value="#{contratos.pagador.nomeConjuge}" />
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="CPF Cônjuge" filterBy="#{contratos.pagador.cpfConjuge}"
+						filterMatchMode="contains" sortBy="#{contratos.pagador.cpfConjuge}"
+						>
+						<h:outputText value="#{contratos.pagador.cpfConjuge}" />
+					</p:column>	
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Região Imóvel"
+						>
+						<h:outputText value="#{contratos.imovel.cidade}/#{contratos.imovel.estado}" />
+					</p:column>		
 					<p:column style="text-align: center;width: 100px;"
-						headerText="Valor CCB" styleClass="colunaHiddenRelFinanceiro">
+						headerText="Valor CCB" >
 						<h:outputText value="R$ " />
 						<h:outputText value="#{contratos.valorCCB}"
 							converter="bigDecimalConverter" />
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
-						headerText="Taxa de Juros (%)" styleClass="colunaHiddenRelFinanceiro">
+						headerText="Taxa de Juros (%)" >
 						<h:outputText value="#{contratos.txJurosParcelas}"
 							converter="bigDecimalConverter" />
 					</p:column>	
@@ -131,7 +161,8 @@
 								<p:dataTable id="dtParcelas" var="parcelas"
 									value="#{contratos.listContratoCobrancaDetalhes}"
 									emptyMessage="" sortBy="#{parcelas.id}"
-									sortOrder="ascending"
+									sortOrder="ascending" scrollable="true" scrollHeight="250"
+                     				scrollWidth="300" frozenColumns="1"
 									rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}">
 			
 							        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">

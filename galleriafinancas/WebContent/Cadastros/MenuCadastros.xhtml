@@ -19,7 +19,7 @@
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>									
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO">									
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO">									
 									<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
@@ -32,12 +32,12 @@
 									<p:menuitem value="Taxa Juros IUGU" action="#{iuguMB.clearAlteraTaxaJurosSubContas}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
 									<p:menuitem value="IPCA" action="#{ipcaMB.clearFieldsIPCA}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
 								</shiro:hasAnyRoles>
-							</p:submenu>	
-							<p:submenu label="Processamento em Lote" styleClass="titulosMenu">				
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">									
-									<p:menuitem value="Calcula Contrato" action="#{processamentoEmLoteMB.clearFieldsvaloresParcelasContratos}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>
-								</shiro:hasAnyRoles>			
-							</p:submenu>																																										
+							</p:submenu>
+							<shiro:hasAnyRoles name="ROOT, COBRANCA">		
+								<p:submenu label="Processamento em Lote" styleClass="titulosMenu">																			
+									<p:menuitem value="Calcula Contrato" action="#{processamentoEmLoteMB.clearFieldsvaloresParcelasContratos}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>										
+								</p:submenu>
+							</shiro:hasAnyRoles>																																										
 						</p:menu>  	
 					</h:form>				
 				</ui:define>
