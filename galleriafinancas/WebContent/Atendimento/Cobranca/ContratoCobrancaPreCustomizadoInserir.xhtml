@@ -108,10 +108,14 @@
 										<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
 										<p:spacer ></p:spacer>
 										<shiro:hasAnyRoles name="PRECOBRANCA">										
-											<p:selectBooleanButton id="analiseReprovadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+											<p:selectBooleanButton id="analiseReprovadaView" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+												<p:ajax event="change" update="dataVistoriaPG" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="analiseReprovadaEdit" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px"/>
+											<p:selectBooleanButton id="analiseReprovadaEdit" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px">
+												<p:ajax event="change" update="dataVistoriaPG" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>			
 										<p:spacer height="7"></p:spacer>
 										<p:spacer height="7"></p:spacer>
@@ -306,7 +310,7 @@
 							</h:panelGrid>
 						</shiro:hasAnyRoles>		
 					</p:panel>
-
+				<!-- Removido a pedido do joão em 05/11/2021
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:20px;">
 					<p:panel header="Gerar Boleto"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
@@ -329,6 +333,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
@@ -351,7 +356,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+ 				-->
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
 					<p:panel
@@ -398,14 +403,14 @@
 					<p:panel id="dataVistoriaPG" style="border: none">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
-								styleClass="labelBold" />
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
 							<p:inputTextarea id="motivo" rows="10" cols="48"
 								maxlength="3000" onblur=""
 								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
 							<p:outputLabel id="quemReprovou" value="Quem analisou?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
 							<p:overlayPanel id="quemReprovouModal" for="quemReprovou" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
-		                    	dismissable="false" showCloseIcon="true">
+		                    	dismissable="false" showCloseIcon="true"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						       	<p:panel id="quemReprovouInfo" header="Quem analisou?" style="margin-bottom:10px;">
 						       		<h:panelGrid columns="1">
 										<h:outputText id="quemAnalisouUsuario" value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}" style="font-weight: bold; font-size: 15px;padding-top: 20px;"/>
@@ -416,7 +421,7 @@
 									</h:panelGrid>
 						       	</p:panel>		
 						    </p:overlayPanel> 
-						    <p:spacer height="10"></p:spacer>
+						    <p:spacer height="10"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"></p:spacer>
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
 								<h:panelGroup
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
@@ -559,6 +564,12 @@
 						
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: "/>
 						<p:inputText id="linkGMapsImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" label="Link Google Maps" style="width:400px;"/> 
+						
+						<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" class="linkPDF" target="_blank" 
+							style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+							-moz-border-radius: 5px;
+							border-radius: 5px; "><b>Abrir link no Google Maps</b></a>
+						<p:spacer></p:spacer>
 						
 						<p:outputLabel for="Tipo" value="Tipo: " />
 						<p:selectOneMenu id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}" label="Tipo" style="width:410px;">

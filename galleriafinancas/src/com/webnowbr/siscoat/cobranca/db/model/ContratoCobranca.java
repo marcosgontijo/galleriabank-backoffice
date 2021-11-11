@@ -110,6 +110,7 @@ public class ContratoCobranca implements Serializable {
 	private String observacao2;
 	private String urlLead;
 	private String statusLead;
+	private String iuguLaudoPaju;
 	
 	private String nomePagador;
 	private String nomeCidadeImovel;
@@ -3831,5 +3832,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setNomeResponsavel(String nomeResponsavel) {
 		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public String getIuguLaudoPaju() {
+		return iuguLaudoPaju;
+	}
+
+	public void setIuguLaudoPaju(String iuguLaudoPaju) {
+		this.iuguLaudoPaju = iuguLaudoPaju;
 	}
 }

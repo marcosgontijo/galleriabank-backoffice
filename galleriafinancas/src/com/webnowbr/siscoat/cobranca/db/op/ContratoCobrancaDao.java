@@ -2694,12 +2694,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (empresa.equals("Todas")) {
 					}
 					
-					if (empresa.equals("Securitizadora")) {
+					if (empresa.equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
 					}
 				
-					if (empresa.equals("FIDC")) {
+					if (empresa.equals("FIDC GALLERIA")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'FIDC GALLERIA' ";
 					}

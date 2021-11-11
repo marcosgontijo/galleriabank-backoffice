@@ -537,6 +537,7 @@ public class ContratoCobrancaMB {
 
 	private Date dataVencimentoBoleto;
 	private BigDecimal valorBoleto;
+	private String valorBoletoStr;
 
 	private Date dataObservacao;
 
@@ -855,6 +856,27 @@ public class ContratoCobrancaMB {
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
+	}
+	
+	public void geraBoletoLaudoPAJU(ContratoCobranca contrato, Date vencimento, String valorBoletoStr) {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao(); 
+		
+		this.objetoContratoCobranca = cDao.findById(contrato.getId());
+		
+		// carrega pagador 
+		this.iuguMb.setSelectedRecebedor(this.objetoContratoCobranca.getPagador());
+		
+		this.iuguMb.setDataVencimento(vencimento);
+
+		// Armazena na Fatura para dar match no retorno do gatilho do splitter
+		this.iuguMb.setIdContrato(String.valueOf(this.objetoContratoCobranca.getId()));
+		this.iuguMb.setIdParcela("1");
+		
+		BigDecimal valorItem = new BigDecimal(valorBoletoStr.replace(".", "").replace(",", "."));
+		this.iuguMb.setValorItem(valorItem);
+		this.iuguMb.setContratoCobranca(this.objetoContratoCobranca);
+				
+		this.iuguMb.geraCobrancaSimplesContrato("bd88479c57011124c25638b26572e453", 34);
 	}
 
 	/******************************************************************
@@ -9212,7 +9234,7 @@ public class ContratoCobrancaMB {
 			BigDecimal juros = BigDecimal.ZERO;
 			BigDecimal multa = BigDecimal.ZERO;
 
-			if (this.bpContratoCobrancaDetalhes.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
+			if (this.bpContratoCobrancaDetalhes.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) { 
 				juros = this.objetoContratoCobranca.getTxJuros();
 			} else {
 				juros = this.bpContratoCobrancaDetalhes.getVlrJuros();
@@ -17235,6 +17257,9 @@ public class ContratoCobrancaMB {
 	 * @return the dataVencimentoBoleto
 	 */
 	public Date getDataVencimentoBoleto() {
+		if (dataVencimentoBoleto == null) {			
+			this.dataVencimentoBoleto = getDataHoje();
+		}
 		return dataVencimentoBoleto;
 	}
 
@@ -18741,6 +18766,12 @@ public class ContratoCobrancaMB {
 	public void setPrazoMaxPreAprovado(Date prazoMaxPreAprovado) {
 		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
 	}
-	
-	
+
+	public String getValorBoletoStr() {
+		return valorBoletoStr;
+	}
+
+	public void setValorBoletoStr(String valorBoletoStr) {
+		this.valorBoletoStr = valorBoletoStr;
+	}
 }

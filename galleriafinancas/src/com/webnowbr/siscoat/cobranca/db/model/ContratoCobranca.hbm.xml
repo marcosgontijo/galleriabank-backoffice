@@ -1195,6 +1195,9 @@
 
 		<property name="comentarioJuridico" type="java.lang.String">
 			<column name="COMENTARIOJURIDICO" />
-		</property>						
+		</property>		
+		<property name="iuguLaudoPaju" type="java.lang.String">
+			<column name="iuguLaudoPaju" />
+		</property>					
 	</class>
 </hibernate-mapping>
