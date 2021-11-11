@@ -8867,8 +8867,8 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void pesquisaSegurado() {
-		tipoPesquisaPagadorRecebedor = "Segurado";
-		updatePagadorRecebedor = ":form:SeguradoresPanel";
+		this.tipoPesquisaPagadorRecebedor = "Segurado";
+		this.updatePagadorRecebedor = ":form:SeguradoresPanel";
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}

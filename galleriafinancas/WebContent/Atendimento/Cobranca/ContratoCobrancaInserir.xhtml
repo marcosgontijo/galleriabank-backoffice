@@ -1645,8 +1645,7 @@
 							<h:panelGrid columns="2" id="DadosSeguro" columnClasses="labelSeguros, ValorSeguros">
 						    <p:outputLabel value="Tem seguro? "/>
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
-								<p:ajax update="DadosSeguro,SeguradoresPanel"
-										event="change" />
+								<p:ajax update="DadosSeguro,SeguradoresPanel" event="change" />
 							</p:selectBooleanCheckbox>
 							
 							<p:outputLabel value="Adicionar seguro DFI " rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>

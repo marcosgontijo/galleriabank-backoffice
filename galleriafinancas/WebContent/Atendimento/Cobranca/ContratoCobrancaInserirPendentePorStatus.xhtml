@@ -30,7 +30,17 @@
 		            validatePhone();
 		        }
 		        );
-			</script>	
+			</script>
+			
+			<h:outputStylesheet >
+			.labelSeguros{
+				width: 128px;
+			}
+			.ValorSeguros{
+				width: 100px;
+			}
+			</h:outputStylesheet>
+				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
 				<p:messages/>
@@ -1243,8 +1253,7 @@
 						</p:selectBooleanCheckbox>
 
 					</h:panelGrid>
-					<h:panelGrid columns="2" id="DadosSeguro"
-						columnClasses="labelSeguros, ValorSeguros">
+					<h:panelGrid columns="2" id="DadosSeguro" columnClasses="labelSeguros, ValorSeguros">
 						<p:outputLabel value="Tem seguro? " />
 						<p:selectBooleanCheckbox
 							value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
@@ -1589,6 +1598,11 @@
 					</f:facet>
 				</p:dataTable>
 			</h:form>
-		</p:dialog>						 		
+		</p:dialog>		
+		
+		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
+				<ui:param name="titulo" value="Segurador"></ui:param>
+		</ui:include>				 		
 	</ui:define>
 </ui:composition>
