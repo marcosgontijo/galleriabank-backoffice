@@ -205,8 +205,6 @@
 							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
 							required="true" label="Data do Vencimento" size="100"
 							pattern="dd/MM/yyyy" styleClass="dateTimeField">
-							<p:ajax event="dateSelect" update="formBpGerarBoletoIUGU"
-								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
 						</p:calendar>
 						<p:outputLabel for="valorBoleto" value="Valor Boleto: "
 							styleClass="labelBold" />
@@ -224,10 +222,9 @@
 				<div align="center"
 					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
 					<p:commandButton value="Gerar Boleto IUGU"
-						action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca,
-																	contratoCobrancaMB.dataVencimentoBoleto,																	
-																	contratoCobrancaMB.valorBoletoStr
-																	)}"
+						action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca, 
+						contratoCobrancaMB.dataVencimentoBoleto, 
+						contratoCobrancaMB.valorBoletoStr)}"
 						update=":form:msgs :form:PanelRecibo :form:dtParcelas :form:dtContratosdtContratos"
 						ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU">
 					</p:commandButton>
@@ -237,6 +234,6 @@
 						oncomplete="PF('bpGerarBoletoIUGUDialog').hide();" />
 				</div>
 			</h:form>
-		</p:dialog>	
+		</p:dialog>  
 	</ui:define>
 </ui:composition>	        

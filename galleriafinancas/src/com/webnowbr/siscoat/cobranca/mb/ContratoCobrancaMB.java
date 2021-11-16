@@ -1815,6 +1815,14 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void getLinkMaps() {
+		String linkImovel = "";
+		linkImovel = this.objetoImovelCobranca.getEndereco() + "," + this.objetoImovelCobranca.getCidade() + this.objetoImovelCobranca.getEstado();
+		linkImovel = linkImovel.replaceAll(" ", "+");
+		linkImovel = linkImovel.replaceAll("," , "%2C");
+		this.objetoImovelCobranca.setLinkGMaps("https://www.google.com/maps/search/?api=1&query="+linkImovel);
+	}
 
 	public void getEnderecoByViaNetConjuge() {
 		try {
@@ -2299,140 +2307,175 @@ public class ContratoCobrancaMB {
 	}
 
 	public String editPreContrato() {
+		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
-		if (this.objetoPagadorRecebedor.getSite() != null) {
-			if (!this.objetoPagadorRecebedor.getSite().contains("http")
-					&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
-				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+
+			this.objetoContratoCobranca.setResponsavel(responsavel);
+
+			if (this.objetoPagadorRecebedor.getSite() != null) {
+				if (!this.objetoPagadorRecebedor.getSite().contains("http")
+						&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
+					this.objetoPagadorRecebedor
+							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+				}
 			}
-		}
 
-		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-		imovelCobrancaDao.merge(this.objetoImovelCobranca);
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-		this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
-		this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
+			this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
+			this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
 
-		if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
-			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
-		}
+			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
+				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+			}
 
-		if (this.objetoContratoCobranca.getVlrParcela() != null) {
-			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+			if (this.objetoContratoCobranca.getVlrParcela() != null) {
+				BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
 
-			this.objetoContratoCobranca.setVlrParcelaStr(
-					bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
-		}
+				this.objetoContratoCobranca.setVlrParcelaStr(
+						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
+			}
 
-		updateCheckList();
+			updateCheckList();
 
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
-		// verifica se o contrato for aprovado, manda um tipo de email..
-		// senao valida se houve alteração no checklist para envio de email.
-		enviaEmailAtualizacaoPreContrato();
+			// verifica se o contrato for aprovado, manda um tipo de email..
+			// senao valida se houve alteração no checklist para envio de email.
+			enviaEmailAtualizacaoPreContrato();
 
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
-								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
 
-		if (!this.preContratoCustom) {
-			return geraConsultaContratosPendentes();
+			if (!this.preContratoCustom) {
+				return geraConsultaContratosPendentes();
+			} else {
+				if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
+					return geraConsultaLeads("Novo Lead");
+				}
+				if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
+					return geraConsultaLeads("Em Tratamento");
+				}
+				if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
+					return geraConsultaLeads("Completo");
+				}
+				if (this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) {
+					return geraConsultaLeads("Reprovado");
+				}
+
+				return "";
+			}
 		} else {
-			if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
-				return geraConsultaLeads("Novo Lead");
-			}
-			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
-				return geraConsultaLeads("Em Tratamento");
-			}
-			if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
-				return geraConsultaLeads("Completo");
-			}
-			if (this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) {
-				return geraConsultaLeads("Reprovado");
+			if (context != null) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Erro de validação: O código do responsável digitado não foi encontrado ("
+								+ this.codigoResponsavel + ")!",
+						""));
 			}
 
-			return "";
+			return null;
 		}
 	}
 
 	
 	public String editPreContratoPorStatus() {
+		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
-		if (this.objetoPagadorRecebedor.getSite() != null) {
-			if (!this.objetoPagadorRecebedor.getSite().contains("http")
-					&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
-				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+
+			this.objetoContratoCobranca.setResponsavel(responsavel);
+
+			if (this.objetoPagadorRecebedor.getSite() != null) {
+				if (!this.objetoPagadorRecebedor.getSite().contains("http")
+						&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
+					this.objetoPagadorRecebedor
+							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+				}
 			}
-		}
 
-		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-		imovelCobrancaDao.merge(this.objetoImovelCobranca);
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-		this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
-		this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
+			this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
+			this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
 
-		if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
-			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
-		}
+			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
+				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+			}
 
-		if (this.objetoContratoCobranca.getVlrParcela() != null) {
-			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+			if (this.objetoContratoCobranca.getVlrParcela() != null) {
+				BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
 
-			this.objetoContratoCobranca.setVlrParcelaStr(
-					bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
-		}
+				this.objetoContratoCobranca.setVlrParcelaStr(
+						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
+			}
 
-		updateCheckList();
+			updateCheckList();
 
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
-		// verifica se o contrato for aprovado, manda um tipo de email..
-		// senao valida se houve alteração no checklist para envio de email.
-		enviaEmailAtualizacaoPreContrato();
+			// verifica se o contrato for aprovado, manda um tipo de email..
+			// senao valida se houve alteração no checklist para envio de email.
+			enviaEmailAtualizacaoPreContrato();
 
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
-								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));	
-		
-		if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
-			return geraConsultaContratosPorStatus("Aguardando Análise");
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
+				return geraConsultaContratosPorStatus("Aguardando Análise");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
+				return geraConsultaContratosPorStatus("Análise Reprovada");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Em Análise")) {
+				return geraConsultaContratosPorStatus("Em Analise");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
+				return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
+				return geraConsultaContratosPorStatus("Ag. DOC");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
+				return geraConsultaContratosPorStatus("Ag. CCB");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
+				return geraConsultaContratosPorStatus("Ag. Assinatura");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
+				return geraConsultaContratosPorStatus("Ag. Registro");
+			}
+
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+
+		} else {
+			if (context != null) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Erro de validação: O código do responsável digitado não foi encontrado ("
+								+ this.codigoResponsavel + ")!",
+						""));
+			}
+
+			return null;
 		}
-		if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
-			return geraConsultaContratosPorStatus("Análise Reprovada");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Em Análise")) {
-			return geraConsultaContratosPorStatus("Em Analise");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
-			return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
-			return geraConsultaContratosPorStatus("Ag. DOC");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
-			return geraConsultaContratosPorStatus("Ag. CCB");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
-			return geraConsultaContratosPorStatus("Ag. Assinatura");
-		}
-		if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
-			return geraConsultaContratosPorStatus("Ag. Registro");
-		}
-		
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
 	
 	public String cancelarEdicaoPreContrato() {
