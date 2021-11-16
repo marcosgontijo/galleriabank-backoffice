@@ -45,6 +45,12 @@
         <property name="dtNascimento" type="java.util.Date">
             <column name="DTNASCIMENTO"/>
         </property> 
+         <property name="nomePai" type="java.lang.String">
+            <column name="NOMEPAI" />
+        </property>
+        <property name="nomeMae" type="java.lang.String">
+            <column name="NOMEMAE" />
+        </property>
         <property name="observacao1" type="text">
             <column name="OBSERVACAO1"/>
         </property>   
@@ -131,7 +137,10 @@
       	</property>  
 		<property name="estadocivil" type="java.lang.String">
             <column name="estadocivil"/>
-        </property>       	     
+        </property>
+        <property name="regimeCasamento" type="java.lang.String">
+            <column name="regimeCasamento"/>
+        </property>      
       	<property name="coobrigado" type="boolean">
            <column name="coobrigado" />
       	</property> 

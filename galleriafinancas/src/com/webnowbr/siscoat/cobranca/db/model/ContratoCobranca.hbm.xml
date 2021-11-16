@@ -1212,8 +1212,14 @@
 		<property name="pagadorDonoGarantia" type="boolean">
 			<column name="pagadorDonoGarantia" />
 		</property>
-
-
+		
+		<property name="tipoCobrarComissaoCliente" type="java.lang.String">
+			<column name="tipoCobrarComissaoCliente" />
+		</property>
+		
+		<property name="brutoLiquidoCobrarComissaoCliente" type="java.lang.String">
+			<column name="brutoLiquidoCobrarComissaoCliente" />
+		</property>
 
 		<property name="nomeParticipanteCheckList" type="java.lang.String">
 			<column name="nomeParticipanteCheckList" />

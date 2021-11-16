@@ -23,6 +23,8 @@ public class PagadorRecebedor implements Serializable {
 	private String telCelular;
 	private String email;
 	private Date dtNascimento;
+	private String nomePai;
+	private String nomeMae;
 	private String observacao1;
 	private String observacao2;
 	private String atividade;
@@ -44,6 +46,7 @@ public class PagadorRecebedor implements Serializable {
 	private String cpfCC;
 	private String cnpjCC;
 	
+	private String regimeCasamento;
 	private String nomeConjuge;	
 	private String cpfConjuge;	
 	private String rgConjuge;
@@ -1167,6 +1170,30 @@ public class PagadorRecebedor implements Serializable {
 	public void setTipoPessoaSecundarioIsFisica(Boolean tipoPessoaSecundarioIsFisica) {
 		this.tipoPessoaSecundarioIsFisica = tipoPessoaSecundarioIsFisica;
 	}
-	
+
+	public String getRegimeCasamento() {
+		return regimeCasamento;
+	}
+
+	public void setRegimeCasamento(String regimeCasamento) {
+		this.regimeCasamento = regimeCasamento;
+	}
+
+	public String getNomePai() {
+		return nomePai;
+	}
+
+	public void setNomePai(String nomePai) {
+		this.nomePai = nomePai;
+	}
+
+	public String getNomeMae() {
+		return nomeMae;
+	}
+
+	public void setNomeMae(String nomeMae) {
+		this.nomeMae = nomeMae;
+	}
 	
 }
+

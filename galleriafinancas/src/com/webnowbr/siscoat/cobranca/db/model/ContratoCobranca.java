@@ -486,6 +486,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal comissaoClientePorcentagem;
 	private BigDecimal comissaoClienteValorFixo;
 	private Boolean pagadorDonoGarantia;
+	private String tipoCobrarComissaoCliente;
+	private String brutoLiquidoCobrarComissaoCliente;
 	
 	private String nomeParticipanteCheckList;
 	private Boolean rgDocumentosCheckList;
@@ -4077,5 +4079,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIuguLaudoPaju(String iuguLaudoPaju) {
 		this.iuguLaudoPaju = iuguLaudoPaju;
+	}
+
+	public String getTipoCobrarComissaoCliente() {
+		return tipoCobrarComissaoCliente;
+	}
+
+	public void setTipoCobrarComissaoCliente(String tipoCobrarComissaoCliente) {
+		this.tipoCobrarComissaoCliente = tipoCobrarComissaoCliente;
+	}
+
+	public String getBrutoLiquidoCobrarComissaoCliente() {
+		return brutoLiquidoCobrarComissaoCliente;
+	}
+
+	public void setBrutoLiquidoCobrarComissaoCliente(String brutoLiquidoCobrarComissaoCliente) {
+		this.brutoLiquidoCobrarComissaoCliente = brutoLiquidoCobrarComissaoCliente;
 	}
 }

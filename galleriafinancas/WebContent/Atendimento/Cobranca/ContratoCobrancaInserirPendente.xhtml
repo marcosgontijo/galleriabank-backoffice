@@ -392,7 +392,7 @@
 								<f:selectItem itemValue= '1650'  itemLabel="100% - R$1.650,00" />
 							</p:selectOneMenu>
 							
-							<p:commandButton value="Gerar Boleto IUGU"
+							<p:commandButton value="Gerar Boleto Laudo"
 								action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca, 
 								contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto, 
 								contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato)}"
@@ -414,7 +414,7 @@
 							<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
 								styleClass="labelBold" />
 							<h:panelGroup>
-								<p:inputText id="taxaPreAprovada"
+								<p:outputLabel id="taxaPreAprovada"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
 									style="FONT-SIZE: 10pt;width:300px;"
 									disabled="#{contratoCobrancaMB.deleteMode}"
@@ -424,7 +424,7 @@
 							<p:outputLabel for="prazoMaxPreAprovado"
 								value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 							<h:panelGroup>
-								<p:inputText id="prazoMaxPreAprovado" showOn="button"
+								<p:outputLabel id="prazoMaxPreAprovado" showOn="button"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
 									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
 									locale="pt" styleClass="dateTimeField" />
@@ -442,7 +442,7 @@
 						<h:panelGrid columns="2">
 							<p:outputLabel for="valorMercadoImovel"
 								value="Valor de mercado do imóvel: " styleClass="labelBold" />
-							<p:inputText id="valorMercadoImovel"
+							<p:outputLabel id="valorMercadoImovel"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);"
@@ -453,7 +453,7 @@
 							<p:outputLabel for="valorVendaForcadaImovel"
 								value="Valor de venda forçada do imóvel: "
 								styleClass="labelBold" />
-							<p:inputText id="valorVendaForcadaImovel"
+							<p:outputLabel id="valorVendaForcadaImovel"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);"
@@ -465,7 +465,7 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:outputLabel for="comentarioJuridico"
 								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48"
+							<p:outputLabel id="comentarioJuridico" rows="10" cols="48"
 								maxlength="3000" onblur=""
 								counterTemplate="{0} characters remaining." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
@@ -510,7 +510,7 @@
 								</h:panelGroup>
 								<h:panelGroup
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
-									<p:calendar id="dataVistoria" showOn="button"
+									<p:outputLabel id="dataVistoria" showOn="button"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
 										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
 										locale="pt" styleClass="dateTimeField" />
@@ -570,7 +570,16 @@
 					            <f:selectItem itemLabel="Física" itemValue="true" />
 					            <f:selectItem itemLabel="Jurídica" itemValue="false" />
 					            <p:ajax update="PanelPagadorRecebedor PanelDadosBancarios" event="valueChange" listener="#{contratoCobrancaMB.selectedTipoPessoaPublico}"/>
-					        </p:selectOneRadio>		
+					        </p:selectOneRadio>	
+					        
+					        <p:outputLabel for="NomeCPF" value="Nome: " styleClass="labelBold" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:outputLabel for="NomeCNPJ" value="Razão Social: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputText id="NomeCPF" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
+								<p:ajax event="blur" update="PanelDadosBancarios" listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}"/>
+							</p:inputText>	
+							<p:inputText id="NomeCNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
+								<p:ajax event="blur" update="PanelDadosBancarios" listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}"/>
+							</p:inputText>	
 		
 							<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:inputMask id="Cpf" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpf}" label="CPF" mask="999.999.999-99" required="true" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
@@ -580,40 +589,29 @@
 							<p:outputLabel for="Rg" value="RG / CNH: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:inputText id="Rg" value="#{contratoCobrancaMB.objetoPagadorRecebedor.rg}" label="RG / CNH"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							
-							<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
-							<p:inputMask id="DtEmissaoRG"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>		
-							
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:inputMask id="CNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur" update="mensagensCPFCNPJ PanelDadosBancarios" listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}"/>
 							</p:inputMask>
 							
-							<p:outputLabel for="NomeCPF" value="Nome: " styleClass="labelBold" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-							<p:outputLabel for="NomeCNPJ" value="Razão Social: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
-							<p:inputText id="NomeCPF" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<p:ajax event="blur" update="PanelDadosBancarios" listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}"/>
-							</p:inputText>	
-							<p:inputText id="NomeCNPJ" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}" label="Nome" required="true" onblur=""  style="width:400px;" rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-								<p:ajax event="blur" update="PanelDadosBancarios" listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}"/>
-							</p:inputText>											
+							<p:outputLabel for="NomePai" value="Nome do Pai: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputText id="NomePai" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />											
+						
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputText id="NomeMae" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />											
 						
 							<p:outputLabel for="Sexo" value="Sexo: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:selectOneRadio id="Sexo"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexo}"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-								<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+								<f:selectItem itemLabel="Masculino" itemValue="MASCULINO" />
+								<f:selectItem itemLabel="Feminino" itemValue="FEMININO" />
 							</p:selectOneRadio>
 						
 						    <p:outputLabel for="Atividade" value="Cargo/Ocupação: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-						    <p:outputLabel for="Atividade" value="Cargo/Ocupação: "  rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>
-						    <p:inputText id="Atividade" value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}" label="Atividade"  style="width:400px;" />							
+					    	<p:inputText id="Atividade" value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}" label="Atividade"  style="width:400px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />							
 																																																				
-							<p:outputLabel for="EMail" value="E-Mail: " />					
-							<p:inputText id="EMail" value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}" label="E-Mail" type="email"  onblur="" style="width:400px;"/>
+							<p:outputLabel for="EMail" value="E-Mail: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>					
+							<p:inputText id="EMail" value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}" label="E-Mail" type="email"  onblur="" style="width:400px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 	
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>	
 							<p:outputLabel for="DtNascimento" value="Data da Fundação: "  rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}"/>				
@@ -621,7 +619,7 @@
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:inputMask>									
 						
-							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
+							<p:outputLabel for="TelCelular" value="Telefone: " />
 							<p:inputText id="TelCelular" value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelular}" styleClass="phone" label="Telefone Celular" />			
 									
 							<p:outputLabel for="Cep" value="Cep: " />
@@ -698,7 +696,25 @@
 									<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 									<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
 									<p:ajax update="PanelCasado" event="valueChange"/>
-								</p:selectOneMenu>								
+								</p:selectOneMenu>
+
+								<p:outputLabel for="regimeCasamento"
+									value="Regime do Casamento: " styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil == 'CASADO'}"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu id="regimeCasamento"
+									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil == 'CASADO'}"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">
+									<f:selectItem itemValue="universal de bens"
+										itemLabel="Universal de bens" />
+									<f:selectItem itemValue="de comunhão parcial de bens"
+										itemLabel="Comunhão parcial de bens" />
+									<f:selectItem itemValue="de separação total de bens"
+										itemLabel="Separação total de bens" />
+									<f:selectItem itemValue="obrigatório de separação de bens"
+										itemLabel="Obrigatório de separação de bens" />
+								</p:selectOneMenu>
+
 								<p:outputLabel for="NomeConjuge" value="Nome: " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
 								<p:inputText id="NomeConjuge" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeConjuge}" required="true" label="Nome" onblur=""  style="width:400px;" rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputText>
 								<p:outputLabel for="SexoConjuge" value="Sexo: " rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -1006,7 +1022,7 @@
 								</p:panel>		
 							</p:panel>	
 						</p:panel>																
-					<p:panel id="PanelDadosBancarios" header="Referência Bancária" style="margin-top:25px;">
+					<p:panel id="PanelDadosBancarios" header="Conta Bancária" style="margin-top:25px;">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="PessoaCC" value="Pessoa: " styleClass="labelBold" />
 								<p:selectOneRadio id="PessoaCC" value="#{contratoCobrancaMB.tipoPessoaIsFisicaCC}" required="true">
@@ -1263,6 +1279,7 @@
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
 							<f:selectItem itemValue="Rural" itemLabel="Rural" />
+							<p:ajax update="BoletoPanel" event="change" />    
 						</p:selectOneMenu>
 
 						<p:outputLabel for="valorEstimado"
@@ -1622,7 +1639,7 @@
 				</p:commandButton>			 						
 				<p:spacer height="10" />
 				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
-					<f:setPropertyActionListener target="#{contratoCoFbrancaMB.preContratoCustom}" value="false" />	
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 				</p:commandButton>		 						
 				<p:spacer height="10" />
 				<p:commandButton value="Voltar ao CRM" ajax="false" immediate="true" icon="ui-icon-arrowreturn-1-w" action="/Atendimento/Cobranca/CRM.xhtml" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.crmMode}"/>		 						

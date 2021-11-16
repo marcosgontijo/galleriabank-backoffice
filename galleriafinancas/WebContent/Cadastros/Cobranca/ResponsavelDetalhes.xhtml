@@ -15,7 +15,7 @@
 					<p:selectOneRadio id="Pessoa" value="#{responsavelMB.tipoPessoaIsFisica}" required="true" disabled="true">
 			            <f:selectItem itemLabel="Física" itemValue="true" />
 			            <f:selectItem itemLabel="Jurídica" itemValue="false" />
-			            <p:ajax update="PanelPagadorRecebedor" event="valueChange" listener="#{responsavelMB.selectedTipoPessoa}"/>
+			            <p:ajax update="PanelResponsavel" event="valueChange" listener="#{responsavelMB.selectedTipoPessoa}"/>
 			        </p:selectOneRadio>		
 
 					<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
@@ -40,21 +40,12 @@
 					
 					<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold"/>	
 					<h:outputText id="EMail" value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail"/> 				
-														
-					<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"/>
-					<h:outputText id="Cpf" value="#{responsavelMB.objetoResponsavel.cpf}" label="CPF" mask="999.999.999-99"/> 	
- 
-					<p:outputLabel for="Rg" value="RG: " styleClass="labelBold"/>
-					<h:outputText id="Rg" value="#{responsavelMB.objetoResponsavel.rg}" label="RG"/>
  
 					<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />	
 					<h:outputText id="DtNascimento" value="#{responsavelMB.objetoResponsavel.dtNascimento}" label="Data de Nascimento">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>	
-					
-					<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
-					<h:outputText id="TelResidencial" value="#{responsavelMB.objetoResponsavel.telResidencial}" label="Telefone Residencial"/>																								
-
+				
 					<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 					<h:outputText id="TelCelular" value="#{responsavelMB.objetoResponsavel.telCelular}" label="Telefone Celular"/>	
 					
