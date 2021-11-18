@@ -5359,16 +5359,16 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("Todas")) {
 			this.tituloPainel = "GERAL";
-			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
 		}
 		
 		if (empresa.equals("Securitizadora")) {
-			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
 			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 		}
 		
 		if (empresa.equals("FIDC")) {
-			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		

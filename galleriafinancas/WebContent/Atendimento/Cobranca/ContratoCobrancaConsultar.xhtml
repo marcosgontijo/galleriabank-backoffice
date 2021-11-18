@@ -112,7 +112,12 @@
 			</p:panel>
 			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
                  <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         reflow="true">
+   		         reflow="true"
+   		         rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="10,50,100">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -129,20 +134,7 @@
 			        </p:column>		
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
 			            <h:outputText value="#{contratos.pagador.nome}" />
-			        </p:column>
-			        <p:column style="text-align: center;" headerText="Recebedor" filterBy="#{contratos.recebedor.nome}" filterMatchMode="contains" >
-			            <h:outputText value="#{contratos.recebedor.nome}" />
-			        </p:column>			        
-			        <p:column style="text-align: center;" headerText="Valor da Parcela (R$)" filterBy="#{contratos.vlrParcelaStr}" filterMatchMode="contains" sortBy="#{contratos.vlrParcela}">
-						<h:outputText value="#{contratos.vlrParcelaStr}">
-						</h:outputText>
-					</p:column>		
-			        <p:column style="text-align: center;" headerText="Data Inicio" sortBy="#{contratos.dataInicio}">
-			            <h:outputText value="#{contratos.dataInicio}" >			            	
-			            	<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-			            </h:outputText>
-			        </p:column>			        
+			        </p:column>	        
 			        <p:column styleClass="colunaResponsiva">	
 			       		<shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  
 				        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
