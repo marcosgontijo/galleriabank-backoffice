@@ -312,18 +312,12 @@
 							</h:panelGrid>
 						</shiro:hasAnyRoles>		
 					</p:panel>
-<<<<<<< HEAD
 				
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:20px;">
 					<p:panel header="Gerar Boleto"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<h:panelGroup rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}">
-=======
 
-				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
-					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
->>>>>>> refs/heads/master
 						<h:panelGrid columns="2">
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -337,22 +331,11 @@
 							<p:selectOneMenu id="valorBoleto"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato}" ajax="true"
 								style="font-weight: bold;">
-								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="82500"  itemLabel="50% - R$825,00" />
+								<f:selectItem itemValue="165000"  itemLabel="100% - R$1.650,00" />
 							</p:selectOneMenu>
 							
-<<<<<<< HEAD
-							<p:commandButton value="Gerar Boleto IUGU"
-								action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca, 
-								contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto, 
-								contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato)}"
-								update=":form:msgs"
-								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU">
-							</p:commandButton>
-							<p:spacer height="10"></p:spacer>
-							<p:outputLabel value="Link do Boleto"
-								styleClass="labelBold" />
-=======
+
 							<p:outputLabel value="Exibir Fatura: "
 								styleClass="labelBold" />
 							<a href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}" class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
@@ -365,12 +348,12 @@
 								update=":form:BoletoPanel :form:BoletoPAJULaudo"
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
->>>>>>> refs/heads/master
+
 						</h:panelGrid>
 						</h:panelGroup>
 					</p:panel> 
 				</h:panelGroup>
-				<!-- Removido a pedido do joão em 05/11/2021
+				<!-- Removido a pedido do joão em 05/11/2021 -->
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
