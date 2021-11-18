@@ -310,10 +310,10 @@
 							</h:panelGrid>
 						</shiro:hasAnyRoles>		
 					</p:panel>
-				<!-- Removido a pedido do joão em 05/11/2021
-				<h:panelGroup id="BoletoPanel" style="margin-bottom:20px;">
-					<p:panel header="Gerar Boleto"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
+
+				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
+					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -330,10 +330,23 @@
 								<f:selectItem itemValue= '825'  itemLabel="50% - R$825,00" />
 								<f:selectItem itemValue= '1650'  itemLabel="100% - R$1.650,00" />
 							</p:selectOneMenu>
+							
+							<p:outputLabel value="Exibir Fatura: "
+								styleClass="labelBold" />
+							<a href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}" class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
+			        
+							<p:commandButton value="Gerar Boleto IUGU"
+								action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca,
+																			contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto,																	
+																			contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato
+																			)}"
+								update=":form:BoletoPanel :form:BoletoPAJULaudo"
+								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
+							</p:commandButton>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+				<!-- Removido a pedido do joão em 05/11/2021
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
