@@ -278,10 +278,14 @@
 									<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
 									<p:spacer height="50"></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
-										<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+										<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+											<p:ajax update="Dados" event="change" />
+										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>		
 									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-										<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
+										<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px">
+											<p:ajax update="Dados" event="change" />
+										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
 									<p:spacer height="7"></p:spacer>
@@ -325,13 +329,11 @@
 									<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>
 									<p:spacer ></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
-										<p:selectBooleanButton id="agRegistroView" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-											<p:ajax update="Dados" event="change" />
+										<p:selectBooleanButton id="agRegistroView" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true">	
 										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>		
 									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-										<p:selectBooleanButton id="agRegistro" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px">
-											<p:ajax update="Dados" event="change" />
+										<p:selectBooleanButton id="agRegistro" value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px">										
 										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
@@ -1722,7 +1724,7 @@
 			<h:panelGroup id="Dados" >
 				<p:panel header="Dados do Contrato"
 					style="margin-bottom:10px;" 
-					rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agRegistro}">
+					rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
 					<h:panelGrid columns="2">
 					
 						<p:outputLabel for="ImovelDadoContrato" value="Imóvel: "
@@ -1884,7 +1886,7 @@
 				</h:panelGroup>
 
 				<p:panel id="Pagamento" header="Forma de Pagamento"
-					style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agRegistro}">
+					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="dataInicio" value="Data Inicio: "
 							styleClass="labelBold" style="margin-right: 59px;" />
