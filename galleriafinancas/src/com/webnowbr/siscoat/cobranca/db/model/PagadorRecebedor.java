@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -46,14 +48,14 @@ public class PagadorRecebedor implements Serializable {
 	private String cpfCC;
 	private String cnpjCC;
 	
-	private String regimeCasamento;
+	private String regimeCasamento; 
 	private String nomeConjuge;	
-	private String cpfConjuge;	
-	private String rgConjuge;
-	private String sexoConjuge;
-	private String telResidencialConjuge;
-	private String telCelularConjuge;
-	private Date dtNascimentoConjuge;	
+	private String cpfConjuge; 
+	private String rgConjuge; 
+	private String sexoConjuge; 
+	private String telResidencialConjuge; 
+	private String telCelularConjuge; 
+	private Date dtNascimentoConjuge; 
 	
 	private String idIugu;
 	
@@ -128,7 +130,7 @@ public class PagadorRecebedor implements Serializable {
 	private String cnpjSecundario;
 	private String telCelularSecundario;
 	private String emailSecundario;
-	private String relaçãoComTomador;
+	private String relacaoComTomador;
 	private Boolean tipoPessoaSecundarioIsFisica;
 	
 	private User usuario;
@@ -1155,12 +1157,12 @@ public class PagadorRecebedor implements Serializable {
 		this.emailSecundario = emailSecundario;
 	}
 
-	public String getRelaçãoComTomador() {
-		return relaçãoComTomador;
+	public String getRelacaoComTomador() {
+		return relacaoComTomador;
 	}
 
-	public void setRelaçãoComTomador(String relaçãoComTomador) {
-		this.relaçãoComTomador = relaçãoComTomador;
+	public void setRelacaoComTomador(String relacaoComTomador) {
+		this.relacaoComTomador = relacaoComTomador;
 	}
 
 	public Boolean getTipoPessoaSecundarioIsFisica() {

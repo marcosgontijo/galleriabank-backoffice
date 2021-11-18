@@ -283,6 +283,8 @@ public class CcbMB {
     public String fileName;
     public String fileType;
     public int fileTypeInt;
+    
+    String tituloPagadorRecebedorDialog = "";
 	
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
@@ -338,12 +340,14 @@ public class CcbMB {
 	String updatePagadorRecebedor = ":form";
 
 	public void pesquisaEmitente() {
+		this.tituloPagadorRecebedorDialog = "Emitente";
 		this.tipoPesquisa = "Emitente";
 		this.updatePagadorRecebedor = ":form:emitentePanel :form:Dados";
 		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 
 	public void pesquisaInterveniente() {
+		this.tituloPagadorRecebedorDialog = "Interveniente";
 		this.tipoPesquisa = "Interveniente";
 		this.updatePagadorRecebedor = ":form:intervenientePanel";
 		this.intervenienteSelecionado = new PagadorRecebedor();
@@ -351,6 +355,7 @@ public class CcbMB {
 	}
 	
 	public void pesquisaTerceiroG() {
+		this.tituloPagadorRecebedorDialog = "Terceiro Garantidor";
 		this.tipoPesquisa = "TerceiroG";
 		this.updatePagadorRecebedor = ":form:terceiroPanel";
 		this.terceiroGSelecionado = new PagadorRecebedor();
@@ -358,6 +363,7 @@ public class CcbMB {
 	}
 	
 	public void pesquisaAvalista() {
+		this.tituloPagadorRecebedorDialog = "Avalista";
 		this.tipoPesquisa = "Avalista";
 		this.updatePagadorRecebedor = ":form:avalistaPanel";
 		this.avalistaSelecionado = new PagadorRecebedor();
@@ -365,6 +371,7 @@ public class CcbMB {
 	}
 	
 	public void pesquisaTestemunha1() {
+		this.tituloPagadorRecebedorDialog = "Testemunha 1";
 		this.tipoPesquisa = "Testemunha1";
 		this.updatePagadorRecebedor = ":form:Dados";
 		this.testemunha1Selecionado = new PagadorRecebedor();
@@ -372,6 +379,7 @@ public class CcbMB {
 	}
 	
 	public void pesquisaTestemunha2() {
+		this.tituloPagadorRecebedorDialog = "Testemunha 2";
 		this.tipoPesquisa = "Testemunha2";
 		this.updatePagadorRecebedor = ":form:Dados";
 		this.testemunha2Selecionado = new PagadorRecebedor();
@@ -3036,6 +3044,14 @@ public class CcbMB {
 
 	public void setFileTypeInt(int fileTypeInt) {
 		this.fileTypeInt = fileTypeInt;
+	}
+
+	public String getTituloPagadorRecebedorDialog() {
+		return tituloPagadorRecebedorDialog;
+	}
+
+	public void setTituloPagadorRecebedorDialog(String tituloPagadorRecebedorDialog) {
+		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
 	}
 	
 }

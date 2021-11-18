@@ -1000,6 +1000,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Segurado" />
         </set>
         
+        <set name="listSocios" table="PAGADORRECEBEDORSOCIO" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio" />
+        </set>            
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>

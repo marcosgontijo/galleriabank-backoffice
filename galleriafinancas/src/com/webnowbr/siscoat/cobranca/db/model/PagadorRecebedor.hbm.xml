@@ -129,7 +129,7 @@
        	<property name="dataEmissaoRGConjuge" type="java.util.Date">
             <column name="dataEmissaoRGConjuge"/>
         </property>      
-                <property name="sexoConjuge" type="java.lang.String">
+        <property name="sexoConjuge" type="java.lang.String">
             <column name="SEXOConjuge"/>
         </property>     
 		<property name="casado" type="boolean">
@@ -293,7 +293,7 @@
 			lazy="false">
 			<column name="USUARIO" />
 		</many-to-one>
-		
+
 		<property name="nomeSecundario" type="java.lang.String">
             <column name="nomeSecundario"/>
         </property> 
@@ -304,7 +304,7 @@
         
         <property name="cnpjSecundario" type="java.lang.String">
             <column name="cnpjSecundario"/>
-        </property> 
+        </property>
         
         <property name="telCelularSecundario" type="java.lang.String">
             <column name="telCelularSecundario"/>
@@ -314,13 +314,12 @@
             <column name="emailSecundario"/>
         </property> 
         
-        <property name="relaçãoComTomador" type="java.lang.String">
-            <column name="relaçãoComTomador"/>
+        <property name="relacaoComTomador" type="java.lang.String">
+            <column name="relacaoComTomador"/>
         </property> 
         
         <property name="tipoPessoaSecundarioIsFisica" type="boolean">
            <column name="tipoPessoaSecundarioIsFisica" />
-      	</property> 
-		                                                                                                            
+      	</property>                                                                                         
     </class>
 </hibernate-mapping>

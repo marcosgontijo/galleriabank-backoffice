@@ -4,13 +4,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
-					
-	<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
-		resizable="false" style="FONT-SIZE: 10pt;" width="600">
-		<h:form id="formReceborPagador">
+	
+	<h:form id="formReceborPagador">
+		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
-				value="#{mbean.listRecebedorPagador}" paginator="true"
-				rows="10" selectionMode="single"
+				value="#{mbean.listRecebedorPagador}" paginator="true" rows="10"
+				selectionMode="single"
 				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="5,10,15"
 				selection="#{mbean.selectedPagadorGenerico}"
@@ -47,17 +47,17 @@
 				<f:facet name="footer">
 					<p:commandButton value="Selecionar"
 						action="#{mbean.populateSelectedPagadorRecebedor}"
-						image="ui-icon ui-icon-check" update="#{mbean.updatePagadorRecebedor}"
+						image="ui-icon ui-icon-check"
+						update="#{mbean.updatePagadorRecebedor}"
 						oncomplete="PF('pagadorRecebedorDialog').hide();" />
 					<p:commandButton value="Limpar Seleção"
 						action="#{mbean.clearPagadorRecebedor}"
-						image="ui-icon ui-icon-trash"
-						update=":form pagadorDialogdlg"
+						image="ui-icon ui-icon-trash" update=":form pagadorDialogdlg"
 						oncomplete="PF('pagadorRecebedorDialog').hide();" />
 					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 						oncomplete="PF('pagadorRecebedorDialog').hide();" />
 				</f:facet>
 			</p:dataTable>
-		</h:form>
-	</p:dialog>
+		</p:dialog>
+	</h:form>
 </ui:composition>

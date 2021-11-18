@@ -50,8 +50,6 @@
 								icon="ui-icon ui-icon-circle-zoomin"
 								oncomplete="PF('pagadorRecebedorDialog').show();"
 								update=":formReceborPagador" />
-								<ui:param name="titulo" value="Emitente"></ui:param>
-
 						</f:facet>
 						<h:panelGrid columns="4">
 							<p:outputLabel for="nomeEmitente" value="Nome do Emitente: "
@@ -292,7 +290,6 @@
 								onLabel="Incluir Interveniente" offLabel="Incluir Interveniente">
 								<p:ajax update=":form:intervenientePanel" event="change" />
 							</p:selectBooleanButton>
-							<ui:param name="titulo" value="Interveniente"></ui:param>
 							<p:commandButton ajax="true"
 								action="#{ccbMB.pesquisaInterveniente}"
 								icon="ui-icon ui-icon-circle-zoomin"
@@ -533,7 +530,7 @@
 								onLabel="Incluir Terceiro Garantidor" offLabel="Incluir Terceiro Garantidor">
 								<p:ajax update=":form:terceiroPanel" event="change" />
 							</p:selectBooleanButton>
-							<ui:param name="titulo" value="Terceiro Garantidor"></ui:param>
+						
 							<p:commandButton ajax="true"
 								action="#{ccbMB.pesquisaTerceiroG}"
 								icon="ui-icon ui-icon-circle-zoomin"
@@ -774,7 +771,7 @@
 								onLabel="Incluir Avalista" offLabel="Incluir Avalista">
 								<p:ajax update=":form:avalistaPanel" event="change" />
 							</p:selectBooleanButton>
-							<ui:param name="titulo" value="Avalista"></ui:param>
+						
 							<p:commandButton ajax="true" action="#{ccbMB.pesquisaAvalista}"
 								icon="ui-icon ui-icon-circle-zoomin"
 								oncomplete="PF('pagadorRecebedorDialog').show();"
@@ -1459,6 +1456,7 @@
 	
 			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{ccbMB}"></ui:param>
+				<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
 			</ui:include>
 	
 	</ui:define>

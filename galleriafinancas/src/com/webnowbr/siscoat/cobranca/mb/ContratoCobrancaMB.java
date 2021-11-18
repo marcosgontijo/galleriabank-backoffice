@@ -102,6 +102,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -188,9 +189,12 @@ public class ContratoCobrancaMB {
 	
 	String tipoPesquisaPagadorRecebedor = "";
 	Segurado seguradoSelecionado;
+	PagadorRecebedorSocio socioSelecionado;
 	String updatePagadorRecebedor = "";
+	String tituloPagadorRecebedorDialog = "";
 	
-	private boolean addSegurador;	
+	private boolean addSegurador;
+	private boolean addSocio;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -532,6 +536,7 @@ public class ContratoCobrancaMB {
 
 	private ImovelCobranca objetoImovelCobranca;
 	private PagadorRecebedor objetoPagadorRecebedor;
+	private PagadorRecebedorSocio objetoSocio;
 
 	private boolean geraBoletoInclusaoContrato;
 
@@ -684,7 +689,11 @@ public class ContratoCobrancaMB {
 		clearSelectedRecebedores();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.tituloPagadorRecebedorDialog = "";
+		this.addSegurador = false;
+		this.addSocio = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1293,7 +1302,10 @@ public class ContratoCobrancaMB {
 		clearSelectedRecebedores();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());		
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());		
 		this.addSegurador= false;
+		this.addSocio = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1352,7 +1364,10 @@ public class ContratoCobrancaMB {
 		clearSelectedRecebedores();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
+		this.addSocio = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -3512,7 +3527,10 @@ public class ContratoCobrancaMB {
 		clearSelectedRecebedores();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
+		this.addSocio= false;
 
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
@@ -3563,8 +3581,10 @@ public class ContratoCobrancaMB {
 
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
-		
+		this.addSocio = false;
 			
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
@@ -7254,7 +7274,10 @@ public class ContratoCobrancaMB {
 		clearSelectedRecebedores();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
+		this.addSocio = false;
 		
 		this.selectedPagador = this.objetoContratoCobranca.getPagador();
 		this.nomePagador = this.objetoContratoCobranca.getPagador().getNome();
@@ -8967,15 +8990,26 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void pesquisaSegurado() {
+		this.tituloPagadorRecebedorDialog = "Segurados";
 		this.tipoPesquisaPagadorRecebedor = "Segurado";
 		this.updatePagadorRecebedor = ":form:SeguradoresPanel";
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	public void pesquisaSocio() {
+		this.tituloPagadorRecebedorDialog = "Sócios";
+		this.tipoPesquisaPagadorRecebedor = "Socio";
+		this.updatePagadorRecebedor = ":form:SociosPanel";
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
 	public void populateSelectedPagadorRecebedor() {
 		if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if ( CommonsUtil.mesmoValor("Socio", tipoPesquisaPagadorRecebedor)) {
+			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		}
 	}
 	
@@ -8987,8 +9021,27 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		}
 	
+	public void concluirSocio() {
+		this.socioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
+		this.objetoContratoCobranca.getListSocios().add(this.socioSelecionado);
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSocio = false;
+		}
+	
+	public void editarSocio(PagadorRecebedorSocio socio) {
+		this.addSocio = true;
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.setSocioSelecionado(socio);
+		this.removerSocio(socio);
+	}
+	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoContratoCobranca.getListSegurados().remove(segurado);		
+	}
+	
+	public void removerSocio(PagadorRecebedorSocio socio) {
+		this.objetoContratoCobranca.getListSocios().remove(socio);
 	}
 
 	private boolean validarProcentagensSeguro() {
@@ -9011,8 +9064,12 @@ public class ContratoCobrancaMB {
 	public void clearPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(null);
-		this.selectedPagador = new PagadorRecebedor();
-	}}
+			this.selectedPagador = new PagadorRecebedor();
+		} else if (CommonsUtil.mesmoValor("Socio", tipoPesquisaPagadorRecebedor)) {
+			this.socioSelecionado.setPessoa(null);
+			this.selectedPagador = new PagadorRecebedor();
+		}
+	}
 //	public void mostrarParcela() {
 //		try {
 //			this.simuladorParcelas = calcularParcelas();
@@ -18710,12 +18767,28 @@ public class ContratoCobrancaMB {
 		this.seguradoSelecionado = seguradoSelecionado;
 	}
 
+	public PagadorRecebedorSocio getSocioSelecionado() {
+		return socioSelecionado;
+	}
+
+	public void setSocioSelecionado(PagadorRecebedorSocio socioSelecionado) {
+		this.socioSelecionado = socioSelecionado;
+	}
+
 	public boolean isAddSegurador() {
 		return addSegurador;
 	}
 
 	public void setAddSegurador(boolean addSegurador) {
 		this.addSegurador = addSegurador;
+	}
+
+	public boolean isAddSocio() {
+		return addSocio;
+	}
+
+	public void setAddSocio(boolean addSocio) {
+		this.addSocio = addSocio;
 	}
 
 	public String getUpdatePagadorRecebedor() {
@@ -18829,5 +18902,15 @@ public class ContratoCobrancaMB {
 	public void setValorBoletoStr(String valorBoletoStr) {
 		this.valorBoletoStr = valorBoletoStr;
 	}
+
+	public String getTituloPagadorRecebedorDialog() {
+		return tituloPagadorRecebedorDialog;
+	}
+
+	public void setTituloPagadorRecebedorDialog(String tituloPagadorRecebedorDialog) {
+		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
+	}
+	
+	
 
 }

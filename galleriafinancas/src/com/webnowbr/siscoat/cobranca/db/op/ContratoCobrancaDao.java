@@ -2561,9 +2561,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONSULTA_CONTRATOS_ULTIMOS_10 =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
-			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "order by cc.datacontrato desc "
-			+ "limit 10 ";
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaContratosUltimos10(String empresa) {
@@ -2576,17 +2574,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_ULTIMOS_10;	
-				try {
-					
-					if (empresa.equals("Todas")) {
-					}
-					
+				try {					
 					if (empresa.equals("Securitizadora")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
-					}
-				
-					if (empresa.equals("FIDC")) {
+					} else if (empresa.equals("FIDC")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'FIDC GALLERIA' ";
 					}

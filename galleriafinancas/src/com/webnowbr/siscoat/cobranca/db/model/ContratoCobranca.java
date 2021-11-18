@@ -144,6 +144,7 @@ public class ContratoCobranca implements Serializable {
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
 	
 	private Set<Segurado> listSegurados;
+	private Set<PagadorRecebedorSocio> listSocios;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -522,6 +523,7 @@ public class ContratoCobranca implements Serializable {
 		this.imovel = new ImovelCobranca();
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
 		this.listSegurados = new HashSet<>();
+		this.listSocios = new HashSet<>();
 		
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
@@ -4096,4 +4098,13 @@ public class ContratoCobranca implements Serializable {
 	public void setBrutoLiquidoCobrarComissaoCliente(String brutoLiquidoCobrarComissaoCliente) {
 		this.brutoLiquidoCobrarComissaoCliente = brutoLiquidoCobrarComissaoCliente;
 	}
+	
+	public Set<PagadorRecebedorSocio> getListSocios() {
+		return listSocios;
+	}
+
+	public void setListSocios(Set<PagadorRecebedorSocio> listSocios) {
+		this.listSocios = listSocios;
+	}
+	
 }
