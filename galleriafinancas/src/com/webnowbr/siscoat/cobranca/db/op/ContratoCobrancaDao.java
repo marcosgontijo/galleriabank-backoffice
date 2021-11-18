@@ -2616,6 +2616,63 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONSULTA_CONTRATOS =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratos(String empresa) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS;	
+				try {
+					
+					if (empresa.equals("Todas")) {
+					}
+					
+					if (empresa.equals("Securitizadora")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' ";
+					}
+				
+					if (empresa.equals("FIDC")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'FIDC GALLERIA' ";
+					}
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc ";
+					
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
