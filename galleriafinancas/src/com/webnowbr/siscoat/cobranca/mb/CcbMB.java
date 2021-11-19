@@ -424,6 +424,22 @@ public class CcbMB {
 		return listaCrea;
 	}
 	
+	/*
+	 * public String EmitirCcbPreContrato() { ContratoCobrancaMB CcMb = new
+	 * ContratoCobrancaMB(); CcMb.objetoContratoCobranca =
+	 * getContratoById(CcMb.objetoContratoCobranca.getId());
+	 * CcMb.objetoImovelCobranca = CcMb.objetoContratoCobranca.getImovel();
+	 * CcMb.objetoPagadorRecebedor = CcMb.objetoContratoCobranca.getPagador();
+	 * CcMb.loadLovs(); CcMb.loadSelectedLovsPendentes();
+	 * 
+	 * ccbMb.setSelectedPagadorGenerico(this.objetoPagadorRecebedor);
+	 * ccbMb.setTipoPesquisa("Emitente"); ccbMb.populateSelectedPagadorRecebedor();
+	 * 
+	 * ccbMb.setNumeroParcelasPagamento("3");
+	 * 
+	 * return "/Atendimento/Cobranca/Ccb.xhtml"; }
+	 */
+	
 	public void populateSelectedPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Emitente")) {
 			this.emitenteSelecionado = (this.selectedPagadorGenerico);

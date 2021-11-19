@@ -331,8 +331,8 @@
 							<p:selectOneMenu id="valorBoleto"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato}" ajax="true"
 								style="font-weight: bold;">
-								<f:selectItem itemValue="82500"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="165000"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="825"  itemLabel="50% - R$825,00" />
+								<f:selectItem itemValue="1650"  itemLabel="100% - R$1.650,00" />
 							</p:selectOneMenu>
 							
 
@@ -558,16 +558,16 @@
 							<p:selectBooleanCheckbox id="pagadorDonoGarantia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.pagadorDonoGarantia}" />
 
-							<p:selectBooleanButton
+							<!-- <p:selectBooleanButton
 								value="#{contratoCobrancaMB.addPagadorPreContrato}"
 								onLabel="Adicionar Pagador" offLabel="Adicionar Pagador">
 								<p:ajax update=":form:PanelPagadorSecundario, :form:ChecklistDocumentosSecundario" event="change" />
-							</p:selectBooleanButton>
+							</p:selectBooleanButton> -->
 
 						</h:panelGrid>
 					</p:panel>
 
-					<h:panelGroup id="PanelPagadorSecundario">
+					<!-- <h:panelGroup id="PanelPagadorSecundario">
 						<p:panel header="Dados Pagador Secundario"
 							style="margin-top:10px;margin-bottom:10px;" rendered="#{contratoCobrancaMB.addPagadorPreContrato}">
 							<h:panelGrid columns="2" header="Dados Pagador Secundario">
@@ -631,8 +631,8 @@
 									label="Relação Com Tomador: " style="width:400px;" />
 								</h:panelGrid>
 							</p:panel>
-						</h:panelGroup>
-					</p:panel>
+						</h:panelGroup>-->
+					</p:panel> 
 					
 
 				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;">	

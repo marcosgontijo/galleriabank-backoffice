@@ -869,6 +869,21 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 	}
 	
+	public String emitirCCB() {
+		CcbMB ccbMb = new CcbMB();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		loadLovs();
+		loadSelectedLovsPendentes();
+
+		ccbMb.setSelectedPagadorGenerico(this.objetoPagadorRecebedor);
+		ccbMb.setTipoPesquisa("Emitente"); 
+		ccbMb.populateSelectedPagadorRecebedor();
+		 
+		return "/Atendimento/Cobranca/Ccb.xhtml";
+	}
+	
 	public void geraBoletoLaudoPAJU(ContratoCobranca contrato, Date vencimento, String valorBoletoStr) {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao(); 
 		
@@ -4467,7 +4482,6 @@ public class ContratoCobrancaMB {
 	public String clearFieldsEditarPendentes() {
 			
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-			
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
