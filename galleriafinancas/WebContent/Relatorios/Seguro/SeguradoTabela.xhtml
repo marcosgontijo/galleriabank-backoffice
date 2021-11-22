@@ -21,7 +21,15 @@
 					<p:outputLabel value="Seguro MIP: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectBooleanCheckbox value="#{seguroTabelaMB.seguroMIP}"/>
-
+					
+					<p:outputLabel for="empresa" value="Qual empresa? "
+							styleClass="labelBold" />
+					<p:selectOneMenu id="empresa" value="#{seguroTabelaMB.empresa}" style="width:345px;" >
+							<f:selectItem itemValue="Todas" itemLabel="TODAS" />
+							<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A. (não está funcionando)" />
+							<f:selectItem itemValue="FIDC GALLERIA" itemLabel="FIDC GALLERIA" />
+					</p:selectOneMenu>	
+						
 					<p:outputLabel for="dataCalculo" value="Data Cálculo : "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:datePicker id="dataCalculo" view="month" value="#{seguroTabelaMB.dataDesagio}" locale="pt" pattern="MM/yyyy" yearNavigator="true" yearRange="#{seguroTabelaMB.yearRange}" />

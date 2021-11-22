@@ -356,6 +356,10 @@ public class ContratoCobranca implements Serializable {
 	private Date agRegistroData;
 	private boolean agRegistro;
 	private String agRegistroUsuario;
+	
+	private Date aprovadoComiteData;
+	private boolean aprovadoComite;
+	private String aprovadoComiteUsuario;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -482,6 +486,16 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
+	
+	private BigDecimal taxaAprovada;
+	private BigInteger prazoMaxAprovado;
+	private BigDecimal valorAprovadoComite;
+	private String tipoValorComite;
+	private String comentarioComite;
+	
+	private BigDecimal valorLaudoPajuTotal;
+	private BigDecimal valorLaudoPajuPago;
+	private BigDecimal valorLaudoPajuFaltante;
 	
 	private String cobrarComissaoCliente;
 	private BigDecimal comissaoClientePorcentagem;
@@ -3362,6 +3376,30 @@ public class ContratoCobranca implements Serializable {
 		this.agRegistroUsuario = agRegistroUsuario;
 	}
 
+	public Date getAprovadoComiteData() {
+		return aprovadoComiteData;
+	}
+	
+	public void setAprovadoComiteData(Date aprovadoComiteData) {
+		this.aprovadoComiteData = aprovadoComiteData;
+	}
+
+	public boolean isAprovadoComite() {
+		return aprovadoComite;
+	}
+
+	public void setAprovadoComite(boolean aprovadoComite) {
+		this.aprovadoComite = aprovadoComite;
+	}
+
+	public String getAprovadoComiteUsuario() {
+		return aprovadoComiteUsuario;
+	}
+
+	public void setAprovadoComiteUsuario(String aprovadoComiteUsuario) {
+		this.aprovadoComiteUsuario = aprovadoComiteUsuario;
+	}
+
 	public Set<Segurado> getListSegurados() {
 		return listSegurados;
 	}
@@ -4107,4 +4145,67 @@ public class ContratoCobranca implements Serializable {
 		this.listSocios = listSocios;
 	}
 	
+	public BigDecimal getTaxaAprovada() {
+		return taxaAprovada;
+	}
+
+	public void setTaxaAprovada(BigDecimal taxaAprovada) {
+		this.taxaAprovada = taxaAprovada;
+	}
+
+	public BigInteger getPrazoMaxAprovado() {
+		return prazoMaxAprovado;
+	}
+
+	public void setPrazoMaxAprovado(BigInteger prazoMaxAprovado) {
+		this.prazoMaxAprovado = prazoMaxAprovado;
+	}
+
+	public BigDecimal getValorAprovadoComite() {
+		return valorAprovadoComite;
+	}
+
+	public void setValorAprovadoComite(BigDecimal valorAprovadoComite) {
+		this.valorAprovadoComite = valorAprovadoComite;
+	}
+
+	public String getTipoValorComite() {
+		return tipoValorComite;
+	}
+
+	public void setTipoValorComite(String tipoValorComite) {
+		this.tipoValorComite = tipoValorComite;
+	}
+
+	public String getComentarioComite() {
+		return comentarioComite;
+	}
+
+	public void setComentarioComite(String comentarioComite) {
+		this.comentarioComite = comentarioComite;
+	}
+	
+	public BigDecimal getValorLaudoPajuTotal() {
+		return valorLaudoPajuTotal;
+	}
+
+	public void setValorLaudoPajuTotal(BigDecimal valorLaudoPajuTotal) {
+		this.valorLaudoPajuTotal = valorLaudoPajuTotal;
+	}
+
+	public BigDecimal getValorLaudoPajuPago() {
+		return valorLaudoPajuPago;
+	}
+
+	public void setValorLaudoPajuPago(BigDecimal valorLaudoPajuPago) {
+		this.valorLaudoPajuPago = valorLaudoPajuPago;
+	}
+
+	public BigDecimal getValorLaudoPajuFaltante() {
+		return valorLaudoPajuFaltante;
+	}
+
+	public void setValorLaudoPajuFaltante(BigDecimal valorLaudoPajuFaltante) {
+		this.valorLaudoPajuFaltante = valorLaudoPajuFaltante;
+	}
 }

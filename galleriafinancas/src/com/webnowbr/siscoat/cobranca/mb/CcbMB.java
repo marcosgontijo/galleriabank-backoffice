@@ -55,7 +55,9 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
@@ -285,7 +287,8 @@ public class CcbMB {
     public int fileTypeInt;
     
     String tituloPagadorRecebedorDialog = "";
-	
+    
+    private ContratoCobranca objetoContratoCobranca;
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
@@ -424,21 +427,27 @@ public class CcbMB {
 		return listaCrea;
 	}
 	
-	/*
-	 * public String EmitirCcbPreContrato() { ContratoCobrancaMB CcMb = new
-	 * ContratoCobrancaMB(); CcMb.objetoContratoCobranca =
-	 * getContratoById(CcMb.objetoContratoCobranca.getId());
-	 * CcMb.objetoImovelCobranca = CcMb.objetoContratoCobranca.getImovel();
-	 * CcMb.objetoPagadorRecebedor = CcMb.objetoContratoCobranca.getPagador();
-	 * CcMb.loadLovs(); CcMb.loadSelectedLovsPendentes();
-	 * 
-	 * ccbMb.setSelectedPagadorGenerico(this.objetoPagadorRecebedor);
-	 * ccbMb.setTipoPesquisa("Emitente"); ccbMb.populateSelectedPagadorRecebedor();
-	 * 
-	 * ccbMb.setNumeroParcelasPagamento("3");
-	 * 
-	 * return "/Atendimento/Cobranca/Ccb.xhtml"; }
-	 */
+	
+	
+	public String EmitirCcbPreContrato() {
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
+		this.setTipoPesquisa("Emitente"); 
+		populateSelectedPagadorRecebedor();
+		
+		
+		return "/Atendimento/Cobranca/Ccb.xhtml";
+	}
+	
+	public ContratoCobranca getContratoById(long idContrato) {
+		ContratoCobranca contrato = new ContratoCobranca();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				
+		contrato = cDao.findById(idContrato);
+		
+		return contrato;
+	}
+	 
 	
 	public void populateSelectedPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Emitente")) {
@@ -3068,6 +3077,14 @@ public class CcbMB {
 
 	public void setTituloPagadorRecebedorDialog(String tituloPagadorRecebedorDialog) {
 		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
+	}
+
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
 	
 }

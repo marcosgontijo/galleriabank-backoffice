@@ -710,6 +710,19 @@
 		<property name="agRegistro" type="boolean">
 			<column name="agRegistro" />
 		</property>
+		
+		<property name="aprovadoComiteData"
+			type="java.util.Date">
+			<column name="aprovadoComiteData" />
+		</property>
+		<property name="aprovadoComiteUsuario"
+			type="java.lang.String">
+			<column name="aprovadoComiteUsuario" />
+		</property>
+		<property name="aprovadoComite" type="boolean">
+			<column name="aprovadoComite" />
+		</property>
+		
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
 			<column name="visitaImovelAprovadaData" />
@@ -1256,8 +1269,6 @@
 		<property name="telefoneEmailDocumentosCheckList" type="boolean">
 			<column name="telefoneEmailDocumentosCheckList" />
 		</property>		
-		
-	
 		<property name="nomeParticipanteSecundarioCheckList" type="java.lang.String">
 			<column name="nomeParticipanteSecundarioCheckList" />
 		</property>	
@@ -1288,6 +1299,38 @@
 		
 		<property name="iuguLaudoPaju" type="java.lang.String">
 			<column name="iuguLaudoPaju" />
-		</property>		
+		</property>	
+
+		<property name="comentarioComite" type="java.lang.String">
+			<column name="comentarioComite" />
+		</property>	
+		<property name="tipoValorComite" type="java.lang.String">
+			<column name="tipoValorComite" />
+		</property>	
+		
+		<property name="taxaAprovada" type="big_decimal">
+			<column name="taxaAprovada" />
+		</property>
+						
+		<property name="prazoMaxAprovado" type="big_integer">
+			<column name="prazoMaxAprovado" />
+		</property>
+		
+		<property name="valorAprovadoComite" type="big_decimal">
+			<column name="valorAprovadoComite" />
+		</property>
+		
+		<property name="valorLaudoPajuTotal" type="big_decimal">
+			<column name="valorLaudoPajuTotal" />
+		</property>
+		
+		<property name="valorLaudoPajuPago" type="big_decimal">
+			<column name="valorLaudoPajuPago" />
+		</property>
+		
+		<property name="valorLaudoPajuFaltante" type="big_decimal">
+			<column name="valorLaudoPajuFaltante" />
+		</property>
+
 	</class>
 </hibernate-mapping>

@@ -38,6 +38,10 @@ public class CRMMB {
 	private int qtdeAgPAJUeLaudo;
 	private BigDecimal valorTotalAgPAJUeLaudo;
 	
+	private List<ContratoCobranca> agComite;
+	private int qtdeAgComite;
+	private BigDecimal valorTotalAgComite;
+	
 	private List<ContratoCobranca> agDOC;
 	private int qtdeAgDOC;
 	private BigDecimal valorTotalAgDOC;
@@ -72,6 +76,7 @@ public class CRMMB {
 		geraConsultaContratosEmAnalise();
 		geraConsultaContratosAgPagtoBoleto();
 		geraConsultaContratosAgPAJUeLaudo();
+		geraConsultaContratosAgComite();
 		geraConsultaContratosAgDOC();
 		geraConsultaContratosAgCCB();
 		geraConsultaContratosAgAssinatura();
@@ -136,6 +141,7 @@ public class CRMMB {
 			
 			this.tituloPagina = "Ag. PAJU e Laudo";
 		}
+		
 		if (filtro.equals("AgDOC")) {
 			geraConsultaContratosAgDOC();
 			this.todosContratos = this.agDOC;
@@ -144,6 +150,16 @@ public class CRMMB {
 			
 			this.tituloPagina = "Ag. DOC";
 		}
+		
+		if (filtro.equals("AgComite")) {
+			geraConsultaContratosAgComite();
+			this.todosContratos = this.agComite;
+			this.qtdeTodosContratos = this.qtdeAgComite;
+			this.valorTodosContratos = this.valorTotalAgComite;
+			
+			this.tituloPagina = "Ag. Comite";
+		}
+		
 		if (filtro.equals("AgCCB")) {
 			geraConsultaContratosAgCCB();
 			this.todosContratos = this.agCCB;
@@ -372,6 +388,39 @@ public class CRMMB {
 			}
 		}
 	}
+	
+	public void geraConsultaContratosAgComite() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.agComite = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.agComite = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Ag. Comite");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.agComite = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Ag. Comite"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAgComite = 0;
+		this.valorTotalAgComite = BigDecimal.ZERO;
+		
+		if (this.agComite.size() > 0) {
+			this.qtdeAgComite = this.agComite.size();
+			
+			for (ContratoCobranca c : this.agComite) {
+				this.valorTotalAgComite = valorTotalAgComite.add(c.getQuantoPrecisa());
+			}
+		}
+	}
 
 	public void geraConsultaContratosAgDOC() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -544,9 +593,19 @@ public class CRMMB {
 				c.setStatus("Ag. DOC");
 			}
 			
+			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && !c.isAprovadoComite()) {
+				c.setStatus("Ag. Comite");
+			}
+			
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
 				c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
-				c.setStatus("Ag. CCB");
+				
+				if(!c.isAprovadoComite()) {
+					c.setStatus("Ag. Comite");
+				} else {
+					c.setStatus("Ag. CCB");
+				}		
 			}
 			
 			if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
@@ -771,8 +830,30 @@ public class CRMMB {
 		this.valorTotalAgRegistro = valorTotalAgRegistro;
 	}
 	
+	public List<ContratoCobranca> getAgComite() {
+		return agComite;
+	}
 
-	
+	public void setAgComite(List<ContratoCobranca> agComite) {
+		this.agComite = agComite;
+	}
+
+	public int getQtdeAgComite() {
+		return qtdeAgComite;
+	}
+
+	public void setQtdeAgComite(int qtdeAgComite) {
+		this.qtdeAgComite = qtdeAgComite;
+	}
+
+	public BigDecimal getValorTotalAgComite() {
+		return valorTotalAgComite;
+	}
+
+	public void setValorTotalAgComite(BigDecimal valorTotalAgComite) {
+		this.valorTotalAgComite = valorTotalAgComite;
+	}
+
 	public List<ContratoCobranca> getTodosContratos() {
 		return todosContratos;
 	}

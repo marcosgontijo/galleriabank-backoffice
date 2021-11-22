@@ -35,14 +35,18 @@ public class SeguroTabelaMB {
 	
 	boolean seguroDFI;
 	boolean seguroMIP;
+	public String empresa;
 	private Date dataDesagio = new Date();
-
 	
 	
 	private List<SeguroTabelaVO> contratosSeguroDFI;
 	private List<SeguroTabelaVO> contratosSeguroMIP;
 	
 	public String clearFields() {
+		this.empresa = "Todas";
+		this.seguroDFI = false;
+		this.seguroMIP = false;
+		this.dataDesagio = new Date();
 		return "/Relatorios/Seguro/SeguradoTabela.xhtml";
 	}
 	
@@ -51,8 +55,8 @@ public class SeguroTabelaMB {
 		this.contratosSeguroMIP = new ArrayList<SeguroTabelaVO>(0); 
 			try {
 				SeguradoDAO seguroDAO = new SeguradoDAO();
-				this.contratosSeguroDFI = seguroDAO.listaSeguradosDFI(0, dataDesagio);				
-				this.contratosSeguroMIP = seguroDAO.listaSeguradosMIP(0, dataDesagio);
+				this.contratosSeguroDFI = seguroDAO.listaSeguradosDFI(0, this.dataDesagio, this.empresa);				
+				this.contratosSeguroMIP = seguroDAO.listaSeguradosMIP(0, this.dataDesagio, this.empresa);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -275,6 +279,14 @@ public class SeguroTabelaMB {
 
 	public void setDataDesagio(Date dataDesagio) {
 		this.dataDesagio = dataDesagio;
+	}
+
+	public String getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(String empresa) {
+		this.empresa = empresa;
 	}
 	
 	

@@ -65,6 +65,10 @@
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. DOC" ajax="false" action="#{crmMB.consultaContratosCRM('AgDOC')}" update="ConsultaContratos" style="padding: 4px; "/>
 							<p:spacer width="6"></p:spacer>
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:commandButton value="Ag. Comite" ajax="false" action="#{crmMB.consultaContratosCRM('aprovadoComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+								<p:spacer width="6"></p:spacer>
+							</shiro:hasAnyRoles>
 							<p:commandButton value="Ag. CCB" ajax="false" action="#{crmMB.consultaContratosCRM('AgCCB')}" update="ConsultaContratos" style="padding: 4px; "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. Assinatura" ajax="false" action="#{crmMB.consultaContratosCRM('AgAssinatura')}" update="ConsultaContratos" style="padding: 4px; "/>

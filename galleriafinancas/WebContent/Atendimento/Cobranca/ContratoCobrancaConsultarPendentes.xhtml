@@ -133,11 +133,9 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>
-			               <!--  <p:commandButton  value="Emitir CCB">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
-			                </p:commandButton>	-->	                	
+			               <p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
+			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
 		            </p:column>	
 					<f:facet name="footer">
