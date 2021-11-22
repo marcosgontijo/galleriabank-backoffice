@@ -92,15 +92,19 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 						ps = connection.prepareStatement(QUERY_SEGURADOS_DFI);
 					} else {
 						ps = connection.prepareStatement(QUERY_SEGURADOS_DFI_EMPRESA);
-						ps.setString(2, empresa);
+					
 					}
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
 					ps.setString(1, sdf.format(dataDesagio));
+					
+					if (!CommonsUtil.mesmoValor(empresa, "Todas") ) {
+						ps.setString(2, empresa);
+					}
 
 					rs = ps.executeQuery();
 					
-					String numeroContratoSeguroantigo = "";
+					String numeroContratoSeguroantigo = "numeroContratoSeguroantigo";
 					SeguroTabelaVO seguroTabelaVO = null;
 										
 					while (rs.next()) {	
@@ -141,7 +145,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							seguroTabelaVO.setCep(rs.getString("cep"));						
 							numeroContratoSeguroantigo = (rs.getString("numerocontratoseguro"));
 							
-						} else if (CommonsUtil.semValor(seguroTabelaVO.getPorcentagem2()) && CommonsUtil.semValor(seguroTabelaVO.getCpf2()) && CommonsUtil.semValor(seguroTabelaVO.getNome2())) {
+						} else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem2()) && CommonsUtil.semValor(seguroTabelaVO.getCpf2()) && CommonsUtil.semValor(seguroTabelaVO.getNome2())) {
 							seguroTabelaVO.setPorcentagem2(rs.getBigDecimal("porcentagemsegurador"));							
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpf2(rs.getString("cpf"));
@@ -149,7 +153,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCpf2(rs.getString("cnpj"));
 							}
 							seguroTabelaVO.setNome2(rs.getString("nome"));							
-						}  else if (CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
+						}  else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
 							seguroTabelaVO.setPorcentagem3(rs.getBigDecimal("porcentagemsegurador"));
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpf3(rs.getString("cpf"));
@@ -157,7 +161,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCpf3(rs.getString("cnpj"));
 							}							
 							seguroTabelaVO.setNome3(rs.getString("nome"));							
-						} else {
+						} else if (seguroTabelaVO != null ) {
 							seguroTabelaVO.setPorcentagem4(rs.getBigDecimal("porcentagemsegurador"));
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpf4(rs.getString("cpf"));
