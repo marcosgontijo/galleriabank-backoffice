@@ -481,6 +481,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date vencimentoBoleto;
 	private BigDecimal valorBoletoPreContrato;
+	private String valorBoletoPreContratoStr;
 	private BigDecimal taxaPreAprovada;
 	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
@@ -4207,5 +4208,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorLaudoPajuFaltante(BigDecimal valorLaudoPajuFaltante) {
 		this.valorLaudoPajuFaltante = valorLaudoPajuFaltante;
+	}
+	
+	public String getValorBoletoPreContratoStr() {
+		return valorBoletoPreContratoStr;
+	}
+
+	public void setValorBoletoPreContratoStr(String valorBoletoPreContratoStr) {
+		this.valorBoletoPreContratoStr = valorBoletoPreContratoStr;
 	}
 }

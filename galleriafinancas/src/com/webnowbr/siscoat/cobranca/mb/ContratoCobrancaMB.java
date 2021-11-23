@@ -896,7 +896,9 @@ public class ContratoCobrancaMB {
 		
 		BigDecimal valorItem = new BigDecimal(valorBoletoStr.replace(".", "").replace(",", "."));
 		this.iuguMb.setValorItem(valorItem);
-		this.iuguMb.setContratoCobranca(this.objetoContratoCobranca);
+		this.objetoContratoCobranca.setValorBoletoPreContrato(valorItem);
+		
+		this.iuguMb.setContratoCobranca(this.objetoContratoCobranca);		
 				
 		this.iuguMb.geraCobrancaSimplesContrato("bd88479c57011124c25638b26572e453", 34);
 	}
