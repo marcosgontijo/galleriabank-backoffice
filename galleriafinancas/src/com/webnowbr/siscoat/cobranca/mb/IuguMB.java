@@ -5127,7 +5127,7 @@ public class IuguMB {
 			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
 		}
 
-		String descricaoCompleta = "Laudo + Parecer Jurídico";
+		String descricaoCompleta = this.idContrato + "Laudo + Parecer Jurídico";
 
 		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
 

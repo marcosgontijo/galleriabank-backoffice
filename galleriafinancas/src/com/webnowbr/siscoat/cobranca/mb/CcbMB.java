@@ -58,11 +58,14 @@ import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 
 /** ManagedBean. */
@@ -567,7 +570,12 @@ public class CcbMB {
 
 	public void handleFileUpload(FileUploadEvent event) {
 		uploadedFile = event.getFile();
-	    fileName = uploadedFile.getFileName();
+	    fileslist.add(uploadedFile);
+    }
+	
+	public void populateFiles(int index) {
+		uploadedFile = fileslist.get(index);
+		fileName = uploadedFile.getFileName();
 	    fileType = uploadedFile.getContentType();
 	    if(fileType.contains("png")) {
 	    	fileTypeInt = 6;
@@ -576,13 +584,16 @@ public class CcbMB {
 	    	fileTypeInt = 5;
 	    	fileType = "jpeg";
 	    }
-	    fileslist.add(uploadedFile);
-    }
+	}
 	
 	public void clearFiles() {
 		uploadedFile = null;
 	    fileName = null;
 	    fileType = null;
+	}
+	
+	public void removerArquivo(UploadedFile file) {
+		this.getFileslist().remove(file);		
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
@@ -1172,8 +1183,9 @@ public class CcbMB {
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteDFI", this.montanteDFI);
 						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.tarifaAntecipada);
 								 
-						if (text != null && text.contains("ImagemImovel") && uploadedFile != null) {
+						if (text != null && text.contains("ImagemImovel") && fileslist.size() > 0) {
 							r.addBreak();
+							this.populateFiles(0);
 							r.addPicture(bis, fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
 							r.addBreak();
 						} 				
