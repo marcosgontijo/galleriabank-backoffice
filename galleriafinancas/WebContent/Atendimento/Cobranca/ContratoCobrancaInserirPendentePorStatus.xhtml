@@ -399,45 +399,40 @@
 					</h:panelGroup>
 				</shiro:hasAnyRoles>
 				
-				<h:panelGroup id="BoletoPanel" style="margin-bottom:20px;">
-					<p:panel header="Gerar Boleto"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
-						<h:panelGroup rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}">
-
-						<h:panelGrid columns="2">
+				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
+					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto}"
-								label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
+								label="Data Vistoria ImÃ³vel" size="100" pattern="dd/MM/yyyy"
 								locale="pt" styleClass="dateTimeField" />
 
-							<p:outputLabel for="valorBoleto" value="Valor do Boleto: "
+							<p:outputLabel for="valorBoletoPre" value="Valor do Boleto: "
 								styleClass="labelBold" />
-							<p:selectOneMenu id="valorBoleto"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato}" ajax="true"
+							<p:selectOneMenu id="valorBoletoPre"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="825"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="1650"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
+								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
 							</p:selectOneMenu>
 							
-
 							<p:outputLabel value="Exibir Fatura: "
 								styleClass="labelBold" />
 							<a href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}" class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
 			        
-							<p:commandButton value="Gerar Boleto IUGU"
+							<p:commandButton value="Gerar Boleto IUGU" 
 								action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca,
 																			contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto,																	
-																			contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContrato
+																			contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr
 																			)}"
 								update=":form:BoletoPanel :form:BoletoPAJULaudo"
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
-
 						</h:panelGrid>
-						</h:panelGroup>
-					</p:panel> 
+					</p:panel>
 				</h:panelGroup>
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">

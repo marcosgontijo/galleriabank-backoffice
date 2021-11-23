@@ -80,7 +80,7 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Avaliação" filterBy="#{segurado.avaliacao}"
 						filterMatchMode="contains" sortBy="#{segurado.avaliacao}">
-						<h:outputText value="#{segurado.avaliacao}" />
+						<h:outputText value="#{segurado.avaliacao}"/>
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
@@ -99,6 +99,7 @@
 						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
 						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}" >
 						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+						<h:outputText value=" %" />
 					</p:column>
 					
 				<!-- <p:column style="text-align: center;width: 100px;"
@@ -182,6 +183,7 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Saldo Devedor" filterBy="#{segurado.saldoDevedor}"
 						filterMatchMode="contains" sortBy="#{segurado.saldoDevedor}">
+						<h:outputText value="R$ " />
 						<h:outputText value="#{segurado.saldoDevedor}" />
 					</p:column>
 					
@@ -214,6 +216,7 @@
 						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
 						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}">
 						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+						<h:outputText value=" %" />
 					</p:column>
 					
 					<!-- <p:column style="text-align: center;width: 100px;"

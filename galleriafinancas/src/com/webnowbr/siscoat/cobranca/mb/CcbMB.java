@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -59,7 +60,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -285,6 +285,9 @@ public class CcbMB {
     public String fileName;
     public String fileType;
     public int fileTypeInt;
+    
+    private ArrayList<UploadedFile> fileslist = new ArrayList<UploadedFile>();
+	
     
     String tituloPagadorRecebedorDialog = "";
     
@@ -573,6 +576,7 @@ public class CcbMB {
 	    	fileTypeInt = 5;
 	    	fileType = "jpeg";
 	    }
+	    fileslist.add(uploadedFile);
     }
 	
 	public void clearFiles() {
@@ -3086,5 +3090,13 @@ public class CcbMB {
 	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
 		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
-	
+
+	public ArrayList<UploadedFile> getFileslist() {
+		return fileslist;
+	}
+
+	public void setFileslist(ArrayList<UploadedFile> fileslist) {
+		this.fileslist = fileslist;
+	}
+
 }

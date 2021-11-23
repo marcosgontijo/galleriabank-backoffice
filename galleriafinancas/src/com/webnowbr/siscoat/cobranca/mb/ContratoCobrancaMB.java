@@ -69,6 +69,7 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;

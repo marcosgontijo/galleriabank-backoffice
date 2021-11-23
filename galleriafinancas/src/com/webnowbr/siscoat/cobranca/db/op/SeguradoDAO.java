@@ -124,7 +124,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}
 							
 							seguroTabelaVO.setNumeroContratoSeguro(rs.getString("numerocontratoseguro"));
-							seguroTabelaVO.setAvaliacao(rs.getBigDecimal("valorimovel"));
+							seguroTabelaVO.setAvaliacao(rs.getBigDecimal("valorimovel")); 
 							seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));
 							seguroTabelaVO.setParcelasFaltantes(rs.getString("qtdeparcelasFaltantes"));
 							Integer parcelasFaltantesint = CommonsUtil.integerValue(seguroTabelaVO.getParcelasFaltantes());
