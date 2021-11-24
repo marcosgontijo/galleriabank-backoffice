@@ -4633,6 +4633,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		this.contratos = new ArrayList<ContratoCobranca>();
 		
 		this.tituloPainel = "Editar";
 
@@ -4661,8 +4662,21 @@ public class ContratoCobrancaMB {
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
 		// saveEstadoCheckListAtual();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-		return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador()) {
+					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
+				} else {
+					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
+				}
+			}
+		}
+		return null;
 	}
 
 	public void saveEstadoCheckListAtual() {

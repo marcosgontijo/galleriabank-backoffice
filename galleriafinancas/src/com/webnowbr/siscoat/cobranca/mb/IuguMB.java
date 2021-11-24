@@ -5193,9 +5193,7 @@ public class IuguMB {
 				this.selectedRecebedor.setCep("13091-611");
 			}
 			
-			if (this.selectedRecebedor.getEmail() == null || this.selectedRecebedor.getEmail().equals("")) {
-				this.selectedRecebedor.setEmail("galleriafinancas@galleriabank.com.br");
-			} 
+			this.selectedRecebedor.setEmail("joaopedro.galleriafinancas@gmail.com");
 			
 			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
 				dadosValidos = false;
