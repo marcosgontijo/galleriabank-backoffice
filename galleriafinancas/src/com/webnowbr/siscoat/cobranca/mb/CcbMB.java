@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -60,10 +63,10 @@ import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.CcbVO;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -292,6 +295,10 @@ public class CcbMB {
     public int fileTypeInt;
     ByteArrayInputStream bis = null;
     
+    CcbVO participanteSelecionado = new CcbVO();
+    private Set<CcbVO> listaParticipantes;
+    private boolean addParticipante;
+    
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
 	
     
@@ -304,6 +311,33 @@ public class CcbMB {
 	
 	private List<SelectItem> listaBancosNome;
 	private List<SelectItem> listaBancosCodigo;
+	
+
+	public void pesquisaParticipante() {
+		this.tipoPesquisa = "Participante";
+		this.updatePagadorRecebedor = ":form:ParticipantesPanel";
+		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+
+	public void concluirParticipante() {
+		this.getListaParticipantes().add(this.participanteSelecionado);
+		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+		this.addParticipante = false;
+		}
+	
+	public void editarParticipante(CcbVO participante) {
+		this.addParticipante = true;
+		this.participanteSelecionado = new CcbVO();
+		this.setParticipanteSelecionado(participante);
+		this.removerParticipante(participante);
+	}
+	
+	public void removerParticipante(CcbVO participante) {
+		this.getListaParticipantes().remove(participante);
+	}
 	
 	public void pesquisaBancosListaNome() {
 		this.listaBancosNome = new ArrayList<>();
@@ -561,6 +595,9 @@ public class CcbMB {
 			this.setCpfTestemunha2(this.testemunha2Selecionado.getCpf());
 			this.setRgTestemunha2(this.testemunha2Selecionado.getRg());
 		}
+		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Participante")) {
+			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
+		}
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, String valorSobrescrever) {
@@ -606,7 +643,7 @@ public class CcbMB {
 	}
 	
 	public void removerArquivo(UploadedFile file) {
-		this.getfilesList().remove(file);		
+		this.getFilesList().remove(file);		
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
@@ -733,16 +770,39 @@ public class CcbMB {
 			XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			XWPFParagraph paragraphHeader = header.createParagraph();
-			paragraphHeader.setAlignment(ParagraphAlignment.CENTER);
+			paragraphHeader.setAlignment(ParagraphAlignment.RIGHT);
 			XWPFRun runHeader = paragraphHeader.createRun();  
-			runHeader.setText("Hello World");
-			runHeader.setFontSize(14);
+			runHeader.setText("VIA NEGOCIÁVEL");
+			runHeader.setFontSize(12);
+			runHeader.setColor("0000ff");
+			runHeader.setBold(true);
 			
 			XWPFParagraph paragraph = document.createParagraph();
 			XWPFRun run = paragraph.createRun();
-			run.setText("\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\"");
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			run.setText("CÉDULA DE CRÉDITO BANCÁRIO");	
+			run.addBreak();
+			run.setText("Nº XXXXXX");	
+			run.setFontSize(14);
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addBreak();
+			paragraph = document.createParagraph();
+			paragraph.setNumID(BigInteger.ONE);
+			document.createNumbering().addNum(paragraph.getNumID());			
+			run = paragraph.createRun();
+			run.setText("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?");
 			run.setFontSize(12);
 			
+			for (XWPFParagraph p : document.getParagraphs()) {
+			    List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            adicionarEnter(text, r);
+			    	}
+			    }
+			}
 			
 			
 			ByteArrayOutputStream  out = new ByteArrayOutputStream ();
@@ -770,9 +830,8 @@ public class CcbMB {
 	    	String tipoDownload = this.getTipoDownload();
 	    	
 	    	XWPFDocument document = new XWPFDocument();
+	    
 	    	
-	    	
-	    			
 	    	if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
 	    		if(CommonsUtil.mesmoValor(this.addTerceiro, true)) {
 	    			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TG.docx"));
@@ -3152,14 +3211,6 @@ public class CcbMB {
 		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
 
-	public ArrayList<UploadedFile> getfilesList() {
-		return filesList;
-	}
-
-	public void setfilesList(ArrayList<UploadedFile> filesList) {
-		this.filesList = filesList;
-	}
-
 	public ByteArrayInputStream getBis() {
 		return bis;
 	}
@@ -3168,4 +3219,35 @@ public class CcbMB {
 		this.bis = bis;
 	}
 
+	public Set<CcbVO> getListaParticipantes() {
+		return listaParticipantes;
+	}
+
+	public void setListaParticipantes(Set<CcbVO> listaParticipantes) {
+		this.listaParticipantes = listaParticipantes;
+	}
+
+	public ArrayList<UploadedFile> getFilesList() {
+		return filesList;
+	}
+
+	public void setFilesList(ArrayList<UploadedFile> filesList) {
+		this.filesList = filesList;
+	}
+
+	public CcbVO getParticipanteSelecionado() {
+		return participanteSelecionado;
+	}
+
+	public void setParticipanteSelecionado(CcbVO participanteSelecionado) {
+		this.participanteSelecionado = participanteSelecionado;
+	}
+
+	public boolean isAddParticipante() {
+		return addParticipante;
+	}
+	
+	public void setAddParticipante(boolean addParticipante) {
+		this.addParticipante = addParticipante;
+	}
 }

@@ -1,114 +1,131 @@
 package com.webnowbr.siscoat.cobranca.vo;
 
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+
 public class CcbVO {
-	
+	private String numeroContrato;
+	private PagadorRecebedor pessoa;
 	private String tipoPessoa;
-	private String nome;
-	private String nacionalidade;
-	private String profissao;
-	private String estadoCivil;
-	private String numeroRg;
-	private String uf;
-	private String cpf;
-	private String logradouro;
-	private String numero;
-	private String complemento;
-	private String cidade;
-	private String cep;
-	private String email;
-	private String RegimeCasamento;
+	private String nacionalidade;	
+	private boolean fiduciante;
+	private boolean feminino;
+	private boolean empresa;	
+	private String razaoSocial;
+	private String tipoEmpresa;
+	private String cnpj;
+	private String municipioEmpresa;
+	private String estadoEmpresa;
+	private String ruaEmpresa;
+	private String numeroEmpresa;
+	private String salaEmpresa;
+	private String bairroEmpresa;
+	private String cepEmpresa;
+
 	
 	
-	
+	public PagadorRecebedor getPessoa() {
+		return pessoa;
+	}
+	public void setPessoa(PagadorRecebedor pessoa) {
+		this.pessoa = pessoa;
+	}
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
+	}
 	public String getTipoPessoa() {
 		return tipoPessoa;
 	}
 	public void setTipoPessoa(String tipoPessoa) {
 		this.tipoPessoa = tipoPessoa;
 	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+	
 	public String getNacionalidade() {
 		return nacionalidade;
 	}
 	public void setNacionalidade(String nacionalidade) {
 		this.nacionalidade = nacionalidade;
 	}
-	public String getProfissao() {
-		return profissao;
+	public boolean isFiduciante() {
+		return fiduciante;
 	}
-	public void setProfissao(String profissao) {
-		this.profissao = profissao;
+	public void setFiduciante(boolean fiduciante) {
+		this.fiduciante = fiduciante;
 	}
-	public String getEstadoCivil() {
-		return estadoCivil;
+	public boolean isFeminino() {
+		return feminino;
 	}
-	public void setEstadoCivil(String estadoCivil) {
-		this.estadoCivil = estadoCivil;
+	public void setFeminino(boolean feminino) {
+		this.feminino = feminino;
 	}
-	public String getNumeroRg() {
-		return numeroRg;
+	public boolean isEmpresa() {
+		return empresa;
 	}
-	public void setNumeroRg(String numeroRg) {
-		this.numeroRg = numeroRg;
+	public void setEmpresa(boolean empresa) {
+		this.empresa = empresa;
 	}
-	public String getUf() {
-		return uf;
+	public String getRazaoSocial() {
+		return razaoSocial;
 	}
-	public void setUf(String uf) {
-		this.uf = uf;
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
 	}
-	public String getCpf() {
-		return cpf;
+	public String getTipoEmpresa() {
+		return tipoEmpresa;
 	}
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setTipoEmpresa(String tipoEmpresa) {
+		this.tipoEmpresa = tipoEmpresa;
 	}
-	public String getLogradouro() {
-		return logradouro;
+	public String getCnpj() {
+		return cnpj;
 	}
-	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
 	}
-	public String getNumero() {
-		return numero;
+	public String getMunicipioEmpresa() {
+		return municipioEmpresa;
 	}
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setMunicipioEmpresa(String municipioEmpresa) {
+		this.municipioEmpresa = municipioEmpresa;
 	}
-	public String getComplemento() {
-		return complemento;
+	public String getEstadoEmpresa() {
+		return estadoEmpresa;
 	}
-	public void setComplemento(String complemento) {
-		this.complemento = complemento;
+	public void setEstadoEmpresa(String estadoEmpresa) {
+		this.estadoEmpresa = estadoEmpresa;
 	}
-	public String getCidade() {
-		return cidade;
+	public String getRuaEmpresa() {
+		return ruaEmpresa;
 	}
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
+	public void setRuaEmpresa(String ruaEmpresa) {
+		this.ruaEmpresa = ruaEmpresa;
 	}
-	public String getCep() {
-		return cep;
+	public String getNumeroEmpresa() {
+		return numeroEmpresa;
 	}
-	public void setCep(String cep) {
-		this.cep = cep;
+	public void setNumeroEmpresa(String numeroEmpresa) {
+		this.numeroEmpresa = numeroEmpresa;
 	}
-	public String getEmail() {
-		return email;
+	public String getSalaEmpresa() {
+		return salaEmpresa;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setSalaEmpresa(String salaEmpresa) {
+		this.salaEmpresa = salaEmpresa;
 	}
-	public String getRegimeCasamento() {
-		return RegimeCasamento;
+	public String getBairroEmpresa() {
+		return bairroEmpresa;
 	}
-	public void setRegimeCasamento(String regimeCasamento) {
-		RegimeCasamento = regimeCasamento;
+	public void setBairroEmpresa(String bairroEmpresa) {
+		this.bairroEmpresa = bairroEmpresa;
 	}
+	public String getCepEmpresa() {
+		return cepEmpresa;
+	}
+	public void setCepEmpresa(String cepEmpresa) {
+		this.cepEmpresa = cepEmpresa;
+	}
+	
 	
 }

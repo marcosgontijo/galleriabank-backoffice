@@ -1003,6 +1003,64 @@
 						</h:panelGroup>
 					</p:panel>
 
+					<!-- <h:panelGroup id="ParticipantesPanel">
+							<p:panel header="Participantes" style="margin-bottom:10px;">
+								<f:facet name="header"> Participantes 
+								<p:outputLabel value="" />
+									<p:selectBooleanButton value="#{ccbMB.addParticipante}"
+										onLabel="Adicionar Participante" offLabel="Adicionar Participante">
+										<p:ajax update=":form:ParticipantesPanel" event="change" />
+									</p:selectBooleanButton>
+								</f:facet>
+
+								<p:dataView var="participante"
+									value="#{ccbMB.listaParticipantes}"
+									paginator="false" layout="list"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:dataViewListItem>
+									<p:outputLabel value="Nome: " styleClass="labelBold" />
+										<p:outputLabel value="#{participante.pessoa.nome}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;" />
+										<p:spacer height="10" />
+										<p:commandButton value="Editar" icon="ui-icon-pencil"
+											action="#{ccbMB.editarParticipante(participante)}"
+											ajax="true" update=":form:ParticipantesPanel" />
+										<p:commandButton value="Remover" icon="ui-icon-trash"
+											action="#{ccbMB.removerParticipante(participante)}"
+											ajax="true" update=":form:ParticipantesPanel" />
+									</p:dataViewListItem>
+								</p:dataView>
+
+								<h:panelGroup id="adicionarParticipante"
+									rendered="#{ccbMB.addParticipante}">
+								<h:panelGrid columns="2">
+									<p:spacer height="10" />
+									<p:spacer height="10" />
+									<p:outputLabel value="Adicionar Participante" styleClass="labelBold" />
+								 espaço em branco para formação dos elementos na tela
+
+									<p:outputLabel for="ParticipanteNome" value="Nome: "
+										styleClass="labelBold" />
+									<h:panelGroup>
+										<p:inputText id="ParticipanteNome"
+											value="#{ccbMB.participanteSelecionado.pessoa.nome}"
+											required="false" style="FONT-SIZE: 10pt;width:300px;" />
+										<p:commandButton action="#{ccbMB.pesquisaParticipante}"
+											icon="ui-icon ui-icon-circle-zoomin"
+											oncomplete="PF('pagadorRecebedorDialog').show();"
+											update="formReceborPagador" />
+									</h:panelGroup>
+
+									
+									
+								</h:panelGrid>
+									<p:commandButton value="Adicionar" ajax="true"
+										action="#{ccbMB.concluirParticipante()}"
+										update=":form:ParticipantesPanel" image="ui-icon ui-icon-check" />
+								</h:panelGroup>
+							</p:panel>
+						</h:panelGroup> -->
+					
 					<p:panel id="Dados" header="Dados" style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
 							<p:panel header="Credito">
