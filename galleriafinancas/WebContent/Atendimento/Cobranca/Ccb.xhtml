@@ -40,6 +40,7 @@
 								<f:selectItem itemValue="AF" itemLabel="AF" />
 								<f:selectItem itemValue="NC" itemLabel="Notificacao de cessao" />
 								<f:selectItem itemValue="Excel" itemLabel="Excel (ainda em teste)" />
+								<f:selectItem itemValue="teste" itemLabel="teste" />
 							</p:selectOneMenu>	
 					</h:panelGrid>
 
@@ -1413,7 +1414,7 @@
 							<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 								style="margin-bottom:10px;text-align: center;">
 								<h:panelGrid columns="1">
-									<p:fileUpload label="Selecionar Arquivo(s)" value="#{ccbMB.fileslist}"
+									<p:fileUpload label="Selecionar Arquivo(s)" value="#{ccbMB.filesList}"
 										uploadLabel="Salvar Arquivo(s)" multiple="true"
 										cancelLabel="Cancelar" sequential="true" 
 										fileUploadListener="#{ccbMB.handleFileUpload}" mode="advanced"
@@ -1422,7 +1423,7 @@
 							</p:panel>
 
 							<p:dataView var="arquivo" id="arquivoDV"
-								value="#{ccbMB.fileslist}" 
+								value="#{ccbMB.filesList}" 
 								paginator="false" layout="list"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
