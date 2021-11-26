@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -295,7 +296,7 @@ public class CcbMB {
     public int fileTypeInt;
     ByteArrayInputStream bis = null;
     
-    CcbVO participanteSelecionado = new CcbVO();
+    private CcbVO participanteSelecionado = new CcbVO();
     private Set<CcbVO> listaParticipantes;
     private boolean addParticipante;
     
@@ -315,7 +316,7 @@ public class CcbMB {
 
 	public void pesquisaParticipante() {
 		this.tipoPesquisa = "Participante";
-		this.updatePagadorRecebedor = ":form:ParticipantesPanel";
+		this.updatePagadorRecebedor = ":form:ParticipantesPanel :form:Dados";
 		this.participanteSelecionado = new CcbVO();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 	}
@@ -1447,7 +1448,7 @@ public class CcbMB {
 	}
 	
 	public void clearPagadorRecebedor() {
-
+		this.participanteSelecionado = new CcbVO();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
 	}
@@ -1477,7 +1478,10 @@ public class CcbMB {
 	}
 	
 	public String clearFieldsEmitirCcb() {
-		loadLovs();
+		loadLovs();	
+		this.listaParticipantes = new HashSet<>();
+		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();

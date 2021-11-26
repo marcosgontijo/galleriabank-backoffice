@@ -24,6 +24,21 @@ public class Dashboard implements Serializable {
 	private String nomeResponsavel;
 	private String gerenteResponsavel;
 	private int totalNovosContratos;
+	
+	
+	private int contratosCadastrados;
+	private int contratosPreAprovados;
+	private int contratosBoletosPagos;
+	private int contratosCcbsEmitidas;
+	private int contratosRegistrados;
+	
+	private BigDecimal valorContratosCadastrados;
+	private BigDecimal valorContratosPreAprovados;
+	private BigDecimal valorBoletosPagos;
+	private BigDecimal valorCcbsEmitidas;
+	private BigDecimal valorContratosRegistrados;
+	
+	
 	private int totalAprovados;
 	private int totalReprovados;
 	private int totalaEmAnalise;
@@ -184,4 +199,85 @@ public class Dashboard implements Serializable {
 	public void setTotalCCB(BigDecimal totalCCB) {
 		this.totalCCB = totalCCB;
 	}
+
+	public int getContratosCadastrados() {
+		return contratosCadastrados;
+	}
+
+	public void setContratosCadastrados(int contratosCadastrados) {
+		this.contratosCadastrados = contratosCadastrados;
+	}
+
+	public int getContratosPreAprovados() {
+		return contratosPreAprovados;
+	}
+
+	public void setContratosPreAprovados(int contratosPreAprovados) {
+		this.contratosPreAprovados = contratosPreAprovados;
+	}
+
+	public int getContratosBoletosPagos() {
+		return contratosBoletosPagos;
+	}
+
+	public void setContratosBoletosPagos(int contratosBoletosPagos) {
+		this.contratosBoletosPagos = contratosBoletosPagos;
+	}
+
+	public int getContratosCcbsEmitidas() {
+		return contratosCcbsEmitidas;
+	}
+
+	public void setContratosCcbsEmitidas(int contratosCcbsEmitidas) {
+		this.contratosCcbsEmitidas = contratosCcbsEmitidas;
+	}
+
+	public int getContratosRegistrados() {
+		return contratosRegistrados;
+	}
+
+	public void setContratosRegistrados(int contratosRegistrados) {
+		this.contratosRegistrados = contratosRegistrados;
+	}
+
+	public BigDecimal getValorContratosCadastrados() {
+		return valorContratosCadastrados;
+	}
+
+	public void setValorContratosCadastrados(BigDecimal valorContratosCadastrados) {
+		this.valorContratosCadastrados = valorContratosCadastrados;
+	}
+
+	public BigDecimal getValorContratosPreAprovados() {
+		return valorContratosPreAprovados;
+	}
+
+	public void setValorContratosPreAprovados(BigDecimal valorContratosPreAprovados) {
+		this.valorContratosPreAprovados = valorContratosPreAprovados;
+	}
+
+	public BigDecimal getValorBoletosPagos() {
+		return valorBoletosPagos;
+	}
+
+	public void setValorBoletosPagos(BigDecimal valorBoletosPagos) {
+		this.valorBoletosPagos = valorBoletosPagos;
+	}
+
+	public BigDecimal getValorCcbsEmitidas() {
+		return valorCcbsEmitidas;
+	}
+
+	public void setValorCcbsEmitidas(BigDecimal valorCcbsEmitidas) {
+		this.valorCcbsEmitidas = valorCcbsEmitidas;
+	}
+
+	public BigDecimal getValorContratosRegistrados() {
+		return valorContratosRegistrados;
+	}
+
+	public void setValorContratosRegistrados(BigDecimal valorContratosRegistrados) {
+		this.valorContratosRegistrados = valorContratosRegistrados;
+	}
+	
 }

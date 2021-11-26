@@ -74,14 +74,15 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Parcelas Faltantes" filterBy="#{segurado.parcelasFaltantes}"
 						filterMatchMode="contains" sortBy="#{segurado.parcelasFaltantes}">
-						<h:outputText value="R$ " />
-						<h:outputText value="#{segurado.parcelasFaltantes}" converter="bigDecimalConverter" />
+						
+						<h:outputText value="#{segurado.parcelasFaltantes}"  />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Avaliação" filterBy="#{segurado.avaliacao}"
 						filterMatchMode="contains" sortBy="#{segurado.avaliacao}">
-						<h:outputText value="#{segurado.avaliacao}"/>
+						<h:outputText value="R$ " />
+						<h:outputText value="#{segurado.avaliacao}" converter="bigDecimalConverter"/>
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"

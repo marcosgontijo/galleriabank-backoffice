@@ -2,10 +2,15 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.faces.model.SelectItem;
+
+import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class PagadorRecebedor implements Serializable {
@@ -42,6 +47,8 @@ public class PagadorRecebedor implements Serializable {
 	private String cep;
 	
 	private String banco;
+	private String bancoCompleto;
+	private List<SelectItem> listaBancos;
 	private String agencia;
 	private String conta;
 	private String nomeCC;
@@ -138,6 +145,7 @@ public class PagadorRecebedor implements Serializable {
 	private BigDecimal saldoInvestidor;
 
 	public PagadorRecebedor(){
+		pesquisaBancosListaNome();
 	}
 	
 	public PagadorRecebedor(long id, String nome, String endereco, String bairro, String complemento,
@@ -158,6 +166,15 @@ public class PagadorRecebedor implements Serializable {
 		this.rg = rg;
 		this.cpf = cpf;
 		this.cep = cep;
+		pesquisaBancosListaNome();
+	}
+	
+	public void pesquisaBancosListaNome() {
+		this.listaBancos = new ArrayList<>();
+		for(BancosEnum banco : BancosEnum.values()) {
+			SelectItem item = new SelectItem(banco.getNomeCompleto());
+			this.listaBancos.add(item);
+		}
 	}
 	
 	/**
@@ -1195,6 +1212,22 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setNomeMae(String nomeMae) {
 		this.nomeMae = nomeMae;
+	}
+
+	public String getBancoCompleto() {
+		return bancoCompleto;
+	}
+
+	public void setBancoCompleto(String bancoCompleto) {
+		this.bancoCompleto = bancoCompleto;
+	}
+
+	public List<SelectItem> getListaBancos() {
+		return listaBancos;
+	}
+
+	public void setListaBancos(List<SelectItem> listaBancos) {
+		this.listaBancos = listaBancos;
 	}
 	
 }

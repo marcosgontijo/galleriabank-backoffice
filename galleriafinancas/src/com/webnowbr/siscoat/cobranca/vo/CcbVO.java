@@ -5,7 +5,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 public class CcbVO {
 	private String numeroContrato;
 	private PagadorRecebedor pessoa;
-	private String tipoPessoa;
+	private String tipoParticipante;
 	private String nacionalidade;	
 	private boolean fiduciante;
 	private boolean feminino;
@@ -35,13 +35,6 @@ public class CcbVO {
 	public void setNumeroContrato(String numeroContrato) {
 		this.numeroContrato = numeroContrato;
 	}
-	public String getTipoPessoa() {
-		return tipoPessoa;
-	}
-	public void setTipoPessoa(String tipoPessoa) {
-		this.tipoPessoa = tipoPessoa;
-	}
-	
 	public String getNacionalidade() {
 		return nacionalidade;
 	}
@@ -126,6 +119,11 @@ public class CcbVO {
 	public void setCepEmpresa(String cepEmpresa) {
 		this.cepEmpresa = cepEmpresa;
 	}
-	
+	public String getTipoParticipante() {
+		return tipoParticipante;
+	}
+	public void setTipoParticipante(String tipoParticipante) {
+		this.tipoParticipante = tipoParticipante;
+	}
 	
 }

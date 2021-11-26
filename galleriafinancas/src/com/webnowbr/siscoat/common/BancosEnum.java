@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.common;
 
 public enum BancosEnum {
-	
 	BANCO_BANKPAR_S_A("000", "Banco Bankpar S.A."),
 	BANCO_CNH_INDUSTRIAL_CAPITAL_S_A("000", "Banco CNH Industrial Capital S.A."),
 	BANCO_CREDICARD_S_A("000", "Banco Credicard S.A."),
@@ -73,13 +72,16 @@ public enum BancosEnum {
 	NUBANK("260", "Nubank"),
 	BANCO_CACIQUE_S_A("263", "Banco Cacique S.A."),
 	BANCO_FATOR_S_A("265", "Banco Fator S.A."),
+	BANCO_PAGSEGURO_INTENERT_S_A_PAGBANK("290", "PagSeguro Internet S.A.(PagBank)"),
 	BANCO_BMG_S_A("318", "Banco BMG S.A."),
 	BANCO_INDUSTRIAL_E_COMERCIAL_S_A("320", "Banco Industrial e Comercial S.A."),
+	BANCO_C6_S_A("336", "Banco C6 S.A."),
 	ITAU_UNIBANCO_S_A("341", "Itaú Unibanco S.A."),
 	BANCO_REAL_S_A("356", "Banco Real S.A."),
 	BANCO_SOCIETE_GENERALE_BRASIL_S_A("366", "Banco Société Générale Brasil S.A."),
 	BANCO_MIZUHO_DO_BRASIL_S_A("370", "Banco Mizuho do Brasil S.A."),
 	BANCO_J_P_MORGAN_S_A("376", "Banco J. P. Morgan S.A."),
+	BANCO_PICPAY_SERVIÇOS_S_A("380", "Banco PicPay Serviços S.A."),
 	BANCO_MERCANTIL_DO_BRASIL_S_A("389", "Banco Mercantil do Brasil S.A."),
 	BANCO_BRADESCO_FINANCIAMENTOS_S_A("394", "Banco Bradesco Financiamentos S.A."),
 	HSBC_BANK_BRASIL_S_A_BANCO_MULTIPLO("399", "HSBC Bank Brasil S.A. - Banco Múltiplo"),
@@ -122,9 +124,11 @@ public enum BancosEnum {
 
 	private String codigo;
 	private String nome;
+	private String nomeCompleto;
 	private BancosEnum(String codigo, String nome) {
 		this.codigo = codigo;
 		this.nome = nome;
+		this.nomeCompleto = codigo + " | " + nome;
 	}
 
 	public String getCodigo() {
@@ -133,6 +137,10 @@ public enum BancosEnum {
 
 	public String getNome() {
 		return this.nome;
+	}
+	
+	public String getNomeCompleto() {
+		return this.nomeCompleto;
 	}
 
 	public static BancosEnum parse(String codigo) {
