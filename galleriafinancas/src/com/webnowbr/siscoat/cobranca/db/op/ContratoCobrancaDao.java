@@ -2983,14 +2983,20 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA = "select c.id from cobranca.contratocobranca c "
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_FIDC = "select c.id from cobranca.contratocobranca c "
 			+ "where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "and c.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI'"
-			+ " order by numerocontrato ";
+			+ "and c.empresa = 'FIDC GALLERIA'"
+			+ " order by numerocontrato";
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA = "select c.id from cobranca.contratocobranca c "
+			+ "where c.status = 'Aprovado' "
+			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
+			+ "and c.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.'"
+			+ " order by numerocontrato";
+
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> relatorioFinanceiroDia() {
+	public List<ContratoCobranca> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2999,7 +3005,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA;	
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = "";
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("Securitizadora")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA;	
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("FIDC")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
+				}
+				
 				try {
 					connection = getConnection();
 					
