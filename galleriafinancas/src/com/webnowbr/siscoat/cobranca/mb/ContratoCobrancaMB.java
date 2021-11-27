@@ -149,6 +149,9 @@ public class ContratoCobrancaMB {
 	private String tituloTelaConsultaPreStatus;
 
 	private Date dataHoje;
+	
+	
+	private String tipoContratoCobrancaFinanceiroDia;
 
 	private boolean contratoGerado = false;
 
@@ -606,6 +609,8 @@ public class ContratoCobrancaMB {
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope;
 
 	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
+	
+	private List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia;
 
 	ContratoCobrancaParcelasInvestidor antecipacao;
 	ContratoCobrancaDetalhes amortizacao;
@@ -4633,6 +4638,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		this.contratos = new ArrayList<ContratoCobranca>();
 		
 		this.tituloPainel = "Editar";
 
@@ -4661,8 +4667,21 @@ public class ContratoCobrancaMB {
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
 		// saveEstadoCheckListAtual();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-		return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador()) {
+					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
+				} else {
+					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
+				}
+			}
+		}
+		return null;
 	}
 
 	public void saveEstadoCheckListAtual() {
@@ -5571,13 +5590,17 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroContabilidade.xhtml";
 	}
 
-	public String clearFieldsRelFinanceiroDia() {
+	public String clearFieldsRelFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
 		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		
+		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroDia.xhtml";
 	}
@@ -6159,7 +6182,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
 
-		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao.relatorioFinanceiroDia();
+		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
 
 		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
 		TimeZone zone = TimeZone.getDefault();
@@ -6420,24 +6443,39 @@ public class ContratoCobrancaMB {
 		cell.setCellValue("CPF/CNPJ");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(4);
-		cell.setCellValue("Valor CCB");
+		cell.setCellValue("Dt. Nascimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(5);
-		cell.setCellValue("Taxa de Juros (%)");
+		cell.setCellValue("Endereço");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(6);
-		cell.setCellValue("Parcela");
+		cell.setCellValue("Nome Cônjuge");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(7);
-		cell.setCellValue("Data Vencimento");
+		cell.setCellValue("CPF Cônjuge");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(8);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Região Imóvel");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(9);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Valor CCB");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
+		cell.setCellValue("Taxa de Juros (%)");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(11);
+		cell.setCellValue("Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(12);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(13);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(14);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(15);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 
@@ -6488,7 +6526,13 @@ public class ContratoCobrancaMB {
 		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
 
 		int linhaInicioContrato = 0;
-		for (ContratoCobranca record : this.contratoCobrancaFinanceiroDia) {
+		
+		// verifica se tem selecionados ou se serão todos
+		if (this.selectedContratoCobrancaFinanceiroDia.size() == 0) {
+			this.selectedContratoCobrancaFinanceiroDia = this.contratoCobrancaFinanceiroDia;
+		}
+		
+		for (ContratoCobranca record : this.selectedContratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -6516,9 +6560,42 @@ public class ContratoCobrancaMB {
 			} else {
 				cell.setCellValue(record.getPagador().getCnpj());
 			}
+			
+			// Data NAscimento Pagador
+			cell = row.createCell(4);
+			cell.setCellStyle(dateStyle);
+			if (record.getPagador().getDtNascimento() != null) {
+				cell.setCellValue(record.getPagador().getDtNascimento());
+			}
+						
+			// Endereço pagador
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - " + record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: " + record.getPagador().getCep() + ")");
+			
+			// Nome Conjuge
+			cell = row.createCell(6);
+			cell.setCellStyle(cell_style);
+			if (record.getPagador().getNomeConjuge() != null) {
+				cell.setCellValue(record.getPagador().getNomeConjuge());
+			}
+			
+			// CPF Conjuge
+			cell = row.createCell(7);
+			cell.setCellStyle(cell_style);
+			if (record.getPagador().getCpfConjuge() != null) {
+				cell.setCellValue(record.getPagador().getCpfConjuge());
+			}
+			
+			// Região Imóvel
+			cell = row.createCell(8);
+			cell.setCellStyle(cell_style);					
+			if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
+				cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+			}
 
 			// Valor CCB
-			cell = row.createCell(4);
+			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorCCB() != null) {
@@ -6528,7 +6605,7 @@ public class ContratoCobrancaMB {
 			}
 
 			// Taxa Juros
-			cell = row.createCell(5);
+			cell = row.createCell(10);
 			cell.setCellStyle(numberStyle);
 			if (record.getTxJurosParcelas() != null) {
 				cell.setCellValue(((BigDecimal) record.getTxJurosParcelas()).doubleValue());
@@ -6567,9 +6644,42 @@ public class ContratoCobrancaMB {
 				} else {
 					cell.setCellValue(record.getPagador().getCnpj());
 				}
+				
+				// Data NAscimento Pagador
+				cell = row.createCell(4);
+				cell.setCellStyle(dateStyle);
+				if (record.getPagador().getDtNascimento() != null) {
+					cell.setCellValue(record.getPagador().getDtNascimento());
+				}
+							
+				// Endereço pagador
+				cell = row.createCell(5);
+				cell.setCellStyle(cell_style);
+				cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - " + record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: " + record.getPagador().getCep() + ")");
+				
+				// Nome Conjuge
+				cell = row.createCell(6);
+				cell.setCellStyle(cell_style);
+				if (record.getPagador().getNomeConjuge() != null) {
+					cell.setCellValue(record.getPagador().getNomeConjuge());
+				}
+				
+				// CPF Conjuge
+				cell = row.createCell(7);
+				cell.setCellStyle(cell_style);
+				if (record.getPagador().getCpfConjuge() != null) {
+					cell.setCellValue(record.getPagador().getCpfConjuge());
+				}
+				
+				// Região Imóvel
+				cell = row.createCell(8);
+				cell.setCellStyle(cell_style);					
+				if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
+					cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+				}
 
 				// Valor CCB
-				cell = row.createCell(4);
+				cell = row.createCell(9);
 				cell.setCellStyle(numericStyle);
 				cell.setCellType(CellType.NUMERIC);
 				if (record.getValorCCB() != null) {
@@ -6579,7 +6689,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Taxa Juros
-				cell = row.createCell(5);
+				cell = row.createCell(10);
 				cell.setCellStyle(numberStyle);
 				if (record.getTxJurosParcelas() != null) {
 					cell.setCellValue(((BigDecimal) record.getTxJurosParcelas()).doubleValue());
@@ -6588,7 +6698,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Parcela
-				cell = row.createCell(6);
+				cell = row.createCell(11);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -6599,7 +6709,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getNumeroParcela());
 
 				// Data Vencimento
-				cell = row.createCell(7);
+				cell = row.createCell(12);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -6610,7 +6720,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataVencimento());
 
 				// Valor Parcela
-				cell = row.createCell(8);
+				cell = row.createCell(13);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -6626,7 +6736,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Data pagto
-				cell = row.createCell(9);
+				cell = row.createCell(14);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -6637,7 +6747,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataUltimoPagamento());
 
 				// Valor Pago
-				cell = row.createCell(10);
+				cell = row.createCell(15);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -6660,6 +6770,11 @@ public class ContratoCobrancaMB {
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 3, 3));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 4, 4));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 5, 5));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 6, 6));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 7, 7));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 8, 8));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 9, 9));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 10, 10));
 			}
 
 			// pula 1 linha
@@ -6688,6 +6803,17 @@ public class ContratoCobrancaMB {
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(10);
 			cell.setCellStyle(cell_style);
+			cell = row.createCell(11);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(12);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(13);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(14);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(15);
+			cell.setCellStyle(cell_style);
+			
 
 			// Style para cabeçalho
 			XSSFCellStyle cell_style_pago = wb.createCellStyle();
@@ -7802,7 +7928,7 @@ public class ContratoCobrancaMB {
 					parcelaInvestidor.setCapitalizacao(BigDecimal.ZERO);
 				}
 
-				if (BigDecimal.ZERO.compareTo(parcelaInvestidor.getJuros())<0) {
+				if (BigDecimal.ZERO.compareTo(parcelaInvestidor.getJurosBaixa())<0) {
 					if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 						BigDecimal txIR = BigDecimal.ZERO;
 	
@@ -7816,9 +7942,11 @@ public class ContratoCobrancaMB {
 							txIR = BigDecimal.valueOf(0.15);
 						}
 	
-						parcelaInvestidor.setIrRetido(parcelaInvestidor.getJuros().multiply(txIR));
+						parcelaInvestidor.setIrRetido(parcelaInvestidor.getJurosBaixa().multiply(txIR));
 	
-						parcelaInvestidor.setValorLiquido(parcelaInvestidor.getParcelaMensal().subtract(parcelaInvestidor.getIrRetido()));
+						if (BigDecimal.ZERO.compareTo(parcelaInvestidor.getParcelaMensal()) < 0)
+							parcelaInvestidor.setValorLiquido(parcelaInvestidor.getParcelaMensal().subtract(parcelaInvestidor.getIrRetido()));
+						
 					} else {
 						parcelaInvestidor.setValorLiquido(parcela.getValorParcela());
 					}
@@ -19044,7 +19172,20 @@ public class ContratoCobrancaMB {
 	public void setTituloPagadorRecebedorDialog(String tituloPagadorRecebedorDialog) {
 		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
 	}
-	
-	
 
+	public List<ContratoCobranca> getSelectedContratoCobrancaFinanceiroDia() {
+		return selectedContratoCobrancaFinanceiroDia;
+	}
+
+	public void setSelectedContratoCobrancaFinanceiroDia(List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia) {
+		this.selectedContratoCobrancaFinanceiroDia = selectedContratoCobrancaFinanceiroDia;
+	}
+
+	public String getTipoContratoCobrancaFinanceiroDia() {
+		return tipoContratoCobrancaFinanceiroDia;
+	}
+
+	public void setTipoContratoCobrancaFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
+		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
+	}
 }
