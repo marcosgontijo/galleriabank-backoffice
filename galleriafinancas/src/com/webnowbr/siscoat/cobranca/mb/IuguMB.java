@@ -5127,7 +5127,7 @@ public class IuguMB {
 			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
 		}
 
-		String descricaoCompleta = "Laudo + Parecer Jurídico";
+		String descricaoCompleta = this.contratoCobranca.getNumeroContrato() + " - Laudo + Parecer Jurídico";
 
 		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
 
@@ -5193,9 +5193,7 @@ public class IuguMB {
 				this.selectedRecebedor.setCep("13091-611");
 			}
 			
-			if (this.selectedRecebedor.getEmail() == null || this.selectedRecebedor.getEmail().equals("")) {
-				this.selectedRecebedor.setEmail("galleriafinancas@galleriabank.com.br");
-			} 
+			this.selectedRecebedor.setEmail("joaopedro.galleriafinancas@gmail.com");
 			
 			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
 				dadosValidos = false;

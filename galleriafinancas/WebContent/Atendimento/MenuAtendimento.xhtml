@@ -187,8 +187,12 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtraso}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
-									<p:menuitem value="Financeiro Dia"
-										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia}"
+									<p:menuitem value="Financeiro Dia Securitizadora"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('Securitizadora')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia FIDC"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('FIDC')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>

@@ -74,13 +74,15 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Parcelas Faltantes" filterBy="#{segurado.parcelasFaltantes}"
 						filterMatchMode="contains" sortBy="#{segurado.parcelasFaltantes}">
-						<h:outputText value="#{segurado.parcelasFaltantes}" />
+						
+						<h:outputText value="#{segurado.parcelasFaltantes}"  />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Avaliação" filterBy="#{segurado.avaliacao}"
 						filterMatchMode="contains" sortBy="#{segurado.avaliacao}">
-						<h:outputText value="#{segurado.avaliacao}"/>
+						<h:outputText value="R$ " />
+						<h:outputText value="#{segurado.avaliacao}" converter="bigDecimalConverter"/>
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
@@ -98,7 +100,7 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
 						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}" >
-						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+						<h:outputText value="#{segurado.porcentagemPrincipal}" converter="bigDecimalConverter"/>
 						<h:outputText value=" %" />
 					</p:column>
 					
@@ -184,7 +186,7 @@
 						headerText="Saldo Devedor" filterBy="#{segurado.saldoDevedor}"
 						filterMatchMode="contains" sortBy="#{segurado.saldoDevedor}">
 						<h:outputText value="R$ " />
-						<h:outputText value="#{segurado.saldoDevedor}" />
+						<h:outputText value="#{segurado.saldoDevedor}" converter="bigDecimalConverter" />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px;"
@@ -215,7 +217,7 @@
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Porcentagem Principal" filterBy="#{segurado.porcentagemPrincipal}"
 						filterMatchMode="contains" sortBy="#{segurado.porcentagemPrincipal}">
-						<h:outputText value="#{segurado.porcentagemPrincipal}" />
+						<h:outputText value="#{segurado.porcentagemPrincipal}" converter="bigDecimalConverter" />
 						<h:outputText value=" %" />
 					</p:column>
 					

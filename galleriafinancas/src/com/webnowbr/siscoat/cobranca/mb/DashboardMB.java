@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,9 +15,11 @@ import org.primefaces.model.charts.pie.PieChartModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 @ManagedBean(name = "dashboardMB")
 @SessionScoped
@@ -27,13 +30,27 @@ public class DashboardMB {
     
     private Date dataInicio;
     private Date dataFim;
+    private boolean consultaStatus;
     
     private List<Dashboard> dashContratos;
     
 	private Responsavel selectedResponsavel;
+	
 	private List<Responsavel> listResponsavel;
+	
+	int totalContratosCadastrados;
+	int totalContratosPreAprovados;
+	int totalContratosBoletosPagos;
+	int totalContratosCcbsEmitidas;
+	int totalContratosRegistrados;
+	
+	BigDecimal totalValorContratosCadastrados;
+	BigDecimal totalValorContratosPreAprovados;
+	BigDecimal totalValorBoletosPagos;
+	BigDecimal totalValorCcbsEmitidas;
+	BigDecimal totalValorContratosRegistrados;
     
-	private String updatePagadorRecebedor = "";
+	private String updatePagadorRecebedor = ":form:responsavel";
 	
 	public DashboardMB() {
 		
@@ -52,7 +69,7 @@ public class DashboardMB {
 		
 		this.dataInicio = null;
 		this.dataFim = null;
-		
+		this.selectedResponsavel = new Responsavel();
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.listResponsavel = rDao.findAll();
 		
@@ -64,15 +81,68 @@ public class DashboardMB {
 	public void processaDashContratos() {
 		
 		DashboardDao dDao = new DashboardDao();
-		this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, 0);
-		
+		if(CommonsUtil.semValor(this.selectedResponsavel.getId())) {
+				this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus);	
+		} else {
+				this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
+		}
+		calculaSoma();
 	}
+
+	public void calculaSoma() {
+		this.totalContratosCadastrados = 0;
+		this.totalContratosPreAprovados = 0;
+		this.totalContratosBoletosPagos = 0;
+		this.totalContratosCcbsEmitidas = 0;
+		this.totalContratosRegistrados = 0;
+		
+		this.totalValorContratosCadastrados = BigDecimal.ZERO;
+		this.totalValorContratosPreAprovados = BigDecimal.ZERO;
+		this.totalValorBoletosPagos = BigDecimal.ZERO;
+		this.totalValorCcbsEmitidas = BigDecimal.ZERO;
+		this.totalValorContratosRegistrados = BigDecimal.ZERO;
+		
+		for (Dashboard dash : this.getDashContratos()) {
+			
+			if (!CommonsUtil.semValor(dash.getContratosCadastrados())) {
+				this.totalContratosCadastrados = totalContratosCadastrados + dash.getContratosCadastrados();
+			}
+			if (!CommonsUtil.semValor(dash.getContratosPreAprovados())) {
+				this.totalContratosPreAprovados = totalContratosPreAprovados + dash.getContratosPreAprovados();
+			}
+			if (!CommonsUtil.semValor(dash.getContratosBoletosPagos())) {
+				this.totalContratosBoletosPagos = totalContratosBoletosPagos + dash.getContratosBoletosPagos();
+			}
+			if (!CommonsUtil.semValor(dash.getContratosCcbsEmitidas())) {
+				this.totalContratosCcbsEmitidas = totalContratosCcbsEmitidas + dash.getContratosCcbsEmitidas();
+			}
+			if (!CommonsUtil.semValor(dash.getContratosRegistrados())) {
+				this.totalContratosRegistrados = totalContratosRegistrados + dash.getContratosRegistrados();
+			}
+			
+			if (!CommonsUtil.semValor(dash.getValorContratosCadastrados())) {
+				this.totalValorContratosCadastrados = totalValorContratosCadastrados.add(dash.getValorContratosCadastrados());
+			}
+			if (!CommonsUtil.semValor(dash.getValorContratosPreAprovados())) {
+				this.totalValorContratosPreAprovados = totalValorContratosPreAprovados.add(dash.getValorContratosPreAprovados());
+			}
+			if (!CommonsUtil.semValor(dash.getValorBoletosPagos())) {
+				this.totalValorBoletosPagos = totalValorBoletosPagos.add(dash.getValorBoletosPagos());
+			}
+			if (!CommonsUtil.semValor(dash.getValorCcbsEmitidas())) {
+				this.totalValorCcbsEmitidas = totalValorCcbsEmitidas.add(dash.getValorCcbsEmitidas());
+			}
+			if (!CommonsUtil.semValor(dash.getValorContratosRegistrados())) {
+				this.totalValorContratosRegistrados = totalValorContratosRegistrados.add(dash.getValorContratosRegistrados());
+			}
+		}
+	}	
 	
 	public String clearFields() {
 		//createPieModel();
 		origemLead();
 		statusLead();
-		
+		this.consultaStatus = false;
 		return "/Atendimento/Cobranca/Dashboard.xhtml";
 	}
 	
@@ -199,8 +269,18 @@ public class DashboardMB {
 	}
 */
 
+    
+    
 	public PieChartModel getPieOrigemLead() {
 		return pieOrigemLead;
+	}
+
+	public boolean isConsultaStatus() {
+		return consultaStatus;
+	}
+
+	public void setConsultaStatus(boolean consultaStatus) {
+		this.consultaStatus = consultaStatus;
 	}
 
 	public void setPieOrigemLead(PieChartModel pieOrigemLead) {
@@ -262,4 +342,86 @@ public class DashboardMB {
 	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
 		this.updatePagadorRecebedor = updatePagadorRecebedor;
 	}
+
+	public int getTotalContratosCadastrados() {
+		return totalContratosCadastrados;
+	}
+
+	public void setTotalContratosCadastrados(int totalContratosCadastrados) {
+		this.totalContratosCadastrados = totalContratosCadastrados;
+	}
+
+	public int getTotalContratosPreAprovados() {
+		return totalContratosPreAprovados;
+	}
+
+	public void setTotalContratosPreAprovados(int totalContratosPreAprovados) {
+		this.totalContratosPreAprovados = totalContratosPreAprovados;
+	}
+
+	public int getTotalContratosBoletosPagos() {
+		return totalContratosBoletosPagos;
+	}
+
+	public void setTotalContratosBoletosPagos(int totalContratosBoletosPagos) {
+		this.totalContratosBoletosPagos = totalContratosBoletosPagos;
+	}
+
+	public int getTotalContratosCcbsEmitidas() {
+		return totalContratosCcbsEmitidas;
+	}
+
+	public void setTotalContratosCcbsEmitidas(int totalContratosCcbsEmitidas) {
+		this.totalContratosCcbsEmitidas = totalContratosCcbsEmitidas;
+	}
+
+	public int getTotalContratosRegistrados() {
+		return totalContratosRegistrados;
+	}
+
+	public void setTotalContratosRegistrados(int totalContratosRegistrados) {
+		this.totalContratosRegistrados = totalContratosRegistrados;
+	}
+
+	public BigDecimal getTotalValorContratosCadastrados() {
+		return totalValorContratosCadastrados;
+	}
+
+	public void setTotalValorContratosCadastrados(BigDecimal totalValorContratosCadastrados) {
+		this.totalValorContratosCadastrados = totalValorContratosCadastrados;
+	}
+
+	public BigDecimal getTotalValorContratosPreAprovados() {
+		return totalValorContratosPreAprovados;
+	}
+
+	public void setTotalValorContratosPreAprovados(BigDecimal totalValorContratosPreAprovados) {
+		this.totalValorContratosPreAprovados = totalValorContratosPreAprovados;
+	}
+
+	public BigDecimal getTotalValorBoletosPagos() {
+		return totalValorBoletosPagos;
+	}
+
+	public void setTotalValorBoletosPagos(BigDecimal totalValorBoletosPagos) {
+		this.totalValorBoletosPagos = totalValorBoletosPagos;
+	}
+
+	public BigDecimal getTotalValorCcbsEmitidas() {
+		return totalValorCcbsEmitidas;
+	}
+
+	public void setTotalValorCcbsEmitidas(BigDecimal totalValorCcbsEmitidas) {
+		this.totalValorCcbsEmitidas = totalValorCcbsEmitidas;
+	}
+
+	public BigDecimal getTotalValorContratosRegistrados() {
+		return totalValorContratosRegistrados;
+	}
+
+	public void setTotalValorContratosRegistrados(BigDecimal totalValorContratosRegistrados) {
+		this.totalValorContratosRegistrados = totalValorContratosRegistrados;
+	}
+	
+	
 }

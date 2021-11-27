@@ -75,7 +75,11 @@ public class SeguroTabelaMB {
 		for (int iSegurado = 0 ; iSegurado < this.contratosSeguroDFI.size();iSegurado++) {
 			SeguroTabelaVO seguroTabelaVO = this.contratosSeguroDFI.get(iSegurado);
 			
-			XSSFRow linha =  sheet.getRow(iLinha) ;
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
 			gravaCelula(0, seguroTabelaVO.getCodigoSegurado(), linha);
 			gravaCelula(1, seguroTabelaVO.getNumeroContratoSeguro(), linha);
 			gravaCelula(2, seguroTabelaVO.getParcelasOriginais(), linha);
@@ -172,7 +176,12 @@ public class SeguroTabelaMB {
 		for (int iSegurado = 0 ; iSegurado < this.contratosSeguroMIP.size();iSegurado++) {
 			SeguroTabelaVO seguroTabelaVO = this.contratosSeguroMIP.get(iSegurado);
 			
-			XSSFRow linha =  sheet.getRow(iLinha) ;
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
 			gravaCelula(0, seguroTabelaVO.getCodigoSegurado(), linha);
 			gravaCelula(1, seguroTabelaVO.getNumeroContratoSeguro(), linha);
 			gravaCelula(2, seguroTabelaVO.getParcelasOriginais(), linha);

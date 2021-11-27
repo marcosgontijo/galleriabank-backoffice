@@ -23,9 +23,13 @@
 					<p:calendar id="dataFim"
 						value="#{dashboardMB.dataFim}" 
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField"/>	
+						styleClass="dateTimeField"/>
 					
-					<p:outputLabel for="responsavel" value="Responsável: "
+					<p:outputLabel value="Consultar Por Status: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectBooleanCheckbox value="#{dashboardMB.consultaStatus}"/>
+					
+					<p:outputLabel for="responsavel" value="Gerente:  "
 						styleClass="labelBold" />
 					<h:panelGrid columns="2">
 							<p:inputText id="responsavel"
@@ -61,22 +65,82 @@
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Total Novos Contratos">
-						<h:outputText value="#{dashContratos.totalNovosContratos}" />
+					<p:column style="text-align: center;" headerText="Total cadastrados">
+						<h:outputText value="#{dashContratos.contratosCadastrados}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Em Análise">
-						<h:outputText value="#{dashContratos.totalaEmAnalise}" />
+					<p:column style="text-align: center;" headerText="Valor Total cadastrados">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Aprovados">
-						<h:outputText value="#{dashContratos.totalAprovados}" />
+					<p:column style="text-align: center;" headerText="Total preaprovado">
+						<h:outputText value="#{dashContratos.contratosPreAprovados}"/>
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Reprovados">
-						<h:outputText value="#{dashContratos.totalReprovados}" />
+					<p:column style="text-align: center;" headerText=" Valor Total preaprovado">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total Contrato">
-						<h:outputText value="#{dashContratos.totalCCB}"
-							converter="bigDecimalConverter"/>
+					<p:column style="text-align: center;" headerText="Total boleto">
+						<h:outputText value="#{dashContratos.contratosBoletosPagos}" />
 					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total boleto">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorBoletosPagos}" converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total ccb">
+						<h:outputText value="#{dashContratos.contratosCcbsEmitidas}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total ccb">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorCcbsEmitidas}" converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Total registrado">
+						<h:outputText value="#{dashContratos.contratosRegistrados}"/>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total registrado">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosRegistrados}" converter="bigDecimalConverter" />
+					</p:column>
+					<f:facet name="footer">
+						<h:panelGroup style="display:block;">
+							<h:panelGrid columns="3">
+								<h:outputText value="Total Cadastrados: " />
+								<h:outputText value="#{dashboardMB.totalContratosCadastrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorContratosCadastrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="Total Pré-Aprovados: " />
+								<h:outputText value="#{dashboardMB.totalContratosPreAprovados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorContratosPreAprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="Total Com Boletos Pagos: " />
+								<h:outputText value="#{dashboardMB.totalContratosBoletosPagos}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorBoletosPagos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="Total Com CCB Emitidas: " />
+								<h:outputText value="#{dashboardMB.totalContratosCcbsEmitidas}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorCcbsEmitidas}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="Total Registrados: " />
+								<h:outputText value="#{dashboardMB.totalContratosRegistrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorContratosRegistrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+							</h:panelGrid>
+						</h:panelGroup>
+					</f:facet>
 				</p:dataTable>
 			</p:panel>
 		</h:form>

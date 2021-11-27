@@ -40,6 +40,7 @@
 								<f:selectItem itemValue="AF" itemLabel="AF" />
 								<f:selectItem itemValue="NC" itemLabel="Notificacao de cessao" />
 								<f:selectItem itemValue="Excel" itemLabel="Excel (ainda em teste)" />
+								<f:selectItem itemValue="teste" itemLabel="teste" />
 							</p:selectOneMenu>	
 					</h:panelGrid>
 
@@ -173,6 +174,7 @@
 								style="font-weight: bold; font-size: 18px;" />
 							<p:inputText id="maeEmitente" value="#{ccbMB.maeEmitente}"
 								label="Contrato" />
+
 						</h:panelGrid>
 
 						<h:panelGroup id="conjugueEmitente">
@@ -1001,6 +1003,8 @@
 						</h:panelGroup>
 					</p:panel>
 
+					
+					
 					<p:panel id="Dados" header="Dados" style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
 							<p:panel header="Credito">
@@ -1412,28 +1416,29 @@
 							<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 								style="margin-bottom:10px;text-align: center;">
 								<h:panelGrid columns="1">
-									<p:fileUpload label="Selecionar Arquivo(s)"
+									<p:fileUpload label="Selecionar Arquivo(s)" value="#{ccbMB.filesList}"
 										uploadLabel="Salvar Arquivo(s)" multiple="true"
-										cancelLabel="Cancelar"
+										cancelLabel="Cancelar" sequential="true" 
 										fileUploadListener="#{ccbMB.handleFileUpload}" mode="advanced"
-										dragDropSupport="true" update="ArquivosSalvos" />
+										dragDropSupport="true" update="arquivoDV" />
 								</h:panelGrid>
 							</p:panel>
 
-							<p:panel id="ArquivosSalvos"
-								header="Arquivo Salvo no Contrato"
-								style="margin-bottom:10px;">
-								<h:panelGrid columns="3">
-									<p:outputLabel value="Nome Do Arquivo: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 28px;" />
-									<p:outputLabel value="#{ccbMB.fileName}"
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 28px;" />
-									<p:commandButton ajax="true" action="#{ccbMB.clearFiles}"
-										icon="ui-icon ui-icon-cancel" update="ArquivosSalvos"/>			
-								</h:panelGrid>
-							</p:panel>
+							<p:dataView var="arquivo" id="arquivoDV"
+								value="#{ccbMB.filesList}" 
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="Nome do arquivo: " styleClass="labelBold" />
+									<p:outputLabel value="#{arquivo.fileName}"
+										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+									<p:spacer height="10" />
+									<p:commandButton icon="ui-icon ui-icon-cancel" 
+										action="#{ccbMB.removerArquivo(arquivo)}"
+										ajax="true" update=":form:UploadArquivos" />
+								</p:dataViewListItem>
+							</p:dataView>
+
 						</p:panel>
 
 
