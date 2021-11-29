@@ -1,14 +1,30 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
-
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFPatternFormatting;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
@@ -20,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 @ManagedBean(name = "dashboardMB")
 @SessionScoped
@@ -136,7 +153,102 @@ public class DashboardMB {
 				this.totalValorContratosRegistrados = totalValorContratosRegistrados.add(dash.getValorContratosRegistrados());
 			}
 		}
-	}	
+	}
+	
+	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
+
+	private void gravaCelula(Integer celula, int value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
+	
+	private void formataCelula(Cell celula, XSSFWorkbook wb) {
+		 CellStyle cellStyle = wb.createCellStyle();
+		 cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		 cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		 celula.setCellStyle(cellStyle);
+	}
+	
+	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
+		if (text != null && text.contains(valorEscrito)) {
+				text = text.replace(valorEscrito, CommonsUtil.formataValorMonetario(valorSobrescrever, moeda));
+			r.setText(text, 0);
+		}
+		return text;
+	}
+	
+	public StreamedContent readXLSXFile() throws IOException {
+		
+		//String sheetName =getClass().getResource("/resource/SeguroDFI.xlsx").getPath();
+		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/DashboardTabela.xlsx"));
+		
+		XSSFSheet sheet = wb.getSheetAt(0);
+		
+		int iLinha = 1;
+		for (int iDashboard = 0 ; iDashboard < this.dashContratos.size();iDashboard++) {
+			Dashboard dash = this.dashContratos.get(iDashboard);
+			
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			gravaCelula(0, dash.getNomeResponsavel(), linha);
+			formataCelula(linha.getCell(0), wb);
+			gravaCelula(1, dash.getGerenteResponsavel(), linha);
+			gravaCelula(2, dash.getContratosCadastrados(), linha);
+			gravaCelula(3, CommonsUtil.formataValorMonetario(dash.getValorContratosCadastrados(),"R$ "), linha);
+			gravaCelula(4, dash.getContratosPreAprovados(), linha);
+			gravaCelula(5, CommonsUtil.formataValorMonetario(dash.getValorContratosPreAprovados(),"R$ "), linha);
+			gravaCelula(6, dash.getContratosBoletosPagos(), linha);
+			gravaCelula(7, CommonsUtil.formataValorMonetario(dash.getValorBoletosPagos(),"R$ "), linha);
+			gravaCelula(8, dash.getContratosCcbsEmitidas(), linha);
+			gravaCelula(9, CommonsUtil.formataValorMonetario(dash.getValorCcbsEmitidas(),"R$ "), linha);
+			gravaCelula(10, dash.getContratosRegistrados(), linha);
+			gravaCelula(11, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
+			
+			iLinha++;
+		}
+		
+		calculaSoma();
+		XSSFRow linha = sheet.getRow(1);
+		
+		gravaCelula(15, this.totalContratosCadastrados, linha);
+		gravaCelula(16, CommonsUtil.formataValorMonetario(this.totalValorContratosPreAprovados,"R$ "), linha);
+		gravaCelula(17, this.totalContratosPreAprovados, linha);
+		gravaCelula(18, CommonsUtil.formataValorMonetario(this.totalValorContratosCadastrados,"R$ "), linha);	
+		gravaCelula(19, this.totalContratosBoletosPagos, linha);
+		gravaCelula(20, CommonsUtil.formataValorMonetario(this.totalValorBoletosPagos,"R$ "), linha);	
+		gravaCelula(21, this.totalContratosCcbsEmitidas, linha);
+		gravaCelula(22, CommonsUtil.formataValorMonetario(this.totalValorCcbsEmitidas,"R$ "), linha);	
+		gravaCelula(23, this.totalContratosRegistrados, linha);
+		gravaCelula(24, CommonsUtil.formataValorMonetario(this.totalValorContratosRegistrados,"R$ "), linha);
+		
+		
+		
+		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+		//escrever tudo o que foi feito no arquivo
+		
+		wb.write(fileOut);
+
+		//fecha a escrita de dados nessa planilha
+		wb.close();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+	}
 	
 	public String clearFields() {
 		//createPieModel();

@@ -4674,7 +4674,7 @@ public class ContratoCobrancaMB {
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 			if (usuarioLogado != null) {
-				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador()) {
+				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador() || this.objetoContratoCobranca.isInicioAnalise() == false) {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
 				} else {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
