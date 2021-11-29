@@ -46,7 +46,11 @@
 					icon="ui-icon-check" action="#{dashboardMB.processaDashContratos}" update="ConsultaDashboardManagerResultados">
 				</p:commandButton>
 			</p:panel>
-			<p:panel id="ConsultaDashboardManagerResultados" header="Dashboard Manager - Resultados" style="margin-bottom:10px;">		    		    				
+			<p:panel id="ConsultaDashboardManagerResultados" header="Dashboard Manager - Resultados" style="margin-bottom:10px;">		    
+				<f:facet name="header"> Dashboard Manager - Resultados
+					<p:outputLabel value="" />  
+					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{dashboardMB.readXLSXFile}" ajax="false"/>
+				</f:facet>		    				
 				<p:dataTable id="dtDashboardManager" var="dashContratos"
 					value="#{dashboardMB.dashContratos}" paginator="true" rows="40"
 					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
