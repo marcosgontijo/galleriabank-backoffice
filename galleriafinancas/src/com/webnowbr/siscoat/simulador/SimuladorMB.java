@@ -61,7 +61,7 @@ public class SimuladorMB {
 		BigDecimal.valueOf(1.49);
 		parcelas = null;
 		BigInteger.valueOf(24);
-		carencia = BigInteger.valueOf(2);
+		carencia = BigInteger.valueOf(1);
 		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
 		simulacao = null;

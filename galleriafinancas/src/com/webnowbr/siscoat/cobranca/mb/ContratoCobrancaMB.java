@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -625,6 +626,22 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
 	
+	private int totalContratosConsultar;
+	private int prazoContrato;
+	private BigDecimal valorUltimaPareclaPaga;
+	private BigDecimal volumeCarteira;
+	private BigDecimal somaContratos180;
+	private BigDecimal somaContratos240;
+	private BigDecimal porcentagem180;
+	private BigDecimal porcentagem240;
+	private int qtdDeparcelasVencidas;
+	private BigDecimal inadimplencia30Soma;
+	private BigDecimal inadimplencia60Soma;
+	private BigDecimal inadimplencia90Soma;
+	private BigDecimal inadimplencia30Porcentagem;
+	private BigDecimal inadimplencia60Porcentagem;
+	private BigDecimal inadimplencia90Porcentagem;
+	
 	private Boolean addPagadorPreContrato;
 
 	/**
@@ -738,6 +755,8 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		
+		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
 	}
@@ -2207,7 +2226,7 @@ public class ContratoCobrancaMB {
 				boolean registraPagador = false;
 				Long idPagador = (long) 0;
 
-				if (this.objetoPagadorRecebedor.getCpf() != null) {
+				if (!CommonsUtil.semValor(this.objetoPagadorRecebedor.getCpf())) {
 					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", this.objetoPagadorRecebedor.getCpf());
 					if (pagadorRecebedorBD.size() > 0) {
 						pagadorRecebedor = pagadorRecebedorBD.get(0);
@@ -2217,7 +2236,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 
-				if (this.objetoPagadorRecebedor.getCnpj() != null) {
+				if (!CommonsUtil.semValor(this.objetoPagadorRecebedor.getCnpj())) {
 					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cnpj",
 							this.objetoPagadorRecebedor.getCnpj());
 					if (pagadorRecebedorBD.size() > 0) {
@@ -2229,6 +2248,7 @@ public class ContratoCobrancaMB {
 				}
 
 				registraPagador = true;
+
 
 				if (pagadorRecebedor == null) {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
@@ -4674,7 +4694,7 @@ public class ContratoCobrancaMB {
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 			if (usuarioLogado != null) {
-				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador() || this.objetoContratoCobranca.isInicioAnalise() == false) {
+				if (!this.objetoContratoCobranca.isInicioAnalise()) {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
 				} else {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
@@ -5358,6 +5378,20 @@ public class ContratoCobrancaMB {
 		clearResponsavel();
 
 		this.numContrato = null;
+		
+		
+		this.somaContratos240 = BigDecimal.ZERO;
+		this.volumeCarteira = BigDecimal.ZERO;
+		this.somaContratos180 = BigDecimal.ZERO;
+		this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+		this.qtdDeparcelasVencidas = 0;
+		this.inadimplencia30Soma = BigDecimal.ZERO;
+		this.inadimplencia60Soma = BigDecimal.ZERO;
+		this.inadimplencia90Soma = BigDecimal.ZERO;
+		this.inadimplencia30Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia60Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia90Porcentagem = BigDecimal.ZERO;
+		
 
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
@@ -5388,7 +5422,52 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (empresa.equals("FIDC")) {
-			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratos(empresa);	
+			this.totalContratosConsultar = this.contratos.size();
+			
+			
+			
+			for(ContratoCobranca contrato : this.contratos) {
+				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+					if (ccd.isParcelaPaga()) {
+						this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
+						this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
+					} else if (ccd.isParcelaVencida()) {
+						this.qtdDeparcelasVencidas++;
+					}
+				}
+				
+				if(qtdDeparcelasVencidas == 1) {
+					this.inadimplencia30Soma = this.inadimplencia30Soma.add(valorUltimaPareclaPaga);
+				} else if(qtdDeparcelasVencidas == 2) {
+					this.inadimplencia60Soma = this.inadimplencia60Soma.add(valorUltimaPareclaPaga);
+				} else if(qtdDeparcelasVencidas >= 3) {
+					this.inadimplencia90Soma = this.inadimplencia90Soma.add(valorUltimaPareclaPaga);
+				}
+				
+				this.volumeCarteira = this.volumeCarteira.add(valorUltimaPareclaPaga);
+				
+				if(this.prazoContrato <= 180) {
+					this.somaContratos180 = this.somaContratos180.add(this.valorUltimaPareclaPaga);
+				} else if(this.prazoContrato > 180) {
+					this.somaContratos240 = this.somaContratos240.add(this.valorUltimaPareclaPaga);
+				}
+			}
+			this.inadimplencia30Porcentagem = this.inadimplencia30Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+			this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.inadimplencia60Porcentagem = this.inadimplencia60Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+			this.inadimplencia60Porcentagem = this.inadimplencia60Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.inadimplencia90Porcentagem = this.inadimplencia90Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+			this.inadimplencia90Porcentagem = this.inadimplencia90Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.porcentagem180 = this.somaContratos180.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+			this.porcentagem180 = this.porcentagem180.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.porcentagem240 = this.somaContratos240.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+			this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
@@ -19186,4 +19265,78 @@ public class ContratoCobrancaMB {
 	public void setTipoContratoCobrancaFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 	}
+
+	public int getTotalContratosConsultar() {
+		return totalContratosConsultar;
+	}
+
+	public void setTotalContratosConsultar(int totalContratosConsultar) {
+		this.totalContratosConsultar = totalContratosConsultar;
+	}
+
+	public BigDecimal getVolumeCarteira() {
+		return volumeCarteira;
+	}
+
+	public void setVolumeCarteira(BigDecimal volumeCarteira) {
+		this.volumeCarteira = volumeCarteira;
+	}
+
+	public BigDecimal getValorUltimaPareclaPaga() {
+		return valorUltimaPareclaPaga;
+	}
+
+	public void setValorUltimaPareclaPaga(BigDecimal valorUltimaPareclaPaga) {
+		this.valorUltimaPareclaPaga = valorUltimaPareclaPaga;
+	}
+
+	public BigDecimal getSomaContratos180() {
+		return somaContratos180;
+	}
+
+	public void setSomaContratos180(BigDecimal somaContratos180) {
+		this.somaContratos180 = somaContratos180;
+	}
+
+	public BigDecimal getPorcentagem180() {
+		return porcentagem180;
+	}
+
+	public void setPorcentagem180(BigDecimal porcentagem180) {
+		this.porcentagem180 = porcentagem180;
+	}
+
+	public BigDecimal getPorcentagem240() {
+		return porcentagem240;
+	}
+
+	public void setPorcentagem240(BigDecimal porcentagem240) {
+		this.porcentagem240 = porcentagem240;
+	}
+
+	public BigDecimal getInadimplencia30Porcentagem() {
+		return inadimplencia30Porcentagem;
+	}
+
+	public void setInadimplencia30Porcentagem(BigDecimal inadimplencia30Porcentagem) {
+		this.inadimplencia30Porcentagem = inadimplencia30Porcentagem;
+	}
+
+	public BigDecimal getInadimplencia60Porcentagem() {
+		return inadimplencia60Porcentagem;
+	}
+
+	public void setInadimplencia60Porcentagem(BigDecimal inadimplencia60Porcentagem) {
+		this.inadimplencia60Porcentagem = inadimplencia60Porcentagem;
+	}
+
+	public BigDecimal getInadimplencia90Porcentagem() {
+		return inadimplencia90Porcentagem;
+	}
+
+	public void setInadimplencia90Porcentagem(BigDecimal inadimplencia90Porcentagem) {
+		this.inadimplencia90Porcentagem = inadimplencia90Porcentagem;
+	}
+	
+	
 }

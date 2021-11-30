@@ -127,61 +127,6 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " group by idresponsavel, nomeresponsavel "
 			+ " order by nomeresponsavel";
 	
-	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE =  	" select idresponsavel, nomeresponsavel, sum(contratosCadastrados) contratosCadastrados, sum(valorContratosCadastrados) valorContratosCadastrados, sum(contratosPreAprovados) contratosPreAprovados, sum(valorContratosPreAprovados) valorContratosPreAprovados, sum(contratosBoletosPagos) contratosBoletosPagos, sum(valorBoletosPagos) valorBoletosPagos, sum(contratosCcbsEmitidas) contratosCcbsEmitidas, sum(valorCcbsEmitidas) valorCcbsEmitidas, sum(contratosRegistrados) contratosRegistrados, sum(valorContratosRegistrados) valorContratosRegistrados from ( "
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) contratosCadastrados, sum(c.quantoPrecisa) valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
-			+ " from cobranca.contratocobranca c"
-			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " inner join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.statuslead = 'Completo' and  c.analisereprovada = 'false' and c.reprovado = 'false' "
-			+ " and inicioanalisedata >= ? ::timestamp "
-			+ " and inicioanalisedata <= ? ::timestamp "
-			+ " and r1.id = ? "
-			+ " group by r.id, r.nome, c.datacontrato"
-			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, count(c.id) contratosPreAprovados, sum(c.quantoPrecisa) valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
-			+ " from cobranca.contratocobranca c"
-			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " inner join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.cadastroaprovadovalor = 'Aprovado' "
-			+ " and inicioanalisedata >= ? ::timestamp "
-			+ " and inicioanalisedata <= ? ::timestamp "
-			+ " and r1.id = ? "
-			+ " group by r.id, r.nome, c.datacontrato"
-			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, count(c.id) contratosBoletosPagos, sum(c.quantoPrecisa) valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
-			+ " from cobranca.contratocobranca c"
-			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " inner join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.pagtolaudoconfirmada = 'true' "
-			+ " and inicioanalisedata >= ? ::timestamp "
-			+ " and inicioanalisedata <= ? ::timestamp "
-			+ " and r1.id = ? "
-			+ " group by r.id, r.nome, c.datacontrato"
-			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, count(c.id) contratosCcbsEmitidas, sum(c.valorccb) valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
-			+ " from cobranca.contratocobranca c"
-			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " inner join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.ccbpronta = 'true' "
-			+ " and inicioanalisedata >= ? ::timestamp "
-			+ " and inicioanalisedata <= ? ::timestamp "
-			+ " and r1.id = ? "
-			+ " group by r.id, r.nome, c.datacontrato"
-			+ " union all"
-			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, count(c.id) contratosRegistrados, sum(c.valorccb) valorContratosRegistrados"
-			+ " from cobranca.contratocobranca c"
-			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " inner join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.status = 'Aprovado' "
-			+ " and inicioanalisedata >= ? ::timestamp "
-			+ " and inicioanalisedata <= ? ::timestamp "
-			+ " and r1.id = ? "
-			+ " group by r.id, r.nome, c.datacontrato"
-			+ " ) totais"
-			+ " group by idresponsavel, nomeresponsavel "
-			+ " order by nomeresponsavel";
-	
-	
 	@SuppressWarnings("unchecked")
 	public List<Dashboard> getDashboardContratos(final Date dataInicio, final Date dataFim, boolean consultarPorStatus) {
 		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
@@ -260,6 +205,115 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 		});
 	}
 	
+	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE =  " select idresponsavel, nomeresponsavel, sum(contratosCadastrados) contratosCadastrados, sum(valorContratosCadastrados) valorContratosCadastrados, sum(contratosPreAprovados) contratosPreAprovados, sum(valorContratosPreAprovados) valorContratosPreAprovados, sum(contratosBoletosPagos) contratosBoletosPagos, sum(valorBoletosPagos) valorBoletosPagos, sum(contratosCcbsEmitidas) contratosCcbsEmitidas, sum(valorCcbsEmitidas) valorCcbsEmitidas, sum(contratosRegistrados) contratosRegistrados, sum(valorContratosRegistrados) valorContratosRegistrados from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) contratosCadastrados, sum(c.quantoPrecisa) valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.statuslead = 'Completo' and  c.analisereprovada = 'false' and c.reprovado = 'false' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, count(c.id) contratosPreAprovados, sum(c.quantoPrecisa) valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.cadastroaprovadovalor = 'Aprovado' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, count(c.id) contratosBoletosPagos, sum(c.quantoPrecisa) valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.pagtolaudoconfirmada = 'true' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, count(c.id) contratosCcbsEmitidas, sum(c.valorccb) valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.ccbpronta = 'true' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato "
+			+ " union all "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, count(c.id) contratosRegistrados, sum(c.valorccb) valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c "
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel "
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel "
+			+ " where c.status = 'Aprovado' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato "
+			+ " ) totais "
+			+ " group by idresponsavel, nomeresponsavel "
+			+ " order by nomeresponsavel ";
+	
+	private static final String QUERY_DASH_CONTRATOS_POR_GERENTE_POR_STATUS =  " select idresponsavel, nomeresponsavel, sum(contratosCadastrados) contratosCadastrados, sum(valorContratosCadastrados) valorContratosCadastrados, sum(contratosPreAprovados) contratosPreAprovados, sum(valorContratosPreAprovados) valorContratosPreAprovados, sum(contratosBoletosPagos) contratosBoletosPagos, sum(valorBoletosPagos) valorBoletosPagos, sum(contratosCcbsEmitidas) contratosCcbsEmitidas, sum(valorCcbsEmitidas) valorCcbsEmitidas, sum(contratosRegistrados) contratosRegistrados, sum(valorContratosRegistrados) valorContratosRegistrados from ( "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, count(c.id) contratosCadastrados, sum(c.quantoPrecisa) valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.statuslead = 'Completo' and  c.analisereprovada = 'false' and c.reprovado = 'false' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, count(c.id) contratosPreAprovados, sum(c.quantoPrecisa) valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.cadastroaprovadovalor = 'Aprovado' "
+			+ " and inicioanalisedata >= ? ::timestamp "
+			+ " and inicioanalisedata <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, count(c.id) contratosBoletosPagos, sum(c.quantoPrecisa) valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.pagtolaudoconfirmada = 'true' "
+			+ " and pagtoLaudoConfirmadaData >= ? ::timestamp "
+			+ " and pagtoLaudoConfirmadaData <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato"
+			+ " union all"
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, count(c.id) contratosCcbsEmitidas, sum(c.valorccb) valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c"
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where c.ccbpronta = 'true' "
+			+ " and ccbProntaData >= ? ::timestamp "
+			+ " and ccbProntaData <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato "
+			+ " union all "
+			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, count(c.id) contratosRegistrados, sum(c.valorccb) valorContratosRegistrados"
+			+ " from cobranca.contratocobranca c "
+			+ " inner join cobranca.responsavel r on r.id = c.responsavel "
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel "
+			+ " where c.status = 'Aprovado' "
+			+ " and agRegistroData >= ? ::timestamp "
+			+ " and agRegistroData <= ? ::timestamp "
+			+ " and (r1.ID = ? or r.ID = ?) "
+			+ " group by r.id, r.nome, c.datacontrato "
+			+ " ) totais "
+			+ " group by idresponsavel, nomeresponsavel "
+			+ " order by nomeresponsavel ";
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<Dashboard> getDashboardContratosPorGerente(final Date dataInicio, final Date dataFim, final long idGerenteResponsavel, boolean consultarPorStatus) {
 		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
@@ -276,28 +330,37 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
-
-					ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_POR_GERENTE);
+					
+					if(consultarPorStatus) {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_POR_GERENTE);
+					} else {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_POR_GERENTE_POR_STATUS);
+					}
 
 					ps.setDate(1, dtRelInicioSQL);
 					ps.setDate(2, dtRelFimSQL);
 					ps.setLong(3, idGerenteResponsavel);
-
-					ps.setDate(4, dtRelInicioSQL);
-					ps.setDate(5, dtRelFimSQL);
-					ps.setLong(6, idGerenteResponsavel);
-
-					ps.setDate(7, dtRelInicioSQL);
-					ps.setDate(8, dtRelFimSQL);
-					ps.setLong(9, idGerenteResponsavel);
-
-					ps.setDate(10, dtRelInicioSQL);
-					ps.setDate(11, dtRelFimSQL);
+					ps.setLong(4, idGerenteResponsavel);
+									
+					ps.setDate(5, dtRelInicioSQL);
+					ps.setDate(6, dtRelFimSQL);
+					ps.setLong(7, idGerenteResponsavel);
+					ps.setLong(8, idGerenteResponsavel);
+										
+					ps.setDate(9, dtRelInicioSQL);
+					ps.setDate(10, dtRelFimSQL);
+					ps.setLong(11, idGerenteResponsavel);
 					ps.setLong(12, idGerenteResponsavel);
-
+									
 					ps.setDate(13, dtRelInicioSQL);
 					ps.setDate(14, dtRelFimSQL);
 					ps.setLong(15, idGerenteResponsavel);
+					ps.setLong(16, idGerenteResponsavel);
+									
+					ps.setDate(17, dtRelInicioSQL);
+					ps.setDate(18, dtRelFimSQL);
+					ps.setLong(19, idGerenteResponsavel);
+					ps.setLong(20, idGerenteResponsavel);
 
 					rs = ps.executeQuery();
 
