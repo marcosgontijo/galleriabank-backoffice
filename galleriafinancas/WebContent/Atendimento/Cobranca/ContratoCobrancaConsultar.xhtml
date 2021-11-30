@@ -55,7 +55,7 @@
 						value="#{contratoCobrancaMB.numContrato}" label="Contrato"
 						style="width:150px;" />
 				</h:panelGrid>
-
+				<h:panelGrid columns="2" style="">
 				<p:panel id="Pessoas" header="Envolvidos"
 					style="margin-bottom:10px;margin-top:20px;">
 
@@ -92,8 +92,75 @@
 							</p:column>
 						</p:pickList>				
 					</h:panelGrid>
-				</p:panel> 
+					</p:panel>
+					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'FIDC GALLERIA'}" header="Dados da Consulta FIDC">
+						<h:panelGrid columns="2" style="">
+							<p:outputLabel for="TotalContratos" value="Total de Contratos: "
+								styleClass="labelBold" />
+							<p:outputLabel id="TotalContratos"
+								value="#{contratoCobrancaMB.totalContratosConsultar}"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="Carteira" value="Volume Carteira:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="Carteira"
+									value="#{contratoCobrancaMB.volumeCarteira}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem180" value="Até 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem180"
+									value="#{contratoCobrancaMB.porcentagem180}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value=" % " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem240" value="Acima 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem240"
+									value="#{contratoCobrancaMB.porcentagem240}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value=" % " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="inadimplencia30" value="1 parcela em atraso: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="inadimplencia30"
+									value="#{contratoCobrancaMB.inadimplencia30Porcentagem}"
+									styleClass="labelBold" />
+								<p:outputLabel value=" % " styleClass="labelBold" />
+							</h:panelGroup>
+							
+							<p:outputLabel for="inadimplencia60" value="2 parcelas em atraso: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="inadimplencia60"
+									value="#{contratoCobrancaMB.inadimplencia60Porcentagem}"
+									styleClass="labelBold" />
+								<p:outputLabel value=" % " styleClass="labelBold" />
+							</h:panelGroup>
+							
+							<p:outputLabel for="inadimplencia90" value="3 ou + parcelas em atraso: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="inadimplencia90"
+									value="#{contratoCobrancaMB.inadimplencia90Porcentagem}"
+									styleClass="labelBold" />
+								<p:outputLabel value=" % " styleClass="labelBold" />
+							</h:panelGroup>
+
+						</h:panelGrid>
+					</p:panel>
+					</h:panelGrid>
 				
+				
+
 				<h:panelGrid columns="3">
 					<p:commandButton value="Consultar"
 						ajax="false"
