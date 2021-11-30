@@ -892,6 +892,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = cDao.findById(contrato.getId());
 		
 		// carrega pagador 
+		if (this.objetoContratoCobranca.getPagador().getEndereco().equals("") || this.objetoContratoCobranca.getPagador().getCep().equals("")) {
+			this.objetoContratoCobranca.getPagador().setEndereco(this.objetoContratoCobranca.getImovel().getEndereco());
+			this.objetoContratoCobranca.getPagador().setCep(this.objetoContratoCobranca.getImovel().getCep());
+		}
 		this.iuguMb.setSelectedRecebedor(this.objetoContratoCobranca.getPagador());
 		
 		this.iuguMb.setDataVencimento(vencimento);
@@ -4004,7 +4008,12 @@ public class ContratoCobrancaMB {
 
 		// pré-seleciona o recebedor -- default galleria SA
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		this.selectedRecebedor = prDao.findById((long) 803);
+		if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
+			this.selectedRecebedor = prDao.findById((long) 6625);
+		} else {
+			this.selectedRecebedor = prDao.findById((long) 803);
+		}
+		
 		this.nomeRecebedor = this.selectedRecebedor.getNome();
 
 		/*
@@ -4673,13 +4682,17 @@ public class ContratoCobrancaMB {
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-			if (usuarioLogado != null) {
-				if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador()) {
+			//if (usuarioLogado != null) {
+				//if (usuarioLogado.isUserPreContratoAnalista() || usuarioLogado.isAdministrador()) { 
+				if (!this.objetoContratoCobranca.isInicioAnalise()) {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
 				} else {
 					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
-				}
-			}
+				}					
+				//} else {
+					//
+				//}
+			//}
 		}
 		return null;
 	}
@@ -5379,16 +5392,16 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("Todas")) {
 			this.tituloPainel = "GERAL";
-			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
 		}
 		
 		if (empresa.equals("Securitizadora")) {
-			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
 			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 		}
 		
 		if (empresa.equals("FIDC")) {
-			this.contratos = contratoCobrancaDao.consultaContratos(empresa);
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
