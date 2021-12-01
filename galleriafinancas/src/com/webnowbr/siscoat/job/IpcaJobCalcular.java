@@ -221,11 +221,11 @@ public class IpcaJobCalcular {
 
 							detalheIpca.setVlrSaldoParcela(vlrSaldoParcela.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-							if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
-								detalheIpca.setParcelaPaga(true);
-								detalheIpca.setDataPagamento(detalheIpca.getDataVencimento());
-								detalheIpca.setVlrParcela(BigDecimal.ZERO);
-							}
+//							if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
+//								detalheIpca.setParcelaPaga(true);
+//								detalheIpca.setDataPagamento(detalheIpca.getDataVencimento());
+//								detalheIpca.setVlrParcela(BigDecimal.ZERO);
+//							}
 
 							if (!detalheIpca.isParcelaPaga()) {
 								if (DateUtil.isAfterDate(detalheIpca.getDataVencimento(), DateUtil.getDataHoje())

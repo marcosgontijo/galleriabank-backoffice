@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	/**
@@ -43,6 +45,27 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public ContratoCobrancaParcelasInvestidor() {
 
+	}
+	
+	public BigDecimal getParcelaMensalBaixa() {		
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)
+			return this.capitalizacao.add(this.amortizacao);
+		else
+			return parcelaMensal;
+	}
+
+	public BigDecimal getJurosBaixa() {
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)
+			return this.capitalizacao;
+		else
+			return juros;
+	}
+	
+	public BigDecimal getValorLiquidoBaixa() {		
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)
+			return this.capitalizacao.add(this.amortizacao).subtract(irRetido);
+		else
+			return valorLiquido;
 	}
 
 	public long getId() {

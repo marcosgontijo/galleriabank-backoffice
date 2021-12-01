@@ -15,10 +15,20 @@
 		<ignore-duplicates>false</ignore-duplicates>
 	</processing-directives>
 
-	<!-- <schedule> <job> <name>IpcaJob</name> <job-class>com.webnowbr.siscoat.job.IpcaJob</job-class> 
-		</job> <trigger> <simple> <name>IpcaTrigger</name> <job-name>IpcaJob</job-name> 
-		<repeat-count>1</repeat-count> repeat indefinitely <repeat-interval>60000</repeat-interval> 
-		every 60 seconds </simple> </trigger> </schedule> -->
+	<!-- <schedule>
+		<job>
+			<name>IpcaJobUnico</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
+		</job>
+		<trigger>
+			<simple>
+				<name>IpcaJobUnicoTrigger</name>
+				<job-name>IpcaJobUnico</job-name>
+				<repeat-count>1</repeat-count>
+				<repeat-interval>600000</repeat-interval>
+			</simple>
+		</trigger>
+	</schedule>  -->
 	<schedule>
 		<job>
 			<name>IpcaJob</name>
