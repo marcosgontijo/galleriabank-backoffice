@@ -156,12 +156,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -185,11 +185,11 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
-
+									
 									<p:column style="text-align: center;"
 										headerText="Parcela Paga?"
 										styleClass="colunaHiddenRelFinanceiro">
@@ -222,7 +222,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -296,12 +296,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -325,7 +325,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -362,7 +362,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -435,12 +435,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -464,7 +464,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -501,7 +501,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -574,12 +574,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -603,7 +603,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -640,7 +640,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -713,12 +713,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -742,7 +742,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -779,7 +779,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -852,12 +852,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -881,7 +881,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -918,7 +918,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -991,12 +991,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1020,7 +1020,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1056,7 +1056,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -1129,12 +1129,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1158,7 +1158,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1195,7 +1195,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -1268,12 +1268,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1297,7 +1297,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1334,7 +1334,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
@@ -1407,12 +1407,12 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor da Parcela (R$)">
-										<h:outputText value="#{parcelas.parcelaMensal}"
+										<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.juros}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1436,7 +1436,7 @@
 									</p:column>
 									<p:column style="text-align: center;"
 										headerText="Valor Líquido (R$)">
-										<h:outputText value="#{parcelas.valorLiquido}"
+										<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1473,7 +1473,7 @@
 													value="#{parcelas}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-													value="#{parcelas.valorLiquido}" />
+													value="#{parcelas.valorLiquidoBaixa}" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 													value="#{parcelas.dataVencimento}" />
