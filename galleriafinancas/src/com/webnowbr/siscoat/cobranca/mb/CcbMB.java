@@ -759,6 +759,11 @@ public class CcbMB {
 		}
 	}
 	
+	public void criarTexto(XWPFParagraph paragraph, XWPFDocument document, XWPFRun run) {
+		paragraph = document.createParagraph();
+		run = paragraph.createRun();
+	}
+	
 
 	public StreamedContent geraCcbDinamica() throws IOException{
 		try {
@@ -783,17 +788,38 @@ public class CcbMB {
 			paragraph.setAlignment(ParagraphAlignment.CENTER);
 			run.setText("CÉDULA DE CRÉDITO BANCÁRIO");	
 			run.addBreak();
+			
 			run.setText("Nº XXXXXX");	
 			run.setFontSize(14);
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
 			run.addBreak();
-			paragraph = document.createParagraph();
-			paragraph.setNumID(BigInteger.ONE);
-			document.createNumbering().addNum(paragraph.getNumID());			
+			
+			paragraph = document.createParagraph();		
 			run = paragraph.createRun();
-			run.setText("Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?");
-			run.setFontSize(12);
+			run.setText("1.	 Partes:");
+			run.setFontSize(11);
+			run.setBold(true);
+			run.addBreak();
+			
+			paragraph = document.createParagraph();
+			run = paragraph.createRun();
+			run.setText("I – CREDOR: BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A.");
+			run.setBold(true);
+			run = paragraph.createRun();
+			run.setText(", instituição financeira, inscrita no CNPJ/MF sob nº 34.337.707/0001-00, com sede na Av. Paulista, 1765, 1º Andar, CEP 01311-200, São Paulo, SP, neste ato, representada na forma do seu Estatuto Social; ");
+			run.addBreak();
+			
+			for(CcbVO participante : this.listaParticipantes) {
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				run.setText("IX – " + "EMITENTE" + ":");
+				if(true) {
+					run.setText(run.getText(0) + "NOMEEMITENTE" + ",");
+				}
+				run.setBold(true);
+			}
+			
 			
 			for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();

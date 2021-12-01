@@ -456,18 +456,12 @@
 								onkeydown="FormataValor(this, 13, event, 2);"
 								converter="bigDecimalConverter"
 								style="FONT-SIZE: 10pt;width:100px;" />
-
-							
-							<p:outputLabel value="Exibir Fatura: " styleClass="labelBold" />
-							<h:panelGroup>
-								<a href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}"
-									class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
-								<!--  -->
-								<p:commandButton
-									action="#{contratoCobrancaMB.calcularValorLaudoPaju}"
-									value="Calcular Restante" update="valorLaudoPajuFaltante" />
-							</h:panelGroup>
-							
+								
+							<p:outputLabel value="Calcular Restante: " styleClass="labelBold" />
+							<p:commandButton
+								action="#{contratoCobrancaMB.calcularValorLaudoPaju}"
+								value="Calcular Restante" update="valorLaudoPajuFaltante" />
+								
 							<p:outputLabel for="valorLaudoPajuFaltante"
 								value="Valor Faltante: " styleClass="labelBold" />
 							<p:inputText id="valorLaudoPajuFaltante"

@@ -1,6 +1,9 @@
 package com.webnowbr.siscoat.cobranca.vo;
 
+import java.util.Set;
+
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 
 public class CcbVO {
 	private String numeroContrato;
@@ -20,6 +23,7 @@ public class CcbVO {
 	private String salaEmpresa;
 	private String bairroEmpresa;
 	private String cepEmpresa;
+	private Set<PagadorRecebedorSocio> socios;
 
 	
 	
@@ -125,5 +129,12 @@ public class CcbVO {
 	public void setTipoParticipante(String tipoParticipante) {
 		this.tipoParticipante = tipoParticipante;
 	}
+	public Set<PagadorRecebedorSocio> getSocios() {
+		return socios;
+	}
+	public void setSocios(Set<PagadorRecebedorSocio> socios) {
+		this.socios = socios;
+	}
+	
 	
 }
