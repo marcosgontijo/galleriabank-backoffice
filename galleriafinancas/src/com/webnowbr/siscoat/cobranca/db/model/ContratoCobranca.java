@@ -145,6 +145,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Set<Segurado> listSegurados;
 	private Set<PagadorRecebedorSocio> listSocios;
+	private Set<PagadorRecebedorAdicionais> listaPagadores;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -520,6 +521,9 @@ public class ContratoCobranca implements Serializable {
 	private Boolean fichaCadastralDocumentosSecundarioCheckList;
 	private Boolean bancoDocumentosSecundarioCheckList;
 	private Boolean telefoneEmailDocumentosSecundarioCheckList;
+	
+	private BigDecimal rendaComprovada;
+	private BigDecimal ccbxRenda;
 
 	public ContratoCobranca() {
 		super();
@@ -539,6 +543,7 @@ public class ContratoCobranca implements Serializable {
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
 		this.listSegurados = new HashSet<>();
 		this.listSocios = new HashSet<>();
+		this.listaPagadores = new HashSet<>();
 		
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
@@ -4217,4 +4222,29 @@ public class ContratoCobranca implements Serializable {
 	public void setValorBoletoPreContratoStr(String valorBoletoPreContratoStr) {
 		this.valorBoletoPreContratoStr = valorBoletoPreContratoStr;
 	}
+	
+	public Set<PagadorRecebedorAdicionais> getListaPagadores() {
+		return listaPagadores;
+	}
+
+	public void setListaPagadores(Set<PagadorRecebedorAdicionais> listaPagadores) {
+		this.listaPagadores = listaPagadores;
+	}
+
+	public BigDecimal getRendaComprovada() {
+		return rendaComprovada;
+	}
+
+	public void setRendaComprovada(BigDecimal rendaComprovada) {
+		this.rendaComprovada = rendaComprovada;
+	}
+
+	public BigDecimal getCcbxRenda() {
+		return ccbxRenda;
+	}
+
+	public void setCcbxRenda(BigDecimal ccbxRenda) {
+		this.ccbxRenda = ccbxRenda;
+	}
+
 }

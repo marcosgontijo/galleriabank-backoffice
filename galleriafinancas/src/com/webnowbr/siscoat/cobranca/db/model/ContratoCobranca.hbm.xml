@@ -1019,7 +1019,15 @@
                 <column name="contratoCobranca" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio" />
-        </set>            
+        </set>   
+        
+       <set name="listaPagadores" table="PagadorRecebedorAdicionais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais" />
+        </set>   
         
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
@@ -1204,6 +1212,14 @@
 						
 		<property name="prazoMaxPreAprovado" type="big_integer">
 			<column name="PRAZOMAXPREAPROVADO" />
+		</property>
+		
+		<property name="ccbxRenda" type="big_decimal">
+			<column name="ccbxRenda" />
+		</property>
+		
+		<property name="rendaComprovada" type="big_decimal">
+			<column name="rendaComprovada" />
 		</property>
 
 		<property name="valorMercadoImovel" type="big_decimal">

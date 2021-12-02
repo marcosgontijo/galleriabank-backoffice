@@ -260,27 +260,26 @@
 								          <f:convertDateTime locale="pt_BR"  />
 								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								    </h:outputText>																    						    
-								</h:panelGrid>
-							
-								<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">CCB Pronta</p:outputLabel>
-										<p:spacer ></p:spacer>						
-										<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
-										<p:spacer height="7"></p:spacer>
-										<p:spacer height="7"></p:spacer>
-										<p:spacer height="7"></p:spacer>
-										<p:outputLabel>Atualizado por: </p:outputLabel>
-										<p:spacer height="7"></p:spacer>
-										<h:outputText id="ccbProntaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
-										<h:outputText id="ccbProntaData" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
-									          <f:convertDateTime locale="pt_BR"  />
-									          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-									    </h:outputText>																    						    
 								</h:panelGrid>				
 							</h:panelGrid>	
-							<h:panelGrid columns="3" style="margin-top:20px;margin-bottom: 20px;">	
+							<h:panelGrid columns="4" style="margin-top:20px;margin-bottom: 20px;">	
+								<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 10px;">	
+											<p:outputLabel styleClass="labelBold">CCB Pronta</p:outputLabel>
+											<p:spacer ></p:spacer>						
+											<p:selectBooleanButton id="ccbProntaView" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+											<p:spacer height="7"></p:spacer>
+											<p:spacer height="7"></p:spacer>
+											<p:spacer height="7"></p:spacer>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<p:spacer height="7"></p:spacer>
+											<h:outputText id="ccbProntaUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+											<h:outputText id="ccbProntaData" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+										          <f:convertDateTime locale="pt_BR"  />
+										          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+										    </h:outputText>																    						    
+									</h:panelGrid>
 									<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px;
 											border-radius: 5px; padding: 10px;">	
@@ -581,73 +580,77 @@
 
 						</h:panelGrid>
 					</p:panel>
+					
+					<h:panelGroup id="OutrosPagadores">
+							<p:panel header="Outros Pagadores" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
+								<f:facet name="header"> Participantes 
+								<p:outputLabel value="" />
+									<p:selectBooleanButton value="#{contratoCobrancaMB.addPagador}"
+										onLabel="Adicionar Pagador" offLabel="Adicionar Pagador">
+										<p:ajax update=":form:OutrosPagadores" event="change" />
+									</p:selectBooleanButton>
+								</f:facet>
 
-					<!-- <h:panelGroup id="PanelPagadorSecundario">
-						<p:panel header="Dados Pagador Secundario"
-							style="margin-top:10px;margin-bottom:10px;" rendered="#{contratoCobrancaMB.addPagadorPreContrato}">
-							<h:panelGrid columns="2" header="Dados Pagador Secundario">
-								<p:outputLabel for="PessoaSecundario" value="Pessoa: "
-									styleClass="labelBold" />
-								<p:selectOneRadio id="PessoaSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}">
-									<f:selectItem itemLabel="Física" itemValue="true" />
-									<f:selectItem itemLabel="Jurídica" itemValue="false" />
-									<p:ajax update="PanelPagadorSecundario" event="valueChange" />
-								</p:selectOneRadio>
+								<p:dataView var="pagador"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
+									paginator="false" layout="list"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:dataViewListItem>
+										<p:outputLabel value="Nome: " styleClass="labelBold" />
+										<p:outputLabel value="#{pagador.pessoa.nome}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;" />
+										<p:spacer height="10" />
+										<p:commandButton value="Editar" icon="ui-icon-pencil"
+											action="#{contratoCobrancaMB.editarPagador(pagador)}"
+											ajax="true" update=":form:OutrosPagadores" />
+										<p:commandButton value="Remover" icon="ui-icon-trash"
+											action="#{contratoCobrancaMB.removerPagador(pagador)}"
+											ajax="true" update=":form:OutrosPagadores" />
 
-								<p:outputLabel for="CpfSecundario" value="CPF: "
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}" />
-								<p:inputMask id="CpfSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfSecundario}"
-									label="CPFSecundario" mask="999.999.999-99"
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}">
-								</p:inputMask>
+									</p:dataViewListItem>
+								</p:dataView>
 
-								<p:outputLabel for="CNPJSecundario" value="CNPJ: "
-									rendered="#{!contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}" />
-								<p:inputMask id="CNPJSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpjSecundario}"
-									label="CNPJSecundario" mask="99.999.999/9999-99"
-									rendered="#{!contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}">
-								</p:inputMask>
+								<h:panelGroup id="adicionarPagador"
+									rendered="#{contratoCobrancaMB.addPagador}">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="NomePagador" value="Nome: "
+											styleClass="labelBold" />
+											
+										<p:inputText id="NomePagador"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.nome}"
+											required="false" style="FONT-SIZE: 10pt;width:300px;" />
 
-								<p:outputLabel for="NomeCPFSecundario" value="Nome: "
-									styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}" />
-								<p:outputLabel for="NomeCNPJSecundario" value="Razão Social: "
-									styleClass="labelBold"
-									rendered="#{!contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}" />
-								<p:inputText id="NomeCPFSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeSecundario}"
-									label="Nome" required="true" onblur="" style="width:400px;"
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}">
-								</p:inputText>
-								<p:inputText id="NomeCNPJSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeSecundario}"
-									label="Nome" required="true" onblur="" style="width:400px;"
-									rendered="#{!contratoCobrancaMB.objetoPagadorRecebedor.tipoPessoaSecundarioIsFisica}">
-								</p:inputText>
+										<p:outputLabel for="CpfPagador" value="CPF: "
+											styleClass="labelBold" />
+										<p:inputMask id="CpfPagador" label="CPF" mask="999.999.999-99"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.cpf}">
+										</p:inputMask>
 
-								<p:outputLabel for="TelCelularSecundario"
-									value="Telefone Celular: " />
-								<p:inputText id="TelCelularSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelularSecundario}"
-									styleClass="phone" label="Telefone Celular" />
+										<p:outputLabel for="TelCelularPagador" value="Telefone: " />
+										<p:inputText id="TelCelularPagador"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.telCelular}"
+											styleClass="phone" label="Telefone Celular" />
 
-								<p:outputLabel for="EMailSecundario" value="E-Mail: " />
-								<p:inputText id="EMailSecundario"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailSecundario}"
-									label="E-Mail" type="email" onblur="" style="width:400px;" />
+										<p:outputLabel for="EMailPagador" value="E-Mail: " />
+										<p:inputText id="EMailPagador"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.email}"
+											label="E-Mail" type="email" onblur="" style="width:400px;" />
 
-								<p:outputLabel for="relacaoComTomador"
-									value="Relação Com Tomador: " />
-								<p:inputText id="relacaoComTomador"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.relacaoComTomador}"
-									label="Relação Com Tomador: " style="width:400px;" />
-								</h:panelGrid>
+										<p:outputLabel for="relacaoComTomador"
+											value="Relação Com Tomador: " />
+										<p:inputText id="relacaoComTomador"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.relacaoComTomador}"
+											label="Relação Com Tomador: " style="width:400px;" />
+
+										<p:commandButton value="Adicionar" ajax="true"
+											action="#{contratoCobrancaMB.concluirPagador()}"
+											update=":form:OutrosPagadores" image="ui-icon ui-icon-check" />
+									</h:panelGrid>
+								</h:panelGroup>
 							</p:panel>
-						</h:panelGroup>-->
-					</p:panel> 
+						</h:panelGroup>
+					
+				</p:panel> 
 					
 
 				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;">	
@@ -829,8 +832,7 @@
 				</p:panel>	
 				
 				<p:panel id="CheckListDocumentos" header="Documentos Prontos" style="margin-bottom:10px;">
-					<h:panelGrid columns="2">
-					
+					<h:panelGrid columns="2">				
 						<h:outputText value="Nome do Participante: " styleClass="labelBold"/>
 						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.nomeParticipanteCheckList}"/> 
 					
@@ -851,38 +853,7 @@
 					
 						<h:outputText value="Tem Telefone e Email? " styleClass="labelBold"/>
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.telefoneEmailDocumentosCheckList}"/>
-					
 					</h:panelGrid>
-
-					<h:panelGroup id="ChecklistDocumentosSecundario">
-					<p:spacer height="10"></p:spacer>
-						<p:panel header="Documentos Secundarios Prontos"
-							rendered="#{contratoCobrancaMB.addPagadorPreContrato}"
-							style="margin-bottom:10px;">
-							<h:panelGrid columns="2">
-								<h:outputText value="Nome do Participante: " styleClass="labelBold" />
-								<p:inputText id="nomeParticipanteSecundarioCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.nomeParticipanteSecundarioCheckList}" />
-
-								<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.rgDocumentosSecundarioCheckList}" />
-
-								<h:outputText value="Tem Comprovante de Endereço? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.comprovanteEnderecoDocumentosSecundarioCheckList}" />
-
-								<h:outputText value="Tem Certidão de Casamento/Nascimento? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.certidaoCasamentoNascimentoDocumentosSecundarioCheckList}" />
-
-								<h:outputText value="Tem Ficha Cadastral? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.fichaCadastralDocumentosSecundarioCheckList}" />
-
-								<h:outputText value="Tem Dados Bancários? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.bancoDocumentosSecundarioCheckList}" />
-
-								<h:outputText value="Tem Telefone e Email? " styleClass="labelBold" />
-								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.telefoneEmailDocumentosSecundarioCheckList}" />
-							</h:panelGrid>
-						</p:panel>
-					</h:panelGroup>
 				</p:panel>
 
 				<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
