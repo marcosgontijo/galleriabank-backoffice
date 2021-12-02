@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.common.db.model.BoletosRemessa" table="BOLETOSREMESSA">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="numeroContrato" type="java.lang.String">
+            <column name="NUMEROCONTRATO" not-null="true"/>
+        </property>
+        <property name="parcela" type="java.lang.String">
+            <column name="PARCELA"/>
+        </property>   
+        <property name="dtVencimento" type="java.util.Date">
+            <column name="DTVENCIMENTO"/>
+        </property>               
+        <property name="dtEmissao" type="java.util.Date">
+            <column name="DTEMISSAO"/>
+        </property> 
+        <property name="dtRemessa" type="java.util.Date">
+            <column name="DTREMESSA"/>
+        </property> 
+        <property name="nomeArquivoRemessa" type="java.lang.String">
+            <column name="NOMEARQUIVOREMESSA"/>
+        </property>
+        <property name="geradoRemessa" type="boolean">
+            <column name="GERADOREMESSA"/>
+        </property>       
+        <property name="sistema" type="java.lang.String">
+            <column name="SISTEMA"/>
+        </property>                  
+        <property name="valor" type="big_decimal">
+            <column name="VALOR"/>
+        </property>       
+         <property name="documento" type="java.lang.String">
+            <column name="DOCUMENTO"/>
+        </property>    
+        <property name="nomeSacado" type="java.lang.String">
+            <column name="NOMESACADO"/>
+        </property>   
+        <property name="endereco" type="java.lang.String">
+            <column name="ENDERECO"/>
+        </property> 
+        <property name="bairro" type="java.lang.String">
+            <column name="BAIRRO"/>
+        </property> 
+        <property name="cep" type="java.lang.String">
+            <column name="CEP"/>
+        </property> 
+        <property name="cidade" type="java.lang.String">
+            <column name="CIDADE"/>
+        </property> 
+        <property name="uf" type="java.lang.String">
+            <column name="UF"/>
+        </property>                                                        
+    </class>
+</hibernate-mapping>

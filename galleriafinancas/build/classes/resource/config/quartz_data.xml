@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+	version="2.0">
+
+	<pre-processing-commands>
+		<delete-jobs-in-group>*</delete-jobs-in-group>  <!-- clear all jobs in scheduler -->
+		<delete-triggers-in-group>*</delete-triggers-in-group> <!-- clear all triggers in scheduler -->
+	</pre-processing-commands>
+
+	<processing-directives>
+		<overwrite-existing-data>true</overwrite-existing-data>
+		<ignore-duplicates>false</ignore-duplicates>
+	</processing-directives>
+
+	<!-- <schedule>
+		<job>
+			<name>IpcaJobUnico</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
+		</job>
+		<trigger>
+			<simple>
+				<name>IpcaJobUnicoTrigger</name>
+				<job-name>IpcaJobUnico</job-name>
+				<repeat-count>1</repeat-count>
+				<repeat-interval>600000</repeat-interval>
+			</simple>
+		</trigger>
+	</schedule>  -->
+	<schedule>
+		<job>
+			<name>IpcaJob</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>IpcaJobTrigger</name>
+				<job-name>IpcaJob</job-name>
+				<cron-expression>0 0 2 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
+	
+	<schedule>
+		<job>
+			<name>IpcaJobContrato</name>
+			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>IpcaJobContratoTrigger</name>
+				<job-name>IpcaJobContrato</job-name>
+				<cron-expression>0 0 0/1 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
+
+</job-scheduling-data>

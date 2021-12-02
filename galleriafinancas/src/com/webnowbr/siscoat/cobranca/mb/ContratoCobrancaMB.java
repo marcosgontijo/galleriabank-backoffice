@@ -4028,10 +4028,12 @@ public class ContratoCobrancaMB {
 
 		// pré-seleciona o recebedor -- default galleria SA
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
-			this.selectedRecebedor = prDao.findById((long) 6625);
-		} else {
-			this.selectedRecebedor = prDao.findById((long) 803);
+		if (this.objetoContratoCobranca.getEmpresa() != null) {
+			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
+				this.selectedRecebedor = prDao.findById((long) 6625);
+			} else {
+				this.selectedRecebedor = prDao.findById((long) 803);
+			}
 		}
 		
 		this.nomeRecebedor = this.selectedRecebedor.getNome();

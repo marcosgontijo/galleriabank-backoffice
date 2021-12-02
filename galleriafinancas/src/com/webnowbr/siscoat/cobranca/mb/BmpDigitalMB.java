@@ -156,7 +156,7 @@ public class BmpDigitalMB {
 		
 		//calendar.get(Calendar.MONTH) retorna 1 mês antes porque começa em 0
 		// Subtraimos 1 porque a consulta é de 45 dias pra tras apenas
-		String mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 1);
+		String mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 2); 
 		String anoReferencia = String.valueOf(calendar.get(Calendar.YEAR));
 		
 		json = "{\"auth\":{\"Usuario\":\"JOAO@GALLERIAFINANCAS.COM.BR\",\"Senha\":\"Scr!2021\",\"CodigoParametro\":\"GALLERIA_SCR\",\"Chave\":\"eb11110f-9f0e-4a16-83d7-6229c949da4a\"}, " +
