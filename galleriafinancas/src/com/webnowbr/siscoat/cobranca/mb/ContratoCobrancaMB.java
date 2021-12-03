@@ -8934,18 +8934,20 @@ public class ContratoCobrancaMB {
 				msgRetorno = "inserido";
 			} else {
 				if (this.objetoContratoCobranca.isGeraParcelaFinal()) {
-					if (!this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-							.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
-							.isParcelaPaga()) {
-						this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+					if (this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() > 0) {
+						if (!this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 								.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
-								.setVlrComissao(this.vlrComissaoFinal);
-						this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-								.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
-								.setVlrRepasse(this.vlrRepasseFinal);
-						this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
-								.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
-								.setVlrRetencao(this.vlrRetencaoFinal);
+								.isParcelaPaga()) {
+							this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+									.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
+									.setVlrComissao(this.vlrComissaoFinal);
+							this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+									.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
+									.setVlrRepasse(this.vlrRepasseFinal);
+							this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
+									.get(this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() - 1)
+									.setVlrRetencao(this.vlrRetencaoFinal);
+						}
 					}
 				}
 
