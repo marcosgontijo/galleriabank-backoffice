@@ -2285,6 +2285,13 @@ public class ContratoCobrancaMB {
 				pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 				pagadorRecebedor = this.objetoPagadorRecebedor;
 			}
+			
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+				
+				return "";
+			}
 
 			// VALIDA IMOVEL
 			String imovelValido = null;
@@ -2516,6 +2523,13 @@ public class ContratoCobrancaMB {
 
 				this.objetoContratoCobranca.setVlrParcelaStr(
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
+			}
+			
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+				
+				return "";
 			}
 
 			updateCheckList();
@@ -5335,6 +5349,23 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroRecebedor.xhtml";
 	}
+	
+	public String clearFieldsRelAtrasoRecebedor() {
+		this.relDataContratoInicio = null;
+		this.relDataContratoFim = null;
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+
+		this.contratoGerado = false;
+
+		this.filtroRelBaixado = "inicio";
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listRecebedores = pagadorRecebedorDao.findAll();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaAtrasoRecebedor.xhtml";
+	}
 
 	public String backContratoCobrancaFinanceiro() {
 		geraRelFinanceiro();
@@ -5937,6 +5968,34 @@ public class ContratoCobrancaMB {
 			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroRecebedorPeriodo(
 					this.relDataContratoInicio, this.relDataContratoFim, this.getIdRecebedor());
 		}
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelAtrasoRecebedor() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+			TimeZone zone = TimeZone.getDefault();
+			Locale locale = new Locale("pt", "BR");
+
+			Calendar cInicio = Calendar.getInstance(zone, locale);
+			cInicio.setTime(this.relDataContratoInicio);
+			cInicio.add(Calendar.DATE, -1);
+			this.relDataContratoInicio = cInicio.getTime();
+
+			Calendar cFim = Calendar.getInstance(zone, locale);
+			cFim.setTime(this.relDataContratoFim);
+			cFim.add(Calendar.DATE, 1);
+			this.relDataContratoFim = cFim.getTime();
+
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroRecebedorAtraso(
+					this.relDataContratoInicio, this.relDataContratoFim);
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
 
