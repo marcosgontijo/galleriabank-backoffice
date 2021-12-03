@@ -138,6 +138,7 @@ public class RelatorioFinanceiroCobranca {
 			Date dataPagamento, BigDecimal vlrRecebedor1, PagadorRecebedor recebedor1, ContratoCobranca contratoCobranca) {
 		this.numeroContrato = numeroContrato;
 		this.parcela = parcela;
+		this.dataVencimento = dataPagamento;
 		this.dataPagamento = dataPagamento;
 		this.vlrRecebedor1 = vlrRecebedor1;
 		this.recebedor1 = recebedor1;

@@ -56,6 +56,97 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "where cdp.datapagamento > ? ::timestamp "
 			+ "and cdp.datapagamento < ? ::timestamp ";
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_RECEBEDOR_ATRASO =  	"select cc.numerocontrato, cd.numeroParcela, cdp.datapagamento, cdp.vlrrecebido, cdp.recebedor, cc.id  from cobranca.contratocobranca cc "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = cc.id "
+			+ "inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id "
+			
+			+ "inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ "inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial "
+			+ "where cdp.dataVencimentoAtual > ? ::timestamp "
+			+ "and cdp.dataVencimentoAtual < ? ::timestamp "
+			+ "and cd.parcelaVencida = 'true' ";
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_RECEBEDOR_ATRASO_NOVO = "select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_1 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor1 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_2 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor2 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_3 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor3 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_4 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor4 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_5 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor5 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_6 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor6 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_7 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor7 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_8 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor8 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_9 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor9 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false'"
+			+ "		union all"
+			+ "	select cc.numerocontrato, ccpi.numeroParcela, ccpi.dataVencimento, ccpi.saldoCredorAtualizado, ccpi.investidor, cc.id"
+			+ "		from  cobranca.contratocobrancaparcelasinvestidor ccpi"
+			+ "		inner join cobranca.contratocobranca_parcelas_investidor_join_10 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
+			+ "		inner join cobranca.contratocobranca cc  on parcelaJoin.idcontratocobrancaparcelasinvestidor10 = cc.id"
+			+ "		where ccpi.dataVencimento > ? ::timestamp "
+			+ "		and ccpi.dataVencimento < ? ::timestamp "
+			+ "		and ccpi.baixado = 'false' ";
+	
+	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_DT_ATUALIZADA =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.vlrRepasse,  cd.vlrParcela,  cd.vlrParcela " 
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
@@ -1581,6 +1672,75 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ps.setDate(2, dtRelFimSQL);								
 							
 	
+					rs = ps.executeQuery();
+					
+					PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+					PagadorRecebedor recebedor = new PagadorRecebedor();
+					
+					while (rs.next()) {
+						recebedor = new PagadorRecebedor();
+						
+						if (rs.getLong(5) > 0) {
+							recebedor = pDao.findById(rs.getLong(5));
+						}		
+						
+						ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
+						ContratoCobranca contratoTemp = ccDao.findById(rs.getLong(6));
+						
+						objects.add(new RelatorioFinanceiroCobranca(rs.getString(1), rs.getString(2), rs.getDate(3), rs.getBigDecimal(4), recebedor, contratoTemp));												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroRecebedorAtraso(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_RECEBEDOR_ATRASO_NOVO;
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);		
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);	
+					ps.setDate(5, dtRelInicioSQL);
+					ps.setDate(6, dtRelFimSQL);	
+					ps.setDate(7, dtRelInicioSQL);
+					ps.setDate(8, dtRelFimSQL);	
+					ps.setDate(9, dtRelInicioSQL);
+					ps.setDate(10, dtRelFimSQL);	
+					ps.setDate(11, dtRelInicioSQL);
+					ps.setDate(12, dtRelFimSQL);	
+					ps.setDate(13, dtRelInicioSQL);
+					ps.setDate(14, dtRelFimSQL);	
+					ps.setDate(15, dtRelInicioSQL);
+					ps.setDate(16, dtRelFimSQL);	
+					ps.setDate(17, dtRelInicioSQL);
+					ps.setDate(18, dtRelFimSQL);	
+					ps.setDate(19, dtRelInicioSQL);
+					ps.setDate(20, dtRelFimSQL);	
+					
 					rs = ps.executeQuery();
 					
 					PagadorRecebedorDao pDao = new PagadorRecebedorDao();

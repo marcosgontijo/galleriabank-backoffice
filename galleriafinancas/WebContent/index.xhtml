@@ -248,6 +248,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Atraso Recebedores"
+										action="#{contratoCobrancaMB.clearFieldsRelAtrasoRecebedor}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"
