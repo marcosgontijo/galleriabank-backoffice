@@ -68,7 +68,8 @@
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }"
+   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true and contratos.aprovadoComite eq false) || (contratos.documentosCompletos eq true and contratos.aprovadoComite eq true) ? 'parcelaPaga' : '' } 
+   		         					#{(contratos.documentosCompletos eq false and contratos.aprovadoComite eq true) ? 'linhaAzul' : '' } "
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -112,6 +113,9 @@
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.origemChamada}" value="FichaContrato" />
+			                </p:commandButton>
+			                 <p:commandButton action="#{contratoCobrancaMB.baixarEConsultarPreContrato}"  ajax="false" value="Baixar" update=":form:PanelPDF :form:dados  :form:dtContratos" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>

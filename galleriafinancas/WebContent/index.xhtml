@@ -132,6 +132,12 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+										
+									<p:menuitem value="Contratos Baixados"
+										action="#{contratoCobrancaMB.geraConsultaContratosBaixados}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="Pré-Cont Ag. Análise"

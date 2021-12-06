@@ -3961,6 +3961,54 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_PENDENTES;
+					
+					query = query + "where status = 'Baixado' " ;	
+					
+					if (codResponsavel != null) {
+						if (!codResponsavel.equals("")) { 
+							query = query + " and res.codigo = '" + codResponsavel + "' ";
+						}
+						query = query + " order by id desc ";						
+					} else {
+						query = query + " order by id desc ";
+					}
+					
+					query = query + " limit 10 ";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
 	
 	@SuppressWarnings("unchecked")
@@ -4114,7 +4162,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {		
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente'" ;
 					
 					if (status != null || !status.equals("")) {			
 						if (status.equals("Novo Lead")) {
@@ -4201,7 +4249,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and statuslead='Completo' " ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' and statuslead='Completo' " ;
 					
 					if (codResponsavel != null) {
 						if (!codResponsavel.equals("")) { 
@@ -4247,7 +4295,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and statuslead='Completo' " ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' and statuslead='Completo' " ;
 					
 					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
 					
@@ -4458,7 +4506,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					String query = QUERY_CONTRATOS_CRM;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' " ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' " ;
 					
 					// Verifica o tipo da consulta de contratos
 					if (tipoConsulta.equals("Todos")) {
@@ -4470,11 +4518,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (tipoConsulta.equals("Aguardando Análise")) {
-						query = query + " and inicioanalise = false and c.statusLead = 'Completo' "; 
+						query = query + " and inicioanalise = false"; 
 					}
 					
 					if (tipoConsulta.equals("Em Analise")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null)  and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)";
+						query = query + " and analiseReprovada = false and inicioanalise = true and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null)  and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)";
 					}
 					
 					if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
@@ -4509,11 +4557,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. Assinatura")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and ccbPronta = true  and agAssinatura = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
 					}
 					if (tipoConsulta.equals("Ag. Registro")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
 					}
 					
 					if (tipoConsulta.equals("Análise Reprovada")) {
@@ -5235,7 +5283,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {		
 					String query = QUERY_CONTRATOS_PENDENTES_VALIDACAO_NOVO_CONTRATO;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente'" ;
+					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and status != 'Baixado'" ;
 					
 					connection = getConnection();
 					

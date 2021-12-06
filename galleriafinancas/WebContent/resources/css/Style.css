@@ -30,6 +30,10 @@
 		    background-color: #91ef9f;  
 		}
 		
+		.ui-datatable .ui-datatable-data .linhaAzul td{
+		    background-color:  #25bbf7;  
+		}
+		
 		.ui-datatable .ui-datatable-data .parcelaAtraso td{
 		    background-color: #ef9191;  
 		}
@@ -305,7 +309,7 @@
 		}
 
 		.semBorda {  
-		   border: none !important;"   
+		   border: none !important;  
 		}  
 		
 		.companyHeaderGrid tr, .companyHeaderGrid td {
@@ -342,8 +346,6 @@
 		    	width: 260px !important;
 		    }
 		}
-		
-}
 
 
  
