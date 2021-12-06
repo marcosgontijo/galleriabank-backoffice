@@ -380,6 +380,7 @@
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 									            <f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+									            <f:selectItem itemLabel="Baixado" itemValue="Baixado" />
 									            <f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
 									        </p:selectOneRadio>	
 								       	</shiro:hasAnyRoles>	
@@ -388,6 +389,7 @@
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 									            <f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+									            <f:selectItem itemLabel="Baixado" itemValue="Baixado" />
 									            <f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
 									        </p:selectOneRadio>	
 								       	</shiro:hasAnyRoles>												    						    
@@ -1277,7 +1279,7 @@
 						</p:panel>
 						<h:panelGroup id="OutrosPagadores">
 							<p:panel header="Outros Pagadores" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<f:facet name="header"> Participantes 
+								<f:facet name="header"> Pagadores Adicionais 
 								<p:outputLabel value="" />
 									<p:selectBooleanButton value="#{contratoCobrancaMB.addPagador}"
 										onLabel="Adicionar Pagador" offLabel="Adicionar Pagador">
@@ -2087,7 +2089,7 @@
 			
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">				
-						<h:outputText value="Nome do Participante: " styleClass="labelBold"/>
+						<h:outputText value="Nome do Pagador: " styleClass="labelBold"/>
 						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.nomeParticipanteCheckList}"/> 
 					
 						<h:outputText value="Tem RG/CPF? " styleClass="labelBold"/>

@@ -93,17 +93,6 @@
 										<p:spacer ></p:spacer>
 										<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" />
 									</h:panelGrid>								
-									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
-										<p:spacer ></p:spacer>						
-										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
-											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
-									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-									        </p:selectOneRadio>
-										</shiro:hasAnyRoles>						    								    													    						   
-									</h:panelGrid>
 								</ui:fragment>
 								
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 1}">
@@ -116,6 +105,7 @@
 											<p:selectOneRadio id="cadastroAprovado" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+									            <p:ajax update="AnaliseReprovadaPanel" event="change" /> 
 									        </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>	
@@ -206,6 +196,21 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato != 1}">
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
+										<p:spacer ></p:spacer>						
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
+											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
+										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+										    	<p:ajax update="AnaliseReprovadaPanel" event="change" /> 
+										    </p:selectOneRadio>
+										</shiro:hasAnyRoles>						    								    													    						   
+									</h:panelGrid>
+								</ui:fragment>
 								
 								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
 									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
@@ -546,43 +551,53 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<h:panelGroup id="CheckListInformacoesAdicionais">
-				<p:panel header="Check-List - Informações Adicionais"
-					style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
-					<p:panel id="AnaliseReprovadaPanel" style="border: none">
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
+
+				<h:panelGroup id="AnaliseReprovadaPanel">
+					<p:panel
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
+						style="border: none" header="Analise Reprovada">
+						<h:panelGrid columns="2">
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
-								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
-							<p:inputTextarea id="motivo" rows="10" cols="48"
-								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
+								styleClass="labelBold" />
+							<p:inputTextarea id="motivo" rows="10" cols="48" maxlength="3000"
+								onblur="" counterTemplate="{0} characters remaining."
+								autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
-							<p:outputLabel id="quemReprovou" value="Quem analisou?" style="cursor:pointer" styleClass="labelBold"/>
-							<p:overlayPanel id="quemReprovouModal" for="quemReprovou" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
-		                    	dismissable="false" showCloseIcon="true"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
-						       	<p:panel id="quemReprovouInfo" header="Quem analisou?" style="margin-bottom:10px;">
-						       		<h:panelGrid columns="1">
-										<h:outputText id="quemAnalisouUsuario" value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}" style="font-weight: bold; font-size: 15px;padding-top: 20px;"/>
-										<h:outputText id="quemAnalisouData" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}" style="font-weight: bold; font-size: 15px;padding-top: 20px;">			            	
-									          <f:convertDateTime locale="pt_BR"  />
-									          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-									    </h:outputText>	
+							<p:outputLabel id="quemReprovou" value="Quem analisou?"
+								style="cursor:pointer" styleClass="labelBold" />
+							<p:overlayPanel id="quemReprovouModal" for="quemReprovou"
+								showEffect="blind" hideEffect="blind" showEvent="mouseover"
+								hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+								<p:panel id="quemReprovouInfo" header="Quem analisou?"
+									style="margin-bottom:10px;">
+									<h:panelGrid columns="1">
+										<h:outputText id="quemAnalisouUsuario"
+											value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;" />
+										<h:outputText id="quemAnalisouData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
 									</h:panelGrid>
-						       	</p:panel>		
-						    </p:overlayPanel> 
+								</p:panel>
+							</p:overlayPanel>
 						</h:panelGrid>
 					</p:panel>
-						
+				</h:panelGroup>
+				
+				<h:panelGroup id="CheckListInformacoesAdicionais">
+				<p:panel header="Check-List - Informações Adicionais"
+					style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">		
 					<p:spacer height="10"></p:spacer>
 					<p:panel id="DataVistoriaPanel" style="border: none">
 						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
-								<h:panelGroup
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
+								<h:panelGroup>
 									<p:outputLabel for="dataVistoria"
 										value="Data Vistoria Imóvel: " styleClass="labelBold" />
 								</h:panelGroup>
-								<h:panelGroup
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
+								<h:panelGroup>
 									<p:calendar id="dataVistoria" showOn="button"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
 										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
@@ -1327,7 +1342,6 @@
 										<p:commandButton value="Remover" icon="ui-icon-trash"
 											action="#{contratoCobrancaMB.removerPagador(pagador)}"
 											ajax="true" update=":form:OutrosPagadores" />
-
 									</p:dataViewListItem>
 								</p:dataView>
 
@@ -1481,7 +1495,7 @@
 
 										<p:commandButton value="Adicionar" ajax="true"
 											action="#{contratoCobrancaMB.concluirPagador()}"
-											update=":form:OutrosPagadores" image="ui-icon ui-icon-check" />
+											update=":form:OutrosPagadores :form:CheckListDocumentosAdicionais" image="ui-icon ui-icon-check" />
 									</h:panelGrid>
 								</h:panelGroup>
 							</p:panel>
@@ -2113,27 +2127,66 @@
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">				
 						<h:outputText value="Nome do Participante: " styleClass="labelBold"/>
-						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.nomeParticipanteCheckList}"/> 
+						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckList}"/> 
 					
 						<h:outputText value="Tem RG/CPF? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.rgDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.rgDocumentosCheckList}"/>
 							
 						<h:outputText value="Tem Comprovante de Endereço? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.comprovanteEnderecoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.comprovanteEnderecoDocumentosCheckList}"/>
 						
 						<h:outputText value="Tem Certidão de Casamento/Nascimento? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.certidaoCasamentoNascimentoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.certidaoCasamentoNascimentoDocumentosCheckList}"/>
 						
 						<h:outputText value="Tem Ficha Cadastral? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.fichaCadastralDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.fichaCadastralDocumentosCheckList}"/>
 		
 						<h:outputText value="Tem Dados Bancários? " styleClass="labelBold" />
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.bancoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.bancoDocumentosCheckList}"/>
 					
 						<h:outputText value="Tem Telefone e Email? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.telefoneEmailDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telefoneEmailDocumentosCheckList}"/>
+						
+						<h:outputText value="Tem Comprovante de Renda? " styleClass="labelBold"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.comprovanteRendaCheckList}"/>
 					</h:panelGrid>
-				</p:panel>
+
+				<p:dataView var="pagador" id="CheckListDocumentosAdicionais"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
+					paginator="false" 
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:dataViewListItem>
+			                <h:panelGrid columns="2">
+			                    <h:outputText value="Nome do Participante: " styleClass="labelBold" />
+								<p:inputText value="#{pagador.pessoa.nomeParticipanteCheckList}" />
+								
+								<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.rgDocumentosCheckList}" />
+		
+								<h:outputText value="Tem Comprovante de Endereço? " 	styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.comprovanteEnderecoDocumentosCheckList}" />
+		
+								<h:outputText value="Tem Certidão de Casamento/Nascimento? " styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.certidaoCasamentoNascimentoDocumentosCheckList}" />
+		
+								<h:outputText value="Tem Ficha Cadastral? " styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.fichaCadastralDocumentosCheckList}" />
+		
+								<h:outputText value="Tem Dados Bancários? " styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.bancoDocumentosCheckList}" />
+		
+								<h:outputText value="Tem Telefone e Email? " styleClass="labelBold" />
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.telefoneEmailDocumentosCheckList}" />
+								
+								<h:outputText value="Tem Comprovante de Renda? " styleClass="labelBold"/>
+								<p:selectBooleanCheckbox value="#{pagador.pessoa.comprovanteRendaCheckList}"/>
+								
+								<h:outputLabel value="_________________________________" styleClass="labelBold" />
+								<h:outputLabel value="_________________________________" styleClass="labelBold" />
+			                </h:panelGrid>	
+					</p:dataViewListItem>
+				</p:dataView>
+			</p:panel>
 			
 			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							

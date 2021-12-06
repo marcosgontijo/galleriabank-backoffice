@@ -122,6 +122,10 @@
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.origemChamada}" value="FichaContrato" />
 			                </p:commandButton>
+			                <p:commandButton action="#{contratoCobrancaMB.baixarPreContrato}" icon="ui-icon-pencil" value="Baixar" title="Editar">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>
+			                
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 

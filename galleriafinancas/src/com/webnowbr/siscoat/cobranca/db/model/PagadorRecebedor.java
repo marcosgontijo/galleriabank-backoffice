@@ -140,12 +140,29 @@ public class PagadorRecebedor implements Serializable {
 	private String relacaoComTomador;
 	private Boolean tipoPessoaSecundarioIsFisica;
 	
+	private String nomeParticipanteCheckList;
+	private boolean rgDocumentosCheckList;
+	private boolean comprovanteEnderecoDocumentosCheckList;
+	private boolean certidaoCasamentoNascimentoDocumentosCheckList;
+	private boolean fichaCadastralDocumentosCheckList;
+	private boolean bancoDocumentosCheckList;
+	private boolean telefoneEmailDocumentosCheckList;
+	private boolean comprovanteRendaCheckList;
+	
 	private User usuario;
 	
 	private BigDecimal saldoInvestidor;
 
 	public PagadorRecebedor(){
 		pesquisaBancosListaNome();
+	
+		this.rgDocumentosCheckList = false;
+		this.comprovanteEnderecoDocumentosCheckList = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
+		this.fichaCadastralDocumentosCheckList = false;
+		this.bancoDocumentosCheckList = false;
+		this.telefoneEmailDocumentosCheckList = false;
+		this.comprovanteRendaCheckList = false;
 	}
 	
 	public PagadorRecebedor(long id, String nome, String endereco, String bairro, String complemento,
@@ -1229,6 +1246,69 @@ public class PagadorRecebedor implements Serializable {
 	public void setListaBancos(List<SelectItem> listaBancos) {
 		this.listaBancos = listaBancos;
 	}
-	
+
+	public String getNomeParticipanteCheckList() {
+		return nomeParticipanteCheckList;
+	}
+
+	public void setNomeParticipanteCheckList(String nomeParticipanteCheckList) {
+		this.nomeParticipanteCheckList = nomeParticipanteCheckList;
+	}
+
+	public Boolean getRgDocumentosCheckList() {
+		return rgDocumentosCheckList;
+	}
+
+	public void setRgDocumentosCheckList(Boolean rgDocumentosCheckList) {
+		this.rgDocumentosCheckList = rgDocumentosCheckList;
+	}
+
+	public Boolean getComprovanteEnderecoDocumentosCheckList() {
+		return comprovanteEnderecoDocumentosCheckList;
+	}
+
+	public void setComprovanteEnderecoDocumentosCheckList(Boolean comprovanteEnderecoDocumentosCheckList) {
+		this.comprovanteEnderecoDocumentosCheckList = comprovanteEnderecoDocumentosCheckList;
+	}
+
+	public Boolean getCertidaoCasamentoNascimentoDocumentosCheckList() {
+		return certidaoCasamentoNascimentoDocumentosCheckList;
+	}
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheckList(Boolean certidaoCasamentoNascimentoDocumentosCheckList) {
+		this.certidaoCasamentoNascimentoDocumentosCheckList = certidaoCasamentoNascimentoDocumentosCheckList;
+	}
+
+	public Boolean getFichaCadastralDocumentosCheckList() {
+		return fichaCadastralDocumentosCheckList;
+	}
+
+	public void setFichaCadastralDocumentosCheckList(Boolean fichaCadastralDocumentosCheckList) {
+		this.fichaCadastralDocumentosCheckList = fichaCadastralDocumentosCheckList;
+	}
+
+	public Boolean getBancoDocumentosCheckList() {
+		return bancoDocumentosCheckList;
+	}
+
+	public void setBancoDocumentosCheckList(Boolean bancoDocumentosCheckList) {
+		this.bancoDocumentosCheckList = bancoDocumentosCheckList;
+	}
+
+	public Boolean getTelefoneEmailDocumentosCheckList() {
+		return telefoneEmailDocumentosCheckList;
+	}
+
+	public void setTelefoneEmailDocumentosCheckList(Boolean telefoneEmailDocumentosCheckList) {
+		this.telefoneEmailDocumentosCheckList = telefoneEmailDocumentosCheckList;
+	}
+
+	public Boolean getComprovanteRendaCheckList() {
+		return comprovanteRendaCheckList;
+	}
+
+	public void setComprovanteRendaCheckList(Boolean comprovanteRendaCheckList) {
+		this.comprovanteRendaCheckList = comprovanteRendaCheckList;
+	}
 }
 
