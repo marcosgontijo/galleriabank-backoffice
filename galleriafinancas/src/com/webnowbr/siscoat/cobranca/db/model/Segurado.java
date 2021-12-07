@@ -10,6 +10,7 @@ public class Segurado implements Serializable {
 	private static final long serialVersionUID = 4327959574378948956L;
 	private long id;
 	private BigDecimal porcentagemSegurador;
+	private String nomeSegurado;
 	private PagadorRecebedor pessoa;
 	private ContratoCobranca contratoCobranca;
 
@@ -27,6 +28,14 @@ public class Segurado implements Serializable {
 
 	public void setPorcentagemSegurador(BigDecimal porcentagemSegurador) {
 		this.porcentagemSegurador = porcentagemSegurador;
+	}
+
+	public String getNomeSegurado() {
+		return nomeSegurado;
+	}
+
+	public void setNomeSegurado(String nomeSegurado) {
+		this.nomeSegurado = nomeSegurado;
 	}
 
 	public PagadorRecebedor getPessoa() {

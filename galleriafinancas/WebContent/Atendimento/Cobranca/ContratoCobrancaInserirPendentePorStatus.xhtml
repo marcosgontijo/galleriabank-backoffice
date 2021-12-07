@@ -158,6 +158,8 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,ADMINISTRADOR">									
 											<p:selectBooleanButton id="aprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+											
+											<p:commandButton id="reprovadoComite" value="Reprovar Contrato" action="#{contratoCobrancaMB.reprovarContrato()}" icon="ui-icon-close" style="width:=60px"/>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
 								</ui:fragment>
@@ -196,7 +198,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato != 1}">
+								<ui:fragment rendered="#{!( contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 4  )}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -2211,8 +2213,8 @@
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
 					        </f:facet>	        
 					        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{filesInterno.name}" filterMatchMode="contains" sortBy="#{filesInterno.name}">
-					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}//interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
-					        </p:column>  
+					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}/interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
+					        </p:column>   
 					        
 					        <p:column style="width:100px;">
 								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
@@ -2274,7 +2276,7 @@
 						    	</p:commandButton>	
 				            </p:column>						        
 
-				             <f:facet name="footer">
+				            <f:facet name="footer">
 								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 						    	</p:commandButton>					             
