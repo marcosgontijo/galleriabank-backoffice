@@ -11,10 +11,8 @@
         <property name="porcentagemSegurador" type="big_decimal">
             <column name="porcentagemsegurador"/>
         </property>
-        <property name="nomeSegurado" type="java.lang.String">
-            <column name="nomeSegurado"/>
-        </property>
-		  <many-to-one name="pessoa" 
+   
+		 <many-to-one name="pessoa" 
 			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
 			lazy="false">
 			<column name="pessoa" />

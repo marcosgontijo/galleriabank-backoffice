@@ -9634,7 +9634,6 @@ public class ContratoCobrancaMB {
 	public void populateSelectedPagadorRecebedor() {
 		if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(this.selectedPagadorGenerico);
-			this.seguradoSelecionado.setNomeSegurado(this.selectedPagadorGenerico.getNome());
 		} else if ( CommonsUtil.mesmoValor("Socio", tipoPesquisaPagadorRecebedor)) {
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if ( CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {

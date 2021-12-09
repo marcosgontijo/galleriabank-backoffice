@@ -1700,7 +1700,7 @@
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="Nome: " styleClass="labelBold" />
-									<p:outputLabel value="#{segurado.nomeSegurado}"
+									<p:outputLabel value="#{segurado.pessoa.nome}"
 										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
 										<p:spacer height="10" />
 									<p:outputLabel value="|" styleClass="labelBold" />
@@ -1727,7 +1727,7 @@
 									styleClass="labelBold" />
 								<h:panelGroup>
 									<p:inputText id="SeguradorNome"
-										value="#{contratoCobrancaMB.seguradoSelecionado.nomeSegurado}"
+										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
 										required="false" style="FONT-SIZE: 10pt;width:300px;" />
 									<p:commandButton
 										action="#{contratoCobrancaMB.pesquisaSegurado}"
