@@ -1668,6 +1668,14 @@
 							<p:inputText id="numContratoSeguro"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContratoSeguro}"
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" />
+								
+							<p:outputLabel for="termoCessao"
+								value="IF (Termo Cessão): "
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"
+								styleClass="labelBold" />
+							<p:inputText id="termoCessao"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.termoCessao}"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" />
 
 							<p:outputLabel for="vlrImovel" value="Valor do Imóvel: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>

@@ -479,6 +479,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean temSeguroMIP;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
+	private String termoCessao;
+	private boolean enviadoJsonBRL;
 	
 	private Date vencimentoBoleto;
 	private BigDecimal valorBoletoPreContrato;
@@ -4247,4 +4249,19 @@ public class ContratoCobranca implements Serializable {
 		this.ccbxRenda = ccbxRenda;
 	}
 
+	public String getTermoCessao() {
+		return termoCessao;
+	}
+
+	public void setTermoCessao(String termoCessao) {
+		this.termoCessao = termoCessao;
+	}
+
+	public boolean isEnviadoJsonBRL() {
+		return enviadoJsonBRL;
+	}
+
+	public void setEnviadoJsonBRL(boolean enviadoJsonBRL) {
+		this.enviadoJsonBRL = enviadoJsonBRL;
+	}
 }

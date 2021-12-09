@@ -261,7 +261,17 @@
 					        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
 					    </p:confirmDialog>   
-		                </shiro:hasAnyRoles>               
+		                </shiro:hasAnyRoles>   
+		             	<shiro:hasAnyRoles name="ROOT">	
+		             		<p:spacer height="10"/>
+		                	<p:commandButton onclick="PF('alterarEmpresaDialog').show();"
+								icon="ui-icon-video"
+								update=":formAlterarEmpresa"
+								style="height: 25px;width: 100px;"
+								value="Empresa" title="Empresa">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />								
+							</p:commandButton>
+						</shiro:hasAnyRoles>               
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
@@ -321,5 +331,37 @@
 				</div>	  				
 			</h:form>
 		</p:dialog>  
+		<p:dialog header="Alterar Empresa do Contrato"
+			widgetVar="alterarEmpresaDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="460">
+			<h:form id="formAlterarEmpresa">
+				<div style="float: left; width: 75%;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="empresa" value="Empresa: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="empresa"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.empresa}"
+							label="Status" style="width:345px;" required="true">
+							<f:selectItem itemValue="" itemLabel="SELECIONE" />
+							<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+							<f:selectItem itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI" itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+							<f:selectItem itemValue="FIDC GALLERIA" itemLabel="FIDC GALLERIA" />
+						</p:selectOneMenu>	
+					</h:panelGrid>
+				</div>
+				<div align="center"
+					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
+					<p:commandButton value="Salvar Alteração"
+						action="#{contratoCobrancaMB.alterarEmpresa()}"
+						update=":form:msgs"
+						ajax="false" icon="ui-icon-print" title="Salvar Alteração" oncomplete="PF('alterarEmpresaDialog').hide();">
+					</p:commandButton>
+					<p:spacer width="10" />
+					<p:commandButton value="Cancelar"
+						icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('alterarEmpresaDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog> 		
 	</ui:define>
 </ui:composition>

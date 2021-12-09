@@ -241,6 +241,12 @@
 		<property name="numeroContratoSeguro" type="java.lang.String">
 			<column name="NUMEROCONTRATOSEGURO" />
 		</property>
+		<property name="termoCessao" type="java.lang.String">
+			<column name="termoCessao" />
+		</property>
+		<property name="enviadoJsonBRL" type="boolean">
+			<column name="enviadoJsonBRL" />
+		</property>
 		<property name="tipoCalculo" type="text">
 			<column name="tipoCalculo" />
 		</property>

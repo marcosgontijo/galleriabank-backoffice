@@ -173,7 +173,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
-			                </p:commandButton>		                	
+			                </p:commandButton>		             	
 		                </shiro:hasAnyRoles>
 		                <!-- 
 		                <p:spacer height="10"/>
@@ -196,7 +196,7 @@
 			        </f:facet>		            		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
-		</h:form>
+		</h:form> 
 		<p:dialog header="Gerar Boleto IUGU - Laudo e PAJU"
 			widgetVar="bpGerarBoletoIUGUDialog" resizable="false"
 			style="FONT-SIZE: 10pt;" width="460">

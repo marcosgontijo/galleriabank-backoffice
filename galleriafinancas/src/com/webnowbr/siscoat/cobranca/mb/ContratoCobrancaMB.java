@@ -649,6 +649,17 @@ public class ContratoCobrancaMB {
 	private BigDecimal inadimplencia90Porcentagem;
 	
 	private Boolean addPagadorPreContrato;
+	
+	public void alterarEmpresa() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		context.addMessage(null,
+			new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Contrato " + this.objetoContratoCobranca.getNumeroContrato() + " - Alteração da empresa salva com sucesso!!!",""));
+	}
 
 	/**
 	 * 

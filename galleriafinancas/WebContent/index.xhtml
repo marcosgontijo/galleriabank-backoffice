@@ -188,6 +188,10 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
+									<p:menuitem value="BRL Json Cessão"
+										action="#{brlTrustMB.clearFieldsBRLJson()}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									<p:menuitem value="Contratos Geral"
 										action="#{contratoCobrancaMB.clearFieldsContratos('Todas')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
