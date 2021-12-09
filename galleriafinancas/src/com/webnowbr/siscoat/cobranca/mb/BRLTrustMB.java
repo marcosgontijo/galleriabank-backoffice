@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -28,6 +32,8 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -194,7 +200,7 @@ public class BRLTrustMB {
 			//jsonRecebivel.put("liquidacao", "2022-03-08");
 			JSONObject jsonValores = new JSONObject();
 			jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
-			jsonValores.put("aquisicao", 99999.99);
+			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId()));
 			// TODO se liquidação
 			//jsonValores.put("liquidacao", 2500.30);
 			
@@ -234,10 +240,44 @@ public class BRLTrustMB {
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"SCR: PDF gerado com sucesso!",
+						"Geração JSON BRL Cessão: JSON gerado com sucesso!",
 						""));	
 
 		return "/Atendimento/Cobranca/ContratoCobrancaJSON.xhtml";
+	}
+	
+	public BigDecimal calcularValorPresenteParcela(Long idParcela){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		BigDecimal valorPresenteParcela;
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+				
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal quantidadeDeMeses = getDifferenceMonths(parcelas.getDataVencimento(), auxDataHoje);
+		
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) {
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1));
+		}
+
+		juros = juros.divide(BigDecimal.valueOf(100));
+		double divisor = Math.pow(CommonsUtil.doubleValue(BigDecimal.ONE.add(juros)), CommonsUtil.doubleValue(quantidadeDeMeses));
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
+	
+	public static BigDecimal getDifferenceMonths(Date d1, Date d2) {
+	    long diff = d2.getTime() - d1.getTime();
+	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	    BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
+	    return diff2;
 	}
 
 	public String getStringSemCaracteres(String documento) {
