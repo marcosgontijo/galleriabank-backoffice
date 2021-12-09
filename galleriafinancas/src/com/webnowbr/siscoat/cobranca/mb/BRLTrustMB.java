@@ -22,10 +22,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+
+import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -44,6 +46,9 @@ public class BRLTrustMB {
 	private String numContrato;
 	private String cedenteCessao;
 	private Date dataAquisicao;
+	private Date dataBaixa;
+	
+	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 
 	public String clearFieldsBRLJson() {			
 		this.numContrato = "";
@@ -63,6 +68,35 @@ public class BRLTrustMB {
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratos = contratoCobrancaDao.consultaContratosBRLCessao(this.numContrato);
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"BRL JSON: Pesquisa efetuada com sucesso!",
+						""));	
+	}
+	
+	public String clearFieldsBRLJsonLiquidacao() {			
+		this.numContrato = "";
+		this.cedenteCessao = "";		
+		this.contratos = new ArrayList<ContratoCobranca>();
+		this.dataAquisicao = new Date();
+		
+		this.dataBaixa = gerarDataOntem();
+		
+		this.parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonLiquidacao.xhtml";
+	}
+	
+	public void pesquisaContratosLiquidacao() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (this.numContrato.length() == 4) {
+			this.numContrato = "0" + this.numContrato;
+		} 
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixa);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -221,6 +255,16 @@ public class BRLTrustMB {
 
 		return dataHoje.getTime();
 	}
+	
+	public Date gerarDataOntem() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.add(Calendar.DATE, -1);
+		
+		return dataHoje.getTime();
+	}
 
 	public boolean isJsonGerado() {
 		return jsonGerado;
@@ -303,5 +347,21 @@ public class BRLTrustMB {
 
 	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
 		this.objetoContratoCobranca = objetoContratoCobranca;
+	}
+
+	public List<ContratoCobrancaBRLLiquidacao> getParcelasLiquidacao() {
+		return parcelasLiquidacao;
+	}
+
+	public void setParcelasLiquidacao(List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao) {
+		this.parcelasLiquidacao = parcelasLiquidacao;
+	}
+
+	public Date getDataBaixa() {
+		return dataBaixa;
+	}
+
+	public void setDataBaixa(Date dataBaixa) {
+		this.dataBaixa = dataBaixa;
 	}
 }

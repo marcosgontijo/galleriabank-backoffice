@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
@@ -2802,6 +2803,71 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_BRL_CONTRATO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido  "
+			+ " from cobranca.contratocobrancadetalhes cd "
+			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
+			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
+			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
+			+ " where cdp.dataPagamento >= ? ::timestamp "
+			+ " and cdp.dataPagamento <= ? ::timestamp ";	
+
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixa) {
+		return (List<ContratoCobrancaBRLLiquidacao>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobrancaBRLLiquidacao> objects = new ArrayList<ContratoCobrancaBRLLiquidacao>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;				
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO;
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixa.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixa.getTime());
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);			
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					ContratoCobrancaBRLLiquidacao contratoCobrancaBRLLiquidacao = new ContratoCobrancaBRLLiquidacao();					
+					
+					while (rs.next()) {
+						contratoCobrancaBRLLiquidacao = new ContratoCobrancaBRLLiquidacao();
+						
+						contratoCobranca = findById(rs.getLong(1));
+						
+						contratoCobrancaBRLLiquidacao.setContrato(contratoCobranca);
+						
+						contratoCobrancaBRLLiquidacao.setNumeroParcela(rs.getString(2));
+						contratoCobrancaBRLLiquidacao.setVlrJurosParcela(rs.getBigDecimal(3));
+						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoParcela(rs.getBigDecimal(4));
+						contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate(5));
+						contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate(6));
+						contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal(7));
+						contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal(8));
+
+						objects.add(contratoCobrancaBRLLiquidacao);
 					}
 	
 				} finally {

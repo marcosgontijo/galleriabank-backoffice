@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelJSON" header="Geração do JSON BRL"
+				style="margin-bottom:10px;" rendered="#{brlTrustMB.jsonGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="JSON BRL" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{brlTrustMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratos" header="Contratos - Consultar | Gerar JSON Liquidação"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="cedente" value="Cedente: "
+						styleClass="labelBold" />
+					<p:selectOneMenu id="cedente"
+						value="#{brlTrustMB.cedenteCessao}"
+						label="Cedente" style="width:345px;" required="true">
+						<f:selectItem itemValue="" itemLabel="SELECIONE" />
+						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
+						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
+					</p:selectOneMenu>	
+					<p:outputLabel for="DataAquisicao" value="Data Aquisição: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="DataAquisicao"
+						value="#{brlTrustMB.dataAquisicao}"
+						required="true" label="Data Aquisição" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField">
+					</p:calendar>		
+					<p:outputLabel for="DataBaixa" value="Data Baixa: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="DataBaixa"
+						value="#{brlTrustMB.dataBaixa}"
+						required="true" label="Data Baixa" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField">
+					</p:calendar>				
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+				<p:commandButton value="Pesquisar Contrato"
+						ajax="false"
+						action="#{brlTrustMB.pesquisaContratosLiquidacao()}"
+						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
+				<p:dataTable id="dtContratos" var="parcelaBaixa"
+					value="#{brlTrustMB.parcelasLiquidacao}"
+					emptyMessage="">
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{parcelaBaixa.contrato.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{parcelaBaixa.contrato.numeroContrato}">
+						<h:outputText value="#{parcelaBaixa.contrato.numeroContrato}" />
+					</p:column>              		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
