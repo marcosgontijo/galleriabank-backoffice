@@ -93,6 +93,10 @@
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>
+			                
+			                <p:commandButton action="#{contratoCobrancaMB.recuperarPreContratoBaixado}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Recuperar Contrato" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 

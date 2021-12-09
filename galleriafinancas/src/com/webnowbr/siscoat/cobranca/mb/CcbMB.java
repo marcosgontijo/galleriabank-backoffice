@@ -813,9 +813,9 @@ public class CcbMB {
 			for(CcbVO participante : this.listaParticipantes) {
 				paragraph = document.createParagraph();
 				run = paragraph.createRun();
-				run.setText("IX – " + "EMITENTE" + ":");
-				if(true) {
-					run.setText(run.getText(0) + "NOMEEMITENTE" + ",");
+				run.setText("IX – " + participante.getTipoParticipante() + ":");
+				if(!participante.isEmpresa()) {
+					run.setText(run.getText(0) + participante.getPessoa().getNome() + ",");
 				}
 				run.setBold(true);
 			}
