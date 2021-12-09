@@ -1859,9 +1859,26 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}"
 									label="Observação" onblur="" style="width:300px;" />
 								<p:spacer width="10" />
+								
+								
+								<p:outputLabel for="numeroPresenteParcela" value="Numero Presente Parcela" />
+								<p:inputText id="numeroPresenteParcela" value="#{contratoCobrancaMB.numeroPresenteParcela}" />
+								<!--  -->
+								
+	
+								<p:outputLabel  value="Calcular Valor Presente Parcela " />
+								<p:commandButton value="Calcular Valor Presente Parcela" action="#{contratoCobrancaMB.calcularValorPresenteParcela}"
+										ajax="true" update="valorPresenteParcela"/>
+										<!--  -->
+								
+								<p:outputLabel for="valorPresenteParcela" value="Valor Presente Parcela" />
+								<p:outputLabel id="valorPresenteParcela" value="#{contratoCobrancaMB.valorPresenteParcela}" converter="bigDecimalConverter" />
+								<!--  -->
 							</h:panelGrid>
 						</p:panel>
 
+						
+						
 						<p:panel id="DetalheParcelas"
 							header="Detalhamento - Forma de Pagamento"
 							style="margin-bottom:10px;"

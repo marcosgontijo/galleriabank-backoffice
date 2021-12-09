@@ -147,6 +147,7 @@ public class ContratoCobrancaMB {
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private boolean crmMode = false;
+	private boolean baixarMode = false;
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -4579,7 +4580,56 @@ public class ContratoCobrancaMB {
 		baixarPreContrato();		
 		geraConsultaContratosPorStatus(this.tituloTelaConsultaPreStatus);
 	}
+	
+	private BigDecimal valorPresenteParcela;
+	private int numeroPresenteParcela;
+	
+	public static BigDecimal getDifferenceMonths(Date d1, Date d2) {
+	    long diff = d2.getTime() - d1.getTime();
+	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	    BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
+	    return diff2;
+	}
 
+	public void calcularValorPresenteParcela(){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		
+		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
+		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal quantidadeDeMeses = getDifferenceMonths(parcelas.getDataVencimento(), auxDataHoje);
+		
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) {
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1));
+		}
+
+		juros = juros.divide(BigDecimal.valueOf(100));
+		double divisor = Math.pow(CommonsUtil.doubleValue(BigDecimal.ONE.add(juros)), CommonsUtil.doubleValue(quantidadeDeMeses));
+	
+		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+	}
+
+	public BigDecimal getValorPresenteParcela() {
+		return valorPresenteParcela;
+	}
+
+	public void setValorPresenteParcela(BigDecimal valorPresenteParcela) {
+		this.valorPresenteParcela = valorPresenteParcela;
+	}
+	
+	public int getNumeroPresenteParcela() {
+		return numeroPresenteParcela;
+	}
+
+	public void setNumeroPresenteParcela(int numeroPresenteParcela) {
+		this.numeroPresenteParcela = numeroPresenteParcela;
+	}
+	
+	
 	public String clearFieldsEditarPendentes() {
 			
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -4587,6 +4637,9 @@ public class ContratoCobrancaMB {
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
 		this.tituloPainel = "Editar";
+		
+		this.valorPresenteParcela = BigDecimal.ZERO;
+		
 
 		files = new ArrayList<FileUploaded>();
 		files = listaArquivos();
@@ -16464,14 +16517,33 @@ public class ContratoCobrancaMB {
 	public void setDeleteMode(boolean deleteMode) {
 		if (deleteMode) {
 			this.tituloPainel = "Excluir";
+		} else if (this.updateMode) {
+			this.tituloPainel = "Editar";
+		} else if (this.baixarMode) {
+			this.tituloPainel = "Baixar";
 		} else {
-			if (this.updateMode) {
-				this.tituloPainel = "Editar";
-			} else {
-				this.tituloPainel = "Visualizar";
-			}
-		}
+			this.tituloPainel = "Visualizar";
+		}	
 		this.deleteMode = deleteMode;
+	}
+	
+
+	public boolean isBaixarMode() {
+		return baixarMode;
+	}
+
+	public void setBaixarMode(boolean baixarMode) {
+		if (baixarMode) {
+			this.tituloPainel = "Baixar";
+		} else if (this.updateMode) {
+			this.tituloPainel = "Editar";
+		} else if (this.deleteMode) {
+			this.tituloPainel = "Excluir";
+		} else {
+			this.tituloPainel = "Visualizar";
+		}	
+		
+		this.baixarMode = baixarMode;
 	}
 
 	/**
