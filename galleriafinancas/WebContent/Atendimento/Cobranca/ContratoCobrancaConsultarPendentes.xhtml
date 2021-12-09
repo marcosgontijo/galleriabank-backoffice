@@ -79,6 +79,7 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 						</p:commandButton>		
 						<p:spacer height="10" />					
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
@@ -117,6 +118,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 			                </p:commandButton>
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -124,6 +126,10 @@
 			                </p:commandButton>
 			                <p:commandButton action="#{contratoCobrancaMB.baixarPreContrato}" icon="ui-icon-pencil" value="Baixar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
 			                
 		                </shiro:hasAnyRoles>
@@ -136,6 +142,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 			                </p:commandButton>
 			               <p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
 			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -147,6 +154,7 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 						</p:commandButton>
 						<p:spacer height="10" />					
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
