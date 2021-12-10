@@ -2172,7 +2172,12 @@
 				<p:spacer height="10" />
 				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
-				</p:commandButton>		 						
+				</p:commandButton>	
+				
+				<p:commandButton value="Baixar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.baixarPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.baixarMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />	
+				</p:commandButton>	 		
+								
 				<p:spacer height="10" />
 				<p:commandButton value="Voltar ao CRM" ajax="false" immediate="true" icon="ui-icon-arrowreturn-1-w" action="/Atendimento/Cobranca/CRM.xhtml" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.crmMode}"/>		 						
 				<p:spacer height="10" rendered="#{contratoCobrancaMB.crmMode}"/>

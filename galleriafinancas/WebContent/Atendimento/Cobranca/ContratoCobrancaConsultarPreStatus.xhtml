@@ -115,13 +115,17 @@
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.origemChamada}" value="FichaContrato" />
 			                </p:commandButton>
-			                 <p:commandButton action="#{contratoCobrancaMB.baixarEConsultarPreContrato}"  ajax="false" value="Baixar" update=":form:PanelPDF :form:dados  :form:dtContratos">
+			                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
+
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 

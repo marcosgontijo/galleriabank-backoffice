@@ -124,8 +124,10 @@
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.origemChamada}" value="FichaContrato" />
 			                </p:commandButton>
-			                <p:commandButton action="#{contratoCobrancaMB.baixarPreContrato}" icon="ui-icon-pencil" value="Baixar" title="Editar">
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />

@@ -4094,12 +4094,85 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					} else {
 						query = query + " order by id desc ";
 					}
-					
+					query = query +  " limit 10 ";
 					ps = connection
 							.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_TOTAL_PRE_CONTRATOS_BAIXADOS =  	"select cc.id "
+			+ " from cobranca.contratocobranca cc "
+			+ " where cc.status = 'Baixado' ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaTotalPreContratosBaixados() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_TOTAL_PRE_CONTRATOS_BAIXADOS;	
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_PRE_CONTRATOS_BAIXADOS =  	"select cc.id "
+			+ " from cobranca.contratocobranca cc "
+			+ " where cc.status = 'Baixado' "
+			+ " and cc.numerocontrato = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaPreContratosBaixados(final String numeroContrato) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_PRE_CONTRATOS_BAIXADOS;	
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+				
+					ps.setString(1, numeroContrato);
+	
+					rs = ps.executeQuery();
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
