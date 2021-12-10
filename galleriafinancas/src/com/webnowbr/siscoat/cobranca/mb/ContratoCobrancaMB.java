@@ -4563,16 +4563,29 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Reprovado");
 	}
 	
-	public void baixarPreContrato() {
+	public String baixarPreContrato() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
+		this.objetoContratoCobranca.setContratoResgatadoBaixar(false);
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		
+		return geraConsultaContratosPendentes();
 	}
 			
 	public void recuperarPreContratoBaixado() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatus("Pendente");
 		this.objetoContratoCobranca.setStatusContrato("Em Análise");
+		updateCheckList();
+		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
+		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 	}
 	
 	public void baixarEConsultarPreContrato() {
@@ -5687,6 +5700,20 @@ public class ContratoCobrancaMB {
 		this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 
+	public void geraConsultaPreContratosBaixados() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		String numeroContrato = "";
+
+		if (this.numContrato.length() == 4) {
+			numeroContrato = "0" + this.numContrato;
+		} else {
+			numeroContrato = this.numContrato;
+		}
+		
+		this.contratosPendentes = contratoCobrancaDao.consultaPreContratosBaixados(numeroContrato);
+	}
+	
 	public void geraConsultaContratos() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratos = new ArrayList<ContratoCobranca>();
@@ -6235,8 +6262,13 @@ public class ContratoCobrancaMB {
 				if (status.equals("Análise Reprovada")) {
 					if(contratos.getAnaliseReprovadaData() != null) {
 						if(getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
-							this.objetoContratoCobranca = contratos;
-							reprovarContrato();
+							if(!contratos.isContratoResgatadoBaixar()) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							} else if(getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							}
 						}
 					}
 				}
@@ -6244,8 +6276,13 @@ public class ContratoCobrancaMB {
 				if (status.equals("Aguardando Análise")) {
 					if(contratos.getDataContrato() != null) {
 						if(getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 14) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
+							if(!contratos.isContratoResgatadoBaixar()) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							} else if(getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							}
 						}
 					}
 				}
@@ -6253,8 +6290,14 @@ public class ContratoCobrancaMB {
 				if (status.equals("Ag. Pagto. Laudo")) {
 					if(contratos.getInicioAnaliseData() != null) {
 						if(getDifferenceDays(contratos.getInicioAnaliseData(), auxDataHoje) > 15) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
+							if(!contratos.isContratoResgatadoBaixar()) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							} else if(getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							}
+							
 						}
 					}
 				}
@@ -6262,8 +6305,13 @@ public class ContratoCobrancaMB {
 				if (status.equals("Ag. DOC e Comite")) {
 					if(contratos.getPajurFavoravelData() != null || contratos.getLaudoRecebidoData() != null ) {
 						if(getDifferenceDays(contratos.getPajurFavoravelData(), auxDataHoje) > 30 || getDifferenceDays(contratos.getLaudoRecebidoData(), auxDataHoje) > 30) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
+							if(!contratos.isContratoResgatadoBaixar()) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							} else if(getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
+								this.objetoContratoCobranca = contratos;
+								baixarPreContrato();
+							}
 						}
 					}
 				}
@@ -6373,7 +6421,9 @@ public class ContratoCobrancaMB {
 	
 	public String geraConsultaContratosBaixados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.numContrato = "";
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
 
 		if (loginBean != null) {
 			User usuarioLogado = new User();

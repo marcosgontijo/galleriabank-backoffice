@@ -1353,6 +1353,13 @@
 		<property name="valorLaudoPajuFaltante" type="big_decimal">
 			<column name="valorLaudoPajuFaltante" />
 		</property>
-
+		
+		<property name="contratoResgatadoBaixar" type="boolean">
+			<column name="contratoResgatadoBaixar" />
+		</property>
+		
+		<property name="contratoResgatadoData" type="java.util.Date">
+			<column name="contratoResgatadoData" />
+		</property>
 	</class>
 </hibernate-mapping>
