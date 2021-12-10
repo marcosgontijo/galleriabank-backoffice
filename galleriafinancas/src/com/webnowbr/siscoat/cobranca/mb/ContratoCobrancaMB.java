@@ -5714,6 +5714,13 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.consultaPreContratosBaixados(numeroContrato);
 	}
 	
+	public void geraConsultaTotalPreContratosBaixados() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.consultaTotalPreContratosBaixados();
+	}
+	
 	public void geraConsultaContratos() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratos = new ArrayList<ContratoCobranca>();

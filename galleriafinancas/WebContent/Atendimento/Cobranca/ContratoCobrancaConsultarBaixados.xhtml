@@ -59,7 +59,7 @@
 						style="width:150px;" />
 			 	 </h:panelGrid>	
 			 	 
-			 	 <h:panelGrid columns="3">
+			 	 <h:panelGrid columns="5">
 					<p:commandButton value="Consultar"
 						ajax="false"
 						action="#{contratoCobrancaMB.geraConsultaPreContratosBaixados}"
@@ -70,6 +70,13 @@
 					<p:commandButton value="Limpar Consulta"
 						ajax="false"
 						action="#{contratoCobrancaMB.geraConsultaContratosBaixados}"
+						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+					<p:spacer width="25"></p:spacer>
+					<p:commandButton value="Consultar Todos"
+						ajax="false"
+						action="#{contratoCobrancaMB.geraConsultaTotalPreContratosBaixados}"
 						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
 						image="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
