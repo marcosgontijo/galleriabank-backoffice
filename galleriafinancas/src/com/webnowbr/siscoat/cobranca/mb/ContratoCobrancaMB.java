@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -2635,8 +2636,8 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 
-			updateCheckList();
-
+			updateCheckList();			
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -9139,7 +9140,7 @@ public class ContratoCobrancaMB {
 
 			//Date dataParcela = this.objetoContratoCobranca.getDataInicio();
 
-			// Adiciona parcelas de pagamento
+			//Adiciona parcelas de pagamento
 			
 			 GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
 			 /* 
