@@ -2553,7 +2553,7 @@ public class ContratoCobrancaMB {
 			updateCheckList();
 			
 			//gerando parcelas se estiver aguardando assinatura
-			if (this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0) {				
+			if (this.objetoContratoCobranca.isAgRegistro() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
 
