@@ -2570,9 +2570,7 @@ public class ContratoCobrancaMB {
 							""));
 
 			if (!this.preContratoCustom) {
-			
 				return geraConsultaContratosPendentes();
-			
 			} else {
 				if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 					return geraConsultaLeads("Novo Lead");
