@@ -526,6 +526,9 @@ public class ContratoCobranca implements Serializable {
 	
 	private BigDecimal rendaComprovada;
 	private BigDecimal ccbxRenda;
+	
+	private boolean contratoResgatadoBaixar;
+	private Date contratoResgatadoData;
 
 	public ContratoCobranca() {
 		super();
@@ -4264,4 +4267,21 @@ public class ContratoCobranca implements Serializable {
 	public void setEnviadoJsonBRL(boolean enviadoJsonBRL) {
 		this.enviadoJsonBRL = enviadoJsonBRL;
 	}
+
+	public boolean isContratoResgatadoBaixar() {
+		return contratoResgatadoBaixar;
+	}
+
+	public void setContratoResgatadoBaixar(boolean contratoResgatadoBaixar) {
+		this.contratoResgatadoBaixar = contratoResgatadoBaixar;
+	}
+
+	public Date getContratoResgatadoData() {
+		return contratoResgatadoData;
+	}
+
+	public void setContratoResgatadoData(Date contratoResgatadoData) {
+		this.contratoResgatadoData = contratoResgatadoData;
+	}
+	
 }
