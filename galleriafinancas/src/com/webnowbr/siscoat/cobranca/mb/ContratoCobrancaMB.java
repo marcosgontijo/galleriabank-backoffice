@@ -2642,6 +2642,11 @@ public class ContratoCobrancaMB {
 			}
 
 			updateCheckList();
+			
+			//gerando parcelas quando contrato registrado
+			if (!this.objetoContratoCobranca.isAgRegistro() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0) {				
+				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
+			}
 
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -2929,11 +2934,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgRegistroData(gerarDataHoje());
 				this.objetoContratoCobranca.setAgRegistroUsuario(getNomeUsuarioLogado());
 			
-				this.objetoContratoCobranca.getStatusContrato().equals("Aprovado");
-				this.objetoContratoCobranca.setStatus("Aprovado");
-				this.objetoContratoCobranca.setAprovado(true);
-				this.objetoContratoCobranca.setAprovadoData(gerarDataHoje());
-				this.objetoContratoCobranca.setAprovadoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setStatusContrato("Aprovado");				
 			}
 		}
 		
@@ -9233,20 +9234,25 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 					saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
 
-					// gera boleto if (this.isGeraBoletoInclusaoContrato()) {
-					geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getPagador().getCpf(),
-							this.objetoContratoCobranca.getPagador().getCnpj(),
-							this.objetoContratoCobranca.getPagador().getEndereco()
-									+ this.objetoContratoCobranca.getPagador().getNumero(),
-							this.objetoContratoCobranca.getPagador().getBairro(),
-							this.objetoContratoCobranca.getPagador().getCep(),
-							this.objetoContratoCobranca.getPagador().getCidade(),
-							this.objetoContratoCobranca.getPagador().getEstado(),
-							contratoCobrancaDetalhes.getDataVencimento(),
-							this.objetoContratoCobranca.getVlrParcela(),
-							contratoCobrancaDetalhes.getNumeroParcela());
+					// gera boleto 
+					
+					if(this.objetoContratoCobranca.getEmpresa() != null) {
+						if (this.isGeraBoletoInclusaoContrato()) {
+							geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getPagador().getCpf(),
+									this.objetoContratoCobranca.getPagador().getCnpj(),
+									this.objetoContratoCobranca.getPagador().getEndereco()
+											+ this.objetoContratoCobranca.getPagador().getNumero(),
+									this.objetoContratoCobranca.getPagador().getBairro(),
+									this.objetoContratoCobranca.getPagador().getCep(),
+									this.objetoContratoCobranca.getPagador().getCidade(),
+									this.objetoContratoCobranca.getPagador().getEstado(),
+									contratoCobrancaDetalhes.getDataVencimento(),
+									this.objetoContratoCobranca.getVlrParcela(),
+									contratoCobrancaDetalhes.getNumeroParcela());
+						}
+					}
 				}
 
 			}
@@ -18284,7 +18290,7 @@ public class ContratoCobrancaMB {
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/";
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 
 		// cria o diretório, caso não exista
 		File diretorio = new File(pathContrato);
@@ -18370,7 +18376,7 @@ public class ContratoCobrancaMB {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/";
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
 		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
@@ -18433,7 +18439,7 @@ public class ContratoCobrancaMB {
 			// recupera path do contrato
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/";
+					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 			// cria objetos para ZIP
 			ZipOutputStream zip = null;
 			FileOutputStream fileWriter = null;

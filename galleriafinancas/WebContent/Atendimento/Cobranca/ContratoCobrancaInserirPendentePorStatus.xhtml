@@ -2263,7 +2263,7 @@
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
 					        </f:facet>	        
 					        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{filesInterno.name}" filterMatchMode="contains" sortBy="#{filesInterno.name}">
-					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}/interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
+					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}//interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
 					        </p:column>   
 					        
 					        <p:column style="width:100px;">
