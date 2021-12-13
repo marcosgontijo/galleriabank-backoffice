@@ -201,8 +201,13 @@ public class IpcaJobCalcular {
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
 
-								for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {
-									vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
+								for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {	
+									if( parcial.getDataVencimento().compareTo(parcial.getDataPagamento())<0 &&
+									    parcial.getVlrParcela().compareTo(parcial.getVlrRecebido()) < 0) {
+										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrParcela()));
+									}else {
+										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
+									}
 								}
 								if (vlrPago.compareTo(BigDecimal.ZERO) == 1) {
 

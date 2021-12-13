@@ -45,8 +45,44 @@
 					</script>
 
 				</h:panelGrid>
-			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Contratos Baixados - Consultar" style="margin-bottom:10px;">		    		    
+			</p:panel>	
+			
+			
+											
+			<p:panel id="ConsultaContratos" header="Contratos Baixados - Consultar" style="margin-bottom:10px;">	
+			
+				 <h:panelGrid columns="2">					
+					<p:outputLabel for="contrato" value="Contrato: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="contrato"
+						value="#{contratoCobrancaMB.numContrato}" label="Contrato"
+						style="width:150px;" />
+			 	 </h:panelGrid>	
+			 	 
+			 	 <h:panelGrid columns="5">
+					<p:commandButton value="Consultar"
+						ajax="false"
+						action="#{contratoCobrancaMB.geraConsultaPreContratosBaixados}"
+						image="ui-icon ui-icon-check"
+						update=":form:ConsultaContratosResultados"
+						style="TEXT-DECORATION: bold;" />
+					<p:spacer width="25"></p:spacer>
+					<p:commandButton value="Limpar Consulta"
+						ajax="false"
+						action="#{contratoCobrancaMB.geraConsultaContratosBaixados}"
+						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+					<p:spacer width="25"></p:spacer>
+					<p:commandButton value="Consultar Todos"
+						ajax="false"
+						action="#{contratoCobrancaMB.geraConsultaTotalPreContratosBaixados}"
+						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="Contratos Baixados - Consultar" style="margin-bottom:10px;">	
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }"
    		          rows="50"
