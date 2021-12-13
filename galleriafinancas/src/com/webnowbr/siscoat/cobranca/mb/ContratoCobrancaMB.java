@@ -8030,7 +8030,11 @@ public class ContratoCobrancaMB {
 
 		this.selectedImovel = this.objetoContratoCobranca.getImovel();
 		if (this.selectedImovel != null) {
-			this.nomeImovel = this.objetoContratoCobranca.getImovel().getNome();
+			if (this.objetoContratoCobranca.getImovel().getNome() != null) {
+				this.nomeImovel = this.objetoContratoCobranca.getImovel().getNome();
+			} else {
+				this.nomeImovel = this.objetoContratoCobranca.getImovel().getTipo();
+			}
 			this.idImovel = this.objetoContratoCobranca.getImovel().getId();
 		}
 
