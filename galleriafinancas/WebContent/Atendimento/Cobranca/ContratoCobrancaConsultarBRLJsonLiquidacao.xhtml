@@ -73,9 +73,10 @@
 			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
 				<p:dataTable id="dtContratos" var="parcelaBaixa"
 					value="#{brlTrustMB.parcelasLiquidacao}"
+					selection="#{brlTrustMB.parcelaLiquidacao}"
 					emptyMessage="">
 					<f:facet name="header">
-
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Geral" title="Gerar JSON Liquidação Geral"/>
 					</f:facet>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{parcelaBaixa.contrato.numeroContrato}"
@@ -128,15 +129,13 @@
 						</h:outputText>
 					</p:column>    	
 					<p:column styleClass="colunaResponsiva">	 
-				        <p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoParcela()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação" title="Gerar JSON Liquidação Parcela">
-				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+				        <p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoParcela()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Parcela" title="Gerar JSON Liquidação Parcela">
+				        		<f:setPropertyActionListener target="#{brlTrustMB.parcelaLiquidacao}" value="#{parcelaBaixa}" />  			        		
 			            </p:commandButton>
 			            <p:spacer width="10" height="10"/>		 
 		            </p:column>	
-		            <f:facet name="Footer">
-						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação" title="Gerar JSON Liquidação Geral">
-				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
-			            </p:commandButton>
+		            <f:facet name="footer">
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Geral" title="Gerar JSON Liquidação Geral"/>  			        		
 					</f:facet>	        			           			 		
 				</p:dataTable>
 			</p:panel>

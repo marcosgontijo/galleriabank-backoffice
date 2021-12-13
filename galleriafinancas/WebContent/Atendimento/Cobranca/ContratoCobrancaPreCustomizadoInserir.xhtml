@@ -879,9 +879,17 @@
 							    	</p:commandButton>								 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>
 						        </f:facet>	        
-						        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{files.name}" filterMatchMode="contains" sortBy="#{files.name}">
-						            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}/#{files.name}" class="linkPDF" target="_blank"><h:outputText value="#{files.name}"/></a>
-						        </p:column>  
+						        
+						        <p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{files.name}"
+									filterMatchMode="contains" sortBy="#{files.name}">
+									<h:outputText
+											value="#{files.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
+										icon="ui-icon-search" onclick="target='_blank'">
+									</p:commandButton>
+								</p:column>
 						        
 						        <p:column style="width:100px;">
 									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	

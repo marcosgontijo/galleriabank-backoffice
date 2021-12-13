@@ -4047,11 +4047,17 @@ public class ContratoCobrancaMB {
 				 * ContratoCobrancaUtilsMB( auxDataVencimento, auxDataPagamento,
 				 * ccd.getVlrParcela(), ccd.getVlrJuros(), ccd.getTxMulta()); }
 				 */
-				if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
-					contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-							ccd.getVlrParcela(), BigDecimal.valueOf(1.00), this.objetoContratoCobranca.getTxMulta());
+				if (ccd.getVlrJuros() != null) {
+					if (BigDecimal.ZERO.compareTo(ccd.getVlrJuros()) == 0) {
+						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+								ccd.getVlrParcela(), BigDecimal.valueOf(1.00), this.objetoContratoCobranca.getTxMulta());
+					} else {
+						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+								ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
+								this.objetoContratoCobranca.getTxMulta());
+					}
 				} else {
-					contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
 							ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
 							this.objetoContratoCobranca.getTxMulta());
 				}
@@ -4244,6 +4250,76 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+		}
+	}
+	
+	public void viewFileInterno(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -9214,7 +9290,12 @@ public class ContratoCobrancaMB {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataInicio = Calendar.getInstance(zone, locale);
-		dataInicio.setTime(this.objetoContratoCobranca.getDataInicio());
+		
+		if (this.objetoContratoCobranca.getDataInicio() == null) {
+			dataInicio.setTime(gerarDataHoje());
+		} else {
+			dataInicio.setTime(this.objetoContratoCobranca.getDataInicio());
+		}
 
 		//Date dataParcela = this.objetoContratoCobranca.getDataInicio();
 
@@ -9224,6 +9305,7 @@ public class ContratoCobrancaMB {
 		  
 		  this.fileBoleto = null;
 		  
+		  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 			if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
 
 				SimulacaoVO simulador = calcularParcelas();
@@ -9258,8 +9340,8 @@ public class ContratoCobrancaMB {
 						}
 					}
 				}
-
 			}
+		  }
 		 
 
 
@@ -9324,8 +9406,10 @@ public class ContratoCobrancaMB {
 		BigDecimal tarifaIOFDiario;
 		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
 
-		this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
-
+		if (this.qtdeParcelas != null) {
+			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+		}
+		
 //			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 //			if (this.objetoContratoCobranca.getVlrInvestimento().multiply(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL.divide(BigDecimal.valueOf(100)))
 //					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
