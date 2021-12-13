@@ -331,7 +331,7 @@
 			   			 </p:tooltip>																
 					</p:panel>
 				</shiro:hasAnyRoles>
-				
+
 				<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
 					<h:panelGroup id="ComitePanel" style="margin-bottom:20px;">
 						<p:panel header="Comitê"
@@ -368,7 +368,7 @@
 										onkeydown="FormataValor(this, 13, event, 2);"
 										converter="bigDecimalConverter"
 										style="FONT-SIZE: 10pt;width:100px;" />
-										
+
 									<!-- -->
 
 									<p:selectOneMenu id="tipoValorComite"
@@ -389,7 +389,57 @@
 						</p:panel>
 					</h:panelGroup>
 				</shiro:hasAnyRoles>
-				
+
+				<shiro:lacksRole name="ADMINISTRADOR">
+					<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
+						<p:panel header="Comitê"
+							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+							<h:panelGrid columns="2">
+
+								<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
+									styleClass="labelBold" />
+								<h:panelGroup>
+									<p:outputLabel id="taxaAprovadaView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaAprovada}"
+										style="FONT-SIZE: 10pt;width:60px;" />
+									<p:outputLabel value="% + IPCA a.m." />
+								</h:panelGroup>
+
+								<p:outputLabel for="prazoMaxAprovadoView"
+									value="Prazo Maximo Aprovado: " styleClass="labelBold" />
+								<h:panelGroup>
+									<p:outputLabel id="prazoMaxAprovadoView" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxAprovado}"
+										size="100" style="width:60px;" />
+									<p:outputLabel value=" meses" />
+								</h:panelGroup>
+
+								<p:outputLabel for="valorAprovadoComiteView"
+									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+
+								<p:outputLabel id="valorAprovadoComiteView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
+									style="FONT-SIZE: 10pt;width:100px;" />
+
+								<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
+									styleClass="labelBold" />
+
+								<p:outputLabel id="tipoValorComiteView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
+									label="Status" style="width:100px;" />
+
+
+								<p:outputLabel for="comentarioComiteView"
+									value="Comentários comitê: " styleClass="labelBold" />
+								<p:outputLabel id="comentarioComiteView" rows="10" cols="48"
+									maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
+							</h:panelGrid>
+						</p:panel>
+					</h:panelGroup>
+				</shiro:lacksRole>
+
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
@@ -2213,7 +2263,7 @@
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
 					        </f:facet>	        
 					        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{filesInterno.name}" filterMatchMode="contains" sortBy="#{filesInterno.name}">
-					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}/interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
+					            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}//interno/#{filesInterno.name}" class="linkPDF" target="_blank"><h:outputText value="#{filesInterno.name}"/></a>
 					        </p:column>   
 					        
 					        <p:column style="width:100px;">
