@@ -52,14 +52,7 @@
 						<f:selectItem itemValue="" itemLabel="SELECIONE" />
 						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
 						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
-					</p:selectOneMenu>	
-					<p:outputLabel for="DataAquisicao" value="Data Aquisição: "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="DataAquisicao"
-						value="#{brlTrustMB.dataAquisicao}"
-						required="true" label="Data Aquisição" size="100"
-						pattern="dd/MM/yyyy" styleClass="dateTimeField">
-					</p:calendar>		
+					</p:selectOneMenu>		
 					<p:outputLabel for="DataBaixa" value="Data Baixa: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:calendar id="DataBaixa"
@@ -81,11 +74,70 @@
 				<p:dataTable id="dtContratos" var="parcelaBaixa"
 					value="#{brlTrustMB.parcelasLiquidacao}"
 					emptyMessage="">
+					<f:facet name="header">
+
+					</f:facet>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{parcelaBaixa.contrato.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{parcelaBaixa.contrato.numeroContrato}">
 						<h:outputText value="#{parcelaBaixa.contrato.numeroContrato}" />
-					</p:column>              		        			        			           			 		
+					</p:column>   
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Número Parcela" filterBy="#{parcelaBaixa.numeroParcela}"
+						filterMatchMode="contains" sortBy="#{parcelaBaixa.numeroParcela}">
+						<h:outputText value="#{parcelaBaixa.numeroParcela}" />
+					</p:column>           
+					<p:column style="text-align: center;width: 70px;"
+							headerText="Data Vencimento"
+							sortBy="#{parcelaBaixa.dataVencimento}">
+						<h:outputText value="#{parcelaBaixa.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+							headerText="Data Pagamento"
+							sortBy="#{parcelaBaixa.dataPagamento}">
+						<h:outputText value="#{parcelaBaixa.dataPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Parcela (R$)">
+						<h:outputText value="#{parcelaBaixa.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Recebido (R$)">
+						<h:outputText value="#{parcelaBaixa.vlrRecebido}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Juros (R$)">
+						<h:outputText value="#{parcelaBaixa.vlrJurosParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Amortização (R$)">
+						<h:outputText value="#{parcelaBaixa.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>    	
+					<p:column styleClass="colunaResponsiva">	 
+				        <p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoParcela()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação" title="Gerar JSON Liquidação Parcela">
+				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+			            </p:commandButton>
+			            <p:spacer width="10" height="10"/>		 
+		            </p:column>	
+		            <f:facet name="Footer">
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação" title="Gerar JSON Liquidação Geral">
+				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+			            </p:commandButton>
+					</f:facet>	        			           			 		
 				</p:dataTable>
 			</p:panel>
 		</h:form>

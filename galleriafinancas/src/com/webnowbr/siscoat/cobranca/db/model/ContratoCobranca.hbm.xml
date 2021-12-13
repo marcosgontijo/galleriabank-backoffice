@@ -329,6 +329,12 @@
 		<property name="temMaisImoveis" type="java.lang.String">
 			<column name="TEMMAISIMOVEIS" />
 		</property>
+		<property name="cedenteBRLCessao" type="java.lang.String">
+			<column name="cedenteBRLCessao" />
+		</property>
+		<property name="dataAquisicaoCessao" type="java.util.Date">
+			<column name="dataAquisicaoCessao" />
+		</property>
 		<property name="finalidade" type="java.lang.String">
 			<column name="FINALIDADE" />
 		</property>

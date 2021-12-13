@@ -2820,10 +2820,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
 			+ " where cdp.dataPagamento >= ? ::timestamp "
-			+ " and cdp.dataPagamento <= ? ::timestamp ";	
+			+ " and cdp.dataPagamento <= ? ::timestamp "
+			+ " and cc.cedenteBRLCessao = ? ";	
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixa) {
+	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixa, final String cedenteCessao) {
 		return (List<ContratoCobrancaBRLLiquidacao>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2846,6 +2847,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 					ps.setDate(1, dtRelInicioSQL);
 					ps.setDate(2, dtRelFimSQL);
+					ps.setString(3, cedenteCessao);
 					
 					rs = ps.executeQuery();
 					
