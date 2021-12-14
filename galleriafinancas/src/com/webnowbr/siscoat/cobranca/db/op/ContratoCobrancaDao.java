@@ -4678,7 +4678,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
-		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.aprovadoComite, c.analiseReprovada " +
+		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.aprovadoComite, c.analiseReprovada, c.aprovadoComiteData " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -4709,7 +4709,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (tipoConsulta.equals("Aguardando Análise")) {
-						query = query + " and inicioanalise = false and c.statusLead = 'Completo' "; 
+						query = query + " and analiseReprovada = false and inicioanalise = false and c.statusLead = 'Completo' "; 
 					}
 					
 					if (tipoConsulta.equals("Em Analise")) {
@@ -4833,7 +4833,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAgRegistro(rs.getBoolean(18));
 						contratoCobranca.setAprovadoComite(rs.getBoolean(19));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean(20)); 
-						 
+						contratoCobranca.setAprovadoComiteData(rs.getDate(21));
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												

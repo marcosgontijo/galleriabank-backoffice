@@ -96,6 +96,13 @@
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
+						
+			         <p:column style="text-align: center;width: 100px" headerText="Data Comite" filterBy="#{contratos.aprovadoComiteData}" filterMatchMode="contains" sortBy="#{contratos.aprovadoComiteData}" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'}">
+			           <h:outputText value="#{contratos.aprovadoComiteData}" >			            	
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+			        </p:column>
+			        		
 			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.nomeCidadeImovel}" filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
 			            <h:outputText value="#{contratos.nomeCidadeImovel}" />
 			        </p:column>				        

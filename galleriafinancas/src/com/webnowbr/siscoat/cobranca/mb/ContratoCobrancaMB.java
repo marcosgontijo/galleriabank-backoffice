@@ -75,6 +75,8 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
+import org.apache.poi.ss.formula.functions.Days360;
+
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -2889,6 +2891,18 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setPajurFavoravelUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isAprovadoComite()) {
+			this.objetoContratoCobranca.setAprovadoComiteData(null);
+			this.objetoContratoCobranca.setAprovadoComiteUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getAprovadoComiteData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setAprovadoComiteData(gerarDataHoje());
+				this.objetoContratoCobranca.setAprovadoComiteUsuario(getNomeUsuarioLogado());
+			}
+		}
 
 		if (!this.objetoContratoCobranca.isDocumentosCompletos()) {
 			this.objetoContratoCobranca.setDocumentosCompletosData(null);
@@ -4684,7 +4698,8 @@ public class ContratoCobrancaMB {
 	public static BigDecimal getDifferenceMonths(Date d1, Date d2) {
 	    long diff = d2.getTime() - d1.getTime();
 	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-	    BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
+	    //BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
+	    BigDecimal diff2 = BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
 	    return diff2;
 	}
 
@@ -4692,19 +4707,30 @@ public class ContratoCobrancaMB {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Calendar dataOntem = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
+		
+		dataOntem.add(Calendar.DATE, -1);
+		
+		Date auxDataOntem = dataOntem.getTime();
 		
 		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
-		BigDecimal quantidadeDeMeses = getDifferenceMonths(parcelas.getDataVencimento(), auxDataHoje);
+		BigDecimal quantidadeDeMeses = getDifferenceMonths(auxDataOntem, parcelas.getDataVencimento());
 		
-		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) {
-			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1));
+		
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 		}
+		 
 
+		Double quantidadeDeMesesdouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
 		juros = juros.divide(BigDecimal.valueOf(100));
-		double divisor = Math.pow(CommonsUtil.doubleValue(BigDecimal.ONE.add(juros)), CommonsUtil.doubleValue(quantidadeDeMeses));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesdouble);
 	
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
