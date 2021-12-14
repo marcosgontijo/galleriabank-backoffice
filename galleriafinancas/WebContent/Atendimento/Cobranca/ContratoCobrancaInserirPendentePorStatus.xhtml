@@ -201,7 +201,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!( contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5)}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -211,7 +211,6 @@
 											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										    	<p:ajax update="AnaliseReprovadaPanel" event="change" /> 
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>
@@ -224,6 +223,44 @@
 								</h:panelGrid>	
 							</h:panelGrid>
 						</ui:fragment>	
+						<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
+							<h:panelGrid columns="3">
+							
+								<ui:fragment>
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>			
+										<p:spacer ></p:spacer>						
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
+											<p:selectBooleanButton id="analiseReprovadaEdit" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px"/>
+										</shiro:hasAnyRoles>						    								    													    						   
+									</h:panelGrid>
+								</ui:fragment>	
+							
+								<ui:fragment>
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>			
+										<p:spacer ></p:spacer>						
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
+											<p:selectOneRadio id="cadastroAprovadoAgAnaliseReprovada" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
+										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+										    </p:selectOneRadio>
+										</shiro:hasAnyRoles>						    								    													    						   
+									</h:panelGrid>
+								</ui:fragment>
+ 
+ 								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+ 								
+									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
+										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+									</p:commandButton>	
+								</h:panelGrid>
+							</h:panelGrid>	
+						</ui:fragment>
 						
 						<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep" position="bottom">
 							<h:panelGrid columns="1">	
