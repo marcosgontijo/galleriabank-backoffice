@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="BoletosPagos" header="Relatorio Boletos Pagos"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio" showOn="button"
+						value="#{boletosPagosMB.dataInicio}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+
+					<p:outputLabel for="dataFinal" value="Data Final: "
+						styleClass="labelBold" />
+					<p:calendar id="dataFinal" showOn="button"
+						value="#{boletosPagosMB.dataFinal}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+
+					<p:commandButton id="consultarBoletos" value="Consultar "
+						image="ui-icon ui-icon-circle-zoomin"
+						action="#{boletosPagosMB.consultarBoletos}" 
+						update=":form:dtBoletosPagos" />
+
+				</h:panelGrid>
+
+				<p:panel id="ConsultaBoletosPagos"
+					header="Resultados" style="margin-bottom:10px;">
+					<f:facet name="header"> Resultados
+						<p:outputLabel value="" />
+						<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"  ajax="false"/>
+					</f:facet>
+					<p:dataTable id="dtBoletosPagos" var="boletos"
+						value="#{boletosPagosMB.boletosPagos}" emptyMessage=""
+						sortBy="#{boletos.numeroContrato}">
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Nº Contrato"
+							filterBy="#{boletos.numeroContrato}"
+							filterMatchMode="contains"
+							sortBy="#{boletos.numeroContrato}">
+							<h:outputText value="#{boletos.numeroContrato}" />
+						</p:column>
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Data Boleto Pago"
+							filterBy="#{boletos.dataBoletoPago}" filterMatchMode="contains"
+							sortBy="#{boletos.dataBoletoPago}">
+							<h:outputText value="#{boletos.dataBoletoPago}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+
+</ui:composition>

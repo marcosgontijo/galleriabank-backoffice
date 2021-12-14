@@ -395,6 +395,7 @@
 				header="Financeiro - Resultados" style="margin-bottom:10px;">
 				<p:dataTable id="dtContratos" var="contratos"
 					value="#{contratoCobrancaMB.relObjetoContratoCobranca}"
+					rowStyleClass= "#{(contratos.contratoCobranca.status eq 'Pendente') ? 'linhaAzul' : '' } "
 					selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"
 					emptyMessage="" sortBy="#{contratos.dataVencimento}">
 					<f:facet name="header">

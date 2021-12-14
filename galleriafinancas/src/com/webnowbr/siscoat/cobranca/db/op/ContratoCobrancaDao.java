@@ -199,7 +199,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0)))"
 			+ "and cd.datavencimentoatual >= ? ::timestamp "
 			+ "and cd.datavencimentoatual <= ? ::timestamp ";	 
 	
@@ -207,7 +207,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0))) "
 			+ "and cd.dataVencimento >= ? ::timestamp "
 			+ "and cd.dataVencimento <= ? ::timestamp ";
 	
@@ -215,7 +215,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0)))"
 			+ "and ((cd.dataVencimento >= ? ::timestamp "
 			+ "and cd.dataVencimento <= ? ::timestamp) or (cd.promessaPagamento >= ? ::timestamp and cd.promessaPagamento <= ? ::timestamp)) ";	
 
@@ -223,7 +223,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0))) "
 			+ "and cd.datavencimentoatual >= ? ::timestamp "
 			+ "and cd.datavencimentoatual <= ? ::timestamp ";
 	
@@ -231,7 +231,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0))) "
 			+ "and cd.dataVencimento >= ? ::timestamp "
 			+ "and cd.dataVencimento <= ? ::timestamp ";
 	
@@ -239,7 +239,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' "
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0)))"
 			+ "and ((cd.dataVencimento >= ? ::timestamp "
 			+ "and cd.dataVencimento <= ? ::timestamp) or (cd.promessaPagamento >= ? ::timestamp and cd.promessaPagamento <= ? ::timestamp)) ";	
 	
@@ -247,7 +247,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "from cobranca.contratocobrancadetalhes cd "
 			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
 			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
-			+ "where cc.status = 'Aprovado' ";
+			+ "where (cc.status = 'Aprovado' or (cc.status = 'Pendente' and cc.AgAssinatura = false and (cc.valorccb != null or cc.valorccb != 0))) ";
 	
 //	private static final String QUERY_REGERAR_PARCELA_NUM_CONTRATO =  	"select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
 //			+ "from cobranca.contratocobrancadetalhes cd "
@@ -3257,6 +3257,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "and c.empresa = 'FIDC GALLERIA'"
 			+ " order by numerocontrato";
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO = " select c.id from cobranca.contratocobranca c "
+			+ "	where (c.status = 'Pendente' and c.AgAssinatura = false and c.agregistro = true and (c.valorccb != null or c.valorccb != 0)) "
+			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
+			+ "	order by numerocontrato ";
+	
 	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA = "select c.id from cobranca.contratocobranca c "
 			+ "where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
@@ -3282,6 +3287,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("FIDC")) {
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("PreAprovado")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO;		
 				}
 				
 				try {
@@ -4726,7 +4735,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true  and aprovadoComite = false and ccbPronta = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. CCB")) {

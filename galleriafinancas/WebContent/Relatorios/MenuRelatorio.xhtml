@@ -30,6 +30,12 @@
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
 						</shiro:hasAnyRoles>
+						
+						<p:submenu label="Pagamentos" styleClass="titulosMenu">
+							<p:menuitem value="Boletos Pagos"
+								action="#{boletosPagosMB.clearFields}" ajax="false"
+								icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+						</p:submenu>
 					</p:menu>
 				</h:form>
 			</ui:define>
