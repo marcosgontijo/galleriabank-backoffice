@@ -18,7 +18,9 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
-	
+	private String cedenteBRLCessao;
+	private Date dataAquisicaoCessao;
+
 	private String tipoCalculoInvestidor1;
 	private BigDecimal vlrInvestidor1;
 	private Integer qtdeParcelasInvestidor1;
@@ -4268,6 +4270,22 @@ public class ContratoCobranca implements Serializable {
 		this.enviadoJsonBRL = enviadoJsonBRL;
 	}
 
+	public String getCedenteBRLCessao() {
+		return cedenteBRLCessao;
+	}
+
+	public void setCedenteBRLCessao(String cedenteBRLCessao) {
+		this.cedenteBRLCessao = cedenteBRLCessao;
+	}
+
+	public Date getDataAquisicaoCessao() {
+		return dataAquisicaoCessao;
+	}
+
+	public void setDataAquisicaoCessao(Date dataAquisicaoCessao) {
+		this.dataAquisicaoCessao = dataAquisicaoCessao;
+	}
+
 	public boolean isContratoResgatadoBaixar() {
 		return contratoResgatadoBaixar;
 	}
@@ -4283,5 +4301,4 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoResgatadoData(Date contratoResgatadoData) {
 		this.contratoResgatadoData = contratoResgatadoData;
 	}
-	
 }
