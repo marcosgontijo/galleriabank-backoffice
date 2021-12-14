@@ -78,8 +78,8 @@
 								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
 								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
 								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>
-								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
+								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
 								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
 								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
 								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
@@ -142,18 +142,8 @@
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
 								</ui:fragment>	
+								
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
-									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
-										<p:spacer ></p:spacer>		
-										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="documentosCompletos" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
-										</shiro:hasAnyRoles>													    						    
-									</h:panelGrid>
-								</ui:fragment>
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -164,6 +154,18 @@
 											
 											<p:commandButton id="reprovadoComite" value="Reprovar Contrato" action="#{contratoCobrancaMB.reprovarContrato()}" icon="ui-icon-close" style="width:=60px"/>
 										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="documentosCompletos" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+										</shiro:hasAnyRoles>													    						    
 									</h:panelGrid>
 								</ui:fragment>
 																
@@ -201,7 +203,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 0)}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -387,7 +389,7 @@
 				<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
 					<h:panelGroup id="ComitePanel" style="margin-bottom:20px;">
 						<p:panel header="Comitê"
-							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 							<h:panelGrid columns="2">
 
 								<p:outputLabel for="taxaAprovada" value="Taxa Aprovada: "
@@ -445,7 +447,7 @@
 				<shiro:lacksRole name="ADMINISTRADOR">
 					<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 						<p:panel header="Comitê"
-							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 							<h:panelGrid columns="2">
 
 								<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "

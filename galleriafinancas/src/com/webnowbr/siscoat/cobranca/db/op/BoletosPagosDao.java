@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,12 +21,12 @@ import com.webnowbr.siscoat.boletosPagos.vo.BoletosPagosVO;
 
 public class BoletosPagosDao extends HibernateDao <BoletosPagosVO,Long> {
 	
-	private static final String QUERY_BOLETOS_PAGOS = " select coco.numerocontrato , pagtoLaudoConfirmadaData"
+	private static final String QUERY_BOLETOS_PAGOS = " select coco.numerocontrato , pagtoLaudoConfirmadaData, valorBoletoPreContrato, valorCCB, quantoPrecisa" 
 			+ " from cobranca.contratocobranca coco "
 			+ " where coco.pagtoLaudoConfirmada = true "
 			+ " and pagtoLaudoConfirmadaData >= ? ::timestamp "
 			+ " and pagtoLaudoConfirmadaData <= ? ::timestamp "
-			+ " group by coco.numerocontrato, pagtoLaudoConfirmadaData";
+			+ " group by coco.numerocontrato, pagtoLaudoConfirmadaData, valorBoletoPreContrato, valorCCB, quantoPrecisa";
 	
 	@SuppressWarnings("unchecked")
 	public List<BoletosPagosVO> listaBoletosPagos(final long idContrato, Date dataInicio, Date dataFim) {
@@ -57,6 +59,22 @@ public class BoletosPagosDao extends HibernateDao <BoletosPagosVO,Long> {
 						if(boletosPagosVO != null) {
 							boletosPagosVO.setDataBoletoPago(rs.getDate("pagtoLaudoConfirmadaData"));
 							boletosPagosVO.setNumeroContrato(rs.getString("numerocontrato"));
+							
+							if(rs.getString("valorBoletoPreContrato") != null) {
+								boletosPagosVO.setValorBoleto(rs.getBigDecimal("valorBoletoPreContrato"));
+								if(CommonsUtil.mesmoValor(CommonsUtil.stringValue(boletosPagosVO.getValorBoleto()), "82500.00")) {
+									boletosPagosVO.setValorBoleto(boletosPagosVO.getValorBoleto().divide(BigDecimal.valueOf(100),  MathContext.DECIMAL128));
+								} else if(CommonsUtil.mesmoValor(CommonsUtil.stringValue(boletosPagosVO.getValorBoleto()), "165000.00")) {
+									boletosPagosVO.setValorBoleto(boletosPagosVO.getValorBoleto().divide(BigDecimal.valueOf(100),  MathContext.DECIMAL128));
+								}	
+							} else {
+								boletosPagosVO.setValorBoleto(BigDecimal.valueOf(825.00));
+							}
+							if(rs.getString("valorCCB") != null) {
+								boletosPagosVO.setValorContrato(rs.getBigDecimal("valorCCB"));
+							} else {
+								boletosPagosVO.setValorContrato(rs.getBigDecimal("quantoPrecisa"));
+							}
 							objects.add(boletosPagosVO);
 						}
 					}

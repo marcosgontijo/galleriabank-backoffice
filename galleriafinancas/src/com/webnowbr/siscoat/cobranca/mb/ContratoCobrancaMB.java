@@ -4839,7 +4839,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
-						!this.objetoContratoCobranca.isDocumentosCompletos()) {
+						!this.objetoContratoCobranca.isAprovadoComite()) {
 					this.indexStepsStatusContrato = 4;
 				}
 				
@@ -4848,8 +4848,8 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
-						this.objetoContratoCobranca.isDocumentosCompletos() &&
-						!this.objetoContratoCobranca.isAprovadoComite()) {
+						this.objetoContratoCobranca.isAprovadoComite() &&
+						!this.objetoContratoCobranca.isDocumentosCompletos()) {
 					this.indexStepsStatusContrato = 5;
 				}
 				
@@ -6353,9 +6353,9 @@ public class ContratoCobrancaMB {
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {
 			contratos = getContratoById(contratos.getId());
-			if (contratos.isCcbPronta()) {
+			if (contratos.isDocumentosCompletos()) {
 				contratos.setAprovadoComite(true);
-				contratos.setAprovadoComiteData(contratos.getCcbProntaData());
+				contratos.setAprovadoComiteData(contratos.getAguardandoDocumentoData());
 				
 			} else {
 				if (!contratos.isAgAssinatura() || !contratos.isAgRegistro()) {

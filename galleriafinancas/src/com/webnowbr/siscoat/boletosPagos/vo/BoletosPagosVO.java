@@ -6,8 +6,8 @@ import java.sql.Date;
 public class BoletosPagosVO {
 	Date dataBoletoPago;
 	String numeroContrato;
-	String valorBoleto;
-	String valorContrato;
+	BigDecimal valorBoleto;
+	BigDecimal valorContrato;
 	
 	
 	public Date getDataBoletoPago() {
@@ -22,18 +22,19 @@ public class BoletosPagosVO {
 	public void setNumeroContrato(String numeroContrato) {
 		this.numeroContrato = numeroContrato;
 	}
-	public String getValorBoleto() {
+	public BigDecimal getValorBoleto() {
 		return valorBoleto;
 	}
-	public void setValorBoleto(String valorBoleto) {
+	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
 	}
-	public String getValorContrato() {
+	public BigDecimal getValorContrato() {
 		return valorContrato;
 	}
-	public void setValorContrato(String valorContrato) {
+	public void setValorContrato(BigDecimal valorContrato) {
 		this.valorContrato = valorContrato;
 	}
+	
 	
 	
 }

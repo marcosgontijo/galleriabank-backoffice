@@ -55,7 +55,27 @@
 							headerText="Data Boleto Pago"
 							filterBy="#{boletos.dataBoletoPago}" filterMatchMode="contains"
 							sortBy="#{boletos.dataBoletoPago}">
-							<h:outputText value="#{boletos.dataBoletoPago}" />
+							<h:outputText value="#{boletos.dataBoletoPago}" >
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Valor Do Boleto"
+							filterBy="#{boletos.valorBoleto}" filterMatchMode="contains"
+							sortBy="#{boletos.valorBoleto}">
+							<h:outputText value="#{boletos.valorBoleto}" converter="bigDecimalConverter">
+								<f:convertNumber type="currency" currencySymbol="R$" /> 
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Valor Do Contrato"
+							filterBy="#{boletos.valorContrato}" filterMatchMode="contains"
+							sortBy="#{boletos.valorContrato}">
+							<h:outputText value="#{boletos.valorContrato}" converter="bigDecimalConverter">
+								<f:convertNumber type="currency" currencySymbol="R$" /> 
+							</h:outputText>
 						</p:column>
 
 					</p:dataTable>
