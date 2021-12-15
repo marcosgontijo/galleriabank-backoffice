@@ -107,14 +107,12 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU e Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-										
-									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
-										<p:menuitem value="Pré-Cont Ag. Comite"
-											action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Comite')}"
-											ajax="false" icon="ui-icon ui-icon-newwin"
-											styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
-										
+
+									<p:menuitem value="Pré-Cont Ag. Comite"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Comite')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+
 									<p:menuitem value="Pré-Cont Ag. DOC"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
