@@ -1367,5 +1367,13 @@
 		<property name="contratoResgatadoData" type="java.util.Date">
 			<column name="contratoResgatadoData" />
 		</property>
+		
+		<property name="dataUltimaAtualizacao" type="java.util.Date">
+			<column name="dataUltimaAtualizacao" />
+		</property>
+		
+		<property name="observacaoRenda" type="java.lang.String">
+			<column name="observacaoRenda" />
+		</property>	
 	</class>
 </hibernate-mapping>

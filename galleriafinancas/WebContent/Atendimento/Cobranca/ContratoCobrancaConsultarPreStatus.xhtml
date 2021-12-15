@@ -97,8 +97,8 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 						
-			         <p:column style="text-align: center;width: 100px" headerText="Data Comite" filterBy="#{contratos.aprovadoComiteData}" filterMatchMode="contains" sortBy="#{contratos.aprovadoComiteData}" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'}">
-			           <h:outputText value="#{contratos.aprovadoComiteData}" >			            	
+			         <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
+			           <h:outputText value="#{contratos.dataUltimaAtualizacao}" >			            	
 							<f:convertDateTime pattern="dd/MM/yyyy"/>
 						</h:outputText>
 			        </p:column>

@@ -203,7 +203,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 0)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -470,18 +470,18 @@
 
 								<p:outputLabel for="valorAprovadoComiteView"
 									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-
-								<p:outputLabel id="valorAprovadoComiteView"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
-									style="FONT-SIZE: 10pt;width:100px;" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<p:outputLabel id="valorAprovadoComiteView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}" converter="bigDecimalConverter"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</h:panelGroup>
 
 								<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
 									styleClass="labelBold" />
-
 								<p:outputLabel id="tipoValorComiteView"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
 									label="Status" style="width:100px;" />
-
 
 								<p:outputLabel for="comentarioComiteView"
 									value="Comentários comitê: " styleClass="labelBold" />
@@ -574,46 +574,60 @@
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<h:panelGrid columns="2">
-							<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
-								styleClass="labelBold" />
 							<h:panelGroup>
-								<p:inputText id="taxaPreAprovada"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}"
-									converter="bigDecimalConverter" />
-								<p:outputLabel value="% + IPCA a.m." />
+								<h:panelGrid columns="2">
+									<p:outputLabel for="taxaPreAprovada"
+										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
+									<h:panelGroup>
+										<p:inputText id="taxaPreAprovada"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+											style="FONT-SIZE: 10pt;width:300px;"
+											disabled="#{contratoCobrancaMB.deleteMode}"
+											converter="bigDecimalConverter" />
+										<p:outputLabel value="% + IPCA a.m." />
+									</h:panelGroup>
+									<p:outputLabel for="prazoMaxPreAprovado"
+										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
+									<h:panelGroup>
+										<p:inputText id="prazoMaxPreAprovado" showOn="button"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
+											label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
+											locale="pt" styleClass="dateTimeField" />
+										<p:outputLabel value=" meses" />
+									</h:panelGroup>
+
+									<p:outputLabel for="rendaComprovada" value="Renda Comprovada: "
+										styleClass="labelBold" />
+									<h:panelGroup>
+										<p:outputLabel value="R$ " />
+										<p:inputText id="rendaComprovada" showOn="button"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
+											size="100" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+									</h:panelGroup>
+
+									<p:outputLabel for="ccbxRenda" value="CCB X Renda: "
+										styleClass="labelBold" />
+									<h:panelGroup>
+										<p:outputLabel value="R$ " />
+										<p:inputText id="ccbxRenda" showOn="button"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
+											size="100" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+									</h:panelGroup>
+								</h:panelGrid>
 							</h:panelGroup>
-							<p:outputLabel for="prazoMaxPreAprovado"
-								value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 							<h:panelGroup>
-								<p:inputText id="prazoMaxPreAprovado" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
-									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-									locale="pt" styleClass="dateTimeField" />
-								<p:outputLabel value=" meses"/>
-							</h:panelGroup>
-							
-							<p:outputLabel for="rendaComprovada"
-								value="Renda Comprovada: " styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel value="R$ "/>
-								<p:inputText id="rendaComprovada" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
-									size="100" onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter" />
-							</h:panelGroup>
-							
-							<p:outputLabel for="ccbxRenda"
-								value="CCB X Renda: " styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel value="R$ "/>
-								<p:inputText id="ccbxRenda" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
-									size="100" onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"/>
+								<h:panelGrid columns="2">
+									<p:outputLabel for="observacaoRenda" value="Observação: "
+										styleClass="labelBold" />
+									<p:inputTextarea id="observacaoRenda" rows="10" cols="48"
+										maxlength="3000" onblur=""
+										counterTemplate="{0} characters remaining." autoResize="false"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
+								</h:panelGrid>
 							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
