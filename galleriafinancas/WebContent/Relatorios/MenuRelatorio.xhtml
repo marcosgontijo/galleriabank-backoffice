@@ -23,19 +23,19 @@
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						
-						<shiro:hasAnyRoles name="ROOT, POSTO, COBRANCA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
 							<p:submenu label="Seguro" styleClass="titulosMenu">
 								<p:menuitem value="Tabela"
 									action="#{seguroTabelaMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
-						</shiro:hasAnyRoles>
 						
-						<p:submenu label="Pagamentos" styleClass="titulosMenu">
-							<p:menuitem value="Boletos Pagos"
-								action="#{boletosPagosMB.clearFields}" ajax="false"
-								icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-						</p:submenu>
+							<p:submenu label="Pagamentos" styleClass="titulosMenu">
+								<p:menuitem value="Boletos Pagos"
+									action="#{boletosPagosMB.clearFields}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
 					</p:menu>
 				</h:form>
 			</ui:define>
