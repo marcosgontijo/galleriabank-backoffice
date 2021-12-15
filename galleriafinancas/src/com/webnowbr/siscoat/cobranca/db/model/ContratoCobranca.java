@@ -531,8 +531,6 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
-	
-	private Date dataUltimaAtualizacao;
 
 	public ContratoCobranca() {
 		super();
@@ -4303,13 +4301,4 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoResgatadoData(Date contratoResgatadoData) {
 		this.contratoResgatadoData = contratoResgatadoData;
 	}
-
-	public Date getDataUltimaAtualizacao() {
-		return dataUltimaAtualizacao;
-	}
-
-	public void setDataUltimaAtualizacao(Date dataUltimaAtualizacao) {
-		this.dataUltimaAtualizacao = dataUltimaAtualizacao;
-	}
-	
 }
