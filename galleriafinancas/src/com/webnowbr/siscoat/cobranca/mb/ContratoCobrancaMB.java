@@ -4706,43 +4706,32 @@ public class ContratoCobrancaMB {
 	
 	private BigDecimal valorPresenteParcela;
 	private int numeroPresenteParcela;
-	
-	public static BigDecimal getDifferenceMonths(Date d1, Date d2) {
-	    long diff = d2.getTime() - d1.getTime();
-	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-	    //BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
-	    BigDecimal diff2 = BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
-	    return diff2;
-	}
 
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Calendar dataOntem = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
-		
-		dataOntem.add(Calendar.DATE, -1);
-		
-		Date auxDataOntem = dataOntem.getTime();
 		
 		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
-		BigDecimal quantidadeDeMeses = getDifferenceMonths(auxDataOntem, parcelas.getDataVencimento());
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
 		
-		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
 		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
 			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
-		}
-		 
+		} 
 
-		Double quantidadeDeMesesdouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
 		
 		juros = juros.divide(BigDecimal.valueOf(100));
 		juros = juros.add(BigDecimal.ONE);
 		
-		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesdouble);
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
 	
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -5846,11 +5835,32 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.consultaPreContratosBaixados(numeroContrato);
 	}
 	
+	public void geraConsultaContratosReprovadosPorContrato() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		String numeroContrato = "";
+
+		if (this.numContrato.length() == 4) {
+			numeroContrato = "0" + this.numContrato;
+		} else {
+			numeroContrato = this.numContrato;
+		}
+		
+		this.contratosPendentes = contratoCobrancaDao.consultaContratosReprovados(numeroContrato);
+	}
+	
 	public void geraConsultaTotalPreContratosBaixados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
 		this.contratosPendentes = contratoCobrancaDao.consultaTotalPreContratosBaixados();
+	}
+	
+	public void geraConsultaTotalContratosReprovados() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.consultaTotalContratosReprovados();
 	}
 	
 	public void geraConsultaContratos() {

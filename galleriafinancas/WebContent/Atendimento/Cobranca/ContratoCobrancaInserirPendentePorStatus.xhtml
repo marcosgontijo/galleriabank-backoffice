@@ -447,7 +447,7 @@
 				<shiro:lacksRole name="ADMINISTRADOR">
 					<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 						<p:panel header="Comitê"
-							rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+							rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 4}">
 							<h:panelGrid columns="2">
 
 								<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "

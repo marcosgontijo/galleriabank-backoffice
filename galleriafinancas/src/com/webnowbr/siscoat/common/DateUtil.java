@@ -570,4 +570,50 @@ public final class DateUtil {
 
 		return getDaysBetweenDates(FechaIni, FechaFin) * 30 + DiaFin - DiaIni;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public static double Days360(Date StartDate, Date EndDate)
+	{		
+	    int StartDay = StartDate.getDate();
+	    int StartMonth = StartDate.getMonth();
+	    StartMonth++;
+	    int StartYear = StartDate.getYear();
+	    StartYear += 1900;
+	    
+	    int EndDay = EndDate.getDate();
+	    int EndMonth = EndDate.getMonth();
+	    EndMonth++;
+	    int EndYear = EndDate.getYear();
+	    EndYear += 1900;
+
+	    if (StartDay == 31 || IsLastDayOfFebruary(StartDate))
+	    {
+	        StartDay = 30;
+	    }
+
+	    if (StartDay == 30 && EndDay == 31)
+	    {
+	        EndDay = 30;
+	    }
+
+	    return ((EndYear - StartYear) * 360) + ((EndMonth - StartMonth) * 30) + (EndDay - StartDay);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static boolean IsLastDayOfFebruary(Date date)
+	{
+		int dateDay = date.getDate();
+	    int dateMonth = date.getMonth();
+	    dateMonth++;
+	    
+	    Date primeiroDiaMes = DateUtil.getFirstDayOfMonth(date);
+	    Date ultimoDiaMes = DateUtil.getLastDayMonth(primeiroDiaMes);
+	    int ultimoDiaMesDay = ultimoDiaMes.getDate();
+	    
+	    if(dateMonth == 2 || dateDay == ultimoDiaMesDay) {
+	    	return true;
+	    } else {
+	    	return false;
+	    }
+	}
 }

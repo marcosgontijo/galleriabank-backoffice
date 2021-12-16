@@ -4060,6 +4060,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					} else {
 						query = query + " order by id desc";
 					}
+					query = query +  " limit 10 ";
 					
 					ps = connection
 							.prepareStatement(query);
@@ -4126,6 +4127,91 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
+	
+	private static final String QUERY_CONSULTA_TOTAL_CONTRATOS_REPROVADOS =  	"select cc.id "
+			+ " from cobranca.contratocobranca cc "
+			+ " where (status = 'Reprovado' or status = 'Desistência Cliente' ) ";
+	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaTotalContratosReprovados() {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONSULTA_TOTAL_CONTRATOS_REPROVADOS;
+				
+					query = query + " order by id desc";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_REPROVADOS =  	"select cc.id "
+			+ " from cobranca.contratocobranca cc "
+			+ " where (status = 'Reprovado' or status = 'Desistência Cliente' ) "
+			+ " and cc.numerocontrato = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaContratosReprovados(final String numeroContrato) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONSULTA_CONTRATOS_REPROVADOS;
+					
+										
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					ps.setString(1, numeroContrato);	
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
 	
 	private static final String QUERY_CONSULTA_TOTAL_PRE_CONTRATOS_BAIXADOS =  	"select cc.id "
 			+ " from cobranca.contratocobranca cc "
