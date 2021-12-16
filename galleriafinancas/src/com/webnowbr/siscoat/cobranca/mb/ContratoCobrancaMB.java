@@ -2641,14 +2641,16 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setVlrParcelaStr(
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
-
-			updateCheckList();
+			
 			
 			//gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
+			if (this.objetoContratoCobranca.getAgAssinaturaData() != null && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size
+					() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
-
+			
+			updateCheckList();
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -6541,6 +6543,7 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosReprovados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		this.setNumContrato("");
 
 		if (loginBean != null) {
 			User usuarioLogado = new User();
