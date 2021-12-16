@@ -33,6 +33,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -578,7 +579,7 @@ public class BRLTrustMB {
 						"Geração JSON BRL Liquidação: JSON gerado com sucesso!",
 						""));	
 	}
-		
+	
 	public BigDecimal calcularValorPresenteParcela(Long idParcela, BigDecimal txJuros){
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -586,38 +587,32 @@ public class BRLTrustMB {
 		Date auxDataHoje = dataHoje.getTime();
 		BigDecimal valorPresenteParcela;
 		
-		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
-				
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
 		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
 		BigDecimal juros = txJuros;
-		BigDecimal saldo;
-		
-		if (parcelas.getVlrAmortizacaoParcela() != null) { 
-			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
-		} else {
-			saldo = parcelas.getVlrJurosParcela();
-		}
-		
-		BigDecimal quantidadeDeMeses = getDifferenceMonths(parcelas.getDataVencimento(), auxDataHoje);
-		
-		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) {
-			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1));
-		}
+		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
 		juros = juros.divide(BigDecimal.valueOf(100));
-		double divisor = Math.pow(CommonsUtil.doubleValue(BigDecimal.ONE.add(juros)), CommonsUtil.doubleValue(quantidadeDeMeses));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
 	
 		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
 		return valorPresenteParcela;
-	}
-	
-	public static BigDecimal getDifferenceMonths(Date d1, Date d2) {
-	    long diff = d2.getTime() - d1.getTime();
-	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-	    BigDecimal diff2 = CommonsUtil.bigDecimalValue(CommonsUtil.divisaoPrecisa(CommonsUtil.doubleValue(diff), CommonsUtil.doubleValue(30)));
-	    return diff2;
 	}
 
 	public String getStringSemCaracteres(String documento) {
