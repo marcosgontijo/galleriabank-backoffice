@@ -2641,14 +2641,16 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setVlrParcelaStr(
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
-
-			updateCheckList();
+			
 			
 			//gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
+			if (this.objetoContratoCobranca.getAgAssinaturaData() != null && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size
+					() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
-
+			
+			updateCheckList();
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -6541,6 +6543,7 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosReprovados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		this.setNumContrato("");
 
 		if (loginBean != null) {
 			User usuarioLogado = new User();
@@ -9356,42 +9359,44 @@ public class ContratoCobrancaMB {
 		  
 		  this.fileBoleto = null;
 		  
-		  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
-			if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
-
-				SimulacaoVO simulador = calcularParcelas();
-
-				BigDecimal saldoAnterior = BigDecimal.ZERO;
-				for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
-
-					ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(
-							contratoCobrancaDao, parcela, this.objetoContratoCobranca.getDataInicio(),
-							saldoAnterior);
-
-					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
-					saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
-
-					// gera boleto 
-					
-					if(this.objetoContratoCobranca.getEmpresa() != null) {
-						if (this.isGeraBoletoInclusaoContrato()) {
-							geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getPagador().getNome(),
-									this.objetoContratoCobranca.getPagador().getCpf(),
-									this.objetoContratoCobranca.getPagador().getCnpj(),
-									this.objetoContratoCobranca.getPagador().getEndereco()
-											+ this.objetoContratoCobranca.getPagador().getNumero(),
-									this.objetoContratoCobranca.getPagador().getBairro(),
-									this.objetoContratoCobranca.getPagador().getCep(),
-									this.objetoContratoCobranca.getPagador().getCidade(),
-									this.objetoContratoCobranca.getPagador().getEstado(),
-									contratoCobrancaDetalhes.getDataVencimento(),
-									this.objetoContratoCobranca.getVlrParcela(),
-									contratoCobrancaDetalhes.getNumeroParcela());
+		  if (this.objetoContratoCobranca.getStatusLead() != null) {
+			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
+				if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
+	
+					SimulacaoVO simulador = calcularParcelas();
+	
+					BigDecimal saldoAnterior = BigDecimal.ZERO;
+					for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
+	
+						ContratoCobrancaDetalhes contratoCobrancaDetalhes = criaContratoCobrancaDetalhe(
+								contratoCobrancaDao, parcela, this.objetoContratoCobranca.getDataInicio(),
+								saldoAnterior);
+	
+						this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
+						saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
+	
+						// gera boleto 
+						
+						if(this.objetoContratoCobranca.getEmpresa() != null) {
+							if (this.isGeraBoletoInclusaoContrato()) {
+								geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+										this.objetoContratoCobranca.getPagador().getNome(),
+										this.objetoContratoCobranca.getPagador().getCpf(),
+										this.objetoContratoCobranca.getPagador().getCnpj(),
+										this.objetoContratoCobranca.getPagador().getEndereco()
+												+ this.objetoContratoCobranca.getPagador().getNumero(),
+										this.objetoContratoCobranca.getPagador().getBairro(),
+										this.objetoContratoCobranca.getPagador().getCep(),
+										this.objetoContratoCobranca.getPagador().getCidade(),
+										this.objetoContratoCobranca.getPagador().getEstado(),
+										contratoCobrancaDetalhes.getDataVencimento(),
+										this.objetoContratoCobranca.getVlrParcela(),
+										contratoCobrancaDetalhes.getNumeroParcela());
+							}
 						}
 					}
 				}
-			}
+			  }
 		  }
 		 
 
@@ -9767,12 +9772,13 @@ public class ContratoCobrancaMB {
 					Date dataParcela = contratoCobrancaDao
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
-
 					
-					detalhe.setDataVencimento(dataParcela);
-					if (detalhe.getDataVencimentoAtual().compareTo(dataParcela) < 0) {
+					if (detalhe.getDataVencimentoAtual().compareTo(detalhe.getDataVencimento()) < 1) {
 						detalhe.setDataVencimentoAtual(dataParcela);
 					}
+					
+					detalhe.setDataVencimento(dataParcela);
+					
 					detalhe.setVlrSaldoInicial(saldoAnterior);
 					detalhe.setVlrSaldoParcela(
 							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
