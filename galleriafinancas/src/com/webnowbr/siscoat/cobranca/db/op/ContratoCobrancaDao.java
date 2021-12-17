@@ -22,6 +22,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
@@ -5572,8 +5573,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						
 						if (rs.getString(2) != null && rs.getString(3) != null) {
-							String matriculaLimpaBD = rs.getString(2).replace(".", "").replace("-", "");
-							String cepLimpoBD = rs.getString(3).replace(".", "").replace("-", "");
+							String matriculaLimpaBD = CommonsUtil.somenteNumeros(rs.getString(2).replace(".", "").replace("-", ""));
+							String cepLimpoBD = CommonsUtil.somenteNumeros(rs.getString(3).replace(".", "").replace("-", ""));
 							
 							if (matriculaLimpaBD.equals(matriculaLimpa) && cepLimpoBD.equals(cepLimpo)) {
 								retorno = rs.getString(1);

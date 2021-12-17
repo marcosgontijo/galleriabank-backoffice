@@ -2315,8 +2315,8 @@ public class ContratoCobrancaMB {
 
 			// VALIDA IMOVEL
 			String imovelValido = null;
-			String matriculaLimpa = this.objetoImovelCobranca.getNumeroMatricula().replace(".", "").replace("-", "");
-			String cepLimpo = this.objetoImovelCobranca.getCep().replace(".", "").replace("-", "");
+			String matriculaLimpa = CommonsUtil.somenteNumeros(this.objetoImovelCobranca.getNumeroMatricula());
+			String cepLimpo = CommonsUtil.somenteNumeros(this.objetoImovelCobranca.getCep().replace(".", "").replace("-", ""));
 
 			imovelValido = contratoCobrancaDao.validaImovelNovoContrato(matriculaLimpa, cepLimpo);
 
@@ -2325,10 +2325,8 @@ public class ContratoCobrancaMB {
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 				ImovelCobranca imovelCobranca = new ImovelCobranca();
 
-				// if (imovelCobrancaDao.findByFilter("numeroMatricula",
-				// this.objetoImovelCobranca.getNumeroMatricula()).size() > 0) {
-				// imovelCobranca = imovelCobrancaDao.findByFilter("numeroMatricula",
-				// this.objetoImovelCobranca.getNumeroMatricula()).get(0);
+				// if (imovelCobrancaDao.findByFilter("numeroMatricula", this.objetoImovelCobranca.getNumeroMatricula()).size() > 0) {
+				//	 imovelCobranca = imovelCobrancaDao.findByFilter("numeroMatricula", this.objetoImovelCobranca.getNumeroMatricula()).get(0);
 				// } else {
 				long idIm = imovelCobrancaDao.create(this.objetoImovelCobranca);
 				imovelCobranca = imovelCobrancaDao.findById(idIm);
