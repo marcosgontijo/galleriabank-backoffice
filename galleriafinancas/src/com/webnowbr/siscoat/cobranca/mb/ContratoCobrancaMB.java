@@ -1036,6 +1036,9 @@ public class ContratoCobrancaMB {
 			// verifica se tem baixa parcial e se a parcela é diferente de paga
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
 				if (rfc.getIdParcela() == ccd.getId()) {
+					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0")
+							|| CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização"))
+						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
 						totalQtedParcelas = totalQtedParcelas + 1;
 						this.totalVlrParcelas = totalVlrParcelas.add(ccd.getVlrParcela());
@@ -1052,6 +1055,7 @@ public class ContratoCobrancaMB {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 	}
+	
 
 	public void onRowEdit(RowEditEvent event) {
 		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
