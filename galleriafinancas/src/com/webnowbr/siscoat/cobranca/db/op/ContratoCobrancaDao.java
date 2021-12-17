@@ -691,7 +691,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca = findById(rs.getLong(1));
 						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(2));
 						
-						parcela = contratoCobrancaDetalhes.getNumeroParcela() + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = contratoCobrancaDetalhes.getNumeroParcela() + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						/*
 						// Calcula baixas, e pega ultima data de pagamento
@@ -1134,7 +1134,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -1348,7 +1348,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -1563,7 +1563,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -1973,7 +1973,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -2186,7 +2186,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -2404,7 +2404,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 						
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
 								contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), rs.getBigDecimal(10), rs.getBigDecimal(11)));												
@@ -3371,7 +3371,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						contratoCobranca = findById(rs.getLong(1));
 												
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						// verifica se o contrato já está na lista (uma única linha por contrato
 						for (RelatorioFinanceiroCobranca parcelaLista : objects) {
@@ -3399,6 +3399,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
+
 	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtraso(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
@@ -3735,7 +3736,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -3787,7 +3788,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						for (ContratoCobrancaDetalhes ct : contratoCobranca.getListContratoCobrancaDetalhes()) {
 							
-							parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+							parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 							
 							if (!ct.isParcelaPaga()) {
 								String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
@@ -3843,7 +3844,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -3896,7 +3897,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
 												
-						parcela = rs.getString(2) + " de " + contratoCobranca.getListContratoCobrancaDetalhes().size();
+						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
 						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
 						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
@@ -5629,5 +5630,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});
 	}	
+
+	private Integer contarTotalParcelas(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes) {
+		int totalParcelas = 0;
+
+		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
+			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")
+					|| CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "Amortização"))
+				continue;
+			totalParcelas++;
+		}
+
+		return totalParcelas;
+	}
 
 }
