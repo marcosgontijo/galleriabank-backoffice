@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -206,9 +207,13 @@ public class ContratoCobrancaMB {
 	String updatePagadorRecebedor = "";
 	String tituloPagadorRecebedorDialog = "";
 	
+	ContasPagar contasPagarSelecionada;
+	
 	private boolean addSegurador;
 	private boolean addSocio;
 	private boolean addPagador;
+	
+	private boolean addContasPagar;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -740,6 +745,12 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
+		this.addContasPagar = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1036,6 +1047,9 @@ public class ContratoCobrancaMB {
 			// verifica se tem baixa parcial e se a parcela é diferente de paga
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
 				if (rfc.getIdParcela() == ccd.getId()) {
+					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0")
+							|| CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização"))
+						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
 						totalQtedParcelas = totalQtedParcelas + 1;
 						this.totalVlrParcelas = totalVlrParcelas.add(ccd.getVlrParcela());
@@ -1052,6 +1066,7 @@ public class ContratoCobrancaMB {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 	}
+	
 
 	public void onRowEdit(RowEditEvent event) {
 		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
@@ -1379,6 +1394,11 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1445,6 +1465,11 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -2315,8 +2340,8 @@ public class ContratoCobrancaMB {
 
 			// VALIDA IMOVEL
 			String imovelValido = null;
-			String matriculaLimpa = this.objetoImovelCobranca.getNumeroMatricula().replace(".", "").replace("-", "");
-			String cepLimpo = this.objetoImovelCobranca.getCep().replace(".", "").replace("-", "");
+			String matriculaLimpa = CommonsUtil.somenteNumeros(this.objetoImovelCobranca.getNumeroMatricula());
+			String cepLimpo = CommonsUtil.somenteNumeros(this.objetoImovelCobranca.getCep().replace(".", "").replace("-", ""));
 
 			imovelValido = contratoCobrancaDao.validaImovelNovoContrato(matriculaLimpa, cepLimpo);
 
@@ -2325,10 +2350,8 @@ public class ContratoCobrancaMB {
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 				ImovelCobranca imovelCobranca = new ImovelCobranca();
 
-				// if (imovelCobrancaDao.findByFilter("numeroMatricula",
-				// this.objetoImovelCobranca.getNumeroMatricula()).size() > 0) {
-				// imovelCobranca = imovelCobrancaDao.findByFilter("numeroMatricula",
-				// this.objetoImovelCobranca.getNumeroMatricula()).get(0);
+				// if (imovelCobrancaDao.findByFilter("numeroMatricula", this.objetoImovelCobranca.getNumeroMatricula()).size() > 0) {
+				//	 imovelCobranca = imovelCobrancaDao.findByFilter("numeroMatricula", this.objetoImovelCobranca.getNumeroMatricula()).get(0);
 				// } else {
 				long idIm = imovelCobrancaDao.create(this.objetoImovelCobranca);
 				imovelCobranca = imovelCobrancaDao.findById(idIm);
@@ -2531,8 +2554,8 @@ public class ContratoCobrancaMB {
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-			this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
-			this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
+			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
+			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 
 			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
 				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
@@ -3772,6 +3795,11 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio= false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -3830,6 +3858,11 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -4669,13 +4702,21 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void reprovarContrato() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatusContrato("Reprovado");
 		this.objetoContratoCobranca.setReprovado(true);
 		this.objetoContratoCobranca.setStatus("Reprovado");
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
 	}
 	
-	public String baixarPreContrato() {
+	
+	public void baixarPreContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatus("Baixado");
@@ -4687,23 +4728,44 @@ public class ContratoCobrancaMB {
 						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
+	}
+	
+
+	public void recuperarContratoReprovado() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setStatusContrato("Em Análise");
+		this.objetoContratoCobranca.setReprovado(false);
+		this.objetoContratoCobranca.setStatus("Pendente");
 		
-		return geraConsultaContratosPendentes();
+		updateCheckList();
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
 	}
 			
 	public void recuperarPreContratoBaixado() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatus("Pendente");
 		this.objetoContratoCobranca.setStatusContrato("Em Análise");
 		updateCheckList();
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
 	}
 	
-	public void baixarEConsultarPreContrato() {
+	public String baixarEConsultarPreContrato() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		baixarPreContrato();		
-		geraConsultaContratosPorStatus(this.tituloTelaConsultaPreStatus);
+		return geraConsultaContratosBaixados();
 	}
 	
 	private BigDecimal valorPresenteParcela;
@@ -4766,11 +4828,12 @@ public class ContratoCobrancaMB {
 		
 		this.valorPresenteParcela = BigDecimal.ZERO;
 		
-
 		files = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
+		
+		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
 		loadLovs();
 
@@ -4808,6 +4871,8 @@ public class ContratoCobrancaMB {
 		files = listaArquivos();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
+		
+		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
 		loadLovs();
 
@@ -5763,12 +5828,16 @@ public class ContratoCobrancaMB {
 				dataHoje.set(Calendar.SECOND, 0);
 				dataHoje.set(Calendar.MILLISECOND, 0);
 				
+				if(CommonsUtil.mesmoValor(contrato.getNumeroContrato(),"03672")) {
+					dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
+				}
+									
 
 				if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 					ccd.setParcelaVencida(true);
 				}
 
-				if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
+				else if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 					ccd.setParcelaVencendo(true);
 				}
 				
@@ -5782,7 +5851,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			if(this.prazoContrato == 0) {
+			if(this.prazoContrato == 0 || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;
 			}
 			
@@ -6401,7 +6470,7 @@ public class ContratoCobrancaMB {
 		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
-		for (ContratoCobranca contratos : this.contratosPendentes) {
+		for (ContratoCobranca contratos : this.contratosPendentes) {			
 			contratos = getContratoById(contratos.getId());
 			if (contratos.isDocumentosCompletos()) {
 				contratos.setAprovadoComite(true);
@@ -6415,7 +6484,7 @@ public class ContratoCobrancaMB {
 			}
 
 			if (status.equals("Análise Reprovada")) {
-				if (contratos.getAnaliseReprovadaData() != null) {
+				if (contratos.getAnaliseReprovadaData() != null && !contratos.isAnaliseReprovada()) {
 					if (getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
 						if (this.objetoContratoCobranca != null) {
 							reprovarContrato(); 
@@ -8152,6 +8221,11 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
+		this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
+		this.contasPagarSelecionada.setResponsavel(new Responsavel());
+		
 		this.selectedPagador = this.objetoContratoCobranca.getPagador();
 		this.nomePagador = this.objetoContratoCobranca.getPagador().getNome();
 		this.idPagador = this.objetoContratoCobranca.getPagador().getId();
@@ -9774,12 +9848,13 @@ public class ContratoCobrancaMB {
 					Date dataParcela = contratoCobrancaDao
 							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
-
 					
-					detalhe.setDataVencimento(dataParcela);
-					if (detalhe.getDataVencimentoAtual().compareTo(dataParcela) < 0) {
+					if (detalhe.getDataVencimentoAtual().compareTo(detalhe.getDataVencimento()) < 1) {
 						detalhe.setDataVencimentoAtual(dataParcela);
 					}
+					
+					detalhe.setDataVencimento(dataParcela);
+					
 					detalhe.setVlrSaldoInicial(saldoAnterior);
 					detalhe.setVlrSaldoParcela(
 							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -9887,6 +9962,18 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public List<String> contaPagarDescricaoLista(){
+		List<String> listaNome = new ArrayList<>();
+		listaNome.add("Cartório");
+		listaNome.add("Honorário");
+		listaNome.add("IPTU");
+		listaNome.add("Condomínio");
+		listaNome.add("Processo");
+		listaNome.add("IQ");
+		listaNome.add("Outros");
+		return listaNome.stream().collect(Collectors.toList());
+	}
+	
 	public void pesquisaSegurado() {
 		this.tituloPagadorRecebedorDialog = "Segurados";
 		this.tipoPesquisaPagadorRecebedor = "Segurado";
@@ -9928,7 +10015,7 @@ public class ContratoCobrancaMB {
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
-		}
+	}
 	
 	public void concluirPagador() {
 		this.pagadorSecundarioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
@@ -9937,7 +10024,7 @@ public class ContratoCobrancaMB {
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addPagador = false;
-		}
+	}
 	
 	public void concluirSocio() {
 		this.socioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
@@ -9945,7 +10032,28 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado = new PagadorRecebedorSocio();
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSocio = false;
+	}
+	
+	public void concluirConta() {
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
+				this.objetoContratoCobranca.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValor());
+			} else {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
+			}
 		}
+		if(this.contasPagarSelecionada.isContaPaga() && CommonsUtil.semValor(this.contasPagarSelecionada.getDataPagamento())) {
+			this.contasPagarSelecionada.setDataPagamento(gerarDataHoje());
+		}	
+		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+		this.contasPagarSelecionada = new ContasPagar();
+		this.addContasPagar = false;
+	}
 	
 	public void editarSocio(PagadorRecebedorSocio socio) {
 		this.addSocio = true;
@@ -9961,6 +10069,13 @@ public class ContratoCobrancaMB {
 		this.removerPagador(pagador);
 	}
 	
+	public void editarConta(ContasPagar conta) {
+		this.addContasPagar = true;
+		this.contasPagarSelecionada = new ContasPagar();
+		this.setContasPagarSelecionada(conta);
+		this.removerConta(conta);
+	}
+	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoContratoCobranca.getListSegurados().remove(segurado);		
 	}
@@ -9971,6 +10086,10 @@ public class ContratoCobrancaMB {
 	
 	public void removerSocio(PagadorRecebedorSocio socio) {
 		this.objetoContratoCobranca.getListSocios().remove(socio);
+	}
+	
+	public void removerConta(ContasPagar conta) {
+		this.objetoContratoCobranca.getListContasPagar().remove(conta);
 	}
 
 	private boolean validarProcentagensSeguro() {
@@ -9989,6 +10108,15 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	private BigDecimal calcularValorTotalContasPagar() {
+		BigDecimal valorTotalContasPagarNovo = BigDecimal.ZERO;
+		for (ContasPagar conta : this.objetoContratoCobranca.getListContasPagar())
+			if(!CommonsUtil.semValor(conta.getValor())) {
+				valorTotalContasPagarNovo = valorTotalContasPagarNovo.add(conta.getValor());
+		}
+		
+		return valorTotalContasPagarNovo;
+	}
 	
 	public void clearPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
@@ -20093,6 +20221,22 @@ public class ContratoCobrancaMB {
 
 	public void setAddPagador(boolean addPagador) {
 		this.addPagador = addPagador;
+	}
+
+	public ContasPagar getContasPagarSelecionada() {
+		return contasPagarSelecionada;
+	}
+
+	public void setContasPagarSelecionada(ContasPagar contasPagarSelecionada) {
+		this.contasPagarSelecionada = contasPagarSelecionada;
+	}
+
+	public boolean isAddContasPagar() {
+		return addContasPagar;
+	}
+
+	public void setAddContasPagar(boolean addContasPagar) {
+		this.addContasPagar = addContasPagar;
 	}
 	
 	

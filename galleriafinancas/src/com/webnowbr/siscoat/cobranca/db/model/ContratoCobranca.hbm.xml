@@ -1041,6 +1041,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais" />
         </set>   
         
+        <set name="listContasPagar" table="CONTASPAGAR" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contrato" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
+        </set>   
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -1242,7 +1250,7 @@
 			<column name="VALORVENDAFORCADAIMOVEL" />
 		</property>	
 
-		<property name="comentarioJuridico" type="java.lang.String">
+		<property name="comentarioJuridico" type="text">
 			<column name="COMENTARIOJURIDICO" />
 		</property>	
 		
@@ -1329,7 +1337,7 @@
 			<column name="iuguLaudoPaju" />
 		</property>	
 
-		<property name="comentarioComite" type="java.lang.String">
+		<property name="comentarioComite" type="text">
 			<column name="comentarioComite" />
 		</property>	
 		<property name="tipoValorComite" type="java.lang.String">
@@ -1372,8 +1380,12 @@
 			<column name="dataUltimaAtualizacao" />
 		</property>
 		
-		<property name="observacaoRenda" type="java.lang.String">
+		<property name="observacaoRenda" type="text">
 			<column name="observacaoRenda" />
+		</property>	
+		
+		<property name="contaPagarValorTotal" type="big_decimal">
+			<column name="contaPagarValorTotal" />
 		</property>	
 	</class>
 </hibernate-mapping>

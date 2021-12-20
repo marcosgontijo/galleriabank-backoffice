@@ -74,8 +74,7 @@ public class ContaContabilDao extends HibernateDao<ContaContabil, Long> {
 					
 					query.append("select id from cobranca.ContaContabil ");
 					query.append("order by case when contacontabilpai is null then id else contacontabilpai end, ");
-					query.append("contacontabilpai desc, codigocontacontabil");
-							
+					query.append("contacontabilpai desc, codigocontacontabil");		
 
 					ps = connection.prepareStatement(query.toString());
 

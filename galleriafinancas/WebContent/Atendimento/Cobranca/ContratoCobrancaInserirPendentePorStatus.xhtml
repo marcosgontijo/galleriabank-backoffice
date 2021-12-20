@@ -203,7 +203,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 4)}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -213,6 +213,7 @@
 											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+										    	<p:ajax update="AnaliseReprovadaPanel" event="change" /> 
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>
@@ -493,6 +494,41 @@
 						</p:panel>
 					</h:panelGroup>
 				</shiro:lacksRole>
+				
+				<h:panelGroup id="AnaliseReprovadaPanel">
+					<p:panel
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
+						style="border: none" header="Analise Reprovada">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
+								styleClass="labelBold" />
+							<p:inputTextarea id="motivo" rows="10" cols="48" maxlength="3000"
+								onblur="" counterTemplate="{0} characters remaining."
+								autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
+							<p:outputLabel id="quemReprovou" value="Quem analisou?"
+								style="cursor:pointer" styleClass="labelBold" />
+							<p:overlayPanel id="quemReprovouModal" for="quemReprovou"
+								showEffect="blind" hideEffect="blind" showEvent="mouseover"
+								hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+								<p:panel id="quemReprovouInfo" header="Quem analisou?"
+									style="margin-bottom:10px;">
+									<h:panelGrid columns="1">
+										<h:outputText id="quemAnalisouUsuario"
+											value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;" />
+										<h:outputText id="quemAnalisouData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</h:panelGrid>
+								</p:panel>
+							</p:overlayPanel>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
@@ -667,42 +703,6 @@
 								counterTemplate="{0} characters remaining." autoResize="false"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
 							<p:outputLabel id="display" />
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-
-
-				<h:panelGroup id="AnaliseReprovadaPanel">
-					<p:panel
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
-						style="border: none" header="Analise Reprovada">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
-								styleClass="labelBold" />
-							<p:inputTextarea id="motivo" rows="10" cols="48" maxlength="3000"
-								onblur="" counterTemplate="{0} characters remaining."
-								autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
-							<p:outputLabel id="quemReprovou" value="Quem analisou?"
-								style="cursor:pointer" styleClass="labelBold" />
-							<p:overlayPanel id="quemReprovouModal" for="quemReprovou"
-								showEffect="blind" hideEffect="blind" showEvent="mouseover"
-								hideEvent="mousedown" dismissable="false" showCloseIcon="true">
-								<p:panel id="quemReprovouInfo" header="Quem analisou?"
-									style="margin-bottom:10px;">
-									<h:panelGrid columns="1">
-										<h:outputText id="quemAnalisouUsuario"
-											value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}"
-											style="font-weight: bold; font-size: 15px;padding-top: 20px;" />
-										<h:outputText id="quemAnalisouData"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
-											style="font-weight: bold; font-size: 15px;padding-top: 20px;">
-											<f:convertDateTime locale="pt_BR" />
-											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-										</h:outputText>
-									</h:panelGrid>
-								</p:panel>
-							</p:overlayPanel>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1735,7 +1735,7 @@
 									<p:outputLabel
 										value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
 
-									<p:outputLabel for="SocioEndereco" value="Endereço: " />
+									<p:outputLabel for="SocioEndereco" value="Endereço: "/>
 									<p:inputText id="SocioEndereco"
 										value="#{contratoCobrancaMB.socioSelecionado.pessoa.endereco}"
 										label="Endereço" onblur="" style="width:400px;" />
@@ -2220,6 +2220,104 @@
 					</p:panel>
 				</h:panelGroup>
 
+				<h:panelGroup id="ContasPagarPanel">
+					<p:panel header="Contas a Pagar" style="margin-bottom:10px;" 
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"> 
+						
+						<f:facet name="header"> Contas a Pagar 
+							<p:outputLabel value="" />
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:selectBooleanButton value="#{contratoCobrancaMB.addContasPagar}"
+									onLabel="Adicionar Conta" offLabel="Adicionar Conta"  onIcon="ui-icon-plus" offIcon="ui-icon-plus">
+									<p:ajax update=":form:ContasPagarPanel" event="change" />
+								</p:selectBooleanButton>
+							</shiro:hasAnyRoles>
+						</f:facet>
+						
+						<p:outputLabel for="ContaPagarValorTotal" value="Valor Total (R$): "
+									styleClass="labelBold" />
+						<p:outputLabel id="ContaPagarValorTotal" styleClass="labelBold"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
+									converter="bigDecimalConverter" />			
+						
+						<h:panelGroup id="adicionarContasPagar"
+							rendered="#{contratoCobrancaMB.addContasPagar}">
+							<h:panelGrid columns="2">
+								<p:spacer height="10" />
+								<p:spacer height="10" />
+
+								<p:outputLabel value="Adicionar Conta a Pagar"
+									styleClass="labelBold" />
+								<!-- espaço em branco para formação dos elementos na tela -->
+									
+								<p:outputLabel for="ContaPagarDescricao" value="Descrição: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+								<p:autoComplete id="ContaPagarDescricao" dropdown="true" value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
+                        			    completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}" scrollHeight="250"/>
+
+								<p:outputLabel for="ContaPagarValor" value="Valor: " styleClass="labelBold"/>
+								<p:inputText id="ContaPagarValor"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="ContaPagarValorPagamento" value="Valor Pagamento (R$): "
+									styleClass="labelBold" />
+								<p:inputText id="ContaPagarValorPagamento"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />															
+								<p:spacer height="10" />
+								<p:spacer height="10" />		
+							</h:panelGrid>
+							<p:commandButton value="Concluir" ajax="true"
+								action="#{contratoCobrancaMB.concluirConta()}"
+								update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
+						</h:panelGroup>
+						
+						<p:dataView var="contas"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
+							paginator="false" layout="list"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="Descrição: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.descricao}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+
+								<p:outputLabel value="Valor: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.valor}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
+								<h:outputText value="#{contas.dataVencimento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+								<p:spacer height="10" />
+								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:commandButton value="Editar" icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
+									update=":form:ContasPagarPanel" />
+								<p:spacer height="10" />
+								<p:commandButton value="Remover" icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removerConta(contas)}" ajax="true"
+									update=":form:ContasPagarPanel" />
+								</shiro:hasAnyRoles>
+							</p:dataViewListItem>
+						</p:dataView>
+					</p:panel>
+				</h:panelGroup>
+
 				<p:panel id="Infos" header="Outras Informações"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
@@ -2253,7 +2351,7 @@
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">				
 						<h:outputText value="Nome do Participante: " styleClass="labelBold"/>
-						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckList}"/> 
+						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.nomeParticipanteCheckList}"/> 
 					
 						<h:outputText value="Tem RG/CPF? " styleClass="labelBold"/>
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.rgDocumentosCheckList}"/>
@@ -2266,10 +2364,10 @@
 						
 						<h:outputText value="Tem Ficha Cadastral? " styleClass="labelBold"/>
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.fichaCadastralDocumentosCheckList}"/>
-		
+						
 						<h:outputText value="Tem Dados Bancários? " styleClass="labelBold" />
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.bancoDocumentosCheckList}"/>
-					
+						
 						<h:outputText value="Tem Telefone e Email? " styleClass="labelBold"/>
 						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telefoneEmailDocumentosCheckList}"/>
 						

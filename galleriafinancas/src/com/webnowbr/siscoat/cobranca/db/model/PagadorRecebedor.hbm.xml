@@ -320,6 +320,39 @@
         
         <property name="tipoPessoaSecundarioIsFisica" type="boolean">
            <column name="tipoPessoaSecundarioIsFisica" />
-      	</property>                                                                                         
+      	</property>                                            
+      	
+      	<property name="nomeParticipanteCheckList" type="java.lang.String">
+			<column name="nomeParticipanteCheckList" />
+		</property>	
+	
+		<property name="rgDocumentosCheckList" type="boolean">
+			<column name="rgDocumentosCheckList" />
+		</property>
+		
+		<property name="comprovanteEnderecoDocumentosCheckList" type="boolean">
+			<column name="comprovanteEnderecoDocumentosCheckList" />
+		</property>
+		
+		<property name="certidaoCasamentoNascimentoDocumentosCheckList" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosCheckList" />
+		</property>
+		
+		<property name="fichaCadastralDocumentosCheckList" type="boolean">
+			<column name="fichaCadastralDocumentosCheckList" />
+		</property>
+		
+		<property name="bancoDocumentosCheckList" type="boolean">
+			<column name="bancoDocumentosCheckList" />
+		</property>
+		
+		<property name="telefoneEmailDocumentosCheckList" type="boolean">
+			<column name="telefoneEmailDocumentosCheckList" />
+		</property>	
+		
+		<property name="comprovanteRendaCheckList" type="boolean">
+			<column name="comprovanteRendaCheckList" />
+		</property>		
+      	                                             
     </class>
 </hibernate-mapping>

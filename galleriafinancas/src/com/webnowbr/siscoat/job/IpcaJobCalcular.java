@@ -60,8 +60,7 @@ public class IpcaJobCalcular {
 
 					if (!CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA())
 							&& detalhe.getIpcaAtualizou() != null
-							&& CommonsUtil.mesmoValor(CommonsUtil.dateValue(detalhe.getIpcaAtualizou()),
-									CommonsUtil.dateValue(ultimoIpca)))
+							&& CommonsUtil.mesmoValor(detalhe.getId(), ultimoIpca.getId()))
 						continue;
 
 					// reparcela

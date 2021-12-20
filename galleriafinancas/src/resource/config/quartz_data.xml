@@ -15,10 +15,10 @@
 		<ignore-duplicates>false</ignore-duplicates>
 	</processing-directives>
 
-	<!-- <schedule>
+	 <!--<schedule>
 		<job>
 			<name>IpcaJobUnico</name>
-			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
+			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
 		</job>
 		<trigger>
 			<simple>
