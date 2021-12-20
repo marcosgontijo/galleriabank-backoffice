@@ -6417,7 +6417,9 @@ public class ContratoCobrancaMB {
 			if (status.equals("Análise Reprovada")) {
 				if (contratos.getAnaliseReprovadaData() != null) {
 					if (getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
-						reprovarContrato();
+						if (this.objetoContratoCobranca != null) {
+							reprovarContrato(); 
+						}
 					}
 				}
 			}
