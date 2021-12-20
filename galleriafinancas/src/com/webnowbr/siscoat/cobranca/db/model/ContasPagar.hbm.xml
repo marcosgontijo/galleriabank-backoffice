@@ -16,11 +16,13 @@
 		<property name="descricao" type="java.lang.String">
 			<column name="descricao" />
 		</property>		
+		
 		<many-to-one name="contrato"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="contrato" />
 		</many-to-one>
+		
 		<property name="valor" type="big_decimal">
 			<column name="valor" />
 		</property>

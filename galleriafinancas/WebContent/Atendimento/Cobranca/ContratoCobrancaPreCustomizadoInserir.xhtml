@@ -521,7 +521,7 @@
 								value="#{contratoCobrancaMB.tipoPessoaIsFisica}" required="true">
 								<f:selectItem itemLabel="Física" itemValue="true" />
 								<f:selectItem itemLabel="Jurídica" itemValue="false" />
-								<p:ajax update="PanelNovoPagador" event="valueChange"
+								<p:ajax update=":form:PanelPagadorRecebedor" event="valueChange"
 									listener="#{contratoCobrancaMB.selectedTipoPessoaPublico}" />
 							</p:selectOneRadio>
 
@@ -837,25 +837,28 @@
 				<p:panel id="CheckListDocumentos" header="Documentos Prontos" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">				
 						<h:outputText value="Nome do Participante: " styleClass="labelBold"/>
-						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.nomeParticipanteCheckList}"/> 
+						<p:inputText id="nomeParticipanteCheckList" value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.nomeParticipanteCheckList}"/> 
 					
 						<h:outputText value="Tem RG/CPF? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.rgDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.rgDocumentosCheckList}"/>
 							
 						<h:outputText value="Tem Comprovante de Endereço? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.comprovanteEnderecoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.comprovanteEnderecoDocumentosCheckList}"/>
 						
 						<h:outputText value="Tem Certidão de Casamento/Nascimento? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.certidaoCasamentoNascimentoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.certidaoCasamentoNascimentoDocumentosCheckList}"/>
 						
 						<h:outputText value="Tem Ficha Cadastral? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.fichaCadastralDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.fichaCadastralDocumentosCheckList}"/>
 		
 						<h:outputText value="Tem Dados Bancários? " styleClass="labelBold" />
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.bancoDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.bancoDocumentosCheckList}"/>
 					
 						<h:outputText value="Tem Telefone e Email? " styleClass="labelBold"/>
-						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.telefoneEmailDocumentosCheckList}"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.telefoneEmailDocumentosCheckList}"/>
+						
+						<h:outputText value="Tem Comprovante de Renda? " styleClass="labelBold"/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pagador.comprovanteRendaCheckList}"/>
 					</h:panelGrid>
 				</p:panel>
 

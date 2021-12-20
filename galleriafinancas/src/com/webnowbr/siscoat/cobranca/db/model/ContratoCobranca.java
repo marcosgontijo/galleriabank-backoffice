@@ -148,6 +148,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<Segurado> listSegurados;
 	private Set<PagadorRecebedorSocio> listSocios;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
+	private Set<ContasPagar> listContasPagar;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -530,6 +531,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal ccbxRenda;
 	private String observacaoRenda;
 	
+	private BigDecimal contaPagarValorTotal;
+	
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
 	
@@ -554,6 +557,7 @@ public class ContratoCobranca implements Serializable {
 		this.listSegurados = new HashSet<>();
 		this.listSocios = new HashSet<>();
 		this.listaPagadores = new HashSet<>();
+		this.listContasPagar = new HashSet<>();
 		
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
@@ -4161,6 +4165,14 @@ public class ContratoCobranca implements Serializable {
 		this.listSocios = listSocios;
 	}
 	
+	public Set<ContasPagar> getListContasPagar() {
+		return listContasPagar;
+	}
+
+	public void setListContasPagar(Set<ContasPagar> listContasPagar) {
+		this.listContasPagar = listContasPagar;
+	}
+
 	public BigDecimal getTaxaAprovada() {
 		return taxaAprovada;
 	}
@@ -4319,6 +4331,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDataUltimaAtualizacao(Date dataUltimaAtualizacao) {
 		this.dataUltimaAtualizacao = dataUltimaAtualizacao;
+	}
+	
+	public BigDecimal getContaPagarValorTotal() {
+		return contaPagarValorTotal;
+	}
+
+	public void setContaPagarValorTotal(BigDecimal contaPagarValorTotal) {
+		this.contaPagarValorTotal = contaPagarValorTotal;
 	}
 	
 	
