@@ -655,6 +655,10 @@ public class ContratoCobrancaMB {
 	private BigDecimal inadimplencia30Porcentagem;
 	private BigDecimal inadimplencia60Porcentagem;
 	private BigDecimal inadimplencia90Porcentagem;
+	private Collection<ContratoCobranca> contratosInadimplencia30;
+	private Collection<ContratoCobranca> contratosInadimplencia60;
+	private Collection<ContratoCobranca> contratosInadimplencia90;
+	
 	
 	private Boolean addPagadorPreContrato;
 	
@@ -5828,23 +5832,18 @@ public class ContratoCobrancaMB {
 		this.inadimplencia60Porcentagem = BigDecimal.ZERO;
 		this.inadimplencia90Porcentagem = BigDecimal.ZERO;
 		
+		this.contratosInadimplencia30 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
+		
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		this.totalContratosConsultar = this.contratos.size();
 
 		for(ContratoCobranca contrato : this.contratos) {
 			this.qtdDeparcelasVencidas = 0;
 			for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
-				dataVencimentoParcela.setTime(ccd.getDataVencimento());
-				dataHoje.set(Calendar.HOUR_OF_DAY, 0);
-				dataHoje.set(Calendar.MINUTE, 0);
-				dataHoje.set(Calendar.SECOND, 0);
-				dataHoje.set(Calendar.MILLISECOND, 0);
+				dataVencimentoParcela.setTime(ccd.getDataVencimento());		
 				
-				if(CommonsUtil.mesmoValor(contrato.getNumeroContrato(),"03672")) {
-					dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
-				}
-									
-
 				if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 					ccd.setParcelaVencida(true);
 				}
@@ -5869,10 +5868,13 @@ public class ContratoCobrancaMB {
 			
 			if(this.qtdDeparcelasVencidas == 1) {
 				this.inadimplencia30Soma = this.inadimplencia30Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia30.add(contrato);
 			} else if(this.qtdDeparcelasVencidas == 2) {
 				this.inadimplencia60Soma = this.inadimplencia60Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia60.add(contrato);
 			} else if(this.qtdDeparcelasVencidas >= 3) {
 				this.inadimplencia90Soma = this.inadimplencia90Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia90.add(contrato);
 			}
 			
 			this.volumeCarteira = this.volumeCarteira.add(valorUltimaPareclaPaga);
@@ -5903,6 +5905,7 @@ public class ContratoCobrancaMB {
 		this.porcentagem240 = this.porcentagem240.multiply(BigDecimal.valueOf(100));
 		this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
+	
 
 	public void geraConsultaPreContratosBaixados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -20217,6 +20220,30 @@ public class ContratoCobrancaMB {
 
 	public void setInadimplencia90Porcentagem(BigDecimal inadimplencia90Porcentagem) {
 		this.inadimplencia90Porcentagem = inadimplencia90Porcentagem;
+	}
+	
+	public Collection<ContratoCobranca> getContratosInadimplencia30() {
+		return contratosInadimplencia30;
+	}
+
+	public void setContratosInadimplencia30(Collection<ContratoCobranca> contratosInadimplencia30) {
+		this.contratosInadimplencia30 = contratosInadimplencia30;
+	}
+	
+	public Collection<ContratoCobranca> getContratosInadimplencia60() {
+		return contratosInadimplencia60;
+	}
+
+	public void setContratosInadimplencia60(Collection<ContratoCobranca> contratosInadimplencia60) {
+		this.contratosInadimplencia60 = contratosInadimplencia60;
+	}
+
+	public Collection<ContratoCobranca> getContratosInadimplencia90() {
+		return contratosInadimplencia90;
+	}
+
+	public void setContratosInadimplencia90(Collection<ContratoCobranca> contratosInadimplencia90) {
+		this.contratosInadimplencia90 = contratosInadimplencia90;
 	}
 
 	public PagadorRecebedorAdicionais getPagadorSecundarioSelecionado() {
