@@ -4737,8 +4737,20 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatusContrato("Em Análise");
 		this.objetoContratoCobranca.setReprovado(false);
 		this.objetoContratoCobranca.setStatus("Pendente");
+		if(!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor()) && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Reprovado")) {
+			this.objetoContratoCobranca.setCadastroAprovadoValor("Aprovado");
+		}
+		this.objetoContratoCobranca.setAnaliseReprovada(false);
+		this.objetoContratoCobranca.setAnaliseReprovadaData(null);
+		this.objetoContratoCobranca.setAnaliseReprovadaUsuario(null);
+		
+		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
+		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 		
 		updateCheckList();
+		
+		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
+		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
