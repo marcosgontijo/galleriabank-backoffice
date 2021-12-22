@@ -1310,5 +1310,33 @@ public class PagadorRecebedor implements Serializable {
 	public void setComprovanteRendaCheckList(Boolean comprovanteRendaCheckList) {
 		this.comprovanteRendaCheckList = comprovanteRendaCheckList;
 	}
+
+	public void setRgDocumentosCheckList(boolean rgDocumentosCheckList) {
+		this.rgDocumentosCheckList = rgDocumentosCheckList;
+	}
+
+	public void setComprovanteEnderecoDocumentosCheckList(boolean comprovanteEnderecoDocumentosCheckList) {
+		this.comprovanteEnderecoDocumentosCheckList = comprovanteEnderecoDocumentosCheckList;
+	}
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheckList(boolean certidaoCasamentoNascimentoDocumentosCheckList) {
+		this.certidaoCasamentoNascimentoDocumentosCheckList = certidaoCasamentoNascimentoDocumentosCheckList;
+	}
+
+	public void setFichaCadastralDocumentosCheckList(boolean fichaCadastralDocumentosCheckList) {
+		this.fichaCadastralDocumentosCheckList = fichaCadastralDocumentosCheckList;
+	}
+
+	public void setBancoDocumentosCheckList(boolean bancoDocumentosCheckList) {
+		this.bancoDocumentosCheckList = bancoDocumentosCheckList;
+	}
+
+	public void setTelefoneEmailDocumentosCheckList(boolean telefoneEmailDocumentosCheckList) {
+		this.telefoneEmailDocumentosCheckList = telefoneEmailDocumentosCheckList;
+	}
+
+	public void setComprovanteRendaCheckList(boolean comprovanteRendaCheckList) {
+		this.comprovanteRendaCheckList = comprovanteRendaCheckList;
+	}
 }
 

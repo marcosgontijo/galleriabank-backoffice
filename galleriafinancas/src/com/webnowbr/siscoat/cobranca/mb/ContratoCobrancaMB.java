@@ -1052,7 +1052,7 @@ public class ContratoCobrancaMB {
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
 				if (rfc.getIdParcela() == ccd.getId()) {
 					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0")
-							|| CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização"))
+							|| ccd.isAmortizacao())
 						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
 						totalQtedParcelas = totalQtedParcelas + 1;
@@ -4145,7 +4145,7 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
-			if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+			if (ccd.isAmortizacao()) {
 				somaBaixas = ccd.getVlrParcela();
 			} else {
 				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
@@ -6904,7 +6904,7 @@ public class ContratoCobrancaMB {
 
 			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
 				
-				if ( CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+				if (ccd.isAmortizacao()) {
 					somaAmortizacoes.add(ccd.getVlrParcela());
 					continue;
 				}
@@ -9855,14 +9855,22 @@ public class ContratoCobrancaMB {
 				
 				if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {
 					
+					Date dataParcela =null;
+					
+					if (!detalhe.isAmortizacao())
+						dataParcela = contratoCobrancaDao
+								.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
+										- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
+					
 					if ( detalhe.isParcelaPaga()) {
+						
+						if ( CommonsUtil.mesmoValor(BigInteger.ZERO, this.numeroParcelaReparcelamento))
+							detalhe.setDataVencimento(dataParcela);
+						
 						encontrouParcela = true;
 						break;						
 					}
 					
-					Date dataParcela = contratoCobrancaDao
-							.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
-									- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
 					
 					if (detalhe.getDataVencimentoAtual().compareTo(detalhe.getDataVencimento()) < 1) {
 						detalhe.setDataVencimentoAtual(dataParcela);
@@ -9925,6 +9933,10 @@ public class ContratoCobrancaMB {
 		}
 		
 		
+		
+		
+		
+		
 	}
 
 	public void reparcelarPelaUltimaParcelaValidada() {
@@ -9950,11 +9962,11 @@ public class ContratoCobrancaMB {
 				break;
 			} else {
 				this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
-				if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Amortização")) {
+				if (!detalhe.isAmortizacao()) {
 					
 					ContratoCobrancaDetalhes detalheProximo = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 							.get(iDetalhe+1);
-					if (!CommonsUtil.mesmoValor(detalheProximo.getNumeroParcela(), "Amortização")) {
+					if (!detalheProximo.isAmortizacao()) {
 						this.setDataParcela(detalheProximo.getDataVencimento());
 						this.setNumeroParcelaReparcelamento(
 								BigInteger.valueOf(CommonsUtil.intValue(detalheProximo.getNumeroParcela())));
@@ -10747,7 +10759,7 @@ public class ContratoCobrancaMB {
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			
-			if ( CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+			if (ccd.isAmortizacao()) {
 				ccd.setValorTotalPagamento(ccd.getVlrParcela());
 				continue;
 			}

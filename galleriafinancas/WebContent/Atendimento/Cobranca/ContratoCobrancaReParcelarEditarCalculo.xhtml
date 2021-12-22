@@ -9,6 +9,16 @@
 	<h:panelGrid columns="2" columnClasses="padRight20">
 		<h:panelGroup>
 			<h:panelGrid columns="2" id="pnlReparcelamento">
+				<p:outputLabel for="numeroParcelaReparcelamento"
+					value="Parcela atual:" styleClass="labelBold" />
+				<p:inputText id="numeroParcelaReparcelamento"
+					value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
+					onkeypress="return isNumberKey(event);"
+					onkeydown="FormataValor(this, 13, event, 2);" required="true">
+					<p:ajax process="@this" event="change" update="pnlReparcelamento"
+						partialSubmit="true" />
+				</p:inputText>
+				
 				<p:outputLabel for="dataInicio" value="Data Inicio: "
 					id="lblDataInicio"
 					rendered="#{contratoCobrancaMB.numeroParcelaReparcelamento eq 0}"
@@ -37,15 +47,7 @@
 			<h:panelGrid columns="2">
 
 
-				<p:outputLabel for="numeroParcelaReparcelamento"
-					value="Parcela atual:" styleClass="labelBold" />
-				<p:inputText id="numeroParcelaReparcelamento"
-					value="#{contratoCobrancaMB.numeroParcelaReparcelamento}"
-					onkeypress="return isNumberKey(event);"
-					onkeydown="FormataValor(this, 13, event, 2);" required="true">
-					<p:ajax process="@this" event="change" update="pnlReparcelamento"
-						partialSubmit="true" />
-				</p:inputText>
+			
 
 				<p:outputLabel for="tipoCalculo" value="Tipo Cálculo: "
 					styleClass="labelBold" />
