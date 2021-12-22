@@ -2262,13 +2262,13 @@
 									onkeydown="FormataValor(this, 13, event, 2);" required="false"
 									converter="bigDecimalConverter" />
 									
-								<p:outputLabel for="ContaPagarValorPagamento" value="Valor Pagamento (R$): "
-									styleClass="labelBold" />
-								<p:inputText id="ContaPagarValorPagamento"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="false"
-									converter="bigDecimalConverter" />															
+								<p:outputLabel for="ContaPagarDataVencimento"
+										value="Data Vencimento: " styleClass="labelBold" />
+								<p:calendar id="ContaPagarDataVencimento"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
+										label="Data" size="100" pattern="dd/MM/yyyy"
+										styleClass="dateTimeField" />
+																						
 								<p:spacer height="10" />
 								<p:spacer height="10" />		
 							</h:panelGrid>
