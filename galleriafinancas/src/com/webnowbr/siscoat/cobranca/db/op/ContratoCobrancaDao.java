@@ -5636,7 +5636,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
 			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")
-					|| CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "Amortização"))
+					|| contratoCobrancaDetalhes.isAmortizacao() )
 				continue;
 			totalParcelas++;
 		}

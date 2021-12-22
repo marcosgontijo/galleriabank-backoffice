@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class ContratoCobrancaDetalhes implements Serializable {
 
 	/**
@@ -74,6 +76,10 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	public ContratoCobrancaDetalhes(){
 		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
 		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
+	}
+	
+	public boolean isAmortizacao() {
+		return CommonsUtil.mesmoValor("Amortização", this.getNumeroParcela());
 	}
 
 	/**
