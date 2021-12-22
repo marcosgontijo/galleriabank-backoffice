@@ -80,6 +80,7 @@ public class SeguroTabelaMB {
 				sheet.createRow(iLinha);
 				linha = sheet.getRow(iLinha);
 			}
+			
 			gravaCelula(0, seguroTabelaVO.getCodigoSegurado(), linha);
 			gravaCelula(1, seguroTabelaVO.getNumeroContratoSeguro(), linha);
 			gravaCelula(2, seguroTabelaVO.getParcelasOriginais(), linha);

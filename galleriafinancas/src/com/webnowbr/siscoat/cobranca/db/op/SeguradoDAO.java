@@ -25,7 +25,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
 			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
+			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
 			+ " where coco.temsegurodfi = true and to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
@@ -38,10 +38,10 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
 			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
+			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temsegurodfi = true and to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
+			+ " where (coco.temsegurodfi = true or to_char(ccd.dataVencimento, 'YYYYMM') = ?) \r\n"
 			+ " and coco.empresa = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep;" ;
@@ -52,10 +52,10 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
 			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
+			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temseguromip = true and to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
+			+ " where coco.temseguromip = true or to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
 			+ " pare.dtnascimento, pare.sexo ";
@@ -66,10 +66,10 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
 			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
+			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temseguromip = true and to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
+			+ " where (coco.temseguromip = true or to_char(ccd.dataVencimento, 'YYYYMM') = ? )\r\n"
 			+ " and coco.empresa = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
@@ -92,7 +92,6 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 						ps = connection.prepareStatement(QUERY_SEGURADOS_DFI);
 					} else {
 						ps = connection.prepareStatement(QUERY_SEGURADOS_DFI_EMPRESA);
-					
 					}
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
