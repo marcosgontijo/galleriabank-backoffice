@@ -199,6 +199,9 @@
 		<property name="txJuros" type="big_decimal">
 			<column name="TXJUROS" />
 		</property>
+		<property name="txJurosCessao" type="big_decimal">
+			<column name="txJurosCessao" />
+		</property>
 		<property name="vlrInvestimento" type="big_decimal">
 			<column name="VLRINVESTIMENTO" />
 		</property>

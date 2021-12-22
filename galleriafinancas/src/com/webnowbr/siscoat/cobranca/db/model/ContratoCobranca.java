@@ -101,6 +101,7 @@ public class ContratoCobranca implements Serializable {
 		
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
+	private BigDecimal txJurosCessao;
 	private BigDecimal vlrInvestimento;
 	private BigDecimal txHonorario;
 	private BigDecimal vlrRepasse;
@@ -4340,6 +4341,12 @@ public class ContratoCobranca implements Serializable {
 	public void setContaPagarValorTotal(BigDecimal contaPagarValorTotal) {
 		this.contaPagarValorTotal = contaPagarValorTotal;
 	}
-	
-	
+
+	public BigDecimal getTxJurosCessao() {
+		return txJurosCessao;
+	}
+
+	public void setTxJurosCessao(BigDecimal txJurosCessao) {
+		this.txJurosCessao = txJurosCessao;
+	}
 }

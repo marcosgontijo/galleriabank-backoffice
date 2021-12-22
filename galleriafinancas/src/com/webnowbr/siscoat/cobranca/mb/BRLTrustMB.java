@@ -54,6 +54,9 @@ public class BRLTrustMB {
 	private Date dataAquisicao;
 	private Date dataBaixa;
 	
+	private boolean usaTaxaJurosDiferenciada;
+	private BigDecimal txJurosCessao;
+	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
 
@@ -62,6 +65,9 @@ public class BRLTrustMB {
 		this.cedenteCessao = "";		
 		this.contratos = new ArrayList<ContratoCobranca>();
 		this.dataAquisicao = new Date();
+		
+		this.usaTaxaJurosDiferenciada = false;
+		this.txJurosCessao = BigDecimal.ZERO;
 		
 		this.jsonGerado = false;
 		
@@ -120,6 +126,12 @@ public class BRLTrustMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.objetoContratoCobranca.setCedenteBRLCessao(this.cedenteCessao);
 		this.objetoContratoCobranca.setDataAquisicaoCessao(this.dataAquisicao);
+		
+		if (this.usaTaxaJurosDiferenciada) {
+			this.objetoContratoCobranca.setTxJurosCessao(this.txJurosCessao);
+		} else {
+			this.objetoContratoCobranca.setTxJurosCessao(this.objetoContratoCobranca.getTxJurosParcelas());
+		}
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 	}
@@ -248,7 +260,12 @@ public class BRLTrustMB {
 					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 					JSONObject jsonValores = new JSONObject();
 					jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
-					jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas()));
+					
+					if (this.usaTaxaJurosDiferenciada) {
+						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao));
+					} else {
+						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao));
+					}					
 
 					jsonRecebivel.put("valores", jsonValores);
 					
@@ -395,7 +412,7 @@ public class BRLTrustMB {
 			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			JSONObject jsonValores = new JSONObject();
 			jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
-			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas()));
+			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosCessao(), parcela.getContrato().getDataAquisicaoCessao()));
 			jsonValores.put("liquidacao", parcela.getVlrRecebido());
 			
 			jsonRecebivel.put("valores", jsonValores);
@@ -538,7 +555,7 @@ public class BRLTrustMB {
 		jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(this.parcelaLiquidacao.getDataVencimento()));
 		JSONObject jsonValores = new JSONObject();
 		jsonValores.put("face", this.parcelaLiquidacao.getVlrAmortizacaoParcela().add(this.parcelaLiquidacao.getVlrJurosParcela()));
-		jsonValores.put("aquisicao", calcularValorPresenteParcela(this.parcelaLiquidacao.getId(), this.parcelaLiquidacao.getContrato().getTxJurosParcelas()));
+		jsonValores.put("aquisicao", calcularValorPresenteParcela(this.parcelaLiquidacao.getId(), this.parcelaLiquidacao.getContrato().getTxJurosCessao(), this.parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
 		jsonValores.put("liquidacao", this.parcelaLiquidacao.getVlrRecebido());
 		
 		jsonRecebivel.put("valores", jsonValores);
@@ -580,11 +597,12 @@ public class BRLTrustMB {
 						""));	
 	}
 	
-	public BigDecimal calcularValorPresenteParcela(Long idParcela, BigDecimal txJuros){
+	public BigDecimal calcularValorPresenteParcela(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Date auxDataHoje = dataHoje.getTime();
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
 		BigDecimal valorPresenteParcela;
 		
 		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
@@ -746,5 +764,21 @@ public class BRLTrustMB {
 
 	public void setParcelaLiquidacao(ContratoCobrancaBRLLiquidacao parcelaLiquidacao) {
 		this.parcelaLiquidacao = parcelaLiquidacao;
+	}
+
+	public boolean isUsaTaxaJurosDiferenciada() {
+		return usaTaxaJurosDiferenciada;
+	}
+
+	public void setUsaTaxaJurosDiferenciada(boolean usaTaxaJurosDiferenciada) {
+		this.usaTaxaJurosDiferenciada = usaTaxaJurosDiferenciada;
+	}
+
+	public BigDecimal getTxJurosCessao() {
+		return txJurosCessao;
+	}
+
+	public void setTxJurosCessao(BigDecimal txJurosCessao) {
+		this.txJurosCessao = txJurosCessao;
 	}
 }

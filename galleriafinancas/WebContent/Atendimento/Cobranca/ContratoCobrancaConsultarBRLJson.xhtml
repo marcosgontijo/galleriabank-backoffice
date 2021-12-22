@@ -64,7 +64,23 @@
 						value="#{brlTrustMB.dataAquisicao}"
 						required="true" label="Data Aquisição" size="100"
 						pattern="dd/MM/yyyy" styleClass="dateTimeField">
-					</p:calendar>					
+					</p:calendar>						
+				</h:panelGrid>
+				<h:panelGrid columns="2" id="teste">
+					<p:outputLabel for="txJurosDiferenciada" value="Taxa de Juros Diferenciada? "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="txJurosDiferenciada"
+						value="#{brlTrustMB.usaTaxaJurosDiferenciada}" required="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax update="teste" event="valueChange"/>
+					</p:selectOneRadio>
+					
+					<p:outputLabel for="txJuros" id="txJurosLabel" value="Taxa de Juros Cessão(%): "
+							styleClass="labelBold" rendered="#{brlTrustMB.usaTaxaJurosDiferenciada}"/>
+					<p:inputText id="txJuros"
+							value="#{brlTrustMB.txJurosCessao}" 
+							converter="bigDecimalConverter" rendered="#{brlTrustMB.usaTaxaJurosDiferenciada}"/>				
 				</h:panelGrid>
 				<h:panelGrid columns="3">
 				<p:commandButton value="Pesquisar Contrato"
