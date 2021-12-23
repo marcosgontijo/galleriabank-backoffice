@@ -529,8 +529,11 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputMask id="Cpf"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpf}"
-								label="CPF" mask="999.999.999-99"
+								label="CPF" mask="999.999.999-99" required="true"
+								validator="#{pagadorRecebedorMB.validaCPF}"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
+								<p:ajax event="valueChange"
+									listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}" />
 							</p:inputMask>
 
 							<p:outputLabel for="CNPJ" value="CNPJ: "
@@ -538,6 +541,7 @@
 							<p:inputMask id="CNPJ"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpj}"
 								label="CNPJ" mask="99.999.999/9999-99"
+								validator="#{pagadorRecebedorMB.validaCNPJ}"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}" />

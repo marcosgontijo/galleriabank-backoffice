@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temsegurodfi = true and to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
+			+ " where (coco.temsegurodfi = true and to_char(ccd1.dataVencimento, 'YYYYMM') = ? ) or to_char(ccd1.dataVencimento, 'YYYYMM') = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep " ;
 	
@@ -41,7 +42,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where (coco.temsegurodfi = true or to_char(ccd.dataVencimento, 'YYYYMM') = ?) \r\n"
+			+ " where (coco.temsegurodfi = true and to_char(ccd1.dataVencimento, 'YYYYMM') = ? ) or to_char(ccd1.dataVencimento, 'YYYYMM') = ? \r\n"
 			+ " and coco.empresa = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep;" ;
@@ -55,7 +56,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temseguromip = true or to_char(ccd.dataVencimento, 'YYYYMM') = ? \r\n"
+			+ " where (coco.temseguromip = true and to_char(ccd1.dataVencimento, 'YYYYMM') = ? ) or to_char(ccd1.dataVencimento, 'YYYYMM') = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
 			+ " pare.dtnascimento, pare.sexo ";
@@ -69,7 +70,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where (coco.temseguromip = true or to_char(ccd.dataVencimento, 'YYYYMM') = ? )\r\n"
+			+ " where (coco.temseguromip = true and to_char(ccd1.dataVencimento, 'YYYYMM') = ? ) or to_char(ccd1.dataVencimento, 'YYYYMM') = ? \r\n"
 			+ " and coco.empresa = ? \r\n"
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
@@ -96,21 +97,20 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
 					ps.setString(1, sdf.format(dataDesagio));
+					ps.setString(2, sdf.format(dataDesagio));
 					
 					if (!CommonsUtil.mesmoValor(empresa, "Todas") ) {
-						ps.setString(2, empresa);
+						ps.setString(3, empresa);
 					}
 
 					rs = ps.executeQuery();
 					
-					String numeroContratoSeguroantigo = "numeroContratoSeguroantigo";
+					String numeroContratoantigo = "numeroContratoSeguroantigo";
 					SeguroTabelaVO seguroTabelaVO = null;
+					double porcentagemtotal = 0;
 										
 					while (rs.next()) {	
-						if (!CommonsUtil.mesmoValor(rs.getString("numerocontratoseguro"), numeroContratoSeguroantigo)){
-							if(seguroTabelaVO != null) {
-								objects.add(seguroTabelaVO);
-							}
+						if (!CommonsUtil.mesmoValor(rs.getString("numerocontrato"), numeroContratoantigo)){
 							seguroTabelaVO = new SeguroTabelaVO();
 							
 							seguroTabelaVO.setDataContrato(rs.getDate("datacontrato"));
@@ -129,6 +129,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							Integer parcelasFaltantesint = CommonsUtil.integerValue(seguroTabelaVO.getParcelasFaltantes());
 							seguroTabelaVO.setParcelasFaltantes(CommonsUtil.stringValue(parcelasFaltantesint));
 							seguroTabelaVO.setPorcentagemPrincipal(rs.getBigDecimal("porcentagemsegurador"));
+							porcentagemtotal = seguroTabelaVO.getPorcentagemPrincipal().doubleValue();
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpfPrincipal(rs.getString("cpf"));
 							}else {
@@ -142,7 +143,10 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							seguroTabelaVO.setCidade(rs.getString("cidade"));
 							seguroTabelaVO.setUf(rs.getString("estado"));
 							seguroTabelaVO.setCep(rs.getString("cep"));						
-							numeroContratoSeguroantigo = (rs.getString("numerocontratoseguro"));
+							numeroContratoantigo = (rs.getString("numerocontrato"));
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
 							
 						} else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem2()) && CommonsUtil.semValor(seguroTabelaVO.getCpf2()) && CommonsUtil.semValor(seguroTabelaVO.getNome2())) {
 							seguroTabelaVO.setPorcentagem2(rs.getBigDecimal("porcentagemsegurador"));							
@@ -151,7 +155,11 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}else {
 								seguroTabelaVO.setCpf2(rs.getString("cnpj"));
 							}
-							seguroTabelaVO.setNome2(rs.getString("nome"));							
+							seguroTabelaVO.setNome2(rs.getString("nome"));			
+							porcentagemtotal += seguroTabelaVO.getPorcentagem2().doubleValue();
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
 						}  else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
 							seguroTabelaVO.setPorcentagem3(rs.getBigDecimal("porcentagemsegurador"));
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
@@ -159,7 +167,11 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}else {
 								seguroTabelaVO.setCpf3(rs.getString("cnpj"));
 							}							
-							seguroTabelaVO.setNome3(rs.getString("nome"));							
+							seguroTabelaVO.setNome3(rs.getString("nome"));		
+							porcentagemtotal += seguroTabelaVO.getPorcentagem3().doubleValue();
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
 						} else if (seguroTabelaVO != null ) {
 							seguroTabelaVO.setPorcentagem4(rs.getBigDecimal("porcentagemsegurador"));
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
@@ -168,11 +180,9 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCpf4(rs.getString("cnpj"));
 							}
 							seguroTabelaVO.setNome4(rs.getString("nome"));
+							objects.add(seguroTabelaVO);
 						}
 																		
-					}
-					if(seguroTabelaVO != null) {
-						objects.add(seguroTabelaVO);
 					}
 				} finally {
 					closeResources(connection, ps, rs);					
@@ -203,51 +213,98 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 					} else {
 						ps = connection.prepareStatement(QUERY_SEGURADOS_MIP_EMPRESA);
 						if(CommonsUtil.mesmoValor(empresa, "GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
-							ps.setString(2, "GALLERIA FINANÇAS SECURITIZADORA S.A.");
+							ps.setString(3, "GALLERIA FINANÇAS SECURITIZADORA S.A.");
 						}else {
-							ps.setString(2, empresa);
+							ps.setString(3, empresa);
 						}
 						
 					}
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-					ps.setString(1, sdf.format(dataDesagio));
+					String dataDesagioSdf = sdf.format(dataDesagio);
+					
+					ps.setString(1, dataDesagioSdf);
+					ps.setString(2, dataDesagioSdf);
 					
 					rs = ps.executeQuery();
 					
-					while (rs.next()) {
-						SeguroTabelaVO seguroTabelaVO = new SeguroTabelaVO();
-						seguroTabelaVO.setDataContrato(rs.getDate("datacontrato"));
-						
-						if(CommonsUtil.compare(rs.getDate("datacontrato").getMonth(), dataDesagio.getMonth()) == 0 && 
-								CommonsUtil.compare(rs.getDate("datacontrato").getYear(), dataDesagio.getYear()) == 0 ) {
-							seguroTabelaVO.setCodigoSegurado("01");
+					String numeroContratoAntigo = "numeroContratoAntigo";
+					SeguroTabelaVO seguroTabelaVO = null;
+					double porcentagemtotal = 0;
+										
+					while (rs.next()) {	
+						if (!CommonsUtil.mesmoValor(rs.getString("numerocontrato"), numeroContratoAntigo)){
+							seguroTabelaVO = new SeguroTabelaVO();
+							seguroTabelaVO.setDataContrato(rs.getDate("datacontrato"));
 							
-						} else {
-							seguroTabelaVO.setCodigoSegurado("02");
+							if(CommonsUtil.compare(rs.getDate("datacontrato").getMonth(), dataDesagio.getMonth()) == 0 && 
+									CommonsUtil.compare(rs.getDate("datacontrato").getYear(), dataDesagio.getYear()) == 0 ) {
+								seguroTabelaVO.setCodigoSegurado("01");
+								
+							} else {
+								seguroTabelaVO.setCodigoSegurado("02");
+							}
+							
+							seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));
+							seguroTabelaVO.setcpfPrincipal(rs.getString("cpf"));
+							seguroTabelaVO.setNomePrincipal(rs.getString("nome"));
+							seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));
+							seguroTabelaVO.setParcelasFaltantes(rs.getString("qtdeparcelasFaltantes"));
+							Integer parcelasFaltantesint = CommonsUtil.integerValue(seguroTabelaVO.getParcelasFaltantes());
+							seguroTabelaVO.setParcelasFaltantes(CommonsUtil.stringValue(parcelasFaltantesint));
+							seguroTabelaVO.setPorcentagemPrincipal(rs.getBigDecimal("porcentagemsegurador"));
+							porcentagemtotal = seguroTabelaVO.getPorcentagemPrincipal().doubleValue();
+							seguroTabelaVO.setNumeroContratoSeguro(rs.getString("numerocontratoseguro"));
+							seguroTabelaVO.setLogradouro(rs.getString("endereco"));
+							seguroTabelaVO.setNumeroResidencia(rs.getString("numero"));
+							seguroTabelaVO.setComplemento(rs.getString("complemento"));
+							seguroTabelaVO.setBairro(rs.getString("bairro"));
+							seguroTabelaVO.setCidade(rs.getString("cidade"));
+							seguroTabelaVO.setUf(rs.getString("estado"));
+							seguroTabelaVO.setCep(rs.getString("cep"));
+							seguroTabelaVO.setDataNascimento(rs.getString("dtnascimento"));
+							seguroTabelaVO.setSexo(rs.getString("sexo"));
+							numeroContratoAntigo = (rs.getString("numerocontrato"));
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
+							
+						} else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem2()) && CommonsUtil.semValor(seguroTabelaVO.getCpf2()) && CommonsUtil.semValor(seguroTabelaVO.getNome2())) {
+							seguroTabelaVO.setPorcentagem2(rs.getBigDecimal("porcentagemsegurador"));							
+							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
+								seguroTabelaVO.setCpf2(rs.getString("cpf"));
+							}else {
+								seguroTabelaVO.setCpf2(rs.getString("cnpj"));
+							}
+							seguroTabelaVO.setNome2(rs.getString("nome"));
+							porcentagemtotal += seguroTabelaVO.getPorcentagem2().doubleValue();
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
+						}  else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
+							seguroTabelaVO.setPorcentagem3(rs.getBigDecimal("porcentagemsegurador"));
+							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
+								seguroTabelaVO.setCpf3(rs.getString("cpf"));
+							}else {
+								seguroTabelaVO.setCpf3(rs.getString("cnpj"));
+							}							
+							seguroTabelaVO.setNome3(rs.getString("nome"));	
+							porcentagemtotal += seguroTabelaVO.getPorcentagem3().doubleValue();
+							if(porcentagemtotal == 100) {
+								objects.add(seguroTabelaVO);
+							}
+						} else if (seguroTabelaVO != null ) {
+							seguroTabelaVO.setPorcentagem4(rs.getBigDecimal("porcentagemsegurador"));
+							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
+								seguroTabelaVO.setCpf4(rs.getString("cpf"));
+							}else {
+								seguroTabelaVO.setCpf4(rs.getString("cnpj"));
+							}
+							seguroTabelaVO.setNome4(rs.getString("nome"));
+							objects.add(seguroTabelaVO);
 						}
-						
-						seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));
-						seguroTabelaVO.setcpfPrincipal(rs.getString("cpf"));
-						seguroTabelaVO.setNomePrincipal(rs.getString("nome"));
-						seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));
-						seguroTabelaVO.setParcelasFaltantes(rs.getString("qtdeparcelasFaltantes"));
-						Integer parcelasFaltantesint = CommonsUtil.integerValue(seguroTabelaVO.getParcelasFaltantes());
-						seguroTabelaVO.setParcelasFaltantes(CommonsUtil.stringValue(parcelasFaltantesint));
-						seguroTabelaVO.setPorcentagemPrincipal(rs.getBigDecimal("porcentagemsegurador"));
-						seguroTabelaVO.setNumeroContratoSeguro(rs.getString("numerocontratoseguro"));
-						seguroTabelaVO.setLogradouro(rs.getString("endereco"));
-						seguroTabelaVO.setNumeroResidencia(rs.getString("numero"));
-						seguroTabelaVO.setComplemento(rs.getString("complemento"));
-						seguroTabelaVO.setBairro(rs.getString("bairro"));
-						seguroTabelaVO.setCidade(rs.getString("cidade"));
-						seguroTabelaVO.setUf(rs.getString("estado"));
-						seguroTabelaVO.setCep(rs.getString("cep"));
-						seguroTabelaVO.setDataNascimento(rs.getString("dtnascimento"));
-						seguroTabelaVO.setSexo(rs.getString("sexo"));
-						objects.add(seguroTabelaVO);												
 					}
-	
+					
 				} finally {
 					closeResources(connection, ps, rs);					
 				}

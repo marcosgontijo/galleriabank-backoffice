@@ -53,7 +53,7 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>                 
-                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato"  sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
