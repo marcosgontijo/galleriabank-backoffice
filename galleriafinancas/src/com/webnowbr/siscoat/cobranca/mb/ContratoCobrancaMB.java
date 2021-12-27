@@ -6500,10 +6500,8 @@ public class ContratoCobrancaMB {
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {			
 			contratos = getContratoById(contratos.getId());
-			if (contratos.isDocumentosCompletos()) {
-				contratos.setAprovadoComite(true);
-				contratos.setAprovadoComiteData(contratos.getAguardandoDocumentoData());
-				
+			if (contratos.isDocumentosCompletos() && !contratos.isAprovadoComite()) {
+				contratos.setAprovadoComite(true);				
 			} else {
 				if (!contratos.isAgAssinatura() || !contratos.isAgRegistro()) {
 					contratos.setAgAssinatura(true);

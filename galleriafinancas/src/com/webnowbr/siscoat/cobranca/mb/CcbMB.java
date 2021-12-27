@@ -1,22 +1,14 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,17 +20,16 @@ import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.IntegerConverter;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import javax.xml.crypto.Data;
 
-import org.apache.commons.fileupload.RequestContext;
-import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -48,17 +39,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.hamcrest.core.Is;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
-import org.apache.poi.util.Units;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
@@ -66,13 +50,12 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.vo.CcbVO;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
+import com.webnowbr.siscoat.common.ValidaCNPJ;
+import com.webnowbr.siscoat.common.ValidaCPF;
 
 /** ManagedBean. */
 @ManagedBean(name = "ccbMB")
@@ -226,7 +209,8 @@ public class CcbMB {
 
 	private PagadorRecebedor selectedPagadorGenerico;
 	private PagadorRecebedor selectedPagador;
-	private PagadorRecebedor emitenteSelecionado;
+	private PagadorRecebedor objetoPagadorRecebedor;
+	private PagadorRecebedor emitenteSelecionado = new PagadorRecebedor();
 	private PagadorRecebedor intervenienteSelecionado;
 	private PagadorRecebedor terceiroGSelecionado;
 	private PagadorRecebedor avalistaSelecionado;
@@ -327,7 +311,7 @@ public class CcbMB {
 		this.participanteSelecionado = new CcbVO();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
-		}
+	}
 	
 	public void editarParticipante(CcbVO participante) {
 		this.addParticipante = true;
@@ -376,7 +360,6 @@ public class CcbMB {
 		}
 	}
 	
-		
 	
 	public void complementaBancoDados(){
 		if (this.numeroBanco == null) {
@@ -398,7 +381,6 @@ public class CcbMB {
 		this.tipoPesquisa = "Interveniente";
 		this.updatePagadorRecebedor = ":form:intervenientePanel";
 		this.intervenienteSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
 	public void pesquisaTerceiroG() {
@@ -406,7 +388,6 @@ public class CcbMB {
 		this.tipoPesquisa = "TerceiroG";
 		this.updatePagadorRecebedor = ":form:terceiroPanel";
 		this.terceiroGSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
 	public void pesquisaAvalista() {
@@ -414,7 +395,6 @@ public class CcbMB {
 		this.tipoPesquisa = "Avalista";
 		this.updatePagadorRecebedor = ":form:avalistaPanel";
 		this.avalistaSelecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
 	public void pesquisaTestemunha1() {
@@ -422,7 +402,6 @@ public class CcbMB {
 		this.tipoPesquisa = "Testemunha1";
 		this.updatePagadorRecebedor = ":form:Dados";
 		this.testemunha1Selecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
 	public void pesquisaTestemunha2() {
@@ -430,7 +409,6 @@ public class CcbMB {
 		this.tipoPesquisa = "Testemunha2";
 		this.updatePagadorRecebedor = ":form:Dados";
 		this.testemunha2Selecionado = new PagadorRecebedor();
-		this.emitenteSelecionado = new PagadorRecebedor();
 	}
 	
 	public void populateParcelaSeguro() {
@@ -472,7 +450,6 @@ public class CcbMB {
 	}
 	
 	
-	
 	public String EmitirCcbPreContrato() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
@@ -493,6 +470,210 @@ public class CcbMB {
 	}
 	 
 	
+	public void populatePagadores() {
+		if(!CommonsUtil.semValor(this.emitenteSelecionado.getCpf())) {
+			this.setNomeEmitente(this.emitenteSelecionado.getNome());
+			this.setUfEmitente(this.emitenteSelecionado.getEstado());
+			this.setLogradouroEmitente(this.emitenteSelecionado.getEndereco());
+			this.setCepEmitente(this.emitenteSelecionado.getCep());
+			this.setCidadeEmitente(this.emitenteSelecionado.getCidade());
+			this.setNumeroEmitente(this.emitenteSelecionado.getNumero());
+			this.setEmailEmitente(this.emitenteSelecionado.getEmail());
+			this.setProfissaoEmitente(this.emitenteSelecionado.getAtividade());
+			this.setEstadoCivilEmitente(this.emitenteSelecionado.getEstadocivil());
+			this.setNumeroRgEmitente(this.emitenteSelecionado.getRg());	
+			this.setCpfEmitente(this.emitenteSelecionado.getCpf());
+			this.setComplementoEmitente(this.emitenteSelecionado.getComplemento());
+			this.setLogradouroEmitente(this.emitenteSelecionado.getEndereco());
+			this.setPaiEmitente(this.emitenteSelecionado.getNomePai());
+			this.setMaeEmitente(this.emitenteSelecionado.getNomeMae());
+			
+			if(!CommonsUtil.semValor(this.emitenteSelecionado.getSexo())) {
+				if(this.emitenteSelecionado.getSexo() == "MASCULINO") {
+					this.femininoEmitente = false;
+				} else if(this.emitenteSelecionado.getSexo() == "FEMININO") {
+					this.femininoEmitente = true;
+				} else {
+					this.femininoEmitente = false;
+				}
+			} else if(this.femininoEmitente = true) {
+				this.emitenteSelecionado.setSexo("FEMININO");
+			} else {
+				this.emitenteSelecionado.setSexo("MASCULINO");
+			}
+			
+			if (this.emitenteSelecionado.getNomeConjuge() != null) {
+				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
+				this.setCpfConjugeEmitente(this.emitenteSelecionado.getCpfConjuge());
+			} else {
+				this.setNomeConjugeEmitente(null);
+				this.setCpfConjugeEmitente(null);
+			}
+		} else {
+			this.setEmpresaEmitente(true);
+			this.setCnpjEmitente(this.emitenteSelecionado.getCnpj());
+			this.setRazaoSocialEmitente(this.emitenteSelecionado.getNome());
+			this.setEstadoEmpresaEmitente(this.emitenteSelecionado.getEstado());
+			this.setRuaEmpresaEmitente(this.emitenteSelecionado.getEndereco());
+			this.setCepEmpresaEmitente(this.emitenteSelecionado.getCep());
+			this.setMunicipioEmpresaEmitente(this.emitenteSelecionado.getCidade());
+			this.setNumeroEmpresaEmitente(this.emitenteSelecionado.getNumero());
+		}
+		
+		if(this.addInterveniente == true) {
+			if(!CommonsUtil.semValor(this.intervenienteSelecionado.getCpf())) {
+				this.setNomeInterveniente(this.intervenienteSelecionado.getNome());
+				this.setUfInterveniente(this.intervenienteSelecionado.getEstado());
+				this.setLogradouroInterveniente(this.intervenienteSelecionado.getEndereco());
+				this.setCepInterveniente(this.intervenienteSelecionado.getCep());
+				this.setCidadeInterveniente(this.intervenienteSelecionado.getCidade());
+				this.setNumeroInterveniente(this.intervenienteSelecionado.getNumero());
+				this.setEmailInterveniente(this.intervenienteSelecionado.getEmail());
+				this.setProfissaoInterveniente(this.intervenienteSelecionado.getAtividade());
+				this.setEstadoCivilInterveniente(this.intervenienteSelecionado.getEstadocivil());
+				this.setNumeroRgInterveniente(this.intervenienteSelecionado.getRg());	
+				this.setCpfInterveniente(this.intervenienteSelecionado.getCpf());
+				this.setComplementoInterveniente(this.intervenienteSelecionado.getComplemento());
+				this.setLogradouroInterveniente(this.intervenienteSelecionado.getEndereco());
+				this.setPaiInterveniente(this.intervenienteSelecionado.getNomePai());
+				this.setMaeInterveniente(this.intervenienteSelecionado.getNomeMae());
+				
+				if(!CommonsUtil.semValor(this.intervenienteSelecionado.getSexo())) {
+					if(this.intervenienteSelecionado.getSexo() == "MASCULINO") {
+						this.femininoInterveniente = false;
+					} else if(this.intervenienteSelecionado.getSexo() == "FEMININO") {
+						this.femininoInterveniente = true;
+					} else {
+						this.femininoInterveniente = false;
+					}
+				} else if(this.femininoInterveniente = true) {
+					this.intervenienteSelecionado.setSexo("FEMININO");
+				} else {
+					this.intervenienteSelecionado.setSexo("MASCULINO");
+				}
+				
+				if (this.intervenienteSelecionado.getNomeConjuge() != null) {
+					this.setNomeConjugeInterveniente(this.intervenienteSelecionado.getNomeConjuge());
+					this.setCpfConjugeInterveniente(this.intervenienteSelecionado.getCpfConjuge());
+				} else {
+					this.setNomeConjugeInterveniente(null);
+					this.setCpfConjugeInterveniente(null);
+				}
+			} else {
+				this.setEmpresaInterveniente(true);
+				this.setCnpjInterveniente(this.intervenienteSelecionado.getCnpj());
+				this.setRazaoSocialInterveniente(this.intervenienteSelecionado.getNome());
+				this.setEstadoEmpresaInterveniente(this.intervenienteSelecionado.getEstado());
+				this.setRuaEmpresaInterveniente(this.intervenienteSelecionado.getEndereco());
+				this.setCepEmpresaInterveniente(this.intervenienteSelecionado.getCep());
+				this.setMunicipioEmpresaInterveniente(this.intervenienteSelecionado.getCidade());
+				this.setNumeroEmpresaInterveniente(this.intervenienteSelecionado.getNumero());
+			}
+		}
+		
+		if(this.addTerceiro == true) {
+			if(!CommonsUtil.semValor(this.terceiroGSelecionado.getCpf())) {
+				this.setNomeTerceiroG(this.terceiroGSelecionado.getNome());
+				this.setUfTerceiroG(this.terceiroGSelecionado.getEstado());
+				this.setLogradouroTerceiroG(this.terceiroGSelecionado.getEndereco());
+				this.setCepTerceiroG(this.terceiroGSelecionado.getCep());
+				this.setCidadeTerceiroG(this.terceiroGSelecionado.getCidade());
+				this.setNumeroTerceiroG(this.terceiroGSelecionado.getNumero());
+				this.setEmailTerceiroG(this.terceiroGSelecionado.getEmail());
+				this.setProfissaoTerceiroG(this.terceiroGSelecionado.getAtividade());
+				this.setEstadoCivilTerceiroG(this.terceiroGSelecionado.getEstadocivil());
+				this.setNumeroRgTerceiroG(this.terceiroGSelecionado.getRg());	
+				this.setCpfTerceiroG(this.terceiroGSelecionado.getCpf());
+				this.setComplementoTerceiroG(this.terceiroGSelecionado.getComplemento());
+				this.setLogradouroTerceiroG(this.terceiroGSelecionado.getEndereco());
+				this.setPaiTerceiroG(this.terceiroGSelecionado.getNomePai());
+				this.setMaeTerceiroG(this.terceiroGSelecionado.getNomeMae());
+				
+				if(!CommonsUtil.semValor(this.terceiroGSelecionado.getSexo())) {
+					if(this.terceiroGSelecionado.getSexo() == "MASCULINO") {
+						this.femininoTerceiroG = false;
+					} else if(this.terceiroGSelecionado.getSexo() == "FEMININO") {
+						this.femininoTerceiroG = true;
+					} else {
+						this.femininoTerceiroG = false;
+					}
+				} else if(this.femininoTerceiroG = true) {
+					this.terceiroGSelecionado.setSexo("FEMININO");
+				} else {
+					this.terceiroGSelecionado.setSexo("MASCULINO");
+				}
+				
+				if (this.terceiroGSelecionado.getNomeConjuge() != null) {
+					this.setNomeConjugeTerceiroG(this.terceiroGSelecionado.getNomeConjuge());
+					this.setCpfConjugeTerceiroG(this.terceiroGSelecionado.getCpfConjuge());
+				} else {
+					this.setNomeConjugeTerceiroG(null);
+					this.setCpfConjugeTerceiroG(null);
+				}
+			} else {
+				this.setEmpresaTerceiroG(true);
+				this.setCnpjTerceiroG(this.terceiroGSelecionado.getCnpj());
+				this.setRazaoSocialTerceiroG(this.terceiroGSelecionado.getNome());
+				this.setEstadoEmpresaTerceiroG(this.terceiroGSelecionado.getEstado());
+				this.setRuaEmpresaTerceiroG(this.terceiroGSelecionado.getEndereco());
+				this.setCepEmpresaTerceiroG(this.terceiroGSelecionado.getCep());
+				this.setMunicipioEmpresaTerceiroG(this.terceiroGSelecionado.getCidade());
+				this.setNumeroEmpresaTerceiroG(this.terceiroGSelecionado.getNumero());
+			}
+		}
+		
+		if(this.addAvalista == true) {
+			if(!CommonsUtil.semValor(this.avalistaSelecionado.getCpf())) {
+				this.setNomeAvalista(this.avalistaSelecionado.getNome());
+				this.setUfAvalista(this.avalistaSelecionado.getEstado());
+				this.setLogradouroAvalista(this.avalistaSelecionado.getEndereco());
+				this.setCepAvalista(this.avalistaSelecionado.getCep());
+				this.setCidadeAvalista(this.avalistaSelecionado.getCidade());
+				this.setNumeroAvalista(this.avalistaSelecionado.getNumero());
+				this.setEmailAvalista(this.avalistaSelecionado.getEmail());
+				this.setProfissaoAvalista(this.avalistaSelecionado.getAtividade());
+				this.setEstadoCivilAvalista(this.avalistaSelecionado.getEstadocivil());
+				this.setNumeroRgAvalista(this.avalistaSelecionado.getRg());	
+				this.setCpfAvalista(this.avalistaSelecionado.getCpf());
+				this.setComplementoAvalista(this.avalistaSelecionado.getComplemento());
+				this.setLogradouroAvalista(this.avalistaSelecionado.getEndereco());
+				this.setPaiAvalista(this.avalistaSelecionado.getNomePai());
+				this.setMaeAvalista(this.avalistaSelecionado.getNomeMae());
+				
+				if(!CommonsUtil.semValor(this.avalistaSelecionado.getSexo())) {
+					if(this.avalistaSelecionado.getSexo() == "MASCULINO") {
+						this.femininoAvalista = false;
+					} else if(this.avalistaSelecionado.getSexo() == "FEMININO") {
+						this.femininoAvalista = true;
+					} else {
+						this.femininoAvalista = false;
+					}
+				} else if(this.femininoAvalista = true) {
+					this.avalistaSelecionado.setSexo("FEMININO");
+				} else {
+					this.avalistaSelecionado.setSexo("MASCULINO");
+				}
+				
+				if (this.avalistaSelecionado.getNomeConjuge() != null) {
+					this.setNomeConjugeAvalista(this.avalistaSelecionado.getNomeConjuge());
+					this.setCpfConjugeAvalista(this.avalistaSelecionado.getCpfConjuge());
+				} else {
+					this.setNomeConjugeAvalista(null);
+					this.setCpfConjugeAvalista(null);
+				}
+			} else {
+				this.setEmpresaAvalista(true);
+				this.setCnpjAvalista(this.avalistaSelecionado.getCnpj());
+				this.setRazaoSocialAvalista(this.avalistaSelecionado.getNome());
+				this.setEstadoEmpresaAvalista(this.avalistaSelecionado.getEstado());
+				this.setRuaEmpresaAvalista(this.avalistaSelecionado.getEndereco());
+				this.setCepEmpresaAvalista(this.avalistaSelecionado.getCep());
+				this.setMunicipioEmpresaAvalista(this.avalistaSelecionado.getCidade());
+				this.setNumeroEmpresaAvalista(this.avalistaSelecionado.getNumero());
+			}
+		}
+	}
+	
 	public void populateSelectedPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Emitente")) {
 			this.emitenteSelecionado = (this.selectedPagadorGenerico);
@@ -508,6 +689,15 @@ public class CcbMB {
 			this.setCidadeEmitente(this.emitenteSelecionado.getCidade());
 			this.setCepEmitente(this.emitenteSelecionado.getCep());
 			this.setEmailEmitente(this.emitenteSelecionado.getEmail());
+			if(this.emitenteSelecionado.getSexo() != null) {
+				if(this.emitenteSelecionado.getSexo() == "MASCULINO") {
+					this.femininoEmitente = false;
+				} else if(this.emitenteSelecionado.getSexo() == "FEMININO") {
+					this.femininoEmitente = true;
+				} else {
+					this.femininoEmitente = false;
+				}
+			}
 			if (this.emitenteSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
 				this.setCpfConjugeEmitente(this.emitenteSelecionado.getCpfConjuge());
@@ -530,6 +720,16 @@ public class CcbMB {
 			this.setComplementoInterveniente(this.intervenienteSelecionado.getComplemento());
 			this.setCidadeInterveniente(this.intervenienteSelecionado.getCidade());
 			this.setCepInterveniente(this.intervenienteSelecionado.getCep());
+			this.setEmailInterveniente(this.intervenienteSelecionado.getEmail());
+			if(this.intervenienteSelecionado.getSexo() != null) {
+				if(this.intervenienteSelecionado.getSexo() == "MASCULINO") {
+					this.femininoInterveniente = false;
+				} else if(this.intervenienteSelecionado.getSexo() == "FEMININO") {
+					this.femininoInterveniente = true;
+				} else {
+					this.femininoInterveniente = false;
+				}
+			}
 			if (this.intervenienteSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeInterveniente(this.intervenienteSelecionado.getNomeConjuge());
 				this.setCpfConjugeInterveniente(this.intervenienteSelecionado.getCpfConjuge());
@@ -552,6 +752,16 @@ public class CcbMB {
 			this.setComplementoTerceiroG(this.terceiroGSelecionado.getComplemento());
 			this.setCidadeTerceiroG(this.terceiroGSelecionado.getCidade());
 			this.setCepTerceiroG(this.terceiroGSelecionado.getCep());
+			this.setEmailTerceiroG(this.terceiroGSelecionado.getEmail());
+			if(this.terceiroGSelecionado.getSexo() != null) {
+				if(this.terceiroGSelecionado.getSexo() == "MASCULINO") {
+					this.femininoTerceiroG = false;
+				} else if(this.terceiroGSelecionado.getSexo() == "FEMININO") {
+					this.femininoTerceiroG = true;
+				} else {
+					this.femininoTerceiroG = false;
+				}
+			}
 			if (this.terceiroGSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeTerceiroG(this.terceiroGSelecionado.getNomeConjuge());
 				this.setCpfConjugeTerceiroG(this.terceiroGSelecionado.getCpfConjuge());
@@ -574,6 +784,16 @@ public class CcbMB {
 			this.setComplementoAvalista(this.avalistaSelecionado.getComplemento());
 			this.setCidadeAvalista(this.avalistaSelecionado.getCidade());
 			this.setCepAvalista(this.avalistaSelecionado.getCep());
+			this.setEmailAvalista(this.avalistaSelecionado.getEmail());
+			if(this.avalistaSelecionado.getSexo() != null) {
+				if(this.avalistaSelecionado.getSexo() == "MASCULINO") {
+					this.femininoAvalista = false;
+				} else if(this.avalistaSelecionado.getSexo() == "FEMININO") {
+					this.femininoAvalista = true;
+				} else {
+					this.femininoAvalista = false;
+				}
+			}
 			if (this.avalistaSelecionado.getNomeConjuge() != null) {
 				this.setNomeConjugeAvalista(this.avalistaSelecionado.getNomeConjuge());
 				this.setCpfConjugeAvalista(this.avalistaSelecionado.getCpfConjuge());
@@ -598,6 +818,101 @@ public class CcbMB {
 		}
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Participante")) {
 			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
+		}
+	}
+	
+	public boolean validaCPF(FacesContext facesContext, UIComponent uiComponent, Object object) {
+		return ValidaCPF.isCPF(object.toString());
+	}
+	
+	public void populaReferenciaBancariaCPF() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean validaCPF = ValidaCPF.isCPF(this.objetoPagadorRecebedor.getCpf());
+
+		if (!validaCPF) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Pré-Contrato: O CPF inserido é inválido ou está incorreto!", ""));
+		} else {
+			this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());
+			this.objetoPagadorRecebedor.setNomeCC(this.objetoPagadorRecebedor.getNome());
+		}
+	}
+
+	public void populaReferenciaBancariaCNPJ() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean validaCNPJ = ValidaCNPJ.isCNPJ(this.objetoPagadorRecebedor.getCnpj());
+
+		if (!validaCNPJ) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Pré-Contrato: O CNPJ inserido é inválido ou está incorreto!", ""));
+		} else {
+			this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());
+			this.objetoPagadorRecebedor.setNomeCC(this.objetoPagadorRecebedor.getNome());
+		}
+	}
+	
+	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
+		PagadorRecebedor pagadorRecebedor = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		
+		this.objetoPagadorRecebedor = pagador;
+		
+		
+		boolean validaCPF = ValidaCPF.isCPF(this.objetoPagadorRecebedor.getCpf());
+		boolean validaCNPJ = ValidaCNPJ.isCNPJ(this.objetoPagadorRecebedor.getCnpj());
+
+		if (this.objetoPagadorRecebedor.getId() <= 0) {
+			List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+			boolean registraPagador = false;
+			Long idPagador = (long) 0;
+
+			if (this.objetoPagadorRecebedor.getCpf() != null) {
+				if(validaCPF) {
+					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", this.objetoPagadorRecebedor.getCpf());
+					if (pagadorRecebedorBD.size() > 0) {
+						pagadorRecebedor = pagadorRecebedorBD.get(0);
+					} else {
+						populaReferenciaBancariaCPF();
+						pagadorRecebedor = this.objetoPagadorRecebedor;
+						registraPagador = true;
+					}
+				}
+			}
+
+			if (this.objetoPagadorRecebedor.getCnpj() != null) {
+				if(validaCNPJ) {
+					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cnpj", this.objetoPagadorRecebedor.getCnpj());
+					if (pagadorRecebedorBD.size() > 0) {
+						pagadorRecebedor = pagadorRecebedorBD.get(0);
+					} else {
+						populaReferenciaBancariaCNPJ();
+						pagadorRecebedor = this.objetoPagadorRecebedor;
+						registraPagador = true;
+					}
+				}
+			}
+
+			registraPagador = true;
+
+
+			if (pagadorRecebedor == null) {
+				pagadorRecebedor = this.objetoPagadorRecebedor;
+			}
+
+			if (this.objetoPagadorRecebedor.getSite() != null && this.objetoPagadorRecebedor.getSite().equals("")) {
+				if (!this.objetoPagadorRecebedor.getSite().contains("http")) {
+					this.objetoPagadorRecebedor
+							.setSite("HTTP://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+				}
+			}
+
+			if (registraPagador) {
+				idPagador = pagadorRecebedorDao.create(pagadorRecebedor);
+				pagadorRecebedor = pagadorRecebedorDao.findById(idPagador);
+			}
+		} else {
+			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			pagadorRecebedor = this.objetoPagadorRecebedor;
 		}
 	}
 	
@@ -885,10 +1200,21 @@ public class CcbMB {
 			
 			ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
 	    	
+	    	populatePagadores();
 	    	
-	    	
+			criarPagadorRecebedorNoSistema(this.emitenteSelecionado);
 			
+			if (this.addInterveniente == true) {
+				criarPagadorRecebedorNoSistema(this.intervenienteSelecionado);
+			}
 			
+			if (this.addTerceiro == true) {
+				criarPagadorRecebedorNoSistema(this.terceiroGSelecionado);
+			}
+			
+			if (this.addAvalista == true) {
+				criarPagadorRecebedorNoSistema(this.avalistaSelecionado);
+			}
 			
 			
 			/*text = trocaValoresXWPF(text, r, "FiducianteConjugue","Rua logradouroConjugeEmitente, nº numeroConjugeEmitente, Qd. XX - Lote XX, Cond. Residencial XXXXXX, Bairro - cidadeConjugeEmitente - ufConjugeEmitente -  \n"
@@ -1414,6 +1740,7 @@ public class CcbMB {
 	        e.printStackTrace();
 	    }
 	    
+	    
 	    return null;
 	}
 	
@@ -1477,6 +1804,9 @@ public class CcbMB {
 		this.participanteSelecionado = new CcbVO();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
+		this.intervenienteSelecionado = new PagadorRecebedor();
+		this.terceiroGSelecionado = new PagadorRecebedor();
+		this.avalistaSelecionado = new PagadorRecebedor();
 	}
 
 	public void calculaValorLiquidoCredito() {
@@ -1723,6 +2053,7 @@ public class CcbMB {
 	    
 	    pesquisaBancosListaNome();
 	    pesquisaBancosListaCodigo();
+	    clearPagadorRecebedor();
 		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
