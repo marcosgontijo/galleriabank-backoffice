@@ -5185,6 +5185,19 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserir.xhtml";
 	}
 	
+	public void clearFieldsSegurados() {
+		loadLovs();
+		loadSelectedLovs();
+
+		this.tituloPagadorRecebedorDialog = "Segurados";
+		this.tipoPesquisaPagadorRecebedor = "Segurado";
+		this.updatePagadorRecebedor = ":formSegurados:SeguradoresPanel";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+
+		this.contratoGerado = true;
+	}
+	
 	public String clearFieldsDocumentoWord() {
 		return "/Atendimento/Cobranca/DocumentoWord.xhtml";
 	}
@@ -8244,7 +8257,7 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
 		
@@ -10020,6 +10033,14 @@ public class ContratoCobrancaMB {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	public void pesquisaSeguradoConsulta() {
+		this.tituloPagadorRecebedorDialog = "Segurados";
+		this.tipoPesquisaPagadorRecebedor = "Segurado";
+		this.updatePagadorRecebedor = ":formSegurados:SeguradoresPanel";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
 	public void pesquisaPagador() {
 			this.tituloPagadorRecebedorDialog = "Pagadores";
 			this.tipoPesquisaPagadorRecebedor = "Pagador";
@@ -10048,6 +10069,11 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirSegurado() {
+		
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		
 		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
@@ -10144,6 +10170,37 @@ public class ContratoCobrancaMB {
 		} else {
 			return true;
 		}
+	}
+	
+	public void editarSeguradosConsulta() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		String msgRetorno = null;
+
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		
+		if (!this.validarProcentagensSeguro()) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"A soma das porcentagens dos segurados não é 100%", ""));
+		} else {
+			contratoCobrancaDao.merge(objetoContratoCobranca);
+			msgRetorno = "atualizado";
+		
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+			"Contrato Cobrança: Registro " + msgRetorno + " com sucesso!", ""));
+		}		
+	}
+	
+	public void cancelarSeguradosConsulta() {
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	private BigDecimal calcularValorTotalContasPagar() {

@@ -1391,8 +1391,8 @@
 			<column name="contaPagarValorTotal" />
 		</property>	
 		
-		<property name="tipoGarantia" type="java.lang.String">
-			<column name="tipoGarantia" />
+		<property name="tipoOperacao" type="java.lang.String">
+			<column name="tipoOperacao" />
 		</property>	
 	</class>
 </hibernate-mapping>

@@ -2070,12 +2070,11 @@
 							onkeydown="FormataValor(this, 13, event, 2);" required="true"
 							converter="bigDecimalConverter" />
 							
-						<p:outputLabel for="tipoGarantia" value="Tipo de Garantia" styleClass="labelBold" />
-						<p:selectOneRadio id="tipoGarantia" unselectable="true" required="true" columns="1"
-							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoGarantia}">
-							<f:selectItem itemLabel="Crédito com Garantia Imobiliária"
-								itemValue="Crédito com Garantia Imobiliária" />
-							<f:selectItem itemLabel="Aquisição" itemValue="Aquisição" />
+						<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
+						<p:selectOneRadio id="tipoOperacao" unselectable="true" required="true" columns="1"
+							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
+							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
+							<f:selectItem itemLabel="Financiamento" itemValue="Financiamento" />
 						</p:selectOneRadio>
 					</h:panelGrid>
 				</p:panel>
