@@ -539,7 +539,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataUltimaAtualizacao;
 	
-	private String tipoGarantia;
+	private String tipoOperacao;
 
 	public ContratoCobranca() {
 		super();
@@ -4352,12 +4352,12 @@ public class ContratoCobranca implements Serializable {
 		this.txJurosCessao = txJurosCessao;
 	}
 
-	public String getTipoGarantia() {
-		return tipoGarantia;
+	public String getTipoOperacao() {
+		return tipoOperacao;
 	}
 
-	public void setTipoGarantia(String tipoGarantia) {
-		this.tipoGarantia = tipoGarantia;
+	public void setTipoOperacao(String tipoOperacao) {
+		this.tipoOperacao = tipoOperacao;
 	}
 	
 }

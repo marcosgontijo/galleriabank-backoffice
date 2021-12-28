@@ -10172,7 +10172,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	public String editarSeguradosConsulta() {
+	public void editarSeguradosConsulta() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		String msgRetorno = null;
@@ -10186,14 +10186,12 @@ public class ContratoCobrancaMB {
 		if (!this.validarProcentagensSeguro()) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"A soma das porcentagens dos segurados não é 100%", ""));
-			return "";
 		} else {
 			contratoCobrancaDao.merge(objetoContratoCobranca);
 			msgRetorno = "atualizado";
 		
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 			"Contrato Cobrança: Registro " + msgRetorno + " com sucesso!", ""));
-			return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 		}		
 	}
 	
