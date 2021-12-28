@@ -5186,53 +5186,16 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void clearFieldsSegurados() {
-		this.hasBaixaParcial = hasBaixaParcial();
-
-		this.renderRecebedorFinais = false;
-
-		if (this.objetoContratoCobranca.getRecebedorParcelaFinal1() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal2() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal3() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal4() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal5() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal6() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal7() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal8() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal9() != null
-				|| this.objetoContratoCobranca.getRecebedorParcelaFinal10() != null) {
-			this.renderRecebedorFinais = true;
-		}
-
-		files = new ArrayList<FileUploaded>();
-		files = listaArquivos();
-		filesInterno = new ArrayList<FileUploaded>();
-		filesInterno = listaArquivosInterno();
-
 		loadLovs();
-
 		loadSelectedLovs();
 
+		this.tituloPagadorRecebedorDialog = "Segurados";
+		this.tipoPesquisaPagadorRecebedor = "Segurado";
+		this.updatePagadorRecebedor = ":formSegurados:SeguradoresPanel";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+
 		this.contratoGerado = true;
-
-		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
-
-		this.vlrRepasse = null;
-
-		this.vlrRetencao = null;
-
-		this.vlrComissao = null;
-
-		this.vlrParcelaFinal = null;
-
-		this.vlrRepasseFinal = null;
-
-		this.vlrRetencaoFinal = null;
-
-		this.vlrComissaoFinal = null;
-
-		loadRetencaoRepasse();
-		this.geraBoletoInclusaoContrato = false;
-		this.fileBoleto = null;
 	}
 	
 	public String clearFieldsDocumentoWord() {
@@ -10106,6 +10069,11 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirSegurado() {
+		
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		
 		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
@@ -10204,10 +10172,16 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	private String editarSeguradosConsulta() {
+	public String editarSeguradosConsulta() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		String msgRetorno = null;
+
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		
 		if (!this.validarProcentagensSeguro()) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -10221,6 +10195,14 @@ public class ContratoCobrancaMB {
 			"Contrato Cobrança: Registro " + msgRetorno + " com sucesso!", ""));
 			return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 		}		
+	}
+	
+	public void cancelarSeguradosConsulta() {
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	private BigDecimal calcularValorTotalContasPagar() {
