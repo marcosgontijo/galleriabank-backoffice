@@ -5185,6 +5185,56 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserir.xhtml";
 	}
 	
+	public void clearFieldsSegurados() {
+		this.hasBaixaParcial = hasBaixaParcial();
+
+		this.renderRecebedorFinais = false;
+
+		if (this.objetoContratoCobranca.getRecebedorParcelaFinal1() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal2() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal3() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal4() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal5() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal6() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal7() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal8() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal9() != null
+				|| this.objetoContratoCobranca.getRecebedorParcelaFinal10() != null) {
+			this.renderRecebedorFinais = true;
+		}
+
+		files = new ArrayList<FileUploaded>();
+		files = listaArquivos();
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+
+		loadLovs();
+
+		loadSelectedLovs();
+
+		this.contratoGerado = true;
+
+		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
+
+		this.vlrRepasse = null;
+
+		this.vlrRetencao = null;
+
+		this.vlrComissao = null;
+
+		this.vlrParcelaFinal = null;
+
+		this.vlrRepasseFinal = null;
+
+		this.vlrRetencaoFinal = null;
+
+		this.vlrComissaoFinal = null;
+
+		loadRetencaoRepasse();
+		this.geraBoletoInclusaoContrato = false;
+		this.fileBoleto = null;
+	}
+	
 	public String clearFieldsDocumentoWord() {
 		return "/Atendimento/Cobranca/DocumentoWord.xhtml";
 	}
@@ -8244,7 +8294,7 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
 		
@@ -10020,6 +10070,14 @@ public class ContratoCobrancaMB {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	public void pesquisaSeguradoConsulta() {
+		this.tituloPagadorRecebedorDialog = "Segurados";
+		this.tipoPesquisaPagadorRecebedor = "Segurado";
+		this.updatePagadorRecebedor = ":formSegurados:SeguradoresPanel";
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
 	public void pesquisaPagador() {
 			this.tituloPagadorRecebedorDialog = "Pagadores";
 			this.tipoPesquisaPagadorRecebedor = "Pagador";
@@ -10144,6 +10202,25 @@ public class ContratoCobrancaMB {
 		} else {
 			return true;
 		}
+	}
+	
+	private String editarSeguradosConsulta() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		String msgRetorno = null;
+		
+		if (!this.validarProcentagensSeguro()) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"A soma das porcentagens dos segurados não é 100%", ""));
+			return "";
+		} else {
+			contratoCobrancaDao.merge(objetoContratoCobranca);
+			msgRetorno = "atualizado";
+		
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+			"Contrato Cobrança: Registro " + msgRetorno + " com sucesso!", ""));
+			return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
+		}		
 	}
 	
 	private BigDecimal calcularValorTotalContasPagar() {

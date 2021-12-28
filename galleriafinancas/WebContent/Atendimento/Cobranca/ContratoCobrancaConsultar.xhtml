@@ -268,7 +268,17 @@
 						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
 					    	</p:confirmDialog>   
-		                </shiro:hasAnyRoles>   
+		                </shiro:hasAnyRoles>
+		                <p:spacer width="10" height="10"/>
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	                
+			                <p:commandButton oncomplete="PF('seguradosDialog').show();" action="#{contratoCobrancaMB.clearFieldsSegurados}" update="formSegurados" icon="ui-icon-check" value="Segurados" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>   
 		             	<shiro:hasAnyRoles name="ROOT">	
 		             		<p:spacer height="10"/>
 		                	<p:commandButton onclick="PF('alterarEmpresaDialog').show();"
@@ -288,7 +298,10 @@
 				</p:dataTable>
 			</p:panel>
 		</h:form>
-		
+
+		<ui:include src="../../Dialog/DialogSegurados.xhtml"/>
+
+
 		<p:dialog header="Observações" widgetVar="observacoesDialog" resizable="false" style="FONT-SIZE: 10pt;" width="800" responsive="true">
 			<h:form id="formObservacoes">
 				<p:panel id="ObservacoesPanel1" header="Observações - Inserir" style="margin-top:10px;">	
