@@ -538,6 +538,8 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoResgatadoData;
 	
 	private Date dataUltimaAtualizacao;
+	
+	private String tipoGarantia;
 
 	public ContratoCobranca() {
 		super();
@@ -4349,4 +4351,13 @@ public class ContratoCobranca implements Serializable {
 	public void setTxJurosCessao(BigDecimal txJurosCessao) {
 		this.txJurosCessao = txJurosCessao;
 	}
+
+	public String getTipoGarantia() {
+		return tipoGarantia;
+	}
+
+	public void setTipoGarantia(String tipoGarantia) {
+		this.tipoGarantia = tipoGarantia;
+	}
+	
 }

@@ -1390,5 +1390,9 @@
 		<property name="contaPagarValorTotal" type="big_decimal">
 			<column name="contaPagarValorTotal" />
 		</property>	
+		
+		<property name="tipoGarantia" type="java.lang.String">
+			<column name="tipoGarantia" />
+		</property>	
 	</class>
 </hibernate-mapping>
