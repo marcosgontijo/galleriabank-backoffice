@@ -857,9 +857,6 @@ public class CcbMB {
 		
 		this.objetoPagadorRecebedor = pagador;
 		
-		
-		boolean validaCPF = ValidaCPF.isCPF(this.objetoPagadorRecebedor.getCpf());
-		boolean validaCNPJ = ValidaCNPJ.isCNPJ(this.objetoPagadorRecebedor.getCnpj());
 
 		if (this.objetoPagadorRecebedor.getId() <= 0) {
 			List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
@@ -867,6 +864,7 @@ public class CcbMB {
 			Long idPagador = (long) 0;
 
 			if (this.objetoPagadorRecebedor.getCpf() != null) {
+				boolean validaCPF = ValidaCPF.isCPF(this.objetoPagadorRecebedor.getCpf());
 				if(validaCPF) {
 					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", this.objetoPagadorRecebedor.getCpf());
 					if (pagadorRecebedorBD.size() > 0) {
@@ -878,8 +876,9 @@ public class CcbMB {
 					}
 				}
 			}
-
+			
 			if (this.objetoPagadorRecebedor.getCnpj() != null) {
+				boolean validaCNPJ = ValidaCNPJ.isCNPJ(this.objetoPagadorRecebedor.getCnpj());
 				if(validaCNPJ) {
 					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cnpj", this.objetoPagadorRecebedor.getCnpj());
 					if (pagadorRecebedorBD.size() > 0) {
