@@ -130,7 +130,7 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 			+ " and parcelaPaga = false"
 			+ " and tipocalculo in ( 'Price', 'SAC')" 
 			+ " and cont.corrigidoipca = true"
-//			+ " and cont.numerocontrato = '05815'" 
+			//+ " and numerocontrato in ('05212')" 
 			;
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaDetalhes> getParcelasCalculoIpca() {
