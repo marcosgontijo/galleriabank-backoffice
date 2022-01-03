@@ -42,6 +42,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.util.CalendarUtils;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -81,6 +82,8 @@ import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoVencimento;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoModalidade;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -150,15 +153,22 @@ public class BmpDigitalMB {
 	}
 	public String composeJSONPayload() {
 		String json = "";
-	
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(gerarDataHoje());
+		
+		Date dataHoje = DateUtil.getDataHoje();
+		//Date dataReferencia = DateUtil.adicionarMes(dataHoje, -2);
+		Date dataReferencia = DateUtil.adicionarDias(dataHoje, -45);
+		
+		int mesReferenciaInt = dataReferencia.getMonth();
+		//mesReferenciaInt ++;
+		String mesReferencia = CommonsUtil.stringValue(mesReferenciaInt);
+		
+		int anoReferenciaInt = dataReferencia.getYear();
+		anoReferenciaInt += 1900;
+		String anoReferencia = CommonsUtil.stringValue(anoReferenciaInt);
 		
 		//calendar.get(Calendar.MONTH) retorna 1 mês antes porque começa em 0
 		// Subtraimos 1 porque a consulta é de 45 dias pra tras apenas
-		String mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 2); 
-		String anoReferencia = String.valueOf(calendar.get(Calendar.YEAR));
-		
+
 		json = "{\"auth\":{\"Usuario\":\"JOAO@GALLERIAFINANCAS.COM.BR\",\"Senha\":\"Scr!2021\",\"CodigoParametro\":\"GALLERIA_SCR\",\"Chave\":\"eb11110f-9f0e-4a16-83d7-6229c949da4a\"}, " +
 			    "\"consulta\":{\"Documento\":\"" + this.documento + "\",\"DataBaseMes\":\"" + mesReferencia + "\",\"DataBaseAno\":\"" + anoReferencia + "\"}}";
 		
