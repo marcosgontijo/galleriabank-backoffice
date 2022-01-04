@@ -28,6 +28,7 @@
 								<p:menuitem value="Tabela"
 									action="#{seguroTabelaMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+									
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						
@@ -35,6 +36,10 @@
 							<p:submenu label="Pagamentos" styleClass="titulosMenu">
 								<p:menuitem value="Boletos Pagos"
 									action="#{boletosPagosMB.clearFields}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+										
+								<p:menuitem value="Relatorio Semestral"
+									action="#{relatorioSemestralMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
 						</shiro:hasAnyRoles>

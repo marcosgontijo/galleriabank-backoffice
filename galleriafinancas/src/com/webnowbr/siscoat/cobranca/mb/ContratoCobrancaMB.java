@@ -6516,9 +6516,14 @@ public class ContratoCobrancaMB {
 			if (contratos.isDocumentosCompletos() && !contratos.isAprovadoComite()) {
 				contratos.setAprovadoComite(true);				
 			} else {
-				if (!contratos.isAgAssinatura() || !contratos.isAgRegistro()) {
-					contratos.setAgAssinatura(true);
-					contratos.setAgRegistro(true);
+				if(!contratos.isCcbPronta()){
+					if (!contratos.isAgAssinatura()) {
+						contratos.setAgAssinatura(true);
+					}
+					
+					if (!contratos.isAgRegistro()) {
+						contratos.setAgRegistro(true);
+					}
 				}
 			}
 

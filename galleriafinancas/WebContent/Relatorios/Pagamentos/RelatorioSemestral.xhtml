@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="RelatorioPanel" header="Relatorio Boletos Pagos">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Consultar " styleClass="labelBold" />
+
+					<p:commandButton action="#{relatorioSemestralMB.geraRelatorio}"
+						image="ui-icon ui-icon-circle-zoomin" update="consulta"
+						onclick="start();" oncomplete="stop();" />
+
+					<p:outputLabel value="tipo consulta " styleClass="labelBold" />
+					<p:selectOneMenu value="#{relatorioSemestralMB.tipoPesquisaRelatorio}"
+						required="true" style="width: 50px;">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItem itemLabel="Receber" itemValue="Receber" />
+						<f:selectItem itemLabel="Pagar" itemValue="Pagar" />
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<p:accordionPanel widgetVar="basic" id="consulta" multiple="true">
+					<p:tab title="Tabela Parcelas a Receber">
+
+						<p:dataTable var="relatorio"
+							value="#{relatorioSemestralMB.listRelatorioReceber}" emptyMessage="">
+							<f:facet name="header"> Tabela Parcelas a Receber
+						<p:outputLabel value="" />
+								<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"
+									action="#{relatorioSemestralMB.readXLSXFileRelatorioSemestreReceber}"
+									ajax="false" />
+							</f:facet>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="Nº Contrato">
+								<h:outputText value="#{relatorio.numeroContratoRelatorio}" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="pagador">
+								<h:outputText value="#{relatorio.nomePagadorRelatorio}" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="data">
+								<h:outputText value="#{relatorio.dataVencimentoRelatorio}">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="valor">
+								<h:outputText value="#{relatorio.valorContratoRelatorio}"
+									converter="bigDecimalConverter" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="taxa">
+								<h:outputText value="#{relatorio.taxaContratoRelatorio}"
+									converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width: 100px;"
+								headerText="indice">
+								<h:outputText value="#{relatorio.indiceContratoRelatorio}"/>
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="empresa">
+								<h:outputText value="#{relatorio.empresaContratoRelatorio}" />
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+					<p:tab title="Tabela Parcelas a Pagar">
+
+						<p:dataTable var="relatorio" id="consultaPagar"
+							value="#{relatorioSemestralMB.listRelatorioPagar}" emptyMessage="">
+							<f:facet name="header"> Tabela Parcelas a Pagar
+						<p:outputLabel value="" />
+								<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"
+									action="#{relatorioSemestralMB.readXLSXFileRelatorioSemestrePagar}"
+									ajax="false" />
+							</f:facet>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="Nº Contrato">
+								<h:outputText value="#{relatorio.numeroContratoRelatorio}" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="pagador">
+								<h:outputText value="#{relatorio.nomePagadorRelatorio}" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="tipo pagador">
+								<h:outputText value="#{relatorio.tipoPagadorRelatorio}" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="data">
+								<h:outputText value="#{relatorio.dataVencimentoRelatorio}">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="valor">
+								<h:outputText value="#{relatorio.valorContratoRelatorio}"
+									converter="bigDecimalConverter" />
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="taxa">
+								<h:outputText value="#{relatorio.taxaContratoRelatorio}"
+									converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width: 100px;"
+								headerText="indice">
+								<h:outputText value="#{relatorio.indiceContratoRelatorio}"/>
+							</p:column>
+
+							<p:column style="text-align: center;width: 100px;"
+								headerText="empresa">
+								<h:outputText value="#{relatorio.empresaContratoRelatorio}" />
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+				</p:accordionPanel>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
