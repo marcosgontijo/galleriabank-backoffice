@@ -13,7 +13,7 @@ import com.webnowbr.siscoat.relatorio.vo.RelatorioSemestre;
 
 public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long> {
 
-	private static final String QUERY_CONTRATOS_RECEBER = " select coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome"
+	private static final String QUERY_CONTRATOS_RECEBER = " select coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA"
 			+ " from cobranca.contratocobranca coco "
 			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
 			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false "
@@ -21,7 +21,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ " where status = 'Aprovado' and ccd.id is not null " + " and pagador not in (15, 34,14, 182, 417, 803) "
 			+ " ORDER BY numerocontrato asc, datavencimento asc ";
 
-	private static final String QUERY_CONTRATOS_PAGAR_FAVORECIDO = " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+	private static final String QUERY_CONTRATOS_PAGAR_FAVORECIDO = " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_1 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -30,7 +30,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'" + "	union all"
 			+ "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_2 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -39,7 +39,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_3 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -48,7 +48,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_4 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -57,7 +57,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_5 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -66,7 +66,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_6 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor"
@@ -75,7 +75,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador "
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA "
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_7 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor "
@@ -84,7 +84,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false'"
 			+ "		union all" + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador "
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA "
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_8 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor "
@@ -93,7 +93,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false' "
 			+ "		union all " + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador "
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA "
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_9 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor "
@@ -102,7 +102,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 			+ "	inner join cobranca.pagadorrecebedor pare " + "		ON pare.id = ccpi.investidor "
 			+ "	where status = 'Aprovado' and ccpi.id is not null " + "		and ccpi.baixado = 'false' "
 			+ "		union all " + "	"
-			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador"
+			+ " select coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.empresa, ccpi.dataVencimento, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA"
 			+ " from cobranca.contratocobrancaparcelasinvestidor ccpi "
 			+ "	inner join cobranca.contratocobranca_parcelas_investidor_join_10 parcelaJoin "
 			+ "		on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor "
@@ -138,6 +138,11 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 						relatorio.setValorContratoRelatorio(rs.getBigDecimal("vlrParcela"));
 						relatorio.setTaxaContratoRelatorio(rs.getBigDecimal("txJurosParcelas"));
 						relatorio.setEmpresaContratoRelatorio(rs.getString("empresa"));
+						if (rs.getBoolean("corrigidoIPCA")) {
+							relatorio.setIndiceContratoRelatorio("Sim");
+						} else {
+							relatorio.setIndiceContratoRelatorio("Não");
+						}
 						objects.add(relatorio);
 					}
 
@@ -176,13 +181,17 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 						relatorio.setValorContratoRelatorio(rs.getBigDecimal("parcelaMensal"));
 						relatorio.setTaxaContratoRelatorio(rs.getBigDecimal("txJurosParcelas"));
 						relatorio.setEmpresaContratoRelatorio(rs.getString("empresa"));
+						if (rs.getBoolean("corrigidoIPCA")) {
+							relatorio.setIndiceContratoRelatorio("Sim");
+						} else {
+							relatorio.setIndiceContratoRelatorio("Não");
+						}
 
 						if (SiscoatConstants.PAGADOR_GALLERIA.contains(rs.getBigDecimal("pagador").longValue())) {
 							relatorio.setTipoPagadorRelatorio("Debênture");
 						} else {
 							relatorio.setTipoPagadorRelatorio("Favorecido");
 						}
-
 						objects.add(relatorio);
 					}
 

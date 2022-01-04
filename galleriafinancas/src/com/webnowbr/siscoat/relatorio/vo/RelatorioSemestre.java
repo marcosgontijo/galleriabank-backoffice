@@ -15,6 +15,7 @@ public class RelatorioSemestre implements Serializable {
 	private Date dataVencimentoRelatorio;
 	private BigDecimal taxaContratoRelatorio;
 	private BigDecimal valorContratoRelatorio;
+	private String indiceContratoRelatorio;
 	
 	
 	public RelatorioSemestre() {
@@ -81,4 +82,11 @@ public class RelatorioSemestre implements Serializable {
 		return serialVersionUID;
 	}
 
+	public String getIndiceContratoRelatorio() {
+		return indiceContratoRelatorio;
+	}
+	
+	public void setIndiceContratoRelatorio(String indiceContratoRelatorio) {
+		this.indiceContratoRelatorio = indiceContratoRelatorio;
+	}
 }

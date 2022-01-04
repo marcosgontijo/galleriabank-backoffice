@@ -76,7 +76,8 @@ public class RelatorioSemestralMB {
 		gravaCelula(2, "Data de Vencimento da Parcela", linha);
 		gravaCelula(3, "Valor da parcela", linha);
 		gravaCelula(4, "Taxa", linha);
-		gravaCelula(5, "Empresa", linha);
+		gravaCelula(5, "Índice", linha);
+		gravaCelula(6, "Empresa", linha);
 
 		iLinha++;
 
@@ -94,7 +95,8 @@ public class RelatorioSemestralMB {
 			gravaCelula(2, relatorio.getDataVencimentoRelatorio(), linha);
 			gravaCelula(3, relatorio.getValorContratoRelatorio(), linha);
 			gravaCelula(4, relatorio.getTaxaContratoRelatorio(), linha);
-			gravaCelula(5, relatorio.getEmpresaContratoRelatorio(), linha);
+			gravaCelula(5, relatorio.getIndiceContratoRelatorio(), linha);
+			gravaCelula(6, relatorio.getEmpresaContratoRelatorio(), linha);
 
 			iLinha++;
 		}
@@ -140,8 +142,9 @@ public class RelatorioSemestralMB {
 		gravaCelula(2, "Data de Vencimento da Parcela", linha);
 		gravaCelula(3, "Valor da parcela", linha);
 		gravaCelula(4, "Taxa", linha);
-		gravaCelula(5, "Empresa", linha);
-		gravaCelula(6, "Tipo Pagador", linha);
+		gravaCelula(5, "Índice", linha);
+		gravaCelula(6, "Empresa", linha);
+		gravaCelula(7, "Tipo Pagador", linha);
 
 		iLinha++;
 
@@ -159,8 +162,9 @@ public class RelatorioSemestralMB {
 			gravaCelula(2, relatorio.getDataVencimentoRelatorio(), linha);
 			gravaCelula(3, relatorio.getValorContratoRelatorio(), linha);
 			gravaCelula(4, relatorio.getTaxaContratoRelatorio(), linha);
-			gravaCelula(5, relatorio.getEmpresaContratoRelatorio(), linha);
-			gravaCelula(6, relatorio.getTipoPagadorRelatorio(), linha);
+			gravaCelula(5, relatorio.getIndiceContratoRelatorio(), linha);
+			gravaCelula(6, relatorio.getEmpresaContratoRelatorio(), linha);
+			gravaCelula(7, relatorio.getTipoPagadorRelatorio(), linha);
 
 			iLinha++;
 		}
