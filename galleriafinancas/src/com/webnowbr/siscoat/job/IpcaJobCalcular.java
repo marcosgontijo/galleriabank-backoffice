@@ -25,7 +25,7 @@ public class IpcaJobCalcular {
 	public boolean calcularIPCA(IPCADao ipcaDao, ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao,
 			ContratoCobrancaDao contratoCobrancaDao,
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao,
-			ContratoCobrancaDetalhes contratoCobrancaDetalhes) {
+			ContratoCobrancaDetalhes contratoCobrancaDetalhes, ContratoCobranca contratoCobranca) {
 
 		Date dataIPCA = DateUtil.adicionarMes(contratoCobrancaDetalhes.getDataVencimento(), -2);
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(dataIPCA);
@@ -35,11 +35,10 @@ public class IpcaJobCalcular {
 
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
-		if (contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= 2
-				|| contratoCobrancaDetalhes.getDataVencimento().getMonth() - ultimoIpca.getData().getMonth() <= -10) {
+		if ( CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth()) &&
+				CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear()) ) {
 
-			ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao
-					.getContratoCobranca(contratoCobrancaDetalhes.getId());
+			
 			// usar o reparcelamento aqui.
 
 			BigDecimal saldoDevedor = BigDecimal.ZERO;
