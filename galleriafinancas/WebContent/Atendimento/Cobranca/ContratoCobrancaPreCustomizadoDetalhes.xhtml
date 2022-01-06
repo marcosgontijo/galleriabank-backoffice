@@ -682,6 +682,10 @@
 							onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);" required="true"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="tipoOperacao" value="Tipo da Operação: " styleClass="labelBold" />
+						<p:outputLabel id="tipoOperacao" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}"/>
+						
 					</h:panelGrid>
 				</p:panel>
 
