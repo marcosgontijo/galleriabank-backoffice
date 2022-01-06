@@ -193,122 +193,130 @@ public class BRLTrustMB {
 		/**
 		 * FIM
 		 */
-		
-		int countParcelas = 0;
-		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
-			countParcelas = countParcelas + 1;
-			if (countParcelas > countCarencia) {
-				if (parcela.getDataVencimento().after(gerarDataHoje())) {
-					JSONObject jsonRecebivel = new JSONObject();
-					
-					String numeroParcela = "";
-					
-					if (parcela.getNumeroParcela().length() == 1) {
-						numeroParcela = "00" + parcela.getNumeroParcela();
-					} else if (parcela.getNumeroParcela().length() == 2) {
-						numeroParcela = "0" + parcela.getNumeroParcela();
-					} else {
-						numeroParcela = parcela.getNumeroParcela();
+		try{
+			int countParcelas = 0;
+			for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+				countParcelas = countParcelas + 1;
+				if (countParcelas > countCarencia) {
+					if (parcela.getDataVencimento().after(gerarDataHoje())) {
+						JSONObject jsonRecebivel = new JSONObject();
+						
+						String numeroParcela = "";
+						
+						if (parcela.getNumeroParcela().length() == 1) {
+							numeroParcela = "00" + parcela.getNumeroParcela();
+						} else if (parcela.getNumeroParcela().length() == 2) {
+							numeroParcela = "0" + parcela.getNumeroParcela();
+						} else {
+							numeroParcela = parcela.getNumeroParcela();
+						}
+						
+						jsonRecebivel.put("numeroControle", this.objetoContratoCobranca.getNumeroContratoSeguro() + "-" + numeroParcela);
+						jsonRecebivel.put("coobrigacao", false);
+						jsonRecebivel.put("ocorrencia", 1);
+						jsonRecebivel.put("tipo", 73);
+						jsonRecebivel.put("documento", this.objetoContratoCobranca.getNumeroContratoSeguro());
+						jsonRecebivel.put("termoCessao", this.objetoContratoCobranca.getTermoCessao());
+						
+						JSONObject jsonSacado = new JSONObject();
+						
+						JSONObject jsonPessoa = new JSONObject();
+						if (this.objetoContratoCobranca.getPagador().getCpf() != null && !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
+							jsonPessoa.put("tipo", "PF");
+							jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCpf())));				
+						} else {
+							jsonPessoa.put("tipo", "PJ");
+							jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCnpj())));
+						}
+						jsonPessoa.put("nome", this.objetoContratoCobranca.getPagador().getNome());
+						jsonSacado.put("pessoa", jsonPessoa);
+						
+						JSONObject jsonEndereco = new JSONObject();
+						jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCep())));
+						jsonEndereco.put("logradouro", this.objetoContratoCobranca.getPagador().getEndereco());
+						jsonEndereco.put("numero", this.objetoContratoCobranca.getPagador().getNumero());
+						jsonEndereco.put("complemento", this.objetoContratoCobranca.getPagador().getComplemento());
+						jsonEndereco.put("bairro", this.objetoContratoCobranca.getPagador().getBairro());
+						jsonEndereco.put("municipio", this.objetoContratoCobranca.getPagador().getCidade());
+						jsonEndereco.put("uf", this.objetoContratoCobranca.getPagador().getEstado());
+						jsonSacado.put("endereco", jsonEndereco);
+				
+						jsonRecebivel.put("sacado", jsonSacado);
+						
+						JSONObject jsonCedente = new JSONObject();
+						jsonCedente.put("tipo", "PJ");
+						
+						if (this.cedenteCessao.equals("BMP Money Plus SCD S.A.")) {
+							jsonCedente.put("identificacao", Long.valueOf("34337707000100"));
+							jsonCedente.put("nome", "BMP Money Plus SCD S.A.");		
+						} else {
+							jsonCedente.put("identificacao", Long.valueOf("34425347000106"));
+							jsonCedente.put("nome", "Galleria Finanças Securitizadora S.A.");	
+						}
+						jsonRecebivel.put("cedente", jsonCedente);
+						
+						jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(this.dataAquisicao));
+						jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(this.objetoContratoCobranca.getDataInicio()));
+						jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+						JSONObject jsonValores = new JSONObject();
+						jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
+						
+						if (this.usaTaxaJurosDiferenciada) {
+							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao));
+						} else {
+							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao));
+						}					
+	
+						jsonRecebivel.put("valores", jsonValores);
+						
+						JSONObject jsonDados = new JSONObject();
+						jsonDados.put("indice", "IPCA");			
+						jsonRecebivel.put("dados", jsonDados);		
+						
+						jsonRecebiveis.put(jsonRecebivel);
 					}
-					
-					jsonRecebivel.put("numeroControle", this.objetoContratoCobranca.getNumeroContratoSeguro() + "-" + numeroParcela);
-					jsonRecebivel.put("coobrigacao", false);
-					jsonRecebivel.put("ocorrencia", 1);
-					jsonRecebivel.put("tipo", 73);
-					jsonRecebivel.put("documento", this.objetoContratoCobranca.getNumeroContratoSeguro());
-					jsonRecebivel.put("termoCessao", this.objetoContratoCobranca.getTermoCessao());
-					
-					JSONObject jsonSacado = new JSONObject();
-					
-					JSONObject jsonPessoa = new JSONObject();
-					if (this.objetoContratoCobranca.getPagador().getCpf() != null && !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
-						jsonPessoa.put("tipo", "PF");
-						jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCpf())));				
-					} else {
-						jsonPessoa.put("tipo", "PJ");
-						jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCnpj())));
-					}
-					jsonPessoa.put("nome", this.objetoContratoCobranca.getPagador().getNome());
-					jsonSacado.put("pessoa", jsonPessoa);
-					
-					JSONObject jsonEndereco = new JSONObject();
-					jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(this.objetoContratoCobranca.getPagador().getCep())));
-					jsonEndereco.put("logradouro", this.objetoContratoCobranca.getPagador().getEndereco());
-					jsonEndereco.put("numero", this.objetoContratoCobranca.getPagador().getNumero());
-					jsonEndereco.put("complemento", this.objetoContratoCobranca.getPagador().getComplemento());
-					jsonEndereco.put("bairro", this.objetoContratoCobranca.getPagador().getBairro());
-					jsonEndereco.put("municipio", this.objetoContratoCobranca.getPagador().getCidade());
-					jsonEndereco.put("uf", this.objetoContratoCobranca.getPagador().getEstado());
-					jsonSacado.put("endereco", jsonEndereco);
-			
-					jsonRecebivel.put("sacado", jsonSacado);
-					
-					JSONObject jsonCedente = new JSONObject();
-					jsonCedente.put("tipo", "PJ");
-					
-					if (this.cedenteCessao.equals("BMP Money Plus SCD S.A.")) {
-						jsonCedente.put("identificacao", Long.valueOf("34337707000100"));
-						jsonCedente.put("nome", "BMP Money Plus SCD S.A.");		
-					} else {
-						jsonCedente.put("identificacao", Long.valueOf("34425347000106"));
-						jsonCedente.put("nome", "Galleria Finanças Securitizadora S.A.");	
-					}
-					jsonRecebivel.put("cedente", jsonCedente);
-					
-					jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(this.dataAquisicao));
-					jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(this.objetoContratoCobranca.getDataInicio()));
-					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
-					JSONObject jsonValores = new JSONObject();
-					jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
-					
-					if (this.usaTaxaJurosDiferenciada) {
-						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao));
-					} else {
-						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao));
-					}					
-
-					jsonRecebivel.put("valores", jsonValores);
-					
-					JSONObject jsonDados = new JSONObject();
-					jsonDados.put("indice", "IPCA");			
-					jsonRecebivel.put("dados", jsonDados);		
-					
-					jsonRecebiveis.put(jsonRecebivel);
 				}
 			}
-		}
-		
-		jsonCessao.put("recebiveis", jsonRecebiveis);
-		
-		jsonSchema.put("cessao", jsonCessao);
-
-		FileOutputStream fileStream;
-		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
 			
-            file.write(jsonSchema.toString());
-            file.flush();
-		} catch (FileNotFoundException e) {
+			jsonCessao.put("recebiveis", jsonRecebiveis);
+			
+			jsonSchema.put("cessao", jsonCessao);
+	
+			FileOutputStream fileStream;
+			try {
+				fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+				OutputStreamWriter file;
+				file = new OutputStreamWriter(fileStream, "UTF-8");
+				
+	            file.write(jsonSchema.toString());
+	            file.flush();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			this.jsonGerado = true;
+			
+			atualizaContratoDadosCessaoBRL();
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Geração JSON BRL Cessão: JSON gerado com sucesso!",
+							""));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Geração JSON BRL Cessão: JSON falhou!" +e,
+							""));
 			e.printStackTrace();
 		}
-		
-		this.jsonGerado = true;
-		
-		atualizaContratoDadosCessaoBRL();
-		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Geração JSON BRL Cessão: JSON gerado com sucesso!",
-						""));	
 	}
 	
 	public void geraJSONLiquidacao() {
@@ -636,7 +644,9 @@ public class BRLTrustMB {
 	public String getStringSemCaracteres(String documento) {
 		String retorno = "";
 		
-		retorno = documento.replace(".", "").replace("/", "").replace("-", "");
+		if(!CommonsUtil.semValor(documento) && !CommonsUtil.mesmoValor(documento,  "")) {
+			retorno = documento.replace(".", "").replace("/", "").replace("-", "");
+		}
 				
 		return retorno;
 	}
