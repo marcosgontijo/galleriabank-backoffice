@@ -97,16 +97,27 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
 						
-			         <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
+			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
 			           <h:outputText value="#{contratos.dataUltimaAtualizacao}" >			            	
 							<f:convertDateTime pattern="dd/MM/yyyy"/>
 						</h:outputText>
 			        </p:column>
-			        		
-			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.nomeCidadeImovel}" filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
-			            <h:outputText value="#{contratos.nomeCidadeImovel}" />
-			        </p:column>				        
-			        <p:column style="width:180px;">
+
+					<p:column style="text-align: center;width: 100px"
+						headerText="Aprovado Comite Por:" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
+						
+						<p:repeat var="comite"  value="#{contratos.listaAnaliseComite}" >
+							<h:outputText value="#{comite.usuarioComite}&lt;br /&gt;"  escape="false" />
+						</p:repeat>	
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Cidade"
+						filterBy="#{contratos.nomeCidadeImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+					<p:column style="width:180px;">
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

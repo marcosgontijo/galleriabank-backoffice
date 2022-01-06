@@ -1052,6 +1052,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>   
         
+        <set name="listaAnaliseComite" table="AnaliseComite" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -1394,5 +1402,13 @@
 		<property name="tipoOperacao" type="java.lang.String">
 			<column name="tipoOperacao" />
 		</property>	
+		
+		<property name="qtdeVotosAprovadosComite" type="big_integer">
+			<column name="qtdeVotosAprovadosComite" />
+		</property>
+		
+		<property name="qtdeVotosReprovadosComite" type="big_integer">
+			<column name="qtdeVotosReprovadosComite" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" table="ANALISECOMITE">
+       <id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+   
+		<property name="taxaComite" type="big_decimal">
+            <column name="taxaComite"/>
+        </property>
+        
+        <property name="prazoMaxComite" type="big_integer">
+            <column name="prazoMaxComite"/>
+        </property>
+		
+		<property name="valorComite" type="big_decimal">
+            <column name="valorComite"/>
+        </property>
+       
+		<property name="dataComite" type="java.util.Date">
+			<column name="dataComite" />
+		</property>
+		
+		<property name="tipoValorComite" type="java.lang.String">
+			<column name="tipoValorComite" />
+		</property>
+		
+		<property name="comentarioComite" type="text">
+			<column name="comentarioComite" />
+		</property>
+		
+		<property name="usuarioComite" type="java.lang.String">
+			<column name="usuarioComite" />
+		</property>
+		
+		<property name="votoAnaliseComite" type="java.lang.String">
+			<column name="votoAnaliseComite" />
+		</property>
+		
+		<many-to-one name="contratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratocobranca" />
+		</many-to-one>       
+    </class>
+</hibernate-mapping>

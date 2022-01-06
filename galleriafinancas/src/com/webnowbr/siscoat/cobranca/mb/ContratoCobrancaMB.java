@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -66,6 +67,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.hibernate.ejb.criteria.ValueHandlerFactory.BigIntegerValueHandler;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -93,6 +95,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -206,6 +209,7 @@ public class ContratoCobrancaMB {
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
 	String updatePagadorRecebedor = "";
 	String tituloPagadorRecebedorDialog = "";
+	AnaliseComite objetoAnaliseComite;
 	
 	ContasPagar contasPagarSelecionada;
 	
@@ -2678,12 +2682,20 @@ public class ContratoCobrancaMB {
 			
 			updateCheckList();
 			
+			
+			if(!CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite()) || CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), "")) {
+				this.objetoAnaliseComite.setDataComite(gerarDataHoje());
+				this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
+			}
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
 			enviaEmailAtualizacaoPreContrato();
-
+			
+			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
@@ -2950,6 +2962,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setStatus("Pendente");
 				this.objetoContratoCobranca.setAprovadoComiteData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAprovadoComiteData());
+				concluirComite(this.objetoContratoCobranca);
+				
 				this.objetoContratoCobranca.setAprovadoComiteUsuario(getNomeUsuarioLogado());
 			}
 		}
@@ -4926,6 +4940,26 @@ public class ContratoCobrancaMB {
 		saveEstadoCheckListAtual();	
 		
 		getIndexStepContrato();
+		
+		this.objetoAnaliseComite = new AnaliseComite();
+		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
+		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+
+		if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+			for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+				if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
+					this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
+				} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
+					this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+				} 
+				if(CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
+					this.objetoAnaliseComite = comite;
+				}
+			}
+		} 
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 	}
@@ -5890,6 +5924,7 @@ public class ContratoCobrancaMB {
 			
 			if(this.prazoContrato == 0 || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;
+				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
 			}
 			
 			if(this.qtdDeparcelasVencidas == 1) {
@@ -10122,6 +10157,35 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
+	}
+	
+	
+
+	public void concluirComite(ContratoCobranca contrato) {
+		BigDecimal maiorTaxaAprovada = BigDecimal.ZERO;
+		BigInteger menorPrazoAprovado = BigInteger.valueOf(999999999);
+		BigDecimal menorValorAprovado = BigDecimal.valueOf(999999999);
+		String menorValorAprovadoTipo = "";
+		String comentarioComiteFinal = "";
+		
+		for (AnaliseComite comite : contrato.getListaAnaliseComite()) {
+			if(comite.getTaxaComite().compareTo(maiorTaxaAprovada) >= 0) {
+				maiorTaxaAprovada = comite.getTaxaComite();
+			}
+			if(comite.getPrazoMaxComite().compareTo(menorPrazoAprovado) <= 0) {
+				menorPrazoAprovado = comite.getPrazoMaxComite();
+			}
+			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0) {
+				menorValorAprovado = comite.getValorComite();
+				menorValorAprovadoTipo = comite.getTipoValorComite();
+			}
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "//";
+		}
+		contrato.setTaxaAprovada(maiorTaxaAprovada);
+		contrato.setPrazoMaxAprovado(menorPrazoAprovado);
+		contrato.setValorAprovadoComite(menorValorAprovado);
+		contrato.setTipoValorComite(menorValorAprovadoTipo);
+		contrato.setComentarioComite(comentarioComiteFinal);
 	}
 	
 	public void editarSocio(PagadorRecebedorSocio socio) {
@@ -20098,7 +20162,7 @@ public class ContratoCobrancaMB {
 	public void setAddSocio(boolean addSocio) {
 		this.addSocio = addSocio;
 	}
-
+	
 	public String getUpdatePagadorRecebedor() {
 		return updatePagadorRecebedor;
 	}
@@ -20361,6 +20425,14 @@ public class ContratoCobrancaMB {
 
 	public void setAddContasPagar(boolean addContasPagar) {
 		this.addContasPagar = addContasPagar;
+	}
+
+	public AnaliseComite getObjetoAnaliseComite() {
+		return objetoAnaliseComite;
+	}
+
+	public void setObjetoAnaliseComite(AnaliseComite objetoAnaliseComite) {
+		this.objetoAnaliseComite = objetoAnaliseComite;
 	}
 	
 	

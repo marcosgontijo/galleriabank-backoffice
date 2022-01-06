@@ -150,7 +150,10 @@ public class ContratoCobranca implements Serializable {
 	private Set<PagadorRecebedorSocio> listSocios;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<ContasPagar> listContasPagar;
+	private Set<AnaliseComite> listaAnaliseComite;
+	
 
+	
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
@@ -365,6 +368,8 @@ public class ContratoCobranca implements Serializable {
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
 	private String aprovadoComiteUsuario;
+	private BigInteger qtdeVotosAprovadosComite;
+	private BigInteger qtdeVotosReprovadosComite;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -561,6 +566,7 @@ public class ContratoCobranca implements Serializable {
 		this.listSocios = new HashSet<>();
 		this.listaPagadores = new HashSet<>();
 		this.listContasPagar = new HashSet<>();
+		this.listaAnaliseComite = new HashSet<>();
 		
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
@@ -4359,5 +4365,28 @@ public class ContratoCobranca implements Serializable {
 	public void setTipoOperacao(String tipoOperacao) {
 		this.tipoOperacao = tipoOperacao;
 	}
-	
+
+	public Set<AnaliseComite> getListaAnaliseComite() {
+		return listaAnaliseComite;
+	}
+
+	public void setListaAnaliseComite(Set<AnaliseComite> listaAnaliseComite) {
+		this.listaAnaliseComite = listaAnaliseComite;
+	}
+
+	public BigInteger getQtdeVotosAprovadosComite() {
+		return qtdeVotosAprovadosComite;
+	}
+
+	public void setQtdeVotosAprovadosComite(BigInteger qtdeVotosAprovadosComite) {
+		this.qtdeVotosAprovadosComite = qtdeVotosAprovadosComite;
+	}
+
+	public BigInteger getQtdeVotosReprovadosComite() {
+		return qtdeVotosReprovadosComite;
+	}
+
+	public void setQtdeVotosReprovadosComite(BigInteger qtdeVotosReprovadosComite) {
+		this.qtdeVotosReprovadosComite = qtdeVotosReprovadosComite;
+	}
 }

@@ -793,6 +793,12 @@ public class CommonsUtil {
 		lista.addAll(valores);
 		return lista;
 	}
+	
+	   public static final  Long[] getListLongToArray(Collection<Long> valores) {
+		    Long[] itemsArray = new Long[valores.size()];
+	        itemsArray = valores.toArray(itemsArray);
+	        return itemsArray;
+	    }
 
 	public static final <T> List<T> merge(List<T> destino, List<T> novos) {
 		if (destino == null) {
