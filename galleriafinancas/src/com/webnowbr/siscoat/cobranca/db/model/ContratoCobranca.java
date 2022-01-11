@@ -33,34 +33,29 @@ public class ContratoCobranca implements Serializable {
 	private Integer carenciaInvestidor2;
 	private Date dataInicioInvestidor2;
 
-	
 	private String tipoCalculoInvestidor3;
 	private BigDecimal vlrInvestidor3;
 	private Integer qtdeParcelasInvestidor3;
 	private Integer carenciaInvestidor3;
 	private Date dataInicioInvestidor3;
 
-	
 	private String tipoCalculoInvestidor4;
 	private BigDecimal vlrInvestidor4;
 	private Integer qtdeParcelasInvestidor4;
 	private Integer carenciaInvestidor4;
 	private Date dataInicioInvestidor4;
 
-	
 	private String tipoCalculoInvestidor5;
 	private BigDecimal vlrInvestidor5;
 	private Integer qtdeParcelasInvestidor5;
 	private Integer carenciaInvestidor5;
 	private Date dataInicioInvestidor5;
 
-	
 	private String tipoCalculoInvestidor6;
 	private BigDecimal vlrInvestidor6;
 	private Integer qtdeParcelasInvestidor6;
 	private Integer carenciaInvestidor6;
 	private Date dataInicioInvestidor6;
-
 	
 	private String tipoCalculoInvestidor7;
 	private BigDecimal vlrInvestidor7;
@@ -68,13 +63,11 @@ public class ContratoCobranca implements Serializable {
 	private Integer carenciaInvestidor7;
 	private Date dataInicioInvestidor7;
 
-	
 	private String tipoCalculoInvestidor8;
 	private BigDecimal vlrInvestidor8;
 	private Integer qtdeParcelasInvestidor8;
 	private Integer carenciaInvestidor8;
 	private Date dataInicioInvestidor8;
-
 
 	private String tipoCalculoInvestidor9;
 	private BigDecimal vlrInvestidor9;
@@ -82,13 +75,11 @@ public class ContratoCobranca implements Serializable {
 	private Integer carenciaInvestidor9;
 	private Date dataInicioInvestidor9;
 
-
 	private String tipoCalculoInvestidor10;
 	private BigDecimal vlrInvestidor10;
 	private Integer qtdeParcelasInvestidor10;
 	private Integer carenciaInvestidor10;
 	private Date dataInicioInvestidor10;
-
 	
 	private static final long serialVersionUID = 1L;
 	private long id;

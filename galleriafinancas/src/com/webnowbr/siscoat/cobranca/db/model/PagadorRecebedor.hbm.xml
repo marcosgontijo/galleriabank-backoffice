@@ -321,6 +321,7 @@
         <property name="tipoPessoaSecundarioIsFisica" type="boolean">
            <column name="tipoPessoaSecundarioIsFisica" />
       	</property>                                            
+      
       	
       	<property name="nomeParticipanteCheckList" type="java.lang.String">
 			<column name="nomeParticipanteCheckList" />
@@ -353,6 +354,63 @@
 		<property name="comprovanteRendaCheckList" type="boolean">
 			<column name="comprovanteRendaCheckList" />
 		</property>		
+		
+		<property name="combateFraudeCheckList" type="boolean">
+			<column name="combateFraudeCheckList" />
+		</property>	
+		
+		<property name="cargoOcupacaoCheckList" type="boolean">
+			<column name="cargoOcupacaoCheckList" />
+		</property>	
+		
+		<property name="taxaCheckList" type="boolean">
+			<column name="taxaCheckList" />
+		</property>	
+		
+		<property name="nomeParticipanteCheckListConjuge" type="java.lang.String">
+			<column name="nomeParticipanteCheckListConjuge" />
+		</property>	
+	
+		<property name="rgDocumentosCheckListConjuge" type="boolean">
+			<column name="rgDocumentosCheckListConjuge" />
+		</property>
+		
+		<property name="comprovanteEnderecoDocumentosCheckListConjuge" type="boolean">
+			<column name="comprovanteEnderecoDocumentosCheckListConjuge" />
+		</property>
+		
+		<property name="certidaoCasamentoNascimentoDocumentosCheckListConjuge" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosCheckListConjuge" />
+		</property>
+		
+		<property name="fichaCadastralDocumentosCheckListConjuge" type="boolean">
+			<column name="fichaCadastralDocumentosCheckListConjuge" />
+		</property>
+		
+		<property name="bancoDocumentosCheckListConjuge" type="boolean">
+			<column name="bancoDocumentosCheckListConjuge" />
+		</property>
+		
+		<property name="telefoneEmailDocumentosCheckListConjuge" type="boolean">
+			<column name="telefoneEmailDocumentosCheckListConjuge" />
+		</property>	
+		
+		<property name="comprovanteRendaCheckListConjuge" type="boolean">
+			<column name="comprovanteRendaCheckListConjuge" />
+		</property>		
+		
+		<property name="combateFraudeCheckListConjuge" type="boolean">
+			<column name="combateFraudeCheckListConjuge" />
+		</property>	
+		
+		<property name="cargoOcupacaoCheckListConjuge" type="boolean">
+			<column name="cargoOcupacaoCheckListConjuge" />
+		</property>	
+		
+		<property name="taxaCheckListConjuge" type="boolean">
+			<column name="taxaCheckListConjuge" />
+		</property>	
+		
       	                                             
     </class>
 </hibernate-mapping>

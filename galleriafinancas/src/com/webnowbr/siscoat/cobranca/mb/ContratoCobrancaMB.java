@@ -1898,6 +1898,49 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void getEnderecoByViaNetPagador(PagadorRecebedor pagador) {
+		try {
+			String inputCep = pagador.getCep().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				pagador.setEndereco("");
+				pagador.setBairro("");
+				pagador.setCidade("");
+				pagador.setEstado("");
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+
+				pagador.setEndereco(myResponse.get("logradouro").toString());
+				pagador.setBairro(myResponse.get("bairro").toString());
+				pagador.setCidade(myResponse.get("localidade").toString());
+				pagador.setEstado(myResponse.get("uf").toString());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void getEnderecoByViaNetImovelCobranca() {
 		try {
@@ -2137,6 +2180,51 @@ public class ContratoCobrancaMB {
 		} else {
 			this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());
 			this.objetoPagadorRecebedor.setNomeCC(this.objetoPagadorRecebedor.getNome());
+		}
+	}
+	
+	public void populaReferenciaBancariaConjuge() {
+		this.objetoPagadorRecebedor.setCpfCCConjuge(this.objetoPagadorRecebedor.getCpfConjuge());
+		this.objetoPagadorRecebedor.setNomeCCConjuge(this.objetoPagadorRecebedor.getNomeConjuge());
+	}
+	
+	public void populaReferenciaBancariaCoobrigado() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean validaCPF = ValidaCPF.isCPFOnly(this.objetoPagadorRecebedor.getCpfCoobrigado());
+
+		if (!validaCPF) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Pré-Contrato: O CPF inserido é inválido ou está incorreto!", ""));
+		} else {
+			this.objetoPagadorRecebedor.setCpfCCCoobrigado(this.objetoPagadorRecebedor.getCpfCoobrigado());
+			this.objetoPagadorRecebedor.setNomeCCCoobrigado(this.objetoPagadorRecebedor.getNomeCoobrigado());
+		}
+	}
+	
+	public void populaReferenciaBancariaCoobrigadoCasado() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean validaCPF = ValidaCPF.isCPFOnly(this.objetoPagadorRecebedor.getCpfCoobrigadoCasado());
+
+		if (!validaCPF) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Pré-Contrato: O CPF inserido é inválido ou está incorreto!", ""));
+		} else {
+			this.objetoPagadorRecebedor.setCpfCCCoobrigadoCasado(this.objetoPagadorRecebedor.getCpfCoobrigadoCasado());
+			this.objetoPagadorRecebedor.setNomeCCCoobrigadoCasado(this.objetoPagadorRecebedor.getNomeCoobrigadoCasado());
+		}
+	}
+	
+	
+	public void populaReferenciaBancariaCPFPagador(PagadorRecebedor pagador) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean validaCPF = ValidaCPF.isCPFOnly(pagador.getCpf());
+
+		if (!validaCPF) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Pré-Contrato: O CPF inserido é inválido ou está incorreto!", ""));
+		} else {
+			pagador.setCpfCC(pagador.getCpf());
+			pagador.setNomeCC(pagador.getNome());
 		}
 	}
 
@@ -4741,7 +4829,7 @@ public class ContratoCobrancaMB {
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
+						"Contrato Cobrança: Pré-Contrato Reprovado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
 	}
@@ -4929,6 +5017,16 @@ public class ContratoCobrancaMB {
 				this.tipoPessoaIsFisica = true;
 			}
 		}
+		
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador = false;
+		this.addSocio = false;
+		this.addPagador = false;
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -5088,6 +5186,16 @@ public class ContratoCobrancaMB {
 				this.tipoPessoaIsFisica = true;
 			}
 		}
+		
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador = false;
+		this.addSocio = false;
+		this.addPagador = false;
 
 		// this.qtdeParcelas =
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -6517,6 +6625,9 @@ public class ContratoCobrancaMB {
 		//if (status.equals("Ag. DOC e Comite")) {
 		//	this.tituloTelaConsultaPreStatus = "Ag. DOC";
 		//}
+		if (status.equals("Pré-Comite")) {
+			this.tituloTelaConsultaPreStatus = "Pré-Comite";
+		}
 		if (status.equals("Ag. Comite")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Comite";
 		}
@@ -6532,7 +6643,6 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-		
 		
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -10109,11 +10219,9 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirSegurado() {
-		
 		this.tituloPagadorRecebedorDialog = "";
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
-		
 		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
@@ -10123,8 +10231,11 @@ public class ContratoCobrancaMB {
 	
 	public void concluirPagador() {
 		this.pagadorSecundarioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
-		this.pagadorSecundarioSelecionado.getPessoa().setNomeParticipanteCheckList(this.pagadorSecundarioSelecionado.getPessoa().getNome());
+		this.pagadorSecundarioSelecionado.setNomeParticipanteCheckList(this.pagadorSecundarioSelecionado.getPessoa().getNome());
+		this.pagadorSecundarioSelecionado.getPessoa().setNomeCC(this.pagadorSecundarioSelecionado.getPessoa().getNome());
+		this.pagadorSecundarioSelecionado.getPessoa().setCpfCC(this.pagadorSecundarioSelecionado.getPessoa().getCpf());
 		this.objetoContratoCobranca.getListaPagadores().add(this.pagadorSecundarioSelecionado);
+		criarPagadorRecebedorNoSistema(this.pagadorSecundarioSelecionado.getPessoa());
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addPagador = false;
@@ -10132,7 +10243,11 @@ public class ContratoCobrancaMB {
 	
 	public void concluirSocio() {
 		this.socioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
+		this.socioSelecionado.setNomeParticipanteCheckList(this.socioSelecionado.getPessoa().getNome());
+		this.socioSelecionado.getPessoa().setNomeCC(this.socioSelecionado.getPessoa().getNome());
+		this.socioSelecionado.getPessoa().setCpfCC(this.socioSelecionado.getPessoa().getCpf());
 		this.objetoContratoCobranca.getListSocios().add(this.socioSelecionado);
+		criarPagadorRecebedorNoSistema(this.socioSelecionado.getPessoa());
 		this.socioSelecionado = new PagadorRecebedorSocio();
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSocio = false;
@@ -10158,8 +10273,6 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 	}
-	
-	
 
 	public void concluirComite(ContratoCobranca contrato) {
 		BigDecimal maiorTaxaAprovada = BigDecimal.ZERO;
@@ -10223,6 +10336,66 @@ public class ContratoCobrancaMB {
 	
 	public void removerConta(ContasPagar conta) {
 		this.objetoContratoCobranca.getListContasPagar().remove(conta);
+	}
+	
+	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
+		PagadorRecebedor pagadorRecebedor = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		
+
+		if (pagador.getId() <= 0) {
+			List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+			boolean registraPagador = false;
+			Long idPagador = (long) 0;
+
+			if (pagador.getCpf() != null) {
+				boolean validaCPF = ValidaCPF.isCPF(pagador.getCpf());
+				if(validaCPF) {
+					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpf());
+					if (pagadorRecebedorBD.size() > 0) {
+						pagadorRecebedor = pagadorRecebedorBD.get(0);
+					} else {
+						pagadorRecebedor = pagador;
+						registraPagador = true;
+					}
+				}
+			}
+			
+			if (pagador.getCnpj() != null) {
+				boolean validaCNPJ = ValidaCNPJ.isCNPJ(pagador.getCnpj());
+				if(validaCNPJ) {
+					pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cnpj", pagador.getCnpj());
+					if (pagadorRecebedorBD.size() > 0) {
+						pagadorRecebedor = pagadorRecebedorBD.get(0);
+					} else {
+						pagadorRecebedor = pagador;
+						registraPagador = true;
+					}
+				}
+			}
+
+			registraPagador = true;
+
+
+			if (pagadorRecebedor == null) {
+				pagadorRecebedor = pagador;
+			}
+
+			if (pagador.getSite() != null && pagador.getSite().equals("")) {
+				if (!pagador.getSite().contains("http")) {
+					pagador
+							.setSite("HTTP://" + pagador.getSite().toLowerCase());
+				}
+			}
+
+			if (registraPagador) {
+				idPagador = pagadorRecebedorDao.create(pagadorRecebedor);
+				pagadorRecebedor = pagadorRecebedorDao.findById(idPagador);
+			}
+		} else {
+			pagadorRecebedorDao.merge(pagador);
+			pagadorRecebedor = pagador;
+		}
 	}
 
 	private boolean validarProcentagensSeguro() {
