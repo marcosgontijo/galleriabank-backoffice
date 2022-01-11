@@ -198,7 +198,7 @@ public class BRLTrustMB {
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			countParcelas = countParcelas + 1;
 			if (countParcelas > countCarencia) {
-				if (parcela.getDataVencimento().after(gerarDataHoje())) {
+				if (parcela.getDataVencimento().after(this.dataAquisicao)) {
 					JSONObject jsonRecebivel = new JSONObject();
 					
 					String numeroParcela = "";

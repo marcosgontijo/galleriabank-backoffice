@@ -88,6 +88,12 @@
          <property name="assistFinanceiro" type="boolean">
             <column name="assistFinanceiro" />
         </property> 
+        <property name="comiteConsultar" type="boolean">
+            <column name="comiteConsultar" />
+        </property> 
+        <property name="comiteEditar" type="boolean">
+            <column name="comiteEditar" />
+        </property>
 		<property name="codigoResponsavel" type="java.lang.String">
             <column name="CODIGORESPONSAVEL" />
         </property>  

@@ -639,7 +639,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "where cc.status = 'Aprovado' "
 			+ "and cdbp.dataPagamento >= ? ::timestamp "
 			+ "and cdbp.dataPagamento < ? ::timestamp "
-			+ "and cc.empresa != 'GALLERIA CORRESPONDENTE BANCARIO EIRELI' "
+			+ "and cc.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' "
 			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "group by cc.id, cd.id "
 			+ "order by cc.id ";
@@ -708,17 +708,23 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							somaBaixas = null;
 						}
 						*/
-						BigDecimal vlrjurosparcela = contratoCobrancaDetalhes.getVlrJurosParcela();
-						if (vlrjurosparcela != null) {
-							if (vlrjurosparcela.compareTo(BigDecimal.ZERO) == 0) {
-								vlrjurosparcela = null;
+						BigDecimal vlrjurosparcela = null;
+						if (contratoCobrancaDetalhes.getVlrJurosParcela() != null) {
+							vlrjurosparcela = contratoCobrancaDetalhes.getVlrJurosParcela();
+							if (vlrjurosparcela != null) {
+								if (vlrjurosparcela.compareTo(BigDecimal.ZERO) == 0) {
+									vlrjurosparcela = null;
+								}
 							}
 						}
 						
-						BigDecimal vlramortizacaoparcela = contratoCobrancaDetalhes.getVlrAmortizacaoParcela();
-						if (vlramortizacaoparcela != null) {
-							if (vlramortizacaoparcela.compareTo(BigDecimal.ZERO) == 0) {
-								vlramortizacaoparcela = null;
+						BigDecimal vlramortizacaoparcela = null;
+						if (contratoCobrancaDetalhes.getVlrAmortizacaoParcela() != null) {
+							vlramortizacaoparcela = contratoCobrancaDetalhes.getVlrAmortizacaoParcela();
+							if (vlramortizacaoparcela != null) {
+								if (vlramortizacaoparcela.compareTo(BigDecimal.ZERO) == 0) {
+									vlramortizacaoparcela = null;
+								}
 							}
 						}
 							
@@ -751,40 +757,47 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 						BigDecimal valorParcela = contratoCobranca.getVlrParcela();
 						
-						if (contratoCobrancaDetalhes.isParcelaPaga()) {
-							if (rs.getBigDecimal(3).compareTo(valorParcela) > 0) {
-								if (vlramortizacaoparcela != null) {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
+						if (valorParcela != null) {
+							if (contratoCobrancaDetalhes.isParcelaPaga()) {
+								if (rs.getBigDecimal(3).compareTo(valorParcela) > 0) {
+									if (!contratoCobranca.isTemSeguro()) {
+										if (vlramortizacaoparcela != null) {
+											objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+													dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
+										} else {
+											objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+													dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
+										}
+									} else {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), contratoCobrancaDetalhes.getVlrJurosParcela(), vlramortizacaoparcela));
+									}
 								} else {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
+									if (vlramortizacaoparcela != null) {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
+									} else {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
+									}
 								}
 							} else {
-								if (vlramortizacaoparcela != null) {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
+								if (rs.getBigDecimal(3).compareTo(valorParcela) > 0) {
+									if (vlramortizacaoparcela != null) {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
+									} else {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
+									}
 								} else {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
-								}
-							}
-						} else {
-							if (rs.getBigDecimal(3).compareTo(valorParcela) > 0) {
-								if (vlramortizacaoparcela != null) {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3).subtract(vlramortizacaoparcela), vlramortizacaoparcela));
-								} else {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), vlramortizacaoparcela));
-								}
-							} else {
-								if (rs.getBigDecimal(3).compareTo(valorParcela) < 0) {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), BigDecimal.ZERO));
-								} else {
-									objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
-											dataUltimoPagamento, rs.getBigDecimal(3), vlrjurosparcela, vlramortizacaoparcela));
+									if (rs.getBigDecimal(3).compareTo(valorParcela) < 0) {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), rs.getBigDecimal(3), BigDecimal.ZERO));
+									} else {
+										objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getPagador().getNome(), parcela, contratoCobrancaDetalhes.getDataVencimento(), valorParcela,
+												dataUltimoPagamento, rs.getBigDecimal(3), vlrjurosparcela, vlramortizacaoparcela));
+									}
 								}
 							}
 						}
