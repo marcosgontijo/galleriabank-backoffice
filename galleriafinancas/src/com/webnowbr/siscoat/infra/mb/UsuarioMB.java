@@ -271,6 +271,24 @@ public class UsuarioMB {
 				}				
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "COMITEEDITAR");
+			if (objetoUsuario.isComiteEditar()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "COMITECONSULTAR");
+			if (objetoUsuario.isComiteConsultar()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
 			}

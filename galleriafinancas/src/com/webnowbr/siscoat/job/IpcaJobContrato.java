@@ -71,14 +71,14 @@ public class IpcaJobContrato implements Job {
 						continue;
 					
 					try {
-						if (!ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca))
+						if (!ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca, contratoCobranca))
 							break;
 					} catch (Exception e) {
 						LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
 						continue;
 					}
 				}
-				contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
+				//contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
 				contratoCobranca.setRecalculaIPCA(false);
 				contratoCobrancaDao.merge(contratoCobranca);
 			}

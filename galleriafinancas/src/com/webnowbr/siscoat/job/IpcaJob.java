@@ -8,6 +8,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -71,7 +72,10 @@ public class IpcaJob implements Job {
 			LOGGER.info("incio job");
 			for (ContratoCobrancaDetalhes parcelaIpca : contratoCobrancaDetalhes) {
 				try {
-					ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca);
+					ContratoCobranca contratoCobranca = contratoCobrancaDetalhesDao
+							.getContratoCobranca(parcelaIpca.getId());
+					
+					ipcaJobCalcular.calcularIPCA(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, parcelaIpca, contratoCobranca);
 				} catch (Exception e) {
 					LOGGER.error("IpcaJob.execute " + "atualizaIPCA: EXCEPTION", e);
 					continue;
