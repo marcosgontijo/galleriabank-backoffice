@@ -8041,7 +8041,11 @@ public class ContratoCobrancaMB {
 			String auxDataVencimentoStr = "";
 			Date auxDataVencimento = null;
 
-			auxDataVencimentoStr = sdf.format(relatorioFinanceiroCobranca.getDataVencimentoAtual());
+			if(!CommonsUtil.semValor(relatorioFinanceiroCobranca.getDataVencimentoAtual())) {
+				auxDataVencimentoStr = sdf.format(relatorioFinanceiroCobranca.getDataVencimentoAtual());
+			} else {
+				auxDataVencimentoStr = sdf.format(relatorioFinanceiroCobranca.getDataVencimento());
+			}
 			try {
 				auxDataVencimento = sdf.parse(auxDataVencimentoStr);
 			} catch (ParseException e) {
