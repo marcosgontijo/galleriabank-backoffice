@@ -155,6 +155,9 @@ public class ContratoCobrancaMB {
 	private String origemTelaBaixar;
 	private String empresa;
 	
+	private String tipoParametroConsultaContrato;
+	private String parametroConsultaContrato;
+	
 	private String tituloTelaConsultaPreStatus;
 
 	private Date dataHoje;
@@ -5792,9 +5795,6 @@ public class ContratoCobrancaMB {
 
 		this.numContrato = null;
 		
-		
-		
-
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
 		this.listRecebedores = pagadorRecebedorDao.findAll();
@@ -5830,6 +5830,60 @@ public class ContratoCobrancaMB {
 		}
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
+	}
+	
+	public String clearFieldsContratosPerformance() {
+		this.tipoParametroConsultaContrato = "numeroContrato";
+		this.parametroConsultaContrato = null;
+		this.empresa = "Todas";
+
+		this.contratoGerado = false;
+
+		this.contratos = new ArrayList<ContratoCobranca>();
+		
+		this.tituloPainel = "";
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPerformance.xhtml";
+	}
+	
+	public void clearFiltersConsultaContratosPerformance() {
+		this.tipoParametroConsultaContrato = "numeroContrato";
+		this.parametroConsultaContrato = null;
+		this.contratoGerado = false;
+		this.empresa = "Todas";
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+	}
+	
+	public void geraConsultaContratosPerformance() {
+		
+		if (this.empresa.equals("Todas")) {
+			this.tituloPainel = "GERAL";
+		}
+		
+		if (this.empresa.equals("Securitizadora")) {
+			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
+		}
+		
+		if (this.empresa.equals("FIDC")) {
+			this.tituloPainel = "FIDC GALLERIA";
+		}
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratos = new ArrayList<ContratoCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		if (this.tipoParametroConsultaContrato.equals("numeroContrato")) {
+			if (this.tipoParametroConsultaContrato.length() == 4) {
+				this.tipoParametroConsultaContrato = "0" + this.tipoParametroConsultaContrato;
+			}
+		}
+
+		this.contratos = contratoCobrancaDao.consultaContratosPerformance(this.tipoParametroConsultaContrato, this.parametroConsultaContrato, this.empresa);
+	}
+	
+	public void changeStatusConsultaContratosPerformance() {
+		this.parametroConsultaContrato = null;
 	}
 	
 	public void consultaDadosFIDC() {
@@ -9893,11 +9947,17 @@ public class ContratoCobrancaMB {
 					
 					if ( detalhe.isParcelaPaga()) {
 						
-						if ( CommonsUtil.mesmoValor(BigInteger.ZERO, this.numeroParcelaReparcelamento))
+						if ( CommonsUtil.mesmoValor(BigInteger.ZERO, this.numeroParcelaReparcelamento)) {
 							detalhe.setDataVencimento(dataParcela);
+							detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
+						}
 						
 						encontrouParcela = true;
-						break;						
+						if ( CommonsUtil.mesmoValor(BigDecimal.ZERO, parcela.getValorParcela()))
+							break;		
+						
+						if ( CommonsUtil.mesmoValor(BigDecimal.ZERO, detalhe.getVlrParcela()))
+							detalhe.setParcelaPaga(false);
 					}
 					
 					
@@ -11156,6 +11216,69 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor();
+		}else if (idAntecipacaoInvestidor == 2) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor2();
+			investidor = objetoContratoCobranca.getRecebedor2();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor2();
+			saldo = objetoContratoCobranca.getVlrRecebedor2();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope2();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor2();
+		}else if (idAntecipacaoInvestidor == 3) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor3();
+			investidor = objetoContratoCobranca.getRecebedor3();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor3();
+			saldo = objetoContratoCobranca.getVlrRecebedor3();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope3();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor3();
+		}else if (idAntecipacaoInvestidor == 4) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor4();
+			investidor = objetoContratoCobranca.getRecebedor4();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor4();
+			saldo = objetoContratoCobranca.getVlrRecebedor4();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope4();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor4();
+		}else if (idAntecipacaoInvestidor == 5) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor5();
+			investidor = objetoContratoCobranca.getRecebedor5();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor5();
+			saldo = objetoContratoCobranca.getVlrRecebedor5();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope5();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor5();
+		}else if (idAntecipacaoInvestidor == 6) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor6();
+			investidor = objetoContratoCobranca.getRecebedor6();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor6();
+			saldo = objetoContratoCobranca.getVlrRecebedor6();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope6();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor6();
+		}else if (idAntecipacaoInvestidor == 7) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor7();
+			investidor = objetoContratoCobranca.getRecebedor7();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor7();
+			saldo = objetoContratoCobranca.getVlrRecebedor7();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope7();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor7();
+		}else if (idAntecipacaoInvestidor == 8) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor8();
+			investidor = objetoContratoCobranca.getRecebedor8();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor8();
+			saldo = objetoContratoCobranca.getVlrRecebedor8();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope8();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor8();
+		}else if (idAntecipacaoInvestidor == 9) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor9();
+			investidor = objetoContratoCobranca.getRecebedor9();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor9();
+			saldo = objetoContratoCobranca.getVlrRecebedor9();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope9();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor9();
+		}else if (idAntecipacaoInvestidor == 10) {
+			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor10();
+			investidor = objetoContratoCobranca.getRecebedor10();
+			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor10();
+			saldo = objetoContratoCobranca.getVlrRecebedor10();
+			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope10();
+			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor10();
 		}
 
 		if (listaCobrancaParcelas == null)
@@ -20362,6 +20485,20 @@ public class ContratoCobrancaMB {
 	public void setAddContasPagar(boolean addContasPagar) {
 		this.addContasPagar = addContasPagar;
 	}
-	
-	
+
+	public String getParametroConsultaContrato() {
+		return parametroConsultaContrato;
+	}
+
+	public void setParametroConsultaContrato(String parametroConsultaContrato) {
+		this.parametroConsultaContrato = parametroConsultaContrato;
+	}
+
+	public String getTipoParametroConsultaContrato() {
+		return tipoParametroConsultaContrato;
+	}
+
+	public void setTipoParametroConsultaContrato(String tipoParametroConsultaContrato) {
+		this.tipoParametroConsultaContrato = tipoParametroConsultaContrato;
+	}
 }
