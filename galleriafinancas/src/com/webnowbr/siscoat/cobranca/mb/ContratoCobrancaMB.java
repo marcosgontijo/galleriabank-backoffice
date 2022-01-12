@@ -2741,7 +2741,7 @@ public class ContratoCobrancaMB {
 							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 				}
 			}
-
+			
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
@@ -2804,6 +2804,9 @@ public class ContratoCobrancaMB {
 			}
 			if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
 				return geraConsultaContratosPorStatus("Ag. DOC");
+			}
+			if (this.tituloTelaConsultaPreStatus.equals("Pré-Comite")) {
+				return geraConsultaContratosPorStatus("Pré-Comite");
 			}
 			if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
 				return geraConsultaContratosPorStatus("Ag. Comite");
@@ -3038,6 +3041,19 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setPajurFavoravelData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPajurFavoravelData());
 				this.objetoContratoCobranca.setPajurFavoravelUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isPreAprovadoComite()) {
+			this.objetoContratoCobranca.setPreAprovadoComiteData(null);
+			this.objetoContratoCobranca.setPreAprovadoComiteUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPreAprovadoComiteData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPreAprovadoComiteData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPreAprovadoComiteData());
+				this.objetoContratoCobranca.setPreAprovadoComiteUsuario(getNomeUsuarioLogado());
 			}
 		}
 		
@@ -5058,8 +5074,19 @@ public class ContratoCobrancaMB {
 				}
 			}
 		} 
-
-		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+		
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite")) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+			if(usuarioLogado.isComiteConsultar()) {
+				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
+			} else {
+				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+			}
+		} else {
+			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+		}
 	}
 	
 	public void getIndexStepContrato() {
@@ -5094,8 +5121,18 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
-						!this.objetoContratoCobranca.isAprovadoComite()) {
+						!this.objetoContratoCobranca.isPreAprovadoComite()) {
 					this.indexStepsStatusContrato = 4;
+				}
+				
+				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isPreAprovadoComite() &&
+						!this.objetoContratoCobranca.isAprovadoComite()) {
+					this.indexStepsStatusContrato = 5;
 				}
 				
 				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
@@ -5105,7 +5142,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPajurFavoravel() &&
 						this.objetoContratoCobranca.isAprovadoComite() &&
 						!this.objetoContratoCobranca.isDocumentosCompletos()) {
-					this.indexStepsStatusContrato = 5;
+					this.indexStepsStatusContrato = 6;
 				}
 				
 				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
@@ -5116,17 +5153,6 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isDocumentosCompletos() &&
 						this.objetoContratoCobranca.isAprovadoComite() &&
 						!this.objetoContratoCobranca.isCcbPronta()) {
-					this.indexStepsStatusContrato = 6;
-				}
-				
-				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
-						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
-						this.objetoContratoCobranca.isLaudoRecebido() &&
-						this.objetoContratoCobranca.isPajurFavoravel() &&
-						this.objetoContratoCobranca.isDocumentosCompletos() &&
-						this.objetoContratoCobranca.isCcbPronta() &&
-						this.objetoContratoCobranca.isAgAssinatura()) {
 					this.indexStepsStatusContrato = 7;
 				}
 				
@@ -5135,11 +5161,24 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isAprovadoComite() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						this.objetoContratoCobranca.isCcbPronta() &&
+						this.objetoContratoCobranca.isAgAssinatura()) {
+					this.indexStepsStatusContrato = 8;
+				}
+				
+				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isAprovadoComite() &&
 						this.objetoContratoCobranca.isDocumentosCompletos() &&
 						this.objetoContratoCobranca.isCcbPronta() &&
 						!this.objetoContratoCobranca.isAgAssinatura() &&
 						this.objetoContratoCobranca.isAgRegistro()) {
-					this.indexStepsStatusContrato = 8;
+					this.indexStepsStatusContrato = 9;
 				}
 			}
 			
@@ -10296,7 +10335,7 @@ public class ContratoCobrancaMB {
 				menorValorAprovado = comite.getValorComite();
 				menorValorAprovadoTipo = comite.getTipoValorComite();
 			}
-			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "//";
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}
 		contrato.setTaxaAprovada(maiorTaxaAprovada);
 		contrato.setPrazoMaxAprovado(menorPrazoAprovado);

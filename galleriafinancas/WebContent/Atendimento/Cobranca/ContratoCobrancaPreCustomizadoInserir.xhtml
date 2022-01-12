@@ -227,6 +227,25 @@
 									    </h:outputText>																    						    
 								</h:panelGrid>
 								
+								<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
+									<p:spacer ></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="preAprovadoComiteView" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>		
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="preAprovadoComiteUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="preAprovadoComiteData" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>
 								
 								<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -342,7 +361,7 @@
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto}"
-								label="Data Vistoria ImÃ³vel" size="100" pattern="dd/MM/yyyy"
+								size="100" pattern="dd/MM/yyyy"
 								locale="pt" styleClass="dateTimeField" />
 
 							<p:outputLabel for="valorBoletoPre" value="Valor do Boleto: "
@@ -511,11 +530,11 @@
 				    </p:overlayPanel>   
 				</p:panel>
 				<p:panel id="PanelPagadorRecebedor" header="Pagador"
-					style="margin-bottom:10px;">
+					style="margin-bottom:10px;" >
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
 						style="margin-top:10px;margin-bottom:10px;">
 						<p:messages id="mensagensCPFCNPJ" showDetail="true" />
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="2" >	
 							<p:outputLabel for="Pessoa" value="Pessoa: "
 								styleClass="labelBold" />
 							<p:selectOneRadio id="Pessoa"
@@ -605,6 +624,11 @@
 							<p:inputText id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
 								label="E-Mail" type="email" onblur="" style="width:400px;" />
+								
+							<p:outputLabel for="pagadorDonoGarantia"
+								value="Pagador é dono da garantia?" />
+							<p:selectBooleanCheckbox id="pagadorDonoGarantia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.pagadorDonoGarantia}" />
 
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />

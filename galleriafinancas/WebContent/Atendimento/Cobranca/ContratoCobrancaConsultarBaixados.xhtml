@@ -118,7 +118,7 @@
 			            <h:outputText value="#{contratos.imovel.cidade}" />
 			        </p:column>	
 			        <p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Operação" title="Editar Simples">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />

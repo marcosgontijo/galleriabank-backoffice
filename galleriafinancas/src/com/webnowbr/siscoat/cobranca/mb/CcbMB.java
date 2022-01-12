@@ -1172,9 +1172,9 @@ public class CcbMB {
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
-
-	    try
-	    {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+	    try {
 	    	String tipoDownload = this.getTipoDownload();
 	    	
 	    	XWPFDocument document = new XWPFDocument();
@@ -1740,10 +1740,12 @@ public class CcbMB {
 			
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
-	    }
-	    catch ( Throwable e )
-	    {
-	        e.printStackTrace();
+			
+	    } catch (Exception e) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e,
+							""));
 	    }
 	    
 	    

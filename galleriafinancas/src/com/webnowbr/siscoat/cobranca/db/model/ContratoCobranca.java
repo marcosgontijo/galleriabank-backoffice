@@ -356,6 +356,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean agRegistro;
 	private String agRegistroUsuario;
 	
+	private Date preAprovadoComiteData;
+	private boolean preAprovadoComite;
+	private String preAprovadoComiteUsuario;
+	
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
 	private String aprovadoComiteUsuario;
@@ -4380,4 +4384,29 @@ public class ContratoCobranca implements Serializable {
 	public void setQtdeVotosReprovadosComite(BigInteger qtdeVotosReprovadosComite) {
 		this.qtdeVotosReprovadosComite = qtdeVotosReprovadosComite;
 	}
+
+	public Date getPreAprovadoComiteData() {
+		return preAprovadoComiteData;
+	}
+
+	public void setPreAprovadoComiteData(Date preAprovadoComiteData) {
+		this.preAprovadoComiteData = preAprovadoComiteData;
+	}
+
+	public boolean isPreAprovadoComite() {
+		return preAprovadoComite;
+	}
+
+	public void setPreAprovadoComite(boolean preAprovadoComite) {
+		this.preAprovadoComite = preAprovadoComite;
+	}
+
+	public String getPreAprovadoComiteUsuario() {
+		return preAprovadoComiteUsuario;
+	}
+
+	public void setPreAprovadoComiteUsuario(String preAprovadoComiteUsuario) {
+		this.preAprovadoComiteUsuario = preAprovadoComiteUsuario;
+	}
+	
 }

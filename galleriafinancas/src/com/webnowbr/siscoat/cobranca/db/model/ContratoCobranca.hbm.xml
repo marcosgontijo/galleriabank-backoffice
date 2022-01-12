@@ -726,6 +726,18 @@
 			<column name="agRegistro" />
 		</property>
 		
+		<property name="preAprovadoComiteData"
+			type="java.util.Date">
+			<column name="preAprovadoComiteData" />
+		</property>
+		<property name="preAprovadoComiteUsuario"
+			type="java.lang.String">
+			<column name="preAprovadoComiteUsuario" />
+		</property>
+		<property name="preAprovadoComite" type="boolean">
+			<column name="preAprovadoComite" />
+		</property>
+		
 		<property name="aprovadoComiteData"
 			type="java.util.Date">
 			<column name="aprovadoComiteData" />

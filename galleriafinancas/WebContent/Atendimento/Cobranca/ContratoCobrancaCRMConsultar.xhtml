@@ -79,7 +79,9 @@
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. PAJU e Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPAJULaudo')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+							<p:commandButton value="Pré-Comite" ajax="false" action="#{crmMB.consultaContratosCRM('PreComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
+							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 								<p:commandButton value="Ag. Comite" ajax="false" action="#{crmMB.consultaContratosCRM('AgComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 								<p:spacer width="6"></p:spacer>
 							</shiro:hasAnyRoles>
