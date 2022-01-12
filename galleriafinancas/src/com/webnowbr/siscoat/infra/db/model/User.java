@@ -53,6 +53,9 @@ public final class User implements Serializable {
     private boolean userPreContratoAnalista;
     private boolean userInvestidor;
     
+    private boolean comiteEditar;
+    private boolean comiteConsultar;
+    
     private boolean assistFinanceiro;
     
     private String codigoResponsavel;
@@ -451,5 +454,21 @@ public final class User implements Serializable {
 
 	public void setAssistFinanceiro(boolean assistFinanceiro) {
 		this.assistFinanceiro = assistFinanceiro;
+	}
+
+	public boolean isComiteEditar() {
+		return comiteEditar;
+	}
+
+	public void setComiteEditar(boolean comiteEditar) {
+		this.comiteEditar = comiteEditar;
+	}
+
+	public boolean isComiteConsultar() {
+		return comiteConsultar;
+	}
+
+	public void setComiteConsultar(boolean comiteConsultar) {
+		this.comiteConsultar = comiteConsultar;
 	}
 }

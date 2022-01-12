@@ -134,6 +134,26 @@
 						<p:ajax event="change" update="PanelResponsavel" />
 					</p:selectBooleanButton>
 					
+					<h:outputLabel for="ComiteConsultar"
+						value="Sistema de Cobrança - Comitê Consultar: "
+						class="labelBold" />
+					<p:selectBooleanButton id="ComiteConsultar"
+						value="#{usuarioMB.objetoUsuario.comiteConsultar}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+						<p:ajax event="change" update="PanelResponsavel" />
+					</p:selectBooleanButton>
+					
+					<h:outputLabel for="ComiteEditar"
+						value="Sistema de Cobrança - Comitê Editar: "
+						class="labelBold" />
+					<p:selectBooleanButton id="ComiteEditar"
+						value="#{usuarioMB.objetoUsuario.comiteEditar}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+						<p:ajax event="change" update="PanelResponsavel" />
+					</p:selectBooleanButton>
+					
 					<h:outputLabel for="GerenciaCobrançaIUGU"
 						value="Sistema de Cobrança - IUGU: " class="labelBold" />
 					<p:selectBooleanButton id="GerenciaCobrançaIUGU"
@@ -141,7 +161,6 @@
 						value="#{usuarioMB.objetoUsuario.userCobrancaIugu}" onLabel="Sim"
 						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
 						style="width:60px">
-
 					</p:selectBooleanButton>
 					
 					<h:outputLabel for="AssistenteFinanceiro"
