@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+						<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Ficha Principal" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.file}" />
+						</p:commandButton>
+						<p:commandButton value="Ficha Conjuge" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratos" header="Contratos - Consultar | #{contratoCobrancaMB.tituloPainel}"
+				style="margin-bottom:10px;">	
+				<h:panelGrid columns="3">								
+					<p:outputLabel for="tipoParametroConsultaContrato" value="Filtro: " style="margin-right: 43px;" />
+			        <p:selectOneListbox id="tipoParametroConsultaContrato" value="#{contratoCobrancaMB.tipoParametroConsultaContrato}">
+			            <f:selectItem itemLabel="Contrato" itemValue="numeroContrato" />
+			            <f:selectItem itemLabel="Nome Pagador" itemValue="nomePagador" />
+			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
+			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
+			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
+			            <p:ajax event="change" update="ConsultaContratos" listener="#{contratoCobrancaMB.changeStatusConsultaContratosPerformance}" />
+			        </p:selectOneListbox>	
+					<p:inputText id="parametroConsultaContrato"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}" label="Contrato"
+						style="width:150px;" required="true" rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroContrato' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB'}"/>
+					<p:inputMask id="Cpf"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CPF" mask="999.999.999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cpfPagador'}"/>
+					<p:inputMask id="CNPJ"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CNPJ" mask="99.999.999/9999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cnpjPagador'}"/>
+					</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="empresa" value="Empresa: " style="margin-right: 20px;" />
+			        <p:selectOneListbox id="empresa" value="#{contratoCobrancaMB.empresa}" style="width: 300px;">
+			            <f:selectItem itemLabel="Todas" itemValue="Todas" />
+			            <f:selectItem itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+			            <f:selectItem itemLabel="FIDC GALLERIA" itemValue="FIDC GALLERIA" />
+			            <p:ajax event="change" update="ConsultaContratos" listener="#{contratoCobrancaMB.changeStatusConsultaContratosPerformance}" />
+			        </p:selectOneListbox>	
+					<p:spacer></p:spacer>												
+				</h:panelGrid>	
+
+				<h:panelGrid columns="3">
+					<p:commandButton value="Consultar"
+						ajax="false"
+						action="#{contratoCobrancaMB.geraConsultaContratosPerformance}"
+						image="ui-icon ui-icon-check"
+						update=":form:ConsultaContratosResultados"
+						style="TEXT-DECORATION: bold;" />
+					<p:spacer width="25"></p:spacer>
+					<p:commandButton value="Limpar Consulta"
+						ajax="false"
+						action="#{contratoCobrancaMB.clearFiltersConsultaContratosPerformance}"
+						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
+                 <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         reflow="true"
+   		         rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="10,50,100">
+			        <f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>                 
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			            <h:outputText value="#{contratos.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Empresa" filterBy="#{contratos.empresa}" filterMatchMode="contains" sortBy="#{contratos.empresa}">
+			            <h:outputText value="#{contratos.empresa}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.pagador.nome}" />
+			        </p:column>	        
+			        <p:column styleClass="colunaResponsiva">	
+			       		<shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  
+				        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>		
+			            </shiro:hasAnyRoles>        
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>	
+		                </shiro:hasAnyRoles>	
+		                <shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  	                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>		                	                						
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">  	                
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>
+			            <shiro:hasAnyRoles name="ROOT">
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+			                </p:commandButton>
+		                </shiro:hasAnyRoles> 
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton onclick="PF('observacoesDialog').show();" value="Observação" title="Observação" icon="ui-icon-plus" update=":formObservacoes">		                	
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.observacaoContrato}" value="#{contratoCobrancaMB.tituloPainel}" />		                	
+		                </p:commandButton>	
+		                <p:spacer width="10" height="10"/> 
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+			                <p:commandButton action="#{ipcaMB.reProcessaIPCAContrato(contratos)}" icon="ui-icon-calculator" value="Corrigir IPCA" title="Corrigir IPCA" update=":form:mensagens">
+			                    <p:confirm header="Confirmação" message="Deseja realmente corrigir este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
+			                </p:commandButton> 
+			                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+					    	</p:confirmDialog>   
+		                </shiro:hasAnyRoles>
+		                <p:spacer width="10" height="10"/>
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	                
+			                <p:commandButton oncomplete="PF('seguradosDialog').show();" action="#{contratoCobrancaMB.clearFieldsSegurados}" update="formSegurados" icon="ui-icon-check" value="Segurados" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>   
+		             	<shiro:hasAnyRoles name="ROOT">	
+		             		<p:spacer height="10"/>
+		                	<p:commandButton onclick="PF('alterarEmpresaDialog').show();"
+								icon="ui-icon-video"
+								update=":formAlterarEmpresa"
+								style="height: 25px;width: 100px;"
+								value="Empresa" title="Empresa">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />								
+							</p:commandButton>
+						</shiro:hasAnyRoles>               
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+		<ui:include src="../../Dialog/DialogSegurados.xhtml" />
+
+		<p:dialog header="Observações" widgetVar="observacoesDialog" resizable="false" style="FONT-SIZE: 10pt;" width="800" responsive="true">
+			<h:form id="formObservacoes">
+				<p:panel id="ObservacoesPanel1" header="Observações - Inserir" style="margin-top:10px;">	
+					<h:panelGrid columns="2">						
+						<p:outputLabel for="numeroContrato" value="Número do Contrato:" styleClass="labelBold" style="margin-right: 59px;"/>
+						<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>
+						<p:outputLabel value="Data da Observação: " styleClass="labelBold" style="font-weight: bold; font-size: 18px;"/>
+					    <h:outputText value="#{contratoCobrancaMB.dataObservacao}" style="font-weight: bold; font-size: 18px;">			            	
+					          <f:convertDateTime locale="pt_BR"  />
+					          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+					    </h:outputText>
+					    <p:outputLabel for="Observacao" value="Observação: " styleClass="labelBold"  style="margin-right: 59px;"/>
+						<p:inputTextarea rows="2" cols="50" id="Observacao" value="#{contratoCobrancaMB.observacao}" label="Observação" onblur=""  style="width:450px;"/>
+					</h:panelGrid>
+					<div align="center" style="margin-top:20px;">								
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.addObservacao}" update="ObservacoesPanel"/>																						
+					</div>	 													
+				</p:panel>
+				<p:panel id="ObservacoesPanel" header="Observações - Consultar" style="margin-top:10px;">	
+	   		         <p:dataTable id="dtObservacoes" var="observacoes" value="#{contratoCobrancaMB.listContratoCobrancaObservacoes}" paginator="true" rows="5" lazy="true"
+	   		         	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         	currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 	rowsPerPageTemplate="5,10" selection="" emptyMessage="" sortBy="#{observacoes.data}" sortOrder="descending">               
+				        <p:column style="text-align: center;" headerText="Data Inicio" sortBy="#{observacoes.data}">
+				            <h:outputText value="#{observacoes.data}" >			            	
+				            	<f:convertDateTime locale="pt_BR"  />
+				            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+				            </h:outputText>
+				        </p:column>		
+				        <p:column style="text-align: center;" headerText="Usuário" filterBy="#{observacoes.usuario}" filterMatchMode="contains" sortBy="#{observacoes.usuario}">
+			            	<h:outputText value="#{observacoes.usuario}" />
+			        	</p:column>	    
+			        	<p:column style="text-align: center;" headerText="Observação" filterBy="#{observacoes.observacao}" filterMatchMode="contains" sortBy="#{observacoes.observacao}">
+			            	<h:outputText value="#{observacoes.observacao}" />
+			        	</p:column>	             
+				        <p:column style="width:150px;">	
+				        	<shiro:hasAnyRoles name="ROOT">		        
+					            <p:commandButton action="#{contratoCobrancaMB.excluirObservacao}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+					               <f:setPropertyActionListener target="#{contratoCobrancaMB.contratoCobrancaObservacoes}" value="#{observacoes}" />
+					             </p:commandButton>			
+					        </shiro:hasAnyRoles> 	        	            
+			            </p:column>		      		               		        			        			           			 		
+					</p:dataTable>	
+				</p:panel>			
+				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
+					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+				</div>	  				
+			</h:form>
+		</p:dialog>  
+		<p:dialog header="Alterar Empresa do Contrato"
+			widgetVar="alterarEmpresaDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="460">
+			<h:form id="formAlterarEmpresa">
+				<div style="float: left; width: 75%;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="empresa" value="Empresa: "
+							styleClass="labelBold" />
+						<p:selectOneMenu id="empresa"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.empresa}"
+							label="Status" style="width:345px;" required="true">
+							<f:selectItem itemValue="" itemLabel="SELECIONE" />
+							<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A." itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+							<f:selectItem itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI" itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+							<f:selectItem itemValue="FIDC GALLERIA" itemLabel="FIDC GALLERIA" />
+						</p:selectOneMenu>	
+					</h:panelGrid>
+				</div>
+				<div align="center"
+					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
+					<p:commandButton value="Salvar Alteração"
+						action="#{contratoCobrancaMB.alterarEmpresa()}"
+						update=":form:msgs"
+						ajax="false" icon="ui-icon-print" title="Salvar Alteração" oncomplete="PF('alterarEmpresaDialog').hide();">
+					</p:commandButton>
+					<p:spacer width="10" />
+					<p:commandButton value="Cancelar"
+						icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('alterarEmpresaDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="1 Parcela em Atraso - Contratos" overflow="auto"
+			widgetVar="ina30Dialog" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="ina30Form">
+				<p:dataTable var="ina30" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosInadimplencia30}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center" headerText="Numero Contrato" 
+						filterBy="#{ina30.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina30.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column style="text-align: center" headerText="Pagador" 
+						filterBy="#{ina30.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina30.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
+								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina30}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
+								ajax="false" icon="ui-icon-check" value="Baixar"
+								title="Baixar Parcela">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina30}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.origemTelaBaixar}"
+									value="CobrancaConsultar" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton
+								action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false"
+								icon="ui-icon-trash" value="Excluir" title="Excluir">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina30}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="true" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton
+								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
+								icon="ui-icon-calculator" value="Corrigir IPCA"
+								title="Corrigir IPCA" update=":form:mensagens">
+								<p:confirm header="Confirmação"
+									message="Deseja realmente corrigir este contrato pelo IPCA?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+							</p:confirmDialog>
+						</shiro:hasAnyRoles>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="2 Parcelas em Atraso - Contratos" overflow="auto"
+			widgetVar="ina60Dialog" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="ina60Form">
+				<p:dataTable var="ina60" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosInadimplencia60}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{ina60.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina60.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{ina60.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina60.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
+								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina60}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
+								ajax="false" icon="ui-icon-check" value="Baixar"
+								title="Baixar Parcela">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina60}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.origemTelaBaixar}"
+									value="CobrancaConsultar" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton
+								action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false"
+								icon="ui-icon-trash" value="Excluir" title="Excluir">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina60}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="true" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton
+								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
+								icon="ui-icon-calculator" value="Corrigir IPCA"
+								title="Corrigir IPCA" update=":form:mensagens">
+								<p:confirm header="Confirmação"
+									message="Deseja realmente corrigir este contrato pelo IPCA?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+							</p:confirmDialog>
+						</shiro:hasAnyRoles>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>	
+		<p:dialog header="3 ou Mais Parcelas em Atraso - Contratos" overflow="auto"
+			widgetVar="ina90Dialog" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="ina90Form">
+				<p:dataTable var="ina90" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosInadimplencia90}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{ina90.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina90.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{ina90.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina90.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
+								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina90}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
+								ajax="false" icon="ui-icon-check" value="Baixar"
+								title="Baixar Parcela">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina90}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.origemTelaBaixar}"
+									value="CobrancaConsultar" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton
+								action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false"
+								icon="ui-icon-trash" value="Excluir" title="Excluir">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{ina90}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="true" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton
+								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
+								icon="ui-icon-calculator" value="Corrigir IPCA"
+								title="Corrigir IPCA" update=":form:mensagens">
+								<p:confirm header="Confirmação"
+									message="Deseja realmente corrigir este contrato pelo IPCA?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+							</p:confirmDialog>
+						</shiro:hasAnyRoles>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	
+	</ui:define>
+</ui:composition>

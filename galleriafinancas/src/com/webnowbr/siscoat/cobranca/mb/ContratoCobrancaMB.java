@@ -158,6 +158,9 @@ public class ContratoCobrancaMB {
 	private String origemTelaBaixar;
 	private String empresa;
 	
+	private String tipoParametroConsultaContrato;
+	private String parametroConsultaContrato;
+	
 	private String tituloTelaConsultaPreStatus;
 
 	private Date dataHoje;
@@ -5973,9 +5976,6 @@ public class ContratoCobrancaMB {
 
 		this.numContrato = null;
 		
-		
-		
-
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
 		this.listRecebedores = pagadorRecebedorDao.findAll();
@@ -6011,6 +6011,60 @@ public class ContratoCobrancaMB {
 		}
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
+	}
+	
+	public String clearFieldsContratosPerformance() {
+		this.tipoParametroConsultaContrato = "numeroContrato";
+		this.parametroConsultaContrato = null;
+		this.empresa = "Todas";
+
+		this.contratoGerado = false;
+
+		this.contratos = new ArrayList<ContratoCobranca>();
+		
+		this.tituloPainel = "";
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPerformance.xhtml";
+	}
+	
+	public void clearFiltersConsultaContratosPerformance() {
+		this.tipoParametroConsultaContrato = "numeroContrato";
+		this.parametroConsultaContrato = null;
+		this.contratoGerado = false;
+		this.empresa = "Todas";
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+	}
+	
+	public void geraConsultaContratosPerformance() {
+		
+		if (this.empresa.equals("Todas")) {
+			this.tituloPainel = "GERAL";
+		}
+		
+		if (this.empresa.equals("Securitizadora")) {
+			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
+		}
+		
+		if (this.empresa.equals("FIDC")) {
+			this.tituloPainel = "FIDC GALLERIA";
+		}
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratos = new ArrayList<ContratoCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		if (this.tipoParametroConsultaContrato.equals("numeroContrato")) {
+			if (this.tipoParametroConsultaContrato.length() == 4) {
+				this.tipoParametroConsultaContrato = "0" + this.tipoParametroConsultaContrato;
+			}
+		}
+
+		this.contratos = contratoCobrancaDao.consultaContratosPerformance(this.tipoParametroConsultaContrato, this.parametroConsultaContrato, this.empresa);
+	}
+	
+	public void changeStatusConsultaContratosPerformance() {
+		this.parametroConsultaContrato = null;
 	}
 	
 	public void consultaDadosFIDC() {
@@ -20650,6 +20704,20 @@ public class ContratoCobrancaMB {
 	public void setObjetoAnaliseComite(AnaliseComite objetoAnaliseComite) {
 		this.objetoAnaliseComite = objetoAnaliseComite;
 	}
-	
-	
+
+	public String getParametroConsultaContrato() {
+		return parametroConsultaContrato;
+	}
+
+	public void setParametroConsultaContrato(String parametroConsultaContrato) {
+		this.parametroConsultaContrato = parametroConsultaContrato;
+	}
+
+	public String getTipoParametroConsultaContrato() {
+		return tipoParametroConsultaContrato;
+	}
+
+	public void setTipoParametroConsultaContrato(String tipoParametroConsultaContrato) {
+		this.tipoParametroConsultaContrato = tipoParametroConsultaContrato;
+	}
 }
