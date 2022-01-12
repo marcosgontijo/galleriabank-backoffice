@@ -125,6 +125,22 @@
 								<h:outputText value="Não" />
 							</ui:fragment>
 							
+							<p:outputLabel value="Sistema de Cobrança - Comitê Editar: " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.comiteEditar}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.comiteEditar}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+							
+							<p:outputLabel value="Sistema de Cobrança - Comitê Consultar:  " styleClass="labelBold"/>	
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.comiteConsultar}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{usuarioMB.objetoUsuario.comiteConsultar}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+							
 							<p:outputLabel value="Cobranças IUGU Postos: " styleClass="labelBold"/>	
 							<ui:fragment rendered="#{usuarioMB.objetoUsuario.userIuguPosto}">
 								<h:outputText value="Sim" />

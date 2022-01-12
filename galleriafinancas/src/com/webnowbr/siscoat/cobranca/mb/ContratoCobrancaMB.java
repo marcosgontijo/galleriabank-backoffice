@@ -9949,6 +9949,7 @@ public class ContratoCobrancaMB {
 						
 						if ( CommonsUtil.mesmoValor(BigInteger.ZERO, this.numeroParcelaReparcelamento)) {
 							detalhe.setDataVencimento(dataParcela);
+							detalhe.setVlrSaldoInicial(saldoAnterior);
 							detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
 						}
 						
