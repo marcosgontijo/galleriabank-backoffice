@@ -5874,8 +5874,8 @@ public class ContratoCobrancaMB {
 
 		// Busca Contratos com Parcelas que vencem no dia atual
 		if (this.tipoParametroConsultaContrato.equals("numeroContrato")) {
-			if (this.tipoParametroConsultaContrato.length() == 4) {
-				this.tipoParametroConsultaContrato = "0" + this.tipoParametroConsultaContrato;
+			if (this.parametroConsultaContrato.length() == 4) {
+				this.parametroConsultaContrato = "0" + this.parametroConsultaContrato;
 			}
 		}
 
