@@ -80,7 +80,7 @@
 							converter="bigDecimalConverter" />
 			        </p:column>	    
 			        <p:column style="width:200px;">
-					<shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  
+					<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  
 					
 							<p:commandButton action="#{contratoCobrancaMB.recuperarContratoReprovado}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Recuperar Contrato" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

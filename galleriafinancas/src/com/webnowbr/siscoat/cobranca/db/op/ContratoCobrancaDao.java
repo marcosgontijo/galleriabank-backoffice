@@ -8,9 +8,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
+import org.hibernate.engine.JoinSequence.Join;
+import org.jboss.resteasy.util.CommitHeaderOutputStream;
+
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -4877,11 +4882,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
-		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao " +
+		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
 			"inner join cobranca.imovelcobranca im on c.imovel = im.id ";
+	
+	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
+			" from cobranca.analisecomite ";
+			
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosCRM(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
@@ -4925,9 +4934,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false) ";
 					} 
 					
+					if (tipoConsulta.equals("Pré-Comite")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = false";
+					}
+					
 					if (tipoConsulta.equals("Ag. Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and aprovadoComite = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = true and aprovadoComite = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. DOC")) {
@@ -4942,7 +4956,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. CCB")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = true and ccbPronta = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true  and documentosCompletos = true and aprovadoComite = true and ccbPronta = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Assinatura")) {
@@ -5008,6 +5022,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					List<String> idsContratoCobranca = new ArrayList<String>(0);
+					
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
@@ -5030,14 +5046,44 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setCcbPronta(rs.getBoolean(16));
 						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
 						contratoCobranca.setAgRegistro(rs.getBoolean(18));
-						contratoCobranca.setAprovadoComite(rs.getBoolean(19));
-						contratoCobranca.setAnaliseReprovada(rs.getBoolean(20)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getDate(21));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(20));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(21)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getDate(22));
+						
+						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
+						
+						
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
 					}
-	
+					rs.close();
+					
+					if (!CommonsUtil.semValor(idsContratoCobranca)) {
+						query = QUERY_CONTRATOS_CRM_COMITE;
+						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
+						// connection = getConnection();
+						ps = connection.prepareStatement(query);
+
+						// (0, CommonsUtil.getArray(idsContratoCobranca ));
+						rs = ps.executeQuery();
+						while (rs.next()) {
+
+							Long idCobranca = rs.getLong("contratocobranca");
+
+							ContratoCobranca contratoCobrancaFind = objects.stream()
+									.filter(c -> CommonsUtil.mesmoValor(c.getId(), idCobranca)).findFirst()
+									.orElse(null);
+							if (contratoCobrancaFind.getListaAnaliseComite() == null) {
+								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
+							}
+							AnaliseComite analiseComite = new AnaliseComite();
+							analiseComite.setUsuarioComite(rs.getString("usuarioComite"));
+							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
+						}
+					}
+
 				} finally {
 					closeResources(connection, ps, rs);					
 				}

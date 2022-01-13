@@ -382,6 +382,14 @@ public class CommonsUtil {
 	public static final boolean mesmoValor(Number a, Number b) {
 		return a == null ? b == null : a.equals(b);
 	}
+	
+	public static final boolean mesmoValor(BigDecimal a, BigDecimal b) {
+		return a == null ? b == null : a.compareTo(b)==0;
+	}
+	
+	public static final boolean mesmoValor(BigInteger a, BigInteger b) {
+		return a == null ? b == null : a.compareTo(b)==0;
+	}
 
 	public static final boolean mesmoValor(String a, String b) {
 		return a == null ? b == null : a.equals(b);
@@ -793,6 +801,12 @@ public class CommonsUtil {
 		lista.addAll(valores);
 		return lista;
 	}
+	
+	   public static final  Long[] getListLongToArray(Collection<Long> valores) {
+		    Long[] itemsArray = new Long[valores.size()];
+	        itemsArray = valores.toArray(itemsArray);
+	        return itemsArray;
+	    }
 
 	public static final <T> List<T> merge(List<T> destino, List<T> novos) {
 		if (destino == null) {

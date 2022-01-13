@@ -726,6 +726,18 @@
 			<column name="agRegistro" />
 		</property>
 		
+		<property name="preAprovadoComiteData"
+			type="java.util.Date">
+			<column name="preAprovadoComiteData" />
+		</property>
+		<property name="preAprovadoComiteUsuario"
+			type="java.lang.String">
+			<column name="preAprovadoComiteUsuario" />
+		</property>
+		<property name="preAprovadoComite" type="boolean">
+			<column name="preAprovadoComite" />
+		</property>
+		
 		<property name="aprovadoComiteData"
 			type="java.util.Date">
 			<column name="aprovadoComiteData" />
@@ -1051,6 +1063,14 @@
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>   
+        
+        <set name="listaAnaliseComite" table="AnaliseComite" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" />
+        </set>
         
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
@@ -1394,5 +1414,18 @@
 		<property name="tipoOperacao" type="java.lang.String">
 			<column name="tipoOperacao" />
 		</property>	
+		
+		<property name="qtdeVotosAprovadosComite" type="big_integer">
+			<column name="qtdeVotosAprovadosComite" />
+		</property>
+		
+		<property name="qtdeVotosReprovadosComite" type="big_integer">
+			<column name="qtdeVotosReprovadosComite" />
+		</property>
+		
+		<property name="comentarioPreComite" type="text">
+			<column name="comentarioPreComite" />
+		</property>	
+		
 	</class>
 </hibernate-mapping>

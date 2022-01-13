@@ -503,9 +503,11 @@ public class CcbMB {
 			}
 			
 			if (this.emitenteSelecionado.getNomeConjuge() != null) {
+				this.setRegimeCasamentoEmitente(this.emitenteSelecionado.getRegimeCasamento());
 				this.setNomeConjugeEmitente(this.emitenteSelecionado.getNomeConjuge());
 				this.setCpfConjugeEmitente(this.emitenteSelecionado.getCpfConjuge());
 			} else {
+				this.setRegimeCasamentoEmitente(null);
 				this.setNomeConjugeEmitente(null);
 				this.setCpfConjugeEmitente(null);
 			}
@@ -553,11 +555,13 @@ public class CcbMB {
 				}
 				
 				if (this.intervenienteSelecionado.getNomeConjuge() != null) {
+					this.setRegimeCasamentoInterveniente(this.intervenienteSelecionado.getRegimeCasamento());
 					this.setNomeConjugeInterveniente(this.intervenienteSelecionado.getNomeConjuge());
 					this.setCpfConjugeInterveniente(this.intervenienteSelecionado.getCpfConjuge());
 				} else {
 					this.setNomeConjugeInterveniente(null);
 					this.setCpfConjugeInterveniente(null);
+					this.setRegimeCasamentoInterveniente(null);
 				}
 			} else {
 				this.setEmpresaInterveniente(true);
@@ -604,11 +608,13 @@ public class CcbMB {
 				}
 				
 				if (this.terceiroGSelecionado.getNomeConjuge() != null) {
+					this.setRegimeCasamentoTerceiroG(this.terceiroGSelecionado.getRegimeCasamento());
 					this.setNomeConjugeTerceiroG(this.terceiroGSelecionado.getNomeConjuge());
 					this.setCpfConjugeTerceiroG(this.terceiroGSelecionado.getCpfConjuge());
 				} else {
 					this.setNomeConjugeTerceiroG(null);
 					this.setCpfConjugeTerceiroG(null);
+					this.setRegimeCasamentoTerceiroG(null);
 				}
 			} else {
 				this.setEmpresaTerceiroG(true);
@@ -655,11 +661,13 @@ public class CcbMB {
 				}
 				
 				if (this.avalistaSelecionado.getNomeConjuge() != null) {
+					this.setRegimeCasamentoAvalista(this.avalistaSelecionado.getRegimeCasamento());
 					this.setNomeConjugeAvalista(this.avalistaSelecionado.getNomeConjuge());
 					this.setCpfConjugeAvalista(this.avalistaSelecionado.getCpfConjuge());
 				} else {
 					this.setNomeConjugeAvalista(null);
 					this.setCpfConjugeAvalista(null);
+					this.setRegimeCasamentoAvalista(null);
 				}
 			} else {
 				this.setEmpresaAvalista(true);
@@ -1078,7 +1086,6 @@ public class CcbMB {
 		run = paragraph.createRun();
 	}
 	
-
 	public StreamedContent geraCcbDinamica() throws IOException{
 		try {
 			XWPFDocument document = new XWPFDocument();
@@ -1165,9 +1172,9 @@ public class CcbMB {
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
-
-	    try
-	    {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+	    try {
 	    	String tipoDownload = this.getTipoDownload();
 	    	
 	    	XWPFDocument document = new XWPFDocument();
@@ -1733,10 +1740,12 @@ public class CcbMB {
 			
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
-	    }
-	    catch ( Throwable e )
-	    {
-	        e.printStackTrace();
+			
+	    } catch (Exception e) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e,
+							""));
 	    }
 	    
 	    

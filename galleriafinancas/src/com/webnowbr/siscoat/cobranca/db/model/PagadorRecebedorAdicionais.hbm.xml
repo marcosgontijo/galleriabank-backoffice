@@ -19,6 +19,51 @@
 				 
 		<property name="relacaoComTomador" type="java.lang.String">
             <column name="relacaoComTomador"/>
-        </property>                                        
+        </property>  
+        
+        	<property name="nomeParticipanteCheckList" type="java.lang.String">
+			<column name="nomeParticipanteCheckList" />
+		</property>	
+	
+		<property name="rgDocumentosCheckList" type="boolean">
+			<column name="rgDocumentosCheckList" />
+		</property>
+		
+		<property name="comprovanteEnderecoDocumentosCheckList" type="boolean">
+			<column name="comprovanteEnderecoDocumentosCheckList" />
+		</property>
+		
+		<property name="certidaoCasamentoNascimentoDocumentosCheckList" type="boolean">
+			<column name="certidaoCasamentoNascimentoDocumentosCheckList" />
+		</property>
+		
+		<property name="fichaCadastralDocumentosCheckList" type="boolean">
+			<column name="fichaCadastralDocumentosCheckList" />
+		</property>
+		
+		<property name="bancoDocumentosCheckList" type="boolean">
+			<column name="bancoDocumentosCheckList" />
+		</property>
+		
+		<property name="telefoneEmailDocumentosCheckList" type="boolean">
+			<column name="telefoneEmailDocumentosCheckList" />
+		</property>	
+		
+		<property name="comprovanteRendaCheckList" type="boolean">
+			<column name="comprovanteRendaCheckList" />
+		</property>		
+		
+		<property name="combateFraudeCheckList" type="boolean">
+			<column name="combateFraudeCheckList" />
+		</property>	
+		
+		<property name="cargoOcupacaoCheckList" type="boolean">
+			<column name="cargoOcupacaoCheckList" />
+		</property>	
+		
+		<property name="taxaCheckList" type="boolean">
+			<column name="taxaCheckList" />
+		</property>	
+		                                      
     </class>
 </hibernate-mapping>

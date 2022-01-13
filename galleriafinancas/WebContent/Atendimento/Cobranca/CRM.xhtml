@@ -206,6 +206,54 @@
 						</div>
 						
 						<div class="ui-g-1 ui-md-1 ui-lg-1">
+						    <p:fieldset id="preComite" legend="Ag. Comite" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
+						        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #bababa !important; padding: 10px;">
+						        	Contratos
+						       	</div>
+						    	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						        	<h:outputText value="#{crmMB.qtdeAgComite}"/>
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #bababa !important; padding: 10px;">
+						       		Valor Total
+						       	</div>
+						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
+						       		<h:outputText value="#{crmMB.valorTotalAgComite}" converter="bigDecimalConverter"/>
+						       	</div>						       	
+						        <p:dataGrid id="preComiteDG" var="preComite" value="#{crmMB.preComite}" columns="1"  emptyMesspree="Nenhum contrato encontrado!!!">
+						            <p:panel id="preComitePanel" header="#{preComite.numeroContrato}" style="text-align:center">
+						                <h:panelGrid columns="1" style="width:100%">
+						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>						                  
+											<h:outputText id="data" value="#{preComite.dataContrato}"  >			            	
+								            	<f:convertDateTime locale="pt_BR"  />
+								            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								            </h:outputText>							
+								            <p:outputLabel for="valor" value="Valor R$ " styleClass="labelBold" style="font-size: 18px;"/>	            
+											<h:outputText id="valor"  value="#{preComite.quantoPrecisa}" converter="bigDecimalConverter" style="background-color: #f2f2f2 !important;padding: 5px !important; border-radius: 5px !important;"/> 
+						                </h:panelGrid>
+						         		<p:commandButton id="impreeBtnAgComite" icon="ui-icon-search" value="Detalhes" type="button" style="width: 90px;margin-top: 10px !important;"/>
+									    <p:overlayPanel id="impreePanelAgComite" for="impreeBtnAgRegistro" hideEffect="fade">
+									    	<h:panelGrid columns="1" style="width:100%">
+										    	<p:outputLabel value="Ppreador: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{preComite.ppreador.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+												<p:outputLabel value="Responsável: " styleClass="labelBold" style="font-size: 18px;text-align: left !important;"/>
+												<h:outputText value="#{preComite.responsavel.nome}"  style="font-weight: normal; font-size: 12px;text-align: left !important;"/>
+											</h:panelGrid>
+										</p:overlayPanel>
+						                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" style="margin-top: 10px !important; width: 90px;">
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{preComite}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPpreadorRecebedor}" value="#{preComite.ppreador}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{preComite.imovel}" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="true" />
+						                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+						                </p:commandButton>
+						            </p:panel>
+						        </p:dataGrid>
+    						</p:fieldset>
+						</div>
+						
+						<div class="ui-g-1 ui-md-1 ui-lg-1">
 						    <p:fieldset id="agComite" legend="Ag. Comite" style="font-weight: bold;margin-top: 10px;background-color: #b7e6ba !important;">						        
 						        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center;background-color: #bababa !important; padding: 10px;">
 						        	Contratos

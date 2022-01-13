@@ -38,6 +38,10 @@ public class CRMMB {
 	private int qtdeAgPAJUeLaudo;
 	private BigDecimal valorTotalAgPAJUeLaudo;
 	
+	private List<ContratoCobranca> preComite;
+	private int qtdePreComite;
+	private BigDecimal valorTotalPreComite;
+	
 	private List<ContratoCobranca> agComite;
 	private int qtdeAgComite;
 	private BigDecimal valorTotalAgComite;
@@ -76,6 +80,7 @@ public class CRMMB {
 		geraConsultaContratosEmAnalise();
 		geraConsultaContratosAgPagtoBoleto();
 		geraConsultaContratosAgPAJUeLaudo();
+		geraConsultaContratosPreComite();
 		geraConsultaContratosAgComite();
 		geraConsultaContratosAgDOC();
 		geraConsultaContratosAgCCB();
@@ -140,6 +145,15 @@ public class CRMMB {
 			this.valorTodosContratos = this.valorTotalAgPAJUeLaudo;
 			
 			this.tituloPagina = "Ag. PAJU e Laudo";
+		}
+		
+		if (filtro.equals("PreComite")) {
+			geraConsultaContratosPreComite();
+			this.todosContratos = this.preComite;
+			this.qtdeTodosContratos = this.qtdePreComite;
+			this.valorTodosContratos = this.valorTotalPreComite;
+			
+			this.tituloPagina = "Pré-Comite";
 		}
 		
 		if (filtro.equals("AgComite")) {
@@ -390,6 +404,39 @@ public class CRMMB {
 		}
 	}
 	
+	public void geraConsultaContratosPreComite() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.preComite = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.preComite = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Pré-Comite");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.preComite = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Pré-Comite"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdePreComite = 0;
+		this.valorTotalPreComite = BigDecimal.ZERO;
+		
+		if (this.preComite.size() > 0) {
+			this.qtdePreComite = this.preComite.size();
+			
+			for (ContratoCobranca c : this.preComite) {
+				this.valorTotalPreComite = valorTotalPreComite.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
 	public void geraConsultaContratosAgComite() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.agComite = new ArrayList<ContratoCobranca>();
@@ -591,28 +638,33 @@ public class CRMMB {
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
-						c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isAprovadoComite()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isPreAprovadoComite()) {
+					c.setStatus("Pré-Comite");
+				}
+				
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
+						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && !c.isAprovadoComite()) {
 					c.setStatus("Ag. Comite");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel()  && !c.isDocumentosCompletos()) {
 					c.setStatus("Ag. DOC");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAprovadoComite() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
-						c.setStatus("Ag. CCB");	
+					c.isLaudoRecebido() && c.isPajurFavoravel()  && c.isDocumentosCompletos() && !c.isCcbPronta()) {
+					c.setStatus("Ag. CCB");	
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel()  && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
 					c.setStatus("Ag. Assinatura");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
-						c.setStatus("Ag. Registro");
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
+					c.setStatus("Ag. Registro");
 				}
 			}
 
@@ -828,6 +880,30 @@ public class CRMMB {
 		this.valorTotalAgRegistro = valorTotalAgRegistro;
 	}
 	
+	public List<ContratoCobranca> getPreComite() {
+		return preComite;
+	}
+
+	public void setPreComite(List<ContratoCobranca> preComite) {
+		this.preComite = preComite;
+	}
+
+	public int getQtdePreComite() {
+		return qtdePreComite;
+	}
+
+	public void setQtdePreComite(int qtdePreComite) {
+		this.qtdePreComite = qtdePreComite;
+	}
+
+	public BigDecimal getValorTotalPreComite() {
+		return valorTotalPreComite;
+	}
+
+	public void setValorTotalPreComite(BigDecimal valorTotalPreComite) {
+		this.valorTotalPreComite = valorTotalPreComite;
+	}
+
 	public List<ContratoCobranca> getAgComite() {
 		return agComite;
 	}

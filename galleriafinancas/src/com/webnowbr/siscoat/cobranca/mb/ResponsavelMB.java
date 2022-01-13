@@ -115,33 +115,35 @@ public class ResponsavelMB {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		String msgRetorno = null;
 		try {
-			
+
 			objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);
-			
+
 			if (objetoResponsavel.getId() <= 0) {
-				responsavelDao.create(objetoResponsavel);
-				msgRetorno = "inserido";
+				if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
+					responsavelDao.create(objetoResponsavel);
+					msgRetorno = "inserido";
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Codigo já Resgistrado", ""));
+					return "";
+				}
 			} else {
 				responsavelDao.merge(objetoResponsavel);
 				msgRetorno = "atualizado";
 			}
 
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Responsavel: Registro "
-							+ msgRetorno + " com sucesso! (Responsavel: "
-							+ objetoResponsavel.getNome() + ")", ""));
-			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Responsavel: Registro " + msgRetorno
+					+ " com sucesso! (Responsavel: " + objetoResponsavel.getNome() + ")", ""));
+
 			objetoResponsavel = new Responsavel();
 
 		} catch (DAOException e) {
 
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Responsavel: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Responsavel: " + e, ""));
 
 			return "";
 		} catch (DBConnectionException e) {
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Responsavel: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Responsavel: " + e, ""));
 
 			return "";
 		}

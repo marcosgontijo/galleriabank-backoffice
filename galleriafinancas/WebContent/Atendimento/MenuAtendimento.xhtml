@@ -94,20 +94,30 @@
 									<p:menuitem value="Pré-Cont Ag. Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />									
+										styleClass="itemMenu" />
 									<p:menuitem value="Pré-Cont Em Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
+										styleClass="itemMenu" />
 									<p:menuitem value="Pré-Cont Ag. Pagto. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Pagto. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
+										styleClass="itemMenu" />
 									<p:menuitem value="Pré-Cont Ag. PAJU e Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU e Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-
+										
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles
+									name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">
+									<p:menuitem value="Pré-Comite"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pré-Comite')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
+								
 									<p:menuitem value="Pré-Cont Ag. Comite"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -117,7 +127,7 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-	
+
 									<p:menuitem value="Pré-Cont Ag. CCB"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. CCB')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -134,7 +144,7 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>					
+								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO">

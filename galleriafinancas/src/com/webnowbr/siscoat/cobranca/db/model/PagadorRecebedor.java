@@ -37,25 +37,12 @@ public class PagadorRecebedor implements Serializable {
 	private String atividade;
 	private String contato;
 	private String numero;
+	private String sexo;
 	
 	private String estadocivil;
 	
-	private String rg;
-	private String cpf;
-	private String cnpj;
-	
-	private String cep;
-	
-	private String banco;
-	private String bancoCompleto;
-	private List<SelectItem> listaBancos;
-	private String agencia;
-	private String conta;
-	private String nomeCC;
-	private String cpfCC;
-	private String cnpjCC;
-	
 	private String regimeCasamento; 
+	private String cargoConjuge;
 	private String nomeConjuge;	
 	private String cpfConjuge; 
 	private String rgConjuge; 
@@ -63,6 +50,34 @@ public class PagadorRecebedor implements Serializable {
 	private String telResidencialConjuge; 
 	private String telCelularConjuge; 
 	private Date dtNascimentoConjuge; 
+	private String enderecoConjuge;
+	private String bairroConjuge;
+	private String complementoConjuge;
+	private String cidadeConjuge;
+	private String estadoConjuge;
+	private String cepConjuge;
+	
+	private String bancoConjuge;
+	private String agenciaConjuge;
+	private String contaConjuge;
+	private String nomeCCConjuge;
+	private String cpfCCConjuge;
+	private String cnpjCCConjuge;	
+	
+	private String rg;
+	private String cpf;
+	private String cnpj;
+	
+	private String cep;
+	
+	private String bancoCompleto;
+	private List<SelectItem> listaBancos;
+	private String banco;
+	private String agencia;
+	private String conta;
+	private String nomeCC;
+	private String cpfCC;
+	private String cnpjCC;	
 	
 	private String idIugu;
 	
@@ -80,16 +95,6 @@ public class PagadorRecebedor implements Serializable {
 	private String iuguUserToken;
 	
 	private String site;
-
-	private String sexo;
-	private String cargoConjuge;
-	
-	private String enderecoConjuge;
-	private String bairroConjuge;
-	private String complementoConjuge;
-	private String cidadeConjuge;
-	private String estadoConjuge;
-	private String cepConjuge;
 	
 	private String nomeCoobrigado;	
 	private String cpfCoobrigado;	
@@ -101,14 +106,19 @@ public class PagadorRecebedor implements Serializable {
 	private String cidadeCoobrigado;
 	private String estadoCoobrigado;
 	private String cepCoobrigado;
-	
 	private String emailCoobrigado;
 	private String emailConjuge;
-	
 	private Date dataEmissaoRGCoobrigado;
 	private Date dataEmissaoRG;
 	private Date dataEmissaoRGConjuge;
 	
+	private String bancoCoobrigado;
+	private String agenciaCoobrigado;
+	private String contaCoobrigado;
+	private String nomeCCCoobrigado;
+	private String cpfCCCoobrigado;
+	private String cnpjCCCoobrigado;	
+
 	private String estadocivilcoobrigado;
 	private String cargoCoobrigadoCasado;
 	private String nomeCoobrigadoCasado;
@@ -131,6 +141,13 @@ public class PagadorRecebedor implements Serializable {
 	private String telCelularCoobrigado;
 	private String sexoCoobrigado;
 	
+	private String bancoCoobrigadoCasado;
+	private String agenciaCoobrigadoCasado;
+	private String contaCoobrigadoCasado;
+	private String nomeCCCoobrigadoCasado;
+	private String cpfCCCoobrigadoCasado;
+	private String cnpjCCCoobrigadoCasado;	
+	
 	
 	private String nomeSecundario;
 	private String cpfSecundario;
@@ -148,6 +165,46 @@ public class PagadorRecebedor implements Serializable {
 	private boolean bancoDocumentosCheckList;
 	private boolean telefoneEmailDocumentosCheckList;
 	private boolean comprovanteRendaCheckList;
+	private boolean combateFraudeCheckList;
+	private boolean cargoOcupacaoCheckList;
+	private boolean taxaCheckList;
+	
+	private String nomeParticipanteCheckListConjuge;
+	private boolean rgDocumentosCheckListConjuge;
+	private boolean comprovanteEnderecoDocumentosCheckListConjuge;
+	private boolean certidaoCasamentoNascimentoDocumentosCheckListConjuge;
+	private boolean fichaCadastralDocumentosCheckListConjuge;
+	private boolean bancoDocumentosCheckListConjuge;
+	private boolean telefoneEmailDocumentosCheckListConjuge;
+	private boolean comprovanteRendaCheckListConjuge;
+	private boolean combateFraudeCheckListConjuge;
+	private boolean cargoOcupacaoCheckListConjuge;
+	private boolean taxaCheckListConjuge;
+	
+	private String nomeParticipanteCheckListCoobrigado;
+	private boolean rgDocumentosCheckListCoobrigado;
+	private boolean comprovanteEnderecoDocumentosCheckListCoobrigado;
+	private boolean certidaoCasamentoNascimentoDocumentosCheckListCoobrigado;
+	private boolean fichaCadastralDocumentosCheckListCoobrigado;
+	private boolean bancoDocumentosCheckListCoobrigado;
+	private boolean telefoneEmailDocumentosCheckListCoobrigado;
+	private boolean comprovanteRendaCheckListCoobrigado;
+	private boolean combateFraudeCheckListCoobrigado;
+	private boolean cargoOcupacaoCheckListCoobrigado;
+	private boolean taxaCheckListCoobrigado;
+	
+	private String nomeParticipanteCheckListCoobrigadoCasado;
+	private boolean rgDocumentosCheckListCoobrigadoCasado;
+	private boolean comprovanteEnderecoDocumentosCheckListCoobrigadoCasado;
+	private boolean certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado;
+	private boolean fichaCadastralDocumentosCheckListCoobrigadoCasado;
+	private boolean bancoDocumentosCheckListCoobrigadoCasado;
+	private boolean telefoneEmailDocumentosCheckListCoobrigadoCasado;
+	private boolean comprovanteRendaCheckListCoobrigadoCasado;
+	private boolean combateFraudeCheckListCoobrigadoCasado;
+	private boolean cargoOcupacaoCheckListCoobrigadoCasado;
+	private boolean taxaCheckListCoobrigadoCasado;
+	/////////
 	
 	private User usuario;
 	
@@ -1338,5 +1395,447 @@ public class PagadorRecebedor implements Serializable {
 	public void setComprovanteRendaCheckList(boolean comprovanteRendaCheckList) {
 		this.comprovanteRendaCheckList = comprovanteRendaCheckList;
 	}
+
+	public boolean isCombateFraudeCheckList() {
+		return combateFraudeCheckList;
+	}
+
+	public void setCombateFraudeCheckList(boolean combateFraudeCheckList) {
+		this.combateFraudeCheckList = combateFraudeCheckList;
+	}
+
+	public boolean isCargoOcupacaoCheckList() {
+		return cargoOcupacaoCheckList;
+	}
+
+	public void setCargoOcupacaoCheckList(boolean cargoOcupacaoCheckList) {
+		this.cargoOcupacaoCheckList = cargoOcupacaoCheckList;
+	}
+
+	public boolean isTaxaCheckList() {
+		return taxaCheckList;
+	}
+
+	public void setTaxaCheckList(boolean taxaCheckList) {
+		this.taxaCheckList = taxaCheckList;
+	}
+
+	public String getNomeParticipanteCheckListConjuge() {
+		return nomeParticipanteCheckListConjuge;
+	}
+
+	public void setNomeParticipanteCheckListConjuge(String nomeParticipanteCheckListConjuge) {
+		this.nomeParticipanteCheckListConjuge = nomeParticipanteCheckListConjuge;
+	}
+
+	public boolean isRgDocumentosCheckListConjuge() {
+		return rgDocumentosCheckListConjuge;
+	}
+
+	public void setRgDocumentosCheckListConjuge(boolean rgDocumentosCheckListConjuge) {
+		this.rgDocumentosCheckListConjuge = rgDocumentosCheckListConjuge;
+	}
+
+	public boolean isComprovanteEnderecoDocumentosCheckListConjuge() {
+		return comprovanteEnderecoDocumentosCheckListConjuge;
+	}
+
+	public void setComprovanteEnderecoDocumentosCheckListConjuge(boolean comprovanteEnderecoDocumentosCheckListConjuge) {
+		this.comprovanteEnderecoDocumentosCheckListConjuge = comprovanteEnderecoDocumentosCheckListConjuge;
+	}
+
+	public boolean isCertidaoCasamentoNascimentoDocumentosCheckListConjuge() {
+		return certidaoCasamentoNascimentoDocumentosCheckListConjuge;
+	}
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheckListConjuge(
+			boolean certidaoCasamentoNascimentoDocumentosCheckListConjuge) {
+		this.certidaoCasamentoNascimentoDocumentosCheckListConjuge = certidaoCasamentoNascimentoDocumentosCheckListConjuge;
+	}
+
+	public boolean isFichaCadastralDocumentosCheckListConjuge() {
+		return fichaCadastralDocumentosCheckListConjuge;
+	}
+
+	public void setFichaCadastralDocumentosCheckListConjuge(boolean fichaCadastralDocumentosCheckListConjuge) {
+		this.fichaCadastralDocumentosCheckListConjuge = fichaCadastralDocumentosCheckListConjuge;
+	}
+
+	public boolean isBancoDocumentosCheckListConjuge() {
+		return bancoDocumentosCheckListConjuge;
+	}
+
+	public void setBancoDocumentosCheckListConjuge(boolean bancoDocumentosCheckListConjuge) {
+		this.bancoDocumentosCheckListConjuge = bancoDocumentosCheckListConjuge;
+	}
+
+	public boolean isTelefoneEmailDocumentosCheckListConjuge() {
+		return telefoneEmailDocumentosCheckListConjuge;
+	}
+
+	public void setTelefoneEmailDocumentosCheckListConjuge(boolean telefoneEmailDocumentosCheckListConjuge) {
+		this.telefoneEmailDocumentosCheckListConjuge = telefoneEmailDocumentosCheckListConjuge;
+	}
+
+	public boolean isComprovanteRendaCheckListConjuge() {
+		return comprovanteRendaCheckListConjuge;
+	}
+
+	public void setComprovanteRendaCheckListConjuge(boolean comprovanteRendaCheckListConjuge) {
+		this.comprovanteRendaCheckListConjuge = comprovanteRendaCheckListConjuge;
+	}
+
+	public boolean isCombateFraudeCheckListConjuge() {
+		return combateFraudeCheckListConjuge;
+	}
+
+	public void setCombateFraudeCheckListConjuge(boolean combateFraudeCheckListConjuge) {
+		this.combateFraudeCheckListConjuge = combateFraudeCheckListConjuge;
+	}
+
+	public boolean isCargoOcupacaoCheckListConjuge() {
+		return cargoOcupacaoCheckListConjuge;
+	}
+
+	public void setCargoOcupacaoCheckListConjuge(boolean cargoOcupacaoCheckListConjuge) {
+		this.cargoOcupacaoCheckListConjuge = cargoOcupacaoCheckListConjuge;
+	}
+
+	public boolean isTaxaCheckListConjuge() {
+		return taxaCheckListConjuge;
+	}
+
+	public void setTaxaCheckListConjuge(boolean taxaCheckListConjuge) {
+		this.taxaCheckListConjuge = taxaCheckListConjuge;
+	}
+
+	public String getNomeParticipanteCheckListCoobrigado() {
+		return nomeParticipanteCheckListCoobrigado;
+	}
+
+	public void setNomeParticipanteCheckListCoobrigado(String nomeParticipanteCheckListCoobrigado) {
+		this.nomeParticipanteCheckListCoobrigado = nomeParticipanteCheckListCoobrigado;
+	}
+
+	public boolean isRgDocumentosCheckListCoobrigado() {
+		return rgDocumentosCheckListCoobrigado;
+	}
+
+	public void setRgDocumentosCheckListCoobrigado(boolean rgDocumentosCheckListCoobrigado) {
+		this.rgDocumentosCheckListCoobrigado = rgDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isComprovanteEnderecoDocumentosCheckListCoobrigado() {
+		return comprovanteEnderecoDocumentosCheckListCoobrigado;
+	}
+
+	public void setComprovanteEnderecoDocumentosCheckListCoobrigado(
+			boolean comprovanteEnderecoDocumentosCheckListCoobrigado) {
+		this.comprovanteEnderecoDocumentosCheckListCoobrigado = comprovanteEnderecoDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isCertidaoCasamentoNascimentoDocumentosCheckListCoobrigado() {
+		return certidaoCasamentoNascimentoDocumentosCheckListCoobrigado;
+	}
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheckListCoobrigado(
+			boolean certidaoCasamentoNascimentoDocumentosCheckListCoobrigado) {
+		this.certidaoCasamentoNascimentoDocumentosCheckListCoobrigado = certidaoCasamentoNascimentoDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isFichaCadastralDocumentosCheckListCoobrigado() {
+		return fichaCadastralDocumentosCheckListCoobrigado;
+	}
+
+	public void setFichaCadastralDocumentosCheckListCoobrigado(boolean fichaCadastralDocumentosCheckListCoobrigado) {
+		this.fichaCadastralDocumentosCheckListCoobrigado = fichaCadastralDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isBancoDocumentosCheckListCoobrigado() {
+		return bancoDocumentosCheckListCoobrigado;
+	}
+
+	public void setBancoDocumentosCheckListCoobrigado(boolean bancoDocumentosCheckListCoobrigado) {
+		this.bancoDocumentosCheckListCoobrigado = bancoDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isTelefoneEmailDocumentosCheckListCoobrigado() {
+		return telefoneEmailDocumentosCheckListCoobrigado;
+	}
+
+	public void setTelefoneEmailDocumentosCheckListCoobrigado(boolean telefoneEmailDocumentosCheckListCoobrigado) {
+		this.telefoneEmailDocumentosCheckListCoobrigado = telefoneEmailDocumentosCheckListCoobrigado;
+	}
+
+	public boolean isComprovanteRendaCheckListCoobrigado() {
+		return comprovanteRendaCheckListCoobrigado;
+	}
+
+	public void setComprovanteRendaCheckListCoobrigado(boolean comprovanteRendaCheckListCoobrigado) {
+		this.comprovanteRendaCheckListCoobrigado = comprovanteRendaCheckListCoobrigado;
+	}
+
+	public boolean isCombateFraudeCheckListCoobrigado() {
+		return combateFraudeCheckListCoobrigado;
+	}
+
+	public void setCombateFraudeCheckListCoobrigado(boolean combateFraudeCheckListCoobrigado) {
+		this.combateFraudeCheckListCoobrigado = combateFraudeCheckListCoobrigado;
+	}
+
+	public boolean isCargoOcupacaoCheckListCoobrigado() {
+		return cargoOcupacaoCheckListCoobrigado;
+	}
+
+	public void setCargoOcupacaoCheckListCoobrigado(boolean cargoOcupacaoCheckListCoobrigado) {
+		this.cargoOcupacaoCheckListCoobrigado = cargoOcupacaoCheckListCoobrigado;
+	}
+
+	public boolean isTaxaCheckListCoobrigado() {
+		return taxaCheckListCoobrigado;
+	}
+
+	public void setTaxaCheckListCoobrigado(boolean taxaCheckListCoobrigado) {
+		this.taxaCheckListCoobrigado = taxaCheckListCoobrigado;
+	}
+
+	public String getNomeParticipanteCheckListCoobrigadoCasado() {
+		return nomeParticipanteCheckListCoobrigadoCasado;
+	}
+
+	public void setNomeParticipanteCheckListCoobrigadoCasado(String nomeParticipanteCheckListCoobrigadoCasado) {
+		this.nomeParticipanteCheckListCoobrigadoCasado = nomeParticipanteCheckListCoobrigadoCasado;
+	}
+
+	public boolean isRgDocumentosCheckListCoobrigadoCasado() {
+		return rgDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setRgDocumentosCheckListCoobrigadoCasado(boolean rgDocumentosCheckListCoobrigadoCasado) {
+		this.rgDocumentosCheckListCoobrigadoCasado = rgDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isComprovanteEnderecoDocumentosCheckListCoobrigadoCasado() {
+		return comprovanteEnderecoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setComprovanteEnderecoDocumentosCheckListCoobrigadoCasado(
+			boolean comprovanteEnderecoDocumentosCheckListCoobrigadoCasado) {
+		this.comprovanteEnderecoDocumentosCheckListCoobrigadoCasado = comprovanteEnderecoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isCertidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado() {
+		return certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setCertidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado(
+			boolean certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado) {
+		this.certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado = certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isFichaCadastralDocumentosCheckListCoobrigadoCasado() {
+		return fichaCadastralDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setFichaCadastralDocumentosCheckListCoobrigadoCasado(
+			boolean fichaCadastralDocumentosCheckListCoobrigadoCasado) {
+		this.fichaCadastralDocumentosCheckListCoobrigadoCasado = fichaCadastralDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isBancoDocumentosCheckListCoobrigadoCasado() {
+		return bancoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setBancoDocumentosCheckListCoobrigadoCasado(boolean bancoDocumentosCheckListCoobrigadoCasado) {
+		this.bancoDocumentosCheckListCoobrigadoCasado = bancoDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isTelefoneEmailDocumentosCheckListCoobrigadoCasado() {
+		return telefoneEmailDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public void setTelefoneEmailDocumentosCheckListCoobrigadoCasado(
+			boolean telefoneEmailDocumentosCheckListCoobrigadoCasado) {
+		this.telefoneEmailDocumentosCheckListCoobrigadoCasado = telefoneEmailDocumentosCheckListCoobrigadoCasado;
+	}
+
+	public boolean isComprovanteRendaCheckListCoobrigadoCasado() {
+		return comprovanteRendaCheckListCoobrigadoCasado;
+	}
+
+	public void setComprovanteRendaCheckListCoobrigadoCasado(boolean comprovanteRendaCheckListCoobrigadoCasado) {
+		this.comprovanteRendaCheckListCoobrigadoCasado = comprovanteRendaCheckListCoobrigadoCasado;
+	}
+
+	public boolean isCombateFraudeCheckListCoobrigadoCasado() {
+		return combateFraudeCheckListCoobrigadoCasado;
+	}
+
+	public void setCombateFraudeCheckListCoobrigadoCasado(boolean combateFraudeCheckListCoobrigadoCasado) {
+		this.combateFraudeCheckListCoobrigadoCasado = combateFraudeCheckListCoobrigadoCasado;
+	}
+
+	public boolean isCargoOcupacaoCheckListCoobrigadoCasado() {
+		return cargoOcupacaoCheckListCoobrigadoCasado;
+	}
+
+	public void setCargoOcupacaoCheckListCoobrigadoCasado(boolean cargoOcupacaoCheckListCoobrigadoCasado) {
+		this.cargoOcupacaoCheckListCoobrigadoCasado = cargoOcupacaoCheckListCoobrigadoCasado;
+	}
+
+	public boolean isTaxaCheckListCoobrigadoCasado() {
+		return taxaCheckListCoobrigadoCasado;
+	}
+
+	public void setTaxaCheckListCoobrigadoCasado(boolean taxaCheckListCoobrigadoCasado) {
+		this.taxaCheckListCoobrigadoCasado = taxaCheckListCoobrigadoCasado;
+	}
+
+	public String getBancoConjuge() {
+		return bancoConjuge;
+	}
+
+	public void setBancoConjuge(String bancoConjuge) {
+		this.bancoConjuge = bancoConjuge;
+	}
+
+	public String getAgenciaConjuge() {
+		return agenciaConjuge;
+	}
+
+	public void setAgenciaConjuge(String agenciaConjuge) {
+		this.agenciaConjuge = agenciaConjuge;
+	}
+
+	public String getContaConjuge() {
+		return contaConjuge;
+	}
+
+	public void setContaConjuge(String contaConjuge) {
+		this.contaConjuge = contaConjuge;
+	}
+
+	public String getNomeCCConjuge() {
+		return nomeCCConjuge;
+	}
+
+	public void setNomeCCConjuge(String nomeCCConjuge) {
+		this.nomeCCConjuge = nomeCCConjuge;
+	}
+
+	public String getCpfCCConjuge() {
+		return cpfCCConjuge;
+	}
+
+	public void setCpfCCConjuge(String cpfCCConjuge) {
+		this.cpfCCConjuge = cpfCCConjuge;
+	}
+
+	public String getCnpjCCConjuge() {
+		return cnpjCCConjuge;
+	}
+
+	public void setCnpjCCConjuge(String cnpjCCConjuge) {
+		this.cnpjCCConjuge = cnpjCCConjuge;
+	}
+
+	public String getBancoCoobrigado() {
+		return bancoCoobrigado;
+	}
+
+	public void setBancoCoobrigado(String bancoCoobrigado) {
+		this.bancoCoobrigado = bancoCoobrigado;
+	}
+
+	public String getAgenciaCoobrigado() {
+		return agenciaCoobrigado;
+	}
+
+	public void setAgenciaCoobrigado(String agenciaCoobrigado) {
+		this.agenciaCoobrigado = agenciaCoobrigado;
+	}
+
+	public String getContaCoobrigado() {
+		return contaCoobrigado;
+	}
+
+	public void setContaCoobrigado(String contaCoobrigado) {
+		this.contaCoobrigado = contaCoobrigado;
+	}
+
+	public String getNomeCCCoobrigado() {
+		return nomeCCCoobrigado;
+	}
+
+	public void setNomeCCCoobrigado(String nomeCCCoobrigado) {
+		this.nomeCCCoobrigado = nomeCCCoobrigado;
+	}
+
+	public String getCpfCCCoobrigado() {
+		return cpfCCCoobrigado;
+	}
+
+	public void setCpfCCCoobrigado(String cpfCCCoobrigado) {
+		this.cpfCCCoobrigado = cpfCCCoobrigado;
+	}
+
+	public String getCnpjCCCoobrigado() {
+		return cnpjCCCoobrigado;
+	}
+
+	public void setCnpjCCCoobrigado(String cnpjCCCoobrigado) {
+		this.cnpjCCCoobrigado = cnpjCCCoobrigado;
+	}
+
+	public String getBancoCoobrigadoCasado() {
+		return bancoCoobrigadoCasado;
+	}
+
+	public void setBancoCoobrigadoCasado(String bancoCoobrigadoCasado) {
+		this.bancoCoobrigadoCasado = bancoCoobrigadoCasado;
+	}
+
+	public String getAgenciaCoobrigadoCasado() {
+		return agenciaCoobrigadoCasado;
+	}
+
+	public void setAgenciaCoobrigadoCasado(String agenciaCoobrigadoCasado) {
+		this.agenciaCoobrigadoCasado = agenciaCoobrigadoCasado;
+	}
+
+	public String getContaCoobrigadoCasado() {
+		return contaCoobrigadoCasado;
+	}
+
+	public void setContaCoobrigadoCasado(String contaCoobrigadoCasado) {
+		this.contaCoobrigadoCasado = contaCoobrigadoCasado;
+	}
+
+	public String getNomeCCCoobrigadoCasado() {
+		return nomeCCCoobrigadoCasado;
+	}
+
+	public void setNomeCCCoobrigadoCasado(String nomeCCCoobrigadoCasado) {
+		this.nomeCCCoobrigadoCasado = nomeCCCoobrigadoCasado;
+	}
+
+	public String getCpfCCCoobrigadoCasado() {
+		return cpfCCCoobrigadoCasado;
+	}
+
+	public void setCpfCCCoobrigadoCasado(String cpfCCCoobrigadoCasado) {
+		this.cpfCCCoobrigadoCasado = cpfCCCoobrigadoCasado;
+	}
+
+	public String getCnpjCCCoobrigadoCasado() {
+		return cnpjCCCoobrigadoCasado;
+	}
+
+	public void setCnpjCCCoobrigadoCasado(String cnpjCCCoobrigadoCasado) {
+		this.cnpjCCCoobrigadoCasado = cnpjCCCoobrigadoCasado;
+	}
+	
+	
+	
 }
 

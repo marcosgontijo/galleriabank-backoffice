@@ -254,12 +254,35 @@
 							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
+									<p:spacer ></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="preAprovadoComiteView" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>		
+									<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">									
+										<p:selectBooleanButton id="preAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="preAprovadoComiteUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="preAprovadoComiteData" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
 									<p:outputLabel styleClass="labelBold">Aprovado Pelo Comitê</p:outputLabel>
 									<p:spacer ></p:spacer>
 									<shiro:hasAnyRoles name="PRECOBRANCA">										
 										<p:selectBooleanButton id="aprovadoComiteView" value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
 									</shiro:hasAnyRoles>		
-									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">									
+									<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">									
 										<p:selectBooleanButton id="aprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:=60px"/>
 									</shiro:hasAnyRoles>
 									<p:spacer height="7"></p:spacer>
