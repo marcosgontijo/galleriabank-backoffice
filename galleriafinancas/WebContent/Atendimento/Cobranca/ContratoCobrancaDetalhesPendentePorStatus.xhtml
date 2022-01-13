@@ -366,6 +366,20 @@
 				</p:panel>
 
 
+				<h:panelGroup id="comentarioPreComitePanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário Pré-Comitê">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPreComite" value="Comentário Pré-Comitê: "
+								styleClass="labelBold" />
+							<h:inputTextarea id="comentarioPreComite"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPreComite}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;" />
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 5}">

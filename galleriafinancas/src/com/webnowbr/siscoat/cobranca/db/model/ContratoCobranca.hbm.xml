@@ -1422,5 +1422,10 @@
 		<property name="qtdeVotosReprovadosComite" type="big_integer">
 			<column name="qtdeVotosReprovadosComite" />
 		</property>
+		
+		<property name="comentarioPreComite" type="text">
+			<column name="comentarioPreComite" />
+		</property>	
+		
 	</class>
 </hibernate-mapping>

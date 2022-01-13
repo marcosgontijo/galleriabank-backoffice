@@ -540,6 +540,8 @@ public class ContratoCobranca implements Serializable {
 	private Date dataUltimaAtualizacao;
 	
 	private String tipoOperacao;
+	
+	private String comentarioPreComite;
 
 	public ContratoCobranca() {
 		super();
@@ -4407,6 +4409,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setPreAprovadoComiteUsuario(String preAprovadoComiteUsuario) {
 		this.preAprovadoComiteUsuario = preAprovadoComiteUsuario;
+	}
+
+	public String getComentarioPreComite() {
+		return comentarioPreComite;
+	}
+
+	public void setComentarioPreComite(String comentarioPreComite) {
+		this.comentarioPreComite = comentarioPreComite;
 	}
 	
 }
