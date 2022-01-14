@@ -27,125 +27,215 @@
 	            validatePhone();
 	        }
 	        );
-		</script>		
-			<p:panel id="PanelResponsavel" header="Responsável - #{responsavelMB.tituloPainel}" style="margin-bottom:10px;">
-				<p:focus /> 
-				<p:messages/>
-						<h:panelGrid columns="2">
-							<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
-							<p:selectOneRadio id="Pessoa" value="#{responsavelMB.tipoPessoaIsFisica}" required="true">
-					            <f:selectItem itemLabel="Física" itemValue="true" />
-					            <f:selectItem itemLabel="Jurídica" itemValue="false" />
-					            <p:ajax update="PanelResponsavel" event="valueChange" listener="#{responsavelMB.selectedTipoPessoa}"/>
-					        </p:selectOneRadio>		
-		
-							<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
-							<p:inputMask id="Cpf" value="#{responsavelMB.objetoResponsavel.cpf}" label="CPF" mask="999.999.999-99" required="true" validator="#{responsavelMB.validaCPF}" rendered="#{responsavelMB.tipoPessoaIsFisica}">							
-							</p:inputMask>  
-							
-							<p:outputLabel for="Rg" value="RG: "  rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
-							<p:inputText id="Rg" value="#{responsavelMB.objetoResponsavel.rg}" label="RG"  rendered="#{responsavelMB.tipoPessoaIsFisica}" />
-							
-							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
-							<p:inputMask id="CNPJ" value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" validator="#{responsavelMB.validaCNPJ}" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>
-												
-							<p:outputLabel for="Codigo" value="Código do Responsável: " styleClass="labelBold" />													
-							<p:inputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo" required="true" onblur=""  style="width:150px;"/>  					
-										
-						</h:panelGrid>		
-						<h:panelGrid columns="3">	
-							<p:outputLabel for="Responsavel" value="Responsável: " />
-							<p:inputText id="Responsavel"
-								value="#{responsavelMB.nomeResponsavel}"
-								label="Responsável" readonly="TRUE"
-								style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;" />
-							<p:commandButton id="botaoResponsavel" type="button"
-								onclick="PF('responsavelDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"  />
-						</h:panelGrid>		
-						<h:panelGrid columns="2">							
-							<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): "/>							
-							<p:inputText id="taxaRemuneracao" 
-								value="#{responsavelMB.objetoResponsavel.taxaRemuneracao}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter" />
-									
-							<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
-							<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>													
-							<p:inputText id="Nome" value="#{responsavelMB.objetoResponsavel.nome}" label="Nome" required="true" onblur=""  style="width:400px;"/>  					
-												
-							<p:outputLabel for="Contato" value="Contato: " />
-							<p:inputText id="Contato"
-								value="#{responsavelMB.objetoResponsavel.contato}"
-								label="Contato" onblur=""
-								style="width:400px;" />
-																									
-							<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold"/>					
-							<p:inputText id="EMail" value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail" type="email" required="true" onblur="" style="width:400px;"/>
-							
-							<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />					
-							<p:inputMask id="DtNascimento" value="#{responsavelMB.objetoResponsavel.dtNascimento}" mask="99/99/9999"  label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>									
+		</script>
+			<p:panel id="PanelResponsavel"
+				header="Responsável - #{responsavelMB.tituloPainel}"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
+					<p:selectOneRadio id="Pessoa"
+						value="#{responsavelMB.tipoPessoaIsFisica}" required="true">
+						<f:selectItem itemLabel="Física" itemValue="true" />
+						<f:selectItem itemLabel="Jurídica" itemValue="false" />
+						<p:ajax update="PanelResponsavel" event="valueChange"
+							listener="#{responsavelMB.selectedTipoPessoa}" />
+					</p:selectOneRadio>
 
-							<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
-							<p:inputMask id="TelResidencial" value="#{responsavelMB.objetoResponsavel.telResidencial}" mask="(99) 9999-9999"  label="Telefone Residencial"/>																																																
-												
-							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
-							<p:inputText id="TelCelular" value="#{responsavelMB.objetoResponsavel.telCelular}" styleClass="phone" label="Telefone Celular"/>		
-									
-							<p:outputLabel for="Endereco" value="Endereço: " />
-							<p:inputText id="Endereco" value="#{responsavelMB.objetoResponsavel.endereco}"  label="Endereço" onblur="" style="width:400px;"/>  	
-							
-							<p:outputLabel for="Bairro" value="Bairro: " />
-							<p:inputText id="Bairro" value="#{responsavelMB.objetoResponsavel.bairro}"  label="Bairro" onblur="" style="width:400px;"/> 
-							
-							<p:outputLabel for="Complemento" value="Complemento: " />
-							<p:inputText id="Complemento" value="#{responsavelMB.objetoResponsavel.complemento}" label="Complemento" onblur="" style="width:400px;"/> 
-							
-							<p:outputLabel for="Cidade" value="Cidade: " />
-							<p:inputText id="Cidade" value="#{responsavelMB.objetoResponsavel.cidade}"  label="Cidade"  onblur="" style="width:400px;"/> 
-							
-							<p:outputLabel for="Cep" value="Cep: " />
-							<p:inputMask id="Cep" value="#{responsavelMB.objetoResponsavel.cep}" mask="99999-999"  label="Cep"/>	
+					<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputMask id="Cpf"
+						value="#{responsavelMB.objetoResponsavel.cpf}" label="CPF"
+						mask="999.999.999-99" required="true"
+						validator="#{responsavelMB.validaCPF}"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}">
+					</p:inputMask>
+
+					<p:outputLabel for="Rg" value="RG: "
+						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputText id="Rg" value="#{responsavelMB.objetoResponsavel.rg}"
+						label="RG" rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+
+					<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputMask id="CNPJ"
+						value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ"
+						mask="99.999.999/9999-99" required="true"
+						validator="#{responsavelMB.validaCNPJ}"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
+
+					<p:outputLabel for="Codigo" value="Código do Responsável: "
+						styleClass="labelBold" />
+					<p:inputText id="Codigo"
+						value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo"
+						required="true" onblur="" style="width:150px;" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+					<p:outputLabel for="Responsavel" value="Responsável: " />
+					<p:inputText id="Responsavel"
+						value="#{responsavelMB.nomeResponsavel}" label="Responsável"
+						readonly="TRUE"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;" />
+					<p:commandButton id="botaoResponsavel" type="button"
+						onclick="PF('responsavelDialog').show();"
+						image="ui-icon ui-icon-circle-zoomin" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): " />
+					<p:inputText id="taxaRemuneracao"
+						value="#{responsavelMB.objetoResponsavel.taxaRemuneracao}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);"
+						converter="bigDecimalConverter" />
+
+					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+					<p:outputLabel for="Nome" value="Razão Social: "
+						styleClass="labelBold"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputText id="Nome"
+						value="#{responsavelMB.objetoResponsavel.nome}" label="Nome"
+						required="true" onblur="" style="width:400px;" />
+
+					<p:outputLabel for="Contato" value="Contato: " />
+					<p:inputText id="Contato"
+						value="#{responsavelMB.objetoResponsavel.contato}" label="Contato"
+						onblur="" style="width:400px;" />
+
+					<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
+					<p:inputText id="EMail"
+						value="#{responsavelMB.objetoResponsavel.email}" label="E-Mail"
+						type="email" required="true" onblur="" style="width:400px;" />
+
+					<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />
+					<p:inputMask id="DtNascimento"
+						value="#{responsavelMB.objetoResponsavel.dtNascimento}"
+						mask="99/99/9999" label="Data de Nascimento">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputMask>
+
+					<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
+					<p:inputMask id="TelResidencial"
+						value="#{responsavelMB.objetoResponsavel.telResidencial}"
+						mask="(99) 9999-9999" label="Telefone Residencial" />
+
+					<p:outputLabel for="TelCelular" value="Telefone Celular: " />
+					<p:inputText id="TelCelular"
+						value="#{responsavelMB.objetoResponsavel.telCelular}"
+						styleClass="phone" label="Telefone Celular" />
+
+					<p:outputLabel for="Endereco" value="Endereço: " />
+					<p:inputText id="Endereco"
+						value="#{responsavelMB.objetoResponsavel.endereco}"
+						label="Endereço" onblur="" style="width:400px;" />
+
+					<p:outputLabel for="Bairro" value="Bairro: " />
+					<p:inputText id="Bairro"
+						value="#{responsavelMB.objetoResponsavel.bairro}" label="Bairro"
+						onblur="" style="width:400px;" />
+
+					<p:outputLabel for="Complemento" value="Complemento: " />
+					<p:inputText id="Complemento"
+						value="#{responsavelMB.objetoResponsavel.complemento}"
+						label="Complemento" onblur="" style="width:400px;" />
+
+					<p:outputLabel for="Cidade" value="Cidade: " />
+					<p:inputText id="Cidade"
+						value="#{responsavelMB.objetoResponsavel.cidade}" label="Cidade"
+						onblur="" style="width:400px;" />
+
+					<p:outputLabel for="Cep" value="Cep: " />
+					<p:inputMask id="Cep"
+						value="#{responsavelMB.objetoResponsavel.cep}" mask="99999-999"
+						label="Cep" />
+
+					<p:outputLabel for="Estado" value="Estado: " />
+					<p:selectOneMenu id="Estado"
+						value="#{responsavelMB.objetoResponsavel.estado}" label="Estado"
+						style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+						<f:selectItem itemValue="AC" itemLabel="ACRE" />
+						<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
+						<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
+						<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
+						<f:selectItem itemValue="BA" itemLabel="BAHIA" />
+						<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
+						<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
+						<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
+						<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
+						<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
+						<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
+						<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
+						<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
+						<f:selectItem itemValue="PA" itemLabel="PARÁ" />
+						<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
+						<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
+						<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
+						<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
+						<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
+						<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
+						<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
+						<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
+						<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
+						<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
+						<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
+						<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
+						<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
+					</p:selectOneMenu>
 					
-							<p:outputLabel for="Estado" value="Estado: " />
-							<p:selectOneMenu id="Estado" value="#{responsavelMB.objetoResponsavel.estado}"  label="Estado" style="width:410px;">
-								<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
-								<f:selectItem itemValue="AC" itemLabel="ACRE" />
-								<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
-								<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
-								<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
-								<f:selectItem itemValue="BA" itemLabel="BAHIA" />
-								<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
-								<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
-								<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
-								<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
-								<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
-								<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
-								<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
-								<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
-								<f:selectItem itemValue="PA" itemLabel="PARÁ" />
-								<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
-								<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
-								<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
-								<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
-								<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
-								<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
-								<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
-								<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
-								<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
-								<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
-								<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
-								<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
-								<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />						    
-							</p:selectOneMenu>					
-		
-							<p:outputLabel for="Observacao" value="Observação: " />
-							<p:inputTextarea id="Observacao" rows="10" cols="48" counter="display" maxlength="3000" onblur="" counterTemplate="{0} characters remaining." autoResize="false" value="#{responsavelMB.objetoResponsavel.observacao}"/>
-							<p:outputLabel id="display" styleClass="labelBold"/>																					
-						</h:panelGrid>																		
+					<p:outputLabel value="Adicionar Usuario: " styleClass="labelBold" />
+					<p:selectBooleanCheckbox value="#{responsavelMB.addUsuario}">
+						<p:ajax update="userPanel" event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:outputLabel for="Observacao" value="Observação: " />
+					<p:inputTextarea id="Observacao" rows="10" cols="48"
+						counter="display" maxlength="3000" onblur=""
+						counterTemplate="{0} characters remaining." autoResize="false"
+						value="#{responsavelMB.objetoResponsavel.observacao}" />
+					<p:outputLabel id="display" styleClass="labelBold" />
+				</h:panelGrid>
+
+				<h:panelGroup id="userPanel">
+					<h:panelGroup rendered="#{responsavelMB.addUsuario}">
+						<h:panelGrid columns="2" rendered="#{responsavelMB.addUsuario}">
+
+							<h:outputLabel for="login" value="Login: " class="campoRequerido" />
+							<p:inputText id="login" value="#{responsavelMB.login}"
+								required="true" label="Login" style="FONT-SIZE: 10pt;"
+								maxlength="50">
+								<f:validateLength maximum="50" minimum="1" />
+							</p:inputText>
+
+							<h:outputLabel for="pwd" value="Senha: " class="campoRequerido" />
+							<p:password id="pwd" value="#{responsavelMB.senha}" label="Senha"
+								required="true" promptLabel="Por favor, digite a senha."
+								weakLabel="Fácil" goodLabel="Regular" strongLabel="Díficil"
+								maxlength="10" redisplay="true" feedback="true" inline="true">
+								<f:validateLength maximum="10" minimum="1" />
+							</p:password>
+						</h:panelGrid>
+						<p:panel id="Responsaveis"
+							header="Usuarios com acesso a dados desse responsável:"
+							style="margin-bottom:10px;">
+							<h:panelGrid columns="2">
+								<p:selectCheckboxMenu id="responsavelList"
+									value="#{responsavelMB.selectedResponsaveis}"
+									label="Selecione os responsáveis ..." filter="true"
+									filterMatchMode="contains" panelStyle="width:550px"
+									style="width:550px;" converter="ResponsavelConverter">
+									<f:selectItems value="#{responsavelMB.listResponsaveis}"
+										var="resp" itemLabel="#{resp.nome}" itemValue="#{resp}" />
+								</p:selectCheckboxMenu>
+							</h:panelGrid>
+						</p:panel>
+					</h:panelGroup>
+				</h:panelGroup>
+
+
+
 			</p:panel>
 
 			<div align="center">
@@ -184,6 +274,8 @@
 						</f:facet>
 						<h:outputText value="#{responsavelDialogdlg.nome}" />
 					</p:column>
+					
+					
 
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"

@@ -4149,7 +4149,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaContratosPendentesReprovados(final String codResponsavel) {
+	public Collection<ContratoCobranca> consultaContratosPendentesReprovados(final String codResponsavel, final List<Responsavel> listResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4164,15 +4164,51 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
 					query = query + "where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
-					
-					if (codResponsavel != null) {
-						if (!codResponsavel.equals("")) { 
-							query = query + " and res.codigo = '" + codResponsavel + "' ";
+					///////////
+					// verifica as cláusulas dos repsonsáveis
+					String queryResponsavel = "";
+					if (codResponsavel != null || listResponsavel != null) {
+						if (queryResponsavel.equals("")) {
+							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
 						}
-						query = query + " order by id desc";						
-					} else {
-						query = query + " order by id desc";
+						
+						String queryGuardaChuva = "";
+						if (listResponsavel.size() > 0) {							
+							for (Responsavel resp : listResponsavel) {
+								if (!resp.getCodigo().equals("")) { 
+									// adiciona membro guarda-chuva									
+									if (queryGuardaChuva.equals("")) {
+										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
+									} else {
+										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
+									}		
+									
+									// busca recursiva no guarda-chuva
+									ResponsavelDao rDao = new ResponsavelDao();
+									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
+									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
+									}									
+								}
+							}
+						}											
+						
+						if (!queryResponsavel.equals("")) {
+							query = query + queryResponsavel;
+							
+							if (!queryGuardaChuva.equals("")) {
+								query = query + " or " + queryGuardaChuva;
+							}
+							
+							query = query + ")";
+						}
 					}
+					
+					
+					/////////////////
+					
+					query = query + " order by id desc";
 					query = query +  " limit 10 ";
 					
 					ps = connection
@@ -4196,7 +4232,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel) {
+	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel, final List<Responsavel> listResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4211,15 +4247,48 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
 					query = query + "where status = 'Baixado' " ;	
-					
-					if (codResponsavel != null) {
-						if (!codResponsavel.equals("")) { 
-							query = query + " and res.codigo = '" + codResponsavel + "' ";
+					///
+					// verifica as cláusulas dos repsonsáveis
+					String queryResponsavel = "";
+					if (codResponsavel != null || listResponsavel != null) {
+						if (queryResponsavel.equals("")) {
+							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
 						}
-						query = query + " order by id desc ";						
-					} else {
-						query = query + " order by id desc ";
+						String queryGuardaChuva = "";
+						if (listResponsavel.size() > 0) {							
+							for (Responsavel resp : listResponsavel) {
+								if (!resp.getCodigo().equals("")) { 
+									// adiciona membro guarda-chuva									
+									if (queryGuardaChuva.equals("")) {
+										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
+									} else {
+										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
+									}		
+									
+									// busca recursiva no guarda-chuva
+									ResponsavelDao rDao = new ResponsavelDao();
+									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
+									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
+									}									
+								}
+							}
+						}											
+						
+						if (!queryResponsavel.equals("")) {
+							query = query + queryResponsavel;
+							
+							if (!queryGuardaChuva.equals("")) {
+								query = query + " or " + queryGuardaChuva;
+							}
+							
+							query = query + ")";
+						}
 					}
+					////////
+				
+					query = query + " order by id desc ";
 					query = query +  " limit 10 ";
 					ps = connection
 							.prepareStatement(query);

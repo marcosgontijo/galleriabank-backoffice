@@ -85,7 +85,8 @@
 							<p:commandButton action="#{contratoCobrancaMB.recuperarContratoReprovado}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Recuperar Contrato" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>
-					
+			                
+					</shiro:hasAnyRoles>	
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
@@ -93,7 +94,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                </p:commandButton>
-		                </shiro:hasAnyRoles>	
+		             
 		                <p:spacer height="10"/>		        
 		                <shiro:hasAnyRoles name="ROOT"> 
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">

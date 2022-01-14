@@ -118,7 +118,7 @@
 			            <h:outputText value="#{contratos.imovel.cidade}" />
 			        </p:column>	
 			        <p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	
+		               
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Operação" title="Editar Simples">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
@@ -129,7 +129,7 @@
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>
-			                
+			           	<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	     
 			                <p:commandButton action="#{contratoCobrancaMB.recuperarPreContratoBaixado}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Recuperar Contrato" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>
