@@ -189,7 +189,9 @@
 										<p:outputLabel styleClass="labelBold">CCB Pronta</p:outputLabel>
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+											<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAgAssintura}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	

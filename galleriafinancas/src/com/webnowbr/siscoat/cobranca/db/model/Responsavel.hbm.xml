@@ -58,7 +58,10 @@
         </property>     
         <property name="cep" type="java.lang.String">
             <column name="CEP"/>
-        </property>     
+        </property>   
+        <property name="whatsAppNumero" type="java.lang.String">
+            <column name="whatsAppNumero"/>
+        </property>  
         <many-to-one name="donoResponsavel"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">

@@ -34,6 +34,8 @@ public class Responsavel implements Serializable {
 	
 	private BigDecimal taxaRemuneracao;
 	
+	private String whatsAppNumero;
+	
 	public Responsavel(){
 	}
 	
@@ -334,5 +336,13 @@ public class Responsavel implements Serializable {
 
 	public void setTaxaRemuneracao(BigDecimal taxaRemuneracao) {
 		this.taxaRemuneracao = taxaRemuneracao;
+	}
+
+	public String getWhatsAppNumero() {
+		return whatsAppNumero;
+	}
+
+	public void setWhatsAppNumero(String whatsAppNumero) {
+		this.whatsAppNumero = whatsAppNumero;
 	}
 }

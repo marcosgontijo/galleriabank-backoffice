@@ -151,7 +151,7 @@
 
 						<p:commandLink title="Documentos" disabled="true"
 							styleClass="dashboard-icone-menu" ajax="false"
-							onclick="#{investidorMB.downloadInformeRendimentosPortalInvestidor()}">
+							onclick="#{investidorMB.downloadInformeRendimentosPortalInvestidor('2021')}">
 							<img src="
 							#{resource['image/Documentos.png']}"
 								style="height: 62px" alt="" />
@@ -168,12 +168,26 @@
 							#{resource['image/informeRendimentos.png']}"
 								style="height: 62px" alt="" />
 							<p:fileDownload
-								value="#{investidorMB.processInformeRendimentosPortalInvestidor()}" />
+								value="#{investidorMB.processInformeRendimentosPortalInvestidor('2020')}" />
 						</p:commandLink>
 
-						<h:outputText value="Informe de Rendimentos" />
+						<h:outputText value="Informe de Rendimentos 2020" />
 					</h:panelGrid>
 
+					<h:panelGrid columns="1" styleClass="dashboard-bloco-menu">
+						<p:commandLink title="Gerar PDF - Informe de Rendimentos 2021"
+							ajax="false" styleClass="dashboard-icone-menu"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							icon="ui-icon-arrowthick-1-s">
+							<img src="
+							#{resource['image/informeRendimentos.png']}"
+								style="height: 62px" alt="" />
+							<p:fileDownload
+								value="#{investidorMB.processInformeRendimentosPortalInvestidor('2021')}" />
+						</p:commandLink>
+
+						<h:outputText value="Informe de Rendimentos 2021" />
+					</h:panelGrid>
 				</div>
 			</div>
 			<h:panelGrid columns="2" style="width:100%"
@@ -312,7 +326,20 @@
 						styleClass="labelBold" />
 					<p:commandButton value="Gerar PDF - Informe de Rendimentos"
 						ajax="false" icon="ui-icon-print"
-						action="#{investidorMB.processInformeRendimentosPortalInvestidor}" />
+						action="#{investidorMB.processInformeRendimentosPortalInvestidor('2020')}" />
+				</h:panelGrid>
+			</p:panel>
+			
+			<p:panel id="informeRendimentos2021" rendered="false"
+				header="Informe de Rendimentos - 2021"
+				style="padding-top:20px; padding-bottom:20px;">
+				<h:panelGrid columns="1">
+					<p:outputLabel
+						value="Para gerar o informe de rendimentos 2021, clique no botão e faça download do PDF."
+						styleClass="labelBold" />
+					<p:commandButton value="Gerar PDF - Informe de Rendimentos"
+						ajax="false" icon="ui-icon-print"
+						action="#{investidorMB.processInformeRendimentosPortalInvestidor('2021')}" />
 				</h:panelGrid>
 			</p:panel>
 		</h:form>

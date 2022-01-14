@@ -116,7 +116,11 @@ public class ResponsavelMB {
 		String msgRetorno = null;
 		try {
 
-			objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);
+			if (this.selectedResponsavel != null) {
+				if (this.selectedResponsavel.getId() > 0) {
+					objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);
+				}
+			}
 
 			if (objetoResponsavel.getId() <= 0) {
 				if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {

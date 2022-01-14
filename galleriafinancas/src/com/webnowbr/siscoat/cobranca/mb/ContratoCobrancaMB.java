@@ -169,6 +169,8 @@ public class ContratoCobrancaMB {
 	private String tipoContratoCobrancaFinanceiroDia;
 
 	private boolean contratoGerado = false;
+	
+	private boolean controleWhatsAppAgAssintura = false;
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -2786,6 +2788,11 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			enviaEmailAtualizacaoPreContrato();
 			
+			if (this.controleWhatsAppAgAssintura) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(), "contrato_pronto_para_assinatura", 
+						this.objetoContratoCobranca.getPagador().getNome(), this.objetoContratoCobranca.getNumeroContrato(), "", "");
+			}			
 			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -6697,6 +6704,8 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosPorStatus(String status) {
 		this.tituloTelaConsultaPreStatus = status;
 		
+		this.controleWhatsAppAgAssintura = false;
+		
 		if (status.equals("Lead")) {
 			this.tituloTelaConsultaPreStatus = "Novo Lead";
 		}
@@ -6736,8 +6745,7 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-		
-		
+				
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
@@ -6821,6 +6829,12 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+	}
+	
+	public void controlaWhatsAppAgAssintura() {
+		if (this.objetoContratoCobranca.isCcbPronta()) {
+			this.controleWhatsAppAgAssintura = true;
+		}
 	}
 	
 	public static long getDifferenceDays(Date d1, Date d2) {
@@ -20789,5 +20803,13 @@ public class ContratoCobrancaMB {
 
 	public void setTipoParametroConsultaContrato(String tipoParametroConsultaContrato) {
 		this.tipoParametroConsultaContrato = tipoParametroConsultaContrato;
+	}
+
+	public boolean isControleWhatsAppAgAssintura() {
+		return controleWhatsAppAgAssintura;
+	}
+
+	public void setControleWhatsAppAgAssintura(boolean controleWhatsAppAgAssintura) {
+		this.controleWhatsAppAgAssintura = controleWhatsAppAgAssintura;
 	}
 }

@@ -8,14 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
-import org.hibernate.engine.JoinSequence.Join;
-import org.jboss.resteasy.util.CommitHeaderOutputStream;
-
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -4888,10 +4883,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
 			"inner join cobranca.imovelcobranca im on c.imovel = im.id ";
 	
-	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
-			" from cobranca.analisecomite ";
-			
-	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosCRM(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -4946,26 +4937,26 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. DOC")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and aprovadoComite = true and  documentosCompletos = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = true and aprovadoComite = true and  documentosCompletos = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. DOC e Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and (documentosCompletos = false or aprovadoComite = false) ";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and (documentosCompletos = false or preAprovadoComite = false or aprovadoComite = false) ";
 					}
 					
 					if (tipoConsulta.equals("Ag. CCB")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true  and documentosCompletos = true and aprovadoComite = true and ccbPronta = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and aprovadoComite = true and ccbPronta = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Assinatura")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
 					}
 					if (tipoConsulta.equals("Ag. Registro")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
 					}
 					
 					if (tipoConsulta.equals("Análise Reprovada")) {
@@ -5022,8 +5013,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					List<String> idsContratoCobranca = new ArrayList<String>(0);
-					
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
@@ -5050,40 +5039,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAprovadoComite(rs.getBoolean(20));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean(21)); 
 						contratoCobranca.setDataUltimaAtualizacao(rs.getDate(22));
-						
-						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
-						
-						
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
 					}
-					rs.close();
-					
-					if (!CommonsUtil.semValor(idsContratoCobranca)) {
-						query = QUERY_CONTRATOS_CRM_COMITE;
-						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
-						// connection = getConnection();
-						ps = connection.prepareStatement(query);
-
-						// (0, CommonsUtil.getArray(idsContratoCobranca ));
-						rs = ps.executeQuery();
-						while (rs.next()) {
-
-							Long idCobranca = rs.getLong("contratocobranca");
-
-							ContratoCobranca contratoCobrancaFind = objects.stream()
-									.filter(c -> CommonsUtil.mesmoValor(c.getId(), idCobranca)).findFirst()
-									.orElse(null);
-							if (contratoCobrancaFind.getListaAnaliseComite() == null) {
-								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
-							}
-							AnaliseComite analiseComite = new AnaliseComite();
-							analiseComite.setUsuarioComite(rs.getString("usuarioComite"));
-							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
-						}
-					}
-
+	
 				} finally {
 					closeResources(connection, ps, rs);					
 				}

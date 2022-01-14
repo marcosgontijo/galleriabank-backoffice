@@ -308,8 +308,8 @@ public class InvestidorMB {
 		return "/Atendimento/Cobranca/InformeRendimentos.xhtml";
 	}
 
-	public StreamedContent processInformeRendimentosPortalInvestidor() {
-		this.anoBase = "2020";
+	public StreamedContent processInformeRendimentosPortalInvestidor(String anoBaseParametro) {
+		this.anoBase = anoBaseParametro;
 		processInformeRendimentos();
 
 		this.imprimirHeaderFooter = true;
@@ -357,6 +357,17 @@ public class InvestidorMB {
 
 					this.labelAnoBase = "Valor em 31/12/2020";
 					this.labelAnoAnterior = "Valor em 31/12/2019";
+				}
+				
+				if (this.anoBase.equals("2021")) {
+					this.dataInicio = format.parse("31/12/2020");
+					this.dataFim = format.parse("31/12/2021");
+
+					dataInicioAnterior = format.parse("31/12/2019");
+					dataFimAnterior = format.parse("31/12/2020");
+
+					this.labelAnoBase = "Valor em 31/12/2021";
+					this.labelAnoAnterior = "Valor em 31/12/2020";
 				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -1923,10 +1934,9 @@ public class InvestidorMB {
 		}
 	}
 
-	public StreamedContent downloadInformeRendimentosPortalInvestidor() {
+	public StreamedContent downloadInformeRendimentosPortalInvestidor(String anoBase) {
 
-		return processInformeRendimentosPortalInvestidor();
-
+		return processInformeRendimentosPortalInvestidor(anoBase);
 	}
 
 	/***
