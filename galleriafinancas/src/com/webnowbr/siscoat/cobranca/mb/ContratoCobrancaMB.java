@@ -2794,15 +2794,15 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				// enviaEmailAtualizacaoPreContrato();
+				 enviaEmailAtualizacaoPreContrato();
 
-				// if (this.controleWhatsAppAgAssintura) {
-				// TakeBlipMB takeBlipMB = new TakeBlipMB();
-				// takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-				// "contrato_pronto_para_assinatura",
-				// this.objetoContratoCobranca.getPagador().getNome(),
-				// this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				// }
+				if (this.controleWhatsAppAgAssintura) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_pronto_para_assinatura",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
 
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
