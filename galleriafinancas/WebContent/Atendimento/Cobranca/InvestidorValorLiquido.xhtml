@@ -137,11 +137,11 @@
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
-							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
-							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
 						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
@@ -153,7 +153,7 @@
 											value="#{parcelas}" />
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-											value="#{parcelas.valorLiquido}" />
+											value="#{parcelas.valorLiquidoBaixa}" />
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 											value="#{parcelas.dataVencimento}" />
@@ -240,11 +240,11 @@
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
-							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
-							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
 						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
@@ -256,7 +256,7 @@
 											value="#{parcelas}" />
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-											value="#{parcelas.valorLiquido}" />
+											value="#{parcelas.valorLiquidoBaixa}" />
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 											value="#{parcelas.dataVencimento}" />
@@ -355,11 +355,11 @@
 						</p:column>
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Bruto da Parcela" >
-						<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+						<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 					</p:column>									
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Líquido a Receber" >
-						<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+						<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 					</p:column>	
 					<p:column style="width:3px" headerText="Ações">
 						<shiro:hasAnyRoles name="ROOT">
@@ -371,7 +371,7 @@
 										value="#{parcelas}" />
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.baixaContratoCobrancaParcelasInvestidor.valorBaixado}"
-										value="#{parcelas.valorLiquido}" />
+										value="#{parcelas.valorLiquidoBaixa}" />
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
 										value="#{parcelas.dataVencimento}" />
