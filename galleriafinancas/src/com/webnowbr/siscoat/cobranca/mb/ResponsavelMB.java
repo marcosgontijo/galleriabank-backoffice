@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -12,10 +14,14 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.infra.mb.UsuarioMB;
 
 import org.primefaces.model.SortOrder;
 
@@ -39,8 +45,15 @@ public class ResponsavelMB {
 	private String nomeResponsavel = null;
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsaveis;
+	
+	private boolean addUsuario = false;
+	private String login = "";
+	private String senha = "";
+	private Responsavel selectedResponsaveis[];
+	
+	
 	/**
-	 * Construtor.
+	 * Construtor
 	 */
 	public ResponsavelMB() {
 
@@ -71,11 +84,35 @@ public class ResponsavelMB {
 		
 		clearResponsavel();
 		loadLovResponsavel();
-				
+		
+		int maiorCodigo = 0;
+		for(Responsavel responsavel : listResponsaveis ) {
+			if(!CommonsUtil.semValor(responsavel.getCodigo()) ) {
+				try {
+					if(maiorCodigo < CommonsUtil.integerValue(responsavel.getCodigo())){
+						maiorCodigo = CommonsUtil.integerValue(responsavel.getCodigo());
+					}
+				} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+				}
+			}
+		}
+		maiorCodigo += 10;
+		String codigoAutomatico = "";
+		codigoAutomatico = CommonsUtil.stringValue(maiorCodigo);
+		objetoResponsavel.setCodigo(codigoAutomatico);
+		
+		addUsuario = false;		
+		login = "";
+		senha = "";
+		this.selectedResponsaveis = new Responsavel[0];
+		
 		this.tipoPessoaIsFisica = true;
 
 		return "ResponsavelInserir.xhtml";
 	}
+	
 	
 	public String clearFieldsView() {
 		if (this.objetoResponsavel.getCnpj() != null) {
@@ -103,14 +140,18 @@ public class ResponsavelMB {
 		loadLovResponsavel();
 		
 		if (this.objetoResponsavel.getDonoResponsavel() != null) {
+
 			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
 			populateSelectedResponsavel();
+
 		}
 		
 		return "ResponsavelInserir.xhtml";
 	}		
 
 	public String inserir() {
+		UserDao userDao = new UserDao();
+		User user = new User();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		String msgRetorno = null;
@@ -125,6 +166,21 @@ public class ResponsavelMB {
 			if (objetoResponsavel.getId() <= 0) {
 				if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
 					responsavelDao.create(objetoResponsavel);
+					if(this.addUsuario) {
+						UsuarioMB userMb = new UsuarioMB();
+						userMb.clearFields();
+						userMb.getObjetoUsuario().setPassword(this.getSenha());
+						userMb.getObjetoUsuario().setLogin(this.getLogin());
+						userMb.getObjetoUsuario().setCodigoResponsavel(this.objetoResponsavel.getCodigo());
+						userMb.getObjetoUsuario().setName(this.objetoResponsavel.getNome());
+						userMb.getObjetoUsuario().setUserPreContrato(true);
+						userMb.inserir();
+						for (Responsavel responsavel : this.selectedResponsaveis) {
+							user = userDao.findByFilter("codigoResponsavel", responsavel.getCodigo()).get(0);
+							user.getListResponsavel().add(this.objetoResponsavel);
+							userDao.merge(user);
+						}	
+					}
 					msgRetorno = "inserido";
 				} else {
 					context.addMessage(null,
@@ -357,5 +413,38 @@ public class ResponsavelMB {
 
 	public void setListResponsaveis(List<Responsavel> listResponsaveis) {
 		this.listResponsaveis = listResponsaveis;
+	}
+
+	public boolean isAddUsuario() {
+		return addUsuario;
+	}
+
+	public void setAddUsuario(boolean addUsuario) {
+		this.addUsuario = addUsuario;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public Responsavel[] getSelectedResponsaveis() {
+		return selectedResponsaveis;
+	}
+
+	public void setSelectedResponsaveis(Responsavel[] selectedResponsaveis) {
+		this.selectedResponsaveis = selectedResponsaveis;
 	}	
+	
 }
