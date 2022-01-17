@@ -424,7 +424,8 @@
 						</p:commandButton>
 						<p:commandButton action="#{iuguMB.redirecionTelaOperacao}"
 							ajax="false" icon="ui-icon-transferthick-e-w"
-							title="Operação Contrato" onclick="this.form.target='_blank'">
+							title="Operação Contrato" onclick="this.form.target='_blank'"
+							onblur="this.form.target='_self'">
 							<f:setPropertyActionListener target="#{iuguMB.contratoCobranca}"
 								value="#{contratos.contratoCobranca}" />
 							<f:setPropertyActionListener target="#{iuguMB.relIsContrato}"
@@ -648,7 +649,8 @@
 						</p:commandButton>
 						<p:commandButton action="#{iuguMB.redirecionTelaOperacao}"
 							ajax="false" icon="ui-icon-transferthick-e-w"
-							title="Operação Contrato" onclick="this.form.target='_blank'">
+							title="Operação Contrato" onclick="this.form.target='_blank'"
+							onblur="this.form.target='_self'">
 							<f:setPropertyActionListener target="#{iuguMB.contratoCobranca}"
 								value="#{contratos.contratoCobranca}" />
 							<f:setPropertyActionListener target="#{iuguMB.relIsContrato}"

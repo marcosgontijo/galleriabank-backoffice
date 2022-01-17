@@ -2242,6 +2242,12 @@ public class ContratoCobrancaMB {
 			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
 			this.objetoContratoCobranca.setResponsavel(responsavel);
+			
+			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+				this.objetoContratoCobranca.setContratoLead(true);
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+				this.objetoContratoCobranca.setContratoLead(false);
+			}
 
 			PagadorRecebedor pagadorRecebedor = null;
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -2374,6 +2380,12 @@ public class ContratoCobrancaMB {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
 				this.objetoContratoCobranca.setResponsavel(responsavel);
+				
+				if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+					this.objetoContratoCobranca.setContratoLead(true);
+				} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+					this.objetoContratoCobranca.setContratoLead(false);
+				}
 
 				PagadorRecebedor pagadorRecebedor = null;
 				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -2654,6 +2666,12 @@ public class ContratoCobrancaMB {
 							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 				}
 			}
+			
+			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+				this.objetoContratoCobranca.setContratoLead(true);
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+				this.objetoContratoCobranca.setContratoLead(false);
+			}
 
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
@@ -2745,6 +2763,12 @@ public class ContratoCobrancaMB {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
 				this.objetoContratoCobranca.setResponsavel(responsavel);
+				
+				if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+					this.objetoContratoCobranca.setContratoLead(true);
+				} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+					this.objetoContratoCobranca.setContratoLead(false);
+				}
 
 				if (this.objetoPagadorRecebedor.getSite() != null) {
 					if (!this.objetoPagadorRecebedor.getSite().contains("http")
@@ -2794,7 +2818,7 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				 enviaEmailAtualizacaoPreContrato();
+				enviaEmailAtualizacaoPreContrato();
 
 				if (this.controleWhatsAppAgAssintura) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -2851,13 +2875,13 @@ public class ContratoCobrancaMB {
 							""));
 				}
 
-				return null;
+				return "";
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
-			return null;
+			return "";
 		}
 	}
 	
@@ -6933,14 +6957,13 @@ public class ContratoCobrancaMB {
 			User usuarioLogado = new User();
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-
+			
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
 					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null, null);
 				} else {
-					this.contratosPendentes = contratoCobrancaDao
-							.consultaContratosPendentesReprovados(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
-
+					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(
+							usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
 				}
 			}
 		}

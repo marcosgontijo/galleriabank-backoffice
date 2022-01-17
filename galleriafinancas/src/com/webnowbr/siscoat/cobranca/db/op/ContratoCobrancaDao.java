@@ -269,8 +269,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			*/
 	private static final String QUERY_ULTIMO_NUMERO_CONTRATO = "select nextval('cobranca.cobranca_seq_contrato')" ;
 	
-	private static final String QUERY_CONTRATOS_PENDENTES = "select c.id from cobranca.contratocobranca c " +
-			"inner join cobranca.responsavel res on c.responsavel = res.id ";
+	private static final String QUERY_CONTRATOS_PENDENTES = " select c.id from cobranca.contratocobranca c " +
+			" inner join cobranca.responsavel res on c.responsavel = res.id ";
 		
 	private static final String QUERY_CONTRATOS_QUITADOS = " select dd.id from cobranca.contratocobranca dd " +
 		"inner join cobranca.responsavel res on dd.responsavel = res.id " +
@@ -4163,13 +4163,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
-					///////////
+					query = query + " where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
+
 					// verifica as cláusulas dos repsonsáveis
 					String queryResponsavel = "";
 					if (codResponsavel != null || listResponsavel != null) {
 						if (queryResponsavel.equals("")) {
-							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
+							queryResponsavel = " and (res.codigo = ' " + codResponsavel + " ' ";
 						}
 						
 						String queryGuardaChuva = "";
@@ -4201,14 +4201,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								query = query + " or " + queryGuardaChuva;
 							}
 							
-							query = query + ")";
+							query = query + " ) ";
 						}
 					}
 					
-					
-					/////////////////
-					
-					query = query + " order by id desc";
+					query = query + " order by id desc ";
 					query = query +  " limit 10 ";
 					
 					ps = connection
@@ -4219,8 +4216,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
-						
-						objects.add(contratoCobranca);												
+						objects.add(contratoCobranca);
 					}
 	
 				} finally {
@@ -4246,7 +4242,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where status = 'Baixado' " ;	
+					query = query + "where status = 'Baixado' " ;
+					
 					///
 					// verifica as cláusulas dos repsonsáveis
 					String queryResponsavel = "";
@@ -4290,15 +4287,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				
 					query = query + " order by id desc ";
 					query = query +  " limit 10 ";
-					ps = connection
-							.prepareStatement(query);
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
-						
 						objects.add(contratoCobranca);												
 					}
 	

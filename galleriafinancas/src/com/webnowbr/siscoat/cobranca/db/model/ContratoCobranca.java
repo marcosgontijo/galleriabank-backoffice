@@ -305,7 +305,7 @@ public class ContratoCobranca implements Serializable {
 	private String profissao;
 
 	/*** usados no sistema ***/
-	
+	private boolean contratoLead; 
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
@@ -4417,6 +4417,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setComentarioPreComite(String comentarioPreComite) {
 		this.comentarioPreComite = comentarioPreComite;
+	}
+
+	public boolean isContratoLead() {
+		return contratoLead;
+	}
+
+	public void setContratoLead(boolean contratoLead) {
+		this.contratoLead = contratoLead;
 	}
 	
 }
