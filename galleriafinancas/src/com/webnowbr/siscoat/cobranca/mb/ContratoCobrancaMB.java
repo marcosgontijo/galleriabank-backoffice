@@ -6960,10 +6960,9 @@ public class ContratoCobrancaMB {
 			
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null, null);
+					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null);
 				} else {
-					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(
-							usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null);
 				}
 			}
 		}
@@ -6984,10 +6983,10 @@ public class ContratoCobrancaMB {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
- 					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesBaixados(null, null);
+ 					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesBaixados(null);
 				} else {
 					this.contratosPendentes = contratoCobrancaDao
-							.consultaContratosPendentesBaixados(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+							.consultaContratosPendentesBaixados(null);
 				}
 			}
 		}
