@@ -1433,5 +1433,9 @@
 			<column name="comentarioPreComite" />
 		</property>	
 		
+		<property name="contratoLead" type="boolean">
+			<column name="contratoLead" />
+		</property>	
+		
 	</class>
 </hibernate-mapping>

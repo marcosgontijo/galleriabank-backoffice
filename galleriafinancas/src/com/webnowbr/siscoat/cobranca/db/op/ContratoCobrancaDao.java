@@ -269,8 +269,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			*/
 	private static final String QUERY_ULTIMO_NUMERO_CONTRATO = "select nextval('cobranca.cobranca_seq_contrato')" ;
 	
-	private static final String QUERY_CONTRATOS_PENDENTES = "select c.id from cobranca.contratocobranca c " +
-			"inner join cobranca.responsavel res on c.responsavel = res.id ";
+	private static final String QUERY_CONTRATOS_PENDENTES = " select c.id from cobranca.contratocobranca c " +
+			" inner join cobranca.responsavel res on c.responsavel = res.id ";
 		
 	private static final String QUERY_CONTRATOS_QUITADOS = " select dd.id from cobranca.contratocobranca dd " +
 		"inner join cobranca.responsavel res on dd.responsavel = res.id " +
@@ -4149,7 +4149,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaContratosPendentesReprovados(final String codResponsavel, final List<Responsavel> listResponsavel) {
+	public Collection<ContratoCobranca> consultaContratosPendentesReprovados(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4163,52 +4163,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
-					///////////
-					// verifica as cláusulas dos repsonsáveis
-					String queryResponsavel = "";
-					if (codResponsavel != null || listResponsavel != null) {
-						if (queryResponsavel.equals("")) {
-							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
-						}
-						
-						String queryGuardaChuva = "";
-						if (listResponsavel.size() > 0) {							
-							for (Responsavel resp : listResponsavel) {
-								if (!resp.getCodigo().equals("")) { 
-									// adiciona membro guarda-chuva									
-									if (queryGuardaChuva.equals("")) {
-										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
-									} else {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
-									}		
-									
-									// busca recursiva no guarda-chuva
-									ResponsavelDao rDao = new ResponsavelDao();
-									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
-									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
-									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
-									}									
-								}
-							}
-						}											
-						
-						if (!queryResponsavel.equals("")) {
-							query = query + queryResponsavel;
-							
-							if (!queryGuardaChuva.equals("")) {
-								query = query + " or " + queryGuardaChuva;
-							}
-							
-							query = query + ")";
-						}
-					}
+					query = query + " where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
+
 					
 					
-					/////////////////
-					
-					query = query + " order by id desc";
+					query = query + " order by id desc ";
 					query = query +  " limit 10 ";
 					
 					ps = connection
@@ -4219,8 +4178,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
-						
-						objects.add(contratoCobranca);												
+						objects.add(contratoCobranca);
 					}
 	
 				} finally {
@@ -4232,7 +4190,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel, final List<Responsavel> listResponsavel) {
+	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4246,59 +4204,21 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES;
 					
-					query = query + "where status = 'Baixado' " ;	
+					query = query + "where status = 'Baixado' " ;
+					
 					///
-					// verifica as cláusulas dos repsonsáveis
-					String queryResponsavel = "";
-					if (codResponsavel != null || listResponsavel != null) {
-						if (queryResponsavel.equals("")) {
-							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
-						}
-						String queryGuardaChuva = "";
-						if (listResponsavel.size() > 0) {							
-							for (Responsavel resp : listResponsavel) {
-								if (!resp.getCodigo().equals("")) { 
-									// adiciona membro guarda-chuva									
-									if (queryGuardaChuva.equals("")) {
-										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
-									} else {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
-									}		
-									
-									// busca recursiva no guarda-chuva
-									ResponsavelDao rDao = new ResponsavelDao();
-									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
-									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
-									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
-									}									
-								}
-							}
-						}											
-						
-						if (!queryResponsavel.equals("")) {
-							query = query + queryResponsavel;
-							
-							if (!queryGuardaChuva.equals("")) {
-								query = query + " or " + queryGuardaChuva;
-							}
-							
-							query = query + ")";
-						}
-					}
+					
 					////////
 				
 					query = query + " order by id desc ";
 					query = query +  " limit 10 ";
-					ps = connection
-							.prepareStatement(query);
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
-						
 						objects.add(contratoCobranca);												
 					}
 	
