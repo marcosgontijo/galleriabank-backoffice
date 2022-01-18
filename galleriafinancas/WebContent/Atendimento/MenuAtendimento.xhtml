@@ -64,7 +64,7 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA ">
 									<p:menuitem value="Leads Completos"
 										action="#{contratoCobrancaMB.geraConsultaLeads('Completo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -73,12 +73,12 @@
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Pré-Contratos"
 										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Contratos Reprovados"
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

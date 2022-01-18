@@ -417,7 +417,7 @@
 
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="2">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
@@ -545,7 +545,7 @@
 
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê">
+					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido && contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -562,7 +562,7 @@
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 5}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
@@ -1312,7 +1312,6 @@
 										style="width:100px;margin-left:67px;" />
 								</h:panelGrid>
 							</h:panelGroup>
-
 						</p:panel>
 						
 

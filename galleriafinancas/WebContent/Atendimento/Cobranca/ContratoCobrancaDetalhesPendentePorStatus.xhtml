@@ -80,7 +80,7 @@
 					</h:panelGrid>
 				</shiro:hasAnyRoles>
 
-				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;">
+				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.status != 'Baixado' or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
 					<ui:fragment
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						<p:steps
@@ -365,9 +365,9 @@
 					</p:tooltip>
 				</p:panel>
 
-
+			<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">
 				<h:panelGroup id="comentarioPreComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê">
+					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPreComite" value="Comentário Pré-Comitê: "
 								styleClass="labelBold" />
@@ -376,6 +376,23 @@
 								rows="10" cols="48" maxlength="3000" onblur=""
 								counterTemplate="{0} characters remaining." autoResize="false"
 								style="FONT-SIZE: 10pt;width:400px;" />
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+			</shiro:hasAnyRoles>
+			
+			<h:panelGroup id="comentarioPreComitePanelView" style="margin-bottom:20px;">
+					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPreComiteView"
+								value="Comentário Pré-Comitê: " styleClass="labelBold" />
+							<p:outputLabel id="comentarioPreComiteView"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPreComite}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;" />
+							<p:spacer height="10" />
+							<p:spacer height="10" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1755,7 +1772,7 @@
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -1785,9 +1802,8 @@
 								converter="bigDecimalConverter" />
 
 							<p:outputLabel value="Corrigido IPCA: " />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}"
-								disabeld="true">
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
 							</p:selectBooleanCheckbox>
 
 						</h:panelGrid>
@@ -1796,20 +1812,20 @@
 							<p:outputLabel value="Tem seguro? " />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"
-								disabeld="true">
+								disabled="true">
 							</p:selectBooleanCheckbox>
 
 							<p:outputLabel value="Adicionar seguro DFI "
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroDFI}"
-								disabeld="true"
+								disabled="true"
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							</p:selectBooleanCheckbox>
 
 							<p:outputLabel value="Adicionar seguro MIP "
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}" />
-							<p:selectBooleanCheckbox disabeld="true"
+							<p:selectBooleanCheckbox disabled="true"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.temSeguroMIP}"
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							</p:selectBooleanCheckbox>
@@ -1863,7 +1879,7 @@
 
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataInicio" value="Data Inicio: "
 								styleClass="labelBold" style="margin-right: 59px;" />
@@ -1933,7 +1949,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
 
 						<p:outputLabel for="ContaPagarValorTotal"
 							value="Valor Total (R$): " styleClass="labelBold" />

@@ -2658,6 +2658,13 @@ public class ContratoCobrancaMB {
 			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
 			this.objetoContratoCobranca.setResponsavel(responsavel);
+			
+
+			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+				this.objetoContratoCobranca.setContratoLead(true);
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+				this.objetoContratoCobranca.setContratoLead(false);
+			}
 
 			if (this.objetoPagadorRecebedor.getSite() != null) {
 				if (!this.objetoPagadorRecebedor.getSite().contains("http")
@@ -5057,6 +5064,50 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
 	}
 	
+	public String clearFieldsDetalhesPendentes() {
+		
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		
+		this.tituloPainel = "Editar";
+		
+		this.valorPresenteParcela = BigDecimal.ZERO;
+		
+		files = new ArrayList<FileUploaded>();
+		files = listaArquivos();
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+		
+		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
+		
+		getIndexStepContrato();
+
+		loadLovs();
+
+		loadSelectedLovsPendentes();
+
+		if (this.objetoContratoCobranca.getPagador() != null) {
+			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
+					&& !this.objetoContratoCobranca.getPagador().getCnpj().equals("")) {
+				this.tipoPessoaIsFisica = false;
+			} else {
+				this.tipoPessoaIsFisica = true;
+			}
+		}
+
+		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
+
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
+
+		saveEstadoCheckListAtual();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
+	}
+	
 	public String clearFieldsEditarPendentesAnalistas() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -6736,9 +6787,107 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+			this.contratosPendentes = populaStatus(this.contratosPendentes);
 
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		}
+	}
+	
+	public Collection<ContratoCobranca> populaStatus(Collection<ContratoCobranca> contratos) {
+		// POPULA STATUS
+		for (ContratoCobranca c : contratos) {
+			
+			if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+				c.setStatus("Aprovado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
+				c.setStatus("Reprovado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
+				c.setStatus("Baixado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
+				c.setStatus("Reprovado");
+			} else {
+				
+				if (!CommonsUtil.semValor(c.getStatusLead())){
+					if (c.getStatusLead().equals("Novo Lead")) {
+						c.setStatus("Novo Lead");
+					}
+
+					if (c.getStatusLead().equals("Em Tratamento")) {
+						c.setStatus("Lead em Tratamento");
+					}
+
+					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
+						c.setStatus("Ag. Análise");
+					}
+
+					if (c.isInicioAnalise()) {
+						c.setStatus("Em Análise");
+					}
+					
+				} else {
+					c.setStatus("Não Definido");
+				}
+
+				if (c.getCadastroAprovadoValor() != null) {
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+						c.setStatus("Em Análise");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& !c.isPagtoLaudoConfirmada()) {
+						c.setStatus("Ag. Pagto. Laudo");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+						c.setStatus("Ag. PAJU e Laudo");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& !c.isPreAprovadoComite()) {
+						c.setStatus("Pré-Comite");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && !c.isAprovadoComite()) {
+						c.setStatus("Ag. Comite");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+						c.setStatus("Ag. DOC");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& !c.isCcbPronta()) {
+						c.setStatus("Ag. CCB");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && c.isAgAssinatura()) {
+						c.setStatus("Ag. Assinatura");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
+						c.setStatus("Ag. Registro");
+					}
+				}
+				if (c.isAnaliseReprovada()) {
+					c.setStatus("Análise Reprovada");
+				}
+			}
+		}
+		return contratos;
 	}
 	
 	public String geraConsultaContratosPorStatus(String status) {
@@ -8548,6 +8697,19 @@ public class ContratoCobrancaMB {
 		this.selectedImovel = new ImovelCobranca();
 		this.nomeImovel = null;
 		this.idImovel = 0;
+		
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		
+		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+		
+		this.addSegurador = false;
+		this.addSocio = false;
+		this.addPagador = false;
 	}
 
 	public void loadSelectedLovs() {
