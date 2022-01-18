@@ -542,6 +542,9 @@ public class ContratoCobranca implements Serializable {
 	private String tipoOperacao;
 	
 	private String comentarioPreComite;
+	
+	private String tipoImovel;
+	private String empresaImovel;
 
 	public ContratoCobranca() {
 		super();
@@ -4418,5 +4421,20 @@ public class ContratoCobranca implements Serializable {
 	public void setComentarioPreComite(String comentarioPreComite) {
 		this.comentarioPreComite = comentarioPreComite;
 	}
-	
+
+	public String getTipoImovel() {
+		return tipoImovel;
+	}
+
+	public void setTipoImovel(String tipoImovel) {
+		this.tipoImovel = tipoImovel;
+	}
+
+	public String getEmpresaImovel() {
+		return empresaImovel;
+	}
+
+	public void setEmpresaImovel(String empresaImovel) {
+		this.empresaImovel = empresaImovel;
+	}
 }
