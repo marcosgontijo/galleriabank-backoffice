@@ -65,6 +65,7 @@ public class IpcaJob implements Job {
 			IPCADao ipcaDao = new IPCADao();
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
 			
 			List<ContratoCobrancaDetalhes> contratoCobrancaDetalhes = contratoCobrancaDetalhesDao
