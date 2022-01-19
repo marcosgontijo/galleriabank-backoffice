@@ -1686,7 +1686,30 @@
 								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							<p:ajax update="DadosSeguro"
 										event="change" />
-							</p:inputText>							
+							</p:inputText>	
+							
+							<p:outputLabel for="tipoImovel" value="Tipo Imóvel: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectOneMenu id="tipoImovel"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoImovel}" >
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Apartamento Residencial" itemLabel="Apartamento Residencial" />
+								<f:selectItem itemValue="Casa Condomínio Fechado" itemLabel="Casa Condomínio Fechado" />
+								<f:selectItem itemValue="Casa" itemLabel="Casa" />
+								<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
+								<f:selectItem itemValue="Imóvel Comercial" itemLabel="Imóvel Comercial" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="EmpresaImovel" value="Empresa Imóvel: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectOneMenu id="EmpresaImovel"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.empresaImovel}"
+										required="true" >
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Galache" itemLabel="Galache" />
+								<f:selectItem itemValue="Compasso" itemLabel="Compasso" />
+							</p:selectOneMenu>
+												
 						</h:panelGrid>
 					</p:panel>
 
@@ -1758,6 +1781,14 @@
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
+					<shiro:hasAnyRoles name="ROOT">
+						<p:panel id="Ipca" header="IPCA" style="margin-bottom:10px;">
+							<p:outputLabel value="Recalcular IPCA: " styleClass="labelBold"
+								style="margin-right: 59px;" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoContratoCobranca.recalculaIPCA}" />
+						</p:panel>
+					</shiro:hasAnyRoles>
 
 						<p:panel id="Pagamento" header="Forma de Pagamento"
 							style="margin-bottom:10px;">
@@ -2106,7 +2137,7 @@
 										value="#{files.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
-									icon="ui-icon-search" onclick="target='_blank'">
+									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>
 
