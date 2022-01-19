@@ -270,7 +270,20 @@ public class BRLTrustMB {
 					jsonRecebivel.put("valores", jsonValores);
 					
 					JSONObject jsonDados = new JSONObject();
-					jsonDados.put("indice", "IPCA");			
+					
+					if (this.objetoContratoCobranca.isCorrigidoIPCA()) {
+						jsonDados.put("indice", "IPCA");
+					}
+					
+					jsonDados.put("sistemaAmortizacao", this.objetoContratoCobranca.getTipoCalculo());
+					jsonDados.put("valorDaGarantia", this.objetoContratoCobranca.getValorImovel());
+					jsonDados.put("tipo", this.objetoContratoCobranca.getTipoImovel());
+					
+					jsonDados.put("LTV", "LTV");
+					
+					jsonDados.put("empresa", this.objetoContratoCobranca.getEmpresaImovel());
+					jsonDados.put("contemSeguroMIPeDFI", "SIM");								
+					
 					jsonRecebivel.put("dados", jsonDados);		
 					
 					jsonRecebiveis.put(jsonRecebivel);

@@ -1686,7 +1686,30 @@
 								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							<p:ajax update="DadosSeguro"
 										event="change" />
-							</p:inputText>							
+							</p:inputText>	
+							
+							<p:outputLabel for="tipoImovel" value="Tipo Imóvel: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectOneMenu id="tipoImovel"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.tipoImovel}" >
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Apartamento Residencial" itemLabel="Apartamento Residencial" />
+								<f:selectItem itemValue="Casa Condomínio Fechado" itemLabel="Casa Condomínio Fechado" />
+								<f:selectItem itemValue="Casa" itemLabel="Casa" />
+								<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
+								<f:selectItem itemValue="Imóvel Comercial" itemLabel="Imóvel Comercial" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="EmpresaImovel" value="Empresa Imóvel: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}"/>
+							<p:selectOneMenu id="EmpresaImovel"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.empresaImovel}"
+										required="true" >
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Galache" itemLabel="Galache" />
+								<f:selectItem itemValue="Compasso" itemLabel="Compasso" />
+							</p:selectOneMenu>
+												
 						</h:panelGrid>
 					</p:panel>
 
