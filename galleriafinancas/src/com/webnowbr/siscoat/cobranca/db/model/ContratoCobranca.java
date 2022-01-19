@@ -305,7 +305,7 @@ public class ContratoCobranca implements Serializable {
 	private String profissao;
 
 	/*** usados no sistema ***/
-	
+	private boolean contratoLead; 
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
@@ -542,6 +542,9 @@ public class ContratoCobranca implements Serializable {
 	private String tipoOperacao;
 	
 	private String comentarioPreComite;
+	
+	private String tipoImovel;
+	private String empresaImovel;
 
 	public ContratoCobranca() {
 		super();
@@ -802,7 +805,7 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * @param observacao2 the observacao2 to set
 	 */
-	public void setObservacao2(String observacao2) {
+	public void setObservacao2(String observacao2) { 
 		this.observacao2 = observacao2;
 	}
 
@@ -4418,5 +4421,28 @@ public class ContratoCobranca implements Serializable {
 	public void setComentarioPreComite(String comentarioPreComite) {
 		this.comentarioPreComite = comentarioPreComite;
 	}
-	
+
+	public String getTipoImovel() {
+		return tipoImovel;
+	}
+
+	public void setTipoImovel(String tipoImovel) {
+		this.tipoImovel = tipoImovel;
+	}
+
+	public String getEmpresaImovel() {
+		return empresaImovel;
+	}
+
+	public void setEmpresaImovel(String empresaImovel) {
+		this.empresaImovel = empresaImovel;
+	}
+
+	public boolean isContratoLead() {
+		return contratoLead;
+	}
+
+	public void setContratoLead(boolean contratoLead) {
+		this.contratoLead = contratoLead;
+	}
 }

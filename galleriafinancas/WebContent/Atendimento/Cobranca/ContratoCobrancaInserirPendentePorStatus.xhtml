@@ -849,7 +849,10 @@
 						<p:outputLabel for="Codigo2" value="Código do Responsável: " styleClass="labelBold"  rendered="#{contratoCobrancaMB.updateMode}"/>
 						<p:inputText id="Codigo2" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: " styleClass="labelBold" rendered="#{contratoCobrancaMB.updateMode}"/>
-						<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>																																  								
+						<h:panelGroup>
+							<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
+							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}"/>																																  								
+						</h:panelGroup>
 					</h:panelGrid>
 					<p:outputLabel id="gerenteContaLabel" value="Gerente da Conta?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}"/>
 					<p:overlayPanel id="gerenteConta" for="gerenteContaLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
@@ -2721,7 +2724,7 @@
 										value="#{filesInterno.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
-									icon="ui-icon-search" onclick="target='_blank'">
+									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
 					        
@@ -2782,7 +2785,7 @@
 										value="#{files.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
-									icon="ui-icon-search" onclick="target='_blank'">
+									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column> 
 					        

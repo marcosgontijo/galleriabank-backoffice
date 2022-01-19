@@ -265,6 +265,12 @@
 		<property name="leadCompletoUsuario" type="java.lang.String">
 			<column name="leadCompletoUsuario" />
 		</property>
+		<property name="tipoImovel" type="java.lang.String">
+			<column name="tipoImovel" />
+		</property>
+		<property name="empresaImovel" type="java.lang.String">
+			<column name="empresaImovel" />
+		</property>
 		<property name="vlrComissao" type="big_decimal">
 			<column name="VLRCOMISSAO" />
 		</property>
@@ -1425,6 +1431,10 @@
 		
 		<property name="comentarioPreComite" type="text">
 			<column name="comentarioPreComite" />
+		</property>	
+		
+		<property name="contratoLead" type="boolean">
+			<column name="contratoLead" />
 		</property>	
 		
 	</class>
