@@ -399,7 +399,7 @@
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 5}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
 								styleClass="labelBold" />
@@ -791,6 +791,14 @@
 							<p:outputLabel id="Atividade"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
+								
+							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:outputLabel id="NomePai"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel id="NomeMae"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
 
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
@@ -822,10 +830,6 @@
 							<p:outputLabel id="Cep"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cep}"
 								mask="99999-999" label="Cep" />
-
-							<p:outputLabel value="" />
-							<p:outputLabel
-								value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
 
 							<p:outputLabel for="Endereco" value="Endereço: " />
 							<p:outputLabel id="Endereco"
@@ -894,6 +898,7 @@
 							<p:outputLabel id="Agencia"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.agencia}"
 								label="Agência" style="width:100px; margin-left:67px;" />
+								
 							<p:outputLabel for="Conta" value="Conta: " styleClass="labelBold" />
 							<p:outputLabel id="Conta"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.conta}"
@@ -944,6 +949,14 @@
 										<f:convertDateTime locale="pt_BR" />
 										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 									</p:outputLabel>
+									
+									<p:outputLabel for="NomePaiConjuge" value="Nome do Pai: " />
+									<p:outputLabel id="NomePaiConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePaiConjuge}" />
+
+									<p:outputLabel for="NomeMaeConjuge" value="Nome da Mãe: " />
+									<p:outputLabel id="NomeMaeConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMaeConjuge}" />
 
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:outputLabel id="EmailConjuge"
@@ -1362,6 +1375,15 @@
 												<p:outputLabel id="RgPagador" value="#{pagador.pessoa.rg}"
 													label="RG / CNH" />
 
+												<p:outputLabel for="dataEmissaoRGConjuge"
+													value="Data Emissão: " />
+												<p:outputLabel id="dataEmissaoRGConjuge"
+													value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
+													mask="99/99/9999" label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
+
 												<p:outputLabel for="NomePaiPagador" value="Nome do Pai: " />
 												<p:outputLabel id="NomePaiPagador"
 													value="#{pagador.pessoa.nomePai}" />
@@ -1387,7 +1409,6 @@
 
 												<p:outputLabel for="DtNascimentoPagador"
 													value="Data de Nascimento: " />
-
 												<p:outputLabel id="DtNascimentoPagador"
 													value="#{pagador.pessoa.dtNascimento}" mask="99/99/9999"
 													label="Data de Nascimento">
@@ -1404,11 +1425,6 @@
 												<p:outputLabel for="CepPagador" value="Cep: " />
 												<p:outputLabel id="CepPagador" value="#{pagador.pessoa.cep}"
 													mask="99999-999" label="Cep" />
-
-
-												<p:outputLabel value="" />
-												<p:outputLabel
-													value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
 
 												<p:outputLabel for="EnderecoPagador" value="Endereço: " />
 												<p:outputLabel id="EnderecoPagador"
@@ -1454,7 +1470,6 @@
 													value="#{pagador.pessoa.banco}" label="Banco"
 													style="width:410px;" />
 
-
 												<p:outputLabel for="AgenciaPagador" value="Agência: "
 													styleClass="labelBold" />
 												<p:outputLabel id="AgenciaPagador"
@@ -1467,10 +1482,7 @@
 													label="Conta" onblur="" style="width:100px;" />
 											</h:panelGrid>
 
-
-
 											<h:panelGrid columns="2">
-
 												<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
 												<p:selectBooleanCheckbox disabled="true"
 													value="#{pagador.rgDocumentosCheckList}" />
@@ -1561,6 +1573,15 @@
 												<p:outputLabel for="SocioRg" value="RG / CNH: " />
 												<p:outputLabel id="SocioRg" value="#{socio.pessoa.rg}"
 													label="RG / CNH" />
+												
+												<p:outputLabel for="dataEmissaoRGSocio"
+													value="Data Emissão: "/>
+												<p:outputLabel id="dataEmissaoRGSocio"
+													value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}" mask="99/99/9999"
+													label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
 
 												<p:outputLabel for="SocioNomePai" value="Nome do Pai: " />
 												<p:outputLabel id="SocioNomePai"
@@ -1572,7 +1593,6 @@
 
 												<p:outputLabel for="SocioSexo" value="Sexo: " />
 												<p:outputLabel id="SocioSexo" value="#{socio.pessoa.sexo}" />
-
 
 												<p:outputLabel for="SocioAtividade" value="Cargo/Ocupação: " />
 												<p:outputLabel id="SocioAtividade"
@@ -1772,7 +1792,7 @@
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status == 'Aprovado'}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -1879,7 +1899,7 @@
 
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status == 'Aprovado'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataInicio" value="Data Inicio: "
 								styleClass="labelBold" style="margin-right: 59px;" />
@@ -1949,7 +1969,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura or contratoCobrancaMB.objetoContratoCobranca.status == 'Aprovado'}">
 
 						<p:outputLabel for="ContaPagarValorTotal"
 							value="Valor Total (R$): " styleClass="labelBold" />

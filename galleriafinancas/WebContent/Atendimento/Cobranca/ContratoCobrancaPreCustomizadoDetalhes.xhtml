@@ -355,7 +355,7 @@
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 5}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
@@ -581,24 +581,18 @@
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
 						style="margin-top:10px;margin-bottom:10px;">
 						<p:messages id="mensagensCPFCNPJ" showDetail="true" />
-						<h:panelGrid columns="2" >	
+						<h:panelGrid columns="2">
 							<p:outputLabel for="Pessoa" value="Pessoa: "
 								styleClass="labelBold" />
-							<p:selectOneRadio id="Pessoa"
-								value="#{contratoCobrancaMB.tipoPessoaIsFisica}" required="true">
-								<f:selectItem itemLabel="Física" itemValue="true" />
-								<f:selectItem itemLabel="Jurídica" itemValue="false" />
-								<p:ajax update="PanelPagadorRecebedor :form:CheckListDocumentos" event="valueChange"
-									listener="#{contratoCobrancaMB.selectedTipoPessoaPublico}" />
-							</p:selectOneRadio>
+							<p:outputLabel id="Pessoa"
+								value="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="Cpf"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpf}"
-								label="CPF"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-								
+								label="CPF" mask="999.999.999-99"
+								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="Rg" value="RG / CNH: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
@@ -609,17 +603,15 @@
 
 							<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
 							<p:outputLabel id="DtEmissaoRG"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}">
-								
-							</p:outputLabel>
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
+								mask="99/99/9999" label="Data de Nascimento" />
 
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="CNPJ"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpj}"
-								label="CNPJ"
-								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-							</p:outputLabel>
+								label="CNPJ" mask="99.999.999/9999-99"
+								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="NomeCPF" value="Nome: "
 								styleClass="labelBold"
@@ -627,28 +619,21 @@
 							<p:outputLabel for="NomeCNPJ" value="Razão Social: "
 								styleClass="labelBold"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
+
 							<p:outputLabel id="NomeCPF"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}"
-								label="Nome" required="true" onblur="" style="width:400px;"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<p:ajax event="blur"
-									listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}"
-									update="referenciaBancaria" />
-							</p:outputLabel>
+								label="Nome" style="width:400px;"
+								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="NomeCNPJ"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}"
-								label="Nome" required="true" onblur="" style="width:400px;"
-								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-								<p:ajax event="blur" update="referenciaBancaria"
-									listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}" />
-							</p:outputLabel>
+								label="Nome" style="width:400px;"
+								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="Sexo" value="Sexo: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="Sexo"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexo}"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-								
+								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="Atividade" value="Cargo/Ocupação: "
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
@@ -657,15 +642,23 @@
 							<p:outputLabel id="Atividade"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
+								
+							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:outputLabel id="NomePai"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel id="NomeMae"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
 
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
-								label="E-Mail" type="email" onblur="" style="width:400px;" />
-								
+								label="E-Mail" type="email" style="width:400px;" />
+
 							<p:outputLabel for="pagadorDonoGarantia"
 								value="Pagador é dono da garantia?" />
-							<p:selectBooleanCheckbox id="pagadorDonoGarantia"
+							<p:selectBooleanCheckbox disabled="true" id="pagadorDonoGarantia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.pagadorDonoGarantia}" />
 
 							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "
@@ -673,7 +666,10 @@
 							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="DtNascimento"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}">
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
+								label="Data de Nascimento">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</p:outputLabel>
 
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
@@ -683,44 +679,38 @@
 
 							<p:outputLabel for="Cep" value="Cep: " />
 							<p:outputLabel id="Cep"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cep}">
-							</p:outputLabel>
-
-							<p:outputLabel value="" />
-							<p:outputLabel
-								value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cep}"
+								mask="99999-999" label="Cep" />
 
 							<p:outputLabel for="Endereco" value="Endereço: " />
 							<p:outputLabel id="Endereco"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.endereco}"
-								label="Endereço" onblur="" style="width:400px;" />
+								label="Endereço" style="width:400px;" />
 
 							<p:outputLabel for="Numero" value="Número: " />
 							<p:outputLabel id="Numero"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.numero}"
-								label="Número" onblur="" style="width:50px;" />
+								label="Número" style="width:50px;" />
 
 							<p:outputLabel for="Bairro" value="Bairro: " />
 							<p:outputLabel id="Bairro"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.bairro}"
-								label="Bairro" onblur="" style="width:400px;" />
+								label="Bairro" style="width:400px;" />
 
 							<p:outputLabel for="Complemento" value="Complemento: " />
 							<p:outputLabel id="Complemento"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.complemento}"
-								label="Complemento" onblur="" style="width:400px;" />
+								label="Complemento" style="width:400px;" />
 
 							<p:outputLabel for="Cidade" value="Cidade: " />
 							<p:outputLabel id="Cidade"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cidade}"
-								label="Cidade" onblur="" style="width:400px;" />
+								label="Cidade" style="width:400px;" />
 
 							<p:outputLabel for="Estado" value="Estado: " />
 							<p:outputLabel id="Estado"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.estado}"
-								label="Estado" style="width:410px;">
-							</p:outputLabel>
-
+								label="Estado" style="width:410px;" />
 						</h:panelGrid>
 
 						<h:panelGrid columns="2" id="referenciaBancaria">
@@ -729,14 +719,15 @@
 							<p:outputLabel id="CpfCC"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCC}"
 								label="CPF" style="width:400px;margin-left:67px;"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-							</p:outputLabel>
+								mask="999.999.999-99"
+								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="CNPJCC" value="CNPJ: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="CNPJCC"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpjCC}"
 								label="CNPJ" style="width:400px;margin-left:67px;"
+								mask="99.999.999/9999-99"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="NomeCC" value="Nome: " styleClass="labelBold"
@@ -751,17 +742,18 @@
 							<p:outputLabel for="Banco" value="Banco: " styleClass="labelBold" />
 							<p:outputLabel id="Banco"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
-								label="Banco" style="width:410px; margin-left:67px;"/>
-							
+								label="Banco" style="width:410px; margin-left:67px;" />
+
 							<p:outputLabel for="Agencia" value="Agência: "
 								styleClass="labelBold" />
 							<p:outputLabel id="Agencia"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.agencia}"
-								label="Agência" onblur="" style="width:100px; margin-left:67px;" />
+								label="Agência" style="width:100px; margin-left:67px;" />
+								
 							<p:outputLabel for="Conta" value="Conta: " styleClass="labelBold" />
 							<p:outputLabel id="Conta"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.conta}"
-								styleClass="labelBold" label="Conta" onblur=""
+								styleClass="labelBold" label="Conta"
 								style="width:100px; margin-left:67px;" />
 
 						</h:panelGrid>
@@ -774,8 +766,7 @@
 									styleClass="labelBold" />
 								<p:outputLabel id="estadocivil"
 									value="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil}"
-									label="Status" style="width:190px; margin-left:43px;">
-								</p:outputLabel>
+									label="Status" style="width:190px; margin-left:43px;" />
 							</h:panelGrid>
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
@@ -784,27 +775,19 @@
 										styleClass="labelBold" />
 									<p:outputLabel id="NomeConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeConjuge}"
-										required="true" label="Nome" onblur="" style="width:400px;">
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
-											update="referenciaBancariaConjuge" />
-									</p:outputLabel>
+										label="Nome" style="width:400px;" />
+
 									<p:outputLabel for="SexoConjuge" value="Sexo: " />
-									<p:selectOneRadio id="SexoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexoConjuge}">
-										<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-										<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
-									</p:selectOneRadio>
+									<p:outputLabel id="SexoConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexoConjuge}" />
+
 									<p:outputLabel for="CpfConjuge" value="CPF: "
 										styleClass="labelBold" />
 									<p:outputLabel id="CpfConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfConjuge}"
-										label="CPF" mask="999.999.999-99" required="true"
-										validator="#{contratoCobrancaMB.validaCPF}">
-										<p:ajax event="blur"
-											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
-											update="referenciaBancariaConjuge" />
-									</p:outputLabel>
+										label="CPF" mask="999.999.999-99"
+										validator="#{contratoCobrancaMB.validaCPF}" />
+
 									<p:outputLabel for="RgConjuge" value="RG / CNH: " />
 									<p:outputLabel id="RgConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.rgConjuge}"
@@ -814,19 +797,30 @@
 									<p:outputLabel id="dataEmissaoRGConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
 										mask="99/99/9999" label="Data Emissão">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 									</p:outputLabel>
+									
+									<p:outputLabel for="NomePaiConjuge" value="Nome do Pai: " />
+									<p:outputLabel id="NomePaiConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePaiConjuge}" />
+
+									<p:outputLabel for="NomeMaeConjuge" value="Nome da Mãe: " />
+									<p:outputLabel id="NomeMaeConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMaeConjuge}" />
+
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:outputLabel id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
-										label="E-Mail" type="email" onblur="" style="width:400px;" />
+										label="E-Mail" type="email" style="width:400px;" />
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
 									<p:outputLabel id="DtNascimentoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
 										mask="99/99/9999" label="Data de Nascimento">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 									</p:outputLabel>
 
 									<p:outputLabel for="TelCelularConjuge"
@@ -843,449 +837,429 @@
 									<p:outputLabel for="CepConjuge" value="Cep: " />
 									<p:outputLabel id="CepConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cepConjuge}"
-										mask="99999-999" label="Cep">
-										<p:ajax event="blur"
-											update="EnderecoConjuge BairroConjuge CidadeConjuge EstadoConjuge"
-											listener="#{contratoCobrancaMB.getEnderecoByViaNetConjuge()}" />
-									</p:outputLabel>
+										mask="99999-999" label="Cep" />
 
 									<p:outputLabel for="EnderecoConjuge" value="Endereço: " />
 									<p:outputLabel id="EnderecoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.enderecoConjuge}"
-										label="Endereço" onblur="" style="width:400px;" />
+										label="Endereço" style="width:400px;" />
+
 									<p:outputLabel for="BairroConjuge" value="Bairro: " />
 									<p:outputLabel id="BairroConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.bairroConjuge}"
-										label="Bairro" onblur="" style="width:400px;" />
+										label="Bairro" style="width:400px;" />
+
 									<p:outputLabel for="ComplementoConjuge" value="Complemento: " />
 									<p:outputLabel id="ComplementoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.complementoConjuge}"
-										label="Complemento" onblur="" style="width:400px;" />
+										label="Complemento" style="width:400px;" />
+
 									<p:outputLabel for="CidadeConjuge" value="Cidade: " />
 									<p:outputLabel id="CidadeConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cidadeConjuge}"
-										label="Cidade" onblur="" style="width:400px;" />
+										label="Cidade" style="width:400px;" />
+
 									<p:outputLabel for="EstadoConjuge" value="Estado: " />
 									<p:outputLabel id="EstadoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.estadoConjuge}"
-										label="Estado" style="width:410px;">
-										
-									</p:outputLabel>
+										label="Estado" style="width:410px;" />
+
 								</h:panelGrid>
 								<h:panelGrid columns="2" id="referenciaBancariaConjuge">
 									<p:outputLabel for="CpfCCConjuge" value="CPF: " />
 									<p:outputLabel id="CpfCCConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCCConjuge}"
 										label="CPF" style="width:400px; margin-left:67px;"
-										mask="999.999.999-99"
-										validator="#{pagadorRecebedorMB.validaCPF}">
-									</p:outputLabel>
+										mask="999.999.999-99" />
 
 									<p:outputLabel for="NomeCCConjuge" value="Nome: "
 										styleClass="labelBold" />
 									<p:outputLabel id="NomeCCConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeCCConjuge}"
-										label="Nome" onblur="" style="width:400px; margin-left:67px;" />
+										label="Nome" style="width:400px; margin-left:67px;" />
 
 									<p:outputLabel for="BancoConjuge" value="Banco: "
 										styleClass="labelBold" />
 									<p:outputLabel id="BancoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.bancoConjuge}"
-										label="Banco" style="width:410px; margin-left:67px;">
-										
-									</p:outputLabel>
+										label="Banco" style="width:410px; margin-left:67px;" />
 
 									<p:outputLabel for="AgenciaConjuge" value="Agência: "
 										styleClass="labelBold" />
 									<p:outputLabel id="AgenciaConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.agenciaConjuge}"
-										label="Agência" onblur=""
-										style="width:100px; margin-left:67px;" />
+										label="Agência" style="width:100px; margin-left:67px;" />
+
 									<p:outputLabel for="ContaConjuge" value="Conta: "
 										styleClass="labelBold" />
 									<p:outputLabel id="ContaConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.contaConjuge}"
-										styleClass="labelBold" label="Conta" onblur=""
+										styleClass="labelBold" label="Conta"
 										style="width:100px;margin-left:67px;" />
 								</h:panelGrid>
 							</h:panelGroup>
-
 						</p:panel>
 
 						<h:panelGroup id="OutrosPagadores">
 							<p:panel header="Outros Pagadores" style="margin-bottom:10px;"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<f:facet name="header"> Participantes </f:facet>
-
+								<f:facet name="header"> Participantes 
+									<p:outputLabel value="" />
+								</f:facet>
 								<p:dataView var="pagador"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
 									paginator="false" layout="list"
 									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 									<p:dataViewListItem>
-									<h:panelGroup id="adicionarPagador">
-									<h:panelGrid columns="2">
-									
-										<p:outputLabel for="NomePagador" value="Nome: "
-											styleClass="labelBold" />
-									
-											<p:outputLabel id="NomePagador"
-												value="#{pagador.pessoa.nome}"
-												required="false" style="FONT-SIZE: 10pt;width:300px;">
-											</p:outputLabel>
-		
-										<p:outputLabel for="CpfPagador" value="CPF: "
-											styleClass="labelBold" />
-										<p:outputLabel id="CpfPagador" label="CPF"
-											value="#{pagador.pessoa.cpf}">
-										</p:outputLabel>
+										<h:panelGroup>
+											<h:panelGrid columns="2">
+												<p:outputLabel for="NomePagador" value="Nome: "
+													styleClass="labelBold" />
 
-										<p:outputLabel for="RgPagador" value="RG / CNH: " />
-										<p:outputLabel id="RgPagador"
-											value="#{pagador.pessoa.rg}"
-											label="RG / CNH" />
+												<p:outputLabel id="NomePagador"
+													value="#{pagador.pessoa.nome}"
+													style="FONT-SIZE: 10pt;width:300px;" />
 
-										<p:outputLabel for="NomePaiPagador" value="Nome do Pai: " />
-										<p:outputLabel id="NomePaiPagador"
-											value="#{pagador.pessoa.nomePai}" />
+												<p:outputLabel for="CpfPagador" value="CPF: "
+													styleClass="labelBold" />
+												<p:outputLabel id="CpfPagador" label="CPF"
+													mask="999.999.999-99" value="#{pagador.pessoa.cpf}" />
 
-										<p:outputLabel for="NomeMaePagador" value="Nome da Mãe: " />
-										<p:outputLabel id="NomeMaePagador"
-											value="#{pagador.pessoa.nomeMae}" />
+												<p:outputLabel for="RgPagador" value="RG / CNH: " />
+												<p:outputLabel id="RgPagador" value="#{pagador.pessoa.rg}"
+													label="RG / CNH" />
 
-										<p:outputLabel for="SexoPagador" value="Sexo: " />
-										<p:selectOneRadio id="SexoPagador"
-											value="#{pagador.pessoa.sexo}">
-											<f:selectItem itemLabel="Masculino" itemValue="MASCULINO" />
-											<f:selectItem itemLabel="Feminino" itemValue="FEMININO" />
-										</p:selectOneRadio>
+												<p:outputLabel for="dataEmissaoRGConjuge"
+													value="Data Emissão: " />
+												<p:outputLabel id="dataEmissaoRGConjuge"
+													value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
+													mask="99/99/9999" label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
 
-										<p:outputLabel for="AtividadePagador" value="Cargo/Ocupação: " />
-										<p:outputLabel id="AtividadePagador"
-											value="#{pagador.pessoa.atividade}"
-											label="Atividade" style="width:400px;" />
+												<p:outputLabel for="NomePaiPagador" value="Nome do Pai: " />
+												<p:outputLabel id="NomePaiPagador"
+													value="#{pagador.pessoa.nomePai}" />
 
-										<p:outputLabel for="EMailPagador" value="E-Mail: " />
-										<p:outputLabel id="EMailPagador"
-											value="#{pagador.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+												<p:outputLabel for="NomeMaePagador" value="Nome da Mãe: " />
+												<p:outputLabel id="NomeMaePagador"
+													value="#{pagador.pessoa.nomeMae}" />
 
-										<p:outputLabel for="DtNascimentoPagador"
-											value="Data de Nascimento: " />
+												<p:outputLabel for="SexoPagador" value="Sexo: " />
+												<p:outputLabel id="SexoPagador"
+													value="#{pagador.pessoa.sexo}" />
 
-										<p:outputLabel id="DtNascimentoPagador"
-											value="#{pagador.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:outputLabel>
+												<p:outputLabel for="AtividadePagador"
+													value="Cargo/Ocupação: " />
+												<p:outputLabel id="AtividadePagador"
+													value="#{pagador.pessoa.atividade}" label="Atividade"
+													style="width:400px;" />
 
-										<p:outputLabel for="TelCelularPagador" value="Telefone: " />
-										<p:outputLabel id="TelCelularPagador"
-											value="#{pagador.pessoa.telCelular}"
-											styleClass="phone" label="Telefone Celular" />
+												<p:outputLabel for="EMailPagador" value="E-Mail: " />
+												<p:outputLabel id="EMailPagador"
+													value="#{pagador.pessoa.email}" label="E-Mail" type="email"
+													onblur="" style="width:400px;" />
+
+												<p:outputLabel for="DtNascimentoPagador"
+													value="Data de Nascimento: " />
+												<p:outputLabel id="DtNascimentoPagador"
+													value="#{pagador.pessoa.dtNascimento}" mask="99/99/9999"
+													label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
+
+												<p:outputLabel for="TelCelularPagador" value="Telefone: " />
+												<p:outputLabel id="TelCelularPagador"
+													value="#{pagador.pessoa.telCelular}" styleClass="phone"
+													label="Telefone Celular" />
 
 
-										<p:outputLabel for="CepPagador" value="Cep: " />
-										<p:outputLabel id="CepPagador"
-											value="#{pagador.pessoa.cep}"
-											mask="99999-999" label="Cep">
-											<p:ajax event="blur" update="Endereco Bairro Cidade Estado"
-												listener="#{contratoCobrancaMB.getEnderecoByViaNetPagador(pagador.pessoa)}" />
-										</p:outputLabel>
+												<p:outputLabel for="CepPagador" value="Cep: " />
+												<p:outputLabel id="CepPagador" value="#{pagador.pessoa.cep}"
+													mask="99999-999" label="Cep" />
 
-										<p:outputLabel value="" />
-										<p:outputLabel
-											value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
+												<p:outputLabel for="EnderecoPagador" value="Endereço: " />
+												<p:outputLabel id="EnderecoPagador"
+													value="#{pagador.pessoa.endereco}" label="Endereço"
+													onblur="" style="width:400px;" />
 
-										<p:outputLabel for="EnderecoPagador" value="Endereço: " />
-										<p:outputLabel id="EnderecoPagador"
-											value="#{pagador.pessoa.endereco}"
-											label="Endereço" onblur="" style="width:400px;" />
+												<p:outputLabel for="NumeroPagador" value="Número: " />
+												<p:outputLabel id="NumeroPagador"
+													value="#{pagador.pessoa.numero}" label="Número" onblur=""
+													style="width:50px;" />
 
-										<p:outputLabel for="NumeroPagador" value="Número: " />
-										<p:outputLabel id="NumeroPagador"
-											value="#{pagador.pessoa.numero}"
-											label="Número" onblur="" style="width:50px;" />
+												<p:outputLabel for="BairroPagador" value="Bairro: " />
+												<p:outputLabel id="BairroPagador"
+													value="#{pagador.pessoa.bairro}" label="Bairro" onblur=""
+													style="width:400px;" />
 
-										<p:outputLabel for="BairroPagador" value="Bairro: " />
-										<p:outputLabel id="BairroPagador"
-											value="#{pagador.pessoa.bairro}"
-											label="Bairro" onblur="" style="width:400px;" />
+												<p:outputLabel for="ComplementoPagador"
+													value="Complemento: " />
+												<p:outputLabel id="ComplementoPagador"
+													value="#{pagador.pessoa.complemento}" label="Complemento"
+													onblur="" style="width:400px;" />
 
-										<p:outputLabel for="ComplementoPagador" value="Complemento: " />
-										<p:outputLabel id="ComplementoPagador"
-											value="#{pagador.pessoa.complemento}"
-											label="Complemento" onblur="" style="width:400px;" />
+												<p:outputLabel for="CidadePagador" value="Cidade: " />
+												<p:outputLabel id="CidadePagador"
+													value="#{pagador.pessoa.cidade}" label="Cidade" onblur=""
+													style="width:400px;" />
 
-										<p:outputLabel for="CidadePagador" value="Cidade: " />
-										<p:outputLabel id="CidadePagador"
-											value="#{pagador.pessoa.cidade}"
-											label="Cidade" onblur="" style="width:400px;" />
+												<p:outputLabel for="EstadoPagador" value="Estado: " />
+												<p:outputLabel id="EstadoPagador"
+													value="#{pagador.pessoa.estado}" label="Estado"
+													style="width:410px;" />
 
-										<p:outputLabel for="EstadoPagador" value="Estado: " />
-										<p:outputLabel id="EstadoPagador"
-											value="#{pagador.pessoa.estado}"
-											label="Estado" style="width:410px;">
-											
-										</p:outputLabel>
 
-										<p:outputLabel for="relacaoComTomador"
-											value="Relação Com Tomador: " />
-										<p:outputLabel id="relacaoComTomador"
-											value="#{pagador.relacaoComTomador}"
-											label="Relação Com Tomador: " style="width:400px;" />
+												<p:outputLabel for="relacaoComTomador"
+													value="Relação Com Tomador: " />
+												<p:inputText id="relacaoComTomador"
+													value="#{pagador.relacaoComTomador}"
+													label="Relação Com Tomador: " style="width:400px;" />
 
-										<p:outputLabel for="BancoPagador" value="Banco: "
-											styleClass="labelBold" />
-										<p:outputLabel id="BancoPagador"
-											value="#{pagador.pessoa.banco}"
-											label="Banco" style="width:410px;">
-											
-										</p:outputLabel>
+												<p:outputLabel for="BancoPagador" value="Banco: "
+													styleClass="labelBold" />
+												<p:outputLabel id="BancoPagador"
+													value="#{pagador.pessoa.banco}" label="Banco"
+													style="width:410px;" />
 
-										<p:outputLabel for="AgenciaPagador" value="Agência: "
-											styleClass="labelBold" />
-										<p:outputLabel id="AgenciaPagador"
-											value="#{pagador.pessoa.agencia}"
-											label="Agência" onblur="" style="width:100px;" />
-										<p:outputLabel for="ContaPagador" value="Conta: "
-											styleClass="labelBold" />
-										<p:outputLabel id="ContaPagador"
-											value="#{pagador.pessoa.conta}"
-											styleClass="labelBold" label="Conta" onblur=""
-											style="width:100px;" />
-									</h:panelGrid>
+												<p:outputLabel for="AgenciaPagador" value="Agência: "
+													styleClass="labelBold" />
+												<p:outputLabel id="AgenciaPagador"
+													value="#{pagador.pessoa.agencia}" label="Agência" onblur=""
+													style="width:100px;" />
+												<p:outputLabel for="ContaPagador" value="Conta: "
+													styleClass="labelBold" />
+												<p:outputLabel id="ContaPagador"
+													value="#{pagador.pessoa.conta}" styleClass="labelBold"
+													label="Conta" onblur="" style="width:100px;" />
+											</h:panelGrid>
 
-									<h:panelGroup>
+											<h:panelGrid columns="2">
+												<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.rgDocumentosCheckList}" />
 
-										<h:panelGrid columns="2">
+												<h:outputText value="Tem Comprovante de Endereço? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.comprovanteEnderecoDocumentosCheckList}" />
 
-											<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.rgDocumentosCheckList}" />
+												<h:outputText value="Tem Certidão de Casamento/Nascimento? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.certidaoCasamentoNascimentoDocumentosCheckList}" />
 
-											<h:outputText value="Tem Comprovante de Endereço? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.comprovanteEnderecoDocumentosCheckList}" />
+												<h:outputText value="Tem Ficha Cadastral? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.fichaCadastralDocumentosCheckList}" />
 
-											<h:outputText value="Tem Certidão de Casamento/Nascimento? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.certidaoCasamentoNascimentoDocumentosCheckList}" />
+												<h:outputText value="Tem Dados Bancários? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.bancoDocumentosCheckList}" />
 
-											<h:outputText value="Tem Ficha Cadastral? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.fichaCadastralDocumentosCheckList}" />
+												<h:outputText value="Tem Telefone e Email? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.telefoneEmailDocumentosCheckList}" />
 
-											<h:outputText value="Tem Dados Bancários? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.bancoDocumentosCheckList}" />
+												<h:outputText value="Tem Comprovante de Renda? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.comprovanteRendaCheckList}" />
 
-											<h:outputText value="Tem Telefone e Email? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.telefoneEmailDocumentosCheckList}" />
+												<h:outputText value="Tem Combate a Fraude? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.combateFraudeCheckList}" />
 
-											<h:outputText value="Tem Comprovante de Renda? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.comprovanteRendaCheckList}" />
+												<h:outputText value="Tem Cargo/Ocupacao? "
+													styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.cargoOcupacaoCheckList}" />
 
-											<h:outputText value="Tem Combate a Fraude? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.combateFraudeCheckList}" />
-
-											<h:outputText value="Tem Cargo/Ocupacao? "
-												styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.cargoOcupacaoCheckList}" />
-
-											<h:outputText value="Tem Taxa? " styleClass="labelBold" />
-											<p:selectBooleanCheckbox
-												value="#{pagador.taxaCheckList}" />
-										</h:panelGrid>
-									</h:panelGroup>
-								</h:panelGroup>
+												<h:outputText value="Tem Taxa? " styleClass="labelBold" />
+												<p:selectBooleanCheckbox disabled="true"
+													value="#{pagador.taxaCheckList}" />
+											</h:panelGrid>
+										</h:panelGroup>
 									</p:dataViewListItem>
 								</p:dataView>
-
-								
 							</p:panel>
 						</h:panelGroup>
-						
+
 						<h:panelGroup id="SociosPanel">
 							<p:panel header="Socios" style="margin-bottom:10px;"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-								<f:facet name="header"> Sócios </f:facet>
+								<f:facet name="header"> Sócios 
+									<p:outputLabel value="" />
+								</f:facet>
+
 								<p:dataView var="socio"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listSocios}"
 									paginator="false" layout="list"
 									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 									<p:dataViewListItem>
-										<h:panelGrid columns="2">
-
+										<p:outputLabel value="Nome: " styleClass="labelBold" />
+										<p:outputLabel value="#{socio.pessoa.nome}"
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
 										<p:spacer height="10" />
-										<p:spacer height="10" />
 
-										<p:outputLabel for="SocioNome" value="Nome do sócio: "
-											styleClass="labelBold" />
-									
-											<p:outputLabel id="SocioNome"
-												value="#{socio.pessoa.nome}"
-												required="false" style="FONT-SIZE: 10pt;width:300px;" />
-									
-										<p:outputLabel for="SocioCpf" value="CPF: "
-											styleClass="labelBold" />
-										<p:outputLabel id="SocioCpf"
-											value="#{socio.pessoa.cpf}"
-											label="CPF" mask="999.999.999-99">
-										</p:outputLabel>
-
-										<p:outputLabel for="SocioRg" value="RG / CNH: " />
-										<p:outputLabel id="SocioRg"
-											value="#{socio.pessoa.rg}"
-											label="RG / CNH" />
-
-										<p:outputLabel for="SocioNomePai" value="Nome do Pai: " />
-										<p:outputLabel id="SocioNomePai"
-											value="#{socio.pessoa.nomePai}" />
-
-										<p:outputLabel for="SocioNomeMae" value="Nome da Mãe: " />
-										<p:outputLabel id="SocioNomeMae"
-											value="#{socio.pessoa.nomeMae}" />
-
-										<p:outputLabel for="SocioSexo" value="Sexo: " />
-										<p:selectOneRadio id="SocioSexo"
-											value="#{socio.pessoa.sexo}">
-											<f:selectItem itemLabel="Masculino" itemValue="MASCULINO" />
-											<f:selectItem itemLabel="Feminino" itemValue="FEMININO" />
-										</p:selectOneRadio>
-
-										<p:outputLabel for="SocioAtividade" value="Cargo/Ocupação: " />
-										<p:outputLabel id="SocioAtividade"
-											value="#{socio.pessoa.atividade}"
-											label="Atividade" style="width:400px;" />
-
-										<p:outputLabel for="SocioEMail" value="E-Mail: " />
-										<p:outputLabel id="SocioEMail"
-											value="#{socio.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioDtNascimento"
-											value="Data de Nascimento: " />
-										<p:outputLabel id="SocioDtNascimento"
-											value="#{socio.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:outputLabel>
-
-										<p:outputLabel for="SocioTelCelular" value="Telefone: " />
-										<p:outputLabel id="SocioTelCelular"
-											value="#{socio.pessoa.telCelular}"
-											styleClass="phone" label="Telefone Celular" />
-
-										<p:outputLabel for="SocioCep" value="Cep: " />
-										<p:outputLabel id="SocioCep"
-											value="#{socio.pessoa.cep}"
-											mask="99999-999" label="Cep">
-											<p:ajax event="blur" update="Endereco Bairro Cidade Estado"
-												listener="#{contratoCobrancaMB.getEnderecoByViaNetPagador(socio.pessoa)}" />
-										</p:outputLabel>
-
-										<p:outputLabel value="" />
-										<p:outputLabel
-											value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
-
-										<p:outputLabel for="SocioEndereco" value="Endereço: " />
-										<p:outputLabel id="SocioEndereco"
-											value="#{socio.pessoa.endereco}"
-											label="Endereço" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioNumero" value="Número: " />
-										<p:outputLabel id="SocioNumero"
-											value="#{socio.pessoa.numero}"
-											label="Número" onblur="" style="width:50px;" />
-
-										<p:outputLabel for="SocioBairro" value="Bairro: " />
-										<p:outputLabel id="SocioBairro"
-											value="#{socio.pessoa.bairro}"
-											label="Bairro" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioComplemento" value="Complemento: " />
-										<p:outputLabel id="SocioComplemento"
-											value="#{socio.pessoa.complemento}"
-											label="Complemento" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioCidade" value="Cidade: " />
-										<p:outputLabel id="SocioCidade"
-											value="#{socio.pessoa.cidade}"
-											label="Cidade" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioEstado" value="Estado: " />
-										<p:outputLabel id="SocioEstado"
-											value="#{socio.pessoa.estado}"
-											label="Estado" style="width:410px;">
-										</p:outputLabel>
-										<h:panelGroup>
-
+										<h:panelGroup id="adicionarSocio">
 											<h:panelGrid columns="2">
+												<p:spacer height="10" />
+												<p:spacer height="10" />
 
-												<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.rgDocumentosCheckList}" />
-
-												<h:outputText value="Tem Comprovante de Endereço? "
+												<p:outputLabel for="SocioNome" value="Nome do sócio: "
 													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.comprovanteEnderecoDocumentosCheckList}" />
 
-												<h:outputText value="Tem Certidão de Casamento/Nascimento? "
+												<p:outputLabel id="SocioNome" value="#{socio.pessoa.nome}"
+													required="false" style="FONT-SIZE: 10pt;width:300px;" />
+
+												<p:outputLabel for="SocioCpf" value="CPF: "
 													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.certidaoCasamentoNascimentoDocumentosCheckList}" />
+												<p:outputLabel id="SocioCpf" value="#{socio.pessoa.cpf}"
+													label="CPF" mask="999.999.999-99" />
 
-												<h:outputText value="Tem Ficha Cadastral? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.fichaCadastralDocumentosCheckList}" />
+												<p:outputLabel for="SocioRg" value="RG / CNH: " />
+												<p:outputLabel id="SocioRg" value="#{socio.pessoa.rg}"
+													label="RG / CNH" />
+												
+												<p:outputLabel for="dataEmissaoRGSocio"
+													value="Data Emissão: "/>
+												<p:outputLabel id="dataEmissaoRGSocio"
+													value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}" mask="99/99/9999"
+													label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
 
-												<h:outputText value="Tem Dados Bancários? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.bancoDocumentosCheckList}" />
+												<p:outputLabel for="SocioNomePai" value="Nome do Pai: " />
+												<p:outputLabel id="SocioNomePai"
+													value="#{socio.pessoa.nomePai}" />
 
-												<h:outputText value="Tem Telefone e Email? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.telefoneEmailDocumentosCheckList}" />
+												<p:outputLabel for="SocioNomeMae" value="Nome da Mãe: " />
+												<p:outputLabel id="SocioNomeMae"
+													value="#{socio.pessoa.nomeMae}" />
 
-												<h:outputText value="Tem Comprovante de Renda? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.comprovanteRendaCheckList}" />
+												<p:outputLabel for="SocioSexo" value="Sexo: " />
+												<p:outputLabel id="SocioSexo" value="#{socio.pessoa.sexo}" />
 
-												<h:outputText value="Tem Combate a Fraude? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.combateFraudeCheckList}" />
+												<p:outputLabel for="SocioAtividade" value="Cargo/Ocupação: " />
+												<p:outputLabel id="SocioAtividade"
+													value="#{socio.pessoa.atividade}" label="Atividade"
+													style="width:400px;" />
 
-												<h:outputText value="Tem Cargo/Ocupacao? "
-													styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.cargoOcupacaoCheckList}" />
+												<p:outputLabel for="SocioEMail" value="E-Mail: " />
+												<p:outputLabel id="SocioEMail" value="#{socio.pessoa.email}"
+													label="E-Mail" type="email" onblur="" style="width:400px;" />
 
-												<h:outputText value="Tem Taxa? " styleClass="labelBold" />
-												<p:selectBooleanCheckbox
-													value="#{socio.taxaCheckList}" />
+												<p:outputLabel for="SocioDtNascimento"
+													value="Data de Nascimento: " />
+												<p:outputLabel id="SocioDtNascimento"
+													value="#{socio.pessoa.dtNascimento}" mask="99/99/9999"
+													label="Data de Nascimento">
+													<f:convertDateTime locale="pt_BR" />
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+												</p:outputLabel>
+
+												<p:outputLabel for="SocioTelCelular" value="Telefone: " />
+												<p:outputLabel id="SocioTelCelular"
+													value="#{socio.pessoa.telCelular}" styleClass="phone"
+													label="Telefone Celular" />
+
+												<p:outputLabel for="SocioCep" value="Cep: " />
+												<p:outputLabel id="SocioCep" value="#{socio.pessoa.cep}"
+													mask="99999-999" label="Cep" />
+
+												<p:outputLabel for="SocioEndereco" value="Endereço: " />
+												<p:outputLabel id="SocioEndereco"
+													value="#{socio.pessoa.endereco}" label="Endereço" onblur=""
+													style="width:400px;" />
+
+												<p:outputLabel for="SocioNumero" value="Número: " />
+												<p:outputLabel id="SocioNumero"
+													value="#{socio.pessoa.numero}" label="Número" onblur=""
+													style="width:50px;" />
+
+												<p:outputLabel for="SocioBairro" value="Bairro: " />
+												<p:outputLabel id="SocioBairro"
+													value="#{socio.pessoa.bairro}" label="Bairro" onblur=""
+													style="width:400px;" />
+
+												<p:outputLabel for="SocioComplemento" value="Complemento: " />
+												<p:outputLabel id="SocioComplemento"
+													value="#{socio.pessoa.complemento}" label="Complemento"
+													onblur="" style="width:400px;" />
+
+												<p:outputLabel for="SocioCidade" value="Cidade: " />
+												<p:outputLabel id="SocioCidade"
+													value="#{socio.pessoa.cidade}" label="Cidade" onblur=""
+													style="width:400px;" />
+
+												<p:outputLabel for="SocioEstado" value="Estado: " />
+												<p:outputLabel id="SocioEstado"
+													value="#{socio.pessoa.estado}" label="Estado"
+													style="width:410px;" />
+												<h:panelGroup>
+													<h:panelGrid columns="2">
+														<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.rgDocumentosCheckList}" />
+
+														<h:outputText value="Tem Comprovante de Endereço? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.comprovanteEnderecoDocumentosCheckList}" />
+
+														<h:outputText
+															value="Tem Certidão de Casamento/Nascimento? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.certidaoCasamentoNascimentoDocumentosCheckList}" />
+
+														<h:outputText value="Tem Ficha Cadastral? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.fichaCadastralDocumentosCheckList}" />
+
+														<h:outputText value="Tem Dados Bancários? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.bancoDocumentosCheckList}" />
+
+														<h:outputText value="Tem Telefone e Email? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.telefoneEmailDocumentosCheckList}" />
+
+														<h:outputText value="Tem Comprovante de Renda? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.comprovanteRendaCheckList}" />
+
+														<h:outputText value="Tem Combate a Fraude? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.combateFraudeCheckList}" />
+
+														<h:outputText value="Tem Cargo/Ocupacao? "
+															styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.cargoOcupacaoCheckList}" />
+
+														<h:outputText value="Tem Taxa? " styleClass="labelBold" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{socio.taxaCheckList}" />
+													</h:panelGrid>
+												</h:panelGroup>
 											</h:panelGrid>
 										</h:panelGroup>
-									</h:panelGrid>
 									</p:dataViewListItem>
 								</p:dataView>
-
 							</p:panel>
 						</h:panelGroup>
 					</p:panel>

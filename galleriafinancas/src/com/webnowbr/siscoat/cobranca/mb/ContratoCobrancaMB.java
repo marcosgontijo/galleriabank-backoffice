@@ -2717,6 +2717,7 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
+			
 			enviaEmailAtualizacaoPreContrato();
 
 			context.addMessage(null,
@@ -2826,7 +2827,7 @@ public class ContratoCobrancaMB {
 				// senao valida se houve alteração no checklist para envio de email.
 
 				enviaEmailAtualizacaoPreContrato();
-
+										
 				if (this.controleWhatsAppAgAssintura) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),

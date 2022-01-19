@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -50,24 +51,31 @@ public class PagadorRecebedor implements Serializable {
 	private String telResidencialConjuge; 
 	private String telCelularConjuge; 
 	private Date dtNascimentoConjuge; 
+	private String nomePaiConjuge;
+	private String nomeMaeConjuge;
 	private String enderecoConjuge;
 	private String bairroConjuge;
 	private String complementoConjuge;
 	private String cidadeConjuge;
 	private String estadoConjuge;
 	private String cepConjuge;
+	private String emailConjuge;
+	
 	
 	private String bancoConjuge;
 	private String agenciaConjuge;
 	private String contaConjuge;
 	private String nomeCCConjuge;
 	private String cpfCCConjuge;
-	private String cnpjCCConjuge;	
+	private String cnpjCCConjuge;
+
+	
+	private Date dataEmissaoRGConjuge;
 	
 	private String rg;
 	private String cpf;
 	private String cnpj;
-	
+	private Date dataEmissaoRG;
 	private String cep;
 	
 	private String bancoCompleto;
@@ -93,7 +101,6 @@ public class PagadorRecebedor implements Serializable {
 	private String iuguLiveApiToken;
 	private String iuguTestApiToken;
 	private String iuguUserToken;
-	
 	private String site;
 	
 	private String nomeCoobrigado;	
@@ -107,10 +114,7 @@ public class PagadorRecebedor implements Serializable {
 	private String estadoCoobrigado;
 	private String cepCoobrigado;
 	private String emailCoobrigado;
-	private String emailConjuge;
 	private Date dataEmissaoRGCoobrigado;
-	private Date dataEmissaoRG;
-	private Date dataEmissaoRGConjuge;
 	
 	private String bancoCoobrigado;
 	private String agenciaCoobrigado;
@@ -147,8 +151,7 @@ public class PagadorRecebedor implements Serializable {
 	private String nomeCCCoobrigadoCasado;
 	private String cpfCCCoobrigadoCasado;
 	private String cnpjCCCoobrigadoCasado;	
-	
-	
+
 	private String nomeSecundario;
 	private String cpfSecundario;
 	private String cnpjSecundario;
@@ -242,6 +245,16 @@ public class PagadorRecebedor implements Serializable {
 		this.cep = cep;
 		pesquisaBancosListaNome();
 	}
+	
+	 public List<String> completeBancos(String query) {
+	        String queryLowerCase = query.toLowerCase();
+	        List<String> bancos = new ArrayList<>();
+	        for(BancosEnum banco : BancosEnum.values()) {
+	        	String bancoStr = banco.getNomeCompleto().toString();
+	        	bancos.add(bancoStr);
+	        }
+	        return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
 	
 	public void pesquisaBancosListaNome() {
 		this.listaBancos = new ArrayList<>();
@@ -1833,6 +1846,22 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setCnpjCCCoobrigadoCasado(String cnpjCCCoobrigadoCasado) {
 		this.cnpjCCCoobrigadoCasado = cnpjCCCoobrigadoCasado;
+	}
+
+	public String getNomePaiConjuge() {
+		return nomePaiConjuge;
+	}
+
+	public void setNomePaiConjuge(String nomePaiConjuge) {
+		this.nomePaiConjuge = nomePaiConjuge;
+	}
+
+	public String getNomeMaeConjuge() {
+		return nomeMaeConjuge;
+	}
+
+	public void setNomeMaeConjuge(String nomeMaeConjuge) {
+		this.nomeMaeConjuge = nomeMaeConjuge;
 	}
 	
 	

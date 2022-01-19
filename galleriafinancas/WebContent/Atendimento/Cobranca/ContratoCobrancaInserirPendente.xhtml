@@ -1107,8 +1107,7 @@
 								value="#{contratoCobrancaMB.tipoPessoaIsFisica}" required="true">
 								<f:selectItem itemLabel="Física" itemValue="true" />
 								<f:selectItem itemLabel="Jurídica" itemValue="false" />
-								<p:ajax update="PanelPagadorRecebedor :form:CheckListDocumentos"
-									event="valueChange"
+								<p:ajax update="PanelPagadorRecebedor :form:CheckListDocumentos" event="valueChange"
 									listener="#{contratoCobrancaMB.selectedTipoPessoaPublico}" />
 							</p:selectOneRadio>
 
@@ -1119,7 +1118,7 @@
 								label="CPF" mask="999.999.999-99" required="true"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur"
-									update="mensagensCPFCNPJ referenciaBancaria"
+									update="mensagensCPFCNPJ  NomeCC CpfCC"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}" />
 							</p:inputMask>
 
@@ -1144,7 +1143,7 @@
 								label="CNPJ" mask="99.999.999/9999-99" required="true"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur"
-									update="mensagensCPFCNPJ referenciaBancaria"
+									update="mensagensCPFCNPJ  NomeCC CNPJCC"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}" />
 							</p:inputMask>
 
@@ -1160,13 +1159,13 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 								<p:ajax event="blur"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}"
-									update="referenciaBancaria" />
+									update=" NomeCC CpfCC" />
 							</p:inputText>
 							<p:inputText id="NomeCNPJ"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nome}"
 								label="Nome" required="true" onblur="" style="width:400px;"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
-								<p:ajax event="blur" update="referenciaBancaria"
+								<p:ajax event="blur" update=" NomeCC CNPJCC"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}" />
 							</p:inputText>
 
@@ -1187,6 +1186,14 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
 
+							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:inputText id="NomePai"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:inputText id="NomeMae"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
+								
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:inputText id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
@@ -1286,7 +1293,7 @@
 						</h:panelGrid>
 
 						<h:panelGrid columns="2" id="referenciaBancaria">
-							<p:outputLabel for="CpfCC" value="CPF: "
+							<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputMask id="CpfCC"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCC}"
@@ -1296,7 +1303,7 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 							</p:inputMask>
 
-							<p:outputLabel for="CNPJCC" value="CNPJ: "
+							<p:outputLabel for="CNPJCC" value="CNPJ: " styleClass="labelBold"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputMask id="CNPJCC"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpjCC}"
@@ -1314,15 +1321,16 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeCC}"
 								label="Nome" onblur="" style="width:400px; margin-left:67px;" />
 
-							<p:outputLabel for="Banco" value="Banco: " styleClass="labelBold" />
 
-							<p:selectOneMenu id="Banco"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
-								label="Banco" style="width:410px; margin-left:67px;">
-								<f:selectItem itemValue="" itemLabel="Escolha o Banco" />
-								<f:selectItems
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.listaBancos}" />
-							</p:selectOneMenu>
+							<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
+							<p:autoComplete id="Banco" value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
+								completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+								var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+								forceSelection="true" styleClass="labelBold" label="Conta" 
+								style="width:100px; margin-left:67px;"
+								scrollHeight="250" />
+
+							
 							<p:outputLabel for="Agencia" value="Agência: "
 								styleClass="labelBold" />
 							<p:inputText id="Agencia"
@@ -1368,7 +1376,7 @@
 										required="true" label="Nome" onblur="" style="width:400px;">
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
-											update="referenciaBancariaConjuge" />
+											update="NomeCCConjuge CpfCCConjuge" />
 									</p:inputText>
 									<p:outputLabel for="SexoConjuge" value="Sexo: " />
 									<p:selectOneRadio id="SexoConjuge"
@@ -1384,7 +1392,7 @@
 										validator="#{contratoCobrancaMB.validaCPF}">
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
-											update="referenciaBancariaConjuge" />
+											update="CpfCCConjuge NomeCCConjuge" />
 									</p:inputMask>
 									<p:outputLabel for="RgConjuge" value="RG / CNH: " />
 									<p:inputText id="RgConjuge"
@@ -1397,6 +1405,15 @@
 										mask="99/99/9999" label="Data Emissão">
 										<f:convertDateTime pattern="dd/MM/yyyy" />
 									</p:inputMask>
+
+									<p:outputLabel for="NomePaiConjuge" value="Nome do Pai: " />
+									<p:inputText id="NomePaiConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePaiConjuge}" />
+
+									<p:outputLabel for="NomeMaeConjuge" value="Nome da Mãe: " />
+									<p:inputText id="NomeMaeConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMaeConjuge}" />
+										
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:inputText id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
@@ -1481,7 +1498,7 @@
 									</p:selectOneMenu>
 								</h:panelGrid>
 								<h:panelGrid columns="2" id="referenciaBancariaConjuge">
-									<p:outputLabel for="CpfCCConjuge" value="CPF: " />
+									<p:outputLabel for="CpfCCConjuge" value="CPF: " styleClass="labelBold"  />
 									<p:inputMask id="CpfCCConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCCConjuge}"
 										label="CPF" style="width:400px; margin-left:67px;"
@@ -1494,16 +1511,16 @@
 									<p:inputText id="NomeCCConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeCCConjuge}"
 										label="Nome" onblur="" style="width:400px; margin-left:67px;" />
-
-									<p:outputLabel for="BancoConjuge" value="Banco: "
+										
+									<p:outputLabel value="Banco: " for="BancoConjuge"
 										styleClass="labelBold" />
-									<p:selectOneMenu id="BancoConjuge"
+									<p:autoComplete id="BancoConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.bancoConjuge}"
-										label="Banco" style="width:410px; margin-left:67px;">
-										<f:selectItem itemValue="" itemLabel="Escolha o Banco" />
-										<f:selectItems
-											value="#{contratoCobrancaMB.objetoPagadorRecebedor.listaBancos}" />
-									</p:selectOneMenu>
+										completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta"
+										style="width:100px; margin-left:67px;" scrollHeight="250" />
+
 
 									<p:outputLabel for="AgenciaConjuge" value="Agência: "
 										styleClass="labelBold" />
@@ -1520,6 +1537,7 @@
 								</h:panelGrid>
 							</h:panelGroup>
 						</p:panel>
+						
 
 						<h:panelGroup id="OutrosPagadores">
 							<p:panel header="Outros Pagadores" style="margin-bottom:10px;"
@@ -1571,13 +1589,20 @@
 											styleClass="labelBold" />
 										<p:inputMask id="CpfPagador" label="CPF" mask="999.999.999-99"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.cpf}">
-
 										</p:inputMask>
 
 										<p:outputLabel for="RgPagador" value="RG / CNH: " />
 										<p:inputText id="RgPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.rg}"
 											label="RG / CNH" />
+
+										<p:outputLabel for="dataEmissaoRGPagador"
+											value="Data Emissão: " />
+										<p:inputMask id="dataEmissaoRGPagador"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
+											mask="99/99/9999" label="Data Emissão">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:inputMask>
 
 										<p:outputLabel for="NomePaiPagador" value="Nome do Pai: " />
 										<p:inputText id="NomePaiPagador"
@@ -1696,15 +1721,14 @@
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.relacaoComTomador}"
 											label="Relação Com Tomador: " style="width:400px;" />
 
-										<p:outputLabel for="BancoPagador" value="Banco: "
+										<p:outputLabel value="Banco: " for="BancoPagador"
 											styleClass="labelBold" />
-										<p:selectOneMenu id="BancoPagador"
+										<p:autoComplete id="BancoPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.banco}"
-											label="Banco" style="width:410px;">
-											<f:selectItem itemValue="" itemLabel="Escolha o Banco" />
-											<f:selectItems
-												value="#{contratoCobrancaMB.objetoPagadorRecebedor.listaBancos}" />
-										</p:selectOneMenu>
+											completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+											var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+											forceSelection="true" styleClass="labelBold" label="Conta"
+											style="width:100px;" scrollHeight="250" />
 
 										<p:outputLabel for="AgenciaPagador" value="Agência: "
 											styleClass="labelBold" />
@@ -1842,6 +1866,14 @@
 										<p:inputText id="SocioRg"
 											value="#{contratoCobrancaMB.socioSelecionado.pessoa.rg}"
 											label="RG / CNH" />
+											
+										<p:outputLabel for="dataEmissaoRGSocio"
+											value="Data Emissão: " />
+										<p:inputMask id="dataEmissaoRGSocio"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
+											mask="99/99/9999" label="Data Emissão">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:inputMask>
 
 										<p:outputLabel for="SocioNomePai" value="Nome do Pai: " />
 										<p:inputText id="SocioNomePai"
@@ -1951,10 +1983,32 @@
 											<f:selectItem itemValue="SE" itemLabel="Sergipe" />
 											<f:selectItem itemValue="TO" itemLabel="Tocantins" />
 										</p:selectOneMenu>
+										
+										<p:outputLabel value="Banco: " for="SocioBanco"
+											styleClass="labelBold" />
+										<p:autoComplete id="SocioBanco"
+											value="#{contratoCobrancaMB.socioSelecionado.pessoa.banco}"
+											completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+											var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+											forceSelection="true" styleClass="labelBold" label="Conta"
+											style="width:100px; " scrollHeight="250" />
+
+										<p:outputLabel for="SocioAgencia" value="Agência: "
+											styleClass="labelBold" />
+										<p:inputText id="SocioAgencia"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.agencia}"
+											label="Agência" onblur="" style="width:100px;" />
+
+										<p:outputLabel for="SocioConta" value="Conta: "
+											styleClass="labelBold" />
+										<p:inputText id="SocioConta"
+											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.conta}"
+											styleClass="labelBold" label="Conta" onblur=""
+											style="width:100px;" />
+
 										<h:panelGroup>
-
+										
 											<h:panelGrid columns="2">
-
 												<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
 												<p:selectBooleanCheckbox
 													value="#{contratoCobrancaMB.socioSelecionado.rgDocumentosCheckList}" />
