@@ -74,20 +74,37 @@ public class BRLTrustMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJson.xhtml";
 	}
 	
+	public void pesquisaContratosJSONCessao() {
+		// cedenteBRLCessao;
+		// dataAquisicaoCessao;
+		
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+		this.contratos = cDao.consultaContratosJSONCessao();
+	}
+	
 	public void pesquisaContratosCessao() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
-		if (this.numContrato.length() == 4) {
-			this.numContrato = "0" + this.numContrato;
-		} 
-		
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratos = contratoCobrancaDao.consultaContratosBRLCessao(this.numContrato);
-		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"BRL JSON: Pesquisa efetuada com sucesso!",
-						""));	
+		if (!this.cedenteCessao.equals("")) {
+			if (this.numContrato.length() == 4) {
+				this.numContrato = "0" + this.numContrato;
+			} 
+			
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			this.contratos = contratoCobrancaDao.consultaContratosBRLCessao(this.numContrato);
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"BRL JSON: Pesquisa efetuada com sucesso!",
+							""));	
+		} else {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"BRL JSON: Informe o cedente para a consulta dos contratos!",
+							""));
+		}
 	}
 	
 	public String clearFieldsBRLJsonLiquidacao() {			
@@ -195,6 +212,11 @@ public class BRLTrustMB {
 		 */
 		
 		int countParcelas = 0;
+		
+		ContratoCobrancaMB contratoCobranca = new ContratoCobrancaMB();
+		
+		BigDecimal valorTotalPresenteContrato = contratoCobranca.calcularValorPresenteTotalContrato(this.objetoContratoCobranca);
+		
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			countParcelas = countParcelas + 1;
 			if (countParcelas > countCarencia) {
@@ -277,10 +299,8 @@ public class BRLTrustMB {
 					
 					jsonDados.put("sistemaAmortizacao", this.objetoContratoCobranca.getTipoCalculo());
 					jsonDados.put("valorDaGarantia", this.objetoContratoCobranca.getValorImovel());
-					jsonDados.put("tipo", this.objetoContratoCobranca.getTipoImovel());
-					
-					jsonDados.put("LTV", "LTV");
-					
+					jsonDados.put("tipo", this.objetoContratoCobranca.getTipoImovel());					
+					jsonDados.put("LTV", valorTotalPresenteContrato);					
 					jsonDados.put("empresa", this.objetoContratoCobranca.getEmpresaImovel());
 					jsonDados.put("contemSeguroMIPeDFI", "SIM");								
 					

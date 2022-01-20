@@ -53,7 +53,7 @@
 						styleClass="labelBold" />
 					<p:selectOneMenu id="cedente"
 						value="#{brlTrustMB.cedenteCessao}"
-						label="Cedente" style="width:345px;" required="true">
+						label="Cedente" style="width:345px;">
 						<f:selectItem itemValue="" itemLabel="SELECIONE" />
 						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
 						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
@@ -89,6 +89,13 @@
 						update=":form:PanelJSON :form:ConsultaContratosResultados"
 						image="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
+						
+				<p:commandButton value="Pesquisar JSON Gerados"
+						ajax="false"
+						action="#{brlTrustMB.pesquisaContratosJSONCessao()}"
+						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						image="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
 				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
@@ -111,6 +118,15 @@
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	        
+			         <p:column style="text-align: center;" headerText="Cedente Cessão" filterBy="#{contratos.cedenteBRLCessao}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.cedenteBRLCessao}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Data Aquisição" sortBy="#{contratos.dataAquisicaoCessao}">
+			            <h:outputText value="#{contratos.dataAquisicaoCessao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
 			        <p:column styleClass="colunaResponsiva">	 
 				        <p:commandButton action="#{brlTrustMB.geraJSONCessao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão" title="Gerar JSON Cessão">
 				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		

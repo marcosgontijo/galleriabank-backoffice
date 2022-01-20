@@ -4613,6 +4613,45 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_CONTRATOS_JSON_CESSAO = " select c.id from cobranca.contratocobranca c ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosJSONCessao() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_JSON_CESSAO;
+					
+					query = query + " where cedenteBRLCessao != '' ";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentes(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
