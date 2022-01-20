@@ -1781,6 +1781,14 @@
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
+					<shiro:hasAnyRoles name="ROOT">
+						<p:panel id="Ipca" header="IPCA" style="margin-bottom:10px;">
+							<p:outputLabel value="Recalcular IPCA: " styleClass="labelBold"
+								style="margin-right: 59px;" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoContratoCobranca.recalculaIPCA}" />
+						</p:panel>
+					</shiro:hasAnyRoles>
 
 						<p:panel id="Pagamento" header="Forma de Pagamento"
 							style="margin-bottom:10px;">
