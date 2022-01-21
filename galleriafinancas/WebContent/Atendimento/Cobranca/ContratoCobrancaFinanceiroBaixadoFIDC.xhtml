@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">	
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>				
+			<p:messages id="mensagens" showDetail="true"/>	
+			<p:panel id="PanelPDF" header="Impressão em PDF / XLS Gerada com Sucesso" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.contratoGerado}">
+				<p:focus /> 
+				<p:messages/>
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+					 
+					<h:form>					
+					    <p:commandButton value="Download do Relatório" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					        <p:fileDownload value="#{contratoCobrancaMB.file}" />
+					    </p:commandButton>
+					</h:form>
+					 
+					<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+					
+				</h:panelGrid>																			
+			</p:panel>													
+			<p:panel id="ConsultaFinanceiroBaixado" header="Financeiro Baixado FIDC - Consultar" style="margin-bottom:10px;">
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="dataInicio" value="Data Inicio: " styleClass="labelBold" style="margin-right: 59px;" />						
+					<p:calendar id="dataInicio" value="#{contratoCobrancaMB.relDataContratoInicio}" required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />				
+					<p:outputLabel for="dataFim" value="Data Fim " styleClass="labelBold" style="margin-right: 59px;" />							
+					<p:calendar id="dataFim" value="#{contratoCobrancaMB.relDataContratoFim}" required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>							
+				</h:panelGrid>														
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixadoFIDC}" image="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;" />					
+			</p:panel>
+			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado FIDC - Resultados" style="margin-bottom:10px;">	    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
+                 	<f:facet name="header">       
+			        </f:facet>	                 
+			        
+			        				relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						
+						
+                 	<p:column style="text-align: center;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			            <h:outputText value="#{contratos.nomeResponsavel}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 90px;" headerText="Valor CCB">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}" converter="bigDecimalConverter"/>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Parcela" filterBy="#{contratos.parcela}" filterMatchMode="contains" sortBy="#{contratos.parcela}">
+			            <h:outputText value="#{contratos.parcela}" />
+			        </p:column>
+			        <p:column style="text-align: center;width: 90px;" headerText="Valor Parcela">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.vlrParcela}" converter="bigDecimalConverter"/>
+			        </p:column>	
+			        <p:column style="text-align: center;width: 90px;" headerText="Valor Pago">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.vlrTotalPago}" converter="bigDecimalConverter"/>
+			        </p:column>			        		        			        			        	               			        	        
+			        <p:column style="width:30px;" exportable="false">
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-search" title="Detalhes">
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos.contratoCobranca}" />  			        		
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaFinanceiroBaixado" />
+		                </p:commandButton>			        			     
+		            </p:column>		
+                 	<f:facet name="footer">         
+			        </f:facet>			            	            	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>			
+		</h:form>
+		<p:panel id="PanelXLS"
+			header="Impressão em PDF / XLS Gerada com Sucesso"
+			style="margin-bottom:10px;"
+			rendered="#{contratoCobrancaMB.contratoGerado}">
+			<p:focus />
+			<p:messages />
+			<h:panelGrid columns="2">
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+					draggable="false" closable="false" resizable="false">
+					<p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<h:form>
+					<p:commandButton value="Download do Relatório" ajax="false"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{contratoCobrancaMB.file}" />
+					</p:commandButton>
+				</h:form>
+
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+					</script>
+
+			</h:panelGrid>
+		</p:panel>					
+	</ui:define>
+</ui:composition>	        

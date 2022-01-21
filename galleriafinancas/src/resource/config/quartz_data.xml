@@ -18,7 +18,7 @@
 	 <!--<schedule>
 		<job>
 			<name>IpcaJobUnico</name>
-			<job-class>com.webnowbr.siscoat.job.IpcaJob</job-class>
+			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
 		</job>
 		<trigger>
 			<simple>
@@ -52,7 +52,7 @@
 			<cron>
 				<name>IpcaJobContratoTrigger</name>
 				<job-name>IpcaJobContrato</job-name>
-				<cron-expression>0 0 0/1 * * ?</cron-expression>
+				<cron-expression>0 0/30 * * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>

@@ -219,8 +219,7 @@
 									<p:menuitem value="Financeiro Dia FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('FIDC')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />
-										
+										styleClass="itemMenu" />										
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -229,6 +228,10 @@
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 									<p:menuitem value="Financeiro Baixado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixado}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Baixado FIDC"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Recebedores"

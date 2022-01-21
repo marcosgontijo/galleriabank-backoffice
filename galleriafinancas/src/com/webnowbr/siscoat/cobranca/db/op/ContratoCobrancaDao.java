@@ -2431,6 +2431,73 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC =  	
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido " + 
+			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
+			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
+			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
+			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
+			"where  " +
+			"cdbp.dataPagamento >= ? ::timestamp  " +	
+			"and cdbp.dataPagamento <= ? ::timestamp  " +
+			"and cc.empresa = 'FIDC GALLERIA' " +
+			"order by cc.numerocontrato, cd.numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalFIDC(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC;
+
+				try {
+					connection = getConnection();
+						
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);								
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+		
+					while (rs.next()) { 
+						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+						
+						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						
+						objects.add(relatorioFinanceiroCobrancaAux);								
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotal(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
@@ -4592,6 +4659,45 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query = query + " order by id desc";
 					
 					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_CONTRATOS_JSON_CESSAO = " select c.id from cobranca.contratocobranca c ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosJSONCessao() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_JSON_CESSAO;
+					
+					query = query + " where cedenteBRLCessao != '' ";
 					
 					ps = connection
 							.prepareStatement(query);
