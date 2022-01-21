@@ -6839,13 +6839,13 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		if (this.preContratoCustom) {
+	//	if (this.preContratoCustom) {
 
-			crmmb = new CRMMB();
-			crmmb.geraConsultaContratosTodos();
+		//	crmmb = new CRMMB();
+		//	crmmb.geraConsultaContratosTodos();
 
-			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoConsultar.xhtml";
-		} else {
+		//	return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoConsultar.xhtml";
+		//} else {
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
@@ -6871,7 +6871,7 @@ public class ContratoCobrancaMB {
 			this.contratosPendentes = populaStatus(this.contratosPendentes);
 
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
-		}
+		//}
 	}
 	
 	public Collection<ContratoCobranca> populaStatus(Collection<ContratoCobranca> contratos) {
