@@ -26,6 +26,8 @@ public class RelatorioFinanceiroCobranca {
 	public Date dataUltimoPagamento;
 	private BigDecimal vlrTotalPago;
 	
+	private BigDecimal valorCCB;
+	
 	private boolean cartorio = false;
 	
 	public ContratoCobranca contratoCobranca;
@@ -781,6 +783,12 @@ public class RelatorioFinanceiroCobranca {
 	public void setCartorio(boolean cartorio) {
 		this.cartorio = cartorio;
 	}
-	
-	
+
+	public BigDecimal getValorCCB() {
+		return valorCCB;
+	}
+
+	public void setValorCCB(BigDecimal valorCCB) {
+		this.valorCCB = valorCCB;
+	}
 }

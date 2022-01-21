@@ -4969,8 +4969,8 @@ public class ContratoCobrancaMB {
 	private int numeroPresenteParcela;
 
 	public void calcularValorPresenteParcela(){
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
+		TimeZone zone = TimeZone.getDefault(); 
+		Locale locale = new Locale("pt", "BR"); 
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
@@ -5005,10 +5005,10 @@ public class ContratoCobrancaMB {
 		Date auxDataHoje = dataHoje.getTime();
 		
 		BigDecimal valorPresenteTotalContrato = BigDecimal.ZERO;
+		BigDecimal juros = contrato.getTxJurosParcelas();
 		
 		for (ContratoCobrancaDetalhes parcelas : contrato.getListContratoCobrancaDetalhes()) {
-			this.valorPresenteParcela = BigDecimal.ZERO;
-			BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+			this.valorPresenteParcela = BigDecimal.ZERO;			
 			BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
 			BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 	
@@ -5965,6 +5965,17 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixado.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroBaixadoFIDC() {
+		this.relDataContratoInicio = gerarDataHoje();
+		this.relDataContratoFim = gerarDataHoje();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoFIDC.xhtml";
+	}
 
 	public String clearFieldsRelFinanceiroRecebedor() {
 		this.relDataContratoInicio = null;
@@ -6594,7 +6605,7 @@ public class ContratoCobrancaMB {
 			this.numContrato = null;
 		}
 	}
-
+	
 	public void geraRelFinanceiroBaixado() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
@@ -6665,6 +6676,21 @@ public class ContratoCobrancaMB {
 						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento);
 			}
 		}
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+
+	public void geraRelFinanceiroBaixadoFIDC() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
+				this.relDataContratoInicio, this.relDataContratoFim);
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
 

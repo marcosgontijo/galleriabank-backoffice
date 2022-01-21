@@ -2818,7 +2818,7 @@ public class InvestidorMB {
 				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
 				writer.setPageEvent(event);
 
-				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logocadastrosbanksmall.png"));
+				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/LogoFinancas.png"));
 		        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		        ImageIO.write(buff, "png", bos);
 		        Image img = Image.getInstance(bos.toByteArray());
