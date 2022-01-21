@@ -15,6 +15,7 @@ public class RelatorioFinanceiroCobranca {
 	public String nomeRecebedor;
 	
 	public String parcela;
+	public String parcelaCCB;
 	public Date dataVencimento;
 	public Date dataVencimentoAtual;
 	public BigDecimal valor;
@@ -790,5 +791,13 @@ public class RelatorioFinanceiroCobranca {
 
 	public void setValorCCB(BigDecimal valorCCB) {
 		this.valorCCB = valorCCB;
+	}
+
+	public String getParcelaCCB() {
+		return parcelaCCB;
+	}
+
+	public void setParcelaCCB(String parcelaCCB) {
+		this.parcelaCCB = parcelaCCB;
 	}
 }

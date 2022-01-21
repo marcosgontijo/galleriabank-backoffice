@@ -71,6 +71,9 @@
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>
+			        <p:column style="text-align: center;" headerText="CCB" filterBy="#{contratos.parcelaCCB}" filterMatchMode="contains" sortBy="#{contratos.parcelaCCB}">
+			            <h:outputText value="#{contratos.parcelaCCB}" />
+			        </p:column>
 			        <p:column style="text-align: center;width: 90px;" headerText="Valor CCB">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}" converter="bigDecimalConverter"/>
 			        </p:column>		
