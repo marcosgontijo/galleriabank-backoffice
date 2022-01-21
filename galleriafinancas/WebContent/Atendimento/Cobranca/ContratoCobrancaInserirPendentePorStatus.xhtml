@@ -238,6 +238,21 @@
 									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
 										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 									</p:commandButton>	
+									
+									<!-- -->
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 6 and contratoCobrancaMB.indexStepsStatusContrato le 8}">
+									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Voltar Contrato para Comitê</p:outputLabel>			
+										<p:spacer ></p:spacer>						
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+											<p:commandButton value="Voltar Para Comite"
+												onclick="PF('voltarComiteDialog').show();" />
+										</shiro:hasAnyRoles>						    								    													    						   
+									</h:panelGrid>
+								</ui:fragment>						
+									
 								</h:panelGrid>	
 							</h:panelGrid>
 						</ui:fragment>	
@@ -272,7 +287,6 @@
 								</ui:fragment>
  
  								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
- 								
 									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" rendered="#{contratoCobrancaMB.updateMode}">
 										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 									</p:commandButton>	
@@ -419,7 +433,7 @@
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
-							<h:panelGrid columns="2">
+							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
 										styleClass="labelBold" />
@@ -2884,7 +2898,33 @@
 				</shiro:hasAnyRoles>
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
-		</h:form>	
+		</h:form>
+
+		<p:dialog header="Enviar Para Comitê" widgetVar="voltarComiteDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromVoltarComite">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="1">
+						<h:outputText
+							value="(Os votos de comitê serão mantidos, mas será preciso aprovar novamente)"
+							styleClass="labelBold"
+							style="width:250px;font-weight: bold; font-size: 13px;" />
+						<p:spacer width="20" />
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Não"
+							onclick="PF('voltarComiteDialog').close();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.voltarContratoParaComite}"
+							style="TEXT-DECORATION: bold;" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+
 		<p:dialog header="Recebedores" widgetVar="recebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formRecebedores">

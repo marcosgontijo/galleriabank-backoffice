@@ -3214,6 +3214,22 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
+	
+	public String voltarContratoParaComite() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setAprovadoComite(false);
+		this.objetoContratoCobranca.setDocumentosCompletos(false);
+		this.objetoContratoCobranca.setCcbPronta(false);
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. Comite");
+	}
 
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
 		ResponsavelDao rDao = new ResponsavelDao();

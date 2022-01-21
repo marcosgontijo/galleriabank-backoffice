@@ -408,16 +408,19 @@
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
-							<p:outputLabel id="vencimentoBoleto" 
+							<p:calendar id="vencimentoBoleto" showOn="button"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto}"
 								size="100" pattern="dd/MM/yyyy"
 								locale="pt" styleClass="dateTimeField" />
 
 							<p:outputLabel for="valorBoletoPre" value="Valor do Boleto: "
 								styleClass="labelBold" />
-							<p:outputLabel id="valorBoletoPre"
+							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
-								style="font-weight: bold;"/>
+								style="font-weight: bold;">
+								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
+								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+							</p:selectOneMenu>
 							
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -429,7 +432,7 @@
 																			contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto,																	
 																			contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr
 																			)}"
-								update=":form:BoletoPanel :form:BoletoPAJULaudo" disabled="true"
+								update=":form:BoletoPanel :form:BoletoPAJULaudo"
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
 						</h:panelGrid>
