@@ -80,7 +80,7 @@
 					</h:panelGrid>
 				</shiro:hasAnyRoles>
 
-				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.status != 'Baixado' or contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
+				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.status != 'Baixado' and contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
 					<ui:fragment
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						<p:steps
@@ -602,7 +602,7 @@
 									<p:outputLabel for="observacaoRenda" value="Observação: "
 										styleClass="labelBold" />
 									<p:outputLabel id="observacaoRenda" rows="10" cols="48"
-										maxlength="3000"
+										maxlength="3000" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
 								</h:panelGrid>
 							</h:panelGroup>
