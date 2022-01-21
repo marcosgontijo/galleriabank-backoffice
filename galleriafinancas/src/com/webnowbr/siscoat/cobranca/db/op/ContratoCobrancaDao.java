@@ -2432,7 +2432,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC =  	
-			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro || '/' || cd.numeroparcela " + 
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela " + 
 			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
 			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
 			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
@@ -2443,7 +2443,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"where  " +
 			"cdbp.dataPagamento >= ? ::timestamp  " +	
 			"and cdbp.dataPagamento <= ? ::timestamp  " +
-			//"and cc.empresa = 'FIDC GALLERIA' " +
+			"and cc.empresa = 'FIDC GALLERIA' " +
 			"order by cc.numerocontrato, cd.numeroparcela ";
 	
 	@SuppressWarnings("unchecked")
@@ -2486,8 +2486,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
 						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
 						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
-						relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8));
 						
+						if (!rs.getString(8).equals("")) {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+						} else {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
+						}
+												
 						objects.add(relatorioFinanceiroCobrancaAux);								
 					}
 				} finally {
