@@ -50,18 +50,12 @@
 			</p:panel>
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado FIDC - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
-                 	<f:facet name="header">       
-			        </f:facet>	                 
-			        
-			        				relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
-						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
-						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
-						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
-						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
-						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
-						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
-						
-						
+                 	<f:facet name="header">   
+                 		<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.gerarXLSFinanceiroBaixadoFIDC}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />    
+			        </f:facet>	                 						
                  	<p:column style="text-align: center;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
@@ -70,6 +64,9 @@
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="CCB" filterBy="#{contratos.parcelaCCB}" filterMatchMode="contains" sortBy="#{contratos.parcelaCCB}">
+			            <h:outputText value="#{contratos.parcelaCCB}" />
 			        </p:column>
 			        <p:column style="text-align: center;width: 90px;" headerText="Valor CCB">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}" converter="bigDecimalConverter"/>
@@ -91,7 +88,11 @@
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaFinanceiroBaixado" />
 		                </p:commandButton>			        			     
 		            </p:column>		
-                 	<f:facet name="footer">         
+                 	<f:facet name="footer">      
+                 		<p:commandButton value="Gerar XLS" ajax="false"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.gerarXLSFinanceiroBaixadoFIDC}"
+							update="PanelPDF PanelXLS"
+							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />   
 			        </f:facet>			            	            	        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>			
