@@ -4226,6 +4226,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONTRATOS_PENDENTES_REPROVADOS = " select c.id, c.numerocontrato, c.datacontrato, pare.nome, res.nome, c.motivoReprovacaoAnalise, c.motivoReprovaLead, c.quantoprecisa, imv.numeroMatricula from cobranca.contratocobranca c "
+			+ "	inner join cobranca.responsavel res on c.responsavel = res.id "
+			+ "	inner join cobranca.pagadorrecebedor pare on c.pagador = pare.id "
+			+ "	inner join cobranca.imovelcobranca imv on c.imovel = imv.id "
+			+ "	where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
+	
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentesReprovados(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -4239,14 +4245,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 
-					String query = QUERY_CONTRATOS_PENDENTES;
-					
-					query = query + " where (status = 'Reprovado' or status = 'Desistência Cliente' ) " ;
+					String query = QUERY_CONTRATOS_PENDENTES_REPROVADOS;
 
-					
+					if (codResponsavel != null) {
+						if (!codResponsavel.equals("")) { 
+							query = query + " and res.codigo = '" + codResponsavel + "' ";
+						}				
+					} 
 					
 					query = query + " order by id desc ";
-					query = query +  " limit 10 ";
 					
 					ps = connection
 							.prepareStatement(query);
@@ -4255,7 +4262,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setMotivoReprovacaoAnalise(rs.getString("motivoReprovacaoAnalise"));
+						contratoCobranca.setMotivoReprovaLead(rs.getString("motivoReprovaLead"));
+						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
+						contratoCobranca.getPagador().setNome(rs.getString(4));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contratoCobranca.getImovel().setNumeroMatricula(rs.getString("numeromatricula"));
 						objects.add(contratoCobranca);
 					}
 	
@@ -4265,8 +4281,74 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return objects;
 			}
 		});	
-	}	
+	}
 	
+	@SuppressWarnings("unchecked")
+	public Collection<ContratoCobranca> consultaContratosPendentesReprovadosResponsaveis(final String codResponsavel, final List<Responsavel> listResponsavel ) {
+		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_PENDENTES_REPROVADOS;
+					
+					
+					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
+					
+					if (listResponsavel.size() > 0) {
+						for (Responsavel resp : listResponsavel) {
+							if (!resp.getCodigo().equals("")) { 
+								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
+							}
+						}
+
+						if (!queryResponsavel.equals("")) {
+							query = query + " and (" + queryResponsavel + ") ";
+						}					
+					} 
+					
+					query = query + " order by id desc ";
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					while (rs.next()) {
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setMotivoReprovacaoAnalise(rs.getString("motivoReprovacaoAnalise"));
+						contratoCobranca.setMotivoReprovaLead(rs.getString("motivoReprovaLead"));
+						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
+						contratoCobranca.getPagador().setNome(rs.getString(4));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contratoCobranca.getImovel().setNumeroMatricula(rs.getString("numeromatricula"));
+						objects.add(contratoCobranca);
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_CONTRATOS_PENDENTES_BAIXADOS = " select c.id, c.numerocontrato, c.datacontrato, pare.nome, res.nome, c.quantoprecisa, imv.cidade from cobranca.contratocobranca c "
+			+ "	inner join cobranca.responsavel res on c.responsavel = res.id "
+			+ "	inner join cobranca.pagadorrecebedor pare on c.pagador = pare.id "
+			+ "	inner join cobranca.imovelcobranca imv on c.imovel = imv.id "
+			+ "	where status = 'Baixado' " ;
+		
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentesBaixados(final String codResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -4280,23 +4362,32 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 
-					String query = QUERY_CONTRATOS_PENDENTES;
-					
-					query = query + "where status = 'Baixado' " ;
+					String query = QUERY_CONTRATOS_PENDENTES_BAIXADOS;
 					
 					///
-					
+					if (codResponsavel != null) {
+						if (!codResponsavel.equals("")) { 
+							query = query + " and res.codigo = '" + codResponsavel + "' ";
+						}				
+					} 
 					////////
 				
 					query = query + " order by id desc ";
-					query = query +  " limit 10 ";
+
 					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
+						contratoCobranca.getPagador().setNome(rs.getString(4));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contratoCobranca.getImovel().setCidade(rs.getString("cidade"));
 						objects.add(contratoCobranca);												
 					}
 	
@@ -4306,14 +4397,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return objects;
 			}
 		});	
-	}	
-	
-	private static final String QUERY_CONSULTA_TOTAL_CONTRATOS_REPROVADOS =  	"select cc.id "
-			+ " from cobranca.contratocobranca cc "
-			+ " where (status = 'Reprovado' or status = 'Desistência Cliente' ) ";
+	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaTotalContratosReprovados() {
+	public Collection<ContratoCobranca> consultaContratosPendentesBaixadosResponsaveis(final String codResponsavel, final List<Responsavel> listResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4325,20 +4412,42 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 
-					String query = QUERY_CONSULTA_TOTAL_CONTRATOS_REPROVADOS;
-				
-					query = query + " order by id desc";
+					String query = QUERY_CONTRATOS_PENDENTES_BAIXADOS;
 					
-					ps = connection
-							.prepareStatement(query);
+					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
+					
+					if (listResponsavel.size() > 0) {
+						for (Responsavel resp : listResponsavel) {
+							if (!resp.getCodigo().equals("")) { 
+								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
+							}
+						}
+
+						if (!queryResponsavel.equals("")) {
+							query = query + " and (" + queryResponsavel + ") ";
+						}					
+					} 
+					///
+					
+					////////
+				
+					query = query + " order by id desc ";
+					
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
-						
-						objects.add(contratoCobranca);												
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
+						contratoCobranca.getPagador().setNome(rs.getString(4));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contratoCobranca.getImovel().setCidade(rs.getString("cidade"));
+						objects.add(contratoCobranca);											
 					}
 	
 				} finally {
@@ -4393,40 +4502,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	
 	private static final String QUERY_CONSULTA_TOTAL_PRE_CONTRATOS_BAIXADOS =  	"select cc.id "
 			+ " from cobranca.contratocobranca cc "
 			+ " where cc.status = 'Baixado' ";
-	
-	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> consultaTotalPreContratosBaixados() {
-		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
-			@Override
-			public Object run() throws Exception {
-				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
-	
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_TOTAL_PRE_CONTRATOS_BAIXADOS;	
-				try {
-					connection = getConnection();
-					ps = connection.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
-	
-					rs = ps.executeQuery();
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
-						
-						objects.add(contratoCobranca);												
-					}
-	
-				} finally {
-					closeResources(connection, ps, rs);					
-				}
-				return objects;
-			}
-		});	
-	}	
 	
 	private static final String QUERY_CONSULTA_PRE_CONTRATOS_BAIXADOS =  	"select cc.id "
 			+ " from cobranca.contratocobranca cc "

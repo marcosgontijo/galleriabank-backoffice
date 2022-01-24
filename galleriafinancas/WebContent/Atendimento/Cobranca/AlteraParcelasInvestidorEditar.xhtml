@@ -118,7 +118,7 @@
 							</h:panelGrid>
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas" var="parcelas"
-									value="#{ contratoCobrancaMB.ordenaParcleasInvstidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1)}"
+									value="#{contratoCobrancaMB.ordenaParcleasInvstidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1)}"
 									emptyMessage="" sortBy="#{contratos.numeroParcela}"
 									sortOrder="ascending"
 									rowStyleClass="#{parcelas.baixado eq true ? 'parcelaPaga' : contratoCobrancaMB.dataHoje ge parcelas.dataVencimento ? 'parcelaAtraso' : null}"
@@ -172,7 +172,7 @@
 										headerText="Valor da Parcela (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.parcelaMensal}"
+												<h:outputText value="#{parcelas.parcelaMensalBaixa}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>
@@ -189,7 +189,7 @@
 									<p:column style="text-align: center;" headerText="Juros (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.juros}"
+												<h:outputText value="#{parcelas.jurosBaixa}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>
@@ -260,7 +260,7 @@
 										headerText="Valor Líquido (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.valorLiquido}"
+												<h:outputText value="#{parcelas.valorLiquidoBaixa}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>

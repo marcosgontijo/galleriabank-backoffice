@@ -4,8 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +37,8 @@ import org.joda.time.DateTime;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -61,6 +65,9 @@ public class RelatorioVendaOperacaoMB {
 
 	private String pathExcel;
 	private String nomeExcel;
+	
+	
+	private Collection<ContratoCobranca> contratos;
 
 	public String clearFields() {
 		contratosVenda = null;
@@ -111,6 +118,34 @@ public class RelatorioVendaOperacaoMB {
 		
 		return "";
 
+	}
+	
+	public BigDecimal calcularValorAtual() {
+		BigDecimal valoratual = BigDecimal.ZERO;
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		BigDecimal coeficiente =  BigDecimal.ONE;
+		Double coeficienteDbl;
+		
+		for (ContratoCobranca contrato : contratos) {
+			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+				coeficiente = BigDecimal.valueOf(DateUtil.Days360(parcela.getDataVencimento(), dataDesagio));
+				coeficiente = coeficiente.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+				
+				BigDecimal juros = contrato.getTxJurosParcelas();
+				BigDecimal saldo = parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela());
+				juros = juros.divide(BigDecimal.valueOf(100));
+				juros = juros.add(BigDecimal.ONE);
+				
+				coeficienteDbl = CommonsUtil.doubleValue(coeficiente);
+				
+				double divisor = Math.pow(CommonsUtil.doubleValue(juros), coeficienteDbl);
+				
+				valoratual = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+				valoratual = valoratual.setScale(2, BigDecimal.ROUND_HALF_UP);
+				valorTotal = valorTotal.add(valoratual);
+			}
+		}
+		return valoratual;
 	}
 	
 	
