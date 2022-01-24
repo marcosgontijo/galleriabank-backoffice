@@ -6361,20 +6361,6 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.consultaContratosReprovados(numeroContrato);
 	}
 	
-	public void geraConsultaTotalPreContratosBaixados() {
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratosPendentes = new ArrayList<ContratoCobranca>();
-		
-		this.contratosPendentes = contratoCobrancaDao.consultaTotalPreContratosBaixados();
-	}
-	
-	public void geraConsultaTotalContratosReprovados() {
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratosPendentes = new ArrayList<ContratoCobranca>();
-		
-		this.contratosPendentes = contratoCobrancaDao.consultaTotalContratosReprovados();
-	}
-	
 	public void geraConsultaContratos() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratos = new ArrayList<ContratoCobranca>();
@@ -7192,7 +7178,12 @@ public class ContratoCobrancaMB {
 				if (usuarioLogado.isAdministrador()) {
 					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null);
 				} else {
-					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(null);
+					if (usuarioLogado.getListResponsavel().size() > 0) {
+						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovadosResponsaveis(
+								usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+					} else {
+						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesReprovados(usuarioLogado.getCodigoResponsavel());
+					}
 				}
 			}
 		}
@@ -7215,8 +7206,13 @@ public class ContratoCobrancaMB {
 				if (usuarioLogado.isAdministrador()) {
  					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesBaixados(null);
 				} else {
-					this.contratosPendentes = contratoCobrancaDao
-							.consultaContratosPendentesBaixados(null);
+					if (usuarioLogado.getListResponsavel().size() > 0) {
+						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesBaixadosResponsaveis(
+								usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
+					} else {
+						this.contratosPendentes = contratoCobrancaDao
+								.consultaContratosPendentesBaixados(usuarioLogado.getCodigoResponsavel());
+					}
 				}
 			}
 		}

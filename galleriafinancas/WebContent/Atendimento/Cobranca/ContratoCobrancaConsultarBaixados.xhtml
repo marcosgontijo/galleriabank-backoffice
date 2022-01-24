@@ -74,12 +74,7 @@
 						image="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
 					<p:spacer width="25"></p:spacer>
-					<p:commandButton value="Consultar Todos"
-						ajax="false"
-						action="#{contratoCobrancaMB.geraConsultaTotalPreContratosBaixados}"
-						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
-						image="ui-icon ui-icon-check"
-						style="TEXT-DECORATION: bold;" />
+					
 				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaContratosResultados" header="Contratos Baixados - Consultar" style="margin-bottom:10px;">	
@@ -105,20 +100,13 @@
 			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	        
-			        <p:column style="text-align: center;" headerText="Motivo Reprova">
-			           <h:outputText value="#{contratos.motivoReprovaLead}" />
-			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
-			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Imóvel" filterBy="#{contratos.imovel.nome}" filterMatchMode="contains" sortBy="#{contratos.imovel.nome}">
-			            <h:outputText value="#{contratos.imovel.nome}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
 			            <h:outputText value="#{contratos.imovel.cidade}" />
 			        </p:column>	
 			        <p:column style="width:180px;">
-			        
 			        		<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
