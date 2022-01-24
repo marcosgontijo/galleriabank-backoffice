@@ -2916,7 +2916,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " and cc.cedenteBRLCessao = ? ";	
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixa, final String cedenteCessao) {
+	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {
 		return (List<ContratoCobrancaBRLLiquidacao>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2931,8 +2931,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO;
 					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixa.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixa.getTime());
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixaInicial.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixaFinal.getTime());
 
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);			

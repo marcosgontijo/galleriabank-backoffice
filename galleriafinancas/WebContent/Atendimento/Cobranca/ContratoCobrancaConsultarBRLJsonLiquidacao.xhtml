@@ -53,10 +53,17 @@
 						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
 						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
 					</p:selectOneMenu>		
-					<p:outputLabel for="DataBaixa" value="Data Baixa: "
+					<p:outputLabel for="DataBaixaInicial" value="Data Baixa Inicial: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="DataBaixa"
-						value="#{brlTrustMB.dataBaixa}"
+					<p:calendar id="DataBaixaInicial"
+						value="#{brlTrustMB.dataBaixaInicial}"
+						required="true" label="Data Baixa" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField">
+					</p:calendar>
+					<p:outputLabel for="DataBaixaFinal" value="Data Baixa Final: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="DataBaixaFinal"
+						value="#{brlTrustMB.dataBaixaFinal}"
 						required="true" label="Data Baixa" size="100"
 						pattern="dd/MM/yyyy" styleClass="dateTimeField">
 					</p:calendar>				

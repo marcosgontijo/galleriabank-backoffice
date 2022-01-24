@@ -52,7 +52,8 @@ public class BRLTrustMB {
 	private String numContrato;
 	private String cedenteCessao;
 	private Date dataAquisicao;
-	private Date dataBaixa;
+	private Date dataBaixaInicial;
+	private Date dataBaixaFinal;
 	
 	private boolean usaTaxaJurosDiferenciada;
 	private BigDecimal txJurosCessao;
@@ -113,7 +114,8 @@ public class BRLTrustMB {
 		this.contratos = new ArrayList<ContratoCobranca>();
 		this.dataAquisicao = new Date();
 		
-		this.dataBaixa = gerarDataOntem();
+		this.dataBaixaInicial = gerarDataOntem();
+		this.dataBaixaFinal = gerarDataOntem();
 		
 		this.parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 		this.parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
@@ -131,7 +133,7 @@ public class BRLTrustMB {
 		} 
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixa, this.cedenteCessao);
+		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -356,7 +358,7 @@ public class BRLTrustMB {
 		String patternyyyyMMddComTraco = "yyyy-MM-dd";
 		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(this.dataBaixa) + "_LIQ";
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + "_LIQ";
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -510,7 +512,7 @@ public class BRLTrustMB {
 			numeroParcela = this.parcelaLiquidacao.getNumeroParcela();
 		}
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(this.dataBaixa) + numeroParcela + "_LIQ_";
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + numeroParcela + "_LIQ_";
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -783,12 +785,20 @@ public class BRLTrustMB {
 		this.parcelasLiquidacao = parcelasLiquidacao;
 	}
 
-	public Date getDataBaixa() {
-		return dataBaixa;
+	public Date getDataBaixaInicial() {
+		return dataBaixaInicial;
 	}
 
-	public void setDataBaixa(Date dataBaixa) {
-		this.dataBaixa = dataBaixa;
+	public void setDataBaixaInicial(Date dataBaixaInicial) {
+		this.dataBaixaInicial = dataBaixaInicial;
+	}
+
+	public Date getDataBaixaFinal() {
+		return dataBaixaFinal;
+	}
+
+	public void setDataBaixaFinal(Date dataBaixaFinal) {
+		this.dataBaixaFinal = dataBaixaFinal;
 	}
 
 	public ContratoCobrancaBRLLiquidacao getParcelaLiquidacao() {
