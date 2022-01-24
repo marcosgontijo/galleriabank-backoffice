@@ -121,13 +121,13 @@
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
+										styleClass="itemMenu" />						
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Pré-Contratos"
 										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />									
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
+										styleClass="itemMenu" />	
 									<p:menuitem value="Contratos Reprovados"
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

@@ -1243,31 +1243,31 @@ public class CcbMB {
 						if (CommonsUtil.mesmoValor(tipoDownload, "CCB")) {
 							if (this.addTerceiro == true) {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										"\nIX – TERCEIRO GARANTIDOR: nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG; \n");
+										"\nIII – TERCEIRO GARANTIDOR: nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletrônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG; \n");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
 							}
 							if (this.addInterveniente == true) {
 								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\nIX – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
+										"\nIX – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletrônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
 							}
 							if (this.addAvalista == true) {
 								text = trocaValoresXWPF(text, r, "criaAvalista",
-										"\nIX – AVALISTA: nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \n");
+										"\nIX – AVALISTA: nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletrônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \n");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaAvalista", "");
 							}		
 						} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
 							if (this.addTerceiro == true) {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										"nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG;");
+										"nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletrônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG;");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
 							}
 							if(CommonsUtil.mesmoValor(fiduciante, true)) {
-								text = trocaValoresXWPF(text, r, "criaFiduciante", "nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
+								text = trocaValoresXWPF(text, r, "criaFiduciante", "nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
 								text = trocaValoresXWPF(text, r, "criaDevedor", "");
 								
 								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "\n"
@@ -1279,7 +1279,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "devedorEmitente","");
 								
 							} else {
-								text = trocaValoresXWPF(text, r, "criaDevedor", "\n X) DEVEDOR: nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
+								text = trocaValoresXWPF(text, r, "criaDevedor", "\n X) DEVEDOR: nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
 								text = trocaValoresXWPF(text, r, "criaFiduciante", "");
 								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "");
 								text = trocaValoresXWPF(text, r, "devedorEmitente", "\n \n"
@@ -1293,13 +1293,13 @@ public class CcbMB {
 							
 							if (this.addInterveniente == true) {
 								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\nX) – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
+										"\nX) – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletrônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
 							}
 							if (this.addAvalista == true) {
 								text = trocaValoresXWPF(text, r, "criaAvalista",
-										" nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista;");
+										" nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletrônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista;");
 							} else {
 								text = trocaValoresXWPF(text, r, "criaAvalista", "");
 							}	
@@ -1318,9 +1318,9 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "bairroEmpresaEmitente", this.bairroEmpresaEmitente);
 							text = trocaValoresXWPF(text, r, "cepEmpresaEmitente", this.cepEmpresaEmitente);
 							if(this.femininoEmitente) {
-								text = trocaValoresXWPF(text, r, "socioEmitente", "pela sua única sósia");
+								text = trocaValoresXWPF(text, r, "socioEmitente", "pela sua única sócia");
 							} else {
-								text = trocaValoresXWPF(text, r, "socioEmitente", "pelo seu único sósio");
+								text = trocaValoresXWPF(text, r, "socioEmitente", "pelo seu único sócio");
 							}
 						} else {
 								text = trocaValoresXWPF(text, r, "nomeEmpresaEmitente", "");
@@ -1399,9 +1399,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "bairroEmpresaInterveniente", this.bairroEmpresaInterveniente);
 								text = trocaValoresXWPF(text, r, "cepEmpresaInterveniente", this.cepEmpresaInterveniente);
 								if(this.femininoInterveniente) {
-									text = trocaValoresXWPF(text, r, "socioInterveniente", "pela sua única sósia");
+									text = trocaValoresXWPF(text, r, "socioInterveniente", "pela sua única sócia");
 								} else {
-									text = trocaValoresXWPF(text, r, "socioInterveniente", "pelo seu único sósio");
+									text = trocaValoresXWPF(text, r, "socioInterveniente", "pelo seu único sócio");
 								}
 							} else {
 									text = trocaValoresXWPF(text, r, "nomeEmpresaInterveniente", "");
@@ -1435,7 +1435,7 @@ public class CcbMB {
 						}
 						if (this.addAvalista == true) {
 							text = trocaValoresXWPF(text, r, "fiducianteAvalista","\n"
-									+"nomeAvalista	 \n"
+									+ "nomeAvalista	 \n"
 
 									+ "logradouroAvalista, nº numeroAvalista,  cidadeAvalista - ufAvalista - \n"
 
@@ -1470,9 +1470,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "bairroEmpresaAvalista", this.bairroEmpresaAvalista);
 								text = trocaValoresXWPF(text, r, "cepEmpresaAvalista", this.cepEmpresaAvalista);
 								if(this.femininoAvalista) {
-									text = trocaValoresXWPF(text, r, "socioAvalista", "pela sua única sósia");
+									text = trocaValoresXWPF(text, r, "socioAvalista", "pela sua única sócia");
 								} else {
-									text = trocaValoresXWPF(text, r, "socioAvalista", "pelo seu único sósio");
+									text = trocaValoresXWPF(text, r, "socioAvalista", "pelo seu único sócio");
 								}
 							} else {
 									text = trocaValoresXWPF(text, r, "nomeEmpresaAvalista", "");
@@ -1545,9 +1545,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "bairroEmpresaTerceiroG", this.bairroEmpresaTerceiroG);
 								text = trocaValoresXWPF(text, r, "cepEmpresaTerceiroG", this.cepEmpresaTerceiroG);
 								if(this.femininoTerceiroG) {
-									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pela sua única sósia");
+									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pela sua única sócia");
 								} else {
-									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pelo seu único sósio");
+									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pelo seu único sócio");
 								}
 							} else {
 									text = trocaValoresXWPF(text, r, "nomeEmpresaTerceiroG", "");
@@ -1635,9 +1635,21 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "responsavelNome", this.responsavelNome);
 						text = trocaValoresXWPF(text, r, "responsavelCrea", this.responsavelCrea);
 						text = trocaValoresXWPF(text, r, "porcentagemImovel", this.porcentagemImovel);
-						
+
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.vendaLeilao);
-						text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.porcentagemImovel);	
+					
+
+						if (text != null && text.contains("xtenso" + "PorcentagemImovel")) {
+							if(CommonsUtil.mesmoValor(this.porcentagemImovel,BigDecimal.ZERO)) {
+								text = text.replace("xtenso" + "PorcentagemImovel", "Zero");
+							} else {
+								porcentagemPorExtenso.setNumber(this.porcentagemImovel);
+								text = text.replace("xtenso" + "PorcentagemImovel", porcentagemPorExtenso.toString());
+							}
+							r.setText(text, 0);
+						}
+						
+						
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.valorCredito);
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.custoEmissao);
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.valorIOF);

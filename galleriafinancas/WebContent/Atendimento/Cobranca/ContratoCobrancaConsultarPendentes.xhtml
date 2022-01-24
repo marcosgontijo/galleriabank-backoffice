@@ -94,24 +94,29 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
-			            <h:outputText value="#{contratos.pagador.nome}" />
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	
-			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
-			            <h:outputText value="#{contratos.responsavel.nome}" />
+			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
+			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>	        
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Imóvel" filterBy="#{contratos.imovel.nome}" filterMatchMode="contains" sortBy="#{contratos.imovel.nome}">
-			            <h:outputText value="#{contratos.imovel.nome}" />
+			        <p:column style="text-align: center;" headerText="Status" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
+			            <h:outputText value="#{contratos.status}" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
-			            <h:outputText value="#{contratos.imovel.cidade}" />
-			        </p:column>	
+			        
 			        <p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
-			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                </p:commandButton>
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	
+		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
@@ -119,7 +124,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-			                </p:commandButton>
+			                </p:commandButton>			
 			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{impressoesPDFMB.origemChamada}" value="FichaContrato" />

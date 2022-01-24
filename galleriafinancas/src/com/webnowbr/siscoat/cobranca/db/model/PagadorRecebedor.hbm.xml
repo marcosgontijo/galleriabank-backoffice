@@ -99,15 +99,7 @@
         <property name="nomeCC" type="java.lang.String">
             <column name="NOMECC"/>
         </property>   
-        <property name="telResidencialConjuge" type="java.lang.String">
-            <column name="telResidencialConjuge"/>
-        </property>   
-        <property name="telCelularConjuge" type="java.lang.String">
-            <column name="telCelularConjuge"/>
-        </property>   
-        <property name="dtNascimentoConjuge" type="java.util.Date">
-            <column name="dtNascimentoConjuge"/>
-        </property>                                  
+                                  
         <property name="cpfCC" type="java.lang.String">
             <column name="CPFCC"/>
         </property>   
@@ -117,21 +109,6 @@
         <property name="atividade" type="java.lang.String">
             <column name="ATIVIDADE"/>
         </property>      
-		<property name="nomeConjuge" type="java.lang.String">
-            <column name="NOMECONJUGE"/>
-        </property> 
-        <property name="cpfConjuge" type="java.lang.String">
-            <column name="CPFCONJUGE"/>
-        </property>          
-        <property name="rgConjuge" type="java.lang.String">
-            <column name="RGCONJUGE"/>
-        </property> 
-       	<property name="dataEmissaoRGConjuge" type="java.util.Date">
-            <column name="dataEmissaoRGConjuge"/>
-        </property>      
-        <property name="sexoConjuge" type="java.lang.String">
-            <column name="SEXOConjuge"/>
-        </property>     
 		<property name="casado" type="boolean">
            <column name="CASADO" />
       	</property>  
@@ -168,6 +145,36 @@
         <property name="contato" type="java.lang.String">
             <column name="contato"/>
         </property>   
+        
+        
+        
+        
+        
+         <property name="telResidencialConjuge" type="java.lang.String">
+            <column name="telResidencialConjuge"/>
+        </property>   
+        <property name="telCelularConjuge" type="java.lang.String">
+            <column name="telCelularConjuge"/>
+        </property>   
+        <property name="dtNascimentoConjuge" type="java.util.Date">
+            <column name="dtNascimentoConjuge"/>
+        </property>       
+        
+        <property name="nomeConjuge" type="java.lang.String">
+            <column name="NOMECONJUGE"/>
+        </property> 
+        <property name="cpfConjuge" type="java.lang.String">
+            <column name="CPFCONJUGE"/>
+        </property>          
+        <property name="rgConjuge" type="java.lang.String">
+            <column name="RGCONJUGE"/>
+        </property> 
+       	<property name="dataEmissaoRGConjuge" type="java.util.Date">
+            <column name="dataEmissaoRGConjuge"/>
+        </property>      
+        <property name="sexoConjuge" type="java.lang.String">
+            <column name="SEXOConjuge"/>
+        </property>     
         <property name="enderecoConjuge" type="java.lang.String">
             <column name="enderecoConjuge"/>
         </property>  
@@ -188,7 +195,32 @@
         </property> 
         <property name="emailConjuge" type="java.lang.String">
             <column name="emailConjuge"/>
-        </property>                              
+        </property>     
+        
+        <property name="bancoConjuge" type="java.lang.String">
+            <column name="bancoConjuge"/>
+        </property>    
+        <property name="agenciaConjuge" type="java.lang.String">
+            <column name="agenciaConjuge"/>
+        </property>    
+        <property name="contaConjuge" type="java.lang.String">
+            <column name="contaConjuge"/>
+        </property>    
+        <property name="nomeCCConjuge" type="java.lang.String">
+            <column name="nomeCCConjuge"/>
+        </property>    
+        <property name="cpfCCConjuge" type="java.lang.String">
+            <column name="cpfCCConjuge"/>
+        </property> 
+        <property name="cnpjCCConjuge" type="java.lang.String">
+            <column name="cnpjCCConjuge"/>
+        </property>
+		<property name="nomePaiConjuge" type="java.lang.String">
+			<column name="nomePaiConjuge" />
+		</property>
+		<property name="nomeMaeConjuge" type="java.lang.String">
+			<column name="nomeMaeConjuge" />
+		</property>
 		<property name="nomeCoobrigado" type="java.lang.String">
             <column name="NOMECoobrigado"/>
         </property> 
@@ -411,9 +443,7 @@
 			<column name="taxaCheckListConjuge" />
 		</property>	
 		
-      	
-      	
-      	
+
       	
       	<property name="nomeParticipanteCheckListCoobrigado" type="java.lang.String">
 			<column name="nomeParticipanteCheckListCoobrigado" />
