@@ -5022,44 +5022,6 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 	
-	public BigDecimal calcularValorPresenteTotalContrato(ContratoCobranca contrato){
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Date auxDataHoje = dataHoje.getTime();
-		
-		BigDecimal valorPresenteTotalContrato = BigDecimal.ZERO;
-		BigDecimal juros = contrato.getTxJurosParcelas();
-		
-		for (ContratoCobrancaDetalhes parcelas : contrato.getListContratoCobrancaDetalhes()) {
-			this.valorPresenteParcela = BigDecimal.ZERO;			
-			BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
-			BigDecimal quantidadeDeMeses = BigDecimal.ONE;
-	
-			quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
-			
-			quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
-				
-			if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
-				quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
-			} 
-	
-			Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
-			
-			juros = juros.divide(BigDecimal.valueOf(100));
-			juros = juros.add(BigDecimal.ONE);
-			
-			double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
-		
-			this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
-			this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
-			
-			valorPresenteTotalContrato = valorPresenteTotalContrato.add(this.valorPresenteParcela);
-		}
-		
-		return valorPresenteTotalContrato;
-	}
-
 	public BigDecimal getValorPresenteParcela() {
 		return valorPresenteParcela;
 	}
