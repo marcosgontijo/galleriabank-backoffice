@@ -215,7 +215,9 @@ public class BRLTrustMB {
 		
 		int countParcelas = 0;
 		
-		ContratoCobrancaMB contratoCobranca = new ContratoCobrancaMB();
+		ContratoCobrancaMB contratoCobranca = new ContratoCobrancaMB();		
+		
+		atualizaContratoDadosCessaoBRL();
 		
 		/***
 		 * CALCULA VALOR PRESENTE CONTRATO
@@ -360,8 +362,6 @@ public class BRLTrustMB {
 		}
 		
 		this.jsonGerado = true;
-		
-		atualizaContratoDadosCessaoBRL();
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
