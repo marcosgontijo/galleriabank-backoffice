@@ -215,9 +215,34 @@ public class BRLTrustMB {
 		
 		int countParcelas = 0;
 		
-		ContratoCobrancaMB contratoCobranca = new ContratoCobrancaMB();
+		ContratoCobrancaMB contratoCobranca = new ContratoCobrancaMB();		
 		
-		BigDecimal valorTotalPresenteContrato = contratoCobranca.calcularValorPresenteTotalContrato(this.objetoContratoCobranca);
+		atualizaContratoDadosCessaoBRL();
+		
+		/***
+		 * CALCULA VALOR PRESENTE CONTRATO
+		 */
+		//BigDecimal valorTotalPresenteContrato = contratoCobranca.calcularValorPresenteTotalContrato(this.objetoContratoCobranca);
+		BigDecimal valorTotalPresenteContrato = BigDecimal.ZERO;
+		BigDecimal taxaJurosCessao = BigDecimal.ZERO;
+				
+		if (this.objetoContratoCobranca != null) {
+			if (this.objetoContratoCobranca.getTxJurosCessao() != null) {
+				taxaJurosCessao = this.objetoContratoCobranca.getTxJurosCessao();
+			} else {
+				taxaJurosCessao = this.objetoContratoCobranca.getTxJurosParcelas();
+			}
+		} else {
+			taxaJurosCessao = this.objetoContratoCobranca.getTxJurosParcelas();
+		}
+		
+		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			valorTotalPresenteContrato = valorTotalPresenteContrato.add(calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao()));
+		}
+		
+		/***
+		 * FIM - CALCULA VALOR PRESENTE CONTRATO
+		 */
 		
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			countParcelas = countParcelas + 1;
@@ -338,8 +363,6 @@ public class BRLTrustMB {
 		
 		this.jsonGerado = true;
 		
-		atualizaContratoDadosCessaoBRL();
-		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Geração JSON BRL Cessão: JSON gerado com sucesso!",
@@ -447,7 +470,21 @@ public class BRLTrustMB {
 			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			JSONObject jsonValores = new JSONObject();
 			jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
-			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosCessao(), parcela.getContrato().getDataAquisicaoCessao()));
+			
+			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
+			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
+			System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
+			
+			if (parcela.getContrato() != null) {
+				if (parcela.getContrato().getTxJurosCessao() != null) {
+					jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosCessao(), parcela.getContrato().getDataAquisicaoCessao()));
+				} else {
+					jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
+				}
+			} else {
+				jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
+			}
+			
 			jsonValores.put("liquidacao", parcela.getVlrRecebido());
 			
 			jsonRecebivel.put("valores", jsonValores);
@@ -590,7 +627,17 @@ public class BRLTrustMB {
 		jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(this.parcelaLiquidacao.getDataVencimento()));
 		JSONObject jsonValores = new JSONObject();
 		jsonValores.put("face", this.parcelaLiquidacao.getVlrAmortizacaoParcela().add(this.parcelaLiquidacao.getVlrJurosParcela()));
-		jsonValores.put("aquisicao", calcularValorPresenteParcela(this.parcelaLiquidacao.getId(), this.parcelaLiquidacao.getContrato().getTxJurosCessao(), this.parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
+		
+		if (parcelaLiquidacao.getContrato() != null) {
+			if (parcelaLiquidacao.getContrato().getTxJurosCessao() != null) {
+				jsonValores.put("aquisicao", calcularValorPresenteParcela(parcelaLiquidacao.getId(), parcelaLiquidacao.getContrato().getTxJurosCessao(), parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
+			} else {
+				jsonValores.put("aquisicao", calcularValorPresenteParcela(parcelaLiquidacao.getId(), parcelaLiquidacao.getContrato().getTxJurosParcelas(), parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
+			}
+		} else {
+			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcelaLiquidacao.getId(), parcelaLiquidacao.getContrato().getTxJurosParcelas(), parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
+		}
+		
 		jsonValores.put("liquidacao", this.parcelaLiquidacao.getVlrRecebido());
 		
 		jsonRecebivel.put("valores", jsonValores);
