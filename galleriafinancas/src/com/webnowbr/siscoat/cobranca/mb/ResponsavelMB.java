@@ -121,6 +121,11 @@ public class ResponsavelMB {
 			this.tipoPessoaIsFisica = true;
 		}		
 		
+		addUsuario = false;		
+		login = "";
+		senha = "";
+		this.selectedResponsaveis = new Responsavel[0];
+		
 		if (this.objetoResponsavel.getDonoResponsavel() != null) {
 			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
 			populateSelectedResponsavel();
@@ -136,14 +141,17 @@ public class ResponsavelMB {
 			this.tipoPessoaIsFisica = true;
 		}	
 		
+		addUsuario = false;
+		login = "";
+		senha = "";
+		this.selectedResponsaveis = new Responsavel[0];
+		
 		clearResponsavel();
 		loadLovResponsavel();
 		
 		if (this.objetoResponsavel.getDonoResponsavel() != null) {
-
 			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
 			populateSelectedResponsavel();
-
 		}
 		
 		return "ResponsavelInserir.xhtml";

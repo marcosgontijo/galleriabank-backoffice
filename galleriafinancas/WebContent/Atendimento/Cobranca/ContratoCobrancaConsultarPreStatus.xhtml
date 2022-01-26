@@ -86,7 +86,14 @@
 			            	<f:convertDateTime locale="pt_BR"  />
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
-			        </p:column>	
+			        </p:column>
+			        
+			        <p:column style="text-align: center;width: 100px"
+						headerText="Comercial" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
+						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false" />
+					</p:column>
+			        
 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>	  

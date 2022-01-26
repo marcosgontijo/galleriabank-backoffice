@@ -1836,7 +1836,7 @@
 						<h:outputText
 							value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}" />
 						<p:spacer width="10" />
-
+						
 						<p:outputLabel for="numeroPresenteParcela" value="Numero Presente Parcela" />
 						<p:inputText id="numeroPresenteParcela" value="#{contratoCobrancaMB.numeroPresenteParcela}" />
 						<!--  -->
@@ -1850,6 +1850,27 @@
 						<p:outputLabel id="valorPresenteParcela" value="#{contratoCobrancaMB.valorPresenteParcela}"
 							converter="bigDecimalConverter" />
 						<!--  -->
+
+						<shiro:hasAnyRoles name="ROOT">
+							<p:outputLabel for="numeroParcelaQuitar" value="Numero Parcela para Quitação" />
+							<p:inputText id="numeroParcelaQuitar" value="#{contratoCobrancaMB.numeroParcelaQuitar}" />
+							<!--  -->
+							
+							<p:outputLabel for="dataQuitacao" value="Data da Quitacao" />
+							<p:calendar id="dataQuitacao" showOn="button"
+											value="#{contratoCobrancaMB.dataQuitacao}"
+											size="100" pattern="dd/MM/yyyy"
+											locale="pt" styleClass="dateTimeField" />
+							<!--  -->	
+							
+							<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
+							<p:commandButton id="quitarContrato" value="Quitar Contrato" update=":form:DetalheParcelas valorPresenteTotal " action="#{contratoCobrancaMB.quitarContrato()}"/>
+							<!--  --> 							
+							
+							<p:outputLabel for="valorPresenteTotal" value="valorPresenteTotal" />
+							<p:outputLabel id="valorPresenteTotal" value="#{contratoCobrancaMB.valorPresenteTotal}" converter="bigDecimalConverter"/>
+							<!--  -->
+						</shiro:hasAnyRoles>
 						
 					</h:panelGrid>
 				</p:panel>

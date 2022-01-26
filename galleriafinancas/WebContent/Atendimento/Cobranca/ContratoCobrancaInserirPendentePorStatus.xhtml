@@ -163,9 +163,11 @@
 										<p:outputLabel styleClass="labelBold">Aprovado Comite</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">									
-											<p:selectBooleanButton id="aprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.qtdeVotosAprovadosComite >= '2'}"/>
-											
-											<p:commandButton id="reprovadoComite" value="Reprovar Contrato" action="#{contratoCobrancaMB.reprovarContrato()}" icon="ui-icon-close" style="width:=60px"/>
+											<p:selectBooleanButton id="aprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.qtdeVotosAprovadosComite >= '2'}"/>		
+											<p:commandButton id="reprovadoComite"
+												value="Reprovar Contrato" icon="ui-icon-close"
+												style="width:=60px"
+												onclick="PF('reprovarContratoDialog').show();" />
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
 								</ui:fragment>
@@ -241,24 +243,38 @@
 									
 									<!-- -->
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 6 and contratoCobrancaMB.indexStepsStatusContrato le 8}">
-									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										<h:panelGrid columns="2"
+											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Voltar Contrato para Comitê</p:outputLabel>			
-										<p:spacer ></p:spacer>						
-										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-											<p:commandButton value="Voltar Para Comite"
-												onclick="PF('voltarComiteDialog').show();" />
-										</shiro:hasAnyRoles>						    								    													    						   
-									</h:panelGrid>
-								</ui:fragment>						
+										border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold">Voltar Contrato para Comitê</p:outputLabel>
+											<p:spacer></p:spacer>
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+												<p:commandButton value="Voltar Para Comite"
+													onclick="PF('voltarComiteDialog').show();" />
+											</shiro:hasAnyRoles>
+										</h:panelGrid>
+									</ui:fragment>
 									
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 5}">
+										<h:panelGrid columns="2"
+											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold">Voltar Contrato para Pré-Comitê</p:outputLabel>
+											<p:spacer></p:spacer>
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+												<p:commandButton value="Voltar Para Pré-Comite"
+													onclick="PF('voltarPreComiteDialog').show();" />
+											</shiro:hasAnyRoles>
+										</h:panelGrid>
+									</ui:fragment>
+
 								</h:panelGrid>	
 							</h:panelGrid>
 						</ui:fragment>	
 						<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 							<h:panelGrid columns="3">
-							
 								<ui:fragment>
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -622,7 +638,6 @@
 					</p:panel>
 				</h:panelGroup>
 
-
 				<h:panelGroup id="AnaliseReprovadaPanel">
 					<p:panel
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
@@ -745,7 +760,7 @@
 									<h:panelGroup>
 										<p:inputText id="taxaPreAprovada"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-											style="FONT-SIZE: 10pt;width:300px;"
+											style="FONT-SIZE: 10pt;width:60px;"
 											disabled="#{contratoCobrancaMB.deleteMode}"
 											converter="bigDecimalConverter" />
 										<p:outputLabel value="% + IPCA a.m." />
@@ -753,7 +768,7 @@
 									<p:outputLabel for="prazoMaxPreAprovado"
 										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 									<h:panelGroup>
-										<p:inputText id="prazoMaxPreAprovado" showOn="button"
+										<p:inputText id="prazoMaxPreAprovado" style="FONT-SIZE: 10pt;width:60px;"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
 											size="100" />
 										<p:outputLabel value=" meses" />
@@ -763,7 +778,7 @@
 										styleClass="labelBold" />
 									<h:panelGroup>
 										<p:outputLabel value="R$ " />
-										<p:inputText id="rendaComprovada" showOn="button"
+										<p:inputText id="rendaComprovada"  style="FONT-SIZE: 10pt;width:60px;"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
 											size="100" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);"
@@ -774,7 +789,7 @@
 										styleClass="labelBold" />
 									<h:panelGroup>
 										<p:outputLabel value="R$ " />
-										<p:inputText id="ccbxRenda" showOn="button"
+										<p:inputText id="ccbxRenda" style="FONT-SIZE: 10pt;width:60px;"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
 											size="100" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);"
@@ -798,7 +813,7 @@
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido == true}" header="Recebido PAJU e laudo">
+					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="valorMercadoImovel"
 								value="Valor de mercado do imóvel: " styleClass="labelBold" />
@@ -993,13 +1008,13 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
 
-							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:outputLabel for="NomePai" value="Nome do Pai: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:inputText id="NomePai"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
-							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
 							<p:inputText id="NomeMae"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 								
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:inputText id="EMail"
@@ -1176,6 +1191,24 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="regimeCasamento"
+										value="Regime do Casamento: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="regimeCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">
+										<f:selectItem itemValue=""
+											itemLabel="Não definido" />
+										<f:selectItem itemValue="universal de bens"
+											itemLabel="Universal de bens" />
+										<f:selectItem itemValue="de comunhão parcial de bens"
+											itemLabel="Comunhão parcial de bens" />
+										<f:selectItem itemValue="de separação total de bens"
+											itemLabel="Separação total de bens" />
+										<f:selectItem itemValue="obrigatório de separação de bens"
+											itemLabel="Obrigatório de separação de bens" />
+									</p:selectOneMenu>
+									
 									<p:outputLabel for="NomeConjuge" value="Nome: "
 										styleClass="labelBold" />
 									<p:inputText id="NomeConjuge"
@@ -2899,6 +2932,29 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>
+		
+		<p:dialog header="Reprovar Contrato" widgetVar="reprovarContratoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formReprovarContrato">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="1">
+						<h:outputText
+							value="(O contrato será reprovado e não aparecerá na esteira de operações)"
+							styleClass="labelBold"
+							style="width:250px;font-weight: bold; font-size: 13px;" />
+						<p:spacer width="20" />
+					</h:panelGrid>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Não"
+							onclick="PF('reprovarContratoDialog').close();" />
+						<p:spacer width="20" />
+						<p:commandButton  value="Sim" action="#{contratoCobrancaMB.reprovarContratoConsultar('Ag. Comite')}"  style="width:=60px"/>
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
 
 		<p:dialog header="Enviar Para Comitê" widgetVar="voltarComiteDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
@@ -2919,6 +2975,24 @@
 						<p:spacer width="20" />
 						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
 							action="#{contratoCobrancaMB.voltarContratoParaComite}"
+							style="TEXT-DECORATION: bold;" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Enviar Para Pré-Comitê" widgetVar="voltarPreComiteDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromVoltarPreComite">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"  
+						style="width:250px;font-weight:bold;font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:50px"> 
+						<p:commandButton value="Não"
+							onclick="PF('voltarPreComiteDialog').close();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.voltarContratoParaPreComite}"
 							style="TEXT-DECORATION: bold;" />
 					</h:panelGrid>
 				</div>

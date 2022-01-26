@@ -646,13 +646,13 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
 								
-							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:outputLabel for="NomePai" value="Nome do Pai: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="NomePai"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
-							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel id="NomeMae"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
@@ -774,6 +774,13 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
 								<h:panelGrid columns="2">
+									<p:outputLabel for="regimeCasamento"
+										value="Regime do Casamento: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:outputLabel id="regimeCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.regimeCasamento}" styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+								
 									<p:outputLabel for="NomeConjuge" value="Nome: "
 										styleClass="labelBold" />
 									<p:outputLabel id="NomeConjuge"
@@ -1017,7 +1024,7 @@
 
 												<p:outputLabel for="relacaoComTomador"
 													value="Relação Com Tomador: " />
-												<p:inputText id="relacaoComTomador"
+												<p:outputLabel id="relacaoComTomador"
 													value="#{pagador.relacaoComTomador}"
 													label="Relação Com Tomador: " style="width:400px;" />
 
@@ -1397,7 +1404,7 @@
 						<h:panelGrid columns="2">
 
 							<h:outputText value="Nome do Emitente: " styleClass="labelBold" />
-							<p:inputText id="nomeParticipanteCheckList"
+							<h:outputText id="nomeParticipanteCheckList"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckList}" />
 
 							<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
@@ -1453,7 +1460,7 @@
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
 							<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
-							<p:inputText id="nomeParticipanteCheckListConjuge"
+							<h:outputText id="nomeParticipanteCheckListConjuge"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListConjuge}" />
 
 							<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
@@ -1512,7 +1519,7 @@
 								<h:panelGrid columns="2">
 									<h:outputText value="Nome do Coobrigado: "
 										styleClass="labelBold" />
-									<p:inputText id="nomeParticipanteCheckListCoobrigado"
+									<h:outputText id="nomeParticipanteCheckListCoobrigado"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListCoobrigado}" />
 
 									<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />
@@ -1569,7 +1576,7 @@
 								<h:panelGrid columns="2"
 									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivilcoobrigado eq 'CASADO'}">
 									<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
-									<p:inputText id="nomeParticipanteCheckListCoobrigadoCasado"
+									<h:outputText id="nomeParticipanteCheckListCoobrigadoCasado"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListCoobrigadoCasado}" />
 
 									<h:outputText value="Tem RG/CPF? " styleClass="labelBold" />

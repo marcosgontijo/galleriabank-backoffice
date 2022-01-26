@@ -3230,6 +3230,20 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Ag. Comite");
 	}
+	
+	public String voltarContratoParaPreComite() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPreAprovadoComite(false);
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. Comite");
+	}
 
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
 		ResponsavelDao rDao = new ResponsavelDao();
@@ -4924,6 +4938,13 @@ public class ContratoCobrancaMB {
 						""));
 	}
 	
+	public String reprovarContratoConsultar(String consulta) {
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		reprovarContrato();
+		
+		return geraConsultaContratosPorStatus(consulta);
+	}
+	
 	
 	public void baixarPreContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -4960,6 +4981,7 @@ public class ContratoCobrancaMB {
 		
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -4976,6 +4998,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
@@ -4990,7 +5013,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	private BigDecimal valorPresenteParcela;
+
 	private int numeroPresenteParcela;
+	private int numeroParcelaQuitar;
+	private Date dataQuitacao;
 
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault(); 
@@ -5058,6 +5084,94 @@ public class ContratoCobrancaMB {
 		}
 		
 		return valorPresenteTotalContrato;
+	}
+	
+	public void quitarContrato() {
+		valorPresenteTotal = BigDecimal.ZERO;
+		valorMIPTotal = BigDecimal.ZERO;
+		valorDFITotal = BigDecimal.ZERO;
+		for (ContratoCobrancaDetalhes parcelas : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			this.valorPresenteParcela = BigDecimal.ZERO;
+			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
+				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+				calcularValorPresenteParcelaData(this.dataQuitacao);
+				parcelas.setValorTotalPagamento(this.valorPresenteParcela);
+				valorPresenteTotal = valorPresenteTotal.add(valorPresenteParcela);
+				valorMIPTotal = valorMIPTotal.add(parcelas.getVlrParcela());
+				parcelas.setDataUltimoPagamento(this.dataQuitacao);
+			}
+		}
+		//this.valorPresenteTotal = this.valorPresenteTotal.setScale(2);
+	}
+	
+	public void calcularValorPresenteParcelaData(Date data){
+		
+		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
+		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(data, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+	}
+	
+	private BigDecimal valorPresenteTotal;
+	private BigDecimal valorMIPTotal;
+	private BigDecimal valorDFITotal;
+	
+	public BigDecimal getValorMIPTotal() {
+		return valorMIPTotal;
+	}
+
+	public void setValorMIPTotal(BigDecimal valorMIPTotal) {
+		this.valorMIPTotal = valorMIPTotal;
+	}
+
+	public BigDecimal getValorDFITotal() {
+		return valorDFITotal;
+	}
+
+	public void setValorDFITotal(BigDecimal valorDFITotal) {
+		this.valorDFITotal = valorDFITotal;
+	}
+
+	public BigDecimal getValorPresenteTotal() {
+		return valorPresenteTotal;
+	}
+
+	public void setValorPresenteTotal(BigDecimal valorPresenteTotal) {
+		this.valorPresenteTotal = valorPresenteTotal;
+	}
+
+	public Date getDataQuitacao() {
+		return dataQuitacao;
+	}
+
+	public void setDataQuitacao(Date dataQuitacao) {
+		this.dataQuitacao = dataQuitacao;
+	}
+
+	public int getNumeroParcelaQuitar() {
+		return numeroParcelaQuitar;
+	}
+
+	public void setNumeroParcelaQuitar(int numeroParcelaQuitar) {
+		this.numeroParcelaQuitar = numeroParcelaQuitar;
 	}
 
 	public BigDecimal getValorPresenteParcela() {
@@ -6169,7 +6283,6 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (empresa.equals("FIDC")) {
-			consultaDadosFIDC();
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
 			this.tituloPainel = "FIDC GALLERIA";
 		}
@@ -10627,16 +10740,21 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirPagador() {
-		this.pagadorSecundarioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
-		this.pagadorSecundarioSelecionado.setNomeParticipanteCheckList(this.pagadorSecundarioSelecionado.getPessoa().getNome());
-		this.pagadorSecundarioSelecionado.getPessoa().setNomeCC(this.pagadorSecundarioSelecionado.getPessoa().getNome());
-		this.pagadorSecundarioSelecionado.getPessoa().setCpfCC(this.pagadorSecundarioSelecionado.getPessoa().getCpf());
-		this.objetoContratoCobranca.getListaPagadores().add(this.pagadorSecundarioSelecionado);
-		criarPagadorRecebedorNoSistema(this.pagadorSecundarioSelecionado.getPessoa());
-		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
-		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addPagador = false;
-	}
+		FacesContext context = FacesContext.getCurrentInstance();
+		try {
+			this.pagadorSecundarioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
+			this.pagadorSecundarioSelecionado.setNomeParticipanteCheckList(this.pagadorSecundarioSelecionado.getPessoa().getNome());
+			this.pagadorSecundarioSelecionado.getPessoa().setNomeCC(this.pagadorSecundarioSelecionado.getPessoa().getNome());
+			this.pagadorSecundarioSelecionado.getPessoa().setCpfCC(this.pagadorSecundarioSelecionado.getPessoa().getCpf());
+			this.objetoContratoCobranca.getListaPagadores().add(this.pagadorSecundarioSelecionado);
+			criarPagadorRecebedorNoSistema(this.pagadorSecundarioSelecionado.getPessoa());
+			this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+			this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+			this.addPagador = false;
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+		}
+	} 
 	
 	public void concluirSocio() {
 		this.socioSelecionado.setContratoCobranca(this.objetoContratoCobranca);
@@ -10738,7 +10856,6 @@ public class ContratoCobrancaMB {
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
 		PagadorRecebedor pagadorRecebedor = null;
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		
 
 		if (pagador.getId() <= 0) {
 			List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();

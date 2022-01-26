@@ -586,68 +586,7 @@
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
-						<h:panelGrid columns="2">
-							<h:panelGrid columns="2">
-								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="taxaAprovadaComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
-											style="FONT-SIZE: 10pt;width:60px;"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 3, event, 2);"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
-									</h:panelGroup>
-
-									<p:outputLabel for="prazoMaxAprovadoComite"
-										value="Prazo Maximo Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="prazoMaxAprovadoComite" showOn="button"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
-											size="100" style="width:60px;" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="valorAprovadoComiteComite"
-										value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="valorAprovadoComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);"
-											converter="bigDecimalConverter"
-											style="FONT-SIZE: 10pt;width:100px;" />
-
-										<!-- -->
-
-										<p:selectOneMenu id="tipoValorComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
-											label="Status" style="width:100px;">
-											<f:selectItem itemValue="bruto" itemLabel="Bruto" />
-											<f:selectItem itemValue="liquido" itemLabel="Líquido" />
-										</p:selectOneMenu>
-									</h:panelGroup>
-
-									<p:outputLabel for="comentarioComiteComite"
-										value="Comentários comitê: " styleClass="labelBold" />
-									<p:inputTextarea id="comentarioComiteComite" rows="10"
-										cols="48" maxlength="3000" onblur=""
-										counterTemplate="{0} characters remaining." autoResize="false"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
-
-									<p:outputLabel for="votoComite" value="Voto do comitê: "
-										styleClass="labelBold" />
-									<p:selectOneRadio id="votoComite"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
-										styleClass="labelBold">
-										<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
-										<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
-									</p:selectOneRadio>
-
-								</shiro:hasAnyRoles>
-							</h:panelGrid>
+						<h:panelGrid columns="1">
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 								paginator="false" layout="list"
@@ -702,8 +641,6 @@
 											styleClass="labelBold" />
 										<p:outputLabel value="_______________________________"
 											styleClass="labelBold" />
-
-
 									</h:panelGrid>
 								</p:dataViewListItem>
 							</p:dataView>
@@ -1186,13 +1123,13 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
 
-							<p:outputLabel for="NomePai" value="Nome do Pai: " />
+							<p:outputLabel for="NomePai" value="Nome do Pai: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputText id="NomePai"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}"  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 
-							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputText id="NomeMae"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 								
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:inputText id="EMail"
@@ -1369,6 +1306,24 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="regimeCasamento"
+										value="Regime do Casamento: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="regimeCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">
+										<f:selectItem itemValue=""
+											itemLabel="Não definido" />
+										<f:selectItem itemValue="universal de bens"
+											itemLabel="Universal de bens" />
+										<f:selectItem itemValue="de comunhão parcial de bens"
+											itemLabel="Comunhão parcial de bens" />
+										<f:selectItem itemValue="de separação total de bens"
+											itemLabel="Separação total de bens" />
+										<f:selectItem itemValue="obrigatório de separação de bens"
+											itemLabel="Obrigatório de separação de bens" />
+									</p:selectOneMenu>
+									
 									<p:outputLabel for="NomeConjuge" value="Nome: "
 										styleClass="labelBold" />
 									<p:inputText id="NomeConjuge"

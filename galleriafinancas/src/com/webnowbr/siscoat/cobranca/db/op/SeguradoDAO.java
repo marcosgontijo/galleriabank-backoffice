@@ -118,6 +118,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							if(CommonsUtil.compare(rs.getDate("datacontrato").getMonth(), dataDesagio.getMonth()) == 0 && 
 									CommonsUtil.compare(rs.getDate("datacontrato").getYear(), dataDesagio.getYear()) == 0 ) {
 								seguroTabelaVO.setCodigoSegurado("01");
+							} else if(CommonsUtil.mesmoValor(CommonsUtil.bigDecimalValue(rs.getString("qtdeparcelasFaltantes")), BigDecimal.ZERO)){
+								seguroTabelaVO.setCodigoSegurado("03");
 							} else {
 								seguroTabelaVO.setCodigoSegurado("02");
 							}

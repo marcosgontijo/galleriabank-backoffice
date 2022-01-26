@@ -94,7 +94,10 @@
 					</h:panelGrid>
 					</p:panel>
 					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'FIDC GALLERIA'}" header="Dados da Consulta FIDC">
-						<h:panelGrid columns="2" style="">
+						<f:facet name="header">
+							<p:commandButton value="Consultar FIDC" action="#{contratoCobrancaMB.consultaDadosFIDC()}" update="panelFidc ina30Form ina60Form ina90Form"/>
+				        </f:facet>
+						<h:panelGrid columns="2" id="panelFidc" style="">
 							<p:outputLabel for="TotalContratos" value="Total de Contratos: "
 								styleClass="labelBold" />
 							<p:outputLabel id="TotalContratos"

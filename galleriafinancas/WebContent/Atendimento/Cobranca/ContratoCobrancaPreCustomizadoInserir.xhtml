@@ -623,13 +623,13 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
 								label="Atividade" style="width:400px;" />
 
-							<p:outputLabel for="NomePai" value="Nome do Pai: " />
-							<p:inputText id="NomePai"
+							<p:outputLabel for="NomePai" value="Nome do Pai: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+							<p:inputText id="NomePai" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
 
-							<p:outputLabel for="NomeMae" value="Nome da Mãe: " />
+							<p:outputLabel for="NomeMae" value="Nome da Mãe: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputText id="NomeMae"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 								
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:inputText id="EMail"
@@ -806,6 +806,24 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="regimeCasamento"
+										value="Regime do Casamento: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="regimeCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">
+										<f:selectItem itemValue=""
+											itemLabel="Não definido" />
+										<f:selectItem itemValue="universal de bens"
+											itemLabel="Universal de bens" />
+										<f:selectItem itemValue="de comunhão parcial de bens"
+											itemLabel="Comunhão parcial de bens" />
+										<f:selectItem itemValue="de separação total de bens"
+											itemLabel="Separação total de bens" />
+										<f:selectItem itemValue="obrigatório de separação de bens"
+											itemLabel="Obrigatório de separação de bens" />
+									</p:selectOneMenu>
+									
 									<p:outputLabel for="NomeConjuge" value="Nome: "
 										styleClass="labelBold" />
 									<p:inputText id="NomeConjuge"
