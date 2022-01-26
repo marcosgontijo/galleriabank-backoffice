@@ -1437,5 +1437,29 @@
 			<column name="contratoLead" />
 		</property>	
 		
+		<property name="entradaContratoCartorioData" type="java.util.Date">
+			<column name="entradaContratoCartorioData" />
+		</property>
+		
+		<property name="preAnocaoCartorioData" type="java.util.Date">
+			<column name="preAnocaoCartorioData" />
+		</property>
+		
+		<property name="exigenciasCartorioData" type="java.util.Date">
+			<column name="exigenciasCartorioData" />
+		</property>
+		
+		<property name="pagamentoCustasCartorioData" type="java.util.Date">
+			<column name="pagamentoCustasCartorioData" />
+		</property>
+		
+		<property name="exigenciasCartorioObservacao" type="text">
+			<column name="exigenciasCartorioObservacao" />
+		</property>	
+		
+		<property name="numeroPreAnotacaoCartorio" type="java.lang.String">
+			<column name="numeroPreAnotacaoCartorio" />
+		</property>	
+		
 	</class>
 </hibernate-mapping>

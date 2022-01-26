@@ -444,6 +444,57 @@
 					</p:panel>
 				</shiro:hasAnyRoles>
 
+				<h:panelGroup id="CartorioPanel">
+					<p:panel header="Cartório" style="margin-bottom:10px;"
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="entradaContratoCartorioData"
+									value="Data da Entrada do Cartório: " styleClass="labelBold" />
+								<p:calendar id="entradaContratoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.entradaContratoCartorioData}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+
+								<p:outputLabel for="preAnocaoCartorioData"
+									value="Data da Pré-Anotação: " styleClass="labelBold" />
+								<p:calendar id="preAnocaoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.preAnocaoCartorioData}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="exigenciasCartorioData"
+									value="Data das Exigências:" styleClass="labelBold" />
+								<p:calendar id="exigenciasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioData}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="pagamentoCustasCartorioData"
+									value="Data do Pagamentos das Custas: " styleClass="labelBold" />
+								<p:calendar id="pagamentoCustasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagamentoCustasCartorioData}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="2">
+								<p:outputLabel for="numeroPreAnotacaoCartorio"
+									value="Número do Cartório: " styleClass="labelBold" />
+								<p:inputText id="numeroPreAnotacaoCartorio"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.numeroPreAnotacaoCartorio}" />
+
+								<p:outputLabel for="exigenciasCartorioObservacao"
+									value="Observação das Exigências: " styleClass="labelBold" />
+								<p:inputTextarea id="exigenciasCartorioObservacao" rows="10"
+									cols="48" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioObservacao}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
 
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"

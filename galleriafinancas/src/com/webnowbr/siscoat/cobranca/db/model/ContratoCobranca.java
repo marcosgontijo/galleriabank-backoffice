@@ -545,6 +545,13 @@ public class ContratoCobranca implements Serializable {
 	
 	private String tipoImovel;
 	private String empresaImovel;
+	
+	private Date entradaContratoCartorioData;
+	private Date preAnocaoCartorioData;
+	private Date exigenciasCartorioData;
+	private Date pagamentoCustasCartorioData;
+	private String exigenciasCartorioObservacao;
+	private String numeroPreAnotacaoCartorio;
 
 	public ContratoCobranca() {
 		super();
@@ -4444,5 +4451,53 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContratoLead(boolean contratoLead) {
 		this.contratoLead = contratoLead;
+	}
+
+	public Date getEntradaContratoCartorioData() {
+		return entradaContratoCartorioData;
+	}
+
+	public void setEntradaContratoCartorioData(Date entradaContratoCartorioData) {
+		this.entradaContratoCartorioData = entradaContratoCartorioData;
+	}
+
+	public Date getPreAnocaoCartorioData() {
+		return preAnocaoCartorioData;
+	}
+
+	public void setPreAnocaoCartorioData(Date preAnocaoCartorioData) {
+		this.preAnocaoCartorioData = preAnocaoCartorioData;
+	}
+
+	public Date getExigenciasCartorioData() {
+		return exigenciasCartorioData;
+	}
+
+	public void setExigenciasCartorioData(Date exigenciasCartorioData) {
+		this.exigenciasCartorioData = exigenciasCartorioData;
+	}
+
+	public Date getPagamentoCustasCartorioData() {
+		return pagamentoCustasCartorioData;
+	}
+
+	public void setPagamentoCustasCartorioData(Date pagamentoCustasCartorioData) {
+		this.pagamentoCustasCartorioData = pagamentoCustasCartorioData;
+	}
+
+	public String getExigenciasCartorioObservacao() {
+		return exigenciasCartorioObservacao;
+	}
+
+	public void setExigenciasCartorioObservacao(String exigenciasCartorioObservacao) {
+		this.exigenciasCartorioObservacao = exigenciasCartorioObservacao;
+	}
+
+	public String getNumeroPreAnotacaoCartorio() {
+		return numeroPreAnotacaoCartorio;
+	}
+
+	public void setNumeroPreAnotacaoCartorio(String numeroPreAnotacaoCartorio) {
+		this.numeroPreAnotacaoCartorio = numeroPreAnotacaoCartorio;
 	}
 }

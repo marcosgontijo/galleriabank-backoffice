@@ -352,6 +352,67 @@
 							</h:panelGrid>
 						</shiro:hasAnyRoles>		
 					</p:panel>
+					
+				<h:panelGroup id="CartorioPanel">
+					<p:panel header="Cartório" style="margin-bottom:10px;"
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="entradaContratoCartorioData"
+									value="Data da Entrada do Cartório: " styleClass="labelBold" />
+								<p:outputLabel id="entradaContratoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.entradaContratoCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+								
+
+								<p:outputLabel for="preAnocaoCartorioData"
+									value="Data da Pré-Anotação: " styleClass="labelBold" />
+								<p:outputLabel id="preAnocaoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.preAnocaoCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+									
+									
+								<p:outputLabel for="exigenciasCartorioData"
+									value="Data das Exigências:" styleClass="labelBold" />
+								<p:outputLabel id="exigenciasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+									
+								<p:outputLabel for="pagamentoCustasCartorioData"
+									value="Data do Pagamentos das Custas: " styleClass="labelBold" />
+								<p:outputLabel id="pagamentoCustasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagamentoCustasCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+							</h:panelGrid>
+
+							<h:panelGrid columns="2">
+								<p:outputLabel for="numeroPreAnotacaoCartorio"
+									value="Número do Cartório: " styleClass="labelBold" />
+								<p:outputLabel id="numeroPreAnotacaoCartorio"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.numeroPreAnotacaoCartorio}" />
+
+								<p:outputLabel for="exigenciasCartorioObservacao"
+									value="Observação das Exigências: " styleClass="labelBold" />
+								<p:outputLabel id="exigenciasCartorioObservacao" rows="10"
+									cols="48" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioObservacao}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
