@@ -6299,7 +6299,7 @@ public class ContratoCobrancaMB {
 
 		this.contratos = new ArrayList<ContratoCobranca>();
 		
-		this.tituloPainel = "";
+		this.tituloPainel = ""; 
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPerformance.xhtml";
 	}
@@ -11853,7 +11853,7 @@ public class ContratoCobrancaMB {
 			return "";
 		}
 
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
+		return clearFieldsContratosPerformance();
 	}
 
 	public void anteciparCreditoInvestidor(int iInvestidor) {
