@@ -5017,6 +5017,8 @@ public class ContratoCobrancaMB {
 	private int numeroPresenteParcela;
 	private int numeroParcelaQuitar;
 	private Date dataQuitacao;
+	private Date dataCalculoQuitacao;
+	private BigDecimal valorPresenteTotal;
 
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault(); 
@@ -5086,27 +5088,87 @@ public class ContratoCobrancaMB {
 		return valorPresenteTotalContrato;
 	}
 	
-	public void quitarContrato() {
+	public void quitarContrato(List<ContratoCobrancaDetalhes> listaParcelas) {
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		valorPresenteTotal = BigDecimal.ZERO;
-		valorMIPTotal = BigDecimal.ZERO;
-		valorDFITotal = BigDecimal.ZERO;
-		for (ContratoCobrancaDetalhes parcelas : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+		this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+	
+		for (ContratoCobrancaDetalhes parcelas : listaParcelas) {
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
+				
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataQuitacao);
+				calcularValorPresenteParcelaData(this.dataCalculoQuitacao, parcelas);
 				parcelas.setValorTotalPagamento(this.valorPresenteParcela);
 				valorPresenteTotal = valorPresenteTotal.add(valorPresenteParcela);
-				valorMIPTotal = valorMIPTotal.add(parcelas.getVlrParcela());
 				parcelas.setDataUltimoPagamento(this.dataQuitacao);
+				
+				////////////////////////////////////////////////
+				
+				TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				
+				Calendar dataPagamento = Calendar.getInstance(zone, locale);
+				dataPagamento.setTime(this.dataQuitacao);
+
+				ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+
+				if (this.selectedRecebedor != null) {
+					if (this.selectedRecebedor.getId() > 0) {
+						contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+					}
+				}
+
+				if (this.observacao != null) {
+					contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
+				}
+				
+				contratoCobrancaDetalhesParcial.setDataVencimento(parcelas.getDataVencimento());
+				contratoCobrancaDetalhesParcial.setDataVencimentoAtual(parcelas.getDataVencimentoAtual());
+				contratoCobrancaDetalhesParcial.setNumeroParcela(parcelas.getNumeroParcela());
+				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+				contratoCobrancaDetalhesParcial.setVlrParcela(parcelas.getVlrParcela());
+				contratoCobrancaDetalhesParcial.setVlrRecebido(parcelas.getValorTotalPagamento());
+				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(parcelas.getVlrParcela());
+				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(parcelas.getVlrParcelaAtualizada());
+				parcelas.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+				parcelas.setParcelaPaga(true);
+				contratoCobrancaDetalhesDao.merge(parcelas);
+				this.selectedListContratoCobrancaDetalhes.add(parcelas);
+			}
+		}		
+	}
+	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar;
+	
+	public void clearQuitarContratoDialog() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		
+		this.numeroParcelaQuitar = 0;
+		this.dataQuitacao = auxDataHoje;
+		this.dataCalculoQuitacao = auxDataHoje;
+		this.valorPresenteTotal = BigDecimal.ZERO;
+		
+		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
+		
+		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
+			this.valorPresenteParcela = BigDecimal.ZERO;
+			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
+				
+				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+				calcularValorPresenteParcelaData(this.dataCalculoQuitacao, parcelas);
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 			}
 		}
-		//this.valorPresenteTotal = this.valorPresenteTotal.setScale(2);
 	}
 	
-	public void calcularValorPresenteParcelaData(Date data){
+	public void calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas){
 		
-		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
+		
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
@@ -5130,24 +5192,22 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 	
-	private BigDecimal valorPresenteTotal;
-	private BigDecimal valorMIPTotal;
-	private BigDecimal valorDFITotal;
 	
-	public BigDecimal getValorMIPTotal() {
-		return valorMIPTotal;
+	
+	public List<ContratoCobrancaDetalhes> getListContratoCobrancaDetalhesQuitar() {
+		return listContratoCobrancaDetalhesQuitar;
 	}
 
-	public void setValorMIPTotal(BigDecimal valorMIPTotal) {
-		this.valorMIPTotal = valorMIPTotal;
+	public void setListContratoCobrancaDetalhesQuitar(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar) {
+		this.listContratoCobrancaDetalhesQuitar = listContratoCobrancaDetalhesQuitar;
 	}
 
-	public BigDecimal getValorDFITotal() {
-		return valorDFITotal;
+	public Date getDataCalculoQuitacao() {
+		return dataCalculoQuitacao;
 	}
 
-	public void setValorDFITotal(BigDecimal valorDFITotal) {
-		this.valorDFITotal = valorDFITotal;
+	public void setDataCalculoQuitacao(Date dataCalculoQuitacao) {
+		this.dataCalculoQuitacao = dataCalculoQuitacao;
 	}
 
 	public BigDecimal getValorPresenteTotal() {
@@ -11076,8 +11136,8 @@ public class ContratoCobrancaMB {
 		 * //this.selectedContratoCobrancaDetalhes.setListContratoCobrancaFavorecidos(
 		 * this.listContratoCobrancaFavorecidos);
 		 */
-
 		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
+
 			for (ContratoCobrancaDetalhes c : this.selectedListContratoCobrancaDetalhes) {
 				c.setParcelaPaga(false);
 				c.setVlrSaldoParcela(c.getVlrParcela());
@@ -11575,11 +11635,13 @@ public class ContratoCobrancaMB {
 		}
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
+		
 
+		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
-
+		
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			

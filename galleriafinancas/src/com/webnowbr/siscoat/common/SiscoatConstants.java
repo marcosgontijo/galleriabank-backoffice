@@ -21,10 +21,14 @@ public class SiscoatConstants {
 	@SuppressWarnings("deprecation")
 	public static Date TROCA_IOF = new Date(2021-1900, 9-1, 19);
 	
-	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.0041);
-	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.0082);
-	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00559);
-	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.01118);
+	//public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.0041);
+	//public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.0082);
+	
+	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.00559);
+	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.01118);
+	
+	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.0041);
+	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
 	
 
 	public static final BigDecimal TARIFA_IOF_ADICIONAL = BigDecimal.valueOf(0.38);
