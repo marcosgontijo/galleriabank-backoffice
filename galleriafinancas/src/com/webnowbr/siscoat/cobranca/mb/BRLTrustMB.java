@@ -421,9 +421,8 @@ public class BRLTrustMB {
 			
 			jsonRecebivel.put("numeroControle", parcela.getContrato().getNumeroContratoSeguro() + "-" + numeroParcela);
 			jsonRecebivel.put("coobrigacao", false);
-			jsonRecebivel.put("ocorrencia", 1);
-			jsonRecebivel.put("tipo", 77 ); // total
-			//jsonRecebivel.put("tipo", 73); parcial 14
+			jsonRecebivel.put("ocorrencia", 77);
+			jsonRecebivel.put("tipo", 73);
 			jsonRecebivel.put("documento", parcela.getContrato().getNumeroContratoSeguro());
 			jsonRecebivel.put("termoCessao", parcela.getContrato().getTermoCessao());
 			

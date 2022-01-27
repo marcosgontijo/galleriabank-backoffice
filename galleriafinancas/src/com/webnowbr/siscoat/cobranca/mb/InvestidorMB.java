@@ -980,8 +980,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquido() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquido());
+				if (parcelas.getValorLiquidoBaixa() != null) {
+					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
 				}
 			}
 		}
@@ -994,8 +994,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorCorrespondente) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquido() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquido());
+				if (parcelas.getValorLiquidoBaixa() != null) {
+					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
 				}
 			}
 		}
@@ -1008,8 +1008,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorEnvelope) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquido() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquido());
+				if (parcelas.getValorLiquidoBaixa() != null) {
+					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
 				}
 			}
 		}
@@ -1104,8 +1104,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalParcela = totalParcela.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getParcelaMensal() != null) {
+					totalParcela = totalParcela.add(parcelas.getParcelaMensal());
 				}
 			}
 		}
@@ -1118,8 +1118,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorCorrespondente) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalParcela = totalParcela.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getParcelaMensal() != null) {
+					totalParcela = totalParcela.add(parcelas.getParcelaMensal());
 				}
 			}
 		}
@@ -1132,8 +1132,10 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorEnvelope) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalParcela = totalParcela.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getParcelaMensal() != null) {
+					if (parcelas.getParcelaMensal() != null) {
+						totalParcela = totalParcela.add(parcelas.getParcelaMensal());
+					}
 				}
 			}
 		}
