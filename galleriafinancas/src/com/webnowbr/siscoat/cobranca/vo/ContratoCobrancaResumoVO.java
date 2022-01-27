@@ -28,7 +28,9 @@ public class ContratoCobrancaResumoVO {
 	}
 
 	public void addValorReceber(BigDecimal valor) {
-		valorReceber = valorReceber.add(valor);
+		if (valor != null) {
+			valorReceber = valorReceber.add(valor);
+		} 
 	}
 
 	public void addValorRecebido(BigDecimal valor) {
