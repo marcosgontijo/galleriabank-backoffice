@@ -414,55 +414,59 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
-					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
-						<h:panelGrid columns="2">
+				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
 
-							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
-								styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="taxaAprovadaView"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaAprovada}"
-									style="FONT-SIZE: 10pt;width:60px;" />
-								<p:outputLabel value="% + IPCA a.m." />
-							</h:panelGroup>
+					<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
+						<p:panel header="Comitê"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+							<h:panelGrid columns="2">
 
-							<p:outputLabel for="prazoMaxAprovadoView"
-								value="Prazo Maximo Aprovado: " styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="prazoMaxAprovadoView" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxAprovado}"
-									size="100" style="width:60px;" />
-								<p:outputLabel value=" meses" />
-							</h:panelGroup>
+								<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
+									styleClass="labelBold" />
+								<h:panelGroup>
+									<p:outputLabel id="taxaAprovadaView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.taxaAprovada}"
+										style="FONT-SIZE: 10pt;width:60px;" />
+									<p:outputLabel value="% + IPCA a.m." />
+								</h:panelGroup>
 
-							<p:outputLabel for="valorAprovadoComiteView"
-								value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-							<h:panelGroup>
-								<h:outputText value="R$ " />
-								<p:outputLabel id="valorAprovadoComiteView"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:100px;" />
-							</h:panelGroup>
+								<p:outputLabel for="prazoMaxAprovadoView"
+									value="Prazo Maximo Aprovado: " styleClass="labelBold" />
+								<h:panelGroup>
+									<p:outputLabel id="prazoMaxAprovadoView" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxAprovado}"
+										size="100" style="width:60px;" />
+									<p:outputLabel value=" meses" />
+								</h:panelGroup>
 
-							<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
-								styleClass="labelBold" />
-							<p:outputLabel id="tipoValorComiteView"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
-								label="Status" style="width:100px;" />
+								<p:outputLabel for="valorAprovadoComiteView"
+									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<p:outputLabel id="valorAprovadoComiteView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
+										converter="bigDecimalConverter"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</h:panelGroup>
 
-							<p:outputLabel for="comentarioComiteView"
-								value="Comentários comitê: " styleClass="labelBold" />
-							<p:outputLabel id="comentarioComiteView" rows="10" cols="48"
-								maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-				
+								<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
+									styleClass="labelBold" />
+								<p:outputLabel id="tipoValorComiteView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
+									label="Status" style="width:100px;" />
+
+								<p:outputLabel for="comentarioComiteView"
+									value="Comentários comitê: " styleClass="labelBold" />
+								<p:outputLabel id="comentarioComiteView" rows="10" cols="48"
+									maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
+							</h:panelGrid>
+						</p:panel>
+					</h:panelGroup>
+
+				</shiro:hasAnyRoles>
+
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
