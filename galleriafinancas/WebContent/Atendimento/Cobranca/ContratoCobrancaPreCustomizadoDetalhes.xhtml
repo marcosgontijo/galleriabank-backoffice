@@ -413,6 +413,8 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+				
+				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
@@ -462,6 +464,8 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+				
+			</shiro:hasAnyRoles>
 				
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"

@@ -105,9 +105,9 @@
 									value="Laudo e Parecer Jurídico Pago" />
 								<p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido" />
 								<p:menuitem id="preComiteStep" value="Pré-Comitê" />
-								<p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê" />
+								<p:menuitem id="aprovadoComiteStep" value="Aguardando comitê" />
 								<p:menuitem id="documentosCompletosStep"
-									value="Documentos Completos" />
+									value="Aguardando Documentos" />
 								<p:menuitem id="ccbProntaStep" value="CCB Pronta" />
 								<p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura" />
 								<p:menuitem id="agRegistroStep" value="Aguardando Registro" />
@@ -442,8 +442,11 @@
 				</h:panelGroup>
 			</shiro:hasAnyRoles>
 			
-			<h:panelGroup id="comentarioPreComitePanelView" style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+			<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
+				<h:panelGroup id="comentarioPreComitePanelView"
+					style="margin-bottom:20px;">
+					<p:panel header="Comentário Pré-Comitê"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPreComiteView"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -457,6 +460,69 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+				
+		
+			<p:panel header="Votos do Comite">
+				<p:dataView var="comite"
+					rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
+					paginator="false" layout="list"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:dataViewListItem>
+						<h:panelGrid columns="2">
+
+							<p:outputLabel value="Usuario comitê: " styleClass="labelBold" />
+							<p:outputLabel value="#{comite.usuarioComite}"
+								styleClass="labelBold" />
+
+							<p:outputLabel value="Data comitê: " styleClass="labelBold" />
+							<p:outputLabel value="#{comite.dataComite}"
+								styleClass="labelBold" />
+
+							<p:outputLabel value="Voto do comitê: " styleClass="labelBold" />
+							<p:outputLabel value="#{comite.votoAnaliseComite}"
+								styleClass="labelBold" />
+
+							<p:outputLabel value="Taxa Aprovada: " styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{comite.taxaComite}"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% + IPCA a.m." />
+							</h:panelGroup>
+
+							<p:outputLabel value="Prazo Maximo Aprovado: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{comite.prazoMaxComite}" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
+
+							<p:outputLabel value="Valor Aprovado pelo Comitê: "
+								styleClass="labelBold" />
+
+							<h:panelGroup>
+								<p:outputLabel value="#{comite.valorComite}"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<!-- -->
+								<p:outputLabel value="#{comite.tipoValorComite}" label="Status"
+									style="width:100px;" />
+							</h:panelGroup>
+
+							<p:outputLabel value="Comentários comitê: "
+								styleClass="labelBold" />
+							<p:outputLabel value="#{comite.comentarioComite}" />
+
+							<p:outputLabel value="_______________________________"
+								styleClass="labelBold" />
+							<p:outputLabel value="_______________________________"
+								styleClass="labelBold" />
+						</h:panelGrid>
+					</p:dataViewListItem>
+				</p:dataView>
+			</p:panel>
+		
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
@@ -505,7 +571,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+		</shiro:hasAnyRoles>
 				<h:panelGroup id="AnaliseReprovadaPanel">
 					<p:panel
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
