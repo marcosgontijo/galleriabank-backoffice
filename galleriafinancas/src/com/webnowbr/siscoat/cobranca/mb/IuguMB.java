@@ -2627,14 +2627,11 @@ public class IuguMB {
 					
 		String login = getUsuarioLogado();
 
-		for (PagadorRecebedor pr : this.listRecebedores) {	
-			
-			if (pr.getIuguLiveApiToken().equals("bd88479c57011124c25638b26572e453")) {
-				System.out.println("aaaa");
-			}	
-			
-			consultarFaturasSubContaByToken(pr.getIuguLiveApiToken(), pr.getNome());			
-		}	
+		//for (PagadorRecebedor pr : this.listRecebedores) {				
+		//	consultarFaturasSubContaByToken(pr.getIuguLiveApiToken(), pr.getNome());			
+		//}	
+		
+		consultarFaturasSubContaByToken("bd88479c57011124c25638b26572e453", "Galleria Correspondente Bancario Eireli");
 
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
@@ -2942,12 +2939,7 @@ public class IuguMB {
 			myURLConnection.setDoOutput(true);
 
 			String erro = "";
-			JSONObject myResponse = null;
-			
-			// LEITURA DOS DADOS EM STRING
-			if (token.equals("bd88479c57011124c25638b26572e453")) {
-				Thread.sleep(1000);
-			}			
+			JSONObject myResponse = null;	
 
 			/**
 			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
