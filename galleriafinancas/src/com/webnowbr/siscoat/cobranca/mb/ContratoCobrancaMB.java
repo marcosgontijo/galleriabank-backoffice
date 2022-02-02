@@ -2811,15 +2811,37 @@ public class ContratoCobrancaMB {
 						&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 					geraContratoCobrancaDetalhes(contratoCobrancaDao);
 				}
-
-				updateCheckList();
-
+				
 				if (!CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
 						|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), "")) {
 					this.objetoAnaliseComite.setDataComite(gerarDataHoje());
 					this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
 					this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
+					this.objetoAnaliseComite = new AnaliseComite();
+					
+					if (CommonsUtil.semValor( this.objetoContratoCobranca.getQtdeVotosAprovadosComite())) {
+						this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
+					}
+					if (CommonsUtil.semValor( this.objetoContratoCobranca.getQtdeVotosReprovadosComite())) {
+						this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+					}
+					if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
+							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
+								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
+								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
+									this.objetoContratoCobranca.setAprovadoComite(true);
+								}
+							} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
+								this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+							} 
+						}
+					} 
 				}
+
+				updateCheckList();
+
+				
 
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -2871,6 +2893,9 @@ public class ContratoCobrancaMB {
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
 					return geraConsultaContratosPorStatus("Ag. Registro");
+				}
+				if (this.tituloTelaConsultaPreStatus.equals("PreContratos")) {
+					return geraConsultaContratosPendentes();
 				}
 
 				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
@@ -3221,6 +3246,11 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAprovadoComite(false);
 		this.objetoContratoCobranca.setDocumentosCompletos(false);
 		this.objetoContratoCobranca.setCcbPronta(false);
+		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
+				comite.setVotoAnaliseComite("Reprovado");
+			}
+		}
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
@@ -4100,6 +4130,8 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
 		this.objetoContratoCobranca.setStatus("Aprovado");		
+		
+		this.objetoContratoCobranca.setStatusLead("Completo");
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
 
@@ -5310,6 +5342,8 @@ public class ContratoCobrancaMB {
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 		
+		this.tituloTelaConsultaPreStatus = "PreContratos";
+		
 		getIndexStepContrato();
 
 		loadLovs();
@@ -5324,6 +5358,21 @@ public class ContratoCobrancaMB {
 				this.tipoPessoaIsFisica = true;
 			}
 		}
+		
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador = false;
+		this.addSocio = false;
+		this.addPagador = false;
+		
+		this.objetoAnaliseComite = new AnaliseComite();
+		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
+		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+		
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -5401,9 +5450,16 @@ public class ContratoCobrancaMB {
 				} 
 				if(CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
 					this.objetoAnaliseComite = comite;
-				}
+				} 
 			}
 		} 
+		
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getTaxaComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovada())) {
+			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovada());
+		}
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getPrazoMaxComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxPreAprovado())) {
+			this.objetoAnaliseComite.setPrazoMaxComite(this.objetoContratoCobranca.getPrazoMaxPreAprovado());
+		}
 		
 		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite")) {
 			User usuarioLogado = new User();
@@ -5414,6 +5470,8 @@ public class ContratoCobrancaMB {
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 			}
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus,"Ag. Comite")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
@@ -7046,7 +7104,6 @@ public class ContratoCobrancaMB {
 			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
 				c.setStatus("Reprovado");
 			} else {
-				
 				if (!CommonsUtil.semValor(c.getStatusLead())){
 					if (c.getStatusLead().equals("Novo Lead")) {
 						c.setStatus("Novo Lead");
@@ -7063,7 +7120,6 @@ public class ContratoCobrancaMB {
 					if (c.isInicioAnalise()) {
 						c.setStatus("Em Análise");
 					}
-					
 				} else {
 					c.setStatus("Não Definido");
 				}
@@ -7174,7 +7230,7 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-				
+			
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
@@ -16485,7 +16541,11 @@ public class ContratoCobrancaMB {
 				ContratoCobrancaDetalhes ccd = ccdDao.findById(record.getIdParcela());
 
 				Calendar dataParcela = Calendar.getInstance(zone, locale);
-				dataParcela.setTime(ccd.getDataVencimentoAtual());
+				if(!CommonsUtil.semValor(ccd.getDataVencimentoAtual())){
+					dataParcela.setTime(ccd.getDataVencimentoAtual());
+				} else {
+					dataParcela.setTime(ccd.getDataVencimento());
+				}
 				dataHoje.set(Calendar.HOUR_OF_DAY, 0);
 				dataHoje.set(Calendar.MINUTE, 0);
 				dataHoje.set(Calendar.SECOND, 0);

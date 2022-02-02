@@ -26,11 +26,17 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
+import javassist.expr.NewArray;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+
+import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.functions.AggregateFunction;
+import org.apache.poi.ss.formula.functions.NumericFunction;
 
 /** ManagedBean. */
 @ManagedBean(name = "simuladorMB")
@@ -194,11 +200,46 @@ public class SimuladorMB {
 		this.simulacao.setMostrarIPCA(mostrarIPCA);
 		this.simulacao.setTipoCalculo(tipoCalculo);
 		this.simulacao.setTipoPessoa(tipoPessoa);
+		
+		BigDecimal jurosAoAno = BigDecimal.ZERO;
+		jurosAoAno = BigDecimal.ONE.add((simulacao.getTaxaJuros().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		jurosAoAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosAoAno), 12));
+		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
+		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+		jurosAoAno = jurosAoAno.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.simulacao.setTaxaJurosAoAno(jurosAoAno);
+		
+		
+		BigDecimal cet = BigDecimal.ZERO;
+		BigDecimal cetAno = BigDecimal.ZERO;
+		double cetDouble = 0.0;
+		
+		double[] cash_flows = new double[simulacao.getQtdParcelas().intValue() + 1];
+		
+		cash_flows[0] = simulacao.getValorCreditoLiberado().negate().doubleValue();
+		
+		for (int i = 1; i <= simulacao.getQtdParcelas().intValue(); i++) {
+			BigDecimal calc_value = simulacao.getParcelas().get(i).getAmortizacao().add(simulacao.getParcelas().get(i).getJuros());
+			cash_flows[i] = calc_value.doubleValue();
+		}
+		cetDouble = irr(cash_flows) * 100;
+		cet = CommonsUtil.bigDecimalValue(cetDouble);	
+		cetAno = BigDecimal.ONE.add((cet.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		cetAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(cetAno), 12));
+		cetAno = cetAno.subtract(BigDecimal.ONE);
+		cetAno = cetAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+		
+		cetAno = cetAno.setScale(2, BigDecimal.ROUND_HALF_UP);
+		cet = cet.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.simulacao.setCetAoAno(cetAno);
+		this.simulacao.setCetAoMes(cet);
+		
 		return null;
 	}
 
-	public StreamedContent download() throws JRException, IOException {
-
+	public StreamedContent download() throws JRException, IOException {	
+		
 		if (!CommonsUtil.semValor(this.simulacao.getParcelas())) {
 
 			JasperPrint jp = null;
@@ -243,6 +284,38 @@ public class SimuladorMB {
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 
 	}
+	
+// 	Função TIR(excel) tirada de https://apache.googlesource.com/poi/+/887af17af3cc2ef8733f9a1990bd99fdeabf789a/src/java/org/apache/poi/ss/formula/functions/Irr.java
+	
+	public static double irr(double[] income) {
+        return irr(income, 0.1d);
+    }
+
+    public static double irr(double[] values, double guess) {
+        int maxIterationCount = 100;
+        double absoluteAccuracy = 1E-7;
+        double x0 = guess;
+        double x1;
+        int i = 0;
+        while (i < maxIterationCount) {
+            // the value of the function (NPV) and its derivate can be calculated in the same loop
+            double fValue = 0;
+            double fDerivative = 0;
+            for (int k = 0; k < values.length; k++) {
+                fValue += values[k] / Math.pow(1.0 + x0, k);
+                fDerivative += -k * values[k] / Math.pow(1.0 + x0, k + 1);
+            }
+            // the essense of the Newton-Raphson Method
+            x1 = x0 - fValue/fDerivative;
+            if (Math.abs(x1 - x0) <= absoluteAccuracy) {
+                return x1;
+            }
+            x0 = x1;
+            ++i;
+        }
+        // maximum number of iterations is exceeded
+        return Double.NaN;
+    }
 
 	public BigDecimal getValorImovel() {
 		return valorImovel;
@@ -347,5 +420,6 @@ public class SimuladorMB {
 	public void setMostrarIPCA(boolean mostrarIPCA) {
 		this.mostrarIPCA = mostrarIPCA;
 	}
-
 }
+
+
