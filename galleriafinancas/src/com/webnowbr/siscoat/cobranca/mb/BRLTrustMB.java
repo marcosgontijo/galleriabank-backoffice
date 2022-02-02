@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -237,8 +238,12 @@ public class BRLTrustMB {
 		}
 		
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
-			valorTotalPresenteContrato = valorTotalPresenteContrato.add(calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao()));
+			BigDecimal valorPresenteParcela = calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao());
+			valorTotalPresenteContrato = valorTotalPresenteContrato.add(valorPresenteParcela);
 		}
+		
+		valorTotalPresenteContrato = valorTotalPresenteContrato.divide(this.objetoContratoCobranca.getValorImovel(), 4, RoundingMode.HALF_DOWN);
+		valorTotalPresenteContrato = valorTotalPresenteContrato.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_DOWN);
 		
 		/***
 		 * FIM - CALCULA VALOR PRESENTE CONTRATO
@@ -329,8 +334,10 @@ public class BRLTrustMB {
 					jsonDados.put("tipo", this.objetoContratoCobranca.getTipoImovel());					
 					jsonDados.put("LTV", valorTotalPresenteContrato);					
 					jsonDados.put("empresa", this.objetoContratoCobranca.getEmpresaImovel());
-					jsonDados.put("contemSeguroMIPeDFI", "SIM");								
-					
+					jsonDados.put("contemSeguroMIPeDFI", "SIM");
+					jsonDados.put("valorEmprestimo", this.objetoContratoCobranca.getValorCCB());
+					jsonDados.put("garantiaAtual", this.objetoContratoCobranca.getImovel().getNome());
+										
 					jsonRecebivel.put("dados", jsonDados);		
 					
 					jsonRecebiveis.put(jsonRecebivel);
