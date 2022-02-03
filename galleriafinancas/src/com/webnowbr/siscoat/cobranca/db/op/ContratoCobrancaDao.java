@@ -4830,11 +4830,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}				
 					} 
 					
-					query = query + " group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, "
+					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, aprovadoComite, analiseReprovada, status ";
-					
+						
 					query = query + " order by id desc";
 					
 					ps = connection
@@ -4849,10 +4849,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setId(rs.getLong("id"));
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
 						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
-						contratoCobranca.setNomeResponsavel(rs.getString(5));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.getResponsavel().setDonoResponsavel(new Responsavel());
+						contratoCobranca.getResponsavel().getDonoResponsavel().setNome(rs.getString(7));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
 						contratoCobranca.setStatusLead(rs.getString("statuslead"));
-						contratoCobranca.setNomePagador(rs.getString(6));
+						contratoCobranca.getPagador().setNome(rs.getString(6));
 						contratoCobranca.setInicioAnalise(rs.getBoolean("inicioAnalise"));
 						contratoCobranca.setCadastroAprovadoValor(rs.getString("cadastroAprovadoValor"));
 						contratoCobranca.setMatriculaAprovadaValor(rs.getString("matriculaAprovadaValor"));
@@ -4881,14 +4883,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	
-	private static final String QUERY_CONTRATOS_PENDENTES_CONSULTA = " select coco.id, coco.numeroContrato, coco.datacontrato, coco.quantoPrecisa, res.nome, "
-			+ " pare.nome, "
-			+ " coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
-			+ " coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
-			+ " coco.agRegistro, coco.preAprovadoComite, coco.aprovadoComite, coco.analiseReprovada, coco.status "
-			+ " from cobranca.contratocobranca coco" 
-			+ " inner join cobranca.responsavel res on coco.responsavel = res.id "
-			+ " inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador";
+	private static final String QUERY_CONTRATOS_PENDENTES_CONSULTA = " select coco.id, coco.numeroContrato, coco.datacontrato, coco.quantoPrecisa, res.nome,  "
+			+ "	pare.nome, gerente.nome, "
+			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
+			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
+			+ "	coco.agRegistro, coco.preAprovadoComite, coco.aprovadoComite, coco.analiseReprovada, coco.status "
+			+ "	from cobranca.contratocobranca coco "
+			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
+			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
+			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id ";
 	
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentesResponsaveis(final String codResponsavel, final List<Responsavel> listResponsavel) {
@@ -4919,11 +4922,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}					
 					} 
 					
-					query = query + " group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, "
+					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, aprovadoComite, analiseReprovada, status ";
-					
+						
 					query = query + " order by id desc";
 					
 					ps = connection
@@ -4938,10 +4941,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setId(rs.getLong("id"));
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
 						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
-						contratoCobranca.setNomeResponsavel(rs.getString(5));
+						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.getResponsavel().setDonoResponsavel(new Responsavel());
+						contratoCobranca.getResponsavel().getDonoResponsavel().setNome(rs.getString(7));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
 						contratoCobranca.setStatusLead(rs.getString("statuslead"));
-						contratoCobranca.setNomePagador(rs.getString(6));
+						contratoCobranca.getPagador().setNome(rs.getString(6));
 						contratoCobranca.setInicioAnalise(rs.getBoolean("inicioAnalise"));
 						contratoCobranca.setCadastroAprovadoValor(rs.getString("cadastroAprovadoValor"));
 						contratoCobranca.setMatriculaAprovadaValor(rs.getString("matriculaAprovadaValor"));

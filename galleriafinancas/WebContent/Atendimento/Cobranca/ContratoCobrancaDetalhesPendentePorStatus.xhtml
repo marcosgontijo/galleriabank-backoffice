@@ -609,39 +609,36 @@
 
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}"
-						style="margin-bottom:25px;">
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
-							<p:outputLabel id="vencimentoBoleto"
+							<p:calendar id="vencimentoBoleto" showOn="button"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto}"
-								size="100" styleClass="dateTimeField">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</p:outputLabel>
+								size="100" pattern="dd/MM/yyyy"
+								locale="pt" styleClass="dateTimeField" />
 
 							<p:outputLabel for="valorBoletoPre" value="Valor do Boleto: "
 								styleClass="labelBold" />
-							<p:outputLabel id="valorBoletoPre"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}"
-								ajax="true" style="font-weight: bold;" />
-
-							<p:outputLabel value="Exibir Fatura: " styleClass="labelBold" />
-							<a
-								href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}"
-								class="linkPDF" target="_blank"> <b>Exibir Fatura</b>
-							</a>
-
-							<p:commandButton value="Gerar Boleto IUGU"
+							<p:selectOneMenu id="valorBoletoPre"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
+								style="font-weight: bold;">
+								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
+								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+							</p:selectOneMenu>
+							
+							
+							<p:outputLabel value="Exibir Fatura: "
+								styleClass="labelBold" />
+							<a href="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju}" class="linkPDF" target="_blank"><b>Exibir Fatura</b></a>
+			        
+							<p:commandButton value="Gerar Boleto IUGU" 
 								action="#{contratoCobrancaMB.geraBoletoLaudoPAJU(contratoCobrancaMB.objetoContratoCobranca,
 																			contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto,																	
 																			contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr
 																			)}"
-								update=":form:BoletoPanel :form:BoletoPAJULaudo" ajax="false"
-								icon="ui-icon-print" title="Gerar Boleto IUGU" disabled="true"
-								rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
+								update=":form:BoletoPanel :form:BoletoPAJULaudo"
+								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
 						</h:panelGrid>
 					</p:panel>
@@ -2141,6 +2138,51 @@
 								<p:spacer height="10" />
 							</p:dataViewListItem>
 						</p:dataView>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
+					<p:panel header="Comissão Cliente" style="margin-bottom:10px;">
+						<h:outputText for="cobrarComissaoCliente" value="Cobrar comissão do cliente? "/>
+						<p:outputLabel id="cobrarComissaoCliente" value="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente}" />
+							
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente == 'Sim'}">
+						
+							<h:outputText for="tipoCobrarComissaoCliente" value="Em "/>
+							<p:outputLabel id="tipoCobrarComissaoCliente" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente}" />
+								
+							
+				
+							<h:outputText for="comissaoClientePorcentagem" value="Comissão do Cliente em Porcentagem"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Porcentagem'}"/>
+							<h:panelGroup  rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Porcentagem'}">
+								<p:outputLabel id="comissaoClientePorcentagem"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comissaoClientePorcentagem}"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 3, event, 2);" 
+									converter="bigDecimalConverter"/>	
+								<h:outputText value=" %" />
+							</h:panelGroup>
+						
+							
+							<h:outputText for="comissaoClienteValorFixo" value="Comissão do Cliente em Valor Fixo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Real'}"/>
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Real'}">
+								<h:outputText value="R$ "/>
+								<p:outputLabel id="comissaoClienteValorFixo"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comissaoClienteValorFixo}"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" 
+									converter="bigDecimalConverter"/>
+							</h:panelGroup>
+						
+							
+							<h:outputText for="brutoLiquidoCobrarComissaoCliente" value="Sobre Valor Bruto ou Líquido? "/>
+							<p:outputLabel id="brutoLiquidoCobrarComissaoCliente" value="#{contratoCobrancaMB.objetoContratoCobranca.brutoLiquidoCobrarComissaoCliente}" />
+							
+						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 

@@ -643,24 +643,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
 	
-	private int totalContratosConsultar;
-	private int prazoContrato;
-	private BigDecimal valorUltimaPareclaPaga;
-	private BigDecimal volumeCarteira;
-	private BigDecimal somaContratos180;
-	private BigDecimal somaContratos240;
-	private BigDecimal porcentagem180;
-	private BigDecimal porcentagem240;
-	private int qtdDeparcelasVencidas;
-	private BigDecimal inadimplencia30Soma;
-	private BigDecimal inadimplencia60Soma;
-	private BigDecimal inadimplencia90Soma;
-	private BigDecimal inadimplencia30Porcentagem;
-	private BigDecimal inadimplencia60Porcentagem;
-	private BigDecimal inadimplencia90Porcentagem;
-	private Collection<ContratoCobranca> contratosInadimplencia30;
-	private Collection<ContratoCobranca> contratosInadimplencia60;
-	private Collection<ContratoCobranca> contratosInadimplencia90;
+	
 	
 	
 	private Boolean addPagadorPreContrato;
@@ -6462,6 +6445,45 @@ public class ContratoCobrancaMB {
 		this.parametroConsultaContrato = null;
 	}
 	
+	private int totalContratosConsultar;
+	private int prazoContrato;
+	private BigDecimal valorUltimaPareclaPaga;
+	private BigDecimal volumeCarteira;
+	private BigDecimal somaContratos180;
+	private BigDecimal somaContratos240;
+	private BigDecimal porcentagem180;
+	private BigDecimal porcentagem240;
+	private int qtdDeparcelasVencidas;
+	private BigDecimal inadimplencia30Soma;
+	private BigDecimal inadimplencia60Soma;
+	private BigDecimal inadimplencia90Soma;
+	
+	private BigDecimal prazoMax;
+	private BigDecimal prazoMedio;
+	private BigDecimal prazoMin;
+	
+	private BigDecimal taxaMax;
+	private BigDecimal taxaMedia;
+	private BigDecimal taxaMin;
+	
+	private BigDecimal taxaMaxIPCA;
+	private BigDecimal taxaMediaIPCA;
+	private BigDecimal taxaMinIPCA;
+	
+	private BigDecimal ltvMax;
+	private BigDecimal ltvMedio;
+	private BigDecimal ltvMin;
+	
+	private BigDecimal inadimplencia30Porcentagem;
+	private BigDecimal inadimplencia60Porcentagem;
+	private BigDecimal inadimplencia90Porcentagem;
+	
+	private Collection<ContratoCobranca> contratosInadimplencia30;
+	private Collection<ContratoCobranca> contratosInadimplencia60;
+	private Collection<ContratoCobranca> contratosInadimplencia90;
+	
+	private BigDecimal totalAVencer;
+
 	public void consultaDadosFIDC() {
 		
 		TimeZone zone = TimeZone.getDefault();
@@ -6472,6 +6494,7 @@ public class ContratoCobrancaMB {
 		dataHoje.set(Calendar.MINUTE, 0);
 		dataHoje.set(Calendar.SECOND, 0);
 		dataHoje.set(Calendar.MILLISECOND, 0);
+		Date dataAtual = dataHoje.getTime();
 		Calendar dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
 		
 		this.contratos = new ArrayList<ContratoCobranca>();
@@ -6492,8 +6515,31 @@ public class ContratoCobrancaMB {
 		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
 		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
 		
+		this.prazoMax = BigDecimal.ZERO;
+		this.prazoMedio = BigDecimal.ZERO;
+		this.prazoMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMax = BigDecimal.ZERO;
+		this.taxaMedia = BigDecimal.ZERO;
+		this.taxaMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMaxIPCA = BigDecimal.ZERO;
+		this.taxaMediaIPCA = BigDecimal.ZERO;
+		this.taxaMinIPCA = BigDecimal.valueOf(100);
+		
+		this.ltvMax = BigDecimal.ZERO;
+		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(100);
+		
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		this.totalContratosConsultar = this.contratos.size();
+		
+		int qtdContratosSemIPCA = 0;
+		int qtdContratosComIPCA = 0;
+		
+		this.totalAVencer = BigDecimal.ZERO;
+		BigDecimal ltv = BigDecimal.ZERO;
+		
 
 		for(ContratoCobranca contrato : this.contratos) {
 			this.qtdDeparcelasVencidas = 0;
@@ -6515,12 +6561,55 @@ public class ContratoCobrancaMB {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
 					}
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				} else {
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				}
+				
+				if(CommonsUtil.mesmoValor(ccd.getDataVencimento().getMonth(), dataAtual.getMonth()) && CommonsUtil.mesmoValor(ccd.getDataVencimento().getYear(), dataAtual.getYear()) && !CommonsUtil.semValor(contrato.getValorImovel())) {
+					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
 				}
 			}
-			
-			if(this.prazoContrato == 0 || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
+
+			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;
 				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+			} else {
+				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
+				ltvMedio = ltvMedio.add(ltv);
+				
+				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
+					prazoMax = BigDecimal.valueOf(prazoContrato);
+				}
+				if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 1){
+					prazoMin = BigDecimal.valueOf(prazoContrato);
+				}
+				if(contrato.isCorrigidoIPCA()) {
+					if (taxaMaxIPCA.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMaxIPCA = contrato.getTxJurosParcelas();
+					}
+					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMinIPCA = contrato.getTxJurosParcelas();
+					}
+					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
+					qtdContratosComIPCA++;
+				} else {
+					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMax = contrato.getTxJurosParcelas();
+					}
+					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMin = contrato.getTxJurosParcelas();
+					}
+					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
+					qtdContratosSemIPCA++;
+				}
+				
+				if (ltvMax.compareTo(ltv) == -1){
+					ltvMax = ltv;
+				}
+				if (ltvMin.compareTo(ltv) == 1){
+					ltvMin = ltv;
+				}
 			}
 			
 			if(this.qtdDeparcelasVencidas == 1) {
@@ -6542,6 +6631,23 @@ public class ContratoCobrancaMB {
 				this.somaContratos240 = this.somaContratos240.add(this.valorUltimaPareclaPaga);
 			}
 		}
+		
+		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
+		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		
+		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
+		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
+		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
+		
+		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMedio = this.ltvMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMax = this.ltvMax.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMin = this.ltvMin.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
 		this.inadimplencia30Porcentagem = this.inadimplencia30Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
 		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.multiply(BigDecimal.valueOf(100));
 		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -7104,6 +7210,7 @@ public class ContratoCobrancaMB {
 			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
 				c.setStatus("Reprovado");
 			} else {
+				
 				if (!CommonsUtil.semValor(c.getStatusLead())){
 					if (c.getStatusLead().equals("Novo Lead")) {
 						c.setStatus("Novo Lead");
@@ -7120,6 +7227,7 @@ public class ContratoCobrancaMB {
 					if (c.isInicioAnalise()) {
 						c.setStatus("Em Análise");
 					}
+					
 				} else {
 					c.setStatus("Não Definido");
 				}
@@ -7230,7 +7338,7 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-			
+				
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
@@ -21494,4 +21602,109 @@ public class ContratoCobrancaMB {
 	public void setControleWhatsAppAgAssintura(boolean controleWhatsAppAgAssintura) {
 		this.controleWhatsAppAgAssintura = controleWhatsAppAgAssintura;
 	}
+
+	public BigDecimal getPrazoMax() {
+		return prazoMax;
+	}
+
+	public void setPrazoMax(BigDecimal prazoMax) {
+		this.prazoMax = prazoMax;
+	}
+
+	public BigDecimal getPrazoMedio() {
+		return prazoMedio;
+	}
+
+	public void setPrazoMedio(BigDecimal prazoMedio) {
+		this.prazoMedio = prazoMedio;
+	}
+
+	public BigDecimal getPrazoMin() {
+		return prazoMin;
+	}
+
+	public void setPrazoMin(BigDecimal prazoMin) {
+		this.prazoMin = prazoMin;
+	}
+
+	public BigDecimal getTaxaMax() {
+		return taxaMax;
+	}
+
+	public void setTaxaMax(BigDecimal taxaMax) {
+		this.taxaMax = taxaMax;
+	}
+
+	public BigDecimal getTaxaMedia() {
+		return taxaMedia;
+	}
+
+	public void setTaxaMedia(BigDecimal taxaMedia) {
+		this.taxaMedia = taxaMedia;
+	}
+
+	public BigDecimal getTaxaMin() {
+		return taxaMin;
+	}
+
+	public void setTaxaMin(BigDecimal taxaMin) {
+		this.taxaMin = taxaMin;
+	}
+
+	public BigDecimal getLtvMax() {
+		return ltvMax;
+	}
+
+	public void setLtvMax(BigDecimal ltvMax) {
+		this.ltvMax = ltvMax;
+	}
+
+	public BigDecimal getLtvMedio() {
+		return ltvMedio;
+	}
+
+	public void setLtvMedio(BigDecimal ltvMedio) {
+		this.ltvMedio = ltvMedio;
+	}
+
+	public BigDecimal getLtvMin() {
+		return ltvMin;
+	}
+
+	public void setLtvMin(BigDecimal ltvMin) {
+		this.ltvMin = ltvMin;
+	}
+
+	public BigDecimal getTotalAVencer() {
+		return totalAVencer;
+	}
+
+	public void setTotalAVencer(BigDecimal totalAVencer) {
+		this.totalAVencer = totalAVencer;
+	}
+
+	public BigDecimal getTaxaMaxIPCA() {
+		return taxaMaxIPCA;
+	}
+
+	public void setTaxaMaxIPCA(BigDecimal taxaMaxIPCA) {
+		this.taxaMaxIPCA = taxaMaxIPCA;
+	}
+
+	public BigDecimal getTaxaMediaIPCA() {
+		return taxaMediaIPCA;
+	}
+
+	public void setTaxaMediaIPCA(BigDecimal taxaMediaIPCA) {
+		this.taxaMediaIPCA = taxaMediaIPCA;
+	}
+
+	public BigDecimal getTaxaMinIPCA() {
+		return taxaMinIPCA;
+	}
+
+	public void setTaxaMinIPCA(BigDecimal taxaMinIPCA) {
+		this.taxaMinIPCA = taxaMinIPCA;
+	}
+	
 }
