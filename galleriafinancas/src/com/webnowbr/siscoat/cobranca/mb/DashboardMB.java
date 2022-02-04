@@ -84,6 +84,18 @@ public class DashboardMB {
 	
 	public String clearFieldsDashContratos() {
 		
+		this.totalContratosCadastrados = 0;
+		this.totalContratosPreAprovados = 0;
+		this.totalContratosBoletosPagos = 0;
+		this.totalContratosCcbsEmitidas = 0;
+		this.totalContratosRegistrados = 0;
+		
+		this.totalValorContratosCadastrados = BigDecimal.ZERO;
+		this.totalValorContratosPreAprovados = BigDecimal.ZERO;
+		this.totalValorBoletosPagos = BigDecimal.ZERO;
+		this.totalValorCcbsEmitidas = BigDecimal.ZERO;
+		this.totalValorContratosRegistrados = BigDecimal.ZERO;
+		
 		this.dataInicio = null;
 		this.dataFim = null;
 		this.selectedResponsavel = new Responsavel();
