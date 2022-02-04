@@ -66,8 +66,8 @@ public class DashboardMB {
 	BigDecimal totalValorBoletosPagos;
 	BigDecimal totalValorCcbsEmitidas;
 	BigDecimal totalValorContratosRegistrados;
-    
-	private String updatePagadorRecebedor = ":form:responsavel";
+	
+	private String updateResponsavel = ":form:responsavel";
 	
 	public DashboardMB() {
 		
@@ -79,7 +79,7 @@ public class DashboardMB {
 	
 	public void clearResponsavel() {
 		this.selectedResponsavel = new Responsavel();
-		this.updatePagadorRecebedor = ":form:responsavel";
+		this.updateResponsavel = ":form:responsavel";
 	}
 	
 	public String clearFieldsDashContratos() {
@@ -459,14 +459,6 @@ public class DashboardMB {
 		this.listResponsavel = listResponsavel;
 	}
 
-	public String getUpdatePagadorRecebedor() {
-		return updatePagadorRecebedor;
-	}
-
-	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
-		this.updatePagadorRecebedor = updatePagadorRecebedor;
-	}
-
 	public int getTotalContratosCadastrados() {
 		return totalContratosCadastrados;
 	}
@@ -546,6 +538,12 @@ public class DashboardMB {
 	public void setTotalValorContratosRegistrados(BigDecimal totalValorContratosRegistrados) {
 		this.totalValorContratosRegistrados = totalValorContratosRegistrados;
 	}
-	
-	
+
+	public String getUpdateResponsavel() {
+		return updateResponsavel;
+	}
+
+	public void setUpdateResponsavel(String updateResponsavel) {
+		this.updateResponsavel = updateResponsavel;
+	}
 }

@@ -226,13 +226,13 @@
 					<h:panelGrid columns="2">
 						<p:outputLabel for="dataInicio" value="Data Inicio: "
 							styleClass="labelBold" style="margin-right: 59px;" />
-						<p:calendar id="dataInicio"
+						<p:calendar id="dataInicio" showOn="button"
 							value="#{contratoCobrancaMB.dataInicio}" label="Data Inicio"
 							size="100" pattern="dd/MM/yyyy" locale="pt"
 							styleClass="dateTimeField" />
 						<p:outputLabel for="dataFim" value="Data Fim: "
 							styleClass="labelBold" style="margin-right: 59px;" />
-						<p:calendar id="dataFim" value="#{contratoCobrancaMB.dataFim}"
+						<p:calendar id="dataFim" value="#{contratoCobrancaMB.dataFim}" showOn="button"
 							label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
 							styleClass="dateTimeField" />
 

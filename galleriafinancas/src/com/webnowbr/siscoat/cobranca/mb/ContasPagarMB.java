@@ -101,7 +101,7 @@ public class ContasPagarMB {
 	/** Objeto selecionado na LoV - Pagador. */
 	private PagadorRecebedor selectedPagadorGenerico;
 	String updatePagadorRecebedor = "";
-
+	String updateResponsavel = "";
 
 	private List<ContaContabil> listContasContabil;
 	/** Objeto selecionado na LoV - Pagador. */
@@ -318,7 +318,8 @@ public class ContasPagarMB {
 	}
 	
 	public final void pesquisaPagador() {		
-		updatePagadorRecebedor = ":form:pagadorPanel";		
+		updatePagadorRecebedor = ":form:pagadorPanel";	
+		updateResponsavel = ":form:pagadorPanel";
 	}
 	
 	public final void populateSelectedResponsavel() {
@@ -492,5 +493,13 @@ public class ContasPagarMB {
 
 	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
 		this.updatePagadorRecebedor = updatePagadorRecebedor;
+	}
+
+	public String getUpdateResponsavel() {
+		return updateResponsavel;
+	}
+
+	public void setUpdateResponavel(String updateResponsavel) {
+		this.updateResponsavel = updateResponsavel;
 	}
 }

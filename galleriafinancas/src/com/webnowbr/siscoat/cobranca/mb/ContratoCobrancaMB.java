@@ -212,6 +212,7 @@ public class ContratoCobrancaMB {
 	PagadorRecebedorSocio socioSelecionado;
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
 	String updatePagadorRecebedor = "";
+	String updateResponsavel = "";
 	String tituloPagadorRecebedorDialog = "";
 	AnaliseComite objetoAnaliseComite;
 	
@@ -7214,7 +7215,7 @@ public class ContratoCobrancaMB {
 			FacesContext context = FacesContext.getCurrentInstance();
 			ResponsavelDao responsavelDao = new ResponsavelDao();
 			
-			this.updatePagadorRecebedor = ":form:relatorioComercial ";
+			this.updateResponsavel = ":form:relatorioComercial ";
 
 			if (loginBean != null) {
 				User usuarioLogado = new User();
@@ -21509,6 +21510,14 @@ public class ContratoCobrancaMB {
 
 	public Date getRelDataContratoInicioAtraso() {
 		return relDataContratoInicioAtraso;
+	}
+
+	public String getUpdateResponsavel() {
+		return updateResponsavel;
+	}
+
+	public void setUpdateResponsavel(String updateResponsavel) {
+		this.updateResponsavel = updateResponsavel;
 	}
 
 	public void setRelDataContratoInicioAtraso(Date relDataContratoInicioAtraso) {

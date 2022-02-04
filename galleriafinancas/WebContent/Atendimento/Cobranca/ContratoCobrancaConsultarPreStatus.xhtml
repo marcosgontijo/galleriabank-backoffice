@@ -78,7 +78,7 @@
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>
 			        </f:facet>                 
-                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+                	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
@@ -87,8 +87,8 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>
-			        
-			        <p:column style="text-align: center;width: 100px"
+
+			        <p:column style="text-align: center;width: 90px"
 						headerText="Comercial" 
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
 						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false" />
@@ -124,6 +124,13 @@
 						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
 					</p:column>
+					
+					<p:column style="text-align: center;width: 100px"
+						headerText="Analista" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}">
+						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
+					</p:column>
+					
 					<p:column style="width:180px;">
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
