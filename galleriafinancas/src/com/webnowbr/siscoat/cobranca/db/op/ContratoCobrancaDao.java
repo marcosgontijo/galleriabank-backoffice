@@ -2910,7 +2910,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_BRL_CONTRATO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id  "
+	private static final String QUERY_CONSULTA_BRL_CONTRATO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA  "
 			+ " from cobranca.contratocobrancadetalhes cd "
 			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
 			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
@@ -2966,6 +2966,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal(7));
 						contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal(8));
 						contratoCobrancaBRLLiquidacao.setId(rs.getLong(9));
+						contratoCobrancaBRLLiquidacao.setVlrJurosSemIPCA(rs.getBigDecimal(10));
+						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoSemIPCA(rs.getBigDecimal(11));
 
 						objects.add(contratoCobrancaBRLLiquidacao);
 					}

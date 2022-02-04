@@ -48,6 +48,12 @@
 		<property name="txMulta" type="big_decimal">
 			<column name="txMulta" />
 		</property>
+		<property name="valorJurosSemIPCA" type="big_decimal">
+			<column name="valorJurosSemIPCA" />
+		</property>
+		<property name="valorAmortizacaoSemIPCA" type="big_decimal">
+			<column name="valorAmortizacaoSemIPCA" />
+		</property>
 		<property name="vlrParcelaAtualizada" type="big_decimal">
 			<column name="VLRPARCELAATUALIZADA" />
 		</property>
