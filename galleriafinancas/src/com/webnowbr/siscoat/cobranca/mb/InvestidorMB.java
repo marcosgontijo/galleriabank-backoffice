@@ -790,6 +790,7 @@ public class InvestidorMB {
 		/****
 		 * TODOS CONTRATOS GERADOS NO ANTERIOR E QUE NÃO TIVERAM BAIXA
 		 */
+		/*
 		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
 		List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
 				this.selectedPagador.getId(), dataInicioAnoAnterior, dataFimAnoAnterior);
@@ -813,6 +814,7 @@ public class InvestidorMB {
 				}
 			}
 		}
+		*/
 
 		return saldoAnterior;
 	}

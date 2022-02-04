@@ -651,7 +651,9 @@
 
 										<p:outputLabel value="Data comitê: " styleClass="labelBold" />
 										<p:outputLabel value="#{comite.dataComite}"
-											styleClass="labelBold" />
+											styleClass="labelBold">
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT-6" />
+										</p:outputLabel>
 
 										<p:outputLabel value="Voto do comitê: " styleClass="labelBold" />
 										<p:outputLabel value="#{comite.votoAnaliseComite}"

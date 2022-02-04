@@ -172,7 +172,7 @@ public class BRLTrustMB {
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeJSON = "JSON_BRL_Trust_Cessao_" + identificadorCessao + ".json";
+		this.nomeJSON = this.objetoContratoCobranca.getNumeroContrato() + ".json";
 		
 		JSONObject jsonSchema = new JSONObject();
 		jsonSchema.put("$schema", "https://schemas.brltrust.com.br/json/fidc/v1.2/cessao.schema.json");

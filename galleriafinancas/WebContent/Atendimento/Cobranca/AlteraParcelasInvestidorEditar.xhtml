@@ -172,7 +172,7 @@
 										headerText="Valor da Parcela (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.parcelaMensalBaixa}"
+												<h:outputText value="#{parcelas.parcelaMensal}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>
@@ -189,7 +189,7 @@
 									<p:column style="text-align: center;" headerText="Juros (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.jurosBaixa}"
+												<h:outputText value="#{parcelas.juros}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>
@@ -260,7 +260,7 @@
 										headerText="Valor Líquido (R$)">
 										<p:cellEditor>
 											<f:facet name="output">
-												<h:outputText value="#{parcelas.valorLiquidoBaixa}"
+												<h:outputText value="#{parcelas.valorLiquido}"
 													converter="bigDecimalConverter">
 													<f:convertNumber type="currency" currencySymbol="R$" />
 												</h:outputText>

@@ -425,6 +425,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 									"      cc.recebedor9 = " + idInvestidor + " or " +
 									"      cc.recebedor10 = " + idInvestidor + ")";
 						
+						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +   
+								"  and (cc.recebedorenvelope = false and cc.recebedorenvelope2 = false and cc.recebedorenvelope3 = false and "
+								+ " cc.recebedorenvelope4 = false and cc.recebedorenvelope5 = false and cc.recebedorenvelope6 = false and "
+								+ " cc.recebedorenvelope7 = false and cc.recebedorenvelope8 = false and cc.recebedorenvelope9 = false and cc.recebedorenvelope10 = false) ";
+
 						ps = connection
 								.prepareStatement(query_QUERY_GET_CONTRATOS_POR_INVESTIDOR);		
 						
