@@ -571,6 +571,7 @@ public final class DateUtil {
 		return getDaysBetweenDates(FechaIni, FechaFin) * 30 + DiaFin - DiaIni;
 	}
 	
+	//https://stackoverflow.com/questions/30168056/what-is-the-exact-excel-days360-algorithm
 	@SuppressWarnings("deprecation")
 	public static double Days360(Date StartDate, Date EndDate)
 	{		
@@ -610,7 +611,7 @@ public final class DateUtil {
 	    Date ultimoDiaMes = DateUtil.getLastDayMonth(primeiroDiaMes);
 	    int ultimoDiaMesDay = ultimoDiaMes.getDate();
 	    
-	    if(dateMonth == 2 || dateDay == ultimoDiaMesDay) {
+	    if(dateMonth == 2 && dateDay == ultimoDiaMesDay) {
 	    	return true;
 	    } else {
 	    	return false;

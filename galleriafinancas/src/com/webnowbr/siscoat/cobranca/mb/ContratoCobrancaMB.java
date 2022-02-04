@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.cobranca.mb;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -113,6 +115,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
+import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
@@ -123,6 +126,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -132,6 +136,7 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
+import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 
@@ -643,24 +648,11 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
 	
-	private int totalContratosConsultar;
-	private int prazoContrato;
-	private BigDecimal valorUltimaPareclaPaga;
-	private BigDecimal volumeCarteira;
-	private BigDecimal somaContratos180;
-	private BigDecimal somaContratos240;
-	private BigDecimal porcentagem180;
-	private BigDecimal porcentagem240;
-	private int qtdDeparcelasVencidas;
-	private BigDecimal inadimplencia30Soma;
-	private BigDecimal inadimplencia60Soma;
-	private BigDecimal inadimplencia90Soma;
-	private BigDecimal inadimplencia30Porcentagem;
-	private BigDecimal inadimplencia60Porcentagem;
-	private BigDecimal inadimplencia90Porcentagem;
-	private Collection<ContratoCobranca> contratosInadimplencia30;
-	private Collection<ContratoCobranca> contratosInadimplencia60;
-	private Collection<ContratoCobranca> contratosInadimplencia90;
+	private Date dataInicio;
+    private Date dataFim;
+    private Collection<ContratoCobranca> listaContratos = new ArrayList<ContratoCobranca>();
+ 	private List<Responsavel> listResponsavel;
+
 	
 	
 	private Boolean addPagadorPreContrato;
@@ -6462,6 +6454,45 @@ public class ContratoCobrancaMB {
 		this.parametroConsultaContrato = null;
 	}
 	
+	private int totalContratosConsultar;
+	private int prazoContrato;
+	private BigDecimal valorUltimaPareclaPaga;
+	private BigDecimal volumeCarteira;
+	private BigDecimal somaContratos180;
+	private BigDecimal somaContratos240;
+	private BigDecimal porcentagem180;
+	private BigDecimal porcentagem240;
+	private int qtdDeparcelasVencidas;
+	private BigDecimal inadimplencia30Soma;
+	private BigDecimal inadimplencia60Soma;
+	private BigDecimal inadimplencia90Soma;
+	
+	private BigDecimal prazoMax;
+	private BigDecimal prazoMedio;
+	private BigDecimal prazoMin;
+	
+	private BigDecimal taxaMax;
+	private BigDecimal taxaMedia;
+	private BigDecimal taxaMin;
+	
+	private BigDecimal taxaMaxIPCA;
+	private BigDecimal taxaMediaIPCA;
+	private BigDecimal taxaMinIPCA;
+	
+	private BigDecimal ltvMax;
+	private BigDecimal ltvMedio;
+	private BigDecimal ltvMin;
+	
+	private BigDecimal inadimplencia30Porcentagem;
+	private BigDecimal inadimplencia60Porcentagem;
+	private BigDecimal inadimplencia90Porcentagem;
+	
+	private Collection<ContratoCobranca> contratosInadimplencia30;
+	private Collection<ContratoCobranca> contratosInadimplencia60;
+	private Collection<ContratoCobranca> contratosInadimplencia90;
+	
+	private BigDecimal totalAVencer;
+
 	public void consultaDadosFIDC() {
 		
 		TimeZone zone = TimeZone.getDefault();
@@ -6472,6 +6503,7 @@ public class ContratoCobrancaMB {
 		dataHoje.set(Calendar.MINUTE, 0);
 		dataHoje.set(Calendar.SECOND, 0);
 		dataHoje.set(Calendar.MILLISECOND, 0);
+		Date dataAtual = dataHoje.getTime();
 		Calendar dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
 		
 		this.contratos = new ArrayList<ContratoCobranca>();
@@ -6492,8 +6524,31 @@ public class ContratoCobrancaMB {
 		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
 		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
 		
+		this.prazoMax = BigDecimal.ZERO;
+		this.prazoMedio = BigDecimal.ZERO;
+		this.prazoMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMax = BigDecimal.ZERO;
+		this.taxaMedia = BigDecimal.ZERO;
+		this.taxaMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMaxIPCA = BigDecimal.ZERO;
+		this.taxaMediaIPCA = BigDecimal.ZERO;
+		this.taxaMinIPCA = BigDecimal.valueOf(100);
+		
+		this.ltvMax = BigDecimal.ZERO;
+		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(100);
+		
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		this.totalContratosConsultar = this.contratos.size();
+		
+		int qtdContratosSemIPCA = 0;
+		int qtdContratosComIPCA = 0;
+		
+		this.totalAVencer = BigDecimal.ZERO;
+		BigDecimal ltv = BigDecimal.ZERO;
+		
 
 		for(ContratoCobranca contrato : this.contratos) {
 			this.qtdDeparcelasVencidas = 0;
@@ -6515,12 +6570,55 @@ public class ContratoCobrancaMB {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
 					}
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				} else {
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				}
+				
+				if(CommonsUtil.mesmoValor(ccd.getDataVencimento().getMonth(), dataAtual.getMonth()) && CommonsUtil.mesmoValor(ccd.getDataVencimento().getYear(), dataAtual.getYear()) && !CommonsUtil.semValor(contrato.getValorImovel())) {
+					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
 				}
 			}
-			
-			if(this.prazoContrato == 0 || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
+
+			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;
 				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+			} else {
+				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
+				ltvMedio = ltvMedio.add(ltv);
+				
+				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
+					prazoMax = BigDecimal.valueOf(prazoContrato);
+				}
+				if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 1){
+					prazoMin = BigDecimal.valueOf(prazoContrato);
+				}
+				if(contrato.isCorrigidoIPCA()) {
+					if (taxaMaxIPCA.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMaxIPCA = contrato.getTxJurosParcelas();
+					}
+					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMinIPCA = contrato.getTxJurosParcelas();
+					}
+					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
+					qtdContratosComIPCA++;
+				} else {
+					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMax = contrato.getTxJurosParcelas();
+					}
+					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMin = contrato.getTxJurosParcelas();
+					}
+					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
+					qtdContratosSemIPCA++;
+				}
+				
+				if (ltvMax.compareTo(ltv) == -1){
+					ltvMax = ltv;
+				}
+				if (ltvMin.compareTo(ltv) == 1){
+					ltvMin = ltv;
+				}
 			}
 			
 			if(this.qtdDeparcelasVencidas == 1) {
@@ -6542,6 +6640,23 @@ public class ContratoCobrancaMB {
 				this.somaContratos240 = this.somaContratos240.add(this.valorUltimaPareclaPaga);
 			}
 		}
+		
+		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
+		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		
+		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
+		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
+		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
+		
+		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMedio = this.ltvMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMax = this.ltvMax.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMin = this.ltvMin.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
 		this.inadimplencia30Porcentagem = this.inadimplencia30Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
 		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.multiply(BigDecimal.valueOf(100));
 		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -7091,6 +7206,189 @@ public class ContratoCobrancaMB {
 		//}
 	}
 	
+	 public void clearFieldsRelatorioComercial(){
+		   	this.dataInicio = null;
+			this.dataFim = null;
+			this.selectedResponsavel = new Responsavel();
+			ResponsavelDao rDao = new ResponsavelDao();
+			FacesContext context = FacesContext.getCurrentInstance();
+			ResponsavelDao responsavelDao = new ResponsavelDao();
+			
+			this.updatePagadorRecebedor = ":form:relatorioComercial ";
+
+			if (loginBean != null) {
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+				if (usuarioLogado != null) {
+					if (usuarioLogado.isAdministrador()) {
+						this.listResponsavel = rDao.findAll();
+					} else {
+						if (usuarioLogado.getListResponsavel().size() > 0) {
+							this.listResponsavel = usuarioLogado.getListResponsavel();
+						} else {
+							context.addMessage(null,
+								new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Lista de Responsaveis Inválida",""));
+						}
+						
+						if(!CommonsUtil.semValor(usuarioLogado.getCodigoResponsavel())) {
+							if (responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).size() >= 0) {
+								if(!this.listResponsavel.contains(responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).get(0))) {
+									this.listResponsavel.add(responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).get(0));
+								}
+							}
+						}
+					}	
+				}
+			}		
+			this.listaContratos = new ArrayList<ContratoCobranca>();
+	    }
+	   
+	   public StreamedContent geraRelatorioComercial() throws IOException{
+		   ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		   this.listaContratos = contratoCobrancaDao.getDashboardContratosParaRelatorio(this.dataInicio, this.dataFim, this.selectedResponsavel.getCodigo(), false);
+	   
+		   XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			int iLinha = 0;
+			int numeroLista = this.listaContratos.size();
+			
+			XSSFSheet sheet = wb.getSheetAt(0);
+			
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			gravaCelula(0, "", linha);
+			gravaCelula(1, "OP.", linha);
+			gravaCelula(2, "Data", linha);
+			gravaCelula(3, "Indicador", linha);
+			gravaCelula(4, "Cliente", linha);
+			gravaCelula(5, "Gerente", linha);
+			
+			iLinha = 1;
+			
+			for (ContratoCobranca contrato : this.listaContratos) {
+				
+				linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				
+				gravaCelula(0, numeroLista, linha);
+				gravaCelula(1, contrato.getNumeroContrato(), linha);
+				gravaCelula(2, contrato.getDataContrato(), linha);
+				gravaCelula(3, contrato.getResponsavel().getNome(), linha);
+				gravaCelula(4, contrato.getPagador().getNome(), linha);
+				gravaCelula(5, contrato.getResponsavel().getDonoResponsavel().getNome(), linha);
+				
+				iLinha++;
+				numeroLista--;
+			}
+			
+			ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+			//escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			//fecha a escrita de dados nessa planilha
+			wb.close();
+			
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			
+			gerador.open(String.format("Galleria Bank - Relatorio Comercial " + selectedResponsavel.getNome() +" %s.xlsx", ""));
+			gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+			
+			return null;
+	   }
+	   
+	   public StreamedContent geraRelatorioComercialAdministrador() throws IOException {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+			XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			int iLinha = 0;
+			
+			XSSFSheet sheet = wb.getSheetAt(0);
+
+			XSSFRow linha = sheet.getRow(iLinha);
+			if (linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+
+			gravaCelula(0, "", linha);
+			gravaCelula(1, "OP.", linha);
+			gravaCelula(2, "Data", linha);
+			gravaCelula(3, "Indicador", linha);
+			gravaCelula(4, "Cliente", linha);
+			gravaCelula(5, "Gerente", linha);
+
+			iLinha = 1;
+
+			for (Responsavel resp : listResponsavel) {
+				
+				this.listaContratos = contratoCobrancaDao.getDashboardContratosParaRelatorio(this.dataInicio,this.dataFim, resp.getCodigo(), true);
+				int numeroLista = this.listaContratos.size();
+				for (ContratoCobranca contrato : this.listaContratos) {
+					linha = sheet.getRow(iLinha);
+					if (linha == null) {
+						sheet.createRow(iLinha);
+						linha = sheet.getRow(iLinha);
+					}
+
+					gravaCelula(0, numeroLista, linha);
+					gravaCelula(1, contrato.getNumeroContrato(), linha);
+					gravaCelula(2, contrato.getDataContrato(), linha);
+					gravaCelula(3, contrato.getResponsavel().getNome(), linha);
+					gravaCelula(4, contrato.getPagador().getNome(), linha);
+					gravaCelula(5, contrato.getResponsavel().getDonoResponsavel().getNome(), linha);
+
+					iLinha++;
+					numeroLista--;
+				}
+			}
+
+			ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+			// escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			// fecha a escrita de dados nessa planilha
+			wb.close();
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			gerador.open(String.format("Galleria Bank - Relatorio Responsaveis %s.xlsx", ""));
+			gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+
+			return null;
+		}
+
+		private void gravaCelula(Integer celula, String value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
+		
+		private void gravaCelula(Integer celula, Date value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
+
+		private void gravaCelula(Integer celula, int value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
+	
 	public Collection<ContratoCobranca> populaStatus(Collection<ContratoCobranca> contratos) {
 		// POPULA STATUS
 		for (ContratoCobranca c : contratos) {
@@ -7104,6 +7402,7 @@ public class ContratoCobrancaMB {
 			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
 				c.setStatus("Reprovado");
 			} else {
+				
 				if (!CommonsUtil.semValor(c.getStatusLead())){
 					if (c.getStatusLead().equals("Novo Lead")) {
 						c.setStatus("Novo Lead");
@@ -7120,6 +7419,7 @@ public class ContratoCobrancaMB {
 					if (c.isInicioAnalise()) {
 						c.setStatus("Em Análise");
 					}
+					
 				} else {
 					c.setStatus("Não Definido");
 				}
@@ -7230,7 +7530,7 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-			
+				
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
@@ -21494,4 +21794,142 @@ public class ContratoCobrancaMB {
 	public void setControleWhatsAppAgAssintura(boolean controleWhatsAppAgAssintura) {
 		this.controleWhatsAppAgAssintura = controleWhatsAppAgAssintura;
 	}
+
+	public BigDecimal getPrazoMax() {
+		return prazoMax;
+	}
+
+	public void setPrazoMax(BigDecimal prazoMax) {
+		this.prazoMax = prazoMax;
+	}
+
+	public BigDecimal getPrazoMedio() {
+		return prazoMedio;
+	}
+
+	public void setPrazoMedio(BigDecimal prazoMedio) {
+		this.prazoMedio = prazoMedio;
+	}
+
+	public BigDecimal getPrazoMin() {
+		return prazoMin;
+	}
+
+	public void setPrazoMin(BigDecimal prazoMin) {
+		this.prazoMin = prazoMin;
+	}
+
+	public BigDecimal getTaxaMax() {
+		return taxaMax;
+	}
+
+	public void setTaxaMax(BigDecimal taxaMax) {
+		this.taxaMax = taxaMax;
+	}
+
+	public BigDecimal getTaxaMedia() {
+		return taxaMedia;
+	}
+
+	public void setTaxaMedia(BigDecimal taxaMedia) {
+		this.taxaMedia = taxaMedia;
+	}
+
+	public BigDecimal getTaxaMin() {
+		return taxaMin;
+	}
+
+	public void setTaxaMin(BigDecimal taxaMin) {
+		this.taxaMin = taxaMin;
+	}
+
+	public BigDecimal getLtvMax() {
+		return ltvMax;
+	}
+
+	public void setLtvMax(BigDecimal ltvMax) {
+		this.ltvMax = ltvMax;
+	}
+
+	public BigDecimal getLtvMedio() {
+		return ltvMedio;
+	}
+
+	public void setLtvMedio(BigDecimal ltvMedio) {
+		this.ltvMedio = ltvMedio;
+	}
+
+	public BigDecimal getLtvMin() {
+		return ltvMin;
+	}
+
+	public void setLtvMin(BigDecimal ltvMin) {
+		this.ltvMin = ltvMin;
+	}
+
+	public BigDecimal getTotalAVencer() {
+		return totalAVencer;
+	}
+
+	public void setTotalAVencer(BigDecimal totalAVencer) {
+		this.totalAVencer = totalAVencer;
+	}
+
+	public BigDecimal getTaxaMaxIPCA() {
+		return taxaMaxIPCA;
+	}
+
+	public void setTaxaMaxIPCA(BigDecimal taxaMaxIPCA) {
+		this.taxaMaxIPCA = taxaMaxIPCA;
+	}
+
+	public BigDecimal getTaxaMediaIPCA() {
+		return taxaMediaIPCA;
+	}
+
+	public void setTaxaMediaIPCA(BigDecimal taxaMediaIPCA) {
+		this.taxaMediaIPCA = taxaMediaIPCA;
+	}
+
+	public BigDecimal getTaxaMinIPCA() {
+		return taxaMinIPCA;
+	}
+
+	public void setTaxaMinIPCA(BigDecimal taxaMinIPCA) {
+		this.taxaMinIPCA = taxaMinIPCA;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public Collection<ContratoCobranca> getListaContratos() {
+		return listaContratos;
+	}
+
+	public void setListaContratos(Collection<ContratoCobranca> listaContratos) {
+		this.listaContratos = listaContratos;
+	}
+
+	public List<Responsavel> getListResponsavel() {
+		return listResponsavel;
+	}
+
+	public void setListResponsavel(List<Responsavel> listResponsavel) {
+		this.listResponsavel = listResponsavel;
+	}
+	
+	
 }
