@@ -2982,7 +2982,8 @@
 					</p:dataViewListItem>
 				</p:dataView>
 			</p:panel>
-
+			
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  
 			<p:panel id="UploadArquivosInternos"
 				header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;">
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Comite(s)"
@@ -3072,7 +3073,8 @@
 					}
 				</script>
 			</p:panel>
-
+		</shiro:hasAnyRoles>
+		
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)"
 				style="margin-bottom:10px;">
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)"

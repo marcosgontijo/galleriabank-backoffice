@@ -559,20 +559,6 @@
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCPF}" />
 							</p:inputMask>
 
-							<p:outputLabel for="Rg" value="RG / CNH: "
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputText id="Rg"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.rg}"
-								label="RG / CNH"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-
-							<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
-							<p:inputMask id="DtEmissaoRG"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
-
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputMask id="CNPJ"
@@ -605,32 +591,7 @@
 								<p:ajax event="blur" update=" NomeCC CNPJCC"
 									listener="#{contratoCobrancaMB.populaReferenciaBancariaCNPJ}" />
 							</p:inputText>
-
-							<p:outputLabel for="Sexo" value="Sexo: "
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:selectOneRadio id="Sexo"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexo}"
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
-								<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-								<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
-							</p:selectOneRadio>
-
-							<p:outputLabel for="Atividade" value="Cargo/Ocupação: "
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="Atividade" value="Cargo/Ocupação: "
-								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputText id="Atividade"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
-								label="Atividade" style="width:400px;" />
-
-							<p:outputLabel for="NomePai" value="Nome do Pai: "  rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
-							<p:inputText id="NomePai" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePai}" />
-
-							<p:outputLabel for="NomeMae" value="Nome da Mãe: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputText id="NomeMae"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMae}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-								
+	
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:inputText id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
@@ -640,16 +601,6 @@
 								value="Pagador é dono da garantia?" />
 							<p:selectBooleanCheckbox id="pagadorDonoGarantia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.pagadorDonoGarantia}" />
-
-							<p:outputLabel for="DtNascimento" value="Data de Nascimento: "
-								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
-								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputMask id="DtNascimento"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
 
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 							<p:inputText id="TelCelular"
@@ -730,6 +681,7 @@
 						</h:panelGrid>
 
 						<h:panelGrid columns="2" id="referenciaBancaria">
+							<f:facet name="header">Dados Bancarios </f:facet>
 							<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:inputMask id="CpfCC"
@@ -833,12 +785,7 @@
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
 											update="NomeCCConjuge CpfCCConjuge" />
 									</p:inputText>
-									<p:outputLabel for="SexoConjuge" value="Sexo: " />
-									<p:selectOneRadio id="SexoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexoConjuge}">
-										<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-										<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
-									</p:selectOneRadio>
+									
 									<p:outputLabel for="CpfConjuge" value="CPF: "
 										styleClass="labelBold" />
 									<p:inputMask id="CpfConjuge"
@@ -849,49 +796,17 @@
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
 											update="CpfCCConjuge NomeCCConjuge" />
 									</p:inputMask>
-									<p:outputLabel for="RgConjuge" value="RG / CNH: " />
-									<p:inputText id="RgConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.rgConjuge}"
-										label="RG / CNH" />
-									<p:outputLabel for="dataEmissaoRGConjuge"
-										value="Data Emissão: " />
-									<p:inputMask id="dataEmissaoRGConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
-										mask="99/99/9999" label="Data Emissão">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</p:inputMask>
-
-									<p:outputLabel for="NomePaiConjuge" value="Nome do Pai: " />
-									<p:inputText id="NomePaiConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomePaiConjuge}" />
-
-									<p:outputLabel for="NomeMaeConjuge" value="Nome da Mãe: " />
-									<p:inputText id="NomeMaeConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeMaeConjuge}" />
-										
+								
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:inputText id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
 										label="E-Mail" type="email" onblur="" style="width:400px;" />
-
-									<p:outputLabel for="DtNascimentoConjuge"
-										value="Data de Nascimento: " />
-									<p:inputMask id="DtNascimentoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
-										mask="99/99/9999" label="Data de Nascimento">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</p:inputMask>
 
 									<p:outputLabel for="TelCelularConjuge"
 										value="Telefone Celular: " />
 									<p:inputText id="TelCelularConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelularConjuge}"
 										styleClass="phone" label="Telefone Celular" />
-
-									<p:outputLabel for="CargoConjuge" value="Cargo/Ocupação: " />
-									<p:inputText id="CargoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoConjuge}"
-										label="Cargo/Ocupação" />
 
 									<p:outputLabel for="CepConjuge" value="Cep: " />
 									<p:inputMask id="CepConjuge"
@@ -953,6 +868,7 @@
 									</p:selectOneMenu>
 								</h:panelGrid>
 								<h:panelGrid columns="2" id="referenciaBancariaConjuge">
+									<f:facet name="header">Dados Bancarios </f:facet>
 									<p:outputLabel for="CpfCCConjuge" value="CPF: " styleClass="labelBold"  />
 									<p:inputMask id="CpfCCConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCCConjuge}"
@@ -1046,58 +962,15 @@
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.cpf}">
 										</p:inputMask>
 
-										<p:outputLabel for="RgPagador" value="RG / CNH: " />
-										<p:inputText id="RgPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.rg}"
-											label="RG / CNH" />
-
-										<p:outputLabel for="dataEmissaoRGPagador"
-											value="Data Emissão: " />
-										<p:inputMask id="dataEmissaoRGPagador"
-											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
-											mask="99/99/9999" label="Data Emissão">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
-
-										<p:outputLabel for="NomePaiPagador" value="Nome do Pai: " />
-										<p:inputText id="NomePaiPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.nomePai}" />
-
-										<p:outputLabel for="NomeMaePagador" value="Nome da Mãe: " />
-										<p:inputText id="NomeMaePagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.nomeMae}" />
-
-										<p:outputLabel for="SexoPagador" value="Sexo: " />
-										<p:selectOneRadio id="SexoPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.sexo}">
-											<f:selectItem itemLabel="Masculino" itemValue="MASCULINO" />
-											<f:selectItem itemLabel="Feminino" itemValue="FEMININO" />
-										</p:selectOneRadio>
-
-										<p:outputLabel for="AtividadePagador" value="Cargo/Ocupação: " />
-										<p:inputText id="AtividadePagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.atividade}"
-											label="Atividade" style="width:400px;" />
-
 										<p:outputLabel for="EMailPagador" value="E-Mail: " />
 										<p:inputText id="EMailPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.email}"
 											label="E-Mail" type="email" onblur="" style="width:400px;" />
 
-										<p:outputLabel for="DtNascimentoPagador"
-											value="Data de Nascimento: " />
-
-										<p:inputMask id="DtNascimentoPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
-
 										<p:outputLabel for="TelCelularPagador" value="Telefone: " />
 										<p:inputText id="TelCelularPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.telCelular}"
 											styleClass="phone" label="Telefone Celular" />
-
 
 										<p:outputLabel for="CepPagador" value="Cep: " />
 										<p:inputMask id="CepPagador"
@@ -1295,9 +1168,7 @@
 
 										<p:spacer height="10" />
 										<p:spacer height="10" />
-										<p:outputLabel value="Adicionar Sócio" styleClass="labelBold" />
-										<!-- espaço em branco para formação dos elementos na tela -->
-
+				
 										<p:outputLabel for="SocioNome" value="Nome do sócio: "
 											styleClass="labelBold" />
 										<h:panelGroup>
@@ -1317,51 +1188,10 @@
 											label="CPF" mask="999.999.999-99">
 										</p:inputMask>
 
-										<p:outputLabel for="SocioRg" value="RG / CNH: " />
-										<p:inputText id="SocioRg"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.rg}"
-											label="RG / CNH" />
-											
-										<p:outputLabel for="dataEmissaoRGSocio"
-											value="Data Emissão: " />
-										<p:inputMask id="dataEmissaoRGSocio"
-											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataEmissaoRG}"
-											mask="99/99/9999" label="Data Emissão">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
-
-										<p:outputLabel for="SocioNomePai" value="Nome do Pai: " />
-										<p:inputText id="SocioNomePai"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.nomePai}" />
-
-										<p:outputLabel for="SocioNomeMae" value="Nome da Mãe: " />
-										<p:inputText id="SocioNomeMae"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.nomeMae}" />
-
-										<p:outputLabel for="SocioSexo" value="Sexo: " />
-										<p:selectOneRadio id="SocioSexo"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.sexo}">
-											<f:selectItem itemLabel="Masculino" itemValue="MASCULINO" />
-											<f:selectItem itemLabel="Feminino" itemValue="FEMININO" />
-										</p:selectOneRadio>
-
-										<p:outputLabel for="SocioAtividade" value="Cargo/Ocupação: " />
-										<p:inputText id="SocioAtividade"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.atividade}"
-											label="Atividade" style="width:400px;" />
-
 										<p:outputLabel for="SocioEMail" value="E-Mail: " />
 										<p:inputText id="SocioEMail"
 											value="#{contratoCobrancaMB.socioSelecionado.pessoa.email}"
 											label="E-Mail" type="email" onblur="" style="width:400px;" />
-
-										<p:outputLabel for="SocioDtNascimento"
-											value="Data de Nascimento: " />
-										<p:inputMask id="SocioDtNascimento"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
 
 										<p:outputLabel for="SocioTelCelular" value="Telefone: " />
 										<p:inputText id="SocioTelCelular"

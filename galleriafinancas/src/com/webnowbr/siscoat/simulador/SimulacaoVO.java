@@ -31,6 +31,7 @@ public class SimulacaoVO {
 	private BigDecimal valorCredito;
 	private BigDecimal valorCreditoLiberado;
 	private BigDecimal taxaJuros;
+	private BigDecimal taxaJurosAoAno;
 	private BigInteger carencia;
 	private BigInteger qtdParcelas;
 	private BigDecimal valorImovel;
@@ -41,6 +42,9 @@ public class SimulacaoVO {
 	// totais
 	private BigDecimal valorTotalIOF;
 	private BigDecimal valorTotalIOFAdicional;
+	
+	private BigDecimal cetAoMes;
+	private BigDecimal cetAoAno;
 
 	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 
@@ -587,4 +591,28 @@ public class SimulacaoVO {
 		this.valorCreditoLiberado = valorCreditoLiberado;
 	}
 
+	public BigDecimal getTaxaJurosAoAno() {
+		return taxaJurosAoAno;
+	}
+
+	public void setTaxaJurosAoAno(BigDecimal taxaJurosAoAno) {
+		this.taxaJurosAoAno = taxaJurosAoAno;
+	}
+
+	public BigDecimal getCetAoMes() {
+		return cetAoMes;
+	}
+
+	public void setCetAoMes(BigDecimal cetAoMes) {
+		this.cetAoMes = cetAoMes;
+	}
+
+	public BigDecimal getCetAoAno() {
+		return cetAoAno;
+	}
+
+	public void setCetAoAno(BigDecimal cetAoAno) {
+		this.cetAoAno = cetAoAno;
+	}
+		
 }
