@@ -31,6 +31,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrParcelaOriginal;
 	
+	private BigDecimal valorJurosSemIPCA;
+	private BigDecimal valorAmortizacaoSemIPCA;
+	
 	private BigDecimal vlrRepasse;
 	private BigDecimal vlrRetencao;
 	
@@ -533,4 +536,19 @@ public class ContratoCobrancaDetalhes implements Serializable {
 		this.vlrParcelaOriginal = vlrParcelaOriginal;
 	}
 
+	public BigDecimal getValorJurosSemIPCA() {
+		return valorJurosSemIPCA;
+	}
+
+	public void setValorJurosSemIPCA(BigDecimal valorJurosSemIPCA) {
+		this.valorJurosSemIPCA = valorJurosSemIPCA;
+	}
+
+	public BigDecimal getValorAmortizacaoSemIPCA() {
+		return valorAmortizacaoSemIPCA;
+	}
+
+	public void setValorAmortizacaoSemIPCA(BigDecimal valorAmortizacaoSemIPCA) {
+		this.valorAmortizacaoSemIPCA = valorAmortizacaoSemIPCA;
+	}
 }

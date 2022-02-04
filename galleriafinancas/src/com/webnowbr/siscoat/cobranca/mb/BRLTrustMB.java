@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -35,7 +36,10 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
+import com.webnowbr.siscoat.simulador.SimulacaoVO;
 
 
 @ManagedBean(name = "brlTrustMB")
@@ -142,6 +146,35 @@ public class BRLTrustMB {
 						""));	
 	}
 	
+	public void atualizaValorParcelaSemIPCA() {
+		SimulacaoVO simulacaoVO = calcularParcelas();
+		ContratoCobrancaDetalhesDao cDetalhesDao = new ContratoCobrancaDetalhesDao();
+		
+		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			BigDecimal valorFace = BigDecimal.ZERO;
+			BigDecimal valorJuros = BigDecimal.ZERO;
+			BigDecimal valorAmortizacao = BigDecimal.ZERO;
+			String numeroParcelaStr = parcela.getNumeroParcela();
+			
+			for (SimulacaoDetalheVO parcelasSimulacao : simulacaoVO.getParcelas()) {
+				valorFace = BigDecimal.ZERO;
+				valorJuros = BigDecimal.ZERO;
+				valorAmortizacao = BigDecimal.ZERO;
+				
+				if (numeroParcelaStr.equals(parcelasSimulacao.getNumeroParcela().toString())) {
+					valorJuros = parcelasSimulacao.getJuros();
+					valorAmortizacao = parcelasSimulacao.getAmortizacao();
+					break; 
+				}
+			}
+
+			parcela.setValorJurosSemIPCA(valorJuros);
+			parcela.setValorAmortizacaoSemIPCA(valorAmortizacao);
+			
+			cDetalhesDao.merge(parcela);
+		}
+	}
+	
 	public void atualizaContratoDadosCessaoBRL() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.objetoContratoCobranca.setCedenteBRLCessao(this.cedenteCessao);
@@ -221,6 +254,16 @@ public class BRLTrustMB {
 		atualizaContratoDadosCessaoBRL();
 		
 		/***
+		 * INICIO - GET VALOR FACE SEM IPCA
+		 */
+		
+		atualizaValorParcelaSemIPCA();
+		
+		/***
+		 * FIM - GET VALOR FACE SEM IPCA
+		 */
+		
+		/***
 		 * CALCULA VALOR PRESENTE CONTRATO
 		 */
 		//BigDecimal valorTotalPresenteContrato = contratoCobranca.calcularValorPresenteTotalContrato(this.objetoContratoCobranca);
@@ -249,7 +292,7 @@ public class BRLTrustMB {
 		 * FIM - CALCULA VALOR PRESENTE CONTRATO
 		 */
 		
-		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) { 
 			countParcelas = countParcelas + 1;
 			if (countParcelas > countCarencia) {
 				if (parcela.getDataVencimento().after(this.dataAquisicao)) {
@@ -313,7 +356,8 @@ public class BRLTrustMB {
 					jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(this.objetoContratoCobranca.getDataInicio()));
 					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 					JSONObject jsonValores = new JSONObject();
-					jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
+					
+					jsonValores.put("face", parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
 					
 					if (this.usaTaxaJurosDiferenciada) {
 						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao));
@@ -475,7 +519,7 @@ public class BRLTrustMB {
 			jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			JSONObject jsonValores = new JSONObject();
-			jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()));
+			jsonValores.put("face", parcela.getVlrAmortizacaoSemIPCA().add(parcela.getVlrJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
 			
 			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
 			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
@@ -531,6 +575,50 @@ public class BRLTrustMB {
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Geração JSON BRL Liquidação: JSON gerado com sucesso!",
 						""));	
+	}
+	
+	private SimulacaoVO calcularParcelas() {
+		BigDecimal tarifaIOFDiario;
+		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
+
+		SimulacaoVO simulador = new SimulacaoVO();
+
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null) {
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
+			}
+			simulador.setTipoPessoa("PF");
+		} else {
+			if ( DateUtil.isAfterDate(this.objetoContratoCobranca.getDataInicio(), SiscoatConstants.TROCA_IOF ) ) {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ_ANTIGA.divide(BigDecimal.valueOf(100));
+			}else {
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
+			}
+			simulador.setTipoPessoa("PJ");
+		}
+
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		// valores
+		simulador.setValorCredito(this.objetoContratoCobranca.getValorCCB());
+		simulador.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());
+		simulador.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));
+		simulador.setQtdParcelas(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
+		simulador.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+//			simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setTipoCalculo(this.objetoContratoCobranca.getTipoCalculo());
+		simulador.setNaoCalcularDFI(
+				!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
+		simulador.setNaoCalcularMIP(
+				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
+
+		simulador.calcular();
+		return simulador;
 	}
 	
 	public void geraJSONLiquidacaoParcela() {
@@ -697,7 +785,7 @@ public class BRLTrustMB {
 		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
 		
 		BigDecimal juros = txJuros;
-		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal saldo = parcelas.getValorJurosSemIPCA().add(parcelas.getValorAmortizacaoSemIPCA());
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
 		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
@@ -708,7 +796,7 @@ public class BRLTrustMB {
 			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 		} 
 
-		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
 		
 		juros = juros.divide(BigDecimal.valueOf(100));
 		juros = juros.add(BigDecimal.ONE);

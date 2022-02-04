@@ -24,9 +24,12 @@ public class ContratoCobrancaBRLLiquidacao implements Serializable {
 	private BigDecimal vlrJurosParcela;
 	private BigDecimal vlrAmortizacaoParcela;
 	
+	private BigDecimal vlrJurosSemIPCA;
+	private BigDecimal vlrAmortizacaoSemIPCA;
+	
 	public ContratoCobrancaBRLLiquidacao(){
 	}
-
+	
 	/**
 	 * @return the id
 	 */
@@ -133,5 +136,21 @@ public class ContratoCobrancaBRLLiquidacao implements Serializable {
 
 	public void setVlrAmortizacaoParcela(BigDecimal vlrAmortizacaoParcela) {
 		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
+	}
+
+	public BigDecimal getVlrJurosSemIPCA() {
+		return vlrJurosSemIPCA;
+	}
+
+	public void setVlrJurosSemIPCA(BigDecimal vlrJurosSemIPCA) {
+		this.vlrJurosSemIPCA = vlrJurosSemIPCA;
+	}
+
+	public BigDecimal getVlrAmortizacaoSemIPCA() {
+		return vlrAmortizacaoSemIPCA;
+	}
+
+	public void setVlrAmortizacaoSemIPCA(BigDecimal vlrAmortizacaoSemIPCA) {
+		this.vlrAmortizacaoSemIPCA = vlrAmortizacaoSemIPCA;
 	}
 }
