@@ -84,6 +84,9 @@
 						<p:spacer height="10" />					
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>
+						<p:spacer height="10" />
+						<p:commandButton value="Gerar Relatorio Comercial" oncomplete="PF('relatorioComercialDialog').show();" action="#{contratoCobrancaMB.clearFieldsRelatorioComercial}" update=":form:relatorioComercial">
+						</p:commandButton>
 			        </f:facet>                 
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
@@ -216,6 +219,54 @@
 					</div>			
 				</p:panel>
 			</p:dialog> 
-		</h:form>	
+			
+			<p:dialog header="" widgetVar="relatorioComercialDialog" height="420">
+				<p:panel id="relatorioComercial" header="Relatório Comercial"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataInicio" value="Data Inicio: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="dataInicio"
+							value="#{contratoCobrancaMB.dataInicio}" label="Data Inicio"
+							size="100" pattern="dd/MM/yyyy" locale="pt"
+							styleClass="dateTimeField" />
+						<p:outputLabel for="dataFim" value="Data Fim: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="dataFim" value="#{contratoCobrancaMB.dataFim}"
+							label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+							styleClass="dateTimeField" />
+
+						<p:outputLabel for="responsavel" value="Gerente:  "
+							styleClass="labelBold" />
+						<h:panelGrid columns="2">
+							<p:inputText id="responsavel"
+								value="#{contratoCobrancaMB.selectedResponsavel.nome}"
+								label="Responsável" disabled="true" style="width:210px;" />
+							<p:commandButton id="botaoResponsavel"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin" update="formResponsavel" />
+						</h:panelGrid>
+					</h:panelGrid>
+
+					<div align="center" style="margin-top: 25px;">
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton
+								action="#{contratoCobrancaMB.geraRelatorioComercialAdministrador}"
+								ajax="false" update="mensagens" value="Gerar XLSX Geral" />
+							<p:spacer height="10" />
+						</shiro:hasAnyRoles>
+						<p:commandButton action="#{contratoCobrancaMB.geraRelatorioComercial}"
+							ajax="false" update="mensagens" value="Gerar XLSX" />
+						<p:spacer height="10" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('relatorioComercialDialog').hide();" />
+					</div>
+				</p:panel>
+			</p:dialog> 
+		</h:form>
+		<ui:include src="../../Dialog/DialogResponsavel.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
+			<ui:param name="titulo" value="Gerente Responsável"></ui:param>
+		</ui:include>	
 	</ui:define>
 </ui:composition>	        

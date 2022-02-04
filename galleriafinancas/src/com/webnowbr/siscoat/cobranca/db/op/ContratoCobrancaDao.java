@@ -6031,6 +6031,82 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});
 	}	
+	
+	private static final String QUERY_CONTRATOS_PARA_RELATORIO = " select coco.id, coco.numeroContrato, coco.datacontrato, r.nome,  "
+			+ "	pare.nome, r1.nome "
+			+ "	from cobranca.contratocobranca coco "
+			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
+			+ " inner join cobranca.responsavel r on r.id = coco.responsavel"
+			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
+			+ " where coco.statuslead = 'Completo' "
+			+ " and inicioAnaliseData >= ? ::timestamp "
+			+ " and inicioAnaliseData <= ? ::timestamp ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getDashboardContratosParaRelatorio(final Date dataInicio, final Date dataFim, final String codResponsavel, final boolean geral) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+					String query = QUERY_CONTRATOS_PARA_RELATORIO;
+					
+					if (codResponsavel != null) {
+						if (!codResponsavel.equals("")) {
+							if(geral) {
+								query = query + " and  r.codigo = '" + codResponsavel + "'";
+							} else {
+								query = query + " and (r1.codigo = '" + codResponsavel + "' " + " or  r.codigo = '" + codResponsavel + "') " ;
+							}
+						}				
+					}
+
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					query = query + " order by id ";
+
+					ps = connection.prepareStatement(query);
+
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					
+					rs = ps.executeQuery();
+
+					ContratoCobranca contrato = new ContratoCobranca();
+
+					while (rs.next()) {
+						contrato = new ContratoCobranca();
+						
+						contrato.setNumeroContrato(rs.getString("numerocontrato"));
+						contrato.setDataContrato(rs.getDate("datacontrato"));
+						
+						contrato.setResponsavel(new Responsavel());
+						contrato.getResponsavel().setNome(rs.getString(4));
+						
+						contrato.setPagador(new PagadorRecebedor());
+						contrato.getPagador().setNome(rs.getString(5));
+						
+						contrato.getResponsavel().setDonoResponsavel(new Responsavel());
+						contrato.getResponsavel().getDonoResponsavel().setNome(rs.getString(6));
+						
+						objects.add(contrato);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+	
 
 	private Integer contarTotalParcelas(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes) {
 		int totalParcelas = 0;

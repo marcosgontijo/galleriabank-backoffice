@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.cobranca.mb;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -113,6 +115,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
+import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
@@ -123,6 +126,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -132,6 +136,7 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
+import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 
@@ -643,7 +648,11 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorVendaForçadaImóvel;
 	private String comentarioJuridico;
 	
-	
+	private Date dataInicio;
+    private Date dataFim;
+    private Collection<ContratoCobranca> listaContratos = new ArrayList<ContratoCobranca>();
+ 	private List<Responsavel> listResponsavel;
+
 	
 	
 	private Boolean addPagadorPreContrato;
@@ -7196,6 +7205,189 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		//}
 	}
+	
+	 public void clearFieldsRelatorioComercial(){
+		   	this.dataInicio = null;
+			this.dataFim = null;
+			this.selectedResponsavel = new Responsavel();
+			ResponsavelDao rDao = new ResponsavelDao();
+			FacesContext context = FacesContext.getCurrentInstance();
+			ResponsavelDao responsavelDao = new ResponsavelDao();
+			
+			this.updatePagadorRecebedor = ":form:relatorioComercial ";
+
+			if (loginBean != null) {
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+				if (usuarioLogado != null) {
+					if (usuarioLogado.isAdministrador()) {
+						this.listResponsavel = rDao.findAll();
+					} else {
+						if (usuarioLogado.getListResponsavel().size() > 0) {
+							this.listResponsavel = usuarioLogado.getListResponsavel();
+						} else {
+							context.addMessage(null,
+								new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Lista de Responsaveis Inválida",""));
+						}
+						
+						if(!CommonsUtil.semValor(usuarioLogado.getCodigoResponsavel())) {
+							if (responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).size() >= 0) {
+								if(!this.listResponsavel.contains(responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).get(0))) {
+									this.listResponsavel.add(responsavelDao.findByFilter("codigo", usuarioLogado.getCodigoResponsavel()).get(0));
+								}
+							}
+						}
+					}	
+				}
+			}		
+			this.listaContratos = new ArrayList<ContratoCobranca>();
+	    }
+	   
+	   public StreamedContent geraRelatorioComercial() throws IOException{
+		   ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		   this.listaContratos = contratoCobrancaDao.getDashboardContratosParaRelatorio(this.dataInicio, this.dataFim, this.selectedResponsavel.getCodigo(), false);
+	   
+		   XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			int iLinha = 0;
+			int numeroLista = this.listaContratos.size();
+			
+			XSSFSheet sheet = wb.getSheetAt(0);
+			
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			gravaCelula(0, "", linha);
+			gravaCelula(1, "OP.", linha);
+			gravaCelula(2, "Data", linha);
+			gravaCelula(3, "Indicador", linha);
+			gravaCelula(4, "Cliente", linha);
+			gravaCelula(5, "Gerente", linha);
+			
+			iLinha = 1;
+			
+			for (ContratoCobranca contrato : this.listaContratos) {
+				
+				linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				
+				gravaCelula(0, numeroLista, linha);
+				gravaCelula(1, contrato.getNumeroContrato(), linha);
+				gravaCelula(2, contrato.getDataContrato(), linha);
+				gravaCelula(3, contrato.getResponsavel().getNome(), linha);
+				gravaCelula(4, contrato.getPagador().getNome(), linha);
+				gravaCelula(5, contrato.getResponsavel().getDonoResponsavel().getNome(), linha);
+				
+				iLinha++;
+				numeroLista--;
+			}
+			
+			ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+			//escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			//fecha a escrita de dados nessa planilha
+			wb.close();
+			
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			
+			gerador.open(String.format("Galleria Bank - Relatorio Comercial " + selectedResponsavel.getNome() +" %s.xlsx", ""));
+			gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+			
+			return null;
+	   }
+	   
+	   public StreamedContent geraRelatorioComercialAdministrador() throws IOException {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+			XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			int iLinha = 0;
+			
+			XSSFSheet sheet = wb.getSheetAt(0);
+
+			XSSFRow linha = sheet.getRow(iLinha);
+			if (linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+
+			gravaCelula(0, "", linha);
+			gravaCelula(1, "OP.", linha);
+			gravaCelula(2, "Data", linha);
+			gravaCelula(3, "Indicador", linha);
+			gravaCelula(4, "Cliente", linha);
+			gravaCelula(5, "Gerente", linha);
+
+			iLinha = 1;
+
+			for (Responsavel resp : listResponsavel) {
+				
+				this.listaContratos = contratoCobrancaDao.getDashboardContratosParaRelatorio(this.dataInicio,this.dataFim, resp.getCodigo(), true);
+				int numeroLista = this.listaContratos.size();
+				for (ContratoCobranca contrato : this.listaContratos) {
+					linha = sheet.getRow(iLinha);
+					if (linha == null) {
+						sheet.createRow(iLinha);
+						linha = sheet.getRow(iLinha);
+					}
+
+					gravaCelula(0, numeroLista, linha);
+					gravaCelula(1, contrato.getNumeroContrato(), linha);
+					gravaCelula(2, contrato.getDataContrato(), linha);
+					gravaCelula(3, contrato.getResponsavel().getNome(), linha);
+					gravaCelula(4, contrato.getPagador().getNome(), linha);
+					gravaCelula(5, contrato.getResponsavel().getDonoResponsavel().getNome(), linha);
+
+					iLinha++;
+					numeroLista--;
+				}
+			}
+
+			ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+			// escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			// fecha a escrita de dados nessa planilha
+			wb.close();
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			gerador.open(String.format("Galleria Bank - Relatorio Responsaveis %s.xlsx", ""));
+			gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+
+			return null;
+		}
+
+		private void gravaCelula(Integer celula, String value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
+		
+		private void gravaCelula(Integer celula, Date value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
+
+		private void gravaCelula(Integer celula, int value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value);
+		}
 	
 	public Collection<ContratoCobranca> populaStatus(Collection<ContratoCobranca> contratos) {
 		// POPULA STATUS
@@ -21706,5 +21898,38 @@ public class ContratoCobrancaMB {
 	public void setTaxaMinIPCA(BigDecimal taxaMinIPCA) {
 		this.taxaMinIPCA = taxaMinIPCA;
 	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public Collection<ContratoCobranca> getListaContratos() {
+		return listaContratos;
+	}
+
+	public void setListaContratos(Collection<ContratoCobranca> listaContratos) {
+		this.listaContratos = listaContratos;
+	}
+
+	public List<Responsavel> getListResponsavel() {
+		return listResponsavel;
+	}
+
+	public void setListResponsavel(List<Responsavel> listResponsavel) {
+		this.listResponsavel = listResponsavel;
+	}
+	
 	
 }
