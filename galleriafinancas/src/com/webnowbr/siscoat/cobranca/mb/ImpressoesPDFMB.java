@@ -35,6 +35,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -120,7 +121,13 @@ public class ImpressoesPDFMB {
 		
 		if (this.origemChamada.equals("FichaContrato")) {
 			this.nome = this.objetoContratoCobranca.getPagador().getNome();
-			this.documento = this.objetoContratoCobranca.getPagador().getCpf();
+			if(CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCpf())) {
+				this.documento = this.objetoContratoCobranca.getPagador().getCpf();
+				this.tipoPessoaIsFisica = true;
+			} else {
+				this.documento = this.objetoContratoCobranca.getPagador().getCnpj();
+				this.tipoPessoaIsFisica = false;
+			}
 			this.email = this.objetoContratoCobranca.getPagador().getEmail();
 			this.telefone = this.objetoContratoCobranca.getPagador().getTelCelular();
 		}

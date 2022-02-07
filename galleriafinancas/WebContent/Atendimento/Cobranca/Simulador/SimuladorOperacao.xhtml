@@ -53,13 +53,7 @@
 							<f:selectItem itemLabel="Liquido" itemValue="L" />
 							<f:selectItem itemLabel="Bruto" itemValue="B" />
 						</p:selectOneRadio>
-						<p:outputLabel for="MostrarIPCA" value="Incluir IPCA: "
-							styleClass="labelBold" style="margin-right: 59px;white-space: nowrap;" />
-						<p:selectOneRadio id="MostrarIPCA"
-							value="#{simuladorMB.mostrarIPCA}">
-							<f:selectItem itemLabel="Sim" itemValue="true" />
-							<f:selectItem itemLabel="Não" itemValue="false" />
-						</p:selectOneRadio>
+						 
 						<p:outputLabel for="valorImovel" value="Valor Imóvel: "
 							styleClass="labelBold" />
 						<p:inputText id="valorImovel" value="#{simuladorMB.valorImovel}"
@@ -149,12 +143,6 @@
 							value="#{simuladorMB.identificacao}" required="false">
 						</p:inputText>
 						
-						<p:outputLabel/>
-						<p:selectBooleanCheckbox id="naoCalcularDFI" value="#{simuladorMB.naoCalcularDFI}" itemLabel="Retirar seguro DFI" />
-					
-						<p:outputLabel/>
-						<p:selectBooleanCheckbox id="naoCalcularMIP" value="#{simuladorMB.naoCalcularMIP}" itemLabel="Retirar seguro MIP" />
-
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -163,23 +151,6 @@
 						image="ui-icon ui-icon-check"
 						update=":form:ConsultaResultados mensagens"
 						style="TEXT-DECORATION: bold;" />
-					<!--  
-
-					<p:outputLabel for="cet" value="CET:(?)" styleClass="labelBold" />
-
-					<h:panelGroup>
-						<p:outputLabel id="cet" value="#{simuladorMB.simulacao.cetAoMes}"
-							converter="bigDecimalConverter" />
-						<p:outputLabel value="%" />
-					</h:panelGroup>
-					
-					<p:outputLabel for="cetAno" value="cetAno:(?)" styleClass="labelBold" />
-
-					<h:panelGroup>
-						<p:outputLabel id="cetAno" value="#{simuladorMB.simulacao.cetAoAno}"
-							converter="bigDecimalConverter" />
-						<p:outputLabel value="%" />
-					</h:panelGroup>-->
 				</h:panelGrid>
 
 

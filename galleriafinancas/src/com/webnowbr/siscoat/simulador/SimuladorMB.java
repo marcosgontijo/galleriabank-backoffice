@@ -194,7 +194,7 @@ public class SimuladorMB {
 			}
 
 			this.simulacao = simuladorLiquido;
-		}else {
+		} else {
 			this.simulacao = simulador;
 		}
 		this.simulacao.setMostrarIPCA(mostrarIPCA);
@@ -235,6 +235,10 @@ public class SimuladorMB {
 		this.simulacao.setCetAoAno(cetAno);
 		this.simulacao.setCetAoMes(cet);
 		
+		BigDecimal ltv = this.simulacao.getValorCredito().divide(this.simulacao.getValorImovel(),MathContext.DECIMAL128);
+		ltv = ltv.multiply(BigDecimal.valueOf(100));
+		ltv = ltv.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.simulacao.setLtv(ltv);
 		return null;
 	}
 
@@ -265,8 +269,8 @@ public class SimuladorMB {
 
 		final ReportUtil ReportUtil = new ReportUtil();
 
-		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCredito");
-		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelas");
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoNovo");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelasNovo");
 		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
