@@ -426,6 +426,10 @@ public class BRLTrustMB {
 		 */		
 		
 		FacesContext context = FacesContext.getCurrentInstance();
+		
+		this.jsonGerado = true;
+		String contratosErros = null;
+		
 		String patternyyyyMMdd = "yyyyMMdd";
 		SimpleDateFormat simpleDateFormatyyyyMMdd = new SimpleDateFormat(patternyyyyMMdd);
 		
@@ -519,7 +523,18 @@ public class BRLTrustMB {
 			jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 			JSONObject jsonValores = new JSONObject();
-			jsonValores.put("face", parcela.getVlrAmortizacaoSemIPCA().add(parcela.getVlrJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+			
+			if (parcela.getVlrAmortizacaoSemIPCA() != null && parcela.getVlrJurosSemIPCA() != null) {
+				jsonValores.put("face", parcela.getVlrAmortizacaoSemIPCA().add(parcela.getVlrJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+			} else {
+				this.jsonGerado = false;
+				
+				if (contratosErros == null) {
+					contratosErros = parcela.getContrato().getNumeroContrato();
+				} else {
+					contratosErros = contratosErros + " / " + parcela.getContrato().getNumeroContrato();
+				}
+			}
 			
 			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
 			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
@@ -569,12 +584,17 @@ public class BRLTrustMB {
 			e.printStackTrace();
 		}
 		
-		this.jsonGerado = true;
-		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Geração JSON BRL Liquidação: JSON gerado com sucesso!",
-						""));	
+		if (this.jsonGerado) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Geração JSON BRL Liquidação: JSON gerado com sucesso!",
+							""));	
+		} else {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Geração JSON BRL Liquidação: Este(s) contrato(s) precisa(m) do processo de gerar Cessão novamente: " + contratosErros,
+							""));	
+		}
 	}
 	
 	private SimulacaoVO calcularParcelas() {

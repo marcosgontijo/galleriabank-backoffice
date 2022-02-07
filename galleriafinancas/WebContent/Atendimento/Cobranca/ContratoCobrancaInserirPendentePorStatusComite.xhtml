@@ -205,7 +205,9 @@
 										<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="agAssinatura" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Não assinado" offLabel="Assinado" onIcon="ui-icon-close" offIcon="ui-icon-check" style="width:=60px"/>
+											<p:selectBooleanButton id="agAssinatura" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Não assinado" offLabel="Assinado" onIcon="ui-icon-close" offIcon="ui-icon-check" style="width:=60px">
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAssinado}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>

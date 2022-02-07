@@ -170,6 +170,9 @@ public class ContratoCobrancaMB {
 	private boolean contratoGerado = false;
 	
 	private boolean controleWhatsAppAgAssintura = false;
+	private boolean controleWhatsAppAssinado = false;
+	private boolean controleWhatsAppPajuLaudoRecebido = false;
+	private boolean controleWhatsAppPreAprovado = false;
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -2834,8 +2837,6 @@ public class ContratoCobrancaMB {
 
 				updateCheckList();
 
-				
-
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 				// verifica se o contrato for aprovado, manda um tipo de email..
@@ -2850,7 +2851,33 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 				}
-
+				
+				if (this.controleWhatsAppAssinado) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_dado_entrada_cartorio",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+				
+				if (this.controleWhatsAppPajuLaudoRecebido) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_recebido_laudo_paju",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+				
+				if (this.controleWhatsAppPreAprovado) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_pre_aprovado",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), 
+					this.objetoContratoCobranca.getTaxaPreAprovada().toString(), 
+					this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+				}
+				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
 								"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
@@ -3063,6 +3090,12 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
 				this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
+				
+				// se condições dispara mensagens do whatsapp de pré-aprovado
+				if (this.objetoContratoCobranca.getTaxaPreAprovada() != null && 
+						this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
+					this.controleWhatsAppPajuLaudoRecebido = true;
+				}
 			}
 		}
 
@@ -7491,6 +7524,9 @@ public class ContratoCobrancaMB {
 		this.tituloTelaConsultaPreStatus = status;
 		
 		this.controleWhatsAppAgAssintura = false;
+		this.controleWhatsAppAssinado = false;
+		this.controleWhatsAppPajuLaudoRecebido = false;
+		this.controleWhatsAppPreAprovado = false;
 		
 		if (status.equals("Lead")) {
 			this.tituloTelaConsultaPreStatus = "Novo Lead";
@@ -7621,6 +7657,18 @@ public class ContratoCobrancaMB {
 	public void controlaWhatsAppAgAssintura() {
 		if (this.objetoContratoCobranca.isCcbPronta()) {
 			this.controleWhatsAppAgAssintura = true;
+		}
+	}
+	
+	public void controlaWhatsAppAssinado() {
+		if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.isAgRegistro()) {
+			this.controleWhatsAppAssinado = true;
+		}
+	}
+	
+	public void controlaWhatsAppPajuLaudoRecebido() {
+		if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
+			this.controleWhatsAppPajuLaudoRecebido = true;
 		}
 	}
 	
