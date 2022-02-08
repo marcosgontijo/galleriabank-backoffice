@@ -10,10 +10,16 @@
 		<h:form id="form" style="margin-bottom:10px;">
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<script type="text/javascript"
+					src="/banking/faces/javax.faces.resource/jquery/jquery-plugins.js?ln=primefaces&amp;v=4.0"></script>
+			<link type="text/css" rel="stylesheet"
+					href="/banking/faces/javax.faces.resource/primefaces.css?ln=primefaces&amp;v=4.0" />
 			<p:messages id="mensagens" showDetail="true" />
 						<p:panel id="PanelPDF" header="Impressão em PDF"
 				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
 				<p:focus />
+				
+				
 				<p:messages />
 				<h:panelGrid columns="2">
 					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
@@ -56,47 +62,59 @@
 						style="width:150px;" />
 				</h:panelGrid>
 				<h:panelGrid columns="2" style="">
-				<p:panel id="Pessoas" header="Envolvidos"
-					style="margin-bottom:10px;margin-top:20px;">
+					<p:panel id="Pessoas" header="Envolvidos"
+						style="margin-bottom:10px;margin-top:20px;">
 
-					<h:panelGrid columns="2" style="">
-						<p:outputLabel for="Pagador" value="Pagador: "
-							styleClass="labelBold" style="width: 40px;"/>						
-							
-				        <p:selectOneListbox id="Pagador" value="#{contratoCobrancaMB.selectedPagador}" 
-				            var="c" filter="true" filterMatchMode="contains" style="width: 250px;" scrollHeight="70" converter="pagadorRecebedorConverter">
-				                <f:selectItems value="#{contratoCobrancaMB.listPagadores}" var="pagador" itemLabel="#{pagador.nome}"
-				                            itemValue="#{pagador}"/>
-				                <p:column>
-				                    <h:outputText value="#{c.nome}"/>
-				                </p:column>
-				        </p:selectOneListbox>				
+						<h:panelGrid columns="2" style="">
+							<p:outputLabel for="Pagador" value="Pagador: "
+								styleClass="labelBold" style="width: 40px;" />
 
-        				<p:outputLabel for="Favorecidos" value="Favorecidos: "
-							styleClass="labelBold" style="width: 40px; margin-top: 20px;"/>
-        				<p:pickList id="Favorecidos"
-							value="#{contratoCobrancaMB.dualListModelRecebedores}"
-							var="favorecidos"
-							converter="primeFacesPickListConverter"
-							itemValue="#{favorecidos}" itemLabel="#{favorecidos.nome}"
-							showCheckbox="true" showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" style="width: 250px;margin-top: 20px;">
-						
-							<p:ajax event="transfer"
-								listener="#{meuManagedBeanMB.onTransfer}" />
-						
-							<f:facet name="sourceCaption">Favorecidos</f:facet>
-							<f:facet name="targetCaption">Selecionados</f:facet>
-						
-							<p:column style="width:75%;">
-								<h:outputText value="#{favorecidos.nome}" />
-							</p:column>
-						</p:pickList>				
-					</h:panelGrid>
+							<p:selectOneListbox id="Pagador"
+								value="#{contratoCobrancaMB.selectedPagador}" var="c"
+								filter="true" filterMatchMode="contains" style="width: 250px;"
+								scrollHeight="70" converter="pagadorRecebedorConverter">
+								<f:selectItems value="#{contratoCobrancaMB.listPagadores}"
+									var="pagador" itemLabel="#{pagador.nome}"
+									itemValue="#{pagador}" />
+								<p:column>
+									<h:outputText value="#{c.nome}" />
+								</p:column>
+							</p:selectOneListbox>
+
+							<p:outputLabel for="Favorecidos" value="Favorecidos: "
+								styleClass="labelBold" style="width: 40px; margin-top: 20px;" />
+							<p:pickList id="Favorecidos"
+								value="#{contratoCobrancaMB.dualListModelRecebedores}"
+								var="favorecidos" converter="primeFacesPickListConverter"
+								itemValue="#{favorecidos}" itemLabel="#{favorecidos.nome}"
+								showCheckbox="true" showSourceFilter="true"
+								showTargetFilter="true" filterMatchMode="contains"
+								style="width: 250px;margin-top: 20px;">
+
+								<p:ajax event="transfer"
+									listener="#{meuManagedBeanMB.onTransfer}" />
+
+								<f:facet name="sourceCaption">Favorecidos</f:facet>
+								<f:facet name="targetCaption">Selecionados</f:facet>
+
+								<p:column style="width:75%;">
+									<h:outputText value="#{favorecidos.nome}" />
+								</p:column>
+							</p:pickList>
+						</h:panelGrid>
 					</p:panel>
-					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'FIDC GALLERIA'}" header="Dados da Consulta FIDC">
+					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'FIDC GALLERIA'}"
+						header="Dados da Consulta FIDC">
 						<f:facet name="header">
-							<p:commandButton value="Consultar FIDC" action="#{contratoCobrancaMB.consultaDadosFIDC()}" update="panelFidc ina30Form ina60Form ina90Form"/>
-				        </f:facet>
+							<p:commandButton value="Consultar FIDC"
+								action="#{contratoCobrancaMB.consultaDadosFIDC()}"
+								update="panelFidc ina30Form ina60Form ina90Form formGrafico prazoMinForm"
+								oncomplete="PF('graficoFidc').show();" />
+							<shiro:hasAnyRoles name="ROOT">
+								<p:commandButton value="Mostrar Grafico" update="formGrafico"
+									onclick="PF('graficoFidc').show();" />
+							</shiro:hasAnyRoles>
+						</f:facet>
 						<h:panelGrid columns="2" id="panelFidc" style="">
 							<p:outputLabel for="TotalContratos" value="Total de Contratos: "
 								styleClass="labelBold" />
@@ -112,7 +130,7 @@
 									value="#{contratoCobrancaMB.volumeCarteira}"
 									styleClass="labelBold" converter="bigDecimalConverter" />
 							</h:panelGroup>
-							
+
 							<p:outputLabel for="totalAVencer" value="Total a Vencer:  "
 								styleClass="labelBold" />
 							<h:panelGroup>
@@ -139,77 +157,85 @@
 									styleClass="labelBold" converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
-							
-							<p:outputLabel value=" _________________________ " styleClass="labelBold" />
-							<p:outputLabel value="  _________________________" styleClass="labelBold" />
 
-							<p:outputLabel for="inadimplencia30" value="1 parcela em atraso: "
+							<p:outputLabel value=" _________________________ "
 								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="inadimplencia30"
+								value="1 parcela em atraso: " styleClass="labelBold" />
 							<h:panelGroup id="inadimplencia30">
 								<p:commandLink onclick="PF('ina30Dialog').show()">
-									<h:outputText 
+									<h:outputText
 										value="#{contratoCobrancaMB.inadimplencia30Porcentagem}"
 										styleClass="labelBold" converter="bigDecimalConverter" />
-									<h:outputText  value="% " styleClass="labelBold" />
+									<h:outputText value="% " styleClass="labelBold" />
 								</p:commandLink>
 							</h:panelGroup>
-							
-							
-							<p:outputLabel for="inadimplencia60" value="2 parcelas em atraso: "
-								styleClass="labelBold" />
+
+
+							<p:outputLabel for="inadimplencia60"
+								value="2 parcelas em atraso: " styleClass="labelBold" />
 							<h:panelGroup id="inadimplencia60">
 								<p:commandLink onclick="PF('ina60Dialog').show()">
-									<h:outputText 
+									<h:outputText
 										value="#{contratoCobrancaMB.inadimplencia60Porcentagem}"
 										styleClass="labelBold" converter="bigDecimalConverter" />
-									<h:outputText  value="% " styleClass="labelBold" />
+									<h:outputText value="% " styleClass="labelBold" />
 								</p:commandLink>
 							</h:panelGroup>
-							
-							<p:outputLabel for="inadimplencia90" value="3 ou + parcelas em atraso: "
-								styleClass="labelBold" />
+
+							<p:outputLabel for="inadimplencia90"
+								value="3 ou + parcelas em atraso: " styleClass="labelBold" />
 							<h:panelGroup id="inadimplencia90">
 								<p:commandLink onclick="PF('ina90Dialog').show()">
-									<h:outputText 
+									<h:outputText
 										value="#{contratoCobrancaMB.inadimplencia90Porcentagem}"
 										styleClass="labelBold" converter="bigDecimalConverter" />
-									<h:outputText  value="% " styleClass="labelBold" />
+									<h:outputText value="% " styleClass="labelBold" />
 								</p:commandLink>
 							</h:panelGroup>
-							
-							<p:outputLabel value=" _________________________ " styleClass="labelBold" />
-							<p:outputLabel value="  _________________________" styleClass="labelBold" />
-							
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
 							<p:outputLabel for="prazoMax" value="Prazo Máximo"
 								styleClass="labelBold" />
 							<h:panelGroup>
 								<p:outputLabel id="prazoMax"
-									value="#{contratoCobrancaMB.prazoMax}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
+									value="#{contratoCobrancaMB.prazoMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
 								<p:outputLabel value=" Meses " styleClass="labelBold" />
 							</h:panelGroup>
-											
+
 							<p:outputLabel for="prazoMin" value="Prazo Mínimo"
 								styleClass="labelBold" />
 							<h:panelGroup>
-								<p:outputLabel id="prazoMin"
-									value="#{contratoCobrancaMB.prazoMin}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
-								<p:outputLabel value=" Meses " styleClass="labelBold" />
+								<p:commandLink onclick="PF('prazoMinDialog').show()">
+									<p:outputLabel id="prazoMin"
+										value="#{contratoCobrancaMB.prazoMin}" styleClass="labelBold"
+										converter="bigDecimalConverter" />
+									<p:outputLabel value=" Meses " styleClass="labelBold" />
+								</p:commandLink>
 							</h:panelGroup>
-							
-							
+
+
 							<p:outputLabel for="prazoMedio" value="Prazo Médio"
 								styleClass="labelBold" />
 							<h:panelGroup>
 								<p:outputLabel id="prazoMedio"
-									value="#{contratoCobrancaMB.prazoMedio}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
+									value="#{contratoCobrancaMB.prazoMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
 								<p:outputLabel value=" Meses " styleClass="labelBold" />
 							</h:panelGroup>
-							
-							<p:outputLabel value=" _________________________ " styleClass="labelBold" />
-							<p:outputLabel value="  _________________________" styleClass="labelBold" />
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
 
 							<p:outputLabel for="taxaMaxIPCA" value="Taxa Máxima Pós"
 								styleClass="labelBold" />
@@ -228,7 +254,7 @@
 									styleClass="labelBold" converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
-							
+
 							<p:outputLabel for="taxaMediaIPCA" value="Taxa Média Pós"
 								styleClass="labelBold" />
 							<h:panelGroup>
@@ -237,16 +263,18 @@
 									styleClass="labelBold" converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
-							
-							<p:outputLabel value=" _________________________ " styleClass="labelBold" />
-							<p:outputLabel value="  _________________________" styleClass="labelBold" />
-							
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
 							<p:outputLabel for="taxaMax" value="Taxa Máxima Pré"
 								styleClass="labelBold" />
 							<h:panelGroup>
 								<p:outputLabel id="taxaMax"
-									value="#{contratoCobrancaMB.taxaMax}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
+									value="#{contratoCobrancaMB.taxaMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
 
@@ -254,55 +282,52 @@
 								styleClass="labelBold" />
 							<h:panelGroup>
 								<p:outputLabel id="taxaMin"
-									value="#{contratoCobrancaMB.taxaMin}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
+									value="#{contratoCobrancaMB.taxaMin}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
-							
+
 							<p:outputLabel for="taxaMedia" value="Taxa Média Pré"
 								styleClass="labelBold" />
 							<h:panelGroup>
 								<p:outputLabel id="taxaMedia"
-									value="#{contratoCobrancaMB.taxaMedia}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
+									value="#{contratoCobrancaMB.taxaMedia}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
-							
-							<p:outputLabel value=" _________________________ " styleClass="labelBold" />
-							<p:outputLabel value="  _________________________" styleClass="labelBold" />
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
 
 							<p:outputLabel for="ltvMax" value="LTV Máximo"
 								styleClass="labelBold" />
 							<h:panelGroup>
-								<p:outputLabel id="ltvMax"
-									value="#{contratoCobrancaMB.ltvMax}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
-								<p:outputLabel value="% " styleClass="labelBold" />
-							</h:panelGroup>
-							
-							<p:outputLabel for="ltvMin" value="LTV Mínimo"
-								styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="ltvMin"
-									value="#{contratoCobrancaMB.ltvMin}"
-									styleClass="labelBold" converter="bigDecimalConverter" />
-								<p:outputLabel value="% " styleClass="labelBold" />
-							</h:panelGroup>
-							
-							<p:outputLabel for="ltvMedio" value="LVT Médio"
-								styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="ltvMedio"
-									value="#{contratoCobrancaMB.ltvMedio}"
+								<p:outputLabel id="ltvMax" value="#{contratoCobrancaMB.ltvMax}"
 									styleClass="labelBold" converter="bigDecimalConverter" />
 								<p:outputLabel value="% " styleClass="labelBold" />
 							</h:panelGroup>
 
+							<p:outputLabel for="ltvMin" value="LTV Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMin" value="#{contratoCobrancaMB.ltvMin}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMedio" value="LVT Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMedio"
+									value="#{contratoCobrancaMB.ltvMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
-					</h:panelGrid>
-				
-				
+				</h:panelGrid>
 
 				<h:panelGrid columns="3">
 					<p:commandButton value="Consultar"
@@ -788,6 +813,107 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
+		
+		<p:dialog header="Prazo Min - Contratos" overflow="auto"
+			widgetVar="prazoMinDialog" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="prazoMinForm">
+				<p:dataTable var="prazoMin" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratoPrazoMin}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{prazoMin.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{prazoMin.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{prazoMin.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{prazoMin.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer width="10" height="10" />
+					</p:column>
+
+					<p:column>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
+								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{prazoMin}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
+								ajax="false" icon="ui-icon-check" value="Baixar"
+								title="Baixar Parcela">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{prazoMin}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.origemTelaBaixar}"
+									value="CobrancaConsultar" />
+							</p:commandButton>
+							<p:spacer width="5" />
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton
+								action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false"
+								icon="ui-icon-trash" value="Excluir" title="Excluir">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.objetoContratoCobranca}"
+									value="#{prazoMin}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.updateMode}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.deleteMode}" value="true" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+							<p:commandButton
+								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
+								icon="ui-icon-calculator" value="Corrigir IPCA"
+								title="Corrigir IPCA" update=":form:mensagens">
+								<p:confirm header="Confirmação"
+									message="Deseja realmente corrigir este contrato pelo IPCA?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+							</p:confirmDialog>
+						</shiro:hasAnyRoles>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="grafico" widgetVar="graficoFidc" resizable="true" style="FONT-SIZE: 10pt;" width="800" responsive="true">
+			<h:form id="formGrafico">		
+				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
+					 <p:barChart model="#{contratoCobrancaMB.stackedGroupBarModel}" style="width: 100%; height: 500px;"/>	
+					 <p:dataTable/>																				
+				</div>	  				
+			</h:form>
+		</p:dialog>  
 	
 	</ui:define>
 </ui:composition>

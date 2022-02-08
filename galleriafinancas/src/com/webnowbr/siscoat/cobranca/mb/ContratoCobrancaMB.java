@@ -75,6 +75,14 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -6395,6 +6403,10 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("FIDC")) {
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+
+			stackedGroupBarModel = new BarChartModel();
+			
+
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
@@ -6491,8 +6503,11 @@ public class ContratoCobrancaMB {
 	private Collection<ContratoCobranca> contratosInadimplencia30;
 	private Collection<ContratoCobranca> contratosInadimplencia60;
 	private Collection<ContratoCobranca> contratosInadimplencia90;
+	private Collection<ContratoCobranca> contratoPrazoMin;
 	
 	private BigDecimal totalAVencer;
+	
+	private BarChartModel stackedGroupBarModel;
 
 	public void consultaDadosFIDC() {
 		
@@ -6524,6 +6539,7 @@ public class ContratoCobrancaMB {
 		this.contratosInadimplencia30 = new ArrayList<ContratoCobranca>();
 		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
 		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
+		this.contratoPrazoMin = new ArrayList<ContratoCobranca>();
 		
 		this.prazoMax = BigDecimal.ZERO;
 		this.prazoMedio = BigDecimal.ZERO;
@@ -6593,6 +6609,10 @@ public class ContratoCobrancaMB {
 				}
 				if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 1){
 					prazoMin = BigDecimal.valueOf(prazoContrato);
+					contratoPrazoMin.clear();
+					contratoPrazoMin.add(contrato);
+				} else if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 0){
+					contratoPrazoMin.add(contrato);
 				}
 				if(contrato.isCorrigidoIPCA()) {
 					if (taxaMaxIPCA.compareTo(contrato.getTxJurosParcelas()) == -1){
@@ -6677,7 +6697,119 @@ public class ContratoCobrancaMB {
 		this.porcentagem240 = this.somaContratos240.divide(this.volumeCarteira,  MathContext.DECIMAL128);
 		this.porcentagem240 = this.porcentagem240.multiply(BigDecimal.valueOf(100));
 		this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		createStackedGroupBarModel();
 	}
+	
+	public void createStackedGroupBarModel() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+        stackedGroupBarModel = new BarChartModel();
+        ChartData data = new ChartData();
+        BarChartDataSet barDataSet = new BarChartDataSet();
+        
+        barDataSet.setLabel("Carteira");
+        barDataSet.setBackgroundColor("rgb(69, 138, 17)");
+        barDataSet.setStack("Stack 0");
+        List<Number> dataVal = new ArrayList<>();
+        
+        BarChartDataSet barDataSet2 = new BarChartDataSet();
+        barDataSet2.setLabel("Amortização");
+        barDataSet2.setBackgroundColor("rgb(63, 171, 236)");
+        barDataSet2.setStack("Stack 0");
+        List<Number> dataVal2 = new ArrayList<>();
+        
+        List<String> labels = new ArrayList<>();
+        
+        TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+		Date dataAtual = dataHoje.getTime();
+		
+		BigDecimal totalAmortizado = BigDecimal.ZERO;
+		BigDecimal volumeCarteiraGrafico = this.volumeCarteira;
+		
+		dataVal.add(volumeCarteiraGrafico);
+		dataVal2.add(totalAmortizado);
+		labels.add(CommonsUtil.stringValue(0));
+		
+		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
+		
+		int i = 0;
+		for (i = 0; i <= prazoMax.intValue(); i++) {
+			int mesHoje = dataAtual.getMonth();
+			int anoHoje = dataAtual.getYear();
+			volumeCarteiraGrafico = this.volumeCarteira;
+			
+			for (ContratoCobranca contrato : this.contratos) {
+				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+					int mesVencimento = ccd.getDataVencimento().getMonth();
+					int anoVencimetno = ccd.getDataVencimento().getYear();
+
+					dataVencimentoParcela.setTime(ccd.getDataVencimento());
+
+					if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
+						ccd.setParcelaVencida(true);
+					} else if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
+						ccd.setParcelaVencendo(true);
+					}
+					
+					if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
+						if (!ccd.isParcelaPaga()) {
+							totalAmortizado = totalAmortizado.add(ccd.getVlrAmortizacaoParcela());
+						}
+					}
+				}
+			}
+			
+			volumeCarteiraGrafico = volumeCarteiraGrafico.subtract(totalAmortizado);
+			int j = i;
+			dataVal.add(volumeCarteiraGrafico);
+			dataVal2.add(totalAmortizado);
+			labels.add(CommonsUtil.stringValue(j++));
+			
+			mesHoje++;
+			if (mesHoje == 12) {
+				mesHoje = 0;
+				anoHoje++;
+			}
+		}       
+        
+        barDataSet.setData(dataVal);
+        barDataSet2.setData(dataVal2);
+        
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setStacked(true);
+        linearAxes.setOffset(true);
+        cScales.addXAxesData(linearAxes);
+        cScales.addYAxesData(linearAxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Bar Chart - Stacked Group");
+        options.setTitle(title);
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setMode("index");
+        tooltip.setIntersect(false);
+        options.setTooltip(tooltip);
+
+        stackedGroupBarModel.setOptions(options);
+
+        data.addChartDataSet(barDataSet);
+        data.addChartDataSet(barDataSet2);
+        data.setLabels(labels);
+
+        stackedGroupBarModel.setData(data);
+    }
 	
 
 	public void geraConsultaPreContratosBaixados() {
@@ -21938,6 +22070,22 @@ public class ContratoCobrancaMB {
 
 	public void setListResponsavel(List<Responsavel> listResponsavel) {
 		this.listResponsavel = listResponsavel;
+	}
+
+	public BarChartModel getStackedGroupBarModel() {
+		return stackedGroupBarModel;
+	}
+
+	public void setStackedGroupBarModel(BarChartModel stackedGroupBarModel) {
+		this.stackedGroupBarModel = stackedGroupBarModel;
+	}
+
+	public Collection<ContratoCobranca> getContratoPrazoMin() {
+		return contratoPrazoMin;
+	}
+
+	public void setContratoPrazoMin(Collection<ContratoCobranca> contratoPrazoMin) {
+		this.contratoPrazoMin = contratoPrazoMin;
 	}
 	
 	
