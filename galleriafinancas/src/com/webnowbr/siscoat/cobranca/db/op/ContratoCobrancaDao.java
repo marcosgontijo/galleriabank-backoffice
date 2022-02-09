@@ -5281,7 +5281,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						contratoCobranca.setId(rs.getLong(1));
 						contratoCobranca.setNumeroContrato(rs.getString(2));
-						contratoCobranca.setDataContrato(rs.getDate(3));
+						contratoCobranca.setDataContrato(rs.getTimestamp(3));
 						contratoCobranca.setNomeResponsavel(rs.getString(4));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
 						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
@@ -5300,7 +5300,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
 						contratoCobranca.setAprovadoComite(rs.getBoolean(20));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean(21)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getDate(22));
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(22));
 						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(23));
 						contratoCobranca.setInicioAnaliseUsuario(rs.getString(24));
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));

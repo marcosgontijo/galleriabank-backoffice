@@ -6734,6 +6734,108 @@ public class ContratoCobrancaMB {
 		createStackedGroupBarModel();
 	}
 	
+	public StreamedContent geraRelatorioFIDC() throws IOException{
+		  XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			int iLinha = 0;
+			int numeroLista = 1;
+			
+		        TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				Calendar dataHoje = Calendar.getInstance(zone, locale);
+				Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
+				dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+				dataHoje.set(Calendar.MINUTE, 0);
+				dataHoje.set(Calendar.SECOND, 0);
+				dataHoje.set(Calendar.MILLISECOND, 0);
+				Date dataAtual = dataHoje.getTime();
+			
+			XSSFSheet sheet = wb.getSheetAt(0);
+			
+			XSSFRow linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			gravaCelula(0, "Período", linha);
+			gravaCelula(1, "Saldo Inicial", linha);
+			gravaCelula(2, "Juros", linha);
+			gravaCelula(3, "Amortização", linha);
+			gravaCelula(4, "Valor Parcela", linha);
+			
+			BigDecimal saldoInicial = BigDecimal.ZERO;
+			BigDecimal juros = BigDecimal.ZERO;
+			BigDecimal amortizacao = BigDecimal.ZERO;
+			BigDecimal valorParcela = BigDecimal.ZERO;
+			
+			int mesHoje = dataAtual.getMonth();
+			int anoHoje = dataAtual.getYear();
+			
+			iLinha = 1;
+			
+			int i = 0;
+			for (i = 0; i <= prazoMax.intValue(); i++) {
+				saldoInicial = BigDecimal.ZERO;
+				juros = BigDecimal.ZERO;
+				amortizacao = BigDecimal.ZERO;
+				valorParcela = BigDecimal.ZERO;
+				
+				for (ContratoCobranca contrato : this.contratos) {
+					for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+						int mesVencimento = ccd.getDataVencimento().getMonth();
+						int anoVencimetno = ccd.getDataVencimento().getYear();
+
+						dataVencimentoParcela.setTime(ccd.getDataVencimento());
+						
+						if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
+							if (!ccd.isParcelaPaga()) {
+								saldoInicial = saldoInicial.add(ccd.getVlrSaldoParcela());
+								juros = juros.add(ccd.getVlrJurosParcela());
+								amortizacao = amortizacao.add(ccd.getVlrAmortizacaoParcela());
+								valorParcela = valorParcela.add(ccd.getVlrAmortizacaoParcela().add(ccd.getVlrJurosParcela()));
+							}
+						}
+					}
+				}
+				
+				linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				
+				gravaCelula(0, numeroLista, linha);
+				gravaCelula(1, saldoInicial, linha);
+				gravaCelula(2, juros, linha);
+				gravaCelula(3, amortizacao, linha);
+				gravaCelula(4, valorParcela, linha);
+				iLinha++;
+				
+				numeroLista++;
+				mesHoje++;
+				if (mesHoje == 12) {
+					mesHoje = 0;
+					anoHoje++;
+				}
+			}       
+						
+			ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+			//escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			//fecha a escrita de dados nessa planilha
+			wb.close();
+			
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			
+			gerador.open(String.format("Galleria Bank - Relatorio FIDC %s.xlsx", ""));
+			gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+			
+			return null;
+	}
+	
 	public void createStackedGroupBarModel() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
@@ -6770,13 +6872,12 @@ public class ContratoCobrancaMB {
 		dataVal.add(volumeCarteiraGrafico);
 		dataVal2.add(totalAmortizado);
 		labels.add(CommonsUtil.stringValue(0));
-		
+		int mesHoje = dataAtual.getMonth();
+		int anoHoje = dataAtual.getYear();
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		
 		int i = 0;
 		for (i = 0; i <= prazoMax.intValue(); i++) {
-			int mesHoje = dataAtual.getMonth();
-			int anoHoje = dataAtual.getYear();
 			volumeCarteiraGrafico = this.volumeCarteira;
 			
 			for (ContratoCobranca contrato : this.contratos) {
@@ -7535,6 +7636,12 @@ public class ContratoCobrancaMB {
 			gerador.close();
 
 			return null;
+		}
+	   
+	   private void gravaCelula(Integer celula, BigDecimal value, XSSFRow linha) {
+			if (linha.getCell(celula) == null)
+				linha.createCell(celula);
+			linha.getCell(celula).setCellValue(value.doubleValue());
 		}
 
 		private void gravaCelula(Integer celula, String value, XSSFRow linha) {

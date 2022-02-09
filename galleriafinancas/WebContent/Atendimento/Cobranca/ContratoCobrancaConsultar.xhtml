@@ -108,11 +108,11 @@
 						<f:facet name="header">
 							<p:commandButton value="Consultar FIDC"
 								action="#{contratoCobrancaMB.consultaDadosFIDC()}"
-								update="panelFidc ina30Form ina60Form ina90Form formGrafico prazoMinForm"
-								oncomplete="PF('graficoFidc').show();" />
+								update="panelFidc ina30Form ina60Form ina90Form formGrafico prazoMinForm"/>
 							<shiro:hasAnyRoles name="ROOT">
 								<p:commandButton value="Mostrar Grafico" update="formGrafico"
 									onclick="PF('graficoFidc').show();" />
+								<p:commandButton value="Gerar Excel" ajax="false" update="mensagens" action="#{contratoCobrancaMB.geraRelatorioFIDC()}" />
 							</shiro:hasAnyRoles>
 						</f:facet>
 						<h:panelGrid columns="2" id="panelFidc" style="">
