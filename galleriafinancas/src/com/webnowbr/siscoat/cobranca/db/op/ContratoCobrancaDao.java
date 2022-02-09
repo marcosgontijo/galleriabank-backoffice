@@ -4925,7 +4925,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 
 						if (!queryResponsavel.equals("")) {
-							query = query + " and (" + queryResponsavel + ") ";
+							query = query + " where  " + queryResponsavel + " ";
 						}					
 					} 
 					

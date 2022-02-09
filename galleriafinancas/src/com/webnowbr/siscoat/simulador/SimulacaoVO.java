@@ -45,6 +45,7 @@ public class SimulacaoVO {
 	
 	private BigDecimal cetAoMes;
 	private BigDecimal cetAoAno;
+	private BigDecimal ltv;
 
 	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 
@@ -613,6 +614,14 @@ public class SimulacaoVO {
 
 	public void setCetAoAno(BigDecimal cetAoAno) {
 		this.cetAoAno = cetAoAno;
+	}
+
+	public BigDecimal getLtv() {
+		return ltv;
+	}
+
+	public void setLtv(BigDecimal ltv) {
+		this.ltv = ltv;
 	}
 		
 }
