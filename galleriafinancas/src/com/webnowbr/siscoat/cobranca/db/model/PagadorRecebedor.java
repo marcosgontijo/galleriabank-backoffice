@@ -214,9 +214,6 @@ public class PagadorRecebedor implements Serializable {
 	private BigDecimal saldoInvestidor;
 
 	public PagadorRecebedor(){
-		System.out.println("PagadorRecebedor construtor 1 - pesquisaBancosListaNome");
-		pesquisaBancosListaNome();
-	
 		this.rgDocumentosCheckList = false;
 		this.comprovanteEnderecoDocumentosCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
@@ -244,8 +241,6 @@ public class PagadorRecebedor implements Serializable {
 		this.rg = rg;
 		this.cpf = cpf;
 		this.cep = cep;
-		System.out.println("PagadorRecebedor Contrutor 2 - pesquisaBancosListaNome");
-		pesquisaBancosListaNome();
 	}
 	
 	 public List<String> completeBancos(String query) {

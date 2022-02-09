@@ -1071,51 +1071,36 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="contaCorrente" value="#{ccbMB.contaCorrente}"
 										label="Contrato" />
+										
 									<p:outputLabel for="agencia" value="Nº Agência: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="agencia" value="#{ccbMB.agencia}"
 										label="Contrato" />
+									
+									<p:outputLabel for="nomeBanco"
+										value="Nome do Banco: " styleClass="labelBold" />
+									<p:autoComplete id="nomeBanco" value="#{ccbMB.nomeBanco}"
+										completeMethod="#{ccbMB.completeBancosNome}" var="bancoNome"
+										itemLabel="#{bancoNome}" itemValue="#{bancoNome}"
+										forceSelection="true" styleClass="labelBold" label="Conta"
+										style="width:100px;" scrollHeight="250">
+										<p:ajax update="numeroBanco" event="itemSelect"
+											listener="#{ccbMB.populateCodigosBanco()}" />
+									</p:autoComplete>
+
 									<p:outputLabel for="numeroBanco" value="Nº do Banco: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-
-									<h:panelGroup>
-										<p:selectOneMenu id="numeroBanco" value="#{ccbMB.numeroBanco}"
-											ajax="true">
-											<f:selectItems value="#{ccbMB.listaBancosCodigo}" />
-											<p:ajax update="nomeBanco" event="change"
-												process="#{ccbMB.populateCodigosBanco()}" />
-										</p:selectOneMenu>
-										
-										<p:spacer height="10" />
-
-										<p:commandButton ajax="true"
-											action="#{ccbMB.populateNomesBanco}"
-											icon="ui-icon ui-icon-circle-zoomin"
-											value="Pegar nome do banco" update="nomeBanco" />
-									</h:panelGroup>
-
-									<p:outputLabel for="nomeBanco"
-										value="Nome do Banco: " styleClass="labelBold" />
-
-									<h:panelGroup>
-										<p:selectOneMenu id="nomeBanco" value="#{ccbMB.nomeBanco}"
-											ajax="true">
-											<f:selectItems value="#{ccbMB.listaBancosNome}" />
-											<p:ajax update="numeroBanco" event="change"
-												process="#{ccbMB.populateNomesBanco()}" />
-										</p:selectOneMenu>
-										
-										<p:spacer height="10" />
-
-										<p:commandButton ajax="true"
-											action="#{ccbMB.populateCodigosBanco}"
-											icon="ui-icon ui-icon-circle-zoomin"
-											value="Pegar nº do banco" update="numeroBanco" />
-									</h:panelGroup>
-
-
+									<p:autoComplete id="numeroBanco" value="#{ccbMB.numeroBanco}"
+										completeMethod="#{ccbMB.completeBancosCodigo}" var="bancoCodigo"
+										itemLabel="#{bancoCodigo}" itemValue="#{bancoCodigo}"
+										forceSelection="true" styleClass="labelBold" label="Conta"
+										style="width:100px;" scrollHeight="250">
+										<p:ajax update="nomeBanco" event="itemSelect"
+											listener="#{ccbMB.populateNomesBanco()}" />
+									</p:autoComplete>
+									
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Parcelas Pagamento">

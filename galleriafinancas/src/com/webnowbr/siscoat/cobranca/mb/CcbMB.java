@@ -294,9 +294,6 @@ public class CcbMB {
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
 	
-	private List<SelectItem> listaBancosNome;
-	private List<SelectItem> listaBancosCodigo;
-	
 
 	public void pesquisaParticipante() {
 		this.tipoPesquisa = "Participante";
@@ -324,27 +321,31 @@ public class CcbMB {
 		this.getListaParticipantes().remove(participante);
 	}
 	
-	public void pesquisaBancosListaNome() {
-		this.listaBancosNome = new ArrayList<>();
-		for(BancosEnum banco : BancosEnum.values()) {
-			SelectItem item = new SelectItem(banco.getNome());
-			this.listaBancosNome.add(item);
-		}
+	public List<String> completeBancosNome(String query) {
+        String queryLowerCase = query.toLowerCase();
+        List<String> bancos = new ArrayList<>();
+        for(BancosEnum banco : BancosEnum.values()) {
+        	String bancoStr = banco.getNome().toString();
+        	bancos.add(bancoStr);
+        }
+        return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
 	
-	public void pesquisaBancosListaCodigo() {
-		this.listaBancosCodigo = new ArrayList<>();
-		for(BancosEnum banco : BancosEnum.values()) {
-			SelectItem item = new SelectItem(banco.getCodigo());
-			this.listaBancosCodigo.add(item);
-		}
+	public List<String> completeBancosCodigo(String query) {
+        String queryLowerCase = query.toLowerCase();
+        List<String> bancos = new ArrayList<>();
+        for(BancosEnum banco : BancosEnum.values()) {
+        	String bancoStr = banco.getCodigo().toString();
+        	bancos.add(bancoStr);
+        }
+        return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
+
 	
 	public void populateCodigosBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
-			if(CommonsUtil.mesmoValor(this.nomeBanco,banco.getNome())) {
+			if(CommonsUtil.mesmoValor(this.nomeBanco, banco.getNome().toString())) {
 				this.setNumeroBanco(banco.getCodigo());
-				//PrimeFaces.current().ajax().update(":numeroBanco");
 				break;
 			}
 		}
@@ -2071,11 +2072,6 @@ public class CcbMB {
 	    this.fileType = null;
 	    this.fileTypeInt = 0;
 	    
-	    System.out.println("CCBMB - pesquisaBancosListaNome");
-	    pesquisaBancosListaNome();
-	    System.out.println("CCBMB - pesquisaBancosListaCodigo");
-	    pesquisaBancosListaCodigo();
-	    System.out.println("CCBMB - clearPagadorRecebedor");
 	    clearPagadorRecebedor();
 		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
@@ -3113,22 +3109,6 @@ public class CcbMB {
 
 	public void setTestemunha2Selecionado(PagadorRecebedor testemunha2Selecionado) {
 		this.testemunha2Selecionado = testemunha2Selecionado;
-	}
-
-	public List<SelectItem> getListaBancosNome() {
-		return listaBancosNome;
-	}
-
-	public void setListaBancosNome(List<SelectItem> listaBancosNome) {
-		this.listaBancosNome = listaBancosNome;
-	}
-
-	public List<SelectItem> getListaBancosCodigo() {
-		return listaBancosCodigo;
-	}
-
-	public void setListaBancosCodigo(List<SelectItem> listaBancosCodigo) {
-		this.listaBancosCodigo = listaBancosCodigo;
 	}
 
 	public boolean isEmpresaEmitente() {

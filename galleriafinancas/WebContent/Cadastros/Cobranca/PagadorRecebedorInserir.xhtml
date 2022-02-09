@@ -839,16 +839,15 @@
 								<p:inputText id="NomeCC"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
 									label="Nome" onblur=""
-									style="width:400px;" />
-
-								<p:outputLabel for="Banco" value="Banco: " styleClass="labelBold" />		
+									style="width:400px;" />	
 								
-								<p:selectOneMenu id="Banco" value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}" label="Banco" style="width:410px;" filter="true"
-									filterMatchMode="contains"
-									filterStyle="width: 500px !important;" >
-									<f:selectItem itemValue="" itemLabel="Escolha o Banco" />
-									<f:selectItems value="#{contratoCobrancaMB.objetoPagadorRecebedor.listaBancos}" />
-								</p:selectOneMenu>
+								<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
+								<p:autoComplete id="Banco" value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
+									completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+									forceSelection="true" styleClass="labelBold" label="Conta" 
+									style="width:100px; margin-left:67px;"
+									scrollHeight="250" />
 								
 								<p:outputLabel for="Agencia" value="Agência: "
 									styleClass="labelBold" />
