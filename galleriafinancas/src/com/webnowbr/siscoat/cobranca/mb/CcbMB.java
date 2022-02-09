@@ -2071,8 +2071,11 @@ public class CcbMB {
 	    this.fileType = null;
 	    this.fileTypeInt = 0;
 	    
+	    System.out.println("CCBMB - pesquisaBancosListaNome");
 	    pesquisaBancosListaNome();
+	    System.out.println("CCBMB - pesquisaBancosListaCodigo");
 	    pesquisaBancosListaCodigo();
+	    System.out.println("CCBMB - clearPagadorRecebedor");
 	    clearPagadorRecebedor();
 		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
