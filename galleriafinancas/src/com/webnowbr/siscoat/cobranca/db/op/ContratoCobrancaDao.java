@@ -4833,7 +4833,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (codResponsavel != null) {
 						if (!codResponsavel.equals("")) { 
-							query = query + " and res.codigo = '" + codResponsavel + "' ";
+							query = query + " where res.codigo = '" + codResponsavel + "' ";
 						}				
 					} 
 					
@@ -4900,6 +4900,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
 			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id ";
 	
+	
 	@SuppressWarnings("unchecked")
 	public Collection<ContratoCobranca> consultaContratosPendentesResponsaveis(final String codResponsavel, final List<Responsavel> listResponsavel) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -4922,12 +4923,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							if (!resp.getCodigo().equals("")) { 
 								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
 							}
-						}
-
-						if (!queryResponsavel.equals("")) {
-							query = query + " where  " + queryResponsavel + " ";
-						}					
+						}				
 					} 
+				
+					query = query + " where  " + queryResponsavel + " ";
 					
 					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
