@@ -155,7 +155,9 @@
 										<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
-											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />
+											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
 								</ui:fragment>

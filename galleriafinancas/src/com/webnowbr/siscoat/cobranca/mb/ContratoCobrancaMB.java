@@ -181,7 +181,8 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAppAssinado = false;
 	private boolean controleWhatsAppPajuLaudoRecebido = false;
 	private boolean controleWhatsAppPreAprovado = false;
-
+	private boolean controleWhatsAppComite = false;
+	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -2884,6 +2885,39 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), 
 					this.objetoContratoCobranca.getTaxaPreAprovada().toString(), 
 					this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+				}
+				
+				if (this.controleWhatsAppComite) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rComite1 = new Responsavel();
+					Responsavel rComite2 = new Responsavel();
+					Responsavel rComite3 = new Responsavel();
+					
+					// Fabricio
+					rComite1 = rDao.findById((long) 61);
+					
+					takeBlipMB.sendWhatsAppMessage(rComite1,
+					"contrato_comite",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "", "");
+					
+					// João
+					rComite2 = rDao.findById((long) 380);
+
+					takeBlipMB.sendWhatsAppMessage(rComite2,
+					"contrato_comite",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "", "");
+					
+					// Sandro
+					rComite3 = rDao.findById((long) 2);
+					
+					takeBlipMB.sendWhatsAppMessage(rComite3,
+					"contrato_comite",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "", "");
 				}
 				
 				context.addMessage(null,
@@ -7958,6 +7992,12 @@ public class ContratoCobrancaMB {
 	public void controlaWhatsAppPajuLaudoRecebido() {
 		if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
 			this.controleWhatsAppPajuLaudoRecebido = true;
+		}
+	}
+	
+	public void controlaWhatsAppComite() {
+		if (this.objetoContratoCobranca.isPreAprovadoComite()) {
+			this.controleWhatsAppComite = true;
 		}
 	}
 	

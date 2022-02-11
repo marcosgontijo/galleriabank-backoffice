@@ -186,24 +186,37 @@ public class TakeBlipMB {
 				//contrato_dado_entrada_cartorio
 				//contrato_pronto_para_assinatura
 				//contrato_recebido_laudo_paju
-				
-				// Nome do notificado
-				jsonWhatsAppParameter = new JSONObject();
-				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", responsavel.getNome());
-				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
-				
-				// Nome do cliente
-				jsonWhatsAppParameter = new JSONObject();
-				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", nomeDoCliente);
-				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
-				
-				// Número do pedido
-				jsonWhatsAppParameter = new JSONObject();
-				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", numeroDoContrato);
-				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				if (nomeTemplateMensagem.equals("contrato_comite")) {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", responsavel.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				} else {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", responsavel.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Nome do cliente
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", nomeDoCliente);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				}
 			}				
 										
 			jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);

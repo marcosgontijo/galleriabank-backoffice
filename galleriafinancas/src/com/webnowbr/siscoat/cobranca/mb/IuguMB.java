@@ -2632,6 +2632,8 @@ public class IuguMB {
 		//}	
 		
 		consultarFaturasSubContaByToken("bd88479c57011124c25638b26572e453", "Galleria Correspondente Bancario Eireli");
+		consultarFaturasSubContaByToken("DB7C543F773EE78B79A055647A08AA848D0BE8BF269AA7A32B149F93F61366C3", "Fabricio Figueiredo");
+		consultarFaturasSubContaByToken("89d3d61fce92f8892739aac4c46f3140", "Paulo Michelucci Cunha");
 
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
