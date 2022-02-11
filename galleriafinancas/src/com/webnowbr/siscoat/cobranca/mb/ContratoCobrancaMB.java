@@ -6572,6 +6572,8 @@ public class ContratoCobrancaMB {
 	private Collection<ContratoCobranca> contratosInadimplencia90;
 	private Collection<ContratoCobranca> contratoPrazoMin;
 	
+	private Collection<ContratoCobranca> contratosGraficoFidc;
+	
 	private BigDecimal totalAVencer;
 	
 	private BarChartModel stackedGroupBarModel;
@@ -6642,6 +6644,8 @@ public class ContratoCobrancaMB {
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		this.totalContratosConsultar = this.contratos.size();
 		
+		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
+		
 		int qtdContratosSemIPCA = 0;
 		int qtdContratosComIPCA = 0;
 		
@@ -6682,6 +6686,8 @@ public class ContratoCobrancaMB {
 				this.totalContratosConsultar--;
 				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
 			} else {
+				contratosGraficoFidc.add(contrato);
+				
 				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
 				ltvMedio = ltvMedio.add(ltv);
 				
@@ -6844,7 +6850,7 @@ public class ContratoCobrancaMB {
 				amortizacao = BigDecimal.ZERO;
 				valorParcela = BigDecimal.ZERO;
 				
-				for (ContratoCobranca contrato : this.contratos) {
+				for (ContratoCobranca contrato : this.contratosGraficoFidc) {
 					for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 						int mesVencimento = ccd.getDataVencimento().getMonth();
 						int anoVencimetno = ccd.getDataVencimento().getYear();
@@ -6967,7 +6973,7 @@ public class ContratoCobrancaMB {
 		
 		int mesHoje = dataAtual.getMonth();
 		int anoHoje = dataAtual.getYear();
-		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
+		
 //		ContratoCobranca contrato = contratos.iterator().next();
 		
 		int i = 0;
@@ -6982,7 +6988,7 @@ public class ContratoCobrancaMB {
 				anoOntem =- 1;
 			}
 			
-		for (ContratoCobranca contrato : this.contratos) {
+		for (ContratoCobranca contrato : this.contratosGraficoFidc) {
 				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 					int mesVencimento = ccd.getDataVencimento().getMonth();
 					int anoVencimetno = ccd.getDataVencimento().getYear();
