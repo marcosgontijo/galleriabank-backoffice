@@ -6438,7 +6438,7 @@ public class ContratoCobrancaMB {
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
 
 			stackedGroupBarModel = new BarChartModel();
-			
+			clearFIDC();
 
 			this.tituloPainel = "FIDC GALLERIA";
 		}
@@ -6542,21 +6542,7 @@ public class ContratoCobrancaMB {
 	
 	private BarChartModel stackedGroupBarModel;
 
-	public void consultaDadosFIDC() {
-		
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
-		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
-		dataHoje.set(Calendar.MINUTE, 0);
-		dataHoje.set(Calendar.SECOND, 0);
-		dataHoje.set(Calendar.MILLISECOND, 0);
-		Date dataAtual = dataHoje.getTime();
-		Calendar dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
-		
-		this.contratos = new ArrayList<ContratoCobranca>();
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+	public void clearFIDC() {
 		this.somaContratos240 = BigDecimal.ZERO;
 		this.volumeCarteira = BigDecimal.ZERO;
 		this.somaContratos180 = BigDecimal.ZERO;
@@ -6576,19 +6562,48 @@ public class ContratoCobrancaMB {
 		
 		this.prazoMax = BigDecimal.ZERO;
 		this.prazoMedio = BigDecimal.ZERO;
-		this.prazoMin =  BigDecimal.valueOf(100);
+		this.prazoMin =  BigDecimal.valueOf(0);
 		
 		this.taxaMax = BigDecimal.ZERO;
 		this.taxaMedia = BigDecimal.ZERO;
-		this.taxaMin =  BigDecimal.valueOf(100);
+		this.taxaMin =  BigDecimal.valueOf(0);
 		
 		this.taxaMaxIPCA = BigDecimal.ZERO;
 		this.taxaMediaIPCA = BigDecimal.ZERO;
-		this.taxaMinIPCA = BigDecimal.valueOf(100);
+		this.taxaMinIPCA = BigDecimal.valueOf(0);
 		
 		this.ltvMax = BigDecimal.ZERO;
 		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(0);
+		
+		this.totalContratosConsultar = 0;
+		
+		this.totalAVencer = BigDecimal.ZERO;
+	}
+	
+	public void consultaDadosFIDC() {
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+		Date dataAtual = dataHoje.getTime();
+		Calendar dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
+		
+		this.prazoMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMinIPCA = BigDecimal.valueOf(100);
+
 		this.ltvMin = BigDecimal.valueOf(100);
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
 		this.totalContratosConsultar = this.contratos.size();
@@ -6596,9 +6611,8 @@ public class ContratoCobrancaMB {
 		int qtdContratosSemIPCA = 0;
 		int qtdContratosComIPCA = 0;
 		
-		this.totalAVencer = BigDecimal.ZERO;
 		BigDecimal ltv = BigDecimal.ZERO;
-		
+			
 
 		for(ContratoCobranca contrato : this.contratos) {
 			this.qtdDeparcelasVencidas = 0;
@@ -6614,14 +6628,14 @@ public class ContratoCobrancaMB {
 				}
 				
 				if (ccd.isParcelaPaga()) {
-					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
+					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela().add(ccd.getVlrAmortizacaoParcela());
 					this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
 					}
 					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
-				} else {
+				}  else {
 					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
 				}
 				
@@ -6629,7 +6643,7 @@ public class ContratoCobrancaMB {
 					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
 				}
 			}
-
+			
 			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;
 				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
@@ -6640,6 +6654,7 @@ public class ContratoCobrancaMB {
 				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
 					prazoMax = BigDecimal.valueOf(prazoContrato);
 				}
+				
 				if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 1){
 					prazoMin = BigDecimal.valueOf(prazoContrato);
 					contratoPrazoMin.clear();
@@ -6647,6 +6662,7 @@ public class ContratoCobrancaMB {
 				} else if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 0){
 					contratoPrazoMin.add(contrato);
 				}
+				
 				if(contrato.isCorrigidoIPCA()) {
 					if (taxaMaxIPCA.compareTo(contrato.getTxJurosParcelas()) == -1){
 						taxaMaxIPCA = contrato.getTxJurosParcelas();
@@ -6731,18 +6747,19 @@ public class ContratoCobrancaMB {
 		this.porcentagem240 = this.porcentagem240.multiply(BigDecimal.valueOf(100));
 		this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
+		prazoMax = prazoMax.add(BigDecimal.ONE);
+		
 		createStackedGroupBarModel();
 	}
 	
 	public StreamedContent geraRelatorioFIDC() throws IOException{
-		  XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+			XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 			int iLinha = 0;
 			int numeroLista = 1;
 			
 		        TimeZone zone = TimeZone.getDefault();
 				Locale locale = new Locale("pt", "BR");
 				Calendar dataHoje = Calendar.getInstance(zone, locale);
-				Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
 				dataHoje.set(Calendar.HOUR_OF_DAY, 0);
 				dataHoje.set(Calendar.MINUTE, 0);
 				dataHoje.set(Calendar.SECOND, 0);
@@ -6762,11 +6779,16 @@ public class ContratoCobrancaMB {
 			gravaCelula(2, "Juros", linha);
 			gravaCelula(3, "Amortização", linha);
 			gravaCelula(4, "Valor Parcela", linha);
+			gravaCelula(5, "Amortização Total", linha);
+
 			
 			BigDecimal saldoInicial = BigDecimal.ZERO;
 			BigDecimal juros = BigDecimal.ZERO;
 			BigDecimal amortizacao = BigDecimal.ZERO;
 			BigDecimal valorParcela = BigDecimal.ZERO;
+			BigDecimal amortizacaoTotal = BigDecimal.ZERO;
+
+
 			
 			int mesHoje = dataAtual.getMonth();
 			int anoHoje = dataAtual.getYear();
@@ -6775,6 +6797,14 @@ public class ContratoCobrancaMB {
 			
 			int i = 0;
 			for (i = 0; i <= prazoMax.intValue(); i++) {
+				int mesOntem = dataAtual.getMonth() -1;
+				int anoOntem = dataAtual.getYear();
+				
+				if (mesOntem > 0) {
+					mesOntem = 11;
+					anoOntem =- 1;
+				}
+				
 				saldoInicial = BigDecimal.ZERO;
 				juros = BigDecimal.ZERO;
 				amortizacao = BigDecimal.ZERO;
@@ -6785,18 +6815,40 @@ public class ContratoCobrancaMB {
 						int mesVencimento = ccd.getDataVencimento().getMonth();
 						int anoVencimetno = ccd.getDataVencimento().getYear();
 
-						dataVencimentoParcela.setTime(ccd.getDataVencimento());
+						if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+							saldoInicial = saldoInicial.add(ccd.getVlrSaldoParcela());
+							saldoInicial = saldoInicial.add(ccd.getVlrAmortizacaoParcela());
+							if(!CommonsUtil.semValor(ccd.getIpca())) {
+								saldoInicial = saldoInicial.add(ccd.getIpca());
+							} 
+						}
 						
 						if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
-							if (!ccd.isParcelaPaga()) {
-								saldoInicial = saldoInicial.add(ccd.getVlrSaldoParcela());
-								juros = juros.add(ccd.getVlrJurosParcela());
-								amortizacao = amortizacao.add(ccd.getVlrAmortizacaoParcela());
-								valorParcela = valorParcela.add(ccd.getVlrAmortizacaoParcela().add(ccd.getVlrJurosParcela()));
-							}
+							juros = juros.add(ccd.getVlrJurosParcela());
+							amortizacao = amortizacao.add(ccd.getVlrAmortizacaoParcela());
+							amortizacaoTotal = amortizacaoTotal.add(ccd.getVlrAmortizacaoParcela());
+							valorParcela = valorParcela.add(ccd.getVlrAmortizacaoParcela().add(ccd.getVlrJurosParcela()));
 						}
 					}
 				}
+				
+				if(i == 0) {
+					linha = sheet.getRow(iLinha);
+					if(linha == null) {
+						sheet.createRow(iLinha);
+						linha = sheet.getRow(iLinha);
+					}
+					gravaCelula(0, 0, linha);
+					gravaCelula(1, saldoInicial, linha);
+					gravaCelula(2, BigDecimal.ZERO, linha);
+					gravaCelula(3, BigDecimal.ZERO, linha);
+					gravaCelula(4, BigDecimal.ZERO, linha);
+					gravaCelula(5, BigDecimal.ZERO, linha);
+
+					iLinha++;
+				}
+				
+				saldoInicial = saldoInicial.subtract(amortizacaoTotal);
 				
 				linha = sheet.getRow(iLinha);
 				if(linha == null) {
@@ -6809,6 +6861,8 @@ public class ContratoCobrancaMB {
 				gravaCelula(2, juros, linha);
 				gravaCelula(3, amortizacao, linha);
 				gravaCelula(4, valorParcela, linha);
+				gravaCelula(5, amortizacaoTotal, linha);
+
 				iLinha++;
 				
 				numeroLista++;
@@ -6854,6 +6908,12 @@ public class ContratoCobrancaMB {
         barDataSet2.setStack("Stack 0");
         List<Number> dataVal2 = new ArrayList<>();
         
+        BarChartDataSet barDataSet3 = new BarChartDataSet();
+       	barDataSet3.setLabel("Parcela");
+        barDataSet3.setBackgroundColor("rgb(167, 06, 206)");
+        barDataSet3.setStack("Stack 1");
+        List<Number> dataVal3 = new ArrayList<>();
+        
         List<String> labels = new ArrayList<>();
         
         TimeZone zone = TimeZone.getDefault();
@@ -6867,45 +6927,60 @@ public class ContratoCobrancaMB {
 		Date dataAtual = dataHoje.getTime();
 		
 		BigDecimal totalAmortizado = BigDecimal.ZERO;
-		BigDecimal volumeCarteiraGrafico = this.volumeCarteira;
+		BigDecimal volumeCarteiraGrafico = BigDecimal.ZERO;
 		
-		dataVal.add(volumeCarteiraGrafico);
-		dataVal2.add(totalAmortizado);
-		labels.add(CommonsUtil.stringValue(0));
+		String numeroParcela = "";
+		
 		int mesHoje = dataAtual.getMonth();
 		int anoHoje = dataAtual.getYear();
 		this.contratos = contratoCobrancaDao.consultaContratos("FIDC");	
+//		ContratoCobranca contrato = contratos.iterator().next();
 		
 		int i = 0;
 		for (i = 0; i <= prazoMax.intValue(); i++) {
-			volumeCarteiraGrafico = this.volumeCarteira;
+			volumeCarteiraGrafico = BigDecimal.ZERO;
 			
-			for (ContratoCobranca contrato : this.contratos) {
+			int mesOntem = dataAtual.getMonth() -1;
+			int anoOntem = dataAtual.getYear();
+			
+			if (mesOntem > 0) {
+				mesOntem = 11;
+				anoOntem =- 1;
+			}
+			
+		for (ContratoCobranca contrato : this.contratos) {
 				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 					int mesVencimento = ccd.getDataVencimento().getMonth();
 					int anoVencimetno = ccd.getDataVencimento().getYear();
 
-					dataVencimentoParcela.setTime(ccd.getDataVencimento());
-
-					if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
-						ccd.setParcelaVencida(true);
-					} else if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
-						ccd.setParcelaVencendo(true);
+					if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrSaldoParcela());
+						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrAmortizacaoParcela());
+						if(!CommonsUtil.semValor(ccd.getIpca())) {
+							volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getIpca());
+						} 
 					}
 					
 					if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
-						if (!ccd.isParcelaPaga()) {
-							totalAmortizado = totalAmortizado.add(ccd.getVlrAmortizacaoParcela());
-						}
+						numeroParcela = ccd.getNumeroParcela();
+						totalAmortizado = totalAmortizado.add(ccd.getVlrAmortizacaoParcela());
 					}
 				}
 			}
+				
+			if(i == 0) {
+				dataVal.add(volumeCarteiraGrafico);
+				dataVal2.add(BigDecimal.ZERO);
+				labels.add(CommonsUtil.stringValue(0));
+			}
 			
-			volumeCarteiraGrafico = volumeCarteiraGrafico.subtract(totalAmortizado);
+			BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico.subtract(totalAmortizado);
 			int j = i;
-			dataVal.add(volumeCarteiraGrafico);
+			j++;
+			dataVal.add(volumeCarteiraGrafico2);
 			dataVal2.add(totalAmortizado);
-			labels.add(CommonsUtil.stringValue(j++));
+			dataVal3.add(CommonsUtil.intValue(numeroParcela));
+			labels.add(CommonsUtil.stringValue(j));
 			
 			mesHoje++;
 			if (mesHoje == 12) {
@@ -6916,6 +6991,8 @@ public class ContratoCobrancaMB {
         
         barDataSet.setData(dataVal);
         barDataSet2.setData(dataVal2);
+        barDataSet3.setData(dataVal3);
+        
         
         BarChartOptions options = new BarChartOptions();
         CartesianScales cScales = new CartesianScales();
@@ -7820,19 +7897,6 @@ public class ContratoCobrancaMB {
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {			
 			contratos = getContratoById(contratos.getId());
-			if (contratos.isDocumentosCompletos() && !contratos.isAprovadoComite()) {
-				contratos.setAprovadoComite(true);				
-			} else {
-				if(!contratos.isCcbPronta()){
-					if (!contratos.isAgAssinatura()) {
-						contratos.setAgAssinatura(true);
-					}
-					
-					if (!contratos.isAgRegistro()) {
-						contratos.setAgRegistro(true);
-					}
-				}
-			}
 
 			if (status.equals("Análise Reprovada")) {
 				if (contratos.getAnaliseReprovadaData() != null && contratos.isAnaliseReprovada()) {
@@ -7860,8 +7924,8 @@ public class ContratoCobrancaMB {
 			}
 
 			if (status.equals("Ag. Pagto. Laudo")) {
-				if (contratos.getInicioAnaliseData() != null) {
-					if (getDifferenceDays(contratos.getInicioAnaliseData(), auxDataHoje) > 15) {
+				if (contratos.getCadastroAprovadoData() != null) {
+					if (getDifferenceDays(contratos.getCadastroAprovadoData(), auxDataHoje) > 15) {
 						if (!contratos.isContratoResgatadoBaixar()) {
 							this.objetoContratoCobranca = contratos;
 							baixarPreContrato();
@@ -7870,20 +7934,6 @@ public class ContratoCobrancaMB {
 							baixarPreContrato();
 						}
 
-					}
-				}
-			}
-
-			if (status.equals("Ag. Comite")) {
-				if (contratos.getDocumentosCompletosData() != null) {
-					if (getDifferenceDays(contratos.getDocumentosCompletosData(), auxDataHoje) > 30) {
-						if (!contratos.isContratoResgatadoBaixar()) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						}
 					}
 				}
 			}

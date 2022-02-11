@@ -242,13 +242,17 @@ public class SimuladorMB {
 		return null;
 	}
 
-	public StreamedContent download() throws JRException, IOException {	
+	public StreamedContent download(boolean isNovo) throws JRException, IOException {	
 		
 		if (!CommonsUtil.semValor(this.simulacao.getParcelas())) {
 
 			JasperPrint jp = null;
-
-			jp = geraPDFSimulacao();
+			
+			if(isNovo) {
+				jp = geraPDFSimulacaoNOVO();
+			} else {
+				jp = geraPDFSimulacao();
+			}
 
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
@@ -287,6 +291,30 @@ public class SimuladorMB {
 
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 
+	}
+	
+	// Método Criado Apenas para teste
+	public JasperPrint geraPDFSimulacaoNOVO() throws JRException, IOException {
+
+		final ReportUtil ReportUtil = new ReportUtil();
+
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoNovo");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelasNovo");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
+
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", this.mostrarIPCA);
+
+		List<SimulacaoVO> list = new ArrayList<SimulacaoVO>();
+		list.add(simulacao);
+
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
 	
 // 	Função TIR(excel) tirada de https://apache.googlesource.com/poi/+/887af17af3cc2ef8733f9a1990bd99fdeabf789a/src/java/org/apache/poi/ss/formula/functions/Irr.java
