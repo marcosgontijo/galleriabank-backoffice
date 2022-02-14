@@ -6470,10 +6470,10 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("FIDC")) {
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
-
-			stackedGroupBarModel = new BarChartModel();
+			
 			clearFIDC();
-
+			stackedGroupBarModel = new BarChartModel();
+		
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
@@ -6615,9 +6615,12 @@ public class ContratoCobrancaMB {
 		this.totalContratosConsultar = 0;
 		
 		this.totalAVencer = BigDecimal.ZERO;
+		this.porcentagem240 = BigDecimal.ZERO;
+		this.porcentagem180 = BigDecimal.ZERO;
 	}
 	
 	public void consultaDadosFIDC() {
+		clearFIDC();
 		
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -6666,7 +6669,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				if (ccd.isParcelaPaga()) {
-					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela().add(ccd.getVlrAmortizacaoParcela());
+					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
 					this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
@@ -6993,16 +6996,17 @@ public class ContratoCobrancaMB {
 					int mesVencimento = ccd.getDataVencimento().getMonth();
 					int anoVencimetno = ccd.getDataVencimento().getYear();
 
-					if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+				/*	if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
 						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrSaldoParcela());
 						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrAmortizacaoParcela());
 						if(!CommonsUtil.semValor(ccd.getIpca())) {
 							volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getIpca());
 						} 
-					}
+					} */
 					
 					if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
 						numeroParcela = ccd.getNumeroParcela();
+						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrSaldoParcela());
 						totalAmortizado = totalAmortizado.add(ccd.getVlrAmortizacaoParcela());
 					}
 				}
@@ -7014,7 +7018,8 @@ public class ContratoCobrancaMB {
 				labels.add(CommonsUtil.stringValue(0));
 			}
 			
-			BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico.subtract(totalAmortizado);
+//			BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico.subtract(totalAmortizado);
+			BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico;
 			int j = i;
 			j++;
 			dataVal.add(volumeCarteiraGrafico2);
@@ -7932,7 +7937,6 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
-		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {			
@@ -7949,7 +7953,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (status.equals("Aguardando Análise")) {
+			else if (status.equals("Aguardando Análise")) {
 				if (contratos.getDataContrato() != null) {
 					if (getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 14) {
 						if (!contratos.isContratoResgatadoBaixar()) {
@@ -7963,7 +7967,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (status.equals("Ag. Pagto. Laudo")) {
+			else if (status.equals("Ag. Pagto. Laudo")) {
 				if (contratos.getCadastroAprovadoData() != null) {
 					if (getDifferenceDays(contratos.getCadastroAprovadoData(), auxDataHoje) > 15) {
 						if (!contratos.isContratoResgatadoBaixar()) {
@@ -7978,7 +7982,6 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
