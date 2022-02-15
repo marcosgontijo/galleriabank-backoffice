@@ -199,7 +199,7 @@
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amortizacao}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="221" y="0" width="71" height="15" uuid="cfeb002c-46ca-4055-b312-10cf10c87090">
+				<reportElement x="210" y="0" width="93" height="15" uuid="cfeb002c-46ca-4055-b312-10cf10c87090">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box bottomPadding="1">
