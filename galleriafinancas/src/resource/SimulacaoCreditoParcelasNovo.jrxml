@@ -178,7 +178,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroParcela}]]></textFieldExpression>
 			</textField>
@@ -194,7 +194,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amortizacao}.toString()))]]></textFieldExpression>
 			</textField>
@@ -210,7 +210,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{juros}.toString()))]]></textFieldExpression>
 			</textField>
@@ -226,7 +226,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{seguroMIP}.toString()))]]></textFieldExpression>
 			</textField>
@@ -244,7 +244,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{seguroDFI}.toString()))]]></textFieldExpression>
 			</textField>
@@ -261,7 +261,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorParcela}.toString()))]]></textFieldExpression>
 			</textField>
@@ -277,7 +277,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{saldoDevedorInicial}.toString()))]]></textFieldExpression>
 			</textField>
@@ -294,7 +294,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorParcela}.toString()))]]></textFieldExpression>
 			</textField>
@@ -311,7 +311,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="6"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorParcela}.intValue() != 0 ? "+IPCA":""]]></textFieldExpression>
 			</textField>
