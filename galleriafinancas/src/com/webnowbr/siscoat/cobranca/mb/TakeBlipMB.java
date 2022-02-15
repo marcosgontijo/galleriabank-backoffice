@@ -20,6 +20,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class TakeBlipMB {
 	
@@ -156,13 +157,13 @@ public class TakeBlipMB {
 				// Nome do notificado
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", responsavel.getNome());
+				jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
 				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				
 				// Nome do cliente
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", nomeDoCliente);
+				jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
 				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				
 				// Número do pedido
@@ -190,7 +191,7 @@ public class TakeBlipMB {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", responsavel.getNome());
+					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Número do pedido
@@ -202,13 +203,13 @@ public class TakeBlipMB {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", responsavel.getNome());
+					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Nome do cliente
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", nomeDoCliente);
+					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Número do pedido

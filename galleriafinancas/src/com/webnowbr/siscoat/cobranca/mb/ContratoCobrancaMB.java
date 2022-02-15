@@ -2869,25 +2869,25 @@ public class ContratoCobrancaMB {
 					rComite1 = rDao.findById((long) 4);
 					
 					takeBlipMB.sendWhatsAppMessage(rComite1,
-					"contrato_comite",
+					"contrato_comite","",
 					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "", "");
+					"", "");
 					
 					// João
 					rComite2 = rDao.findById((long) 380);
 
 					takeBlipMB.sendWhatsAppMessage(rComite2,
-					"contrato_comite",
+					"contrato_comite","",
 					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "", "");
+					"", "");
 					
 					// Sandro
 					rComite3 = rDao.findById((long) 2);
 					
 					takeBlipMB.sendWhatsAppMessage(rComite3,
-					"contrato_comite",
+					"contrato_comite","",
 					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "", "");
+					"", "");
 				}
 				
 				if (!whatsAppEnviado && this.controleWhatsAppAssinado) {
