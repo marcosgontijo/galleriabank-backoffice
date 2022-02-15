@@ -6478,10 +6478,10 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("FIDC")) {
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
-
-			stackedGroupBarModel = new BarChartModel();
+			
 			clearFIDC();
-
+			stackedGroupBarModel = new BarChartModel();
+		
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
@@ -6623,9 +6623,12 @@ public class ContratoCobrancaMB {
 		this.totalContratosConsultar = 0;
 		
 		this.totalAVencer = BigDecimal.ZERO;
+		this.porcentagem240 = BigDecimal.ZERO;
+		this.porcentagem180 = BigDecimal.ZERO;
 	}
 	
 	public void consultaDadosFIDC() {
+		clearFIDC();
 		
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -6674,7 +6677,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				if (ccd.isParcelaPaga()) {
-					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela().add(ccd.getVlrAmortizacaoParcela());
+					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
 					this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
@@ -6829,31 +6832,34 @@ public class ContratoCobrancaMB {
 			gravaCelula(4, "Valor Parcela", linha);
 			gravaCelula(5, "Amortização Total", linha);
 
-			
+			BigDecimal saldoAnterior = BigDecimal.ZERO;
 			BigDecimal saldoInicial = BigDecimal.ZERO;
 			BigDecimal juros = BigDecimal.ZERO;
 			BigDecimal amortizacao = BigDecimal.ZERO;
 			BigDecimal valorParcela = BigDecimal.ZERO;
 			BigDecimal amortizacaoTotal = BigDecimal.ZERO;
 
-
+//			ContratoCobranca contrato = contratos.iterator().next();
+			
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+//			ContratoCobranca contrato = contratoCobrancaDao.findByFilter("numeroContrato", "06445").get(0);
 			
 			int mesHoje = dataAtual.getMonth();
 			int anoHoje = dataAtual.getYear();
 			
+			int mesOntem = mesHoje;
+			mesOntem--;
+			int anoOntem = anoHoje;
+			
+			if (mesOntem < 0) {
+				mesOntem = 11;
+				anoOntem--;
+			}
+			
 			iLinha = 1;
 			
 			int i = 0;
-			for (i = 0; i <= prazoMax.intValue(); i++) {
-				int mesOntem = dataAtual.getMonth() -1;
-				int anoOntem = dataAtual.getYear();
-				
-				if (mesOntem > 0) {
-					mesOntem = 11;
-					anoOntem =- 1;
-				}
-				
-				saldoInicial = BigDecimal.ZERO;
+			for (i = 0; i <= prazoMax.intValue() ; i++) {
 				juros = BigDecimal.ZERO;
 				amortizacao = BigDecimal.ZERO;
 				valorParcela = BigDecimal.ZERO;
@@ -6862,16 +6868,21 @@ public class ContratoCobrancaMB {
 					for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 						int mesVencimento = ccd.getDataVencimento().getMonth();
 						int anoVencimetno = ccd.getDataVencimento().getYear();
-
-						if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
-							saldoInicial = saldoInicial.add(ccd.getVlrSaldoParcela());
-							saldoInicial = saldoInicial.add(ccd.getVlrAmortizacaoParcela());
-							if(!CommonsUtil.semValor(ccd.getIpca())) {
-								saldoInicial = saldoInicial.add(ccd.getIpca());
-							} 
+						
+						if(i==0) {
+							if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+								saldoAnterior = ccd.getVlrSaldoParcela();
+							}
 						}
 						
 						if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
+							if (i == 0) {
+								if (!CommonsUtil.semValor(ccd.getVlrSaldoInicial())) {
+									saldoInicial = saldoInicial.add(ccd.getVlrSaldoInicial());
+								} else {
+									saldoInicial = saldoInicial.add(saldoAnterior);
+								}
+							}
 							juros = juros.add(ccd.getVlrJurosParcela());
 							amortizacao = amortizacao.add(ccd.getVlrAmortizacaoParcela());
 							amortizacaoTotal = amortizacaoTotal.add(ccd.getVlrAmortizacaoParcela());
@@ -6894,9 +6905,9 @@ public class ContratoCobrancaMB {
 					gravaCelula(5, BigDecimal.ZERO, linha);
 
 					iLinha++;
-				}
+				} 
 				
-				saldoInicial = saldoInicial.subtract(amortizacaoTotal);
+				BigDecimal saldoInicial2 = saldoInicial.subtract(amortizacaoTotal);
 				
 				linha = sheet.getRow(iLinha);
 				if(linha == null) {
@@ -6905,7 +6916,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				gravaCelula(0, numeroLista, linha);
-				gravaCelula(1, saldoInicial, linha);
+				gravaCelula(1, saldoInicial2, linha);
 				gravaCelula(2, juros, linha);
 				gravaCelula(3, amortizacao, linha);
 				gravaCelula(4, valorParcela, linha);
@@ -6976,41 +6987,51 @@ public class ContratoCobrancaMB {
 		
 		BigDecimal totalAmortizado = BigDecimal.ZERO;
 		BigDecimal volumeCarteiraGrafico = BigDecimal.ZERO;
+		BigDecimal saldoAnterior = BigDecimal.ZERO;
 		
 		String numeroParcela = "";
 		
 		int mesHoje = dataAtual.getMonth();
 		int anoHoje = dataAtual.getYear();
 		
+		int mesOntem = mesHoje;
+		mesOntem--;
+		int anoOntem = anoHoje;
+		
+		if (mesOntem < 0) {
+			mesOntem = 11;
+			anoOntem--;
+		}
+		
 //		ContratoCobranca contrato = contratos.iterator().next();
 		
 		int i = 0;
 		for (i = 0; i <= prazoMax.intValue(); i++) {
-			volumeCarteiraGrafico = BigDecimal.ZERO;
+		//	volumeCarteiraGrafico = BigDecimal.ZERO;
+		//	totalAmortizado = BigDecimal.ZERO;
 			
-			int mesOntem = dataAtual.getMonth() -1;
-			int anoOntem = dataAtual.getYear();
-			
-			if (mesOntem > 0) {
-				mesOntem = 11;
-				anoOntem =- 1;
-			}
-			
-		for (ContratoCobranca contrato : this.contratosGraficoFidc) {
+			for (ContratoCobranca contrato : this.contratosGraficoFidc) {
 				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 					int mesVencimento = ccd.getDataVencimento().getMonth();
 					int anoVencimetno = ccd.getDataVencimento().getYear();
-
-					if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
-						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrSaldoParcela());
-						volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrAmortizacaoParcela());
-						if(!CommonsUtil.semValor(ccd.getIpca())) {
-							volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getIpca());
-						} 
+					
+					if(i==0) {
+						if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+							if(null == ccd.getVlrSaldoInicial()) {
+								saldoAnterior = ccd.getVlrSaldoParcela();
+							}
+						}
 					}
 					
 					if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
 						numeroParcela = ccd.getNumeroParcela();
+						if(i==0) {
+							if (!CommonsUtil.semValor(ccd.getVlrSaldoInicial())) {
+								volumeCarteiraGrafico = volumeCarteiraGrafico.add(ccd.getVlrSaldoInicial());
+							} else {
+								volumeCarteiraGrafico = volumeCarteiraGrafico.add(saldoAnterior);
+							}
+						}
 						totalAmortizado = totalAmortizado.add(ccd.getVlrAmortizacaoParcela());
 					}
 				}
@@ -7023,6 +7044,7 @@ public class ContratoCobrancaMB {
 			}
 			
 			BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico.subtract(totalAmortizado);
+	//		BigDecimal volumeCarteiraGrafico2 = volumeCarteiraGrafico;
 			int j = i;
 			j++;
 			dataVal.add(volumeCarteiraGrafico2);
@@ -7940,7 +7962,6 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
-		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {			
@@ -7957,7 +7978,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (status.equals("Aguardando Análise")) {
+			else if (status.equals("Aguardando Análise")) {
 				if (contratos.getDataContrato() != null) {
 					if (getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 14) {
 						if (!contratos.isContratoResgatadoBaixar()) {
@@ -7971,7 +7992,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (status.equals("Ag. Pagto. Laudo")) {
+			else if (status.equals("Ag. Pagto. Laudo")) {
 				if (contratos.getCadastroAprovadoData() != null) {
 					if (getDifferenceDays(contratos.getCadastroAprovadoData(), auxDataHoje) > 15) {
 						if (!contratos.isContratoResgatadoBaixar()) {
@@ -7986,7 +8007,6 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}

@@ -80,7 +80,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="18" isBold="true"/>
+					<font fontName="SansSerif" size="18" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Simulação de Crédito com Imóvel em Garantia]]></text>
 			</staticText>
@@ -94,7 +94,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorCreditoLiberado}.toString()))]]></textFieldExpression>
 			</textField>
@@ -104,7 +104,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " + new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{IOFTotal}.setScale(2, BigDecimal.ROUND_HALF_UP).toString()))]]></textFieldExpression>
 			</textField>
@@ -114,7 +114,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " + new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{custoEmissaoValor}.toString()))]]></textFieldExpression>
 			</textField>
@@ -123,7 +123,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{qtdParcelas} + " meses"]]></textFieldExpression>
 			</textField>
@@ -132,7 +132,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxaJuros}.toString())) + "% a.m. " + (($P{MOSTRARIPCA})?"+ IPCA":"" )]]></textFieldExpression>
 			</textField>
@@ -141,7 +141,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " + new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorCredito}.setScale(2, BigDecimal.ROUND_HALF_UP).toString()))]]></textFieldExpression>
 			</textField>
@@ -151,7 +151,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Valor Líquido do Crédito:]]></text>
 			</staticText>
@@ -160,7 +160,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Taxa de Juros:]]></text>
 			</staticText>
@@ -169,7 +169,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Prazo:]]></text>
 			</staticText>
@@ -178,7 +178,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[IOF:]]></text>
 			</staticText>
@@ -187,7 +187,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Custo de Emissão:]]></text>
 			</staticText>
@@ -196,7 +196,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tipoCalculo}]]></textFieldExpression>
 			</textField>
@@ -205,7 +205,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Sistema de Amortização:]]></text>
 			</staticText>
@@ -214,7 +214,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["R$ " + new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorImovel}.toString()))]]></textFieldExpression>
 			</textField>
@@ -223,7 +223,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Valor da Garantia:]]></text>
 			</staticText>
@@ -232,7 +232,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{carencia} + ($F{carencia}.intValue() == 1 ? " mês":" meses")]]></textFieldExpression>
 			</textField>
@@ -241,7 +241,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Carência:]]></text>
 			</staticText>
@@ -251,7 +251,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
 				</textElement>
 				<text><![CDATA[Valor Total do Crédito:]]></text>
@@ -261,7 +261,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Custo Efetivo Total (CET): ]]></text>
 			</staticText>
@@ -270,7 +270,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[LTV:]]></text>
 			</staticText>
@@ -280,14 +280,14 @@
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Rounded MT Bold" size="11" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data da Simulação:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="407" y="140" width="100" height="25" uuid="3a2f0ef4-ae36-4a88-87cf-bd0bf1c6daf7"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -296,7 +296,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{cetAoMes}.toString())) + "% a.m. " + (($P{MOSTRARIPCA})?"+ IPCA":"" )]]></textFieldExpression>
 			</textField>
@@ -305,7 +305,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{ltv}.toString())) + "%"]]></textFieldExpression>
 			</textField>
@@ -331,7 +331,7 @@
 			<staticText>
 				<reportElement x="0" y="0" width="550" height="50" uuid="0859088d-d178-47e5-870e-232c07c1e168"/>
 				<textElement textAlignment="Justified" markup="styled">
-					<font fontName="Arial" size="9" isItalic="true"/>
+					<font fontName="SansSerif" size="9" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[ <style isItalic="true"> <style isBold="true">Observação Importante:</style> Lembramos que isso é <style forecolor="red" isUnderline="true"> APENAS UMA SIMULAÇÃO</style>, a formalização dessa proposta irá depender do laudo do imóvel oferecido como garantia, parecer jurídico de todos os envolvidos no contrato e a capacidade mensal de pagamento. Não existe nenhuma obrigação da Galleria Bank enquanto o contrato de empréstimo com imóvel em garantia não for efetivamente assinado e registrado pelo Cartório de Registro de Imóvel responsável pelo imóvel.</style>]]></text>
 			</staticText>
