@@ -156,10 +156,10 @@ public class BmpDigitalMB {
 		
 		Date dataHoje = DateUtil.getDataHoje();
 		//Date dataReferencia = DateUtil.adicionarMes(dataHoje, -2);
-		Date dataReferencia = DateUtil.adicionarDias(dataHoje, -45);
+		Date dataReferencia = DateUtil.adicionarDias(dataHoje, -50);
 		
 		int mesReferenciaInt = dataReferencia.getMonth();
-		//mesReferenciaInt ++;
+		mesReferenciaInt ++;
 		String mesReferencia = CommonsUtil.stringValue(mesReferenciaInt);
 		
 		int anoReferenciaInt = dataReferencia.getYear();

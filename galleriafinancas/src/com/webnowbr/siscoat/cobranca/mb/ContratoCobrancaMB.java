@@ -2852,42 +2852,12 @@ public class ContratoCobrancaMB {
 				// senao valida se houve alteração no checklist para envio de email.
 
 				enviaEmailAtualizacaoPreContrato();
-										
-				if (this.controleWhatsAppAgAssintura) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_pronto_para_assinatura_operacao",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
 				
-				if (this.controleWhatsAppAssinado) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_dado_entrada_cartorio",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
-				
-				if (this.controleWhatsAppPajuLaudoRecebido) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_recebido_laudo_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
-				
-				if (this.controleWhatsAppPreAprovado) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_pre_aprovado",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), 
-					this.objetoContratoCobranca.getTaxaPreAprovada().toString(), 
-					this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-				}
+				boolean whatsAppEnviado = false;
 				
 				if (this.controleWhatsAppComite) {
+					whatsAppEnviado = true;
+					
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -2896,7 +2866,7 @@ public class ContratoCobrancaMB {
 					Responsavel rComite3 = new Responsavel();
 					
 					// Fabricio
-					rComite1 = rDao.findById((long) 61);
+					rComite1 = rDao.findById((long) 4);
 					
 					takeBlipMB.sendWhatsAppMessage(rComite1,
 					"contrato_comite",
@@ -2919,6 +2889,44 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "", "");
 				}
+				
+				if (!whatsAppEnviado && this.controleWhatsAppAssinado) {
+					whatsAppEnviado = true;
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_dado_entrada_cartorio",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+										
+				if (!whatsAppEnviado && this.controleWhatsAppAgAssintura) {
+					whatsAppEnviado = true;
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_pronto_para_assinatura_operacao",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+				
+				if (!whatsAppEnviado && this.controleWhatsAppPajuLaudoRecebido) {
+					whatsAppEnviado = true;
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_recebido_laudo_paju",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+				
+				if (!whatsAppEnviado && this.controleWhatsAppPreAprovado) {
+					whatsAppEnviado = true;
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_pre_aprovado",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), 
+					this.objetoContratoCobranca.getTaxaPreAprovada().toString(), 
+					this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+				}			
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
