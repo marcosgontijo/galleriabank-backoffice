@@ -99,7 +99,7 @@
 				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorCreditoLiberado}.toString()))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement mode="Transparent" x="158" y="62" width="69" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="d0031bf6-0e1e-4a79-b740-777c22204b88">
+				<reportElement mode="Transparent" x="158" y="62" width="111" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="d0031bf6-0e1e-4a79-b740-777c22204b88">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -109,7 +109,7 @@
 				<textFieldExpression><![CDATA["R$ " + new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{IOFTotal}.setScale(2, BigDecimal.ROUND_HALF_UP).toString()))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement mode="Transparent" x="158" y="37" width="69" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="8343ac98-c985-41bd-b593-06abdef4dad3">
+				<reportElement mode="Transparent" x="158" y="37" width="111" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="8343ac98-c985-41bd-b593-06abdef4dad3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
