@@ -39,12 +39,8 @@
 		value="#{simulacao.parcelas}" emptyMessage=""
 		style="margin-top:20px;">
 		<f:facet name="header">
-			<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print" rendered="#{simulador}"
-				action="#{simuladorMB.download(false)}" />
-			<shiro:hasAnyRoles name="ROOT">	
-				<p:commandButton value="Gerar PDF Novo" ajax="false" icon="ui-icon-print" rendered="#{simulador}"
-					action="#{simuladorMB.download(true)}" />
-			</shiro:hasAnyRoles>
+			<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print"
+				rendered="#{simulador}" action="#{simuladorMB.download(true)}" />
 		</f:facet>
 
 		<p:column style="text-align: center;" headerText="Parcela">
