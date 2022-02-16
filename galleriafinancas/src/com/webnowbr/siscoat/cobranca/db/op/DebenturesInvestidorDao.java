@@ -455,7 +455,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								debenturesCompleta.setContrato(c);
 								
 								debenturesCompleta.setRecebedor(c.getRecebedor());
-								debenturesCompleta.setValorDebenture(c.getVlrFinalRecebedor1());
+								debenturesCompleta.setValorDebenture(c.getValorCCB());
 								debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor1());
 								
 								debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());

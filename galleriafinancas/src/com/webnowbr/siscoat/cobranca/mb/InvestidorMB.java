@@ -2414,6 +2414,8 @@ public class InvestidorMB {
 	}
 
 	public void habilitaFiltrosContrato() {
+		loadContratos();
+		
 		if (!this.updateMode) {
 			if (this.filtraContrato) {
 				clearContrato();
@@ -2430,7 +2432,7 @@ public class InvestidorMB {
 
 		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
 
-		this.listContratos = contratoDao.findByFilter("status", "Aprovado");
+		this.listContratos = contratoDao.consultaContratosAprovados();
 	}
 
 	public final void loadContratosByNumero(String numeroContrato) {
