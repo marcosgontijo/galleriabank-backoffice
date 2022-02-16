@@ -3868,9 +3868,11 @@ public class InvestidorMB {
 	}
 	
 	public void consultaDebeturesEmitidas() {
+		System.out.println("consultaDebeturesEmitidas");
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
+		System.out.println("listDebenturesInvestidor");
 		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim, this.dualListModelRecebedores.getTarget());
 	}
 

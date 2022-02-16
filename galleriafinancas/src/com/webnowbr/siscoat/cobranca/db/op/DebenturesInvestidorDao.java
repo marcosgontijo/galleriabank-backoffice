@@ -92,7 +92,9 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 					ps.setDate(4, dtRelFimSQL);
 					
 					rs = ps.executeQuery();
-
+					
+					System.out.println("Query:"  + ps);
+					
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 					ContratoCobranca c = new ContratoCobranca();
 					DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
@@ -106,8 +108,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 
 						c = cDao.findById(rs.getLong(2));
 						
+						System.out.println("Contrato:"  + c.getNumeroContrato());
+						
 						// se tem cadastro de debentures (pagador diferente de Galleria)
 						if (rs.getLong(1) > 0) {
+							System.out.println("Não Galleria");
 							db = dbDao.findById(rs.getLong(1));
 							
 							debenturesCompleta.setDataDebentures(db.getDataDebentures());
@@ -446,7 +451,8 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									}	
 								}
 							}
-						} else {							
+						} else {		
+							System.out.println("Galleria");
 							// se pagador for galleria
 							debenturesCompleta.setDataDebentures(c.getDataInicio());
 							debenturesCompleta.setPrazo(c.getQtdeParcelas());
