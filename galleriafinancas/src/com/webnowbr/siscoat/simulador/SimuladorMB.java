@@ -222,7 +222,16 @@ public class SimuladorMB {
 			BigDecimal calc_value = simulacao.getParcelas().get(i).getAmortizacao().add(simulacao.getParcelas().get(i).getJuros());
 			cash_flows[i] = calc_value.doubleValue();
 		}
-		cetDouble = irr(cash_flows) * 100;
+		
+		int maxGuess = 50;
+		cetDouble = irr(cash_flows, maxGuess);
+		
+		while(CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
+			maxGuess+= 50;
+			cetDouble = irr(cash_flows, maxGuess);
+		}
+		
+		cetDouble = cetDouble * 100; 
 		cet = CommonsUtil.bigDecimalValue(cetDouble);	
 		cetAno = BigDecimal.ONE.add((cet.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
 		cetAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(cetAno), 12));
@@ -319,12 +328,12 @@ public class SimuladorMB {
 	
 // 	Função TIR(excel) tirada de https://apache.googlesource.com/poi/+/887af17af3cc2ef8733f9a1990bd99fdeabf789a/src/java/org/apache/poi/ss/formula/functions/Irr.java
 	
-	public static double irr(double[] income) {
-        return irr(income, 0.1d);
+	public static double irr(double[] income, int maxGuess) {
+        return irr(income, 0.1d, maxGuess);
     }
 
-    public static double irr(double[] values, double guess) {
-        int maxIterationCount = 100;
+    public static double irr(double[] values, double guess, int maxGuess) {
+        int maxIterationCount = maxGuess;
         double absoluteAccuracy = 1E-7;
         double x0 = guess;
         double x1;

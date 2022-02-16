@@ -6800,7 +6800,7 @@ public class ContratoCobrancaMB {
 		
 		prazoMax = prazoMax.add(BigDecimal.ONE);
 		
-		createStackedGroupBarModel();
+	//	createStackedGroupBarModel();
 	}
 	
 	public StreamedContent geraRelatorioFIDC() throws IOException{
