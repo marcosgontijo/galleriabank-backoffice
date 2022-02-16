@@ -128,7 +128,7 @@
 				<textFieldExpression><![CDATA[$F{qtdParcelas} + " meses"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Transparent" x="407" y="5" width="99" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="7642c4b5-6421-49a9-84f1-7cb77b548a04">
+				<reportElement mode="Transparent" x="403" y="5" width="114" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="7642c4b5-6421-49a9-84f1-7cb77b548a04">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -292,7 +292,7 @@
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Transparent" x="407" y="33" width="100" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="2ac81f24-fc0e-4ca2-8526-b062ce1d1f3c">
+				<reportElement mode="Transparent" x="403" y="33" width="115" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="2ac81f24-fc0e-4ca2-8526-b062ce1d1f3c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
