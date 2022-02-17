@@ -145,7 +145,7 @@
 				<text><![CDATA[Valor Parcela]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="51" y="0" width="89" height="20" forecolor="#EDFFF4" backcolor="#76A44A" uuid="016d9548-1b42-44de-8445-73d3516a83c2">
+				<reportElement mode="Opaque" x="51" y="0" width="80" height="20" forecolor="#EDFFF4" backcolor="#76A44A" uuid="016d9548-1b42-44de-8445-73d3516a83c2">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
@@ -156,9 +156,9 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Saldo Devedor]]></text>
+				<text><![CDATA[Saldo]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
