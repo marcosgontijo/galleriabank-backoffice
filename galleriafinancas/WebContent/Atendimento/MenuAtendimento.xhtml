@@ -36,6 +36,10 @@
 									action="#{dashboardMB.clearFieldsDashContratos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+								<p:menuitem value="PowerBi"
+									action="#{powerBiMb.clearPowerBi}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
 							<p:menuitem value="Simulador"
 								action="#{simuladorMB.clearFields}"
@@ -96,6 +100,10 @@
 										styleClass="itemMenu" />
 									<p:menuitem value="02 - Em Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="02.5 - Análise Pendente"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Analise Pendente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									<p:menuitem value="03 - Ag. Pagto. Laudo"

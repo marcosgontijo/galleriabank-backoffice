@@ -2824,12 +2824,9 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
 					this.objetoAnaliseComite = new AnaliseComite();
 					
-					if (CommonsUtil.semValor( this.objetoContratoCobranca.getQtdeVotosAprovadosComite())) {
 						this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
-					}
-					if (CommonsUtil.semValor( this.objetoContratoCobranca.getQtdeVotosReprovadosComite())) {
 						this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
-					}
+
 					if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
@@ -3125,7 +3122,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCadastroAprovadoUsuario(null);
 
 			} else {
-				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
+				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") ) {
 					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
 						this.objetoContratoCobranca.setStatus("Pendente");
 					}
@@ -5562,7 +5559,7 @@ public class ContratoCobrancaMB {
 			this.indexStepsStatusContrato = 1;
 		} else {			
 			if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() &&
-					(this.objetoContratoCobranca.getCadastroAprovadoValor() == null || this.objetoContratoCobranca.getCadastroAprovadoValor().equals(""))) {
+					(this.objetoContratoCobranca.getCadastroAprovadoValor() == null || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente"))) {
 				this.indexStepsStatusContrato = 1;
 			}
 			
@@ -7848,6 +7845,10 @@ public class ContratoCobrancaMB {
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
 						c.setStatus("Em Análise");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
+						c.setStatus("Em Análise.");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& !c.isPagtoLaudoConfirmada()) {
@@ -7925,6 +7926,9 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Em Analise")) {
 			this.tituloTelaConsultaPreStatus = "Em Análise";
+		}
+		if (status.equals("Analise Pendente")) {
+			this.tituloTelaConsultaPreStatus = "Análise Pendente";
 		}
 		if (status.equals("Ag. Pagto. Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Pagto. Laudo";

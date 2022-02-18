@@ -1,0 +1,752 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="DemonstrativoResultados" header="Simular Operação"
+				style="margin-bottom:10px;">
+
+				<p:outputLabel for="dataConsultaHoje" value="Data Hoje: "
+					styleClass="labelBold" />
+				<p:calendar id="dataConsultaHoje" showOn="button"
+					value="#{powerBiMb.powerBiHoje.dataConsulta}" label="Data"
+					size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" >
+					<!-- <p:ajax update="dadosHoje" event="dateSelect"
+						listener="#{powerBiMb.powerBiHoje}" /> -->
+				</p:calendar>
+
+				<h:panelGroup id="dadosHoje">
+					<h:panelGrid columns="8">
+						<p:outputLabel for="opCadastradasHoje" value="OP Cadastradas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opCadastradasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroOperacoesCadastradas}" />
+							
+						<p:outputLabel for="opAnalisadasHoje" value="OP Analisadas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opAnalisadasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroOperacoesAnalisadas}" />
+
+						<p:outputLabel for="opAssinadasHoje" value="OP Assinadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="opAssinadasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroOperacoesAssinadas}" />
+
+						<p:outputLabel for="opRegistradasHoje" value="OP Registradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="opRegistradasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroOperacoesRegistradas}" />
+
+						<p:outputLabel for="vlrCadastradasHoje" value="Vlr Cadastradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrCadastradasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorOperacoesCadastradas}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrAnalisadasHoje" value="Vlr Analisadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrAnalisadasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorOperacoesAnalisadas}"
+							converter="bigDecimalConverter" />
+
+						<p:outputLabel for="vlrAssinadasHoje" value="Vlr Assinadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrAssinadasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorOperacoesAssinadas}"
+							converter="bigDecimalConverter" />
+
+						<p:outputLabel for="vlrRegistradasHoje" value="Vlr Registradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrRegistradasHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorOperacoesRegistradas}"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+					
+						<p:outputLabel value="______________________________________________________________"
+						style="margin-bottom:50px;margin-left:20px;" styleClass="labelBold" />
+						
+					<h:panelGrid columns="2">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Securitizadora"
+								style="margin-bottom:50px;margin-left:20px;"
+								styleClass="labelBold" />
+							<p:outputLabel value=" "
+								style="margin-bottom:50px;margin-left:20px;" />
+							
+							<p:spacer width="10px"/>
+							<p:spacer width="10px"/>
+
+							<p:outputLabel for="numeroContratosAtrasoSecHoje" value="Nº Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosAtrasoSecHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.securitizadora.contratosAtraso}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.securitizadora.numeroContratosAtraso}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasAtrasoSecHoje" value="Valor Parcelas Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasAtrasoSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrParcelasAtraso}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosAtrasoSecHoje" value="Valor Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosAtrasoSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrContratosAtraso}"
+								converter="bigDecimalConverter"  />
+
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:outputLabel for="numeroContratosPagasSecHoje" value="Nº Contratos Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosPagasSecHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.securitizadora.contratosPagos}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.securitizadora.numeroContratosPagas}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasPagasSecHoje" value="Valor Parcelas Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasPagasSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrParcelasPagas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosPagosSecHoje" value="Valor Contratos Pagos"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosPagosSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrContratosPagos}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+						
+							<p:outputLabel for="numeroContratosQuitadosSecHoje" value="Nº Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosQuitadosSecHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.securitizadora.contratosQuitados}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.securitizadora.numeroContratosQuitados}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasQuitadssSecHoje" value="Valor Parcelas Quitadas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasQuitadssSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrParcelasQuitadas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosQuitadosSecHoje" value="Valor Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosQuitadosSecHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.securitizadora.vlrContratosQuitados}"
+								converter="bigDecimalConverter"  />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Fidc"
+								style="margin-bottom:50px;margin-left:20px;"
+								styleClass="labelBold" />
+							<p:outputLabel value=" "
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:spacer width="10px"/>
+							<p:spacer width="10px"/>
+								
+							<p:outputLabel for="numeroContratosAtrasoFidcHoje" value="Nº Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosAtrasoFidcHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.fidc.contratosAtraso}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.fidc.numeroContratosAtraso}"/>
+							</p:commandLink>
+
+							<p:outputLabel for="vlrParcelasAtrasoFidcHoje" value="Valor Parcelas Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasAtrasoFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrParcelasAtraso}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosAtrasoFidcHoje" value="Valor Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosAtrasoFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrContratosAtraso}"
+								converter="bigDecimalConverter"  />
+
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:outputLabel for="numeroContratosPagasFidcHoje" value="Nº Contratos Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosPagasFidcHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.fidc.contratosPagos}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.fidc.numeroContratosPagas}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasPagasFidcHoje" value="Valor Parcelas Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasPagasFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrParcelasPagas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosPagosFidcHoje" value="Valor Contratos Pagos"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosPagosFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrContratosPagos}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+						
+							<p:outputLabel for="numeroContratosQuitadosFidcHoje" value="Nº Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosQuitadosFidcHoje" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiHoje.fidc.contratosQuitados}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiHoje.fidc.numeroContratosQuitados}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasQuitadssFidcHoje" value="Valor Parcelas Quitadas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasQuitadssFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrParcelasQuitadas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosQuitadosFidcHoje" value="Valor Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosQuitadosFidcHoje"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiHoje.fidc.vlrContratosQuitados}"
+								converter="bigDecimalConverter"  />
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:panelGroup>
+				
+				<h:panelGrid columns="1">
+					<p:spacer width="10px"/>
+				</h:panelGrid>
+				
+				<p:outputLabel for="dataConsultaOntem" value="Data Ontem: "
+					styleClass="labelBold" />
+				<p:calendar id="dataConsultaOntem" showOn="button"
+					value="#{powerBiMb.powerBiOntem.dataConsulta}" label="Data"
+					size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" >
+					<!-- <p:ajax update="dadosOntem" event="dateSelect"
+						listener="#{powerBiMb.powerBiOntem}" /> -->
+				</p:calendar>
+				
+				<h:panelGroup id="dadosOntem">
+					<h:panelGrid columns="8">
+						<p:outputLabel for="opCadastradasOntem" value="OP Cadastradas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opCadastradasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroOperacoesCadastradas}" />
+							
+						<p:outputLabel for="opAnalisadasOntem" value="OP Analisadas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opAnalisadasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroOperacoesAnalisadas}" />
+
+						<p:outputLabel for="opAssinadasOntem" value="OP Assinadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="opAssinadasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroOperacoesAssinadas}" />
+
+						<p:outputLabel for="opRegistradasOntem" value="OP Registradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="opRegistradasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroOperacoesRegistradas}" />
+
+						<p:outputLabel for="vlrCadastradasOntem" value="Vlr Cadastradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrCadastradasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorOperacoesCadastradas}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrAnalisadasOntem" value="Vlr Analisadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrAnalisadasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorOperacoesAnalisadas}"
+							converter="bigDecimalConverter" />
+
+						<p:outputLabel for="vlrAssinadasOntem" value="Vlr Assinadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrAssinadasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorOperacoesAssinadas}"
+							converter="bigDecimalConverter" />
+
+						<p:outputLabel for="vlrRegistradasOntem" value="Vlr Registradas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrRegistradasOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorOperacoesRegistradas}"
+							converter="bigDecimalConverter" />
+										
+					</h:panelGrid> 
+					<p:outputLabel value="______________________________________________________________"
+						style="margin-bottom:50px;margin-left:20px;" styleClass="labelBold" />
+					
+					<h:panelGrid columns="2">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Securitizadora"
+								style="margin-bottom:50px;margin-left:20px;"
+								styleClass="labelBold" />
+							<p:outputLabel value=" "
+								style="margin-bottom:50px;margin-left:20px;" />
+							
+							<p:spacer width="10px"/>
+							<p:spacer width="10px"/>
+
+							<p:outputLabel for="numeroContratosAtrasoSecOntem" value="Nº Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosAtrasoSecOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.securitizadora.contratosAtraso}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.securitizadora.numeroContratosAtraso}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasAtrasoSecOntem" value="Valor Parcelas Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasAtrasoSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrParcelasAtraso}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosAtrasoSecOntem" value="Valor Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosAtrasoSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrContratosAtraso}"
+								converter="bigDecimalConverter"  />
+
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:outputLabel for="numeroContratosPagasSecOntem" value="Nº Contratos Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosPagasSecOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.securitizadora.contratosPagos}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.securitizadora.numeroContratosPagas}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasPagasSecOntem" value="Valor Parcelas Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasPagasSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrParcelasPagas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosPagosSecOntem" value="Valor Contratos Pagos"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosPagosSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrContratosPagos}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+						
+							<p:outputLabel for="numeroContratosQuitadosSecOntem" value="Nº Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosQuitadosSecOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.securitizadora.contratosQuitados}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.securitizadora.numeroContratosQuitados}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasQuitadssSecOntem" value="Valor Parcelas Quitadas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasQuitadssSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrParcelasQuitadas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosQuitadosSecOntem" value="Valor Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosQuitadosSecOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.securitizadora.vlrContratosQuitados}"
+								converter="bigDecimalConverter"  />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Fidc"
+								style="margin-bottom:50px;margin-left:20px;"
+								styleClass="labelBold" />
+							<p:outputLabel value=" "
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:spacer width="10px"/>
+							<p:spacer width="10px"/>
+								
+							<p:outputLabel for="numeroContratosAtrasoFidcOntem" value="Nº Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosAtrasoFidcOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.fidc.contratosAtraso}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.fidc.numeroContratosAtraso}"/>
+							</p:commandLink>
+
+							<p:outputLabel for="vlrParcelasAtrasoFidcOntem" value="Valor Parcelas Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasAtrasoFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrParcelasAtraso}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosAtrasoFidcOntem" value="Valor Contratos Atraso"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosAtrasoFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrContratosAtraso}"
+								converter="bigDecimalConverter"  />
+
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+
+							<p:outputLabel for="numeroContratosPagasFidcOntem" value="Nº Contratos Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosPagasFidcOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.fidc.contratosPagos}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.fidc.numeroContratosPagas}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasPagasFidcOntem" value="Valor Parcelas Pagas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasPagasFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrParcelasPagas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosPagosFidcOntem" value="Valor Contratos Pagos"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosPagosFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrContratosPagos}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel value="________________"
+								style="margin-bottom:50px;margin-left:20px;" />
+						
+							<p:outputLabel for="numeroContratosQuitadosFidcOntem" value="Nº Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+								
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="numeroContratosQuitadosFidcOntem" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{powerBiMb.contratosConsulta}"
+									value="#{powerBiMb.powerBiOntem.fidc.contratosQuitados}" />
+								<h:outputText
+									value="#{powerBiMb.powerBiOntem.fidc.numeroContratosQuitados}"/>
+							</p:commandLink>
+								
+							<p:outputLabel for="vlrParcelasQuitadssFidcOntem" value="Valor Parcelas Quitadas"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrParcelasQuitadssFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrParcelasQuitadas}"
+								converter="bigDecimalConverter"  />
+								
+							<p:outputLabel for="vlrContratosQuitadosFidcOntem" value="Valor Contratos Quitados"
+								styleClass="labelBold"
+								style="margin-bottom:50px;margin-left:20px;" />
+							<p:outputLabel id="vlrContratosQuitadosFidcOntem"
+								style="margin-bottom:50px;margin-left:20px;"
+								value="#{powerBiMb.powerBiOntem.fidc.vlrContratosQuitados}"
+								converter="bigDecimalConverter"  />
+						</h:panelGrid>
+					</h:panelGrid>
+				</h:panelGroup>
+				
+				<p:spacer width="10px"/>
+
+				<p:commandButton value="Consultar" action="#{powerBiMb.powerBiTodos}"
+					image="ui-icon ui-icon-check"
+					update="DemonstrativoResultados"
+					style="TEXT-DECORATION: bold;" />
+
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Lista de contratos" overflow="auto"
+			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.contratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column>
+						<p:commandButton onclick="PF('parcelasContratos').show()" value="Ver Parcelas" update="parcelasForm" >
+							<f:setPropertyActionListener
+								target="#{powerBiMb.listParcelas}"
+								value="#{contratos.listContratoCobrancaDetalhes}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="parcelas"  overflow="auto"
+			widgetVar="parcelasContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			minWidth="800" height="620" width="1000">
+			<h:form id="parcelasForm">
+				<p:dataTable var="parcelas" paginator="false" scrollable="true"
+					scrollHeight="580"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.listParcelas}"
+					sortBy="#{contratos.numeroParcela}" sortOrder="ascending"
+					rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center;width: 45px;"
+						headerText="Parcela" filterMatchMode="contains"
+						sortBy="#{parcelas.numeroParcela}">
+						<h:outputText value="#{parcelas.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo Inicial (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoInicial}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto."
+						sortBy="#{parcelas.dataUltimoPagamento}">
+						<h:outputText value="#{parcelas.dataUltimoPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Total Pago (R$)">
+						<h:outputText value="#{parcelas.valorTotalPagamento}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto." sortBy="#{parcelas.dataPagamento}">
+						<h:outputText value="#{parcelas.dataPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor (R$)">
+						<h:outputText value="#{parcelas.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Juros (R$)">
+						<h:outputText value="#{parcelas.vlrJurosParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Amortização (R$)">
+						<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro DFI (R$)">
+						<h:outputText value="#{parcelas.seguroDFI}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro MIP (R$)">
+						<h:outputText value="#{parcelas.seguroMIP}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
