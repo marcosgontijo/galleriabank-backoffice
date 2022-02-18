@@ -48,11 +48,13 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 				
 				try {				
 					// prepara filtros de investidores
-					for (PagadorRecebedor investidor : listInvestidores) {						
-						if (query_IDs_INVESTIDORES == null) {
-							query_IDs_INVESTIDORES = String.valueOf(investidor.getId()); 
-						} else {
-							query_IDs_INVESTIDORES = query_IDs_INVESTIDORES + ", " + investidor.getId();
+					if (listInvestidores != null) { 
+						for (PagadorRecebedor investidor : listInvestidores) {						
+							if (query_IDs_INVESTIDORES == null) {
+								query_IDs_INVESTIDORES = String.valueOf(investidor.getId()); 
+							} else {
+								query_IDs_INVESTIDORES = query_IDs_INVESTIDORES + ", " + investidor.getId();
+							}
 						}
 					}
 					

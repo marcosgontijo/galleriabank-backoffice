@@ -130,7 +130,9 @@
 										<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="laudoRecebido" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+											<p:selectBooleanButton id="laudoRecebido" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -139,7 +141,9 @@
 										<p:outputLabel styleClass="labelBold">Parecer Jurídico Recebido</p:outputLabel>
 										<p:spacer ></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="pajurFavoravel" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+											<p:selectBooleanButton id="pajurFavoravel" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
 								</ui:fragment>	
@@ -151,7 +155,9 @@
 										<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
-											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />
+											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
 								</ui:fragment>

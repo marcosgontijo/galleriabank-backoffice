@@ -3868,19 +3868,15 @@ public class InvestidorMB {
 	}
 	
 	public void consultaDebeturesEmitidas() {
+		System.out.println("Debentures Emitidas Size: Consultando...");
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
 		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim, this.dualListModelRecebedores.getTarget());
+		
+		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
 
-	
-	public void testeHermes() {
-		this.listDebenturesInvestidor = new ArrayList<DebenturesInvestidor>();
-
-		DebenturesInvestidorDao diDao = new DebenturesInvestidorDao();
-		this.listDebenturesInvestidor = diDao.findAll();
-	}
 
 	public void clearTitulosQuitadosPDFParams() {
 		this.titulosQuitadosPDF = null;
