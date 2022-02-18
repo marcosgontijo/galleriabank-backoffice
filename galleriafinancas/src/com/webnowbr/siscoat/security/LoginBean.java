@@ -25,6 +25,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.mb.InvestidorMB;
 import com.webnowbr.siscoat.db.dao.HibernateFactory;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -48,6 +49,7 @@ public class LoginBean {
     private String key;
     private String newPassword;
     private boolean renderMenu = false; 
+    private int numeroContratosComite;
 
     public LoginBean() {
     }
@@ -91,6 +93,9 @@ public class LoginBean {
         FacesContext context = FacesContext.getCurrentInstance();
         
         List<User> userTmp = new ArrayList<User>();
+        
+        ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+        numeroContratosComite = contratoCobrancaDao.getQuantidadeContratosComite();
         
         // let's login the current user so we can check against roles and
         // permissions:
@@ -175,7 +180,7 @@ public class LoginBean {
         	loggedIn = true;
         	renderMenu = false;
         }
-            
+    		   
         if (loggedIn) {
                 try {
                 	String url = "";
@@ -274,4 +279,12 @@ public class LoginBean {
 	public void setKey(String key) {
 		this.key = key;
 	}  
+
+ 	public int getNumeroContratosComite() {
+ 		return numeroContratosComite;
+ 	}
+
+ 	public void setNumeroContratosComite(int numeroContratosComite) {
+ 		this.numeroContratosComite = numeroContratosComite;
+ 	}
 }

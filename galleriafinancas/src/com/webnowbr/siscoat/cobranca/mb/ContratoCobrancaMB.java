@@ -2251,7 +2251,7 @@ public class ContratoCobrancaMB {
 			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
 				this.objetoContratoCobranca.setContratoLead(true);
 			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
-				this.objetoContratoCobranca.setContratoLead(false);
+				this.objetoContratoCobranca.setContratoLead(true);
 			}
 
 			PagadorRecebedor pagadorRecebedor = null;
@@ -3084,9 +3084,16 @@ public class ContratoCobrancaMB {
 				if (responsavel != null) {
 					this.objetoContratoCobranca.setResponsavel(responsavel);
 				}
-			}
+			} 
 		} else {
 			this.objetoContratoCobranca.setStatusLead("Completo");
+		}
+		
+		if(this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
+			if (this.objetoContratoCobranca.getContratoResgatadoData() == null) {
+				this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
+				this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
+			}
 		}
 
 		if (!this.objetoContratoCobranca.isInicioAnalise()) {
@@ -5036,6 +5043,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setReprovado(true);
 		this.objetoContratoCobranca.setStatus("Reprovado");
 		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato Reprovado com sucesso! (Contrato: "
@@ -5057,6 +5068,8 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(false);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5088,6 +5101,9 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
@@ -5104,6 +5120,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
@@ -6470,6 +6490,7 @@ public class ContratoCobrancaMB {
 		
 		if (empresa.equals("Securitizadora")) {
 			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			stackedGroupBarModel = new BarChartModel();
 			this.tituloPainel = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 		}
 		
@@ -7984,7 +8005,7 @@ public class ContratoCobrancaMB {
 
 			else if (status.equals("Aguardando Análise")) {
 				if (contratos.getDataContrato() != null) {
-					if (getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 14) {
+					if (getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 45) {
 						if (!contratos.isContratoResgatadoBaixar()) {
 							this.objetoContratoCobranca = contratos;
 							baixarPreContrato();

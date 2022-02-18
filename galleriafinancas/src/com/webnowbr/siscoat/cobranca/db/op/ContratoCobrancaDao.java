@@ -6131,5 +6131,44 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 		return totalParcelas;
 	}
+	
+	private static final String QUERY_QUANTIDADE_CONTRATOS_COMITE = " select numeroContrato from cobranca.contratocobranca c\r\n"
+			+ "where c.InicioAnalise = true and c.CadastroAprovadoValor = 'Aprovado'\r\n"
+			+ "and c.PagtoLaudoConfirmada = true and c.LaudoRecebido = true and c.PajurFavoravel = true\r\n"
+			+ "and c.PreAprovadoComite = true and c.AprovadoComite = false";
+	
+	@SuppressWarnings("unchecked")
+	public int getQuantidadeContratosComite() {
+		return (int) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				int object = 0;
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+					String query = QUERY_QUANTIDADE_CONTRATOS_COMITE;
+					ps = connection.prepareStatement(query);					
+					rs = ps.executeQuery();
+
+					ContratoCobranca contrato = new ContratoCobranca();
+					List<String> listaContratos = new ArrayList<String>();
+
+					while (rs.next()) {
+						listaContratos.add(rs.getString("numerocontrato"));
+					}
+					
+					object = listaContratos.size();
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return object;
+			}
+		});
+	}
 
 }

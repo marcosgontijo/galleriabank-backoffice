@@ -26,7 +26,7 @@
 				</p:calendar>
 
 				<h:panelGroup id="dadosHoje">
-					<h:panelGrid columns="8">
+					<h:panelGrid columns="10">
 						<p:outputLabel for="opCadastradasHoje" value="OP Cadastradas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
@@ -34,7 +34,14 @@
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiHoje.numeroOperacoesCadastradas}" />
 							
-						<p:outputLabel for="opAnalisadasHoje" value="OP Analisadas"
+						<p:outputLabel for="opInicioAnaliseHoje" value="OP Analisadas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opInicioAnaliseHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroOperacoesInicioAnalise}" />
+							
+						<p:outputLabel for="opAnalisadasHoje" value="OP Pré-Aprovadas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
 						<p:outputLabel id="opAnalisadasHoje"
@@ -63,7 +70,15 @@
 							value="#{powerBiMb.powerBiHoje.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
 							
-						<p:outputLabel for="vlrAnalisadasHoje" value="Vlr Analisadas"
+						<p:outputLabel for="vlrInicioAnaliseHoje" value="Vlr Analisadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrInicioAnaliseHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorOperacoesInicioAnalise}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrAnalisadasHoje" value="Vlr Pré-Aprovadas"
 							style="margin-bottom:50px;margin-left:20px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAnalisadasHoje"
@@ -327,7 +342,7 @@
 				</p:calendar>
 				
 				<h:panelGroup id="dadosOntem">
-					<h:panelGrid columns="8">
+					<h:panelGrid columns="10">
 						<p:outputLabel for="opCadastradasOntem" value="OP Cadastradas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
@@ -335,7 +350,14 @@
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiOntem.numeroOperacoesCadastradas}" />
 							
-						<p:outputLabel for="opAnalisadasOntem" value="OP Analisadas"
+						<p:outputLabel for="opInicioAnaliseOntem" value="OP Analisadas"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="opInicioAnaliseOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroOperacoesInicioAnalise}" />
+							
+						<p:outputLabel for="opAnalisadasOntem" value="OP Pré-Aprovadas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
 						<p:outputLabel id="opAnalisadasOntem"
@@ -364,7 +386,15 @@
 							value="#{powerBiMb.powerBiOntem.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
 							
-						<p:outputLabel for="vlrAnalisadasOntem" value="Vlr Analisadas"
+						<p:outputLabel for="vlrInicioAnaliseOntem" value="Vlr Analisadas"
+							style="margin-bottom:50px;margin-left:20px;"
+							styleClass="labelBold" />
+						<p:outputLabel id="vlrInicioAnaliseOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorOperacoesInicioAnalise}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrAnalisadasOntem" value="Vlr Pré-Aprovadas"
 							style="margin-bottom:50px;margin-left:20px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAnalisadasOntem"
@@ -387,8 +417,7 @@
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesRegistradas}"
 							converter="bigDecimalConverter" />
-										
-					</h:panelGrid> 
+					</h:panelGrid>
 					<p:outputLabel value="______________________________________________________________"
 						style="margin-bottom:50px;margin-left:20px;" styleClass="labelBold" />
 					
