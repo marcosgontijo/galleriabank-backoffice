@@ -189,6 +189,11 @@
 					<p:selectBooleanCheckbox value="#{responsavelMB.addUsuario}">
 						<p:ajax update="userPanel" event="change" />
 					</p:selectBooleanCheckbox>
+					
+					<p:outputLabel for="WhatsApp" value="Contato WhatsApp: " />
+					<p:inputText id="WhatsApp"
+						value="#{responsavelMB.objetoResponsavel.whatsAppNumero}" label="WhatsApp"
+						onblur="" style="width:400px;" />
 
 					<p:outputLabel for="Observacao" value="Observação: " />
 					<p:inputTextarea id="Observacao" rows="10" cols="48"

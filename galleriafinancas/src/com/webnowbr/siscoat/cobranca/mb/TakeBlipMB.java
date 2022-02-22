@@ -295,7 +295,7 @@ public class TakeBlipMB {
 				if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
 					context.addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_INFO,
-									"Take Blip: Falha ao buscar URL do responsável no WhatsApp (Cod: " + myURLConnection.getResponseCode() + ")",
+									"Take Blip: Falha ao buscar URL do responsável no WhatsApp (Cod: " + myURLConnection.getResponseCode() + " / Celular: " + responsavel.getTelCelular() + ")",
 					""));
 				} else {				
 					// Seta o ID da fatura na Parcela do Siscoat

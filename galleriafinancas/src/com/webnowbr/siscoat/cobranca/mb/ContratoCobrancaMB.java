@@ -2887,7 +2887,7 @@ public class ContratoCobrancaMB {
 					"", "");
 				}
 				
-				if (!whatsAppEnviado && this.controleWhatsAppAssinado) {
+				if (this.controleWhatsAppAssinado) {
 					whatsAppEnviado = true;
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -2896,7 +2896,7 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 				}
 										
-				if (!whatsAppEnviado && this.controleWhatsAppAgAssintura) {
+				if (this.controleWhatsAppAgAssintura) {
 					whatsAppEnviado = true;
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -2905,7 +2905,7 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 				}
 				
-				if (!whatsAppEnviado && this.controleWhatsAppPajuLaudoRecebido) {
+				if (this.controleWhatsAppPajuLaudoRecebido) {
 					whatsAppEnviado = true;
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -2914,7 +2914,9 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 				}
 				
-				if (!whatsAppEnviado && this.controleWhatsAppPreAprovado) {
+				if (this.controleWhatsAppPreAprovado && 
+						this.objetoContratoCobranca.getTaxaPreAprovada() != null && 
+						this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 					whatsAppEnviado = true;
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -3137,12 +3139,6 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
 				this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
-				
-				// se condições dispara mensagens do whatsapp de pré-aprovado
-				if (this.objetoContratoCobranca.getTaxaPreAprovada() != null && 
-						this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
-					this.controleWhatsAppPajuLaudoRecebido = true;
-				}
 			}
 		}
 
@@ -5459,7 +5455,16 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 	}
 	
+	public void clearMensagensWhatsApp() {
+		this.controleWhatsAppAgAssintura = false;
+		this.controleWhatsAppAssinado = false;
+		this.controleWhatsAppPajuLaudoRecebido = false;
+		this.controleWhatsAppPreAprovado = false;
+		this.controleWhatsAppComite = false;
+	}
+	
 	public String clearFieldsEditarPendentesAnalistas() {
+		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
@@ -7910,10 +7915,7 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosPorStatus(String status) {
 		this.tituloTelaConsultaPreStatus = status;
 		
-		this.controleWhatsAppAgAssintura = false;
-		this.controleWhatsAppAssinado = false;
-		this.controleWhatsAppPajuLaudoRecebido = false;
-		this.controleWhatsAppPreAprovado = false;
+		clearMensagensWhatsApp();
 		
 		if (status.equals("Lead")) {
 			this.tituloTelaConsultaPreStatus = "Novo Lead";
@@ -8018,24 +8020,40 @@ public class ContratoCobrancaMB {
 	public void controlaWhatsAppAgAssintura() {
 		if (this.objetoContratoCobranca.isCcbPronta()) {
 			this.controleWhatsAppAgAssintura = true;
+		} else {
+			this.controleWhatsAppAgAssintura = false;
 		}
 	}
 	
 	public void controlaWhatsAppAssinado() {
 		if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.isAgRegistro()) {
 			this.controleWhatsAppAssinado = true;
+		} else {
+			this.controleWhatsAppAssinado = false;
 		}
 	}
 	
 	public void controlaWhatsAppPajuLaudoRecebido() {
 		if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
 			this.controleWhatsAppPajuLaudoRecebido = true;
+		} else {
+			this.controleWhatsAppPajuLaudoRecebido = false;
+		}
+	}
+	
+	public void controlaWhatsAppPreAprovado() {
+		if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
+			this.controleWhatsAppPreAprovado = true;
+		} else {
+			this.controleWhatsAppPreAprovado = false;
 		}
 	}
 	
 	public void controlaWhatsAppComite() {
 		if (this.objetoContratoCobranca.isPreAprovadoComite()) {
 			this.controleWhatsAppComite = true;
+		} else {
+			this.controleWhatsAppComite = false;
 		}
 	}
 	

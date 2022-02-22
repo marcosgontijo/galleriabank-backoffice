@@ -982,13 +982,15 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getValorLiquido() != null && parcelas.getValorLiquido().compareTo(BigDecimal.ZERO) == 1) {
+					if (parcelas.getValorLiquidoBaixa() != null) {
+						totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+					}
 				}
 			}
 		}
 
-		return totalLiquido;
+		return totalLiquido.setScale(2);
 	}
 
 	public BigDecimal getTotalLiquidoInvestidorCorrespondente(long idInvestidor) {
@@ -996,13 +998,15 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorCorrespondente) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getValorLiquido() != null && parcelas.getValorLiquido().compareTo(BigDecimal.ZERO) == 1) {
+					if (parcelas.getValorLiquidoBaixa() != null) {
+						totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+					}
 				}
 			}
 		}
 
-		return totalLiquido;
+		return totalLiquido.setScale(2);
 	}
 
 	public BigDecimal getTotalLiquidoInvestidorEnvelope(long idInvestidor) {
@@ -1010,13 +1014,15 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorEnvelope) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getValorLiquidoBaixa() != null) {
-					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+				if (parcelas.getValorLiquido() != null && parcelas.getValorLiquido().compareTo(BigDecimal.ZERO) == 1) {
+					if (parcelas.getValorLiquidoBaixa() != null) {
+						totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+					}
 				}
 			}
 		}
 
-		return totalLiquido;
+		return totalLiquido.setScale(2);
 	}
 
 	public BigDecimal getTotalLiquidoTodosInvestidores() {
