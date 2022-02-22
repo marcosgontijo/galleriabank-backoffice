@@ -7989,7 +7989,29 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		if(!status.equals("Pré-Comite")) {
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		} else {
+			if (loginBean != null) {
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+				if (usuarioLogado != null) {
+					if (usuarioLogado.isAdministrador()) {
+						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+					} else {
+						if (usuarioLogado.getListResponsavel().size() > 0) {
+							this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(
+									usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), status);
+						} else {
+							this.contratosPendentes = contratoCobrancaDao
+									.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), null, status);
+						}
+					}
+				}
+			}
+		}
 
 		for (ContratoCobranca contratos : this.contratosPendentes) {			
 			contratos = getContratoById(contratos.getId());
