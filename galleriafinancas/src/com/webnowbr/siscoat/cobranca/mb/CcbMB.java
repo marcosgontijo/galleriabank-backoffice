@@ -5,14 +5,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -32,13 +35,31 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
+import org.apache.poi.xwpf.usermodel.XWPFAbstractNum;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
+import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLevelText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumFmt;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STNumberFormat;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -285,7 +306,6 @@ public class CcbMB {
     private boolean addParticipante;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
-	
     
     String tituloPagadorRecebedorDialog = "";
     
@@ -294,7 +314,6 @@ public class CcbMB {
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
 	
-
 	public void pesquisaParticipante() {
 		this.tipoPesquisa = "Participante";
 		this.updatePagadorRecebedor = ":form:ParticipantesPanel :form:Dados";
@@ -302,7 +321,6 @@ public class CcbMB {
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
-
 	public void concluirParticipante() {
 		this.getListaParticipantes().add(this.participanteSelecionado);
 		this.participanteSelecionado = new CcbVO();
@@ -340,7 +358,6 @@ public class CcbMB {
         }
         return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
-
 	
 	public void populateCodigosBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
@@ -360,7 +377,6 @@ public class CcbMB {
 			}
 		}
 	}
-	
 	
 	public void complementaBancoDados(){
 		if (this.numeroBanco == null) {
@@ -450,7 +466,6 @@ public class CcbMB {
 		return listaCrea;
 	}
 	
-	
 	public String EmitirCcbPreContrato() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
@@ -469,8 +484,7 @@ public class CcbMB {
 		
 		return contrato;
 	}
-	 
-	
+	 	
 	public void populatePagadores() {
 		if(!CommonsUtil.semValor(this.emitenteSelecionado.getCpf())) {
 			this.setNomeEmitente(this.emitenteSelecionado.getNome());
@@ -1086,12 +1100,24 @@ public class CcbMB {
 		paragraph = document.createParagraph();
 		run = paragraph.createRun();
 	}
+
+	static String cTAbstractNumBulletXML = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"0\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"360\"/></w:pPr><w:rPr><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_NoLeft = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"1\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"360\" w:hanging=\"360\"/></w:pPr><w:rPr><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
 	
 	public StreamedContent geraCcbDinamica() throws IOException{
 		try {
 			XWPFDocument document = new XWPFDocument();
-			
-			
 			XWPFHeaderFooterPolicy headerFooterPolicy = document.getHeaderFooterPolicy();
 			  if (headerFooterPolicy == null) headerFooterPolicy = document.createHeaderFooterPolicy();
 
@@ -1108,42 +1134,947 @@ public class CcbMB {
 			XWPFParagraph paragraph = document.createParagraph();
 			XWPFRun run = paragraph.createRun();
 			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
 			run.setText("CÉDULA DE CRÉDITO BANCÁRIO");	
-			run.addBreak();
+			run.addCarriageReturn();
+			
 			
 			run.setText("Nº XXXXXX");	
 			run.setFontSize(14);
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
-			run.addBreak();
+			run.addCarriageReturn();
 			
 			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
 			run = paragraph.createRun();
+			run.setFontSize(12);
 			run.setText("1.	 Partes:");
-			run.setFontSize(11);
 			run.setBold(true);
-			run.addBreak();
+			run.addCarriageReturn();
 			
 			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
 			run = paragraph.createRun();
 			run.setText("I – CREDOR: BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A.");
 			run.setBold(true);
 			run = paragraph.createRun();
-			run.setText(", instituição financeira, inscrita no CNPJ/MF sob nº 34.337.707/0001-00, com sede na Av. Paulista, 1765, 1º Andar, CEP 01311-200, São Paulo, SP, neste ato, representada na forma do seu Estatuto Social; ");
-			run.addBreak();
+			run.setFontSize(12);
+			run.setText(", instituição financeira, inscrita no CNPJ/MF sob nº 34.337.707/0001-00,"
+					+ " com sede na Av. Paulista, 1765, 1º Andar, CEP 01311-200, São Paulo, SP,"
+					+ " neste ato, representada na forma do seu Estatuto Social; ");
+			run.addCarriageReturn();
 			
+			int iParticipante = 2;
 			for(CcbVO participante : this.listaParticipantes) {
 				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
+				
 				run = paragraph.createRun();
-				run.setText("IX – " + participante.getTipoParticipante() + ":");
+				run.setFontSize(12);
+				run.setText(RomanNumerals(iParticipante) + " – " + participante.getTipoParticipante() + ":");
 				if(!participante.isEmpresa()) {
-					run.setText(run.getText(0) + participante.getPessoa().getNome() + ",");
+					run.setText(" " + participante.getPessoa().getNome() + ", ");
 				}
 				run.setBold(true);
+				XWPFRun run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				String filho;
+				if(participante.isFeminino()) {
+					filho = "filha";
+				} else {
+					filho = "filho";
+				}
+				run2.setText( filho + " de " + participante.getPessoa().getNomeMae() + " e paiEmitente,"
+						+ " nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente "
+						+ "regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente,"
+						+ " portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente,"
+						+ " inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente,"
+						+ " residente e domiciliado à logradouroEmitente, nº numeroEmitente, "
+						+ "complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente; ");		
+				run2.addCarriageReturn();
+				
+				iParticipante++;
 			}
 			
+			paragraph = document.createParagraph();	
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Considerando que: ");
+			run.addCarriageReturn();
 			
-			for (XWPFParagraph p : document.getParagraphs()) {
+			paragraph = document.createParagraph();	
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("a) O EMITENTE declara e garante que está devidamente "
+					+ "autorizado a firmar a presente Cédula de Crédito Bancário (“CCB”),"
+					+ " e assumir todas as obrigações aqui pactuadas e cumprir todos os "
+					+ "seus termos e condições até quitação final de todas as obrigações aqui "
+					+ "estabelecidas, uma vez que as obrigações pecuniárias assumidas "
+					+ "nesta CCB são compatíveis com a capacidade econômico-financeira do"
+					+ " EMITENTE para honrá-las;");
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();	
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("b) O EMITENTE declara e garante que cumpre o disposto na"
+					+ " legislação referente à Política Nacional de Meio Ambiente"
+					+ " e não aplicará os recursos decorrentes desta CCB no financiamento "
+					+ "de qualquer atividade ou projeto que caracterize crime contra o"
+					+ " meio ambiente, que cause poluição e/ou que prejudique o ordenamento"
+					+ " urbano e o patrimônio cultural, obrigando-se a respeitar integralmente"
+					+ " as normas contidas nas Leis nº 9.605/98 e nº 9.985/2000 e demais"
+					+ " regras complementares; e ainda que não utilizará os recursos no "
+					+ "desenvolvimento de suas atividades comerciais e vinculadas ao seu objeto"
+					+ " social, formas nocivas ou de exploração de trabalho forçado e/ou mão"
+					+ " de obra infantil.");
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();		
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Em garantia do integral cumprimento de todas as obrigações,"
+					+ " principais e acessórias, assumidas pelo EMITENTE, as Partes"
+					+ " resolvem celebrar a presente Cédula de Crédito Bancário, a qual"
+					+ " se regerá pelas seguintes cláusulas e condições: ");
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.	DAS CARACTERÍSTICAS DA OPERAÇÃO DE CRÉDITO");
+			run.setBold(true);
+			run.addCarriageReturn();
+			
+			
+			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.	Valor do Crédito: ");
+			run.setBold(true);
+			XWPFRun run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("valorCredito (ExtensoValorCredito);");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.1.	Custo de Emissão: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("custoEmissao (ExtensoCustoEmissao), e será pago pelo EMITENTE na data"
+					+ " de emissão desta CCB, sendo o mesmo deduzido no ato da liberação do recurso"
+					+ " que entrará a crédito na Conta Corrente descrita no item 2.5 desta CCB, e"
+					+ " será devido por conta da guarda, manutenção e atualização de dados cadastrais,"
+					+ " bem como permanente e contínua geração de dados relativos ao cumprimento dos"
+					+ " direitos e obrigações decorrentes deste instrumento;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.2.	Valor do Imposto sobre Operações Financeiras (IOF): ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("valorIOF (ExtensoValorIOF), conforme apurado na Planilha"
+					+ " de Cálculo (Anexo I), calculado nos termos da legislação vigente"
+					+ " na data de ocorrência do fato gerador, tendo como base de cálculo"
+					+ " o Valor do Crédito mencionado no item 2.1;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.3.	Valor destinado ao pagamento de despesas acessórias "
+					+ "(devidas a terceiros): ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("valorDespesas (ExtensoValorDespesas);");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.4.	Valor Líquido do Crédito: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O valor líquido do crédito concedido é de valorLiquidoCredito"
+					+ " (ExtensoValorLiquidoCredito), após o desconto do Custo de Emissão,"
+					+ " IOF e Despesas Acessórias desta CCB;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.5.");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" O EMITENTE está ciente e concorda que é de sua responsabilidade"
+					+ " o pagamento dos valores indicados nos itens supramencionados, bem "
+					+ "como os relativos aos tributos e demais despesas que incidam ou venham"
+					+ " a incidir sobre a operação, inclusive as que façam necessária para o "
+					+ "registro da garantia real perante a circunscrição imobiliária competente.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.1.6.");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" O EMITENTE concorda que o valor relativo ao IOF será incorporado à"
+					+ " sua dívida confessada, sendo pago nos mesmos termos do parcelamento"
+					+ " do saldo devedor em aberto.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.2.	Encargos Financeiros:");
+			run.setBold(true);
+			run.addCarriageReturn();
+			run.setText("(X) Pré-fixado,");
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" calculado com base no ano de 365 dias;");
+			run2.addCarriageReturn();
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("(X) Pós-fixado: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("atualização dos valores pela variação mensal do Índice Nacional "
+					+ "de Preços ao Consumidor Amplo – IPCA/IBGE, apurado a partir da data"
+					+ " de emissão até a efetiva quitação da CCB, sendo esta atualização "
+					+ "condição essencial do presente negócio, que o saldo devedor e o valor"
+					+ " de cada uma das parcelas serão atualizados monetária e mensalmente, de"
+					+ " acordo com o índice de atualização referido;");
+			run2.addCarriageReturn();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+	
+			paragraph = document.createParagraph();
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.3. 	Taxa de Juros Efetiva: ");
+			run.setBold(true);
+			run.addCarriageReturn();
+			run.setText("Mês: ");
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("taxaDeJurosMes%");
+			run2.addCarriageReturn();
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Ano: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("taxaDeJurosAno%");
+			run2.addCarriageReturn();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			
+			paragraph = document.createParagraph();
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.4. 	Custo Efetivo Total (“CET”):");
+			run.setBold(true);
+			run.addCarriageReturn();
+			run.setText("Mês: ");
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("cetMes%");
+			run2.addCarriageReturn();
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Ano: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("cetAno%");
+			run2.addCarriageReturn();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.5. Forma de Liberação do Crédito: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O CREDOR realizará o crédito na Conta Corrente nº contaCorrente,"
+					+ " Agência nº agencia, BANCO numeroBanco – nomeBanco, em até 5 (cinco)"
+					+ " dias úteis após o cumprimento das condições precedentes estabelecidas "
+					+ "na cláusula 4.4 abaixo;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.6. Forma de pagamento: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O EMITENTE realizará o pagamento, nos termos do Anexo "
+					+ "I desta CCB, em conta corrente do CREDOR ou a quem este indicar; ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.7. Fluxo de Pagamento (Juros e Amortização): ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("numeroParcelasPagamento (ExtensoNumeroParcelasPagamento)"
+					+ " parcelas mensais, sendo a 1ª parcela com vencimento em "
+					+ "vencimentoPrimeiraParcelaPagamento e a última com vencimento "
+					+ "em vencimentoUltimaParcelaPagamento, corrigidas pela variação"
+					+ " mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB,"
+					+ " o montante de montantePagamento (ExtensoMontantePagamento), conforme ANEXO I;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.7.1. Valor e Fluxo de Pagamento do Seguro de Morte e Invalidez Permanente (MIP): ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("numeroParcelasMIP (ExtensoNumeroParcelasMIP) parcelas mensais,"
+					+ " sendo a 1ª parcela com vencimento em vencimentoPrimeiraParcelaMIP "
+					+ "e a última com vencimento em vencimentoUltimaParcelaMIP, corrigidas"
+					+ " pela variação mensal do IPCA/IBGE, totalizando, na data de emissão "
+					+ "desta CCB, o montante de montanteMIP (ExtensoMontanteMIP), conforme ANEXO I. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.7.2. Valor e Fluxo de Pagamento do Seguro de Danos Físicos ao Imóvel (DFI): ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("numeroParcelasDFI (ExtensoNumeroParcelasDFI) parcelas"
+					+ " mensais, sendo a 1ª parcela com vencimento em vencimentoPrimeiraParcelaDFI "
+					+ "e a última com vencimento em vencimentoUltimaParcelaDFI, corrigidas pela"
+					+ " variação mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB,"
+					+ " o montante de montanteDFI (ExtensoMontanteDFI), conforme ANEXO I.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.8. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("A atualização pela variação mensal do Índice Nacional"
+					+ " de Preços ao Consumidor Amplo – IPCA/IBGE será devida"
+					+ " desde o momento da emissão desta CCB, independentemente "
+					+ "da data ajustada para o pagamento da 1ª parcela.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.8.1. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O valor da atualização IPCA/IBGE apurado a cada mês, "
+					+ "desde a emissão da CCB até a última parcela, será incorporado"
+					+ " ao saldo devedor, resultando em um reajuste em todas as parcelas.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.9. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O(s) EMITENTE(S) poderá(ão) verificar as datas de divulgação dos indicadores no sítio eletrônico ");
+			run2.setBold(false);
+			XWPFRun run3 = paragraph.createRun();
+			run3.setFontSize(12);
+			run3.setText("www.ibge.gov.br/calendario-indicadores-novoportal");
+			
+			XWPFRun run4 = paragraph.createRun();
+			run4.setFontSize(12);
+			run4.removeCarriageReturn();
+			run4.setText(", ou em outro que vier a substituí-lo.");
+			
+			run4.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.10. Tarifa de Liquidação Antecipada: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("tarifaAntecipada% (ExtensoTarifaAntecipada por cento);");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.11. Data de Emissão: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("dataDeEmissao;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.12. Data de Vencimento: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("vencimentoUltimaParcelaPagamento;");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("2.13. Praça de Pagamento: ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("São Paulo/SP.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.	DAS GARANTIAS");
+			run.setBold(true);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.1. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Em garantia do fiel, integral e pontual "
+					+ "cumprimento de todas as obrigações assumidas na presente CCB,"
+					+ " o EMITENTE aliena fiduciariamente ao CREDOR o(s) bem(ens)"
+					+ " imóvel(eis), de sua propriedade, bem(ns) com a(s) seguinte(s) "
+					+ "descrição(ões):");
+			run2.setBold(false);
+			
+			int iImagem = 0;
+			for(UploadedFile imagem :  filesList) {
+				run3 = paragraph.createRun();
+				run3.addCarriageReturn();
+				this.populateFiles(iImagem);
+				run3.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+				run3.addCarriageReturn();	
+				iImagem++;
+			}
+			
+			run4 = paragraph.createRun();
+			run4.setFontSize(12);
+			run4.removeCarriageReturn();
+			run4.setText(", objeto da matrícula nº numeroImovel "
+					+ "(“Bem Imóvel” ou “Imóvel”), registrada perante o "
+					+ "cartorioImovel Cartório de Registro de Imóveis da "
+					+ "Comarca de cidadeImovel – ufImovel  (“RGI”), nos termos"
+					+ " e condições anuídos pelas Partes no Instrumento Particular "
+					+ "de Alienação Fiduciária Bem Imóvel (“Termo de Garantia”), o "
+					+ "qual faz parte desta CCB como parte acessória e inseparável.");
+			run4.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.2. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Se solteiro(a), viúvo(a), divorciado(a) ou separado(a) "
+					+ "judicialmente, declara, sob responsabilidade civil e criminal, "
+					+ "que o imóvel aqui objetivado não foi adquirido na constância de "
+					+ "união estável prevista na Lei nº 9.278, de 10/05/96 e no Código Civil, "
+					+ "razão pela qual é seu único e exclusivo proprietário.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.3.	Seguros:");
+			run.setBold(true);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.3.1. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O CREDOR Fica autorizado neste ato a contratar em nome do(s) EMITENTE, os seguros para "
+					+ "cobertura dos riscos de morte e invalidez permanente e de danos físicos ao(s) Imóvel(is) descrito(s) "
+					+ "na cláusula 3 acima, cujos prêmios deverão ser pagos mensalmente. O CREDOR, ou quem vier a substituí-lo, "
+					+ "será nomeado beneficiário das respectivas apólices/certificados de seguro, e receberá o capital segurado"
+					+ " ou indenização em caso de sinistro para utilização dos valores daí decorrentes na liquidação total"
+					+ " ou parcial das obrigações de pagamento oriundas do presente instrumento. O valor do prêmio dos"
+					+ " referidos seguros será reajustado conforme definido em apólice e poderá ser revisto e alterado"
+					+ " desde o início da contratação, ou seja, na elaboração da proposta de empréstimo ou financiamento,"
+					+ " até a liquidação integral da CCB, de acordo com as regras estabelecidas na respectiva"
+					+ " apólice de seguros que são estipuladas pela companhia seguradora. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.3.1.1. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Assim, declara-se ciente o EMITENTE que qualquer alteração"
+					+ " nas condições inicialmente informadas para a contratação,"
+					+ " tais como, mas não se limitando, por exemplo, a(s) idade(s)"
+					+ " do(s) proponente(s), poderá refletir em modificação no prêmio"
+					+ " dos seguros a serem contratados para a devida formalização deste"
+					+ " empréstimo com garantia imobiliária.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.LEFT);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.3.1.2. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Declara ainda o EMITENTE e o(s) TERCEIROS(S) GARANTIDOR(ES) que:");
+			run2.setBold(false);
+			
+			CTNumbering cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML);
+			CTAbstractNum cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+			
+		//	CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			XWPFNumbering numbering = document.createNumbering();
+			BigInteger abstractNumID = numbering.addAbstractNum(abstractNum);
+			BigInteger numID = numbering.addNum(abstractNumID);
+			
+			paragraph = document.createParagraph();	
+			paragraph.setNumID(numID);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("tem(têm) ciência e concorda(m) integralmente com os termos das condições gerais "
+					+ "ora apresentadas com relação ao Seguro de pessoa com cobertura de Morte e "
+					+ "Invalidez Permanente por Acidente (MIP) e ao Seguro de danos com cobertura de "
+					+ "Danos Físicos ao Imóvel (DFI), tendo pleno conhecimento de todas as suas "
+					+ "coberturas e riscos excluídos ");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("os próprios EMITENTE ou seus beneficiários, herdeiros ou sucessores, deverão "
+					+ "comunicar ao CREDOR e a Seguradora, imediatamente e por escrito, a ocorrência "
+					+ "de qualquer sinistro, bem como, qualquer evento suscetível de agravar "
+					+ "consideravelmente o risco coberto, sob pena de perder o direito à indenização se "
+					+ "for provado que silenciou de má-fé;");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();		
+			paragraph.setNumID(numID);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);	
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("autoriza(m), desde já, de forma expressa, irrevogável e inequívoca, que a "
+					+ "Seguradora realize o levantamento de informações médicas em hospitais, clínicas "
+					+ "e/ou consultórios, bem como, que solicite a realização de perícia médica quando	necessária.");
+			run.setBold(false);
+			run.addCarriageReturn();
+
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.3.2.     ", 
+					 "Se, em decorrência de sinistro, "
+					 + "a Seguradora por qualquer motivo "
+					 + "desembolsar indenização em valor "
+					 + "insuficiente a quitação do saldo"
+					 + " devedor do empréstimo objeto deste "
+					 + "instrumento, ficará(ão) o EMITENTE ou seu(s)"
+					 + " herdeiro(s) e/ou sucessor(es) obrigado(s) a efetiva"
+					 + " liquidação do saldo devedor remanescente perante o CREDOR.", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.3.3.      ", 
+					 "Na hipótese da cláusula acima, no caso de não liquidação do"
+					 + " saldo remanescente pelos DEVEDOR(ES), seus herdeiros e"
+					 + " sucessores a qualquer título, sobre estes incidirá os encargos"
+					 + " moratórios previstos na cláusula 6, bem como a respectiva "
+					 + "execução da garantia pelo CREDOR ou quem vier a substituí-lo.", 
+					 true,  false);
+			
+			fazParagrafoSimples(document, paragraph, run, "4. DA CONCESSÃO DO CRÉDITO",  true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.1.     ", 
+					 "O EMITENTE pagará por esta CCB ao CREDOR ou a quem este "
+					 + "vier a indicar, em moeda corrente nacional, o Valor do "
+					 + "Crédito acrescido de encargos, conforme expressamente "
+					 + "indicado na cláusula 2 acima, calculados desde a data da "
+					 + "emissão desta CCB pelo EMITENTE até a data do seu respectivo "
+					 + "pagamento integral ao CREDOR, acrescidos, quando aplicáveis,"
+					 + " dos encargos moratórios, conforme disposto na presente CCB; ", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.2.   ", 
+					 "O EMITENTE tem expresso conhecimento de que os juros"
+					 + " ajustados para o empréstimo a que se refere à presente"
+					 + " CCB são calculados, sempre e invariavelmente, de forma"
+					 + " diária e capitalizada, conforme permitido pela legislação"
+					 + " aplicável; ", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.3.      ", 
+					 "O EMITENTE declara que tomou conhecimento do cálculo do CET"
+					 + " indicado no item 2.4 acima, previamente à operação de "
+					 + "empréstimo contratada por meio da presente CCB, através "
+					 + "de planilha de cálculo que lhe foi apresentada pelo CREDOR; ", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.    ", 
+					 "O EMITENTE concorda que a Liberação do Crédito "
+					 + "prevista na cláusula 2.5 está condicionada ao cumprimento"
+					 + " das seguintes condições precedentes, de forma cumulativa"
+					 + " e satisfatória para o CREDOR:", 
+					 true,  false);
+			
+			
+			CTNumbering cTNumbering2 = CTNumbering.Factory.parse(cTAbstractNumBulletXML_NoLeft);
+			CTAbstractNum cTAbstractNum2 = cTNumbering2.getAbstractNumArray(0);
+			XWPFAbstractNum abstractNum2 = new XWPFAbstractNum(cTAbstractNum2);
+			XWPFNumbering numbering2 = document.createNumbering();
+			BigInteger abstractNumID2 = numbering2.addAbstractNum(abstractNum2);
+			BigInteger numID2 = numbering2.addNum(abstractNumID2);
+
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Entrega de todas as vias da CCB e Instrumento Particular"
+					+ " de Alienação Fiduciária de Bem(ns) Imóvel(eis) em Garantia e "
+					+ "Outras Avenças, devidamente assinadas pelas Partes com todas as "
+					+ "firmas reconhecidas ou mediante assinatura eletrônica compatível"
+					+ " com os padrões do ICP-BRASIL;");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Entrega do protocolo do registro da alienação"
+					+ " fiduciária em favor do CREDOR na matrícula do"
+					+ " imóvel descrito na cláusula 3 dessa CCB.");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.5.   ", 
+					 "As Partes anuem que, caso as condições precedentes acima"
+					 + " não sejam cumpridas no prazo de até 30 (trinta) dias "
+					 + "corridos contados da emissão da CCB, o referido título"
+					 + " poderá será considerado cancelado deixando de surtir efeitos,"
+					 + " obrigações, direitos e deveres às Partes. ", 
+					 true,  false);
+			
+			fazParagrafoSimples(document, paragraph, run, "5. DA FORMA DE PAGAMENTO E PRAZO",  true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.1.	Depósito em Conta Corrente: ", 
+					 "Fica o EMITENTE instruído pelo CREDOR, em caráter irrevogável e irretratável,"
+					 + " a depositar em conta corrente nos termos da cláusula 2.6 acima,"
+					 + " de titularidade do CREDOR ou a quem este vier a indicar (“Conta Corrente”),"
+					 + " os valores relativos às parcelas da CCB indicadas no ANEXO I, "
+					 + "acrescidas dos respectivos encargos, inclusive debitar os valores"
+					 + " correspondentes a mora, IOF, tarifas e demais despesas aqui previstas.", 
+					 true,  false);
+			
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.2. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("O(s) EMITENTE(S) declara(m)-se ciente(s) de que o pagamento "
+					+ "das parcelas mensais e os encargos, conforme valores e prazos "
+					+ "estabelecidos no ANEXO I dessa CCB, ");
+			run2.setBold(false);
+			
+			run3 = paragraph.createRun();
+			run3.setFontSize(12);
+			run3.setText("não estão vinculados à data de liberação do Valor Líquido do Crédito");
+			run3.setBold(true);	
+			
+			run4 = paragraph.createRun();
+			run4.setFontSize(12);
+			run4.removeCarriageReturn();
+			run4.setText(", devendo tais encargos serem pagos a partir da data ajustada"
+					+ " no item ");
+			run4.addCarriageReturn();
+			
+			
+			XWPFRun run5 = paragraph.createRun();
+			run5.setFontSize(12);
+			run5.removeCarriageReturn();
+			run5.setText("2.7");
+			run5.addCarriageReturn();
+			
+			XWPFRun run6 = paragraph.createRun();
+			run6.setFontSize(12);
+			run6.removeCarriageReturn();
+			run6.setText(", sob pena de incidência de atualização monetária, juros e multa, de acordo com o quanto disposto na cláusula 6.");
+			run6.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.3.	", 
+					 "Na hipótese de haver parcelas mensais vencidas e não pagas na "
+					 + "data de liberação do Valor Líquido do Crédito, o(s) DEVEDOR(ES),"
+					 + " desde já, autoriza(m) o CREDOR a descontar desse valor,"
+					 + " descrito na cláusula 2.1.4, eventual montante devido em"
+					 + " razão do não pagamento das parcelas mensais ajustadas"
+					 + " conforme ANEXO I, incluindo encargos moratórios conforme"
+					 + " previsto na Cláusula 6 dessa CCB.", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.4. ", 
+					 "Os pagamentos devidos ao CREDOR, previstos na presente CCB,"
+					 + " serão efetuados via boleto bancário a ser encaminhado ao"
+					 + " endereço físico ou eletrônico do EMITENTE constante do item"
+					 + " II da cláusula 1. Fica estabelecido que a falta de recebimento "
+					 + "do aviso de cobrança ou boleto bancário não exime o EMITENTE de "
+					 + "efetuar os pagamentos previstos nesta CCB, nem constitui justificativa"
+					 + " para atraso em sua liquidação ou isenção de penalidades moratórias,"
+					 + " cabendo ao EMITENTE entrar em contato com o CREDOR, ou quem o substituir,"
+					 + " em tempo hábil, visando à obtenção de boleto para pagamento.", 
+					 true,  false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.5.	", 
+					 "Em razão do acordado nesta cédula quanto ao valor, prestações,"
+					 + " parcelas, reajustes e atualizações, o pagamento de qualquer"
+					 + " prestação atualizada de maneira diversa da estabelecida nesta CCB,"
+					 + " inclusive perante terceiros autorizados a recebê-las,"
+					 + " não implicará na quitação do respectivo débito ou "
+					 + "repactuação da dívida.", 
+					 true,  false);
+			
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.6.", 
+					 "Qualquer diferença verificada entre os créditos"
+					 + " efetivados na conta corrente do CREDOR e a sistemática"
+					 + " de cálculos dos valores estabelecidos nesta CCB,"
+					 + " deverá ser imediatamente liquidada pelo EMITENTE no "
+					 + "prazo máximo de 48 (quarenta e oito) horas, contadas"
+					 + " do aviso que o CREDOR lhe dirigir neste sentido,"
+					 + " caso em que, não realizado o pagamento após esse "
+					 + "prazo, estará em mora.", 
+					 true,  false);
+			
+			/*for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();
 			    if (runs != null) {  	
 			    	for (XWPFRun r : runs) {
@@ -1151,7 +2082,8 @@ public class CcbMB {
 			            adicionarEnter(text, r);
 			    	}
 			    }
-			}
+			}*/
+
 			
 			
 			ByteArrayOutputStream  out = new ByteArrayOutputStream ();
@@ -1169,6 +2101,36 @@ public class CcbMB {
 	    }
 	    
 	    return null;
+	}
+	
+	public void fazParagrafoSimples(XWPFDocument document, XWPFParagraph paragraph, XWPFRun run, String texto, boolean bold) {
+		paragraph = document.createParagraph();		
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setSpacingBetween(1);
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		run.setBold(bold);
+		run.addCarriageReturn();
+	}
+	
+	public void geraParagrafoComposto(XWPFDocument document, XWPFParagraph paragraph, XWPFRun run, XWPFRun run2, String texto, 
+			String texto2, boolean bold, boolean bold2) {
+		paragraph = document.createParagraph();
+		paragraph.setAlignment(ParagraphAlignment.BOTH);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setSpacingBetween(1);
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		run.setBold(bold);
+		run2 = paragraph.createRun();
+		run2.setFontSize(12);
+		run2.setText(texto2);
+		run2.setBold(bold2);
+		run2.addCarriageReturn();
 	}
 	
 	@SuppressWarnings("resource")
@@ -2082,6 +3044,40 @@ public class CcbMB {
 		this.listPagadores = pagadorRecebedorDao.findAll();
 	}
 
+	public static String RomanNumerals(int Int) {
+	    LinkedHashMap<String, Integer> roman_numerals = new LinkedHashMap<String, Integer>();
+	    roman_numerals.put("M", 1000);
+	    roman_numerals.put("CM", 900);
+	    roman_numerals.put("D", 500);
+	    roman_numerals.put("CD", 400);
+	    roman_numerals.put("C", 100);
+	    roman_numerals.put("XC", 90);
+	    roman_numerals.put("L", 50);
+	    roman_numerals.put("XL", 40);
+	    roman_numerals.put("X", 10);
+	    roman_numerals.put("IX", 9);
+	    roman_numerals.put("V", 5);
+	    roman_numerals.put("IV", 4);
+	    roman_numerals.put("I", 1);
+	    String res = "";
+	    for(Map.Entry<String, Integer> entry : roman_numerals.entrySet()){
+	      int matches = Int/entry.getValue();
+	      res += repeat(entry.getKey(), matches);
+	      Int = Int % entry.getValue();
+	    }
+	    return res;
+	  }
+	  public static String repeat(String s, int n) {
+	    if(s == null) {
+	        return null;
+	    }
+	    final StringBuilder sb = new StringBuilder();
+	    for(int i = 0; i < n; i++) {
+	        sb.append(s);
+	    }
+	    return sb.toString();
+	  }
+	
 	public String getNumeroContrato() {
 		return numeroContrato;
 	}

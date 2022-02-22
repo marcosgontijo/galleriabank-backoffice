@@ -5235,26 +5235,31 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 						
 						String queryGuardaChuva = "";
-						if (listResponsavel.size() > 0) {							
-							for (Responsavel resp : listResponsavel) {
-								if (!resp.getCodigo().equals("")) { 
-									// adiciona membro guarda-chuva									
-									if (queryGuardaChuva.equals("")) {
-										queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
-									} else {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + resp.getCodigo() + "' ";
-									}		
-									
-									// busca recursiva no guarda-chuva
-									ResponsavelDao rDao = new ResponsavelDao();
-									List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
-									retornoGuardaChuvaRecursivo = rDao.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());									
-									for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
-										queryGuardaChuva = queryGuardaChuva + " or res.codigo = '" + codigoResponsavel + "' ";
-									}									
+						if (listResponsavel != null) {
+							if (listResponsavel.size() > 0) {
+								for (Responsavel resp : listResponsavel) {
+									if (!resp.getCodigo().equals("")) {
+										// adiciona membro guarda-chuva
+										if (queryGuardaChuva.equals("")) {
+											queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
+										} else {
+											queryGuardaChuva = queryGuardaChuva + " or res.codigo = '"
+													+ resp.getCodigo() + "' ";
+										}
+
+										// busca recursiva no guarda-chuva
+										ResponsavelDao rDao = new ResponsavelDao();
+										List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+										retornoGuardaChuvaRecursivo = rDao
+												.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());
+										for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+											queryGuardaChuva = queryGuardaChuva + " or res.codigo = '"
+													+ codigoResponsavel + "' ";
+										}
+									}
 								}
 							}
-						}											
+						}
 						
 						if (!queryResponsavel.equals("")) {
 							query = query + queryResponsavel;
@@ -6135,7 +6140,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_QUANTIDADE_CONTRATOS_COMITE = " select numeroContrato from cobranca.contratocobranca c\r\n"
 			+ "where c.InicioAnalise = true and c.CadastroAprovadoValor = 'Aprovado'\r\n"
 			+ "and c.PagtoLaudoConfirmada = true and c.LaudoRecebido = true and c.PajurFavoravel = true\r\n"
-			+ "and c.PreAprovadoComite = true and c.AprovadoComite = false";
+			+ "and c.PreAprovadoComite = true and c.AprovadoComite = false and status = 'Pendente'";
 	
 	@SuppressWarnings("unchecked")
 	public int getQuantidadeContratosComite() {
@@ -6157,7 +6162,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ContratoCobranca contrato = new ContratoCobranca();
 					List<String> listaContratos = new ArrayList<String>();
 
-					while (rs.next()) {
+					while (rs.next()) {	
 						listaContratos.add(rs.getString("numerocontrato"));
 					}
 					
