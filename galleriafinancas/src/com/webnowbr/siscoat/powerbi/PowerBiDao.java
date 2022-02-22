@@ -24,7 +24,7 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 
-	private static final String POWER_BI= " select datacontrato, inicioanalisedata, cadastroAprovadoData, cadastroAprovadoValor, agassinaturadata, aprovadodata, quantoprecisa, valorccb "
+	private static final String POWER_BI= " select datacontrato, status,  inicioanalisedata, cadastroAprovadoData, cadastroAprovadoValor, agassinaturadata, aprovadodata, quantoprecisa, valorccb "
 			+ " from cobranca.contratocobranca coco  ";
 	
 	@SuppressWarnings("unchecked")
@@ -54,19 +54,35 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					int qtdAnalisadas = 0;
 					int qtdAssinadas = 0;
 					int qtdRegistradas = 0;
+					int qtdInicioAnalise = 0;
+					
 					BigDecimal vlrCadastradas = BigDecimal.ZERO;
+					BigDecimal vlrInicioAnalise = BigDecimal.ZERO;
 					BigDecimal vlrAnalisadas = BigDecimal.ZERO;
 					BigDecimal vlrAssinadas = BigDecimal.ZERO;
 					BigDecimal vlrRegistradas = BigDecimal.ZERO;
 					
 					while (rs.next()) {
+						if (!CommonsUtil.semValor((rs.getDate("datacontrato")))) {
+							if (!CommonsUtil.mesmoValor(rs.getString("status"), "Aprovado")) {
+								if (CommonsUtil.mesmoValor(rs.getDate("datacontrato").getMonth(), mes)
+										&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getYear(), ano)
+										&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getDate(), dia)) {
+									qtdCadastradas++;
+									if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
+										vlrCadastradas = vlrCadastradas.add(rs.getBigDecimal("quantoprecisa"));
+									}
+								}
+							}
+						}
+						
 						if (!CommonsUtil.semValor((rs.getDate("inicioanalisedata")))) {
 							if (CommonsUtil.mesmoValor(rs.getDate("inicioanalisedata").getMonth(), mes)
 									&& CommonsUtil.mesmoValor(rs.getDate("inicioanalisedata").getYear(), ano)
 									&& CommonsUtil.mesmoValor(rs.getDate("inicioanalisedata").getDate(), dia)) {
-								qtdCadastradas++;
+								qtdInicioAnalise++;
 								if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
-									vlrCadastradas = vlrCadastradas.add(rs.getBigDecimal("quantoprecisa"));
+									vlrInicioAnalise = vlrInicioAnalise.add(rs.getBigDecimal("quantoprecisa"));
 								}
 							}
 						}
@@ -108,11 +124,13 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					}
 					
 					powerBi.setNumeroOperacoesAssinadas(BigInteger.valueOf(qtdAssinadas));
+					powerBi.setNumeroOperacoesInicioAnalise(BigInteger.valueOf(qtdInicioAnalise));
 					powerBi.setNumeroOperacoesAnalisadas(BigInteger.valueOf(qtdAnalisadas));
 					powerBi.setNumeroOperacoesCadastradas(BigInteger.valueOf(qtdCadastradas));
 					powerBi.setNumeroOperacoesRegistradas(BigInteger.valueOf(qtdRegistradas));
 					
 					powerBi.setValorOperacoesAssinadas(vlrAssinadas);
+					powerBi.setValorOperacoesInicioAnalise(vlrInicioAnalise);
 					powerBi.setValorOperacoesCadastradas(vlrCadastradas);
 					powerBi.setValorOperacoesRegistradas(vlrRegistradas);
 					powerBi.setValorOperacoesAnalisadas(vlrAnalisadas);

@@ -22,11 +22,13 @@ import com.webnowbr.siscoat.common.DateUtil;
 public class PowerBiVO {
 	
 	public BigInteger numeroOperacoesCadastradas;
+	public BigInteger numeroOperacoesInicioAnalise;
 	public BigInteger numeroOperacoesAnalisadas;
 	public BigInteger numeroOperacoesAssinadas;
 	public BigInteger numeroOperacoesRegistradas;
 	
 	public BigDecimal valorOperacoesCadastradas;
+	public BigDecimal valorOperacoesInicioAnalise;
 	public BigDecimal valorOperacoesAnalisadas;
 	public BigDecimal valorOperacoesAssinadas;
 	public BigDecimal valorOperacoesRegistradas;
@@ -110,6 +112,22 @@ public class PowerBiVO {
 
 	public void setValorOperacoesAnalisadas(BigDecimal valorOperacoesAnalisadas) {
 		this.valorOperacoesAnalisadas = valorOperacoesAnalisadas;
+	}
+
+	public BigInteger getNumeroOperacoesInicioAnalise() {
+		return numeroOperacoesInicioAnalise;
+	}
+
+	public void setNumeroOperacoesInicioAnalise(BigInteger numeroOperacoesInicioAnalise) {
+		this.numeroOperacoesInicioAnalise = numeroOperacoesInicioAnalise;
+	}
+
+	public BigDecimal getValorOperacoesInicioAnalise() {
+		return valorOperacoesInicioAnalise;
+	}
+
+	public void setValorOperacoesInicioAnalise(BigDecimal valorOperacoesInicioAnalise) {
+		this.valorOperacoesInicioAnalise = valorOperacoesInicioAnalise;
 	}
 	
 
