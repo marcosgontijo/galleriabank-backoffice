@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.vo;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
@@ -24,7 +25,15 @@ public class CcbVO {
 	private String bairroEmpresa;
 	private String cepEmpresa;
 	private Set<PagadorRecebedorSocio> socios;
-
+	
+	
+	public CcbVO() {
+		this.pessoa = new PagadorRecebedor();
+		this.socios	= new HashSet<>();
+		this.fiduciante = false;
+		this.feminino = false;
+		this.empresa = false;
+	}
 	
 	
 	public PagadorRecebedor getPessoa() {
