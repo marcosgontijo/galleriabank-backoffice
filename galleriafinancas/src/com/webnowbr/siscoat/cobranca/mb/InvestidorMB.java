@@ -8988,7 +8988,7 @@ public class InvestidorMB {
 		this.listPagadores = prDao.findAll();
 
 		// Seta ano Base
-		this.anoBase = "2020";
+		//this.anoBase = "2020";
 
 		// gera consulta e PDFs
 		for (PagadorRecebedor investidor : this.listPagadores) {
