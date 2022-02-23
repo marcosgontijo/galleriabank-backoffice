@@ -2772,6 +2772,12 @@ public class ContratoCobrancaMB {
 
 		try {
 
+			TakeBlipMB takeBlipMBs = new TakeBlipMB();
+			takeBlipMBs.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+			"contrato_dado_entrada_cartorio",
+			this.objetoContratoCobranca.getPagador().getNome(),
+			this.objetoContratoCobranca.getNumeroContrato(), "", "");
+			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 

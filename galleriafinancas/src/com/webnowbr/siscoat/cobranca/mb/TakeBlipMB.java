@@ -142,9 +142,10 @@ public class TakeBlipMB {
 		JSONObject jsonWhatsApp = new JSONObject();
 		jsonWhatsApp.put("id", generateUUID());
 
-		jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
+		//jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
+		jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
 				
-		jsonWhatsApp.put("type", "application/json");
+		jsonWhatsApp.put("type", "application/json"); 
 		
 		JSONArray jsonWhatsAppComponents = new JSONArray();
 		JSONObject jsonWhatsAppComponent = new JSONObject();

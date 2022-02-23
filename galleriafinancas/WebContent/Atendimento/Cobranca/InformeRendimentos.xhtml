@@ -183,6 +183,19 @@
 						</p:dialog>
 	
 						<h:form>
+							<h:panelGrid columns="2">
+								<p:outputLabel for="anofiscal" value="Ano base: "
+									styleClass="labelBold"  />
+								<p:selectOneMenu id="anofiscal"
+										value="#{investidorMB.anoBase}"
+										label="Status" style="width:190px;" required="true">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="2019" itemLabel="2019" />
+										<f:selectItem itemValue="2020" itemLabel="2020" />
+										<f:selectItem itemValue="2021" itemLabel="2021" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+				
 							<p:commandButton value="Gerar PDFs" ajax="false"
 								onclick="PrimeFaces.monitorDownload(start, stop);"
 								icon="ui-icon-arrowthick-1-s">
