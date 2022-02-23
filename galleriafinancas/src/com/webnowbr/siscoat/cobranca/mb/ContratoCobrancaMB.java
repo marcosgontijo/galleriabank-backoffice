@@ -7879,7 +7879,7 @@ public class ContratoCobrancaMB {
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
-						c.setStatus("Em Análise.");
+						c.setStatus("Análise Pendente");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -8004,7 +8004,7 @@ public class ContratoCobrancaMB {
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 				if (usuarioLogado != null) {
-					if (usuarioLogado.isAdministrador()) {
+					if (usuarioLogado.isAdministrador() || usuarioLogado.isUserPreContratoAnalista()) {
 						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 					} else {
 						if (usuarioLogado.getListResponsavel().size() > 0) {

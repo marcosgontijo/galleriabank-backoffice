@@ -628,6 +628,10 @@ public class CRMMB {
 					c.setStatus("Em Análise");
 				}
 				
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
+					c.setStatus("Análise Pendente");
+				}
+				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
 					c.setStatus("Ag. Pagto. Laudo");
 				}
