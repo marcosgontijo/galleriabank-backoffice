@@ -108,7 +108,7 @@
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 									            <f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-									            <p:ajax update="AnaliseReprovadaPanel" event="change" /> 
+									            <p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" event="change" /> 
 									        </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>	
@@ -240,7 +240,7 @@
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										    	<f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										    	<p:ajax update="AnaliseReprovadaPanel" listener="#{contratoCobrancaMB.controlaWhatsAppPreAprovado}"/> 
+										    	<p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" listener="#{contratoCobrancaMB.controlaWhatsAppPreAprovado}"/> 
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>

@@ -7998,7 +7998,7 @@ public class ContratoCobrancaMB {
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 				if (usuarioLogado != null) {
-					if (usuarioLogado.isAdministrador()) {
+					if (usuarioLogado.isAdministrador() || usuarioLogado.isUserPreContratoAnalista()) {
 						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 					} else {
 						if (usuarioLogado.getListResponsavel().size() > 0) {
