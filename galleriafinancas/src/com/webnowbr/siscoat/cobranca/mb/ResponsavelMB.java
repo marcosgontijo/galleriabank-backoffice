@@ -165,6 +165,11 @@ public class ResponsavelMB {
 		String msgRetorno = null;
 		try {
 
+			if (objetoResponsavel.getWhatsAppNumero() == null || objetoResponsavel.getWhatsAppNumero().equals("")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				takeBlipMB.getWhatsAppURL(objetoResponsavel);
+			}
+			
 			if (this.selectedResponsavel != null) {
 				if (this.selectedResponsavel.getId() > 0) {
 					objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);

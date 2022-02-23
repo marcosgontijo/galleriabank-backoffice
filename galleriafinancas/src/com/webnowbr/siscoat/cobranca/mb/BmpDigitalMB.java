@@ -156,7 +156,7 @@ public class BmpDigitalMB {
 		
 		Date dataHoje = DateUtil.getDataHoje();
 		//Date dataReferencia = DateUtil.adicionarMes(dataHoje, -2);
-		Date dataReferencia = DateUtil.adicionarDias(dataHoje, -50);
+		Date dataReferencia = DateUtil.adicionarDias(dataHoje, -60);
 		
 		int mesReferenciaInt = dataReferencia.getMonth();
 		mesReferenciaInt ++;

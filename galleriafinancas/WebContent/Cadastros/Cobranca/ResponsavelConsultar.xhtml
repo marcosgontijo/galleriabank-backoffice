@@ -49,6 +49,8 @@
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{responsavelMB.clearFields}"/>
+						<p:spacer width="10"></p:spacer>
+						<p:commandButton value="Sincronizar Números WhatsApp" ajax="false" icon="ui-icon-arrowrefresh-1-w" action="#{contratoCobrancaMB.processaResponsaveisGeraNumeroWhatsApp}"/>
 			        </f:facet>
 				</p:dataTable>
 			</p:panel>

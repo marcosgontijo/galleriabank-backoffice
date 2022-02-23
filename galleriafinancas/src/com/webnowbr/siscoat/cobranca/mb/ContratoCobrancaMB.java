@@ -8038,6 +8038,17 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
 	
+	public void processaResponsaveisGeraNumeroWhatsApp() {
+		ResponsavelDao r = new ResponsavelDao();
+		List<Responsavel> responsaveis = r.findAll();
+		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		
+		for (Responsavel resp : responsaveis) {			
+			takeBlipMB.getWhatsAppURL(resp);
+		}
+	}
+	
 	public void controlaWhatsAppAgAssintura() {
 		if (this.objetoContratoCobranca.isCcbPronta()) {
 			this.controleWhatsAppAgAssintura = true;
