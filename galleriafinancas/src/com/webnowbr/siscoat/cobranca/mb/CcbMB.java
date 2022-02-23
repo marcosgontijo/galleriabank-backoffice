@@ -1122,6 +1122,20 @@ public class CcbMB {
 			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"0\"/></w:pPr></w:lvl>"
 			+ "</w:abstractNum>";
 	
+	static String cTAbstractNumBulletXML_NoLeft_NoHanging_bold2 = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"3\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"0\" w:hanging=\"0\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"0\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"0\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_NoHanging_bold = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"4\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"360\" w:hanging=\"0\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
 	public StreamedContent geraCcbDinamica() throws IOException{
 		try {
 			XWPFDocument document = new XWPFDocument();
@@ -2156,10 +2170,504 @@ public class CcbMB {
 			run.setBold(false);
 			run.addCarriageReturn();
 			
+			fazParagrafoSimples(document, paragraph, run, "7. DO VENCIMENTO ANTECIPADO", true);
 			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.1. ", 
+					 "Além das demais hipóteses estabelecidas em lei e nesta CCB,"
+					 + " a dívida aqui contraída pelo EMITENTE, a partir do primeiro "
+					 + "dia útil da liberação do Valor do Crédito, reputar-se-á "
+					 + "antecipadamente vencida, facultando-se ao credor da CCB exigir "
+					 + "a imediata e integral satisfação de seu crédito, independentemente "
+					 + "de aviso ou notificação judicial ou extrajudicial de qualquer espécie,"
+					 + " na ocorrência de qualquer das hipóteses previstas nos artigos 333 e "
+					 + "1.425 do Código Civil Brasileiro e, ainda, nas seguintes hipóteses:", 
+					 true,  false);
 			
+			 cTNumbering2 = CTNumbering.Factory.parse(cTAbstractNumBulletXML_NoLeft_NoHanging_bold2);
+			 cTAbstractNum2 = cTNumbering2.getAbstractNumArray(0);
+			 abstractNum2 = new XWPFAbstractNum(cTAbstractNum2);
+			 numbering2 = document.createNumbering();
+			 abstractNumID2 = numbering.addAbstractNum(abstractNum2);
+			 numID2 = numbering2.addNum(abstractNumID2);
 			
+			geraParagrafoBulletList(document, paragraph, run, numID2,
+					"Se ocorrer inadimplemento de qualquer obrigação assumida pelo EMITENTE, "
+					+ "em consonância com as cláusulas e condições aqui estabelecidas, "
+					+ "principalmente no que tange ao pagamento das parcelas devidas "
+					+ "em decorrências do empréstimo a ele concedido por força da "
+					+ "presente CCB;",
+					false);
 			
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se ocorrer inadimplemento "
+			 		+ "de qualquer obrigação assumida pelo EMITENTE, e/ou quaisquer sociedades"
+			 		+ " direta ou indiretamente ligadas, coligadas, controladoras ou controladas"
+			 		+ " pelo EMITENTE (doravante denominadas “AFILIADAS”), inclusive no exterior,"
+			 		+ " de suas obrigações decorrentes de outros contratos, empréstimos ou descontos"
+			 		+ " celebrados com o CREDOR e/ou quaisquer sociedades, direta ou indiretamente,"
+			 		+ " ligadas, coligadas, controladoras ou controladas pelo credor da CCB ou seu "
+			 		+ "cessionário, e/ou com terceiros, e/ou rescisão ou declaração de vencimento "
+			 		+ "antecipado dos respectivos documentos, por culpa do EMITENTE e/ou de quaisquer "
+			 		+ "AFILIADAS;", false);
+	
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se for protestado qualquer "
+			 		+ "título de responsabilidade do EMITENTE em razão do inadimplemento de obrigação "
+			 		+ "cujo valor individual ou em conjunto seja igual ou superior a R$ 100.000,00 "
+			 		+ "(cem mil reais), sem que a justificativa para tal medida tenha sido apresentada"
+			 		+ " ao credor da CCB, no prazo que lhe tiver sido solicitada ou, sendo ou tendo sido"
+			 		+ " apresentada a justificativa, se esta não for considerada satisfatória pelo CREDOR,"
+			 		+ " ressalvado o protesto tirado por erro ou má-fé do respectivo portador;", false);
+
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se O EMITENTE for inscrito no "
+			 		+ "Cadastro de Emitentes de Cheques sem Fundo – CCF, ou, ainda, constem informações "
+			 		+ "negativas a seu respeito no Sistema de Informações de Crédito do Banco Central,"
+			 		+ " que, a critério do credor da CCB, possa afetar a sua capacidade de cumprir as "
+			 		+ "obrigações assumidas na presente CCB ou no Termo de Garantia;", false);
+			
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se o EMITENTE e/ou quaisquer AFILIADAS,"
+			 		+ " inclusive no exterior, tornarem-se insolventes, requerer(em) ou tiver(em), falência, "
+			 		+ "insolvência civil, recuperação judicial ou extrajudicial requerida ou decretada, sofrer "
+			 		+ "intervenções, regime de administração especial temporária, ou liquidação judicial ou"
+			 		+ " extrajudicial;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se for comprovada a falsidade de qualquer"
+			 		+ " declaração, informação ou documento que houver sido, respectivamente, firmada, prestada ou"
+			 		+ " entregue pelo EMITENTE, ao CREDOR;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se o EMITENTE sofrer qualquer (quaisquer) "
+			 		+ "medida(s) judicial(ais) ou extrajudicial(ais) que por qualquer forma, possa(m) afetar "
+			 		+ "negativamente os créditos do empréstimo e/ou as garantias conferidas ao credor da CCB;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se as garantias fidejussórias, "
+			 		+ "ora e/ou que venham a ser eventualmente convencionadas, por qualquer fato atinente"
+			 		+ " ao seu objeto ou prestador se tornar inábeis, impróprias, ou insuficientes para "
+			 		+ "assegurar o pagamento da dívida, e desde que não sejam substituídas, ou complementadas,"
+			 		+ " quando solicitada por escrito pelo CREDOR ou a quem este vier a indicar;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se, sem o expresso consentimento "
+			 		+ "do credor da CCB ocorrer a transferência a terceiros dos direitos e obrigações do"
+			 		+ " EMITENTE previstos nesta CCB e no Termo de Garantia;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se, sem o expresso consentimento do "
+			 		+ "credor da CCB ocorrer alienação, cessão, doação ou transferência, por qualquer meio, "
+			 		+ "de bens, ativos ou direitos de propriedade do EMITENTE e/ou de quaisquer AFILIADAS, "
+			 		+ "quando aplicável que, no entendimento do credor, possam levar ao descumprimento das "
+			 		+ "obrigações previstas na presente CCB;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se, sem o expresso consentimento do"
+			 		+ " credor da CCB, o EMITENTE, quando aplicável, tiver total ou parcialmente, o seu"
+			 		+ " controle acionário, direto ou indireto, cedido, transferido ou por qualquer outra"
+			 		+ " forma alienado ou modificado;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se ocorrer mudança ou alteração do"
+			 		+ " objeto social do EMITENTE, quando aplicável, de forma a alterar as atividades"
+			 		+ " principais ou a agregar às suas atividades novos negócios que possam representar "
+			 		+ "desvios em relação às atividades atualmente desenvolvidas;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se, sem o expresso consentimento do"
+			 		+ " credor da CCB, o EMITENTE sofrer, durante a vigência desta CCB, qualquer operação"
+			 		+ " de transformação, incorporação, fusão ou cisão;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se a garantia real objeto do"
+			 		+ " Instrumento Particular de Alienação Fiduciária de Bem Imóvel não for efetivamente"
+			 		+ " registrada junto ao RGI no prazo de até 30(trinta) dias corridos a contar da"
+			 		+ " emissão desta CCB; e", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID2, "Se o Bem Imóvel objeto"
+			 		+ " da garantia à presente CCB apresentar quaisquer características, ônus "
+			 		+ "ou gravame ou caso ocorra qualquer ato ou omissão por parte do EMITENTE,"
+			 		+ " que impeça a efetiva constituição da garantia regulada nos termos Instrumento"
+			 		+ " Particular de Alienação Fiduciária de Bem Imóvel.", false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "7.2. ",  "No caso de falta de pagamento"
+			 		+ " de qualquer parcela(s) na(s) data(s) de seu(s) respectivo(s) vencimento(s),"
+			 		+ " o CREDOR poderá, por mera liberdade e sem que tal situação caracterize novação"
+			 		+ " ou alteração das condições estabelecidas nesta CCB – optar pela cobrança somente"
+			 		+ " da(s) parcela(s) devida(s) em aberto, comprometendo-se o EMITENTE,"
+			 		+ " em contrapartida, a liquidá-la(s) imediatamente quando instado(s) para tal,"
+			 		+ " sob pena de ultimar-se o vencimento antecipado de toda a dívida; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "7.2.1. ",  "Declarado o vencimento "
+			 		+ "antecipado de toda a dívida, o credor da CCB apresentará ao EMITENTE notificação "
+			 		+ "contendo o saldo devedor final, incluindo principal, juros, encargos, despesas e "
+			 		+ "tributos, a ser pago pelo EMITENTE no dia útil imediatamente subsequente ao "
+			 		+ "recebimento de referida notificação, sob pena de ser considerado em mora, "
+			 		+ "independentemente de qualquer aviso ou notificação judicial ou extrajudicial;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "7.2.2. ",  "Na declaração de vencimento "
+			 		+ "antecipado da dívida pelo credor da CCB, além do valor apurado nos termos do item 7.2.1 acima,"
+			 		+ " serão acrescidos os encargos previstos na cláusula 6 às parcelas vencidas. ", true,  false);
+			 
+			 fazParagrafoSimples(document, paragraph, run, "8. LIQUIDAÇÃO ANTECIPADA", true);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "8.1. ",  "O EMITENTE poderá liquidar"
+			 		+ " antecipadamente, total ou parcialmente, suas obrigações decorrentes desta CCB, "
+			 		+ "desde que previamente acordado, de modo satisfatório ao credor da CCB e ao EMITENTE,"
+			 		+ " as condições de tal liquidação antecipada. Para tanto, o EMITENTE deverá encaminhar"
+			 		+ " ao credor da CCB, solicitação por escrito, com antecedência mínima de 10 (dez) dias úteis;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "8.1.1. ",  "Se indicada a Tarifa de "
+			 		+ "Liquidação Antecipada no item 2.10 acima, o EMITENTE, desde já, se obriga a pagar "
+			 		+ "ao CREDOR, na data da liquidação, a Tarifa de Liquidação Antecipada sobre o valor"
+			 		+ " efetivamente pago antecipadamente, a título de indenização pelos custos relacionados"
+			 		+ " com a quebra de captação de recursos;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "8.1.2. ",  "Nas situações em que as despesas "
+			 		+ "associadas à contratação realizada por meio desta CCB forem também objeto de financiamento "
+			 		+ "ou empréstimo, essas despesas integrarão igualmente a operação para apuração do valor "
+			 		+ "presente para fins de amortização, total ou parcial, da dívida ainda em aberto;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "8.1.3. ",  "Caso haja saldo devedor a ser"
+			 		+ " pago acrescentar-se-ão, às prestações em atraso, e as penalidades previstas neste instrumento,"
+			 		+ " bem como os juros remuneratórios calculados pro rata die e quaisquer outras despesas de "
+			 		+ "responsabilidade do EMITENTE nos termos desta CCB;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "8.1.4. ",  "Sempre que for necessário,"
+			 		+ " a apuração do saldo devedor do EMITENTE será realizada pelo CREDOR mediante planilha "
+			 		+ "de cálculo, que constituirá documento integrante e inseparável da presente CCB. ", true,  false);
+			 
+			 fazParagrafoSimples(document, paragraph, run, "9.	DECLARAÇÕES", true);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "9.1. ",  "As Partes signatárias, cada uma por si, declaram e garantem que: ", true,  false);
+			 
+			 cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML_NoHanging_bold);
+			 cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+			 abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			 numbering = document.createNumbering();
+			 abstractNumID = numbering.addAbstractNum(abstractNum);
+			 numID = numbering.addNum(abstractNumID);
+			 
+			 geraParagrafoBulletListComposta( document,  paragraph,  run,  run2,  "Possui plena capacidade e "
+			 		+ "legitimidade para celebrar a presente CCB, realizar todas as operações e cumprir todas "
+			 		+ "as obrigações aqui assumidas", 
+						 ", bem como dos instrumentos de garantia, tendo tomado todas as medidas"
+						 + " de natureza societária e outras eventualmente necessárias para autorizar "
+						 + "a sua celebração, implementação e cumprimento de todas as obrigações "
+						 + "constituídas;",  true,  false,  numID, UnderlinePatterns.DASH);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "A celebração desta CCB e do Termo de Garantia,"
+			 		+ " e o cumprimento das obrigações de cada uma das Partes: (a) não violam qualquer disposição contida"
+			 		+ " nos seus documentos societários; (b) não violam qualquer lei, regulamento, decisão judicial, "
+			 		+ "administrativa ou arbitral, aos quais a respectiva Parte esteja vinculada; (c) não exigem qualquer"
+			 		+ " consentimento, ação ou autorização, prévia ou posterior, de terceiros;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "Esta CCB e o Termo de Garantia são validamente "
+			 		+ "celebrados e constituem obrigação legal, válida, vinculante e exequível contra cada uma das Partes,"
+			 		+ " de acordo com os seus termos;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "Cada Parte está apta a cumprir as obrigações ora"
+			 		+ " previstas nesta CCB e nos instrumentos de garantia, e agirá em relação aos mesmos de boa-fé e com"
+			 		+ " lealdade;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "Nenhuma Parte depende economicamente da outra;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "Nenhuma das Partes se encontra em estado de"
+			 		+ " necessidade ou sob coação para celebrar esta CCB e/ou quaisquer contratos e compromissos a "
+			 		+ "ela relacionados e acessórios ", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "As discussões sobre o objeto contratual, "
+			 		+ "crédito, encargos incidentes e obrigações acessórias, oriundos desta CCB e dos instrumentos"
+			 		+ " de garantia, foram feitas, conduzidas e implementadas por livre iniciativa das Partes;", false);
+			 
+			 geraParagrafoBulletList(document, paragraph, run, numID, "O CREDOR e EMITENTE, são pessoas devidamente estruturadas,"
+			 		+ " qualificadas e capacitadas para entender a estrutura financeira e jurídica objeto desta CCB, e estão "
+			 		+ "acostumadas a celebrar, em seus respectivos campos de atuação, títulos e instrumentos de garantia semelhantes"
+			 		+ " aos previstos nesta CCB, não havendo entre as Partes qualquer relação de hipossuficiência ou ainda natureza de"
+			 		+ " consumo na relação aqui tratada.", false);
+			 
+			 fazParagrafoSimples(document, paragraph, run, "10.	DAS DISPOSIÇÕES FINAIS", true);
+
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.1. Tolerância:",  "A tolerância não implica perdão, renúncia, novação ou alteração da dívida ou das condições aqui previstas e o pagamento do principal, mesmo sem ressalvas, não será considerado ou presumido a quitação dos encargos. Dessa forma, as Partes acordam que qualquer prática diversa da aqui pactuada, mesmo que reiterada, não poderá ser interpretada como novação;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.1.1 Declarações Específicas: ",  "O EMITENTE declara que: "
+			 		+ "(i) está ciente que o surto do novo coronavírus (COVID-19), reconhecido oficialmente como pandemia pela "
+			 		+ "Organização Mundial de Saúde (OMS), é anterior à celebração desta CCB e que a pandemia não apresenta "
+			 		+ "caráter de imprevisibilidade, extraordinariedade ou superveniência no presente momento, (ii) reconhece "
+			 		+ "que tais eventos não configuram caso fortuito ou de força maior, conforme definição do artigo 393 do Código"
+			 		+ " Civil, e (iii) compromete-se a honrar as obrigações assumidas nos termos desta CCB; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.2. Comunicação aos Serviços de Proteção ao Crédito: ", 
+					 "Na hipótese de ocorrer descumprimento de qualquer obrigação ou atraso no pagamento, o CREDOR ou a quem este"
+					 + " vier a indicar poderá comunicar o fato a qualquer serviço de proteção ao crédito, como Serasa Experian ou"
+					 + " qualquer outro órgão encarregado de cadastrar atraso nos pagamentos e o descumprimento de obrigações "
+					 + "contratuais, informando o nome do EMITENTE.", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.3. Reforço de Garantias: ",  "O CREDOR poderá, "
+			 		+ "a qualquer tempo, exigir reforço de garantias, ficando estipulado o prazo de 5 (cinco) dias úteis "
+			 		+ "contados da data de sua solicitação, pelo CREDOR, por carta sob protocolo ou registro postal, para "
+			 		+ "que o EMITENTE providencie o respectivo reforço, sob pena do imediato vencimento da presente CCB, "
+			 		+ "independentemente de interpelação judicial ou notificação judicial ou extrajudicial;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.4. Alteração da CCB: ",  "A presente CCB somente poderá "
+			 		+ "ser alterada mediante aditivo próprio devidamente assinado pelas Partes; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.5. Comunicação ao Sistema de Informação de Créditos "
+			 		+ "(“SCR”): ",  "O CREDOR, neste ato, comunica ao EMITENTE que a presente operação de empréstimo, será "
+			 				+ "registrada no SCR gerido pelo Banco Central do Brasil (“BACEN”), que tem por finalidade subsidiar"
+			 				+ " o BACEN para fins de supervisão de risco de crédito a que estão expostas as instituições"
+			 				+ " financeiras e ainda intercambiar informações entre as instituições financeiras; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.5.1 ",  "O EMITENTE poderá ter acesso aos dados "
+			 		+ "constantes em seu SCR, por meio de central de atendimento ao público do BACEN;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.5.2 ",  "Em caso de discordância quanto às informações"
+			 		+ " do SCR, bem como pedidos de correções, o EMITENTE deverá entrar em contato com a Ouvidoria do CREDOR,"
+			 		+ " nos termos do item 10.11 abaixo;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.5.3 ",  "O EMITENTE autoriza o CREDOR ou a quem este "
+			 		+ "indicar, a qualquer tempo: a: (i) efetuar consultas ao Sistema de Informações de Crédito – SCR – do Banco"
+			 		+ " Central do Brasil (“SCR”), nos termos da Resolução nº 3.658, do Conselho Monetário Nacional, de 17.12.2008,"
+			 		+ " conforme alterada e os serviços de proteção ao crédito SPC, Serasa e outras em que o CREDOR seja "
+			 		+ "cadastrado; (ii) fornecer ao Banco Central do Brasil informações sobre esta CCB, para integrar o SCR; "
+			 		+ "e (iii) proceder conforme disposições que advierem de novas exigências feitas pelo Banco Central do Brasil"
+			 		+ " ou autoridades. ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.6. Efeitos do CCB: ",  "As Partes convencionam que as "
+			 		+ "obrigações pecuniárias estipuladas na presente CCB passam a vigorar a partir de sua respectiva emissão;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.7. ",  "Se qualquer item ou cláusula desta CCB "
+			 		+ "vier a ser considerado ilegal, inexequível ou, por qualquer motivo, ineficaz, todos os demais itens"
+			 		+ " e cláusulas continuarão em vigor, plenamente válidos e eficazes. As Partes, desde já, se comprometem"
+			 		+ " a negociar, no menor prazo possível, item ou cláusula que, conforme o caso, venha a substituir o item"
+			 		+ " ou cláusula ilegal, inexequível ou ineficaz. Nessa negociação, deverá ser considerado o objetivo das "
+			 		+ "Partes na data de assinatura dessa CCB, bem como o contexto no qual o item ou cláusula ilegal, inexequível"
+			 		+ " ou ineficaz foi inserido.", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.8. Irrevogabilidade e Irretratabilidade: ",
+					 "A presente CCB é firmada em caráter irrevogável e irretratável, obrigando as Partes, seus "
+					 + "herdeiros e/ou sucessores; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.9. Base de Dados: ",  "O EMITENTE declara e concorda "
+			 		+ "expressamente que ao firmar a presente CCB passará a fazer parte integrante da base de clientes do CREDOR,"
+			 		+ " ou a quem este vier a indicar, autorizando, assim através das informações cadastrais que o CREDOR, ou a "
+			 		+ "quem este vier a indicar, possui a respeito dele o oferecimento de produtos e/ou serviços;", true,  false);
+			 
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.10. Ouvidoria: ",  "O EMITENTE declara ter ciência de que o "
+			 		+ "CREDOR disponibiliza um canal de Ouvidoria para que sejam feitas sugestões e/ou reclamações através do telefone"
+			 		+ " (11) 3810-9333;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.11. Legislação: ",  "Aplica-se a presente CCB, as"
+			 		+ " disposições da Lei 10.931, de 02 de agosto de 2004, e posteriores alterações (“Lei 10.931”), declarando"
+			 		+ " o EMITENTE ter conhecimento que a presente CCB é um título executivo extrajudicial e representa dívida "
+			 		+ "em dinheiro, certa, líquida e exigível, seja pela soma nela indicada, seja pelo saldo devedor "
+			 		+ "demonstrado em planilha de cálculo ou nos extratos de Conta Corrente, a serem emitidos consoante "
+			 		+ "o que preceitua a aludida Lei 10.931;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.11.1  ",  "O EMITENTE declara ter ciência que: (i)"
+			 		+ " o CREDOR integra o Sistema Financeiro Nacional, submetendo-se à disciplina e regras pelo Conselho"
+			 		+ " Monetário Nacional e Banco Central do Brasil; e (ii) as taxas de juros cobradas nas operações "
+			 		+ "financeiras realizadas pelo CREDOR, incluindo a presente CCB, não estão submetidas ao limite de"
+			 		+ " 12% (doze por cento) ao ano, como já decidiu o Supremo Tribunal Federal, sendo legítima a "
+			 		+ "cobrança de juros e encargos superiores a esse percentual;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.11.2	 ",  "A tolerância, por uma das partes, "
+			 		+ "quanto a alguma demora, atraso ou omissão da outra parte no cumprimento das obrigações ajustadas"
+			 		+ " neste instrumento, ou a não aplicação, na ocasião oportuna, das penalidades previstas "
+			 		+ "será considerada mera liberalidade, não se configurando como precedente ou novação "
+			 		+ "contratual", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.11.3 ",  "Se vier a tornar impossível"
+			 		+ " a aplicação das regras previstas nesta Cédula, seja por força de eventual caráter cogente"
+			 		+ " de imperativos legais que venham a ser baixados, seja em decorrência de ausência de consenso"
+			 		+ " entre as Partes, considerar-se-á rescindida esta CCB e, em consequência, a dívida dela"
+			 		+ " oriunda se considerará antecipadamente vencida, da mesma forma e com os mesmos efeitos "
+			 		+ "previstos, efetivando-se a cobrança de juros “pro-rata temporis”; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.12. Cessão ou Endosso: ",  "O CREDOR fica "
+			 		+ "expressamente autorizado a qualquer tempo, a seu exclusivo critério e independentemente da "
+			 		+ "prévia anuência do EMITENTE, a ceder a terceiros os direitos de crédito que detém em razão desta CCB,"
+			 		+ " bem como a transferi-la a terceiros mediante endosso da “via negociável”, sendo certo que "
+			 		+ "a cessão ou o endosso não caracterizarão violação do sigilo bancário em relação ao EMITENTE."
+			 		+ " Ocorrendo a cessão ou o endosso, o cessionário/endossatário desta CCB assumirá automaticamente"
+			 		+ " a qualidade de credor desta CCB, passando a ser titular de todos os direitos e obrigações dela "
+			 		+ "decorrentes; ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.12.1	 ",  "Após o endosso pelo CREDOR desta CCB,"
+			 		+ " o EMITENTE desde já, reconhece a validade da emissão e do endosso desta CCB de forma física ou eletrônica, "
+			 		+ "o que é feito com base no art. 889, §3º, do Código Civil. ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.12.2	",  "Na hipótese de transferência da presente CCB,"
+			 		+ " o seu novo titular ficará automaticamente sub-rogado em todos os direitos e garantias que "
+			 		+ "cabiam ao CREDOR original, independentemente de qualquer formalidade, passando a ter acesso "
+			 		+ "livre e direto a todas as informações relacionadas à operação bancária e respectivas garantias,"
+			 		+ " a exemplo de duplicatas e/ou direitos creditórios e/ou quaisquer outras garantias eventualmente "
+			 		+ "constituídas, reconhecendo o EMITENTE que o novo titular da CCB possui o inequívoco direito de "
+			 		+ "acompanhar detidamente todo o andamento da operação bancária, motivo pelo qual, da mesma forma,"
+			 		+ " estará automaticamente sub-rogado a consultar as informações consolidadas em seu nome, no SCR, "
+			 		+ "SERASA – Centralização de Serviços os Bancos S.A. e quaisquer  outros órgãos, entidades ou empresas,"
+			 		+ " julgados pertinentes pelo CREDOR, permanecendo válida a presente autorização durante todo o tempo"
+			 		+ " em que subsistir em aberto e não liquidadas as obrigações decorrentes da presente CCB. ", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.12.3	 ",  "A cessão dos direitos sempre compreenderá"
+			 		+ " os acessórios, títulos, instrumentos que os representam e anexos. De tal forma, ao formalizar a cessão "
+			 		+ "dos direitos de crédito, por meio de Contrato de Cessão, o CREDOR estará cedendo, automaticamente,"
+			 		+ " todos os direitos, privilégios, preferências, prerrogativas, garantias e ações, legal e contratualmente"
+			 		+ " previstas, que sejam inerentes ao direito de crédito cedido, inclusive: (i) o direito de receber "
+			 		+ "integralmente o seu valor, acrescido dos juros, das multas, da atualização monetária e/ou demais encargos"
+			 		+ " remuneratórios e/ou moratórios; (ii) o direito de ação e o de protesto em face do respectivo EMITENTE,"
+			 		+ " para exigir o cumprimento da obrigação de pagamento, ou visando resguardar qualquer direito; (iii)"
+			 		+ " as garantias eventualmente existentes, sejam reais ou pessoais; e (iv) o direito de declarar o direito "
+			 		+ "de crédito vencido antecipadamente, nas hipóteses contratadas com o EMITENTE e naquelas previstas na"
+			 		+ " legislação aplicável;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.12.4 ",  "O EMITENTE, está integralmente ciente(s)"
+			 		+ " e de acordo com o seguinte: (i) qualquer litígio ou questionamento, judicial ou extrajudicial, que possa "
+			 		+ "vir a ser ajuizado, deverá ser ajuizado, àquele portador endossatário da CCB na data do ajuizamento do "
+			 		+ "litígio ou questionamento; e (ii) o ajuizamento de qualquer ação, judicial ou extrajudicial, pelo EMITENTE,"
+			 		+ " contra o CREDOR, após o mesmo ter endossado esta CCB para terceiro, o EMITENTE, estará sujeito ao "
+			 		+ "pagamento de indenização por perdas e danos, e ressarcimento de todo e quaisquer custos e despesas"
+			 		+ " que o CREDOR venha a incorrer (incluindo honorários advocatícios) para defesa de seus direitos no "
+			 		+ "respectivo litígio;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.13. Emissão de Certificados de CCB: ",  "O CREDOR, "
+			 		+ "ou a quem este vier a indicar, poderá emitir certificados de CCB com lastro no presente título, podendo"
+			 		+ " negociá-los livremente no mercado;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.13.1 ",  "Caso haja a emissão do certificado referido "
+			 		+ "no item 10.13, a presente CCB ficará custodiada em instituição financeira autorizada, a qual passará a "
+			 		+ "proceder às cobranças dos valores devidos, junto ao EMITENTE;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.13.2 ",  "O EMITENTE desde já se declara de acordo"
+			 		+ " com a emissão do certificado referido no item 10.13, obrigando-se a atender às solicitações da instituição"
+			 		+ " custodiante, bem como, aceitam a cessão de crédito, independentemente de qualquer aviso "
+			 		+ "ou formalidade;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.14.	Foro: ",  "Ajustam as Partes que será sempre"
+			 		+ " competente para conhecer e dirimir qualquer questão oriunda ou decorrente da presente CCB, o foro"
+			 		+ " da comarca de São Paulo capital com a exclusão de qualquer outro, por mais privilegiado que seja,"
+			 		+ " reservando-se o credor da CCB o direito de optar, a seu exclusivo critério, pelo foro da sede"
+			 		+ " do EMITENTE ou, ainda, pelo foro da situação dos bens dados em garantia;", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.15. ",  "Em caso de contratação eletrônica, "
+			 		+ "as Partes ratificam que admitem como válido, para fins de comprovação de autoria e integridade,"
+			 		+ " a assinatura e informações constantes no presente documento, as quais foram capturadas de forma"
+			 		+ " eletrônica e utilizadas nesta Cédula, constituindo título executivo extrajudicial nos termos "
+			 		+ "do artigo 28 da Lei nº 10.931 2004 e para todos os fins de direito, ainda que seja estabelecida "
+			 		+ "com assinatura eletrônica ou certificação fora dos padrões ICP-BRASIL, conforme disposto pelo art."
+			 		+ " 10 da Medida Provisória nº 2.200/2001.", true,  false);
+			 
+			 geraParagrafoComposto(document, paragraph, run, run2, "10.16. ",  "A presente CCB é emitida e firmada "
+			 		+ "em 2 (duas) vias, constando na 1ª via a expressão “Via Negociável” e nas demais, a expressão "
+			 		+ "“Via Não Negociável”. ", true,  false);
+
+			 fazParagrafoSimples(document, paragraph, run, "São Paulo, SP, emissaoDia de emissaoMes de emissaoAno.", false);
+			 
+			 	paragraph = document.createParagraph();		
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setAlignment(ParagraphAlignment.CENTER);
+				paragraph.setSpacingBetween(1);
+				run = paragraph.createRun();
+				run.setFontSize(12);
+				run.setText("(O final desta página foi intencionalmente deixado em branco)");
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();		
+				paragraph.setPageBreak(true);
+				
+				 paragraph = document.createParagraph();		
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
+				paragraph.setAlignment(ParagraphAlignment.CENTER);
+				run = paragraph.createRun();
+				run.setFontSize(12);
+				run.setText("(Segue a página de assinaturas)");
+					run.setBold(false);
+					run.addCarriageReturn();
+					
+					paragraph = document.createParagraph();		
+					paragraph.setPageBreak(true);
+			 
+					paragraph = document.createParagraph();		
+					paragraph.setSpacingBefore(0);
+					paragraph.setSpacingAfter(0);
+					paragraph.setSpacingBetween(1);
+					paragraph.setAlignment(ParagraphAlignment.BOTH);
+					run = paragraph.createRun();
+					run.setFontSize(12);
+					run.setText("(Página de assinaturas da Cédula de Crédito Bancário nº XXXXXX, emitida por nomeEmitente, CPF/MF nº cpfEmitente, em favor de BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00, em dataDeEmissao).");
+						run.setBold(false);
+						run.setItalic(true);
+						run.addCarriageReturn();
+						
+				
+					XWPFTable table = document.createTable();	
+					
+					paragraph = document.createParagraph();
+					paragraph.setSpacingBefore(0);
+					paragraph.setSpacingAfter(0);
+					paragraph.setSpacingBetween(1);
+					paragraph.setAlignment(ParagraphAlignment.LEFT);
+					
+					
+					
+					table.getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf(6000));
+					table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
+					
+					// create first row
+					XWPFTableRow tableRowOne = table.getRow(0);
+					
+					tableRowOne.getCell(0).setParagraph(paragraph);
+					run = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					run.setFontSize(12);
+					run.setText("____________________________________   ");
+					run.setBold(false);
+					run.addBreak();
+					
+					run2 = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					run2.setFontSize(12);
+					run2.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+					run2.setBold(true);
+					run2.addBreak();
+					
+					run4 = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					run4.setFontSize(12);
+					run4.setText("CREDOR");
+					run4.setBold(false);
+					
+					tableRowOne.addNewTableCell();
+					
+
+					tableRowOne.getCell(1).setParagraph(paragraph);
+					
+					run = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run.setFontSize(12);
+					run.setText("____________________________________ ");
+					run.setBold(false);
+					run.addBreak();
+					
+					run2 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run2.setFontSize(12);
+					run2.setText("NOME EMITENTE");
+					run2.setBold(true);
+					run2.addBreak();
+					
+					run3 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run3.setFontSize(12);
+					run3.setText(" ");
+					run3.setBold(true);
+					run3.addBreak();
+					
+					run4 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run4.setFontSize(12);
+					run4.setText("EMITENTE");
+					run4.setBold(false);
+					
+					
+				      //create second row
+				      XWPFTableRow tableRowTwo = table.createRow();
+				      tableRowTwo.getCell(0).setText("col one, row two");
+
+						
+				      //create third row
+				      XWPFTableRow tableRowThree = table.createRow();
+				      tableRowThree.getCell(0).setText("col one, row three");
+
+					
+					
+						
+						
 			/*for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();
 			    if (runs != null) {  	
@@ -2212,6 +2720,40 @@ public class CcbMB {
 		run.setFontSize(12);
 		run.setText(texto);
 		run.setBold(bold);
+		run2 = paragraph.createRun();
+		run2.setFontSize(12);
+		run2.setText(texto2);
+		run2.setBold(bold2);
+		run2.addCarriageReturn();
+	}
+	
+	public void geraParagrafoBulletList(XWPFDocument document, XWPFParagraph paragraph, XWPFRun run, BigInteger numID, String texto, boolean bold) {
+		paragraph = document.createParagraph();
+		paragraph.setNumID(numID);
+		paragraph.setSpacingBetween(1);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setAlignment(ParagraphAlignment.BOTH);
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		run.setBold(bold);
+		run.addCarriageReturn();
+	}
+	
+	public void geraParagrafoBulletListComposta(XWPFDocument document, XWPFParagraph paragraph, XWPFRun run, XWPFRun run2, String texto, 
+			String texto2, boolean bold, boolean bold2, BigInteger numID, UnderlinePatterns underline) {
+		paragraph = document.createParagraph();
+		paragraph.setNumID(numID);
+		paragraph.setAlignment(ParagraphAlignment.BOTH);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setSpacingBetween(1);
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		run.setBold(bold);
+		run.setUnderline(underline);
 		run2 = paragraph.createRun();
 		run2.setFontSize(12);
 		run2.setText(texto2);
@@ -2323,7 +2865,7 @@ public class CcbMB {
 										+ "nomeEmitente \n"
 										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente \n"
 										+ "CEP cepEmitente \n"
-										+ "Email: emailEmitente \n");
+										+ "E-mail: emailEmitente \n");
 								
 								text = trocaValoresXWPF(text, r, "devedorEmitente","");
 								
@@ -2336,7 +2878,7 @@ public class CcbMB {
 										+ "nomeEmitente \n"
 										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \n"
 										+ "CEP cepEmitente \n"
-										+ "Email: emailEmitente \n");
+										+ "E-mail: emailEmitente \n");
 							}
 							
 							
@@ -2419,7 +2961,7 @@ public class CcbMB {
 
 									+ "CEP cepInterveniente \n"
 
-									+ "Email: emailInterveniente \n");
+									+ "E-mail: emailInterveniente \n");
 							
 							if (this.getNomeConjugeInterveniente() != null) {
 								text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente",
@@ -2490,7 +3032,7 @@ public class CcbMB {
 
 									+ "CEP cepAvalista \n"
 
-									+ "Email: emailAvalista \n");
+									+ "E-mail: emailAvalista \n");
 							
 							if (this.getNomeConjugeAvalista() != null) {
 								text = trocaValoresXWPF(text, r, "nomeConjugeAvalista",
@@ -2561,7 +3103,7 @@ public class CcbMB {
 
 									+ "CEP cepTerceiroG \n"
 
-									+ "Email: emailTerceiroG \n");
+									+ "E-mail: emailTerceiroG \n");
 							
 							
 							if (this.getNomeConjugeTerceiroG() != null) {
@@ -2713,10 +3255,14 @@ public class CcbMB {
 						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.tarifaAntecipada);
 								 
 						if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
-							r.addBreak();
-							this.populateFiles(0);
-							r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
-							r.addBreak();
+							int iImagem = 0;
+							for(UploadedFile imagem :  filesList) {
+								r.addBreak();
+								this.populateFiles(iImagem);
+								r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+								r.addBreak();	
+								iImagem++;
+							}
 						} 				
 						text = trocaValoresXWPF(text, r, "ImagemImovel", "");
 						
