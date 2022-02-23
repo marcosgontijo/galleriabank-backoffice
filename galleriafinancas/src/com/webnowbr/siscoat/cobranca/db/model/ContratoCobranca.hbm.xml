@@ -1461,5 +1461,9 @@
 			<column name="numeroPreAnotacaoCartorio" />
 		</property>	
 		
+		<property name="motivoPendenteAnalise" type="text">
+			<column name="motivoPendenteAnalise" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

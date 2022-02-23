@@ -7873,7 +7873,7 @@ public class ContratoCobrancaMB {
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
-						c.setStatus("Em Análise.");
+						c.setStatus("Análise Pendente");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")

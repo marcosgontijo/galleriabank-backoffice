@@ -1115,6 +1115,13 @@ public class CcbMB {
 			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
 			+ "</w:abstractNum>";
 	
+	static String cTAbstractNumBulletXML_NoLeft_NoHanging_bold = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"2\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"0\" w:hanging=\"0\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"0\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"0\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
 	public StreamedContent geraCcbDinamica() throws IOException{
 		try {
 			XWPFDocument document = new XWPFDocument();
@@ -2073,6 +2080,85 @@ public class CcbMB {
 					 + " caso em que, não realizado o pagamento após esse "
 					 + "prazo, estará em mora.", 
 					 true,  false);
+			
+			fazParagrafoSimples(document, paragraph, run, "6. DO ATRASO NO PAGAMENTO E ENCARGOS MORATÓRIOS", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "6.1.    ", 
+					 "Na hipótese de inadimplemento ou mora, o EMITENTE estará "
+					 + "obrigado a pagar ao CREDOR ou a quem este indicar, cumulativamente,"
+					 + " além da quantia correspondente à dívida em aberto, os seguintes "
+					 + "encargos: ", 
+					 true,  false);
+			
+			
+			 cTNumbering2 = CTNumbering.Factory.parse(cTAbstractNumBulletXML_NoLeft_NoHanging_bold);
+			 cTAbstractNum2 = cTNumbering2.getAbstractNumArray(0);
+			 abstractNum2 = new XWPFAbstractNum(cTAbstractNum2);
+			 numbering2 = document.createNumbering();
+			 abstractNumID2 = numbering2.addAbstractNum(abstractNum2);
+			 numID2 = numbering2.addNum(abstractNumID2);
+
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Juros remuneratórios nos mesmos percentuais das taxas "
+					+ "contratadas nessa CCB, calculados a partir do vencimento "
+					+ "da(s) parcela(s) em aberto até a data do efetivo pagamento;");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Juros de mora à razão de 1% a.m. (um por cento ao mês), "
+					+ "calculados a partir do vencimento da(s) parcela(s) em aberto"
+					+ " até a data do efetivo pagamento;");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Multa contratual, de natureza não compensatória, de 2% (dois por cento)"
+					+ " incidente sobre o montante atualizado (juros remuneratórios e juros de mora)"
+					+ " total do débito apurado e não pago;");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID2);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Na hipótese do CREDOR vir a ser compelido a recorrer"
+					+ " a meios administrativos ou judiciais para receber o seu crédito,"
+					+ " as despesas de cobrança, estas limitadas a 20% (vinte por cento)"
+					+ " sobre o valor do saldo devedor e, havendo procedimento judicial, "
+					+ "custas processuais e honorários advocatícios, estes fixados judicialmente.");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			
+			
+			
 			
 			/*for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();

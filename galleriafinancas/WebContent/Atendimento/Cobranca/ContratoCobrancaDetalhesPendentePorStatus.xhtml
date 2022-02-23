@@ -460,10 +460,10 @@
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
-
-					<p:panel header="Votos do Comite">
+					
+			<h:panelGroup id="votosComitePanel">
+					<p:panel header="Votos do Comite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<p:dataView var="comite"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 							paginator="false" layout="list"
 							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
@@ -521,7 +521,7 @@
 							</p:dataViewListItem>
 						</p:dataView>
 					</p:panel>
-
+</h:panelGroup>
 
 					<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 						<p:panel header="Comitê"
@@ -596,6 +596,40 @@
 											style="font-weight: bold; font-size: 15px;padding-top: 20px;" />
 										<h:outputText id="quemAnalisouData"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</h:panelGrid>
+								</p:panel>
+							</p:overlayPanel>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="AnalisePendentePanel">
+					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}"
+						style="border: none" header="Analise Pendente">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="motivoPendente" value="Motivo Pendência Analise: "
+								styleClass="labelBold" />
+							<p:outputLabel id="motivoPendente" rows="10" cols="48" maxlength="3000"
+								onblur="" counterTemplate="{0} characters remaining."
+								autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoPendenteAnalise}" />
+							<p:outputLabel id="quemPendenciou" value="Quem analisou?"
+								style="cursor:pointer" styleClass="labelBold" />
+							<p:overlayPanel id="quemPendenciouModal" for="quemPendenciou"
+								showEffect="blind" hideEffect="blind" showEvent="mouseover"
+								hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+								<p:panel id="quemPendenciouInfo" header="Quem analisou?"
+									style="margin-bottom:10px;">
+									<h:panelGrid columns="1">
+										<h:outputText id="quemAnalisouUsuarioPendente"
+											value="Usuário: #{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}"
+											style="font-weight: bold; font-size: 15px;padding-top: 20px;" />
+										<h:outputText id="quemAnalisouDataPendente"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoData}"
 											style="font-weight: bold; font-size: 15px;padding-top: 20px;">
 											<f:convertDateTime locale="pt_BR" />
 											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
