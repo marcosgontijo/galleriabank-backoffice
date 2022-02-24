@@ -2996,17 +2996,18 @@ public class ContratoCobrancaMB {
 		
 		// Mensagem CONTRATO PRE APROVADO
 		if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
-			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
-				//if (this.objetoContratoCobranca.getTaxaPreAprovada() != null && 
-				//		this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
+					// if (this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
+					// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_pre_aprovado",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), 
-					this.objetoContratoCobranca.getTaxaPreAprovada().toString(), 
-					this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-				//}
+							"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+					// }
+				}
 			}
 		}
 	}
