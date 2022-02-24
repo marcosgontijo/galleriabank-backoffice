@@ -632,6 +632,22 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
+				
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário de Pendencia">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
+								styleClass="labelBold" />
+							<h:inputTextarea id="comentarioPendencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt; width: 143px; height: 60px" >
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
