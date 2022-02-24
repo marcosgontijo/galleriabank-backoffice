@@ -284,7 +284,6 @@
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=60px">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-										<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 									</p:selectBooleanButton>
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>
@@ -322,7 +321,6 @@
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=60px">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-										<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 									</p:selectBooleanButton>
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>
@@ -466,7 +464,6 @@
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=60px">
 										<p:ajax update="Dados" event="change" />
-										<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAgAssintura}" />
 									</p:selectBooleanButton>
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>
@@ -501,7 +498,6 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=60px" >
-										<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAssinado}" />
 									</p:selectBooleanButton>
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>

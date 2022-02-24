@@ -264,10 +264,6 @@ public class TakeBlipMB {
 			existeWhatsAppNumber = false;
 		}
 		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Take Blip: Iniciando envio WhatsApp (Nome: " + responsavel.getNome() + ")",""));
-		
 		if (!existeWhatsAppNumber) {
 			ResponsavelDao rDao = new ResponsavelDao();
 			
@@ -327,6 +323,70 @@ public class TakeBlipMB {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		return whatsAppNumber;
+	}
+	
+	/**
+	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
+	 */
+	public String getWhatsAppURLNovoResponsavel(Responsavel responsavel) {
+		FacesContext context = FacesContext.getCurrentInstance();
+	
+		String whatsAppNumber = "";
+
+		try {		
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://http.msging.net/commands");	
+			
+			JSONObject jsonWhatsAppURL = new JSONObject();			
+			jsonWhatsAppURL.put("id", generateUUID());
+			jsonWhatsAppURL.put("to", "postmaster@wa.gw.msging.net");
+			jsonWhatsAppURL.put("method", "get");
+			jsonWhatsAppURL.put("uri", "lime://wa.gw.msging.net/accounts/+" + formatTelefoneWhatsApp(responsavel.getTelCelular()));
+
+			byte[] postDataBytes = jsonWhatsAppURL.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Authorization", "Key Z2FsbGVyaWE6dzZ5ZzBwSTNMSnhqMHhuNmNtRlA=");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO,
+								"Take Blip: Falha ao buscar URL do responsável no WhatsApp (Cod: " + myURLConnection.getResponseCode() + " / Celular: " + responsavel.getTelCelular() + ")",
+				""));
+			} else {				
+				// Seta o ID da fatura na Parcela do Siscoat
+				JSONObject retornoWhatsAPP = null;
+
+				retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
+				
+				JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+				
+				whatsAppNumber = resource.getString("alternativeAccount");
+				
+				System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + responsavel.getNome());
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return whatsAppNumber;

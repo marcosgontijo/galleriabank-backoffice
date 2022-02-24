@@ -132,7 +132,6 @@
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="laudoRecebido" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
@@ -143,7 +142,6 @@
 										<p:spacer ></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pajurFavoravel" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
@@ -157,7 +155,6 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
 											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
@@ -199,7 +196,6 @@
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAgAssintura}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
@@ -213,7 +209,6 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="agAssinatura" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Não assinado" offLabel="Assinado" onIcon="ui-icon-close" offIcon="ui-icon-check" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAssinado}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
@@ -240,7 +235,7 @@
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										    	<f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										    	<p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" listener="#{contratoCobrancaMB.controlaWhatsAppPreAprovado}"/> 
+										    	<p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" /> 
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>

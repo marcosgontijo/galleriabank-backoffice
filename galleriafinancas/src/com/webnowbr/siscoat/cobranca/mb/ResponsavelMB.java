@@ -167,7 +167,7 @@ public class ResponsavelMB {
 
 			if (objetoResponsavel.getWhatsAppNumero() == null || objetoResponsavel.getWhatsAppNumero().equals("")) {
 				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				takeBlipMB.getWhatsAppURL(objetoResponsavel);
+				objetoResponsavel.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoResponsavel(objetoResponsavel));
 			}
 			
 			if (this.selectedResponsavel != null) {

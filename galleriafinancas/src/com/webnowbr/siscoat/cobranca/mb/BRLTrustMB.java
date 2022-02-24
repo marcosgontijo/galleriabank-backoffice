@@ -189,6 +189,23 @@ public class BRLTrustMB {
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 	}
 	
+	public static int mesesEntre(Calendar inicial , Calendar fim ){  
+		int qtdMesesIni = (inicial.get(Calendar.YEAR) * 12) + inicial.get(Calendar.MONTH);
+		int qtdMesesFim = (fim.get(Calendar.YEAR) * 12) + fim.get(Calendar.MONTH);
+		return qtdMesesFim - qtdMesesIni;
+	}
+	
+	public Calendar getDateCalendar(Date data) {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+
+		Calendar calendar = Calendar.getInstance(zone, locale);
+
+		calendar.setTime(data);
+		
+		return calendar;
+	}
+	
 	public void geraJSONCessao() {
 		/***
 		 * TODO SE CEDENTE DIFERENTE, GERAR ARQUIVOS DIFERENTES 
@@ -292,6 +309,25 @@ public class BRLTrustMB {
 		 * FIM - CALCULA VALOR PRESENTE CONTRATO
 		 */
 		
+		/**
+		 * INICIO - CALCULA MESES CARENCIA
+		 */
+		int mesesCarencia = 0;
+		Date dataHoje = gerarDataHoje();
+		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			if (!parcela.isParcelaPaga()) {
+				mesesCarencia = mesesEntre(getDateCalendar(dataHoje),getDateCalendar(parcela.getDataVencimento()));
+				break;
+			}			
+		}
+		
+		if (mesesCarencia > 0) {
+			mesesCarencia = mesesCarencia - 1;			
+		}
+		/**
+		 * FIM - CALCULA MESES CARENCIA
+		 */
+		
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) { 
 			countParcelas = countParcelas + 1;
 			if (countParcelas > countCarencia) {
@@ -381,7 +417,13 @@ public class BRLTrustMB {
 					jsonDados.put("contemSeguroMIPeDFI", "SIM");
 					jsonDados.put("valorEmprestimo", this.objetoContratoCobranca.getValorCCB());
 					jsonDados.put("garantiaAtual", this.objetoContratoCobranca.getImovel().getNome());
-										
+					
+					
+					jsonDados.put("taxaCessao", this.objetoContratoCobranca.getTxJurosParcelas());
+					jsonDados.put("taxaJuros", this.objetoContratoCobranca.getTxJurosParcelas());
+					jsonDados.put("numeroDeParcelas", this.objetoContratoCobranca.getQtdeParcelas());
+					jsonDados.put("mesesDeCarencia", mesesCarencia);
+																			
 					jsonRecebivel.put("dados", jsonDados);		
 					
 					jsonRecebiveis.put(jsonRecebivel);

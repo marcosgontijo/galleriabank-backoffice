@@ -503,7 +503,7 @@ public class InvestidorMB {
 						informeRendimentos.setIrRetido(BigDecimal.ZERO);
 						informeRendimentos.setJuros(BigDecimal.ZERO);
 						informeRendimentos.setSaldoAnoAtual(
-								buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId()));
+								buscaValorDebentureInvestidorNoContrato(contrato, this.selectedPagador.getId()));
 						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
 						informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
 						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
@@ -1454,6 +1454,73 @@ public class InvestidorMB {
 				this.posicaoInvestidorNoContrato = 10;
 			}
 		}
+	}
+	
+	// busca o valor final do investidor no contrato
+	public BigDecimal buscaValorDebentureInvestidorNoContrato(ContratoCobranca contrato, long idInvestidor) {
+		BigDecimal valorFinal = BigDecimal.ZERO;
+
+		if (contrato.getRecebedor() != null) {
+			if (contrato.getRecebedor().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor1();
+			}
+		}
+
+		if (contrato.getRecebedor2() != null) {
+			if (contrato.getRecebedor2().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor2();
+			}
+		}
+
+		if (contrato.getRecebedor3() != null) {
+			if (contrato.getRecebedor3().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor3();
+			}
+		}
+
+		if (contrato.getRecebedor4() != null) {
+			if (contrato.getRecebedor4().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor4();
+			}
+		}
+
+		if (contrato.getRecebedor5() != null) {
+			if (contrato.getRecebedor5().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor5();
+			}
+		}
+
+		if (contrato.getRecebedor6() != null) {
+			if (contrato.getRecebedor6().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor6();
+			}
+		}
+
+		if (contrato.getRecebedor7() != null) {
+			if (contrato.getRecebedor7().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor7();
+			}
+		}
+
+		if (contrato.getRecebedor8() != null) {
+			if (contrato.getRecebedor8().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor8();
+			}
+		}
+
+		if (contrato.getRecebedor9() != null) {
+			if (contrato.getRecebedor9().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor9();
+			}
+		}
+
+		if (contrato.getRecebedor10() != null) {
+			if (contrato.getRecebedor10().getId() == idInvestidor) {
+				valorFinal = contrato.getVlrInvestidor10();
+			}
+		}
+
+		return valorFinal;
 	}
 
 	// busca o valor final do investidor no contrato
