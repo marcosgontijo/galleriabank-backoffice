@@ -475,6 +475,7 @@ public class ContratoCobranca implements Serializable {
 	private Date dataPrevistaVistoria;
 	private String motivoReprovacaoAnalise;
 	private String motivoPendenteAnalise;
+	private String comentarioPendencia;
 	
 	private String observacaolead;
 	private String motivoReprovaLead;
@@ -4508,6 +4509,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setMotivoPendenteAnalise(String motivoPendenteAnalise) {
 		this.motivoPendenteAnalise = motivoPendenteAnalise;
+	}
+
+	public String getComentarioPendencia() {
+		return comentarioPendencia;
+	}
+
+	public void setComentarioPendencia(String comentarioPendencia) {
+		this.comentarioPendencia = comentarioPendencia;
 	}
 	
 }

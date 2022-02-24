@@ -132,6 +132,16 @@
 							</ui:fragment>
 
 							<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+							
+								<p:commandButton value="Retirar Pendência" ajax="false"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.retirarPendencia}"
+									style="TEXT-DECORATION: bold;"
+									rendered="#{contratoCobrancaMB.updateMode}">
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
+								</p:commandButton>
+								
 								<p:commandButton value="Atualizar Check-List" ajax="false"
 									icon="ui-icon-check"
 									action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
@@ -443,6 +453,23 @@
 					</p:panel>
 				</h:panelGroup>
 			</shiro:hasAnyRoles>
+			
+			
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
+								styleClass="labelBold" />
+							<h:inputTextarea id="comentarioPendencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;" >
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
 
 				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
 					<h:panelGroup id="comentarioPreComitePanelView"

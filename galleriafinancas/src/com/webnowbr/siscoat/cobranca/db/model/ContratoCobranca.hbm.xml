@@ -1465,5 +1465,9 @@
 			<column name="motivoPendenteAnalise" />
 		</property>
 		
+		<property name="comentarioPendencia" type="text">
+			<column name="comentarioPendencia" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

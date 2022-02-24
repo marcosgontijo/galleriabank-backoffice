@@ -3154,7 +3154,6 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("")) {
 				this.objetoContratoCobranca.setCadastroAprovadoData(null);
 				this.objetoContratoCobranca.setCadastroAprovadoUsuario(null);
-
 			} else {
 				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") ) {
 					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
@@ -5148,6 +5147,22 @@ public class ContratoCobrancaMB {
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato resgatado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+	}
+	
+	public void retirarPendencia() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setInicioAnalise(false);
+		this.objetoContratoCobranca.setCadastroAprovadoValor("");
+		updateCheckList();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pendência retirada com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
 	}
