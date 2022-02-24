@@ -142,8 +142,8 @@ public class TakeBlipMB {
 		JSONObject jsonWhatsApp = new JSONObject();
 		jsonWhatsApp.put("id", generateUUID());
 
-		//jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
-		jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+		jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
 				
 		jsonWhatsApp.put("type", "application/json"); 
 		
@@ -263,6 +263,10 @@ public class TakeBlipMB {
 		} else {
 			existeWhatsAppNumber = false;
 		}
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Take Blip: Iniciando envio WhatsApp (Nome: " + responsavel.getNome() + ")",""));
 		
 		if (!existeWhatsAppNumber) {
 			ResponsavelDao rDao = new ResponsavelDao();

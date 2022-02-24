@@ -20,6 +20,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
@@ -6176,4 +6177,49 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});
 	}
 
+	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel, laudoRecebido, cadastroAprovadoValor, preaprovadocomite "
+			 + " from cobranca.contratocobranca c "  
+			 + " where c.id = ?";
+	
+	@SuppressWarnings("unchecked")
+	public ContratoCobrancaStatus consultaStatusContratos(final long idContrato) {
+		return (ContratoCobrancaStatus) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				ContratoCobrancaStatus object = new ContratoCobrancaStatus();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_GET_STATUS;
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					ps.setLong(1, idContrato);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobrancaStatus contratoCobrancaStatus = new ContratoCobrancaStatus();
+					
+					while (rs.next()) {									
+						contratoCobrancaStatus.setCcbPronta(rs.getBoolean("ccbPronta"));
+						contratoCobrancaStatus.setAgRegistro(rs.getBoolean("agRegistro"));
+						contratoCobrancaStatus.setAgAssinatura(rs.getBoolean("agAssinatura"));
+						contratoCobrancaStatus.setPajuFavoravel(rs.getBoolean("pajurFavoravel"));
+						contratoCobrancaStatus.setLaudoRecebido(rs.getBoolean("laudoRecebido"));
+						contratoCobrancaStatus.setPreAprovadoComite(rs.getBoolean("preaprovadocomite"));
+						contratoCobrancaStatus.setContratoPreAprovado(rs.getString("cadastroAprovadoValor"));							
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return object;
+			}
+		});	
+	}
 }
