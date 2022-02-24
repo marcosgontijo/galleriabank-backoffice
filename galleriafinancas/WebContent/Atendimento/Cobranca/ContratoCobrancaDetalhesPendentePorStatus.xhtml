@@ -2690,7 +2690,8 @@
 </shiro:hasAnyRoles>
 					
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
-				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
+				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;"
+					rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor != 'Aprovado'}">								
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosSalvos" />								

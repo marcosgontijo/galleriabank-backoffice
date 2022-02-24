@@ -1865,7 +1865,8 @@
 			</p:panel>
 
 				<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
-					<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
+					<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;" 
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor != 'Aprovado'}">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
 	                          update="ArquivosSalvos" />								
@@ -1883,8 +1884,10 @@
 								 <f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
-							    	</p:commandButton>								 
-									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>
+							    	</p:commandButton>	
+							    	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">							 
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>
+						        	</shiro:hasAnyRoles>
 						        </f:facet>	        
 						        <p:column style="text-align: center;" headerText="Nome do Arquivo" filterBy="#{files.name}" filterMatchMode="contains" sortBy="#{files.name}">
 						            <a href="http://www.webnowbr.com.br/DocumentosCobranca/#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}/#{files.name}" class="linkPDF" target="_blank"><h:outputText value="#{files.name}"/></a>
@@ -1900,8 +1903,10 @@
 					             <f:facet name="footer">
 									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
-							    	</p:commandButton>					             
-									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>								
+							    	</p:commandButton>	
+							    	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">				             
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>								
+						       		</shiro:hasAnyRoles>
 						        </f:facet>             	        		               		        			        			           			 		
 							</p:dataTable>								
 						</h:panelGrid>  
