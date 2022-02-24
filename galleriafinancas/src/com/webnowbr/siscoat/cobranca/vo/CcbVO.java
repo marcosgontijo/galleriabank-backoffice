@@ -14,6 +14,7 @@ public class CcbVO {
 	private boolean fiduciante;
 	private boolean feminino;
 	private boolean empresa;	
+	
 	private String razaoSocial;
 	private String tipoEmpresa;
 	private String cnpj;

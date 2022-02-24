@@ -59,6 +59,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STNumberFormat;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
@@ -302,7 +305,7 @@ public class CcbMB {
     ByteArrayInputStream bis = null;
     
     private CcbVO participanteSelecionado = new CcbVO();
-    private Set<CcbVO> listaParticipantes;
+    private ArrayList<CcbVO> listaParticipantes;
     private boolean addParticipante;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
@@ -1215,13 +1218,28 @@ public class CcbMB {
 				} else {
 					filho = "filho";
 				}
-				run2.setText( filho + " de " + participante.getPessoa().getNomeMae() + " e paiEmitente,"
-						+ " nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente "
+				String nacionalidade;
+
+				if (participante.isFeminino() == true) {
+					if (CommonsUtil.mesmoValor(participante.getNacionalidade(), "brasileiro")) {
+						nacionalidade = "brasileira";
+					} else {
+						nacionalidade = participante.getNacionalidade();
+					}
+				} else {
+					nacionalidade = participante.getNacionalidade();
+				}
+				String conjuge ="";
+				
+				PagadorRecebedor pessoa = participante.getPessoa();
+				run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
+						+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ pessoa.getEstadocivil() 
 						+ "regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente,"
-						+ " portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente,"
-						+ " inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente,"
-						+ " residente e domiciliado à logradouroEmitente, nº numeroEmitente, "
-						+ "complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente; ");		
+						+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + "SSP/"+ pessoa.getEstado() +","
+						+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
+						+ " residente e domiciliado à "+ pessoa.getEndereco() +", nº "+ pessoa.getNumero() +", "
+						+ pessoa.getComplemento()+", "+ pessoa.getCidade()+"/"+pessoa.getEstado()+", CEP"+ pessoa.getCep()+"; ");
+				
 				run2.addCarriageReturn();
 				
 				iParticipante++;
@@ -2606,67 +2624,219 @@ public class CcbMB {
 					table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
 					
 					// create first row
-					XWPFTableRow tableRowOne = table.getRow(0);
+					XWPFTableRow tableRow1 = table.getRow(0);
 					
-					tableRowOne.getCell(0).setParagraph(paragraph);
-					run = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					tableRow1.getCell(0).setParagraph(paragraph);
+					run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run.setFontSize(12);
 					run.setText("____________________________________   ");
 					run.setBold(false);
 					run.addBreak();
 					
-					run2 = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run2.setFontSize(12);
 					run2.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
 					run2.setBold(true);
 					run2.addBreak();
 					
-					run4 = tableRowOne.getCell(0).getParagraphArray(0).createRun();
+					run4 = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run4.setFontSize(12);
 					run4.setText("CREDOR");
 					run4.setBold(false);
 					
-					tableRowOne.addNewTableCell();
+					tableRow1.addNewTableCell();
 					
 
-					tableRowOne.getCell(1).setParagraph(paragraph);
+					tableRow1.getCell(1).setParagraph(paragraph);
 					
-					run = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run = tableRow1.getCell(1).getParagraphArray(0).createRun();
 					run.setFontSize(12);
 					run.setText("____________________________________ ");
 					run.setBold(false);
 					run.addBreak();
 					
-					run2 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 					run2.setFontSize(12);
 					run2.setText("NOME EMITENTE");
 					run2.setBold(true);
 					run2.addBreak();
 					
-					run3 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run3 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 					run3.setFontSize(12);
 					run3.setText(" ");
 					run3.setBold(true);
 					run3.addBreak();
 					
-					run4 = tableRowOne.getCell(1).getParagraphArray(0).createRun();
+					run4 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 					run4.setFontSize(12);
 					run4.setText("EMITENTE");
 					run4.setBold(false);
 					
+						
+					XWPFTableRow tableRow2 = table.createRow();
 					
-				      //create second row
-				      XWPFTableRow tableRowTwo = table.createRow();
-				      tableRowTwo.getCell(0).setText("col one, row two");
+					if (listaParticipantes.size() > 1) {
+						tableRow2.getCell(0).setParagraph(paragraph);
+						tableRow2.getCell(1).setParagraph(paragraph);
+						int QtdePessoasEsquerdo = 0;
+						for (int iPartTab = 0; iPartTab < listaParticipantes.size(); iPartTab++) {
+							
+							CcbVO participante = this.listaParticipantes.get(iPartTab);
+							if (iPartTab != 0) {
+								if (iPartTab % 2 != 0) {
+									
+									run = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run.addBreak();
+									run.setFontSize(12);
+									run.setText("____________________________________   ");
+									run.setBold(false);
+									run.addBreak();
+
+									run2 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run2.setFontSize(12);
+									run2.setText(participante.getPessoa().getNome());
+									run2.setBold(true);
+									run2.addBreak();
+
+									run3 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run3.setFontSize(12);
+									run3.setText(participante.getTipoParticipante());
+									run3.setBold(false);
+									run3.addBreak();
+									
+									QtdePessoasEsquerdo++;
+								} else {
+									run = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run.addBreak();
+									run.setFontSize(12);
+									run.setText("____________________________________   ");
+									run.setBold(false);
+									run.addBreak();
+
+									run2 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run2.setFontSize(12);
+									run2.setText(participante.getPessoa().getNome());
+									run2.setBold(true);
+									run2.addBreak();
+
+									run3 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+									run3.setFontSize(12);
+									run3.setText(participante.getTipoParticipante());
+									run3.setBold(false);
+									run3.addBreak();
+								}
+							}
+						}
+						run4 = tableRow2.getCell(0).getParagraphArray(0).createRun();
+						run4.setFontSize(12);
+						run4.addBreak();
+						run4.setText("Testemunhas");
+						run4.setBold(false);
+						run4.addBreak();
+						run4.setText("____________________________________");
+						
+						run4 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+						run4.setFontSize(12);
+						for(int i = 0; i < QtdePessoasEsquerdo; i++) {
+							run4.addBreak();
+							run4.addBreak();
+							run4.addBreak();
+						}
+						run4.setText("____________________________________   ");
+						run4.setBold(false);
+						
+					} else {
+						tableRow2.getCell(0).setParagraph(paragraph);
+						run = tableRow2.getCell(0).getParagraphArray(0).createRun();
+						run.setFontSize(12);
+						run.addBreak();
+						run.setText("Testemunhas");
+						run.setBold(false);
+						run.addBreak();
+						run.setText("____________________________________");
+						
+						tableRow2.getCell(1).setParagraph(paragraph);
+						run = tableRow2.getCell(1).getParagraphArray(0).createRun();
+						run.setFontSize(12);
+						run.addBreak();
+						run.addBreak();
+						run.setText("____________________________________   ");
+						run.setBold(false);
+					}
+					
 
 						
 				      //create third row
-				      XWPFTableRow tableRowThree = table.createRow();
-				      tableRowThree.getCell(0).setText("col one, row three");
+				     XWPFTableRow tableRow3 = table.createRow();
+				     tableRow3.getCell(0).setParagraph(paragraph);
+						run = tableRow3.getCell(0).getParagraphArray(0).createRun();
+						run.setFontSize(12);
+						run.setText("Nome:  nomeTestemunha1");
+						run.setBold(false);
+						
+						tableRow3.getCell(1).setParagraph(paragraph);
+						run = tableRow3.getCell(1).getParagraphArray(0).createRun();
+						run.setFontSize(12);
+						run.setText("Nome:  nomeTestemunha2");
+						run.setBold(false);
+
+						
+						XWPFTableRow tableRow4 = table.createRow();
+						tableRow4.getCell(0).setParagraph(paragraph);
+							run = tableRow4.getCell(0).getParagraphArray(0).createRun();
+							run.setFontSize(12);
+							run.setText("RG:  rgTestemunha1");
+							run.setBold(false);
+							
+							tableRow4.getCell(1).setParagraph(paragraph);
+							run = tableRow4.getCell(1).getParagraphArray(0).createRun();
+							run.setFontSize(12);
+							run.setText("RG:  rgTestemunha2");
+							run.setBold(false);
 
 					
+							XWPFTableRow tableRow5 = table.createRow();
+							tableRow5.getCell(0).setParagraph(paragraph);
+								run = tableRow5.getCell(0).getParagraphArray(0).createRun();
+								run.setFontSize(12);
+								run.setText("CPF:  cpfTestemunha1");
+								run.setBold(false);
+								
+								tableRow5.getCell(1).setParagraph(paragraph);
+								run = tableRow5.getCell(1).getParagraphArray(0).createRun();
+								run.setFontSize(12);
+								run.setText("CPF:  cpfTestemunha2");
+								run.setBold(false);
+								
+								CTTblPr tblpro = table.getCTTbl().getTblPr();
+
+								CTTblBorders borders = tblpro.addNewTblBorders();
+								borders.addNewBottom().setVal(STBorder.NONE); 
+								borders.addNewLeft().setVal(STBorder.NONE);
+								borders.addNewRight().setVal(STBorder.NONE);
+								borders.addNewTop().setVal(STBorder.NONE);
+								//also inner borders
+								borders.addNewInsideH().setVal(STBorder.NONE);
+								borders.addNewInsideV().setVal(STBorder.NONE);
 					
-						
+								paragraph = document.createParagraph();		
+								paragraph.setPageBreak(true);
+								
+								 paragraph = document.createParagraph();		
+									paragraph.setSpacingBefore(0);
+									paragraph.setSpacingAfter(0);
+									paragraph.setSpacingBetween(1);
+									paragraph.setAlignment(ParagraphAlignment.CENTER);
+									run = paragraph.createRun();
+									run.setFontSize(12);
+									run.setText("ANEXO I");
+									run.addCarriageReturn();
+									run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº XXXXXX");
+									run.addCarriageReturn();
+									run.setText("PLANILHA DE CÁLCULO");
+										run.setBold(false);
+										
+										
 						
 			/*for (XWPFParagraph p : document.getParagraphs()) {
 			    List<XWPFRun> runs = p.getRuns();
@@ -3450,7 +3620,7 @@ public class CcbMB {
 	
 	public String clearFieldsEmitirCcb() {
 		loadLovs();	
-		this.listaParticipantes = new HashSet<>();
+		this.listaParticipantes = new ArrayList<>();
 		this.participanteSelecionado = new CcbVO();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
@@ -5211,11 +5381,11 @@ public class CcbMB {
 		this.bis = bis;
 	}
 
-	public Set<CcbVO> getListaParticipantes() {
+	public ArrayList<CcbVO> getListaParticipantes() {
 		return listaParticipantes;
 	}
 
-	public void setListaParticipantes(Set<CcbVO> listaParticipantes) {
+	public void setListaParticipantes(ArrayList<CcbVO> listaParticipantes) {
 		this.listaParticipantes = listaParticipantes;
 	}
 

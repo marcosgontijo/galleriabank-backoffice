@@ -508,7 +508,7 @@
 				<!-- Removido a pedido do joão em 05/11/2021 -->
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
 								styleClass="labelBold" />
