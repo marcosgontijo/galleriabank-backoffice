@@ -7896,17 +7896,21 @@ public class ContratoCobrancaMB {
 					if (c.getStatusLead().equals("Em Tratamento")) {
 						c.setStatus("Lead em Tratamento");
 					}
+					
+					if (c.getStatusLead().equals("Reprovado")) {
+						c.setStatus("Lead Reprovado");
+					}
 
 					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
 						c.setStatus("Ag. Análise");
 					}
 
-					if (c.isInicioAnalise()) {
-						c.setStatus("Em Análise");
-					}
-					
 				} else {
 					c.setStatus("Não Definido");
+				}
+				
+				if (c.isInicioAnalise()) {
+					c.setStatus("Em Análise");
 				}
 
 				if (c.getCadastroAprovadoValor() != null) {

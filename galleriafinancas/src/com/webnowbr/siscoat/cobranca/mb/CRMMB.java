@@ -615,6 +615,10 @@ public class CRMMB {
 				c.setStatus("Lead em Tratamento");
 			}
 			
+			if (c.getStatusLead().equals("Reprovado")) {
+				c.setStatus("Lead Reprovado");
+			}
+			
 			if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
 				c.setStatus("Ag. Análise");
 			}
