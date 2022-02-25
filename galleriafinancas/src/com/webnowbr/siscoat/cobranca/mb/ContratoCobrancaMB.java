@@ -2997,7 +2997,9 @@ public class ContratoCobrancaMB {
 		// Mensagem CONTRATO PRE APROVADO
 		if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
-				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")) {
+				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
+						this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 					// if (this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
 					// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();

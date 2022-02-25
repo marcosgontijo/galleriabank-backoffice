@@ -6186,7 +6186,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		return (ContratoCobrancaStatus) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				ContratoCobrancaStatus object = new ContratoCobrancaStatus();
+				ContratoCobrancaStatus contratoCobrancaStatus = new ContratoCobrancaStatus();
 	
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -6203,22 +6203,20 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					rs = ps.executeQuery();
 					
-					ContratoCobrancaStatus contratoCobrancaStatus = new ContratoCobrancaStatus();
-					
 					while (rs.next()) {									
-						contratoCobrancaStatus.setCcbPronta(rs.getBoolean("ccbPronta"));
-						contratoCobrancaStatus.setAgRegistro(rs.getBoolean("agRegistro"));
-						contratoCobrancaStatus.setAgAssinatura(rs.getBoolean("agAssinatura"));
-						contratoCobrancaStatus.setPajuFavoravel(rs.getBoolean("pajurFavoravel"));
-						contratoCobrancaStatus.setLaudoRecebido(rs.getBoolean("laudoRecebido"));
-						contratoCobrancaStatus.setPreAprovadoComite(rs.getBoolean("preaprovadocomite"));
-						contratoCobrancaStatus.setContratoPreAprovado(rs.getString("cadastroAprovadoValor"));							
+						contratoCobrancaStatus.setCcbPronta(rs.getBoolean(2));
+						contratoCobrancaStatus.setAgRegistro(rs.getBoolean(4));
+						contratoCobrancaStatus.setAgAssinatura(rs.getBoolean(3));
+						contratoCobrancaStatus.setPajuFavoravel(rs.getBoolean(5));
+						contratoCobrancaStatus.setLaudoRecebido(rs.getBoolean(6));
+						contratoCobrancaStatus.setPreAprovadoComite(rs.getBoolean(8));
+						contratoCobrancaStatus.setContratoPreAprovado(rs.getString(7));							
 					}
 	
 				} finally {
 					closeResources(connection, ps, rs);					
 				}
-				return object;
+				return contratoCobrancaStatus;
 			}
 		});	
 	}
