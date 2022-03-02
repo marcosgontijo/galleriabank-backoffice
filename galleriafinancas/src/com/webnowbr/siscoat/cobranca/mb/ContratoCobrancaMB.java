@@ -8810,7 +8810,12 @@ public class ContratoCobrancaMB {
 			// Data do Contrato
 			cell = row.createCell(1);
 			cell.setCellStyle(dateStyle);
-			cell.setCellValue(record.getDataContrato());
+			if (tipoContratoCobrancaFinanceiroDia.equals("PreAprovado")) {
+				cell.setCellValue(record.getDataContrato());
+			} else {
+				cell.setCellValue(record.getDataInicio());
+			}
+			
 
 			// Pagador
 			cell = row.createCell(2);
@@ -8894,7 +8899,11 @@ public class ContratoCobrancaMB {
 				// Data do Contrato
 				cell = row.createCell(1);
 				cell.setCellStyle(dateStyle);
-				cell.setCellValue(record.getDataContrato());
+				if (tipoContratoCobrancaFinanceiroDia.equals("PreAprovado")) {
+					cell.setCellValue(record.getDataContrato());
+				} else {
+					cell.setCellValue(record.getDataInicio());
+				}
 
 				// Pagador
 				cell = row.createCell(2);
