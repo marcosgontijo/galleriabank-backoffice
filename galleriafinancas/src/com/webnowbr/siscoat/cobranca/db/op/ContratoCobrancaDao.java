@@ -414,23 +414,23 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = QUERY_GET_CONTRATOS_POR_INVESTIDOR_INFORME_RENDIMENTOS;
 					
 					if (idInvestidor > 0) {
-						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +   
-									"  and (cc.recebedor = " + idInvestidor + " or " +
-									"      cc.recebedor2 = " + idInvestidor + " or " +
-									"      cc.recebedor3 = " + idInvestidor + " or " +
-									"      cc.recebedor4 = " + idInvestidor + " or " +
-									"      cc.recebedor5 = " + idInvestidor + " or " +
-									"      cc.recebedor6 = " + idInvestidor + " or " +
-									"      cc.recebedor7 = " + idInvestidor + " or " +
-									"      cc.recebedor8 = " + idInvestidor + " or " +
-									"      cc.recebedor9 = " + idInvestidor + " or " +
-									"      cc.recebedor10 = " + idInvestidor + ")";
-						
+						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +   					
+								" and ((cc.recebedor = " + idInvestidor + " and cc.recebedorenvelope = false) " +
+								" or (cc.recebedor2 = " + idInvestidor + " and cc.recebedorenvelope2 = false) " + 
+								" or (cc.recebedor3 = " + idInvestidor + " and cc.recebedorenvelope3 = false) " + 
+								" or (cc.recebedor4 = " + idInvestidor + " and cc.recebedorenvelope4 = false) " + 
+								" or (cc.recebedor5 = " + idInvestidor + " and cc.recebedorenvelope5 = false) " + 
+								" or (cc.recebedor6 = " + idInvestidor + " and cc.recebedorenvelope6 = false) " + 
+								" or (cc.recebedor7 = " + idInvestidor + " and cc.recebedorenvelope7 = false) " + 
+								" or (cc.recebedor8 = " + idInvestidor + " and cc.recebedorenvelope8 = false) " + 
+								" or (cc.recebedor9 = " + idInvestidor + " and cc.recebedorenvelope9 = false) " + 
+								" or (cc.recebedor10 = " + idInvestidor + " and cc.recebedorenvelope10 = false)) " ;
+/*						
 						query_QUERY_GET_CONTRATOS_POR_INVESTIDOR = query_QUERY_GET_CONTRATOS_POR_INVESTIDOR +   
 								"  and (cc.recebedorenvelope = false and cc.recebedorenvelope2 = false and cc.recebedorenvelope3 = false and "
 								+ " cc.recebedorenvelope4 = false and cc.recebedorenvelope5 = false and cc.recebedorenvelope6 = false and "
 								+ " cc.recebedorenvelope7 = false and cc.recebedorenvelope8 = false and cc.recebedorenvelope9 = false and cc.recebedorenvelope10 = false) ";
-
+*/
 						ps = connection
 								.prepareStatement(query_QUERY_GET_CONTRATOS_POR_INVESTIDOR);		
 						

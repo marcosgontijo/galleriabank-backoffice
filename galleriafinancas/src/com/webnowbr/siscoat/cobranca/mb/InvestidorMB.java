@@ -513,6 +513,53 @@ public class InvestidorMB {
 					}
 				}
 			}
+			
+			/****
+			 * PEGA CONTRATOS EM ATRASO ANOS ANTERIORES, PEGA A ÚLTIMA BAIXA E USA O SALDO CREDOR COMO VALOR DOS ANOS ANTERIORES
+			 */
+			
+			int anoInicioContratos = Integer.valueOf(this.anoBase) - 15;
+			int anoFimContratos = Integer.valueOf(this.anoBase) - 1;
+			try {
+				dataInicioContrato = format.parse("01/01/" + String.valueOf(anoInicioContratos));
+				dataFimContrato = format.parse("31/12/" + String.valueOf(anoFimContratos));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			listContratos = new ArrayList<ContratoCobranca>();
+			listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
+					this.selectedPagador.getId(), dataInicioContrato, dataFimContrato);
+
+			// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
+			// SE SIM, É PQ JÁ HOUVE BAIXA ou Foi criado no ano base
+			for (ContratoCobranca contrato : listContratos) {
+				boolean consideraContrato = true;
+
+				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+					if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
+						consideraContrato = false;
+					}
+				}
+
+				// SE CONSIDERA O CONTRATO,
+				if (consideraContrato) {
+						BigDecimal saldoContrato = buscaUltimoValorPago(contrato, this.selectedPagador.getId());
+					
+						informeRendimentos = new InvestidorInformeRendimentos();
+						informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
+						informeRendimentos.setIrRetido(BigDecimal.ZERO);
+						informeRendimentos.setJuros(BigDecimal.ZERO);
+						informeRendimentos.setSaldoAnoAtual(saldoContrato);
+						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+						informeRendimentos.setSaldoAnoAnterior(saldoContrato);
+						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+						informeRendimentos.setCnpj("34.425.347/0001-06");
+	
+						this.investidorInformeRendimentos.add(informeRendimentos);
+				}
+			}
 
 			// FINALIZA PROCESSO DE CONSTRUÇÃO DO INFORME
 			if (this.investidorInformeRendimentos.size() == 0) {
@@ -1454,6 +1501,184 @@ public class InvestidorMB {
 				this.posicaoInvestidorNoContrato = 10;
 			}
 		}
+	}
+	
+	// busca o valor final do investidor no contrato
+	public BigDecimal buscaUltimoValorPago(ContratoCobranca contrato, long idInvestidor) {
+		BigDecimal valorFinal = null;
+
+		if (contrato.getRecebedor() != null) {
+			if (contrato.getRecebedor().getId() == idInvestidor && !contrato.isRecebedorEnvelope()) {
+				// pega a última parcela baixa
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor1()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor1().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor2() != null) {
+			if (contrato.getRecebedor2().getId() == idInvestidor && !contrato.isRecebedorEnvelope2()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor2()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor2().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor3() != null) {
+			if (contrato.getRecebedor3().getId() == idInvestidor && !contrato.isRecebedorEnvelope3()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor3()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor3().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor4() != null) {
+			if (contrato.getRecebedor4().getId() == idInvestidor && !contrato.isRecebedorEnvelope4()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor4()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor4().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor5() != null) {
+			if (contrato.getRecebedor5().getId() == idInvestidor && !contrato.isRecebedorEnvelope5()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor5()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor5().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor6() != null) {
+			if (contrato.getRecebedor6().getId() == idInvestidor && !contrato.isRecebedorEnvelope6()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor6()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor6().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor7() != null) {
+			if (contrato.getRecebedor7().getId() == idInvestidor && !contrato.isRecebedorEnvelope7()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor7()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor7().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor8() != null) {
+			if (contrato.getRecebedor8().getId() == idInvestidor && !contrato.isRecebedorEnvelope8()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor8()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor8().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor9() != null) {
+			if (contrato.getRecebedor9().getId() == idInvestidor && !contrato.isRecebedorEnvelope9()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor9()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor9().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		if (contrato.getRecebedor10() != null) {
+			if (contrato.getRecebedor10().getId() == idInvestidor && !contrato.isRecebedorEnvelope10()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor10()) {
+					if (parcelasInvestidor.isBaixado()) {
+						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
+					}
+				}
+				
+				// se não houve baixa, pega a primeira parcela				
+				if (valorFinal == null) {
+					if (contrato.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
+						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor10().get(0).getSaldoCredor();
+					}
+				}
+			}
+		}
+
+		return valorFinal;
 	}
 	
 	// busca o valor final do investidor no contrato
