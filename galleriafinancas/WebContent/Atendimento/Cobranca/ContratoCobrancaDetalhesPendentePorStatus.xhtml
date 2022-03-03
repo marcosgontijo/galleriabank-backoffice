@@ -137,7 +137,7 @@
 									icon="ui-icon-check"
 									action="#{contratoCobrancaMB.retirarPendencia}"
 									style="TEXT-DECORATION: bold;"
-									rendered="#{contratoCobrancaMB.updateMode}">
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 								</p:commandButton>
@@ -462,7 +462,7 @@
 								styleClass="labelBold" />
 							<h:inputTextarea id="comentarioPendencia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
-								rows="10" cols="48" maxlength="3000" onblur=""
+								rows="10" cols="48" maxlength="3000" onblur="" required="true"
 								counterTemplate="{0} characters remaining." autoResize="false"
 								style="FONT-SIZE: 10pt;width:400px;" >
 								<p:ajax process="@this" partialSubmit="true" />
