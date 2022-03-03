@@ -1604,70 +1604,210 @@ public class InvestidorMB {
 				} else {
 					break;
 				}
-			}
+			} 
 
 			if (contratoVo.getValorInvestido().compareTo(BigDecimal.ZERO) == 0) {
 				// valorInvestidoContrato = c.getVlrFinalRecebedor1();
+				boolean semValor = false;
 				switch (this.posicaoInvestidorNoContrato) {
-				case 1:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor1()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor1()));
-					else
+				case 1:					
+					if (CommonsUtil.semValor(c.getVlrInvestidor1())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor1()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor1()));
+					}
 					break;
 				case 2:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor2()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor2()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor2())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor2()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor2()));
+					}
 					break;
 				case 3:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor3()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor3()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor3())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor3()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor3()));
+					}
 					break;
 				case 4:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor4()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor4()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor4())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor4()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor4()));
+					}
 					break;
 				case 5:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor5()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor5()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor5())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor5()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor5()));
+					}
 					break;
 				case 6:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor6()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor6()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor6())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor6()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor6()));
+					}
 					break;
 				case 7:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor7()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor7()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor7())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor7()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor7()));
+					}
 					break;
 				case 8:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor8()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor8()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor8())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor8()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor8()));
+					}
 					break;
 				case 9:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor9()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor9()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor9())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor9()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor9()));
+					}
 					break;
 				case 10:
-					if ( CommonsUtil.semValor(c.getVlrInvestidor10()))
-						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor10()));
-					else
+					semValor = false;
+					if (CommonsUtil.semValor(c.getVlrInvestidor10())) {
+						if (listParcelasInvestidor.size() > 0) {
+							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
+									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+							} else {
+								semValor = true;
+							}						
+						}  else {
+							semValor = true;
+						}
+					
+						if (semValor) {
+							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor10()));
+						}
+					} else {
 						contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrInvestidor10()));
+					}
 					break;
 				}
 			}
