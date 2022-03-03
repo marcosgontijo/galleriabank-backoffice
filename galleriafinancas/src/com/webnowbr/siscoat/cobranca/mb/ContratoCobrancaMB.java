@@ -2665,7 +2665,6 @@ public class ContratoCobrancaMB {
 
 			this.objetoContratoCobranca.setResponsavel(responsavel);
 			
-
 			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
 				this.objetoContratoCobranca.setContratoLead(true);
 			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
@@ -2678,13 +2677,7 @@ public class ContratoCobrancaMB {
 					this.objetoPagadorRecebedor
 							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 				}
-			}
-			
-			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
-				this.objetoContratoCobranca.setContratoLead(true);
-			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
-				this.objetoContratoCobranca.setContratoLead(false);
-			}
+			}			
 
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
@@ -3109,10 +3102,11 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getStatusLead() != null) {
 			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
 				Responsavel responsavel = getResponsavelUsuarioLogado();
-
+				this.objetoContratoCobranca.setLeadCompleto(false);
 				if (responsavel != null) {
 					this.objetoContratoCobranca.setResponsavel(responsavel);
 				}
+				
 			} 
 		} else {
 			this.objetoContratoCobranca.setStatusLead("Completo");
@@ -3122,6 +3116,11 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.getContratoResgatadoData() == null) {
 				this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 				this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
+			}
+			this.objetoContratoCobranca.setLeadCompleto(true);
+			if (this.objetoContratoCobranca.getLeadCompletoData() == null) {
+				this.objetoContratoCobranca.setLeadCompletoData(gerarDataHoje());
+				this.objetoContratoCobranca.setLeadCompletoUsuario(getNomeUsuarioLogado());
 			}
 		}
 
