@@ -3159,6 +3159,10 @@ public class ContratoCobrancaMB {
 				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") ) {
 					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
 						this.objetoContratoCobranca.setStatus("Pendente");
+						
+						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
+						this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
+						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 					}
 				} else {
 					this.objetoContratoCobranca.setStatus("Reprovado");
@@ -3167,10 +3171,6 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAnaliseReprovadaData());
 					this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
 				}
-				
-				this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
-				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
-				this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 			}
 		}
 
