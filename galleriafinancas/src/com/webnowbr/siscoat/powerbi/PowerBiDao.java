@@ -24,7 +24,7 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 
-	private static final String POWER_BI= " select datacontrato, status,  inicioanalisedata, cadastroAprovadoData, cadastroAprovadoValor, agassinaturadata, aprovadodata, quantoprecisa, valorccb "
+	private static final String POWER_BI= " select datacontrato, status, statusLead, inicioanaliseusuario, inicioanalisedata, leadcompletodata, cadastroAprovadoData, PagtoLaudoConfirmadaData, cadastroAprovadoValor, agassinaturadata, aprovadodata, quantoprecisa, valorccb, contratoLead "
 			+ " from cobranca.contratocobranca coco  ";
 	
 	@SuppressWarnings("unchecked")
@@ -51,26 +51,62 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					PowerBiVO powerBi = new PowerBiVO();
 					
 					int qtdCadastradas = 0;
+					int qtdNovosLeads = 0;
+					int qtdLeadsCompletos = 0;
 					int qtdAnalisadas = 0;
 					int qtdAssinadas = 0;
 					int qtdRegistradas = 0;
 					int qtdInicioAnalise = 0;
 					
+					List<PowerBiDetalhes> analises = new ArrayList<PowerBiDetalhes>();
+					List<PowerBiDetalhes> preAprovacoes = new ArrayList<PowerBiDetalhes>();
+					List<PowerBiDetalhes> assinaturas = new ArrayList<PowerBiDetalhes>();
+					List<PowerBiDetalhes> registros = new ArrayList<PowerBiDetalhes>();
+					
 					BigDecimal vlrCadastradas = BigDecimal.ZERO;
+					
+					BigDecimal vlrNovosLeads = BigDecimal.ZERO;
+					BigDecimal vlrLeadsCompletos = BigDecimal.ZERO;
+					
 					BigDecimal vlrInicioAnalise = BigDecimal.ZERO;
 					BigDecimal vlrAnalisadas = BigDecimal.ZERO;
 					BigDecimal vlrAssinadas = BigDecimal.ZERO;
 					BigDecimal vlrRegistradas = BigDecimal.ZERO;
 					
 					while (rs.next()) {
+						
 						if (!CommonsUtil.semValor((rs.getDate("datacontrato")))) {
-							if (!CommonsUtil.mesmoValor(rs.getString("status"), "Aprovado")) {
+							if (!rs.getBoolean("contratoLead")) {
+								if (!CommonsUtil.mesmoValor(rs.getString("status"), "Aprovado")) {
+									if (CommonsUtil.mesmoValor(rs.getDate("datacontrato").getMonth(), mes)
+											&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getYear(), ano)
+											&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getDate(), dia)) {
+										qtdCadastradas++;
+										if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
+											vlrCadastradas = vlrCadastradas.add(rs.getBigDecimal("quantoprecisa"));
+										}
+									}
+								}
+							} else {
 								if (CommonsUtil.mesmoValor(rs.getDate("datacontrato").getMonth(), mes)
 										&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getYear(), ano)
 										&& CommonsUtil.mesmoValor(rs.getDate("datacontrato").getDate(), dia)) {
-									qtdCadastradas++;
+									qtdNovosLeads++;
 									if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
-										vlrCadastradas = vlrCadastradas.add(rs.getBigDecimal("quantoprecisa"));
+										vlrNovosLeads = vlrNovosLeads.add(rs.getBigDecimal("quantoprecisa"));
+									}
+								}
+							}
+						}
+						
+						if (!CommonsUtil.semValor((rs.getDate("leadcompletodata")))) {
+							if (!CommonsUtil.mesmoValor(rs.getString("statuslead"), "Aprovado")) {
+								if (CommonsUtil.mesmoValor(rs.getDate("leadcompletodata").getMonth(), mes)
+										&& CommonsUtil.mesmoValor(rs.getDate("leadcompletodata").getYear(), ano)
+										&& CommonsUtil.mesmoValor(rs.getDate("leadcompletodata").getDate(), dia)) {
+									qtdLeadsCompletos++;
+									if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
+										vlrLeadsCompletos = vlrLeadsCompletos.add(rs.getBigDecimal("quantoprecisa"));
 									}
 								}
 							}
@@ -86,15 +122,33 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 								}
 							}
 						}
-						
-						if (!CommonsUtil.semValor((rs.getDate("cadastroAprovadoData")))) {
-							if (CommonsUtil.mesmoValor(rs.getString("cadastroAprovadoValor"), "Aprovado")) {
-								if (CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getMonth(), mes)
-										&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getYear(), ano)
-										&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getDate(), dia)) {
-									qtdAnalisadas++;
-									if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
-										vlrAnalisadas = vlrAnalisadas.add(rs.getBigDecimal("quantoprecisa"));
+						if(!CommonsUtil.semValor(rs.getDate("PagtoLaudoConfirmadaData"))){
+							if (!CommonsUtil.semValor((rs.getDate("cadastroAprovadoData")))) {
+								if (!(rs.getDate("cadastroAprovadoData").getMonth() > rs.getDate("PagtoLaudoConfirmadaData").getMonth()) &&
+										(rs.getDate("cadastroAprovadoData").getYear() > rs.getDate("PagtoLaudoConfirmadaData").getYear()) &&
+										(rs.getDate("cadastroAprovadoData").getDate() > rs.getDate("PagtoLaudoConfirmadaData").getDate())) {
+									if (CommonsUtil.mesmoValor(rs.getString("cadastroAprovadoValor"), "Aprovado")) {
+										if (CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getMonth(), mes)
+												&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getYear(), ano)
+												&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getDate(), dia)) {
+											qtdAnalisadas++;
+											if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
+												vlrAnalisadas = vlrAnalisadas.add(rs.getBigDecimal("quantoprecisa"));
+											}
+										}
+									}
+								}
+							}
+						} else {
+							if (!CommonsUtil.semValor((rs.getDate("cadastroAprovadoData")))) {
+								if (CommonsUtil.mesmoValor(rs.getString("cadastroAprovadoValor"), "Aprovado")) {
+									if (CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getMonth(), mes)
+											&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getYear(), ano)
+											&& CommonsUtil.mesmoValor(rs.getDate("cadastroAprovadoData").getDate(), dia)) {
+										qtdAnalisadas++;
+										if (!CommonsUtil.semValor(rs.getBigDecimal("quantoprecisa"))) {
+											vlrAnalisadas = vlrAnalisadas.add(rs.getBigDecimal("quantoprecisa"));
+										}
 									}
 								}
 							}
@@ -124,11 +178,15 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					}
 					
 					powerBi.setNumeroOperacoesAssinadas(BigInteger.valueOf(qtdAssinadas));
+					powerBi.setNumeroNovosLeadsCadastrados(BigInteger.valueOf(qtdNovosLeads));
+					powerBi.setNumeroLeadsCompletos(BigInteger.valueOf(qtdLeadsCompletos));
 					powerBi.setNumeroOperacoesInicioAnalise(BigInteger.valueOf(qtdInicioAnalise));
 					powerBi.setNumeroOperacoesAnalisadas(BigInteger.valueOf(qtdAnalisadas));
 					powerBi.setNumeroOperacoesCadastradas(BigInteger.valueOf(qtdCadastradas));
 					powerBi.setNumeroOperacoesRegistradas(BigInteger.valueOf(qtdRegistradas));
 					
+					powerBi.setValorNovosLeadsCadastrados(vlrNovosLeads);
+					powerBi.setValorLeadsCompletos(vlrLeadsCompletos);
 					powerBi.setValorOperacoesAssinadas(vlrAssinadas);
 					powerBi.setValorOperacoesInicioAnalise(vlrInicioAnalise);
 					powerBi.setValorOperacoesCadastradas(vlrCadastradas);
@@ -219,9 +277,6 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 						ContratoCobranca contrato = contratoCobrancaDao.findById(rs.getLong("id"));
 						valorPareclaPaga = BigDecimal.ZERO;
 						prazoContrato = 1;
-						if(CommonsUtil.mesmoValor(contrato.getNumeroContrato(), "08546")) {
-							String aaa = "oi";
-						}
 						
 						if (!CommonsUtil.semValor(contrato.getListContratoCobrancaDetalhes())) {
 
