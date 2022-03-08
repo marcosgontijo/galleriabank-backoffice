@@ -143,7 +143,6 @@ public class ContratoCobranca implements Serializable {
 	private Set<ContasPagar> listContasPagar;
 	private Set<AnaliseComite> listaAnaliseComite;
 	
-
 	
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -554,6 +553,8 @@ public class ContratoCobranca implements Serializable {
 	private Date pagamentoCustasCartorioData;
 	private String exigenciasCartorioObservacao;
 	private String numeroPreAnotacaoCartorio;
+	
+	private BigDecimal cetMes;
 
 	public ContratoCobranca() {
 		super();
@@ -4518,5 +4519,12 @@ public class ContratoCobranca implements Serializable {
 	public void setComentarioPendencia(String comentarioPendencia) {
 		this.comentarioPendencia = comentarioPendencia;
 	}
-	
+
+	public BigDecimal getCetMes() {
+		return cetMes;
+	}
+
+	public void setCetMes(BigDecimal cetMes) {
+		this.cetMes = cetMes;
+	}
 }
