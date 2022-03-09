@@ -26,13 +26,27 @@
 				</p:calendar>
 
 				<h:panelGroup id="dadosHoje">
-					<h:panelGrid columns="10">
+					<h:panelGrid columns="14">
 						<p:outputLabel for="opCadastradasHoje" value="OP Cadastradas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
 						<p:outputLabel id="opCadastradasHoje"
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiHoje.numeroOperacoesCadastradas}" />
+							
+						<p:outputLabel for="leadsNovosHoje" value="Leads Novos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="leadsNovosHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroNovosLeadsCadastrados}" />
+							
+						<p:outputLabel for="leadsCompletosHoje" value="Leads Completos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="leadsCompletosHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.numeroLeadsCompletos}" />
 							
 						<p:outputLabel for="opInicioAnaliseHoje" value="OP Analisadas"
 							styleClass="labelBold"
@@ -69,6 +83,20 @@
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrLeadsNovosHoje" value="Vlr Leads Novos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="vlrLeadsNovosHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorNovosLeadsCadastrados}" />
+							
+						<p:outputLabel for="vlrLeadsCompletosHoje" value="Vlr Leads Completos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="vlrLeadsCompletosHoje"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiHoje.valorLeadsCompletos}" />
 							
 						<p:outputLabel for="vlrInicioAnaliseHoje" value="Vlr Analisadas"
 							style="margin-bottom:50px;margin-left:20px;"
@@ -342,13 +370,27 @@
 				</p:calendar>
 				
 				<h:panelGroup id="dadosOntem">
-					<h:panelGrid columns="10">
+					<h:panelGrid columns="14">
 						<p:outputLabel for="opCadastradasOntem" value="OP Cadastradas"
 							styleClass="labelBold"
 							style="margin-bottom:50px;margin-left:20px;" />
 						<p:outputLabel id="opCadastradasOntem"
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiOntem.numeroOperacoesCadastradas}" />
+							
+						<p:outputLabel for="leadsNovosOntem" value="Leads Novos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="leadsNovosOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroNovosLeadsCadastrados}" />
+							
+						<p:outputLabel for="leadsCompletosOntem" value="Leads Completos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="leadsCompletosOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.numeroLeadsCompletos}" />
 							
 						<p:outputLabel for="opInicioAnaliseOntem" value="OP Analisadas"
 							styleClass="labelBold"
@@ -385,6 +427,20 @@
 							style="margin-bottom:50px;margin-left:20px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="vlrLeadsNovosOntem" value="Vlr Leads Novos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="vlrLeadsNovosOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorNovosLeadsCadastrados}" />
+							
+						<p:outputLabel for="vlrLeadsCompletosOntem" value="Vlr Leads Completos"
+							styleClass="labelBold"
+							style="margin-bottom:50px;margin-left:20px;" />
+						<p:outputLabel id="vlrLeadsCompletosOntem"
+							style="margin-bottom:50px;margin-left:20px;"
+							value="#{powerBiMb.powerBiOntem.valorLeadsCompletos}" />
 							
 						<p:outputLabel for="vlrInicioAnaliseOntem" value="Vlr Analisadas"
 							style="margin-bottom:50px;margin-left:20px;"

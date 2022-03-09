@@ -55,7 +55,7 @@ public class SimuladorMB {
     private boolean naoCalcularMIP;
     private char tipoCalculoFinal;
     private boolean mostrarIPCA;
-
+    private boolean validar;
 	
 
 	private SimulacaoVO simulacao;
@@ -73,6 +73,7 @@ public class SimuladorMB {
 		simulacao = null;
 		tipoCalculoFinal= 'L';
 		mostrarIPCA= true;
+		validar = true;
 		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
@@ -81,39 +82,40 @@ public class SimuladorMB {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 
 		this.simulacao = new SimulacaoVO();
-
-		Map<String, String> validacao = new HashMap<String, String>();
-		if (CommonsUtil.mesmoValor(this.tipoCalculo, "Americano")) {
-			if (this.parcelas.compareTo(BigInteger.valueOf(36)) == 1) {
-				validacao.put("Prazo excedido !!", "O prazo máximo é de 36 meses para o tipo de cálculo americano");
+		if(validar) {
+			Map<String, String> validacao = new HashMap<String, String>();
+			if (CommonsUtil.mesmoValor(this.tipoCalculo, "Americano")) {
+				if (this.parcelas.compareTo(BigInteger.valueOf(36)) == 1) {
+					validacao.put("Prazo excedido !!", "O prazo máximo é de 36 meses para o tipo de cálculo americano");
+				}
+				if (this.taxaJuros.compareTo(BigDecimal.valueOf(1.99)) < 0) {
+					validacao.put("Juros inválido !!", "A menor taxa de juros é de 1.99% para o tipo de cálculo americano");
+				}
+			} else {
+				if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
+					validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
+				}
+				if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
+					validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
+				}
 			}
-			if (this.taxaJuros.compareTo(BigDecimal.valueOf(1.99)) < 0) {
-				validacao.put("Juros inválido !!", "A menor taxa de juros é de 1.99% para o tipo de cálculo americano");
+			if (this.valorCredito.compareTo(BigDecimal.ZERO) == 0) {
+				validacao.put("Valor Empréstimo !!", "O valor de empréstimo não foi informado");
 			}
-		} else {
-			if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
-				validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
+			if (this.valorImovel.compareTo(BigDecimal.ZERO) == 0) {
+				validacao.put("Valor Imóvel !!", "O valor de imóvel não foi informado");
 			}
-			if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
-				validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
+			if (this.valorCredito.compareTo(BigDecimal.ZERO) == 1 && this.valorImovel.compareTo(BigDecimal.ZERO) == 1
+					&& this.valorCredito.compareTo(valorImovel) == 1) {
+				validacao.put("Valores inválidos!!", "O imóvel deve ter valor maior que o empréstimo");
 			}
-		}
-		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 0) {
-			validacao.put("Valor Empréstimo !!", "O valor de empréstimo não foi informado");
-		}
-		if (this.valorImovel.compareTo(BigDecimal.ZERO) == 0) {
-			validacao.put("Valor Imóvel !!", "O valor de imóvel não foi informado");
-		}
-		if (this.valorCredito.compareTo(BigDecimal.ZERO) == 1 && this.valorImovel.compareTo(BigDecimal.ZERO) == 1
-				&& this.valorCredito.compareTo(valorImovel) == 1) {
-			validacao.put("Valores inválidos!!", "O imóvel deve ter valor maior que o empréstimo");
-		}
-		if (!CommonsUtil.semValor(validacao)) {
-			for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
-				facesContext.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
+			if (!CommonsUtil.semValor(validacao)) {
+				for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
+					facesContext.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
+				}
+				return null;
 			}
-			return null;
 		}
 
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
@@ -121,7 +123,7 @@ public class SimuladorMB {
 		final BigDecimal custoEmissaoPercentual;
 		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
 			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_LIQUIDO;
-		}else {
+		} else {
 			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
 		}
 		if (this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
@@ -223,13 +225,13 @@ public class SimuladorMB {
 			cash_flows[i] = calc_value.doubleValue();
 		}
 		
-		int maxGuess = 50;
+		
+		int maxGuess = 500;
 		cetDouble = irr(cash_flows, maxGuess);
 		
-		while(CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
-			maxGuess+= 50;
-			cetDouble = irr(cash_flows, maxGuess);
-		}
+		if (CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
+			cetDouble = 0;
+		} 
 		
 		cetDouble = cetDouble * 100; 
 		cet = CommonsUtil.bigDecimalValue(cetDouble);	
@@ -460,6 +462,14 @@ public class SimuladorMB {
 
 	public void setMostrarIPCA(boolean mostrarIPCA) {
 		this.mostrarIPCA = mostrarIPCA;
+	}
+
+	public boolean isValidar() {
+		return validar;
+	}
+
+	public void setValidar(boolean validar) {
+		this.validar = validar;
 	}
 }
 

@@ -15,17 +15,10 @@ public class CcbVO {
 	private boolean feminino;
 	private boolean empresa;	
 	
-	private String razaoSocial;
 	private String tipoEmpresa;
-	private String cnpj;
 	private String municipioEmpresa;
-	private String estadoEmpresa;
-	private String ruaEmpresa;
-	private String numeroEmpresa;
 	private String salaEmpresa;
-	private String bairroEmpresa;
-	private String cepEmpresa;
-	private Set<PagadorRecebedorSocio> socios;
+	private Set<CcbVO> socios;
 	
 	
 	public CcbVO() {
@@ -73,23 +66,11 @@ public class CcbVO {
 	public void setEmpresa(boolean empresa) {
 		this.empresa = empresa;
 	}
-	public String getRazaoSocial() {
-		return razaoSocial;
-	}
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
 	public String getTipoEmpresa() {
 		return tipoEmpresa;
 	}
 	public void setTipoEmpresa(String tipoEmpresa) {
 		this.tipoEmpresa = tipoEmpresa;
-	}
-	public String getCnpj() {
-		return cnpj;
-	}
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
 	}
 	public String getMunicipioEmpresa() {
 		return municipioEmpresa;
@@ -97,41 +78,11 @@ public class CcbVO {
 	public void setMunicipioEmpresa(String municipioEmpresa) {
 		this.municipioEmpresa = municipioEmpresa;
 	}
-	public String getEstadoEmpresa() {
-		return estadoEmpresa;
-	}
-	public void setEstadoEmpresa(String estadoEmpresa) {
-		this.estadoEmpresa = estadoEmpresa;
-	}
-	public String getRuaEmpresa() {
-		return ruaEmpresa;
-	}
-	public void setRuaEmpresa(String ruaEmpresa) {
-		this.ruaEmpresa = ruaEmpresa;
-	}
-	public String getNumeroEmpresa() {
-		return numeroEmpresa;
-	}
-	public void setNumeroEmpresa(String numeroEmpresa) {
-		this.numeroEmpresa = numeroEmpresa;
-	}
 	public String getSalaEmpresa() {
 		return salaEmpresa;
 	}
 	public void setSalaEmpresa(String salaEmpresa) {
 		this.salaEmpresa = salaEmpresa;
-	}
-	public String getBairroEmpresa() {
-		return bairroEmpresa;
-	}
-	public void setBairroEmpresa(String bairroEmpresa) {
-		this.bairroEmpresa = bairroEmpresa;
-	}
-	public String getCepEmpresa() {
-		return cepEmpresa;
-	}
-	public void setCepEmpresa(String cepEmpresa) {
-		this.cepEmpresa = cepEmpresa;
 	}
 	public String getTipoParticipante() {
 		return tipoParticipante;
@@ -139,12 +90,10 @@ public class CcbVO {
 	public void setTipoParticipante(String tipoParticipante) {
 		this.tipoParticipante = tipoParticipante;
 	}
-	public Set<PagadorRecebedorSocio> getSocios() {
+	public Set<CcbVO> getSocios() {
 		return socios;
 	}
-	public void setSocios(Set<PagadorRecebedorSocio> socios) {
+	public void setSocios(Set<CcbVO> socios) {
 		this.socios = socios;
 	}
-	
-	
 }
