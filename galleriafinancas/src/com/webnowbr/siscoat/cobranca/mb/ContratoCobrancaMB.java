@@ -20730,7 +20730,10 @@ public class ContratoCobrancaMB {
 
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+				
+				if(!arquivo.getName().contains("interno")) {
+					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+				}
 			}
 		}
 		return lista;
