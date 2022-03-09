@@ -547,17 +547,19 @@ public class InvestidorMB {
 				if (consideraContrato) {
 						BigDecimal saldoContrato = buscaUltimoValorPago(contrato, this.selectedPagador.getId());
 					
-						informeRendimentos = new InvestidorInformeRendimentos();
-						informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
-						informeRendimentos.setIrRetido(BigDecimal.ZERO);
-						informeRendimentos.setJuros(BigDecimal.ZERO);
-						informeRendimentos.setSaldoAnoAtual(saldoContrato);
-						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-						informeRendimentos.setSaldoAnoAnterior(saldoContrato);
-						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
-						informeRendimentos.setCnpj("34.425.347/0001-06");
-	
-						this.investidorInformeRendimentos.add(informeRendimentos);
+						if (saldoContrato.compareTo(BigDecimal.ZERO) > 0) {
+							informeRendimentos = new InvestidorInformeRendimentos();
+							informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
+							informeRendimentos.setIrRetido(BigDecimal.ZERO);
+							informeRendimentos.setJuros(BigDecimal.ZERO);
+							informeRendimentos.setSaldoAnoAtual(saldoContrato);
+							informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+							informeRendimentos.setSaldoAnoAnterior(saldoContrato);
+							informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+							informeRendimentos.setCnpj("34.425.347/0001-06");
+		
+							this.investidorInformeRendimentos.add(informeRendimentos);
+						}
 				}
 			}
 
