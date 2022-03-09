@@ -1401,6 +1401,15 @@ public class CcbMB {
 					"2.1.3. Valor destinado ao pagamento de despesas acessórias (devidas a terceiros): ",
 					CommonsUtil.formataValorMonetario(valorDespesas, "R$") + " (" + valorPorExtenso.toString() + ");", true,
 					false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2,
+					"2.1.3.1 ", "Os valores mencionados no ANEXO II expressam estimativas,"
+							+ " sendo que caso haja necessidade de complementação para quitação,"
+							+ " o(a) EMITENTE autoriza desde já e independentemente de notificação,"
+							+ " que seja realizado o desconto destes valores do montante líquido a"
+							+ " ser liberado, bem como, caso os valores sejam menores no momento da"
+							+ " quitação dos débitos, o CREDOR irá realizar o depósito da diferença"
+							+ " na Conta indicada no item 2.5.", true, false);
 
 			valorPorExtenso.setNumber(valorLiquidoCredito);
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1.4. Valor Líquido do Crédito: ",
@@ -2665,6 +2674,202 @@ public class CcbMB {
 
 		return null;
 	}
+	
+
+	public StreamedContent geraAFDinamica() throws IOException {
+		try {
+			XWPFDocument document = new XWPFDocument();				
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			XWPFRun run;
+
+			XWPFParagraph paragraph = document.createParagraph();
+			run = paragraph.createRun();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run.setText("INSTRUMENTO PARTICULAR DE ALIENAÇÃO FIDUCIÁRIA DE BEM(NS) IMÓVEL(EIS) EM GARANTIA E OUTRAS AVENÇAS");
+			XWPFRun run2 = paragraph.createRun();
+			XWPFRun run3 = paragraph.createRun();
+			XWPFRun run4 = paragraph.createRun();
+			XWPFRun run5 = paragraph.createRun();
+			XWPFRun run6 = paragraph.createRun();
+			XWPFRun run7 = paragraph.createRun();
+			XWPFRun run8 = paragraph.createRun();
+			XWPFRun run9 = paragraph.createRun();
+			XWPFRun run10 = paragraph.createRun();
+			
+			
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			
+			fazParagrafoSimples(document, paragraph, run, "Pelo presente instrumento particular firmado"
+					+ " nos termos do artigo 38 da Lei nº 9.514/1997, com a redação que lhe foi dada "
+					+ "pelo artigo 53 da Lei nº 11.076/2004, as Partes: ", false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "De um lado, na qualidade de outorgante(s) ", "FIDUCIANTE(s),", false, true);
+			
+			int iParticipante = 1;
+			for (CcbVO participante : this.listaParticipantes) {
+				if(participante.isFiduciante()) {
+					participante.setTipoParticipante("FIDUCIANTE");
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
+
+				run = paragraph.createRun();
+				run.setFontSize(12);
+				run.setText(iParticipante + ")");
+				run.addTab();
+				run.setText(" " + participante.getPessoa().getNome() + ", ");
+				run.setBold(true);
+
+				run2 = paragraph.createRun();
+				if (!participante.isEmpresa()) {
+					geraParagrafoPF(run2, participante);
+					run2.addCarriageReturn();
+
+				} else {
+					run2.setFontSize(12);
+					PagadorRecebedor pessoa = participante.getPessoa();
+
+					String socios = "";
+					if (participante.getSocios().size() > 1) {
+						socios = "pelos seus sócios, ";
+					} else {
+						if (participante.getSocios().iterator().next().isFeminino()) {
+							socios = "pela sua única sócia, ";
+						} else {
+							socios = "pelo seu único sócio, ";
+						}
+					}
+
+					run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+							+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+							+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+							+ "; neste ato representada " + socios);
+
+					for (CcbVO sociosParticipante : participante.getSocios()) {
+						XWPFRun runSocios = paragraph.createRun();
+						runSocios.setFontSize(12);
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setBold(true);
+						XWPFRun runSociosNome = paragraph.createRun();
+						geraParagrafoPF(runSociosNome, sociosParticipante);
+						runSociosNome.addCarriageReturn();
+					}
+				}
+				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(nomeEmitente)) {
+						nomeEmitente = participante.getPessoa().getNome();
+					}
+					
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							cpfEmitente = participante.getPessoa().getCpf();
+						} else {
+							cpfEmitente = participante.getPessoa().getCnpj();
+						}
+					}
+				}
+
+				iParticipante++;
+				} else {
+					participante.setTipoParticipante("DEVEDOR");
+				}
+			}
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(iParticipante + ")");
+			run.addTab();
+			run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., ");
+			run.setBold(true);
+
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("instituição financeira, inscrita no CNPJ/MF sob"
+					+ " nº 34.337.707/0001-00, com sede na Av. Paulista,"
+					+ " 1765, 1º Andar, CEP 01311-200, São Paulo, SP, neste ato,"
+					+ " representada na forma do seu Estatuto Social (“");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("”, e quando em conjunto com o ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE(S), ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("doravante denominadas “");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("PARTES");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("” e, isoladamente, “");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("PARTE");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("”).");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			gerador.open(String.format("testeAaaaaaa %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
 	
 	private void geraParagrafoPF(XWPFRun run2, CcbVO participante){
 		run2.setFontSize(12);
