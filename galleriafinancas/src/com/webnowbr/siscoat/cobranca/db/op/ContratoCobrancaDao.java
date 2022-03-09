@@ -5762,7 +5762,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			 + " urllead != 'Empréstimo online' and " 
 			 + " urllead != 'Empréstimo Home Equity' and " 
 			 + " urllead != 'Empréstimo com terreno em garantia' and " 
-			 + " urllead != 'Empréstimo online Y' and " 
+			 + " urllead != 'Empréstimo online YT' and " 
 			 + " urllead != 'Simulador online') outros " ;
 	
 
