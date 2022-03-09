@@ -1468,6 +1468,22 @@
 		<property name="comentarioPendencia" type="text">
 			<column name="comentarioPendencia" />
 		</property>
+
+		<property name="cetMes" type="big_decimal">
+			<column name="cetMes" />
+		</property>	
+		
+		<property name="divida" type="java.lang.String">
+			<column name="divida" />
+		</property>	
+		
+		<property name="dividaValor" type="big_decimal">
+			<column name="dividaValor" />
+		</property>	
+		
+		<property name="observacaoParaComite" type="text">
+			<column name="observacaoParaComite" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

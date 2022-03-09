@@ -29,6 +29,7 @@ public class ImovelCobranca implements Serializable {
 	private String possuiDivida;
 	private String ocupacao;
 	private BigDecimal valoEstimado;
+	private Date dataCompra;
 			
 	public ImovelCobranca(){
 	}
@@ -311,5 +312,13 @@ public class ImovelCobranca implements Serializable {
 
 	public void setValoEstimado(BigDecimal valoEstimado) {
 		this.valoEstimado = valoEstimado;
+	}
+
+	public Date getDataCompra() {
+		return dataCompra;
+	}
+
+	public void setDataCompra(Date dataCompra) {
+		this.dataCompra = dataCompra;
 	}
 }

@@ -61,6 +61,10 @@
         </property>                  
         <property name="valoEstimado" type="big_decimal">
 			<column name="valoEstimado" />
-		</property>                 
+		</property>             
+		<property name="dataCompra" type="java.util.Date">
+			<column name="dataCompra" />
+		</property>
+
     </class>
 </hibernate-mapping>

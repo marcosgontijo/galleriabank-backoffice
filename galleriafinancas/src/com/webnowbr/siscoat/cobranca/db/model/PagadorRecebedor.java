@@ -3,15 +3,20 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
 import com.webnowbr.siscoat.common.BancosEnum;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class PagadorRecebedor implements Serializable {
@@ -31,6 +36,7 @@ public class PagadorRecebedor implements Serializable {
 	private String telCelular;
 	private String email;
 	private Date dtNascimento;
+	private String idade;
 	private String nomePai;
 	private String nomeMae;
 	private String observacao1;
@@ -51,6 +57,7 @@ public class PagadorRecebedor implements Serializable {
 	private String telResidencialConjuge; 
 	private String telCelularConjuge; 
 	private Date dtNascimentoConjuge; 
+	private String idadeConjuge;
 	private String nomePaiConjuge;
 	private String nomeMaeConjuge;
 	private String enderecoConjuge;
@@ -260,6 +267,32 @@ public class PagadorRecebedor implements Serializable {
 			SelectItem item = new SelectItem(banco.getNomeCompleto());
 			this.listaBancos.add(item);
 		}
+	}
+	
+	public void calcularIdade() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		
+		long idadeLong = dateHoje.getTime() - this.getDtNascimento().getTime();
+		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+		idadeLong = idadeLong / 30;
+		idadeLong = idadeLong / 12;
+	    this.setIdade(CommonsUtil.stringValue(idadeLong));
+	}
+	
+	public void calcularIdadeConjuge() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		
+		long idadeLong = dateHoje.getTime() - this.getDtNascimentoConjuge().getTime();
+		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+		idadeLong = idadeLong / 30;
+		idadeLong = idadeLong / 12;
+	    this.setIdadeConjuge(CommonsUtil.stringValue(idadeLong));
 	}
 	
 	/**
@@ -1861,7 +1894,22 @@ public class PagadorRecebedor implements Serializable {
 	public void setNomeMaeConjuge(String nomeMaeConjuge) {
 		this.nomeMaeConjuge = nomeMaeConjuge;
 	}
-	
+
+	public String getIdade() {
+		return idade;
+	}
+
+	public void setIdade(String idade) {
+		this.idade = idade;
+	}
+
+	public String getIdadeConjuge() {
+		return idadeConjuge;
+	}
+
+	public void setIdadeConjuge(String idadeConjuge) {
+		this.idadeConjuge = idadeConjuge;
+	}
 	
 	
 }

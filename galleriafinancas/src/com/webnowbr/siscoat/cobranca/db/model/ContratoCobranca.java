@@ -555,6 +555,10 @@ public class ContratoCobranca implements Serializable {
 	private String numeroPreAnotacaoCartorio;
 	
 	private BigDecimal cetMes;
+	
+	private String divida;
+	private BigDecimal dividaValor;
+	private String observacaoParaComite;
 
 	public ContratoCobranca() {
 		super();
@@ -4526,5 +4530,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setCetMes(BigDecimal cetMes) {
 		this.cetMes = cetMes;
+	}
+
+	public String getDivida() {
+		return divida;
+	}
+
+	public void setDivida(String divida) {
+		this.divida = divida;
+	}
+
+	public BigDecimal getDividaValor() {
+		return dividaValor;
+	}
+
+	public void setDividaValor(BigDecimal dividaValor) {
+		this.dividaValor = dividaValor;
+	}
+
+	public String getObservacaoParaComite() {
+		return observacaoParaComite;
+	}
+
+	public void setObservacaoParaComite(String observacaoParaComite) {
+		this.observacaoParaComite = observacaoParaComite;
 	}
 }

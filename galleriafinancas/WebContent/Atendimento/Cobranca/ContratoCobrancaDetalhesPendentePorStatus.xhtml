@@ -449,6 +449,22 @@
 								style="FONT-SIZE: 10pt;width:400px;" >
 								<p:ajax process="@this" partialSubmit="true" />
 							</h:inputTextarea>
+							
+							<p:outputLabel for="divida" value="Tem previsão de divida para quitação? "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="divida" required="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
+								label="Status" style="width:100px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="sim" itemLabel="Sim" />
+								<f:selectItem itemValue="nao" itemLabel="Não" />
+								<p:ajax update="comentarioPreComitePanel" event="change" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="dividaValor" value="Valor da dívida: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
+							<p:inputText id="dividaValor" value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -490,7 +506,7 @@
 						</p:panel>
 					</h:panelGroup>
 					
-			<h:panelGroup id="votosComitePanel">
+				<h:panelGroup id="votosComitePanel">
 					<p:panel header="Votos do Comite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<p:dataView var="comite"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
@@ -793,6 +809,19 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
 								</h:panelGrid>
 							</h:panelGroup>
+							
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
+								<!--  -->
+								<h:panelGroup>
+									<h:panelGrid columns="2">
+										<p:outputLabel for="observacaoParaComite" value="Observação para o Comitê: "
+											styleClass="labelBold" />
+										<p:outputLabel id="observacaoParaComite" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+									</h:panelGrid>
+								</h:panelGroup>
+							</shiro:hasAnyRoles>
+							
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1001,13 +1030,22 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:outputLabel id="DtNascimento"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-								label="Data de Nascimento">
-								<f:convertDateTime locale="pt_BR" />
-								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-							</p:outputLabel>
+								
+							<h:panelGroup>
+								<p:outputLabel id="DtNascimento"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
+									label="Data de Nascimento">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 
+									<p:outputLabel for="idade" value="Idade: "
+										rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+									<p:outputLabel id="idade"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
+										rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+								</p:outputLabel>
+							</h:panelGroup>
+							
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 							<p:outputLabel id="TelCelular"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelular}"
@@ -1160,12 +1198,22 @@
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
-									<p:outputLabel id="DtNascimentoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
-										mask="99/99/9999" label="Data de Nascimento">
-										<f:convertDateTime locale="pt_BR" />
-										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-									</p:outputLabel>
+
+									<h:panelGroup>
+									
+										<p:outputLabel id="DtNascimentoConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
+											mask="99/99/9999" label="Data de Nascimento">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+										</p:outputLabel>
+
+										<p:outputLabel for="idadeConjuge" value="Idade: "
+											rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+										<p:outputLabel id="idadeConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.idadeConjuge}"
+											rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+									</h:panelGroup>
 
 									<p:outputLabel for="TelCelularConjuge"
 										value="Telefone Celular: " />
@@ -1604,12 +1652,21 @@
 
 												<p:outputLabel for="DtNascimentoPagador"
 													value="Data de Nascimento: " />
-												<p:outputLabel id="DtNascimentoPagador"
-													value="#{pagador.pessoa.dtNascimento}" mask="99/99/9999"
-													label="Data de Nascimento">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-												</p:outputLabel>
+													
+												<h:panelGroup>
+													<p:outputLabel id="DtNascimentoPagador"
+														value="#{pagador.pessoa.dtNascimento}" mask="99/99/9999"
+														label="Data de Nascimento">
+														<f:convertDateTime locale="pt_BR" />
+														<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+													</p:outputLabel>
+
+													<p:outputLabel for="idadePagador" value="Idade: "
+														rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+													<p:outputLabel id="idadePagador"
+														value="#{pagador.pessoa.idade}"
+														rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+												</h:panelGroup>
 
 												<p:outputLabel for="TelCelularPagador" value="Telefone: " />
 												<p:outputLabel id="TelCelularPagador"
@@ -1800,12 +1857,20 @@
 
 												<p:outputLabel for="SocioDtNascimento"
 													value="Data de Nascimento: " />
-												<p:outputLabel id="SocioDtNascimento"
-													value="#{socio.pessoa.dtNascimento}" mask="99/99/9999"
-													label="Data de Nascimento">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-												</p:outputLabel>
+
+												<h:panelGroup>
+													<p:outputLabel id="SocioDtNascimento"
+														value="#{socio.pessoa.dtNascimento}" mask="99/99/9999"
+														label="Data de Nascimento">
+														<f:convertDateTime locale="pt_BR" />
+														<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+													</p:outputLabel>
+
+													<p:outputLabel for="idadeSocio" value="Idade: "
+														rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+													<p:outputLabel id="idadeSocio" value="#{socio.pessoa.idade}"
+														rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+												</h:panelGroup>
 
 												<p:outputLabel for="SocioTelCelular" value="Telefone: " />
 												<p:outputLabel id="SocioTelCelular"
@@ -1976,6 +2041,14 @@
 						<p:outputLabel id="valorEstimado"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
 							converter="bigDecimalConverter" />
+						
+						<p:outputLabel for="dataCompra"
+							value="Data da compra do Imóvel " />							
+						<p:outputLabel id="dataCompra"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+							mask="99/99/9999" label="Data de Nascimento">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
 
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />
 						<p:outputLabel id="Ocupacao"

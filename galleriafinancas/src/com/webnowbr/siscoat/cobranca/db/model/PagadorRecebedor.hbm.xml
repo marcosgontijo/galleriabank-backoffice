@@ -532,6 +532,14 @@
 		<property name="taxaCheckListCoobrigadoCasado" type="boolean">
 			<column name="taxaCheckListCoobrigadoCasado" />
 		</property>	
+		
+		<property name="idade" type="java.lang.String">
+			<column name="idade" />
+		</property>	
+		
+		<property name="idadeConjuge" type="java.lang.String">
+			<column name="idadeConjuge" />
+		</property>	
       	                                        
     </class>
 </hibernate-mapping>

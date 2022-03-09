@@ -917,6 +917,19 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
 								</h:panelGrid>
 							</h:panelGroup>
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
+								<!--  -->
+								<h:panelGroup>
+									<h:panelGrid columns="2">
+										<p:outputLabel for="observacaoParaComite" value="Observação para o Comitê: "
+											styleClass="labelBold" />
+										<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
+											maxlength="3000" onblur=""
+											counterTemplate="{0} characters remaining." autoResize="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+									</h:panelGrid>
+								</h:panelGroup>
+							</shiro:hasAnyRoles>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1140,12 +1153,22 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputMask id="DtNascimento"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
-
+								
+							<h:panelGroup>
+								<p:inputMask id="DtNascimento"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
+									mask="99/99/9999" label="Data de Nascimento">
+									<p:ajax event="blur" update="idade"
+										listener="#{contratoCobrancaMB.objetoPagadorRecebedor.calcularIdade()}" />
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputMask>
+								
+								<p:spacer width="10px"/>
+								
+								<p:outputLabel for="idade" value="Idade: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+								<p:inputText id="idade" value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+							</h:panelGroup>
+							
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 							<p:inputText id="TelCelular"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelular}"
@@ -1371,11 +1394,22 @@
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
-									<p:inputMask id="DtNascimentoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
-										mask="99/99/9999" label="Data de Nascimento">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</p:inputMask>
+
+									<h:panelGroup>
+										<p:inputMask id="DtNascimentoConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
+											mask="99/99/9999" label="Data de Nascimento">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+											<p:ajax event="blur" update="idadeConjuge"
+												listener="#{contratoCobrancaMB.objetoPagadorRecebedor.calcularIdadeConjuge()}" />
+										</p:inputMask>
+										
+										<p:spacer width="10px" />
+										
+										<p:outputLabel for="idadeConjuge" value="Idade: " />
+										<p:inputText id="idadeConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.idadeConjuge}"/>
+									</h:panelGroup>
 
 									<p:outputLabel for="TelCelularConjuge"
 										value="Telefone Celular: " />
@@ -1582,11 +1616,22 @@
 										<p:outputLabel for="DtNascimentoPagador"
 											value="Data de Nascimento: " />
 
-										<p:inputMask id="DtNascimentoPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
+										<h:panelGroup>
+											<p:inputMask id="DtNascimentoPagador"
+												value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.dtNascimento}"
+												mask="99/99/9999" label="Data de Nascimento">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+												<p:ajax event="blur" update="idadePagador"
+													listener="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.calcularIdade()}" />
+											</p:inputMask> 
+
+											<p:spacer width="10px" />
+
+											<p:outputLabel for="idadePagador" value="Idade: " />
+											<p:inputText id="idadePagador"
+												value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.idade}" />
+										</h:panelGroup>
+										
 
 										<p:outputLabel for="TelCelularPagador" value="Telefone: " />
 										<p:inputText id="TelCelularPagador"
@@ -1852,11 +1897,23 @@
 
 										<p:outputLabel for="SocioDtNascimento"
 											value="Data de Nascimento: " />
-										<p:inputMask id="SocioDtNascimento"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
+											
+										<h:panelGroup>
+											<p:inputMask id="SocioDtNascimento"
+												value="#{contratoCobrancaMB.socioSelecionado.pessoa.dtNascimento}"
+												mask="99/99/9999" label="Data de Nascimento">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+												<p:ajax event="blur" update="idadeSocio"
+													listener="#{contratoCobrancaMB.socioSelecionado.pessoa.calcularIdade()}" />
+											</p:inputMask>
+
+											<p:spacer width="10px" />
+
+											<p:outputLabel for="idadeSocio" value="Idade: " />
+											<p:inputText id="idadeSocio"
+												value="#{contratoCobrancaMB.socioSelecionado.pessoa.idade}" />
+										</h:panelGroup>
+										
 
 										<p:outputLabel for="SocioTelCelular" value="Telefone: " />
 										<p:inputText id="SocioTelCelular"
@@ -2136,6 +2193,14 @@
 							onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="dataCompra"
+							value="Data da compra do Imóvel " />							
+						<p:inputMask id="dataCompra"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+							mask="99/99/9999" label="Data de Nascimento">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputMask>
 
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />
 						<p:selectOneMenu id="Ocupacao"
@@ -2984,6 +3049,7 @@
 								headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
 								filterMatchMode="contains" sortBy="#{filesInterno.name}">
 								<h:outputText
+								
 										value="#{filesInterno.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"

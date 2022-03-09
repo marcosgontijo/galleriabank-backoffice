@@ -455,13 +455,71 @@
 			   			 </p:tooltip>																
 					</p:panel>
 				</shiro:hasAnyRoles>
-				
+
+				<h:panelGroup>
+					<h:panelGrid columns="2">
+						<h:panelGroup>
+							<h:panelGrid columns="2">
+								<p:outputLabel for="idadeComite" value="Idade Emitente: "
+									styleClass="labelBold" />
+								<p:inputText id="idadeComite"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}" />
+
+								<p:outputLabel for="idadeConjugeComite" value="Idade Conjuge: "
+									styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+								<p:inputText id="idadeConjugeComite"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
+									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							</h:panelGrid>
+						</h:panelGroup>
+						<p:dataView var="pagador"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
+							paginator="false" layout="list"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores.size() > 0}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="Nome: " styleClass="labelBold" />
+								<p:outputLabel value="#{pagador.pessoa.nome}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="10" />
+								<p:outputLabel value="Idade: " styleClass="labelBold" />
+								<p:outputLabel value="#{pagador.pessoa.idade}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+							</p:dataViewListItem>
+						</p:dataView>
+
+						<p:dataView var="socios"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listSocios}"
+							paginator="false" layout="list"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listSocios.size() > 0}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="Nome: " styleClass="labelBold" />
+								<p:outputLabel value="#{socios.pessoa.nome}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="10" />
+								<p:outputLabel value="Idade: " styleClass="labelBold" />
+								<p:outputLabel value="#{socios.pessoa.idade}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+							</p:dataViewListItem>
+						</p:dataView>
+					</h:panelGrid>
+				</h:panelGroup>
+
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+									<h:panelGroup id="botaoLinkImovelComite">
+										<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+											class="linkPDF" target="_blank"
+											style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
+												link no Google Maps</b></a>
+									</h:panelGroup>
+									<!-- -->
 									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
 										styleClass="labelBold" />
 									<h:panelGroup>
@@ -598,9 +656,28 @@
 								rows="10" cols="48" maxlength="3000" onblur=""
 								counterTemplate="{0} characters remaining." autoResize="false"
 								style="FONT-SIZE: 10pt;width:400px;" />
+							
+							
+							<p:outputLabel for="divida" value="Tem previsão de divida para quitação? "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="divida" required="true"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
+								label="Status" style="width:100px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="sim" itemLabel="Sim" />
+								<f:selectItem itemValue="nao" itemLabel="Não" />
+								<p:ajax update="comentarioPreComitePanel" event="change" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="dividaValor" value="Valor da dívida: "
+								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
+							<p:inputText id="dividaValor" value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
+								
 							<p:spacer height="10" />
 							<p:spacer height="10" />
 						</h:panelGrid>
+						
 					</p:panel>
 				</h:panelGroup>
 
@@ -621,8 +698,16 @@
 							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
 							<f:selectItem itemLabel="Financiamento" itemValue="Financiamento" />
 						</p:selectOneRadio>
+
+						<p:outputLabel for="dataCompraComite" value="Data da compra do Imóvel " />
+						<p:calendar id="dataCompraComite" showOn="button"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+							size="100" pattern="dd/MM/yyyy" locale="pt"
+							styleClass="dateTimeField" />
 					</h:panelGrid>
 				</p:panel>
+				
+				
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
@@ -682,6 +767,19 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
 								</h:panelGrid>
 							</h:panelGroup>
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
+								<!--  -->
+								<h:panelGroup>
+									<h:panelGrid columns="2">
+										<p:outputLabel for="observacaoParaComite" value="Observação para o Comitê: "
+											styleClass="labelBold" />
+										<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
+											maxlength="3000" onblur=""
+											counterTemplate="{0} characters remaining." autoResize="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+									</h:panelGrid>
+								</h:panelGroup>
+							</shiro:hasAnyRoles>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1297,12 +1395,22 @@
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
 							<p:outputLabel for="DtNascimento" value="Data da Fundação: "
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
-							<p:inputMask id="DtNascimento"
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
-
+								
+							<h:panelGroup>
+								<p:inputMask id="DtNascimento"
+									value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimento}"
+									mask="99/99/9999" label="Data de Nascimento">
+									<p:ajax event="blur" update="idade"
+										listener="#{contratoCobrancaMB.objetoPagadorRecebedor.calcularIdade()}" />
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputMask>
+								
+								<p:spacer width="10px"/>
+								
+								<p:outputLabel for="idade" value="Idade: " rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+								<p:inputText id="idade" value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}" rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+							</h:panelGroup>
+							
 							<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 							<p:inputText id="TelCelular"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.telCelular}"
@@ -1528,11 +1636,22 @@
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
-									<p:inputMask id="DtNascimentoConjuge"
-										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
-										mask="99/99/9999" label="Data de Nascimento">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</p:inputMask>
+
+									<h:panelGroup>
+										<p:inputMask id="DtNascimentoConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
+											mask="99/99/9999" label="Data de Nascimento">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+											<p:ajax event="blur" update="idadeConjuge"
+												listener="#{contratoCobrancaMB.objetoPagadorRecebedor.calcularIdadeConjuge()}" />
+										</p:inputMask>
+										
+										<p:spacer width="10px" />
+										
+										<p:outputLabel for="idadeConjuge" value="Idade: " />
+										<p:inputText id="idadeConjuge"
+											value="#{contratoCobrancaMB.objetoPagadorRecebedor.idadeConjuge}"/>
+									</h:panelGroup>
 
 									<p:outputLabel for="TelCelularConjuge"
 										value="Telefone Celular: " />
@@ -1739,11 +1858,22 @@
 										<p:outputLabel for="DtNascimentoPagador"
 											value="Data de Nascimento: " />
 
-										<p:inputMask id="DtNascimentoPagador"
-											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
+										<h:panelGroup>
+											<p:inputMask id="DtNascimentoPagador"
+												value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.dtNascimento}"
+												mask="99/99/9999" label="Data de Nascimento">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+												<p:ajax event="blur" update="idadePagador"
+													listener="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.calcularIdade()}" />
+											</p:inputMask> 
+
+											<p:spacer width="10px" />
+
+											<p:outputLabel for="idadePagador" value="Idade: " />
+											<p:inputText id="idadePagador"
+												value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.idade}" />
+										</h:panelGroup>
+										
 
 										<p:outputLabel for="TelCelularPagador" value="Telefone: " />
 										<p:inputText id="TelCelularPagador"
@@ -2009,11 +2139,23 @@
 
 										<p:outputLabel for="SocioDtNascimento"
 											value="Data de Nascimento: " />
-										<p:inputMask id="SocioDtNascimento"
-											value="#{contratoCobrancaMB.socioSelecionado.pessoa.dtNascimento}"
-											mask="99/99/9999" label="Data de Nascimento">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</p:inputMask>
+											
+										<h:panelGroup>
+											<p:inputMask id="SocioDtNascimento"
+												value="#{contratoCobrancaMB.socioSelecionado.pessoa.dtNascimento}"
+												mask="99/99/9999" label="Data de Nascimento">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+												<p:ajax event="blur" update="idadeSocio"
+													listener="#{contratoCobrancaMB.socioSelecionado.pessoa.calcularIdade()}" />
+											</p:inputMask>
+
+											<p:spacer width="10px" />
+
+											<p:outputLabel for="idadeSocio" value="Idade: " />
+											<p:inputText id="idadeSocio"
+												value="#{contratoCobrancaMB.socioSelecionado.pessoa.idade}" />
+										</h:panelGroup>
+										
 
 										<p:outputLabel for="SocioTelCelular" value="Telefone: " />
 										<p:inputText id="SocioTelCelular"
@@ -2293,6 +2435,15 @@
 							onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="dataCompra"
+							value="Data da compra do Imóvel " />							
+						<p:inputMask id="dataCompra"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+							mask="99/99/9999" label="Data de Nascimento">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputMask>
+							
 
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />
 						<p:selectOneMenu id="Ocupacao"
