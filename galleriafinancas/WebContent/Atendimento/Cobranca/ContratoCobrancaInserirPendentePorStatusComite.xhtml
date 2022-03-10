@@ -660,18 +660,13 @@
 							
 							<p:outputLabel for="divida" value="Tem previsão de divida para quitação? "
 								styleClass="labelBold" />
-							<p:selectOneMenu id="divida" required="true"
+							<p:outputLabel id="divida"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
-								label="Status" style="width:100px;">
-								<f:selectItem itemValue="" itemLabel="" />
-								<f:selectItem itemValue="sim" itemLabel="Sim" />
-								<f:selectItem itemValue="nao" itemLabel="Não" />
-								<p:ajax update="comentarioPreComitePanel" event="change" />
-							</p:selectOneMenu>
+								label="Status" style="width:100px;"/>
 							
 							<p:outputLabel for="dividaValor" value="Valor da dívida: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
-							<p:inputText id="dividaValor" value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+							<p:outputLabel id="dividaValor" value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
 								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
 								
 							<p:spacer height="10" />

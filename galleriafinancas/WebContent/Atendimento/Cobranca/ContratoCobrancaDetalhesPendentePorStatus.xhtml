@@ -463,8 +463,15 @@
 							
 							<p:outputLabel for="dividaValor" value="Valor da dívida: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
-							<p:inputText id="dividaValor" value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
-								converter="bigDecimalConverter" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
+
+							<p:inputText id="dividaValor"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}">
+								<p:ajax process="@this" partialSubmit="true" />
+							</p:inputText>
+	
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
