@@ -2953,8 +2953,8 @@ public class ContratoCobrancaMB {
 		}
 		
 		// Mensagem PRE APROVADO COMITE
-		if (this.objetoContratoCobranca.isPreAprovadoComite() != statusContrato.isPreAprovadoComite()) {
-			if (this.objetoContratoCobranca.isPreAprovadoComite()) {
+		if (this.objetoContratoCobranca.isDocumentosComite() != statusContrato.isDocumentosComite()) {
+			if (this.objetoContratoCobranca.isDocumentosComite()) {
 				TakeBlipMB takeBlipMB = new TakeBlipMB();
 				
 				ResponsavelDao rDao = new ResponsavelDao();
@@ -3232,13 +3232,25 @@ public class ContratoCobrancaMB {
 		if (!this.objetoContratoCobranca.isPreAprovadoComite()) {
 			this.objetoContratoCobranca.setPreAprovadoComiteData(null);
 			this.objetoContratoCobranca.setPreAprovadoComiteUsuario(null);
-
 		} else {
 			if (this.objetoContratoCobranca.getPreAprovadoComiteData() == null) {
 				this.objetoContratoCobranca.setStatus("Pendente");
 				this.objetoContratoCobranca.setPreAprovadoComiteData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPreAprovadoComiteData());
 				this.objetoContratoCobranca.setPreAprovadoComiteUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isDocumentosComite()) {
+			this.objetoContratoCobranca.setDocumentosComiteData(null);
+			this.objetoContratoCobranca.setDocumentosComiteUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getDocumentosComiteData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setDocumentosComiteData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getDocumentosComiteData());
+				this.objetoContratoCobranca.setDocumentosComiteUsuario(getNomeUsuarioLogado());
 			}
 		}
 		
@@ -3353,6 +3365,20 @@ public class ContratoCobrancaMB {
 				comite.setVotoAnaliseComite("Reprovado");
 			}
 		}
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. Comite");
+	}
+	
+	public String voltarContratoParaDocumentosComite() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setDocumentosComite(false);
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
@@ -5649,7 +5675,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
-						!this.objetoContratoCobranca.isPreAprovadoComite()) {
+						!this.objetoContratoCobranca.isPreAprovadoComite() || !this.objetoContratoCobranca.isDocumentosComite()) {
 					this.indexStepsStatusContrato = 4;
 				}
 				
@@ -5659,6 +5685,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
 						this.objetoContratoCobranca.isPreAprovadoComite() &&
+						this.objetoContratoCobranca.isDocumentosComite() &&
 						!this.objetoContratoCobranca.isAprovadoComite()) {
 					this.indexStepsStatusContrato = 5;
 				}
@@ -7937,36 +7964,42 @@ public class ContratoCobrancaMB {
 							&& !c.isPreAprovadoComite()) {
 						c.setStatus("Pré-Comite");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isPreAprovadoComite() && !c.isDocumentosComite()) {
+						c.setStatus("Ag. Validação DOCs");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isPreAprovadoComite() && !c.isAprovadoComite()) {
+							&& c.isPreAprovadoComite() && c.isDocumentosComite() && !c.isAprovadoComite()) {
 						c.setStatus("Ag. Comite");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isPreAprovadoComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+							&& c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
 						c.setStatus("Ag. DOC");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& !c.isCcbPronta()) {
 						c.setStatus("Ag. CCB");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& c.isCcbPronta() && c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
@@ -8010,6 +8043,9 @@ public class ContratoCobrancaMB {
 		//}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
+		}
+		if (status.equals("Ag. Documentos Comite")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Documentos Comite";
 		}
 		if (status.equals("Ag. Comite")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Comite";
@@ -8776,21 +8812,24 @@ public class ContratoCobrancaMB {
 		cell.setCellValue("Taxa de Juros (%)");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(12);
-		cell.setCellValue("CET");
+		cell.setCellValue("Tipo de Juros");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(13);
-		cell.setCellValue("Parcela");
+		cell.setCellValue("CET");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(14);
-		cell.setCellValue("Data Vencimento");
+		cell.setCellValue("Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(15);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(16);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Valor");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(17);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(18);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 
@@ -8939,9 +8978,18 @@ public class ContratoCobrancaMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0"));
 			}
+			
+			// Tipo Juros
+			cell = row.createCell(12);
+			cell.setCellStyle(cell_style);
+			if (record.isCorrigidoIPCA()) {
+				cell.setCellValue("Pós-Fixado");
+			} else {
+				cell.setCellValue("Pré-Fixado");
+			}
 
 			// CET
-			cell = row.createCell(12);
+			cell = row.createCell(13);
 			cell.setCellStyle(numberStyle);
 			if (record.getTxJurosParcelas() != null) {
 				cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
@@ -9044,8 +9092,17 @@ public class ContratoCobrancaMB {
 					cell.setCellValue(Double.valueOf("0"));
 				}
 				
-				// CET
+				// Tipo Juros
 				cell = row.createCell(12);
+				cell.setCellStyle(cell_style);
+				if (record.isCorrigidoIPCA()) {
+					cell.setCellValue("Pós-Fixado");
+				} else {
+					cell.setCellValue("Pré-Fixado");
+				}
+				
+				// CET
+				cell = row.createCell(13);
 				cell.setCellStyle(numberStyle);
 				if (record.getTxJurosParcelas() != null) {
 					cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
@@ -9054,7 +9111,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Parcela
-				cell = row.createCell(13);
+				cell = row.createCell(14);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -9065,7 +9122,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getNumeroParcela());
 
 				// Data Vencimento
-				cell = row.createCell(14);
+				cell = row.createCell(15);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -9076,7 +9133,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataVencimento());
 
 				// Valor Parcela
-				cell = row.createCell(15);
+				cell = row.createCell(16);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -9092,7 +9149,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Data pagto
-				cell = row.createCell(16);
+				cell = row.createCell(17);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -9103,7 +9160,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataUltimoPagamento());
 
 				// Valor Pago
-				cell = row.createCell(17);
+				cell = row.createCell(18);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -9133,6 +9190,7 @@ public class ContratoCobrancaMB {
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 10, 10));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 11, 11));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 12, 12));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 13, 13));
 			}
 
 			// pula 1 linha
@@ -9174,6 +9232,8 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(16);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(17);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(18);
 			cell.setCellStyle(cell_style);
 			
 

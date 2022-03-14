@@ -114,8 +114,7 @@
 								<p:menuitem id="aprovadoStep" value="Contrato" />
 							</p:steps>
 
-							<ui:fragment
-								rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 								<h:panelGrid columns="2"
 									style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -128,7 +127,7 @@
 											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 											offIcon="ui-icon-close" style="width:=60px" />
 									</shiro:hasAnyRoles>
-								</h:panelGrid>
+								</h:panelGrid>								
 							</ui:fragment>
 
 							<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">

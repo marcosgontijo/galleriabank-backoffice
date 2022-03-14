@@ -163,6 +163,20 @@
 									</h:panelGrid>
 								</ui:fragment>
 								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
+											<p:selectBooleanButton id="DocumentosComite" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
+											</p:selectBooleanButton>
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+								</ui:fragment>
+								
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -267,6 +281,20 @@
 									</ui:fragment>
 									
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 5}">
+										<h:panelGrid columns="2"
+											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold">Voltar Contrato para Validação DOCs</p:outputLabel>
+											<p:spacer></p:spacer>
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+												<p:commandButton value="Voltar Contrato para Validação DOCs"
+													onclick="PF('voltarValidacaoDocsDialog').show();" />
+											</shiro:hasAnyRoles>
+										</h:panelGrid>
+									</ui:fragment>
+									
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 4 and contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -509,7 +537,7 @@
 
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
@@ -913,7 +941,7 @@
 			
 			<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
 								styleClass="labelBold" />
@@ -1232,9 +1260,9 @@
 				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
-						<p:inputText id="Codigo1" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" required="true" onblur=""  style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}"/>
+						<p:inputText id="Codigo1" value="#{contratoCobrancaMB.codigoResponsavel}" autocomplete="no" label="Código do Responsável" required="true" style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}"/>
 						<p:outputLabel for="Codigo2" value="Código do Responsável: " styleClass="labelBold"  rendered="#{contratoCobrancaMB.updateMode}"/>
-						<p:inputText id="Codigo2" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
+						<p:inputText id="Codigo2" value="#{contratoCobrancaMB.codigoResponsavel}" autocomplete="no" label="Código do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: " styleClass="labelBold" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<h:panelGroup>
 							<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
@@ -3311,6 +3339,24 @@
 						<p:spacer width="20" />
 						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
 							action="#{contratoCobrancaMB.voltarContratoParaComite}"
+							style="TEXT-DECORATION: bold;" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Enviar Para Validação DOCs" widgetVar="voltarValidacaoDocsDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromVoltarValidacaoDOCs">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"  
+						style="width:250px;font-weight:bold;font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:50px"> 
+						<p:commandButton value="Não"
+							onclick="PF('voltarValidacaoDocsDialog').close();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.voltarContratoParaDocumentosComite}"
 							style="TEXT-DECORATION: bold;" />
 					</h:panelGrid>
 				</div>

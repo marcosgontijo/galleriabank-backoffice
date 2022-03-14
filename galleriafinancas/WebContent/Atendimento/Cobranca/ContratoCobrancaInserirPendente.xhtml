@@ -372,6 +372,34 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</h:panelGrid>
+							
+							<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
+									<p:spacer ></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">										
+										<p:selectBooleanButton id="documentosComiteView" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" disabled="true"/>
+									</shiro:hasAnyRoles>
+									
+									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+									<p:selectBooleanButton id="documentosComite"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px">
+									</p:selectBooleanButton>
+								</shiro:hasAnyRoles>		
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="documentosComiteUsuario" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteUsuario}" style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;"/>
+									<h:outputText id="documentosComiteData" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteData}" style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">			            	
+								          <f:convertDateTime locale="pt_BR"  />
+								          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								    </h:outputText>																    						    
+								</h:panelGrid>
 
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -638,7 +666,7 @@
 
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="1">
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
@@ -739,7 +767,7 @@
 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="taxaAprovadaView" value="Taxa Aprovada: "
@@ -1078,17 +1106,17 @@
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: "
-							styleClass="labelBold"
+							styleClass="labelBold" 
 							rendered="#{!contratoCobrancaMB.updateMode}" />
 						<p:inputText id="Codigo1"
-							value="#{contratoCobrancaMB.codigoResponsavel}"
+							value="#{contratoCobrancaMB.codigoResponsavel}"  autocomplete="no"
 							label="Código do Responsável" required="true" onblur=""
 							style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}" />
 						<p:outputLabel for="Codigo2" value="Código do Responsável: "
 							styleClass="labelBold"
 							rendered="#{contratoCobrancaMB.updateMode}" />
 						<p:inputText id="Codigo2"
-							value="#{contratoCobrancaMB.codigoResponsavel}"
+							value="#{contratoCobrancaMB.codigoResponsavel}"  autocomplete="no"
 							label="Código do Responsável" style="width:150px;"
 							rendered="#{contratoCobrancaMB.updateMode}" />
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: "

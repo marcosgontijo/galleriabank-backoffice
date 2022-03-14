@@ -650,28 +650,34 @@ public class CRMMB {
 					c.setStatus("Pré-Comite");
 				}
 				
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isPreAprovadoComite() && !c.isDocumentosComite()) {
+					c.setStatus("Ag. Validação DOCs");
+				}
+				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
-						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && !c.isAprovadoComite()) {
+						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && !c.isAprovadoComite()) {
 					c.setStatus("Ag. Comite");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
 					c.setStatus("Ag. DOC");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
 					c.setStatus("Ag. CCB");	
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
 					c.setStatus("Ag. Assinatura");
 				}
 				
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
+					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
 					c.setStatus("Ag. Registro");
 				}
 			}
