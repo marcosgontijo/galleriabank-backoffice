@@ -36,958 +36,1488 @@
 								value="Tipo Do Documento: " styleClass="labelBold" />
 							<p:selectOneMenu id="tipoDownload"
 								value="#{ccbMB.tipoDownload}" ajax="true">
-								<f:selectItem itemValue="CCB" itemLabel="CCB" />
-								<f:selectItem itemValue="AF" itemLabel="AF" />
-								<f:selectItem itemValue="NC" itemLabel="Notificacao de cessao" />
-								<f:selectItem itemValue="Excel" itemLabel="Excel (ainda em teste)" />
-								<f:selectItem itemValue="teste" itemLabel="teste" />
+								<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
+								<f:selectItem itemValue="AFnova" itemLabel="AF" />
+								<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
+								<f:selectItem itemValue="CCB" itemLabel="CCB (antiga)" />
+								<f:selectItem itemValue="AF" itemLabel="AF (antiga)" />
+								<f:selectItem itemValue="NC" itemLabel="Notificacao de cessao (antiga)" />
+								<p:ajax update="pagadoresAntigos pagadoresNovos" event="valueChange"
+									listener="#{ccbMB.verificaModeloAntigo()}" />
 							</p:selectOneMenu>	
 					</h:panelGrid>
-
-					<p:panel header="Emitente" id="emitentePanel"
-						style="margin-bottom:10px;">
-						<f:facet name="header"> Emitente
-							<p:commandButton ajax="true" action="#{ccbMB.pesquisaEmitente()}"
-								icon="ui-icon ui-icon-circle-zoomin"
-								oncomplete="PF('pagadorRecebedorDialog').show();"
-								update=":formReceborPagador" process="@this" />
-						</f:facet>
-						<h:panelGrid columns="4">
-							<p:outputLabel for="nomeEmitente" value="Nome do Emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nomeEmitente" value="#{ccbMB.emitenteSelecionado.nome}"
-								label="Contrato" />
-
-							<p:outputLabel for="nacionalidadeEmitente"
-								value="Nacionalidade do Emitente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nacionalidadeEmitente"
-								value="#{ccbMB.nacionalidadeEmitente}" label="Contrato" />
-
-							<p:outputLabel for="profissaoEmitente"
-								value="Profissão do Emitente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="profissaoEmitente"
-								value="#{ccbMB.emitenteSelecionado.atividade}" label="Contrato" />
-
-							<p:outputLabel for="estadoCivilEmitente"
-								value="Estado civil do Emitente: " styleClass="labelBold" />
-							<p:selectOneMenu id="estadoCivilEmitente"
-								value="#{ccbMB.emitenteSelecionado.estadocivil}" ajax="true">
-								<f:selectItem itemValue="NÃO INFORMADO"
-									itemLabel="Não informado" />
-								<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
-								<f:selectItem itemValue="CASADO" itemLabel="Casado" />
-								<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
-								<f:selectItem itemValue="UNIÃO ESTÁVEL"
-									itemLabel="União estável" />
-								<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
-								<p:ajax update=":form:conjugueEmitente" event="change" />
-							</p:selectOneMenu>
-
-							<p:outputLabel for="numeroRgEmitente"
-								value="Numero do RG do emitente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroRgEmitente"
-								value="#{ccbMB.emitenteSelecionado.rg}" label="Contrato" />
-								
-							<p:outputLabel value="É Feminino: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="femininoEmitente"
-								value="#{ccbMB.femininoEmitente}" />
-
-							<p:outputLabel for="ufEmitente" value="UF do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="ufEmitente" value="#{ccbMB.emitenteSelecionado.estado}"
-								label="Contrato" />
-
-							<p:outputLabel for="cpfEmitente" value="CPF do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />						
-							<p:inputMask id="cpfEmitente" value="#{ccbMB.emitenteSelecionado.cpf}"
-										label="Contrato" mask="999.999.999-99"/>
-
-							<p:outputLabel for="logradouroEmitente"
-								value="Logradouro do emitente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="logradouroEmitente"
-								value="#{ccbMB.emitenteSelecionado.endereco}" label="Contrato" />
-
-							<p:outputLabel for="numeroEmitente" value="Numero do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroEmitente" value="#{ccbMB.emitenteSelecionado.numero}"
-								label="Contrato" />
-
-							<p:outputLabel for="complementoEmitente"
-								value="Complemento do emitente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="complementoEmitente"
-								value="#{ccbMB.emitenteSelecionado.complemento}" label="Contrato" />
-
-							<p:outputLabel for="cidadeEmitente" value="Cidade do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cidadeEmitente" value="#{ccbMB.emitenteSelecionado.cidade}"
-								label="Contrato" />
-
-							<p:outputLabel for="cepEmitente" value="CEP do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cepEmitente" value="#{ccbMB.emitenteSelecionado.cep}"
-								label="Contrato" />
-
-							<p:outputLabel for="emailEmitente" value="Email do emitente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="emailEmitente" value="#{ccbMB.emitenteSelecionado.email}"
-								label="Contrato" />
-								
-							<p:outputLabel value="É fiduciante: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="fiduciante"
-								value="#{ccbMB.fiduciante}"/>
-								
-							<p:outputLabel value="É empresa: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-
-							<p:selectBooleanCheckbox id="empresaEmitente"
-								value="#{ccbMB.empresaEmitente}">
-								<p:ajax update=":form:empresaEmitentePanel" event="change" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel for="paiEmitente" value="Nome do pai: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="paiEmitente" value="#{ccbMB.emitenteSelecionado.nomePai}"
-								label="Contrato" />
-								
-							<p:outputLabel for="maeEmitente" value="Nome da mãe: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="maeEmitente" value="#{ccbMB.emitenteSelecionado.nomeMae}"
-								label="Contrato" />
-
-						</h:panelGrid>
-
-						<h:panelGroup id="conjugueEmitente">
-							<p:panel header="Coinjugue Emitente" style="margin-bottom:10px;"
-								rendered="#{ccbMB.emitenteSelecionado.estadocivil == 'CASADO'}">
-								<h:panelGrid columns="4">
-
-									<p:outputLabel for="regimeCasamentoEmitente"
-										value="Regime do Casamento: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectOneMenu id="regimeCasamentoEmitente"
-										value="#{ccbMB.emitenteSelecionado.regimeCasamento}" ajax="true">
-										<f:selectItem itemValue="universal de bens"
-											itemLabel="Universal de bens" />
-										<f:selectItem itemValue="de comunhão parcial de bens"
-											itemLabel="Comunhão parcial de bens" />
-										<f:selectItem itemValue="de separação total de bens"
-											itemLabel="Separação total de bens" />
-										<f:selectItem itemValue="obrigatório de separação de bens"
-											itemLabel="Obrigatório de separação de bens" />
-									</p:selectOneMenu>
-
-									<p:outputLabel for="nomeConjugeEmitente"
-										value="Nome do Conjuge do Emitente: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="nomeConjugeEmitente"
-										value="#{ccbMB.emitenteSelecionado.nomeConjuge}" label="Contrato" />
-
-									<p:outputLabel for="cpfConjugeEmitente"
-										value="CPF do emitente: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />						
-									<p:inputMask id="cpfConjugeEmitente" value="#{ccbMB.emitenteSelecionado.cpfConjuge}"
-										label="Contrato" mask="999.999.999-99"/>
-
-								</h:panelGrid>
-							</p:panel>
-						</h:panelGroup>
-
-						<h:panelGroup id="empresaEmitentePanel">
-							<p:panel header="Empresa Emitente" style="margin-bottom:10px;"
-								rendered="#{ccbMB.empresaEmitente}">
-								<h:panelGrid columns="4">
-									<p:outputLabel for="razaoSocialEmitente" value="Razão social: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="razaoSocialEmitente" value="#{ccbMB.razaoSocialEmitente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="tipoEmpresaEmitente" value="Tipo da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="tipoEmpresaEmitente" value="#{ccbMB.tipoEmpresaEmitente}"
-										label="Contrato" />
-
-									<p:outputLabel for="cnpjEmitente" value="CNPJ da empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cnpjEmitente" value="#{ccbMB.cnpjEmitente}"
-										label="Contrato" mask="99.999.999/9999-99" />
-										
-									<p:outputLabel for="municipioEmpresaEmitente" value="Município da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="municipioEmpresaEmitente" value="#{ccbMB.municipioEmpresaEmitente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="estadoEmpresaEmitente" value="Estado da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="estadoEmpresaEmitente" value="#{ccbMB.estadoEmpresaEmitente}"
-										label="Contrato" />
-									
-									<p:outputLabel for="ruaEmpresaEmitente" value="Logradouro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="ruaEmpresaEmitente" value="#{ccbMB.ruaEmpresaEmitente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="numeroEmpresaEmitente" value="Numero da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="numeroEmpresaEmitente" value="#{ccbMB.numeroEmpresaEmitente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="salaEmpresaEmitente" value="Sala da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="salaEmpresaEmitente" value="#{ccbMB.salaEmpresaEmitente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="bairroEmpresaEmitente" value="Bairro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="bairroEmpresaEmitente" value="#{ccbMB.bairroEmpresaEmitente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="cepEmpresaEmitente" value="CEP da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cepEmpresaEmitente" value="#{ccbMB.cepEmpresaEmitente}"
-										label="Contrato" />
-
-								</h:panelGrid>
-							</p:panel>
-						</h:panelGroup>
-					</p:panel>
-
-					<p:panel header="Interveniente" id="intervenientePanel"
-						style="margin-bottom:10px;">
-						<f:facet name="header"> Interveniente
-							<p:selectBooleanButton value="#{ccbMB.addInterveniente}"
-								onLabel="Incluir Interveniente" offLabel="Incluir Interveniente">
-								<p:ajax update=":form:intervenientePanel" event="change" />
-							</p:selectBooleanButton>
-							<p:commandButton ajax="true"
-								action="#{ccbMB.pesquisaInterveniente}"
-								icon="ui-icon ui-icon-circle-zoomin"
-								oncomplete="PF('pagadorRecebedorDialog').show();"
-								update=":formReceborPagador" process="@this" />
-						</f:facet>
-						
-						<h:panelGrid columns="4" rendered="#{ccbMB.addInterveniente}" >
-							<p:outputLabel for="nomeInterveniente"
-								value="Nome do Interveniente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nomeInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.nome}" label="Contrato" />
-
-							<p:outputLabel for="nacionalidadeInterveniente"
-								value="Nacionalidade do Interveniente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nacionalidadeInterveniente"
-								value="#{ccbMB.nacionalidadeInterveniente}" label="Contrato" />
-
-							<p:outputLabel for="profissaoInterveniente"
-								value="Profissão do Interveniente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="profissaoInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.atividade}" label="Contrato" />
-
-							<p:outputLabel for="estadoCivilInterveniente"
-								value="Estado civil do Interveniente: " styleClass="labelBold" />
-							<p:selectOneMenu id="estadoCivilInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.estadocivil}" ajax="true">
-								<f:selectItem itemValue="NÃO INFORMADO"
-									itemLabel="Não informado" />
-								<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
-								<f:selectItem itemValue="CASADO" itemLabel="Casado" />
-								<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
-								<f:selectItem itemValue="UNIÃO ESTÁVEL"
-									itemLabel="União estável" />
-								<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
-								<p:ajax update=":form:conjugueInterveniente" event="change" />
-							</p:selectOneMenu>
-
-							<p:outputLabel for="numeroRgInterveniente"
-								value="Numero do RG do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroRgInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.rg}" label="Contrato" />
-
-							<p:outputLabel value="É Feminino: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="femininoInterveniente"
-								value="#{ccbMB.femininoInterveniente}" />
-
-							<p:outputLabel for="ufInterveniente" value="UF do interveniente "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="ufInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.estado}" label="Contrato" />
-
-							<p:outputLabel for="cpfInterveniente"
-								value="CPF do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputMask id="cpfInterveniente" value="#{ccbMB.intervenienteSelecionado.cpf}"
-										label="Contrato" mask="999.999.999-99"/>
-
-							<p:outputLabel for="logradouroInterveniente"
-								value="Logradouro do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="logradouroInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.endereco}" label="Contrato" />
-
-							<p:outputLabel for="numeroInterveniente"
-								value="Numero do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.numero}" label="Contrato" />
-
-							<p:outputLabel for="complementoInterveniente"
-								value="Complemento do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="complementoInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.complemento}" label="Contrato" />
-
-							<p:outputLabel for="cidadeInterveniente"
-								value="Cidade do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cidadeInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.cidade}" label="Contrato" />
-
-							<p:outputLabel for="cepInterveniente"
-								value="CEP do interveniente " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cepInterveniente"
-								value="#{ccbMB.intervenienteSelecionado.cep}" label="Contrato" />
-								
-							<p:outputLabel for="emailInterveniente" value="Email do interveniente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="emailInterveniente" value="#{ccbMB.intervenienteSelecionado.email}"
-								label="Contrato" />
-								
-							<p:outputLabel value="É empresa: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="empresaInterveniente"
-								value="#{ccbMB.empresaInterveniente}">
-								<p:ajax update=":form:empresaIntervenientePanel" event="change" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel for="paiInterveniente" value="Nome do pai: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="paiInterveniente" value="#{ccbMB.intervenienteSelecionado.nomePai}"
-								label="Contrato" />
-								
-							<p:outputLabel for="maeInterveniente" value="Nome da mãe: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="maeInterveniente" value="#{ccbMB.intervenienteSelecionado.nomeMae}"
-								label="Contrato" />
-								
-						</h:panelGrid>
-
-						<h:panelGroup id="conjugueInterveniente">
-							<p:panel header="Coinjugue Interveniente"
-								style="margin-bottom:10px;"
-								rendered="#{ccbMB.intervenienteSelecionado.estadocivil == 'CASADO' and ccbMB.addInterveniente}">
-								<h:panelGrid columns="4">
-
-									<p:outputLabel for="regimeCasamentoInterveniente"
-										value="Regime do Casamento: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectOneMenu id="regimeCasamentoInterveniente"
-										value="#{ccbMB.intervenienteSelecionado.regimeCasamento}" ajax="true">
-										<f:selectItem itemValue="universal de bens"
-											itemLabel="Universal de bens" />
-										<f:selectItem itemValue="de comunhão parcial de bens"
-											itemLabel="Comunhão parcial de bens" />
-										<f:selectItem itemValue="de separação total de bens"
-											itemLabel="Separação total de bens" />
-										<f:selectItem itemValue="obrigatório de separação de bens"
-											itemLabel="Obrigatório de separação de bens" />
-									</p:selectOneMenu>
-									
-									<p:outputLabel for="nomeConjugeInterveniente"
-										value="Nome do Conjuge do Interveniente: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="nomeConjugeInterveniente"
-										value="#{ccbMB.intervenienteSelecionado.nomeConjuge}" label="Contrato" />
-
-									<p:outputLabel for="cpfConjugeInterveniente"
-										value="CPF do interveniente " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />						
-									<p:inputMask id="cpfConjugeInterveniente" value="#{ccbMB.intervenienteSelecionado.cpfConjuge}"
-										label="Contrato" mask="999.999.999-99"/>
-										
-								</h:panelGrid>
-							</p:panel>
-						</h:panelGroup>
-						
-						<h:panelGroup id="empresaIntervenientePanel">
-							<p:panel header="Empresa Interveniente" style="margin-bottom:10px;"
-								rendered="#{ccbMB.empresaInterveniente and ccbMB.addInterveniente}">
-								<h:panelGrid columns="4">
-									<p:outputLabel for="razaoSocialInterveniente" value="Razão social: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="razaoSocialInterveniente" value="#{ccbMB.razaoSocialInterveniente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="tipoEmpresaInterveniente" value="Tipo da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="tipoEmpresaInterveniente" value="#{ccbMB.tipoEmpresaInterveniente}"
-										label="Contrato" />
-
-									<p:outputLabel for="cnpjInterveniente" value="CNPJ da empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cnpjInterveniente" value="#{ccbMB.cnpjInterveniente}"
-										label="Contrato" mask="99.999.999/9999-99" />
-										
-									<p:outputLabel for="municipioEmpresaInterveniente" value="Município da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="municipioEmpresaInterveniente" value="#{ccbMB.municipioEmpresaInterveniente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="estadoEmpresaInterveniente" value="Estado da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="estadoEmpresaInterveniente" value="#{ccbMB.estadoEmpresaInterveniente}"
-										label="Contrato" />
-									
-									<p:outputLabel for="ruaEmpresaInterveniente" value="Logradouro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="ruaEmpresaInterveniente" value="#{ccbMB.ruaEmpresaInterveniente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="numeroEmpresaInterveniente" value="Numero da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="numeroEmpresaInterveniente" value="#{ccbMB.numeroEmpresaInterveniente}"
-										label="Contrato" />
-										
-										<p:outputLabel for="salaEmpresaInterveniente" value="Sala da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="salaEmpresaInterveniente" value="#{ccbMB.salaEmpresaInterveniente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="bairroEmpresaInterveniente" value="Bairro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="bairroEmpresaInterveniente" value="#{ccbMB.bairroEmpresaInterveniente}"
-										label="Contrato" />
-										
-									<p:outputLabel for="cepEmpresaInterveniente" value="CEP da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cepEmpresaInterveniente" value="#{ccbMB.cepEmpresaInterveniente}"
-										label="Contrato" />
-
-								</h:panelGrid>
-							</p:panel>
-						</h:panelGroup>
-					</p:panel>
 					
-					<p:panel header="Terceiro" id="terceiroPanel"
-						style="margin-bottom:10px;">
-						<f:facet name="header"> Terceiro Garantidor
-							<p:selectBooleanButton value="#{ccbMB.addTerceiro}"
-								onLabel="Incluir Terceiro Garantidor" offLabel="Incluir Terceiro Garantidor">
-								<p:ajax update=":form:terceiroPanel" event="change" />
-							</p:selectBooleanButton>
+					<h:panelGroup id="pagadoresAntigos">
+						<h:panelGroup rendered="#{ccbMB.modeloAntigo}">
 						
-							<p:commandButton ajax="true"
-								action="#{ccbMB.pesquisaTerceiroG}"
-								icon="ui-icon ui-icon-circle-zoomin"
-								oncomplete="PF('pagadorRecebedorDialog').show();"
-								update=":formReceborPagador"  process="@this" />
-						</f:facet>
-
-						<h:panelGrid rendered="#{ccbMB.addTerceiro}" columns="4">						
-							<p:outputLabel for="nomeTerceiroG"
-								value="Nome do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nomeTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.nome}" label="Contrato" />
-
-							<p:outputLabel for="nacionalidadeTerceiroG"
-								value="Nacionalidade do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nacionalidadeTerceiroG"
-								value="#{ccbMB.nacionalidadeTerceiroG}" label="Contrato" />
-
-							<p:outputLabel for="profissaoTerceiroG"
-								value="Profissão do Terceir Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="profissaoTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.atividade}" label="Contrato" />
-
-							<p:outputLabel for="estadoCivilTerceiroG"
-								value="Estado civil do Terceiro Garantidor: " styleClass="labelBold" />
-							<p:selectOneMenu id="estadoCivilTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.estadocivil}" ajax="true">
-								<f:selectItem itemValue="NÃO INFORMADO"
-									itemLabel="Não informado" />
-								<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
-								<f:selectItem itemValue="CASADO" itemLabel="Casado" />
-								<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
-								<f:selectItem itemValue="UNIÃO ESTÁVEL"
-									itemLabel="União estável" />
-								<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
-								<p:ajax update=":form:conjugueTerceiroG" event="change" />
-							</p:selectOneMenu>
-
-							<p:outputLabel for="numeroRgTerceiroG"
-								value="Numero do RG do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroRgTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.rg}" label="Contrato" />
-								
-							<p:outputLabel value="É Feminino: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="femininoTerceiroG"
-								value="#{ccbMB.femininoTerceiroG}" />
-
-							<p:outputLabel for="ufTerceiroG" value="UF do Terceiro Garantidor: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="ufTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.estado}" label="Contrato" />
-
-							<p:outputLabel for="cpfTerceiroG"
-								value="CPF do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputMask id="cpfTerceiroG" value="#{ccbMB.terceiroGSelecionado.cpf}"
-										label="Contrato" mask="999.999.999-99"/>
-										
-							<p:outputLabel for="logradouroTerceiroG"
-								value="Logradouro do Terceiro Garantidor:" styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="logradouroTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.endereco}" label="Contrato" />
-
-							<p:outputLabel for="numeroTerceiroG"
-								value="Numero do Terceiro Garantidor:" styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.numero}" label="Contrato" />
-
-							<p:outputLabel for="complementoTerceiroG"
-								value="Complemento do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="complementoTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.complemento}" label="Contrato" />
-
-							<p:outputLabel for="cidadeTerceiroG"
-								value="Cidade do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cidadeTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.cidade}" label="Contrato" />
-
-							<p:outputLabel for="cepTerceiroG"
-								value="CEP do Terceiro Garantidor: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cepTerceiroG" value="#{ccbMB.terceiroGSelecionado.cep}"
-								label="Contrato" />
-
-							<p:outputLabel for="emailTerceiroG"
-								value="Email do interveniente: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="emailTerceiroG"
-								value="#{ccbMB.terceiroGSelecionado.email}" label="Contrato" />		
-									
-							<p:outputLabel value="É empresa: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="empresaTerceiroG"
-								value="#{ccbMB.empresaTerceiroG}">
-								<p:ajax update=":form:empresaTerceiroGPanel" event="change" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel for="paiTerceiroG" value="Nome do pai: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="paiTerceiroG" value="#{ccbMB.terceiroGSelecionado.nomePai}"
-								label="Contrato" />
-								
-							<p:outputLabel for="maeTerceiroG" value="Nome da mãe: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="maeTerceiroG" value="#{ccbMB.terceiroGSelecionado.nomeMae}"
-								label="Contrato" />
-						</h:panelGrid>
-
-						<h:panelGroup id="conjugueTerceiroG">
-							<p:panel header="Coinjugue TerceiroG"
-								style="margin-bottom:10px;"
-								rendered="#{ccbMB.terceiroGSelecionado.estadocivil == 'CASADO' and ccbMB.addTerceiro}">
+							<p:panel header="Emitente" id="emitentePanel"
+								style="margin-bottom:10px;">
+								<f:facet name="header"> Emitente
+									<p:commandButton ajax="true" action="#{ccbMB.pesquisaEmitente()}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update=":formReceborPagador" process="@this" />
+								</f:facet>
 								<h:panelGrid columns="4">
-
-									<p:outputLabel for="regimeCasamentoTerceiroG"
-										value="Regime do Casamento: " styleClass="labelBold"
-										
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectOneMenu id="regimeCasamentoTerceiroG"
-										value="#{ccbMB.terceiroGSelecionado.regimeCasamento}" ajax="true">
-										<f:selectItem itemValue="universal de bens"
-											itemLabel="Universal de bens" />
-										<f:selectItem itemValue="de comunhão parcial de bens"
-											itemLabel="Comunhão parcial de bens" />
-										<f:selectItem itemValue="de separação total de bens"
-											itemLabel="Separação total de bens" />
-										<f:selectItem itemValue="obrigatório de separação de bens"
-											itemLabel="Obrigatório de separação de bens" />
-									</p:selectOneMenu>
-									
-									<p:outputLabel for="nomeConjugeTerceiroG"
-										value="Nome do Conjuge do Terceir Garantidor: "
+									<p:outputLabel for="nomeEmitente" value="Nome do Emitente: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="nomeConjugeTerceiroG"
-										value="#{ccbMB.terceiroGSelecionado.nomeConjuge}" label="Contrato" />
+									<p:inputText id="nomeEmitente" value="#{ccbMB.emitenteSelecionado.nome}"
+										label="Contrato" />
+		
+									<p:outputLabel for="nacionalidadeEmitente"
+										value="Nacionalidade do Emitente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="nacionalidadeEmitente"
+										value="#{ccbMB.nacionalidadeEmitente}" label="Contrato" />
+		
+									<p:outputLabel for="profissaoEmitente"
+										value="Profissão do Emitente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="profissaoEmitente"
+										value="#{ccbMB.emitenteSelecionado.atividade}" label="Contrato" />
+		
+									<p:outputLabel for="estadoCivilEmitente"
+										value="Estado civil do Emitente: " styleClass="labelBold" />
+									<p:selectOneMenu id="estadoCivilEmitente"
+										value="#{ccbMB.emitenteSelecionado.estadocivil}" ajax="true">
+										<f:selectItem itemValue="NÃO INFORMADO"
+											itemLabel="Não informado" />
+										<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+										<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+										<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+										<f:selectItem itemValue="UNIÃO ESTÁVEL"
+											itemLabel="União estável" />
+										<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
+										<p:ajax update=":form:conjugueEmitente" event="change" />
+									</p:selectOneMenu>
+		
+									<p:outputLabel for="numeroRgEmitente"
+										value="Numero do RG do emitente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroRgEmitente"
+										value="#{ccbMB.emitenteSelecionado.rg}" label="Contrato" />
 										
-									<p:outputLabel for="cpfConjugeTerceiroG"
+									<p:outputLabel value="É Feminino: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="femininoEmitente"
+										value="#{ccbMB.femininoEmitente}" />
+		
+									<p:outputLabel for="ufEmitente" value="UF do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="ufEmitente" value="#{ccbMB.emitenteSelecionado.estado}"
+										label="Contrato" />
+		
+									<p:outputLabel for="cpfEmitente" value="CPF do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />						
+									<p:inputMask id="cpfEmitente" value="#{ccbMB.emitenteSelecionado.cpf}"
+												label="Contrato" mask="999.999.999-99"/>
+		
+									<p:outputLabel for="logradouroEmitente"
+										value="Logradouro do emitente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="logradouroEmitente"
+										value="#{ccbMB.emitenteSelecionado.endereco}" label="Contrato" />
+		
+									<p:outputLabel for="numeroEmitente" value="Numero do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroEmitente" value="#{ccbMB.emitenteSelecionado.numero}"
+										label="Contrato" />
+		
+									<p:outputLabel for="complementoEmitente"
+										value="Complemento do emitente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="complementoEmitente"
+										value="#{ccbMB.emitenteSelecionado.complemento}" label="Contrato" />
+		
+									<p:outputLabel for="cidadeEmitente" value="Cidade do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cidadeEmitente" value="#{ccbMB.emitenteSelecionado.cidade}"
+										label="Contrato" />
+		
+									<p:outputLabel for="cepEmitente" value="CEP do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cepEmitente" value="#{ccbMB.emitenteSelecionado.cep}"
+										label="Contrato" />
+		
+									<p:outputLabel for="emailEmitente" value="Email do emitente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="emailEmitente" value="#{ccbMB.emitenteSelecionado.email}"
+										label="Contrato" />
+										
+									<p:outputLabel value="É fiduciante: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="fiduciante"
+										value="#{ccbMB.fiduciante}"/>
+										
+									<p:outputLabel value="É empresa: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+		
+									<p:selectBooleanCheckbox id="empresaEmitente"
+										value="#{ccbMB.empresaEmitente}">
+										<p:ajax update=":form:empresaEmitentePanel" event="change" />
+									</p:selectBooleanCheckbox>
+									
+									<p:outputLabel for="paiEmitente" value="Nome do pai: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="paiEmitente" value="#{ccbMB.emitenteSelecionado.nomePai}"
+										label="Contrato" />
+										
+									<p:outputLabel for="maeEmitente" value="Nome da mãe: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="maeEmitente" value="#{ccbMB.emitenteSelecionado.nomeMae}"
+										label="Contrato" />
+		
+								</h:panelGrid>
+		
+								<h:panelGroup id="conjugueEmitente">
+									<p:panel header="Coinjugue Emitente" style="margin-bottom:10px;"
+										rendered="#{ccbMB.emitenteSelecionado.estadocivil == 'CASADO'}">
+										<h:panelGrid columns="4">
+		
+											<p:outputLabel for="regimeCasamentoEmitente"
+												value="Regime do Casamento: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectOneMenu id="regimeCasamentoEmitente"
+												value="#{ccbMB.emitenteSelecionado.regimeCasamento}" ajax="true">
+												<f:selectItem itemValue="universal de bens"
+													itemLabel="Universal de bens" />
+												<f:selectItem itemValue="de comunhão parcial de bens"
+													itemLabel="Comunhão parcial de bens" />
+												<f:selectItem itemValue="de separação total de bens"
+													itemLabel="Separação total de bens" />
+												<f:selectItem itemValue="obrigatório de separação de bens"
+													itemLabel="Obrigatório de separação de bens" />
+											</p:selectOneMenu>
+		
+											<p:outputLabel for="nomeConjugeEmitente"
+												value="Nome do Conjuge do Emitente: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="nomeConjugeEmitente"
+												value="#{ccbMB.emitenteSelecionado.nomeConjuge}" label="Contrato" />
+		
+											<p:outputLabel for="cpfConjugeEmitente"
+												value="CPF do emitente: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />						
+											<p:inputMask id="cpfConjugeEmitente" value="#{ccbMB.emitenteSelecionado.cpfConjuge}"
+												label="Contrato" mask="999.999.999-99"/>
+		
+										</h:panelGrid>
+									</p:panel>
+								</h:panelGroup>
+		
+								<h:panelGroup id="empresaEmitentePanel">
+									<p:panel header="Empresa Emitente" style="margin-bottom:10px;"
+										rendered="#{ccbMB.empresaEmitente}">
+										<h:panelGrid columns="4">
+											<p:outputLabel for="razaoSocialEmitente" value="Razão social: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="razaoSocialEmitente" value="#{ccbMB.razaoSocialEmitente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="tipoEmpresaEmitente" value="Tipo da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="tipoEmpresaEmitente" value="#{ccbMB.tipoEmpresaEmitente}"
+												label="Contrato" />
+		
+											<p:outputLabel for="cnpjEmitente" value="CNPJ da empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cnpjEmitente" value="#{ccbMB.cnpjEmitente}"
+												label="Contrato" mask="99.999.999/9999-99" />
+												
+											<p:outputLabel for="municipioEmpresaEmitente" value="Município da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="municipioEmpresaEmitente" value="#{ccbMB.municipioEmpresaEmitente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="estadoEmpresaEmitente" value="Estado da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="estadoEmpresaEmitente" value="#{ccbMB.estadoEmpresaEmitente}"
+												label="Contrato" />
+											
+											<p:outputLabel for="ruaEmpresaEmitente" value="Logradouro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="ruaEmpresaEmitente" value="#{ccbMB.ruaEmpresaEmitente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="numeroEmpresaEmitente" value="Numero da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroEmpresaEmitente" value="#{ccbMB.numeroEmpresaEmitente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="salaEmpresaEmitente" value="Sala da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="salaEmpresaEmitente" value="#{ccbMB.salaEmpresaEmitente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="bairroEmpresaEmitente" value="Bairro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="bairroEmpresaEmitente" value="#{ccbMB.bairroEmpresaEmitente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="cepEmpresaEmitente" value="CEP da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cepEmpresaEmitente" value="#{ccbMB.cepEmpresaEmitente}"
+												label="Contrato" />
+		
+										</h:panelGrid>
+									</p:panel>
+								</h:panelGroup>
+							</p:panel>
+		
+							<p:panel header="Interveniente" id="intervenientePanel"
+								style="margin-bottom:10px;">
+								<f:facet name="header"> Interveniente
+									<p:selectBooleanButton value="#{ccbMB.addInterveniente}"
+										onLabel="Incluir Interveniente" offLabel="Incluir Interveniente">
+										<p:ajax update=":form:intervenientePanel" event="change" />
+									</p:selectBooleanButton>
+									<p:commandButton ajax="true"
+										action="#{ccbMB.pesquisaInterveniente}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update=":formReceborPagador" process="@this" />
+								</f:facet>
+								
+								<h:panelGrid columns="4" rendered="#{ccbMB.addInterveniente}" >
+									<p:outputLabel for="nomeInterveniente"
+										value="Nome do Interveniente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="nomeInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.nome}" label="Contrato" />
+		
+									<p:outputLabel for="nacionalidadeInterveniente"
+										value="Nacionalidade do Interveniente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="nacionalidadeInterveniente"
+										value="#{ccbMB.nacionalidadeInterveniente}" label="Contrato" />
+		
+									<p:outputLabel for="profissaoInterveniente"
+										value="Profissão do Interveniente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="profissaoInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.atividade}" label="Contrato" />
+		
+									<p:outputLabel for="estadoCivilInterveniente"
+										value="Estado civil do Interveniente: " styleClass="labelBold" />
+									<p:selectOneMenu id="estadoCivilInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.estadocivil}" ajax="true">
+										<f:selectItem itemValue="NÃO INFORMADO"
+											itemLabel="Não informado" />
+										<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+										<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+										<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+										<f:selectItem itemValue="UNIÃO ESTÁVEL"
+											itemLabel="União estável" />
+										<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
+										<p:ajax update=":form:conjugueInterveniente" event="change" />
+									</p:selectOneMenu>
+		
+									<p:outputLabel for="numeroRgInterveniente"
+										value="Numero do RG do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroRgInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.rg}" label="Contrato" />
+		
+									<p:outputLabel value="É Feminino: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="femininoInterveniente"
+										value="#{ccbMB.femininoInterveniente}" />
+		
+									<p:outputLabel for="ufInterveniente" value="UF do interveniente "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="ufInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.estado}" label="Contrato" />
+		
+									<p:outputLabel for="cpfInterveniente"
+										value="CPF do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputMask id="cpfInterveniente" value="#{ccbMB.intervenienteSelecionado.cpf}"
+												label="Contrato" mask="999.999.999-99"/>
+		
+									<p:outputLabel for="logradouroInterveniente"
+										value="Logradouro do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="logradouroInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.endereco}" label="Contrato" />
+		
+									<p:outputLabel for="numeroInterveniente"
+										value="Numero do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.numero}" label="Contrato" />
+		
+									<p:outputLabel for="complementoInterveniente"
+										value="Complemento do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="complementoInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.complemento}" label="Contrato" />
+		
+									<p:outputLabel for="cidadeInterveniente"
+										value="Cidade do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cidadeInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.cidade}" label="Contrato" />
+		
+									<p:outputLabel for="cepInterveniente"
+										value="CEP do interveniente " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cepInterveniente"
+										value="#{ccbMB.intervenienteSelecionado.cep}" label="Contrato" />
+										
+									<p:outputLabel for="emailInterveniente" value="Email do interveniente: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="emailInterveniente" value="#{ccbMB.intervenienteSelecionado.email}"
+										label="Contrato" />
+										
+									<p:outputLabel value="É empresa: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="empresaInterveniente"
+										value="#{ccbMB.empresaInterveniente}">
+										<p:ajax update=":form:empresaIntervenientePanel" event="change" />
+									</p:selectBooleanCheckbox>
+									
+									<p:outputLabel for="paiInterveniente" value="Nome do pai: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="paiInterveniente" value="#{ccbMB.intervenienteSelecionado.nomePai}"
+										label="Contrato" />
+										
+									<p:outputLabel for="maeInterveniente" value="Nome da mãe: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="maeInterveniente" value="#{ccbMB.intervenienteSelecionado.nomeMae}"
+										label="Contrato" />
+										
+								</h:panelGrid>
+		
+								<h:panelGroup id="conjugueInterveniente">
+									<p:panel header="Coinjugue Interveniente"
+										style="margin-bottom:10px;"
+										rendered="#{ccbMB.intervenienteSelecionado.estadocivil == 'CASADO' and ccbMB.addInterveniente}">
+										<h:panelGrid columns="4">
+		
+											<p:outputLabel for="regimeCasamentoInterveniente"
+												value="Regime do Casamento: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectOneMenu id="regimeCasamentoInterveniente"
+												value="#{ccbMB.intervenienteSelecionado.regimeCasamento}" ajax="true">
+												<f:selectItem itemValue="universal de bens"
+													itemLabel="Universal de bens" />
+												<f:selectItem itemValue="de comunhão parcial de bens"
+													itemLabel="Comunhão parcial de bens" />
+												<f:selectItem itemValue="de separação total de bens"
+													itemLabel="Separação total de bens" />
+												<f:selectItem itemValue="obrigatório de separação de bens"
+													itemLabel="Obrigatório de separação de bens" />
+											</p:selectOneMenu>
+											
+											<p:outputLabel for="nomeConjugeInterveniente"
+												value="Nome do Conjuge do Interveniente: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="nomeConjugeInterveniente"
+												value="#{ccbMB.intervenienteSelecionado.nomeConjuge}" label="Contrato" />
+		
+											<p:outputLabel for="cpfConjugeInterveniente"
+												value="CPF do interveniente " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />						
+											<p:inputMask id="cpfConjugeInterveniente" value="#{ccbMB.intervenienteSelecionado.cpfConjuge}"
+												label="Contrato" mask="999.999.999-99"/>
+												
+										</h:panelGrid>
+									</p:panel>
+								</h:panelGroup>
+								
+								<h:panelGroup id="empresaIntervenientePanel">
+									<p:panel header="Empresa Interveniente" style="margin-bottom:10px;"
+										rendered="#{ccbMB.empresaInterveniente and ccbMB.addInterveniente}">
+										<h:panelGrid columns="4">
+											<p:outputLabel for="razaoSocialInterveniente" value="Razão social: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="razaoSocialInterveniente" value="#{ccbMB.razaoSocialInterveniente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="tipoEmpresaInterveniente" value="Tipo da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="tipoEmpresaInterveniente" value="#{ccbMB.tipoEmpresaInterveniente}"
+												label="Contrato" />
+		
+											<p:outputLabel for="cnpjInterveniente" value="CNPJ da empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cnpjInterveniente" value="#{ccbMB.cnpjInterveniente}"
+												label="Contrato" mask="99.999.999/9999-99" />
+												
+											<p:outputLabel for="municipioEmpresaInterveniente" value="Município da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="municipioEmpresaInterveniente" value="#{ccbMB.municipioEmpresaInterveniente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="estadoEmpresaInterveniente" value="Estado da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="estadoEmpresaInterveniente" value="#{ccbMB.estadoEmpresaInterveniente}"
+												label="Contrato" />
+											
+											<p:outputLabel for="ruaEmpresaInterveniente" value="Logradouro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="ruaEmpresaInterveniente" value="#{ccbMB.ruaEmpresaInterveniente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="numeroEmpresaInterveniente" value="Numero da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroEmpresaInterveniente" value="#{ccbMB.numeroEmpresaInterveniente}"
+												label="Contrato" />
+												
+												<p:outputLabel for="salaEmpresaInterveniente" value="Sala da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="salaEmpresaInterveniente" value="#{ccbMB.salaEmpresaInterveniente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="bairroEmpresaInterveniente" value="Bairro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="bairroEmpresaInterveniente" value="#{ccbMB.bairroEmpresaInterveniente}"
+												label="Contrato" />
+												
+											<p:outputLabel for="cepEmpresaInterveniente" value="CEP da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cepEmpresaInterveniente" value="#{ccbMB.cepEmpresaInterveniente}"
+												label="Contrato" />
+		
+										</h:panelGrid>
+									</p:panel>
+								</h:panelGroup>
+							</p:panel>
+							
+							<p:panel header="Terceiro" id="terceiroPanel"
+								style="margin-bottom:10px;">
+								<f:facet name="header"> Terceiro Garantidor
+									<p:selectBooleanButton value="#{ccbMB.addTerceiro}"
+										onLabel="Incluir Terceiro Garantidor" offLabel="Incluir Terceiro Garantidor">
+										<p:ajax update=":form:terceiroPanel" event="change" />
+									</p:selectBooleanButton>
+								
+									<p:commandButton ajax="true"
+										action="#{ccbMB.pesquisaTerceiroG}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										oncomplete="PF('pagadorRecebedorDialog').show();"
+										update=":formReceborPagador"  process="@this" />
+								</f:facet>
+		
+								<h:panelGrid rendered="#{ccbMB.addTerceiro}" columns="4">						
+									<p:outputLabel for="nomeTerceiroG"
+										value="Nome do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="nomeTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.nome}" label="Contrato" />
+		
+									<p:outputLabel for="nacionalidadeTerceiroG"
+										value="Nacionalidade do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="nacionalidadeTerceiroG"
+										value="#{ccbMB.nacionalidadeTerceiroG}" label="Contrato" />
+		
+									<p:outputLabel for="profissaoTerceiroG"
+										value="Profissão do Terceir Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="profissaoTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.atividade}" label="Contrato" />
+		
+									<p:outputLabel for="estadoCivilTerceiroG"
+										value="Estado civil do Terceiro Garantidor: " styleClass="labelBold" />
+									<p:selectOneMenu id="estadoCivilTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.estadocivil}" ajax="true">
+										<f:selectItem itemValue="NÃO INFORMADO"
+											itemLabel="Não informado" />
+										<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+										<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+										<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+										<f:selectItem itemValue="UNIÃO ESTÁVEL"
+											itemLabel="União estável" />
+										<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
+										<p:ajax update=":form:conjugueTerceiroG" event="change" />
+									</p:selectOneMenu>
+		
+									<p:outputLabel for="numeroRgTerceiroG"
+										value="Numero do RG do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroRgTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.rg}" label="Contrato" />
+										
+									<p:outputLabel value="É Feminino: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="femininoTerceiroG"
+										value="#{ccbMB.femininoTerceiroG}" />
+		
+									<p:outputLabel for="ufTerceiroG" value="UF do Terceiro Garantidor: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="ufTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.estado}" label="Contrato" />
+		
+									<p:outputLabel for="cpfTerceiroG"
 										value="CPF do Terceiro Garantidor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cpfConjugeTerceiroG" value="#{ccbMB.terceiroGSelecionado.cpfConjuge}"
-										label="Contrato" mask="999.999.999-99"/>
-						</h:panelGrid>
-						</p:panel>
-						</h:panelGroup>
-
-						<h:panelGroup id="empresaTerceiroGPanel">
-							<p:panel header="Empresa TerceiroG" style="margin-bottom:10px;"
-								rendered="#{ccbMB.empresaTerceiroG and ccbMB.addTerceiro}">
-								<h:panelGrid columns="4"> 
-									<p:outputLabel for="razaoSocialTerceiroG" value="Razão social: "
-										styleClass="labelBold"
+									<p:inputMask id="cpfTerceiroG" value="#{ccbMB.terceiroGSelecionado.cpf}"
+												label="Contrato" mask="999.999.999-99"/>
+												
+									<p:outputLabel for="logradouroTerceiroG"
+										value="Logradouro do Terceiro Garantidor:" styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="razaoSocialTerceiroG" value="#{ccbMB.razaoSocialTerceiroG}"
+									<p:inputText id="logradouroTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.endereco}" label="Contrato" />
+		
+									<p:outputLabel for="numeroTerceiroG"
+										value="Numero do Terceiro Garantidor:" styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="numeroTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.numero}" label="Contrato" />
+		
+									<p:outputLabel for="complementoTerceiroG"
+										value="Complemento do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="complementoTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.complemento}" label="Contrato" />
+		
+									<p:outputLabel for="cidadeTerceiroG"
+										value="Cidade do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cidadeTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.cidade}" label="Contrato" />
+		
+									<p:outputLabel for="cepTerceiroG"
+										value="CEP do Terceiro Garantidor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="cepTerceiroG" value="#{ccbMB.terceiroGSelecionado.cep}"
 										label="Contrato" />
-										
-									<p:outputLabel for="tipoEmpresaTerceiroG" value="Tipo da Empresa: "
+		
+									<p:outputLabel for="emailTerceiroG"
+										value="Email do interveniente: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="emailTerceiroG"
+										value="#{ccbMB.terceiroGSelecionado.email}" label="Contrato" />		
+											
+									<p:outputLabel value="É empresa: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="tipoEmpresaTerceiroG" value="#{ccbMB.tipoEmpresaTerceiroG}"
-										label="Contrato" />
-
-									<p:outputLabel for="cnpjTerceiroG" value="CNPJ da empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cnpjTerceiroG" value="#{ccbMB.cnpjTerceiroG}"
-										label="Contrato" mask="99.999.999/9999-99" />
-										
-									<p:outputLabel for="municipioEmpresaTerceiroG" value="Município da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="municipioEmpresaTerceiroG" value="#{ccbMB.municipioEmpresaTerceiroG}"
-										label="Contrato" />
-										
-										<p:outputLabel for="estadoEmpresaTerceiroG" value="Estado da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="estadoEmpresaTerceiroG" value="#{ccbMB.estadoEmpresaTerceiroG}"
-										label="Contrato" />
+									<p:selectBooleanCheckbox id="empresaTerceiroG"
+										value="#{ccbMB.empresaTerceiroG}">
+										<p:ajax update=":form:empresaTerceiroGPanel" event="change" />
+									</p:selectBooleanCheckbox>
 									
-									<p:outputLabel for="ruaEmpresaTerceiroG" value="Logradouro da Empresa: "
+									<p:outputLabel for="paiTerceiroG" value="Nome do pai: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="ruaEmpresaTerceiroG" value="#{ccbMB.ruaEmpresaTerceiroG}"
+									<p:inputText id="paiTerceiroG" value="#{ccbMB.terceiroGSelecionado.nomePai}"
 										label="Contrato" />
 										
-										<p:outputLabel for="numeroEmpresaTerceiroG" value="Numero da Empresa: "
+									<p:outputLabel for="maeTerceiroG" value="Nome da mãe: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="numeroEmpresaTerceiroG" value="#{ccbMB.numeroEmpresaTerceiroG}"
+									<p:inputText id="maeTerceiroG" value="#{ccbMB.terceiroGSelecionado.nomeMae}"
 										label="Contrato" />
-										
-										<p:outputLabel for="salaEmpresaTerceiroG" value="Sala da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="salaEmpresaTerceiroG" value="#{ccbMB.salaEmpresaTerceiroG}"
-										label="Contrato" />
-										
-									<p:outputLabel for="bairroEmpresaTerceiroG" value="Bairro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="bairroEmpresaTerceiroG" value="#{ccbMB.bairroEmpresaTerceiroG}"
-										label="Contrato" />
-										
-									<p:outputLabel for="cepEmpresaTerceiroG" value="CEP da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cepEmpresaTerceiroG" value="#{ccbMB.cepEmpresaTerceiroG}"
-										label="Contrato" />
-
 								</h:panelGrid>
+		
+								<h:panelGroup id="conjugueTerceiroG">
+									<p:panel header="Coinjugue TerceiroG"
+										style="margin-bottom:10px;"
+										rendered="#{ccbMB.terceiroGSelecionado.estadocivil == 'CASADO' and ccbMB.addTerceiro}">
+										<h:panelGrid columns="4">
+		
+											<p:outputLabel for="regimeCasamentoTerceiroG"
+												value="Regime do Casamento: " styleClass="labelBold"
+												
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectOneMenu id="regimeCasamentoTerceiroG"
+												value="#{ccbMB.terceiroGSelecionado.regimeCasamento}" ajax="true">
+												<f:selectItem itemValue="universal de bens"
+													itemLabel="Universal de bens" />
+												<f:selectItem itemValue="de comunhão parcial de bens"
+													itemLabel="Comunhão parcial de bens" />
+												<f:selectItem itemValue="de separação total de bens"
+													itemLabel="Separação total de bens" />
+												<f:selectItem itemValue="obrigatório de separação de bens"
+													itemLabel="Obrigatório de separação de bens" />
+											</p:selectOneMenu>
+											
+											<p:outputLabel for="nomeConjugeTerceiroG"
+												value="Nome do Conjuge do Terceir Garantidor: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="nomeConjugeTerceiroG"
+												value="#{ccbMB.terceiroGSelecionado.nomeConjuge}" label="Contrato" />
+												
+											<p:outputLabel for="cpfConjugeTerceiroG"
+												value="CPF do Terceiro Garantidor: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cpfConjugeTerceiroG" value="#{ccbMB.terceiroGSelecionado.cpfConjuge}"
+												label="Contrato" mask="999.999.999-99"/>
+								</h:panelGrid>
+								</p:panel>
+								</h:panelGroup>
+		
+								<h:panelGroup id="empresaTerceiroGPanel">
+									<p:panel header="Empresa TerceiroG" style="margin-bottom:10px;"
+										rendered="#{ccbMB.empresaTerceiroG and ccbMB.addTerceiro}">
+										<h:panelGrid columns="4"> 
+											<p:outputLabel for="razaoSocialTerceiroG" value="Razão social: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="razaoSocialTerceiroG" value="#{ccbMB.razaoSocialTerceiroG}"
+												label="Contrato" />
+												
+											<p:outputLabel for="tipoEmpresaTerceiroG" value="Tipo da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="tipoEmpresaTerceiroG" value="#{ccbMB.tipoEmpresaTerceiroG}"
+												label="Contrato" />
+		
+											<p:outputLabel for="cnpjTerceiroG" value="CNPJ da empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cnpjTerceiroG" value="#{ccbMB.cnpjTerceiroG}"
+												label="Contrato" mask="99.999.999/9999-99" />
+												
+											<p:outputLabel for="municipioEmpresaTerceiroG" value="Município da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="municipioEmpresaTerceiroG" value="#{ccbMB.municipioEmpresaTerceiroG}"
+												label="Contrato" />
+												
+												<p:outputLabel for="estadoEmpresaTerceiroG" value="Estado da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="estadoEmpresaTerceiroG" value="#{ccbMB.estadoEmpresaTerceiroG}"
+												label="Contrato" />
+											
+											<p:outputLabel for="ruaEmpresaTerceiroG" value="Logradouro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="ruaEmpresaTerceiroG" value="#{ccbMB.ruaEmpresaTerceiroG}"
+												label="Contrato" />
+												
+												<p:outputLabel for="numeroEmpresaTerceiroG" value="Numero da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroEmpresaTerceiroG" value="#{ccbMB.numeroEmpresaTerceiroG}"
+												label="Contrato" />
+												
+												<p:outputLabel for="salaEmpresaTerceiroG" value="Sala da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="salaEmpresaTerceiroG" value="#{ccbMB.salaEmpresaTerceiroG}"
+												label="Contrato" />
+												
+											<p:outputLabel for="bairroEmpresaTerceiroG" value="Bairro da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="bairroEmpresaTerceiroG" value="#{ccbMB.bairroEmpresaTerceiroG}"
+												label="Contrato" />
+												
+											<p:outputLabel for="cepEmpresaTerceiroG" value="CEP da Empresa: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cepEmpresaTerceiroG" value="#{ccbMB.cepEmpresaTerceiroG}"
+												label="Contrato" />
+		
+										</h:panelGrid>
+									</p:panel>
+								</h:panelGroup>
 							</p:panel>
-						</h:panelGroup>
-					</p:panel>
-
-					<p:panel header="Avalista" id="avalistaPanel"
-						style="margin-bottom:10px;">
-						<f:facet name="header"> Avalista 
-							<p:selectBooleanButton value="#{ccbMB.addAvalista}"
-								onLabel="Incluir Avalista" offLabel="Incluir Avalista">
-								<p:ajax update=":form:avalistaPanel" event="change" />
-							</p:selectBooleanButton>
+		
+							<p:panel header="Avalista" id="avalistaPanel"
+							style="margin-bottom:10px;">
+							<f:facet name="header"> Avalista 
+								<p:selectBooleanButton value="#{ccbMB.addAvalista}"
+									onLabel="Incluir Avalista" offLabel="Incluir Avalista">
+									<p:ajax update=":form:avalistaPanel" event="change" />
+								</p:selectBooleanButton>
+							
+								<p:commandButton ajax="true" action="#{ccbMB.pesquisaAvalista}"
+									icon="ui-icon ui-icon-circle-zoomin"
+									oncomplete="PF('pagadorRecebedorDialog').show();"
+									update=":formReceborPagador" process="@this"  />
+							</f:facet>
+	
+							<h:panelGrid rendered="#{ccbMB.addAvalista}" columns="4">
+								<p:outputLabel for="nomeAvalista" value="Nome do Avalista: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="nomeAvalista" value="#{ccbMB.avalistaSelecionado.nome}"
+									label="Contrato" />
+	
+								<p:outputLabel for="nacionalidadeAvalista"
+									value="Nacionalidade do Avalista: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="nacionalidadeAvalista"
+									value="#{ccbMB.nacionalidadeAvalista}" label="Contrato" />
+	
+								<p:outputLabel for="profissaoAvalista"
+									value="Profissão do Avalista: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="profissaoAvalista"
+									value="#{ccbMB.avalistaSelecionado.atividade}" label="Contrato" />
+	
+								<p:outputLabel for="estadoCivilAvalista"
+									value="Estado civil do Avalista: " styleClass="labelBold" />
+								<p:selectOneMenu id="estadoCivilAvalista"
+									value="#{ccbMB.avalistaSelecionado.estadocivil}" ajax="true">
+									<f:selectItem itemValue="NÃO INFORMADO"
+										itemLabel="Não informado" />
+									<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+									<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+									<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+									<f:selectItem itemValue="UNIÃO ESTÁVEL"
+										itemLabel="União estável" />
+									<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
+									<p:ajax update=":form:conjugueAvalista" event="change" />
+								</p:selectOneMenu>
+	
+								<p:outputLabel for="numeroRgAvalista"
+									value="Numero do RG do Avalista " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="numeroRgAvalista"
+									value="#{ccbMB.avalistaSelecionado.rg}" label="Contrato" />
+									
+								<p:outputLabel value="É Feminino: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectBooleanCheckbox id="femininoAvalista"
+									value="#{ccbMB.femininoAvalista}" />
+	
+								<p:outputLabel for="ufAvalista" value="UF do Avalista "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="ufAvalista" value="#{ccbMB.avalistaSelecionado.estado}"
+									label="Contrato" />
+	
+								<p:outputLabel for="cpfAvalista" value="CPF do Avalista "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />			
+								<p:inputMask id="cpfAvalista" value="#{ccbMB.avalistaSelecionado.cpf}"
+											label="Contrato" mask="999.999.999-99"/>
+											
+								<p:outputLabel for="logradouroAvalista"
+									value="Logradouro do Avalista " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="logradouroAvalista"
+									value="#{ccbMB.avalistaSelecionado.endereco}" label="Contrato" />
+	
+								<p:outputLabel for="numeroAvalista" value="Numero do Avalista "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="numeroAvalista" value="#{ccbMB.avalistaSelecionado.numero}"
+									label="Contrato" />
+	
+								<p:outputLabel for="complementoAvalista"
+									value="Complemento do Avalista " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="complementoAvalista"
+									value="#{ccbMB.avalistaSelecionado.complemento}" label="Contrato" />
+	
+								<p:outputLabel for="cidadeAvalista" value="Cidade do Avalista "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="cidadeAvalista" value="#{ccbMB.avalistaSelecionado.cidade}"
+									label="Contrato" />
+	
+								<p:outputLabel for="cepAvalista" value="CEP do Avalista "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="cepAvalista" value="#{ccbMB.avalistaSelecionado.cep}"
+									label="Contrato" />
+									
+								<p:outputLabel for="emailAvalista" value="Email do interveniente: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="emailAvalista" value="#{ccbMB.avalistaSelecionado.email}"
+									label="Contrato" />
+									
+								<p:outputLabel value="É empresa: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								
+								<p:selectBooleanCheckbox id="empresaAvalista"
+									value="#{ccbMB.empresaAvalista}">
+									<p:ajax update=":form:empresaAvalistaPanel" event="change" />
+								</p:selectBooleanCheckbox>
+								
+								<p:outputLabel for="paiAvalista" value="Nome do pai: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="paiAvalista" value="#{ccbMB.avalistaSelecionado.nomePai}"
+									label="Contrato" />
+									
+								<p:outputLabel for="maeAvalista" value="Nome da mãe: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="maeAvalista" value="#{ccbMB.avalistaSelecionado.nomeMae}"
+									label="Contrato" />
+									
+							</h:panelGrid>
+	
+							<h:panelGroup id="conjugueAvalista">
+								<p:panel header="Coinjugue Avalista" style="margin-bottom:10px;"
+									rendered="#{ccbMB.avalistaSelecionado.estadocivil == 'CASADO' and ccbMB.addAvalista}">
+									<h:panelGrid columns="4">
+									
+										<p:outputLabel for="regimeCasamentoAvalista"
+											value="Regime do Casamento: " styleClass="labelBold"			
+											style="font-weight: bold; font-size: 18px;" />
+										<p:selectOneMenu id="regimeCasamentoAvalista"
+											value="#{ccbMB.avalistaSelecionado.regimeCasamento}" ajax="true">
+											<f:selectItem itemValue="universal de bens"
+												itemLabel="Universal de bens" />
+											<f:selectItem itemValue="de comunhão parcial de bens"
+												itemLabel="Comunhão parcial de bens" />
+											<f:selectItem itemValue="de separação total de bens"
+												itemLabel="Separação total de bens" />
+											<f:selectItem itemValue="obrigatório de separação de bens"
+												itemLabel="Obrigatório de separação de bens" />
+										</p:selectOneMenu>
+										
+										<p:outputLabel for="nomeConjugeAvalista"
+											value="Nome do Conjuge do Avalista: " styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="nomeConjugeAvalista"
+											value="#{ccbMB.avalistaSelecionado.nomeConjuge}" label="Contrato" />
+	
+										<p:outputLabel for="cpfConjugeAvalista"
+											value="CPF do Avalista " styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputMask id="cpfConjugeAvalista"
+											value="#{ccbMB.avalistaSelecionado.cpf}" label="Contrato"
+											mask="999.999.999-99"  />
+	
+									</h:panelGrid>
+								</p:panel>
+							</h:panelGroup>
 						
-							<p:commandButton ajax="true" action="#{ccbMB.pesquisaAvalista}"
-								icon="ui-icon ui-icon-circle-zoomin"
-								oncomplete="PF('pagadorRecebedorDialog').show();"
-								update=":formReceborPagador" process="@this"  />
-						</f:facet>
-
-						<h:panelGrid rendered="#{ccbMB.addAvalista}" columns="4">
-							<p:outputLabel for="nomeAvalista" value="Nome do Avalista: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nomeAvalista" value="#{ccbMB.avalistaSelecionado.nome}"
-								label="Contrato" />
-
-							<p:outputLabel for="nacionalidadeAvalista"
-								value="Nacionalidade do Avalista: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="nacionalidadeAvalista"
-								value="#{ccbMB.nacionalidadeAvalista}" label="Contrato" />
-
-							<p:outputLabel for="profissaoAvalista"
-								value="Profissão do Avalista: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="profissaoAvalista"
-								value="#{ccbMB.avalistaSelecionado.atividade}" label="Contrato" />
-
-							<p:outputLabel for="estadoCivilAvalista"
-								value="Estado civil do Avalista: " styleClass="labelBold" />
-							<p:selectOneMenu id="estadoCivilAvalista"
-								value="#{ccbMB.avalistaSelecionado.estadocivil}" ajax="true">
-								<f:selectItem itemValue="NÃO INFORMADO"
-									itemLabel="Não informado" />
-								<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
-								<f:selectItem itemValue="CASADO" itemLabel="Casado" />
-								<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
-								<f:selectItem itemValue="UNIÃO ESTÁVEL"
-									itemLabel="União estável" />
-								<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
-								<p:ajax update=":form:conjugueAvalista" event="change" />
-							</p:selectOneMenu>
-
-							<p:outputLabel for="numeroRgAvalista"
-								value="Numero do RG do Avalista " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroRgAvalista"
-								value="#{ccbMB.avalistaSelecionado.rg}" label="Contrato" />
-								
-							<p:outputLabel value="É Feminino: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="femininoAvalista"
-								value="#{ccbMB.femininoAvalista}" />
-
-							<p:outputLabel for="ufAvalista" value="UF do Avalista "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="ufAvalista" value="#{ccbMB.avalistaSelecionado.estado}"
-								label="Contrato" />
-
-							<p:outputLabel for="cpfAvalista" value="CPF do Avalista "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />			
-							<p:inputMask id="cpfAvalista" value="#{ccbMB.avalistaSelecionado.cpf}"
-										label="Contrato" mask="999.999.999-99"/>
+							<h:panelGroup id="empresaAvalistaPanel">
+								<p:panel header="Empresa Avalista" style="margin-bottom:10px;"
+									rendered="#{ccbMB.empresaAvalista and ccbMB.addAvalista}">
+									<h:panelGrid columns="4">
+										<p:outputLabel for="razaoSocialAvalista" value="Razão social: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="razaoSocialAvalista" value="#{ccbMB.razaoSocialAvalista}"
+											label="Contrato" />
+											
+										<p:outputLabel for="tipoEmpresaAvalista" value="Tipo da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="tipoEmpresaAvalista" value="#{ccbMB.tipoEmpresaAvalista}"
+											label="Contrato" />
+	
+										<p:outputLabel for="cnpjAvalista" value="CNPJ da empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputMask id="cnpjAvalista" value="#{ccbMB.cnpjAvalista}"
+											label="Contrato" mask="99.999.999/9999-99" />
+											
+										<p:outputLabel for="municipioEmpresaAvalista" value="Município da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="municipioEmpresaAvalista" value="#{ccbMB.municipioEmpresaAvalista}"
+											label="Contrato" />
+											
+											<p:outputLabel for="estadoEmpresaAvalista" value="Estado da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="estadoEmpresaAvalista" value="#{ccbMB.estadoEmpresaAvalista}"
+											label="Contrato" />
 										
-							<p:outputLabel for="logradouroAvalista"
-								value="Logradouro do Avalista " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="logradouroAvalista"
-								value="#{ccbMB.avalistaSelecionado.endereco}" label="Contrato" />
-
-							<p:outputLabel for="numeroAvalista" value="Numero do Avalista "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroAvalista" value="#{ccbMB.avalistaSelecionado.numero}"
-								label="Contrato" />
-
-							<p:outputLabel for="complementoAvalista"
-								value="Complemento do Avalista " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="complementoAvalista"
-								value="#{ccbMB.avalistaSelecionado.complemento}" label="Contrato" />
-
-							<p:outputLabel for="cidadeAvalista" value="Cidade do Avalista "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cidadeAvalista" value="#{ccbMB.avalistaSelecionado.cidade}"
-								label="Contrato" />
-
-							<p:outputLabel for="cepAvalista" value="CEP do Avalista "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="cepAvalista" value="#{ccbMB.avalistaSelecionado.cep}"
-								label="Contrato" />
-								
-							<p:outputLabel for="emailAvalista" value="Email do interveniente: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="emailAvalista" value="#{ccbMB.avalistaSelecionado.email}"
-								label="Contrato" />
-								
-							<p:outputLabel value="É empresa: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							
-							<p:selectBooleanCheckbox id="empresaAvalista"
-								value="#{ccbMB.empresaAvalista}">
-								<p:ajax update=":form:empresaAvalistaPanel" event="change" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel for="paiAvalista" value="Nome do pai: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="paiAvalista" value="#{ccbMB.avalistaSelecionado.nomePai}"
-								label="Contrato" />
-								
-							<p:outputLabel for="maeAvalista" value="Nome da mãe: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="maeAvalista" value="#{ccbMB.avalistaSelecionado.nomeMae}"
-								label="Contrato" />
-								
-						</h:panelGrid>
-
-						<h:panelGroup id="conjugueAvalista">
-							<p:panel header="Coinjugue Avalista" style="margin-bottom:10px;"
-								rendered="#{ccbMB.avalistaSelecionado.estadocivil == 'CASADO' and ccbMB.addAvalista}">
-								<h:panelGrid columns="4">
-								
-									<p:outputLabel for="regimeCasamentoAvalista"
-										value="Regime do Casamento: " styleClass="labelBold"			
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectOneMenu id="regimeCasamentoAvalista"
-										value="#{ccbMB.avalistaSelecionado.regimeCasamento}" ajax="true">
-										<f:selectItem itemValue="universal de bens"
-											itemLabel="Universal de bens" />
-										<f:selectItem itemValue="de comunhão parcial de bens"
-											itemLabel="Comunhão parcial de bens" />
-										<f:selectItem itemValue="de separação total de bens"
-											itemLabel="Separação total de bens" />
-										<f:selectItem itemValue="obrigatório de separação de bens"
-											itemLabel="Obrigatório de separação de bens" />
-									</p:selectOneMenu>
-									
-									<p:outputLabel for="nomeConjugeAvalista"
-										value="Nome do Conjuge do Avalista: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="nomeConjugeAvalista"
-										value="#{ccbMB.avalistaSelecionado.nomeConjuge}" label="Contrato" />
-
-									<p:outputLabel for="cpfConjugeAvalista"
-										value="CPF do Avalista " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cpfConjugeAvalista"
-										value="#{ccbMB.avalistaSelecionado.cpf}" label="Contrato"
-										mask="999.999.999-99"  />
-
-								</h:panelGrid>
-							</p:panel>
+										<p:outputLabel for="ruaEmpresaAvalista" value="Logradouro da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="ruaEmpresaAvalista" value="#{ccbMB.ruaEmpresaAvalista}"
+											label="Contrato" />
+											
+											<p:outputLabel for="numeroEmpresaAvalista" value="Numero da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="numeroEmpresaAvalista" value="#{ccbMB.numeroEmpresaAvalista}"
+											label="Contrato" />
+											
+											<p:outputLabel for="salaEmpresaAvalista" value="Sala da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="salaEmpresaAvalista" value="#{ccbMB.salaEmpresaAvalista}"
+											label="Contrato" />
+											
+										<p:outputLabel for="bairroEmpresaAvalista" value="Bairro da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="bairroEmpresaAvalista" value="#{ccbMB.bairroEmpresaAvalista}"
+											label="Contrato" />
+											
+										<p:outputLabel for="cepEmpresaAvalista" value="CEP da Empresa: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="cepEmpresaAvalista" value="#{ccbMB.cepEmpresaAvalista}"
+											label="Contrato" />
+	
+									</h:panelGrid>
+								</p:panel>
+							</h:panelGroup>
+						</p:panel>
+						
 						</h:panelGroup>
+					</h:panelGroup>
+
+					<h:panelGroup id="pagadoresNovos">
+						<h:panelGroup rendered="#{!ccbMB.modeloAntigo}">
+							
+							<h:panelGroup id="ParticipantesPanel">
+								<p:panel header="Participantes" style="margin-bottom:10px;">
+									<f:facet name="header"> Participantes 
+								<p:outputLabel value="" />
+										<p:selectBooleanButton value="#{ccbMB.addParticipante}"
+											onLabel="Adicionar Participante"
+											offLabel="Adicionar Participante">
+											<p:ajax update=":form:ParticipantesPanel" event="change" />
+										</p:selectBooleanButton>
+									</f:facet>
+
+									<p:dataView var="participante"
+										value="#{ccbMB.listaParticipantes}" paginator="false"
+										layout="list"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="Nome: " styleClass="labelBold" />
+											<p:outputLabel value="#{participante.pessoa.nome}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" - " styleClass="labelBold" />
+											<p:outputLabel value="#{participante.tipoParticipante}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:spacer height="10" />
+											<p:commandButton value="Editar" icon="ui-icon-pencil"
+												action="#{ccbMB.editarParticipante(participante)}"
+												ajax="true" update=":form:ParticipantesPanel" />
+											<p:commandButton value="Remover" icon="ui-icon-trash"
+												action="#{ccbMB.removerParticipante(participante)}"
+												ajax="true" update=":form:ParticipantesPanel" />
+
+										</p:dataViewListItem>
+									</p:dataView>
+
+									<h:panelGroup id="adicionarParticipante"
+										rendered="#{ccbMB.addParticipante}">
+										<h:panelGrid columns="2">
+											<p:spacer height="10" />
+											<p:spacer height="10" />
+											<p:outputLabel value="Adicionar Participante"
+												styleClass="labelBold" />
+											<p:spacer height="10" />
+
+											<p:outputLabel for="Pessoa" value="Pessoa: "
+												styleClass="labelBold" />
+											<p:selectOneRadio id="Pessoa"
+												value="#{ccbMB.participanteSelecionado.empresa}">
+												<f:selectItem itemLabel="Física" itemValue="false" />
+												<f:selectItem itemLabel="Jurídica" itemValue="true" />
+												<p:ajax update="adicionarParticipante" />
+											</p:selectOneRadio>
+										</h:panelGrid>
+
+										<h:panelGrid columns="4"
+											rendered="#{!ccbMB.participanteSelecionado.empresa}">
+
+											<p:outputLabel for="NomeParticipante" value="Nome: "
+												styleClass="labelBold" />
+											<h:panelGroup>
+												<p:inputText id="NomeParticipante"
+													value="#{ccbMB.participanteSelecionado.pessoa.nome}"
+													required="false" style="FONT-SIZE: 10pt;" />
+												<p:commandButton action="#{ccbMB.pesquisaParticipante}"
+													icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+													oncomplete="PF('pagadorRecebedorDialog').show();"
+													update="formReceborPagador" />
+											</h:panelGroup>
+
+											<p:outputLabel for="tipo" value="Tipo: "
+												styleClass="labelBold" />
+											<p:selectOneMenu id="tipo"
+												value="#{ccbMB.participanteSelecionado.tipoParticipante}">
+												<f:selectItem itemValue="EMITENTE" itemLabel="EMITENTE" />
+												<f:selectItem itemValue="INTERVEIENTE ANUENTE" itemLabel="INTERVEIENTE ANUENTE" />
+												<f:selectItem itemValue="TERCEIRO GARANTIDOR" itemLabel="TERCEIRO GARANTIDOR" />
+												<f:selectItem itemValue="AVALISTA" itemLabel="AVALISTA" />
+											</p:selectOneMenu>
+
+											<p:outputLabel for="nacionalidadeParticipante"
+												value="Nacionalidade: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="nacionalidadeParticipante"
+												value="#{ccbMB.participanteSelecionado.nacionalidade}"
+												label="Contrato" />
+
+											<p:outputLabel for="profissaoParticipante"
+												value="Profissão: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="profissaoParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.atividade}"
+												label="Contrato" />
+
+											<p:outputLabel for="estadoCivilParticipante"
+												value="Estado civil: " styleClass="labelBold" />
+											<p:selectOneMenu id="estadoCivilParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.estadocivil}"
+												ajax="true">
+												<f:selectItem itemValue="NÃO INFORMADO"
+													itemLabel="Não informado" />
+												<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+												<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+												<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+												<f:selectItem itemValue="UNIÃO ESTÁVEL"
+													itemLabel="União estável" />
+												<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
+												<p:ajax update=":form:conjugueParticipante" event="change" />
+											</p:selectOneMenu>
+
+											<p:outputLabel for="numeroRgParticipante"
+												value="Numero do RG: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroRgParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.rg}"
+												label="Contrato" />
+
+											<p:outputLabel value="É Feminino: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectBooleanCheckbox id="femininoParticipante"
+												value="#{ccbMB.participanteSelecionado.feminino}" />
+
+											<p:outputLabel for="ufParticipante" value="UF: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="ufParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.estado}"
+												label="Contrato" />
+
+											<p:outputLabel for="cpfParticipante" value="CPF: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cpfParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.cpf}"
+												label="Contrato" mask="999.999.999-99" />
+
+											<p:outputLabel for="logradouroParticipante"
+												value="Logradouro: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="logradouroParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.endereco}"
+												label="Contrato" />
+
+											<p:outputLabel for="numeroParticipante" value="Numero: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.numero}"
+												label="Contrato" />
+
+											<p:outputLabel for="complementoParticipante"
+												value="Complemento: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="complementoParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.complemento}"
+												label="Contrato" />
+
+											<p:outputLabel for="cidadeParticipante" value="Cidade: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cidadeParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.cidade}"
+												label="Contrato" />
+
+											<p:outputLabel for="cepParticipante" value="CEP: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cepParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.cep}"
+												label="Contrato" />
+
+											<p:outputLabel for="emailParticipante" value="Email: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="emailParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.email}"
+												label="Contrato" />
+
+											<p:outputLabel value="É fiduciante: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectBooleanCheckbox id="fiducianteParticipante"
+												value="#{ccbMB.participanteSelecionado.fiduciante}" />
+
+											<p:outputLabel for="paiParticipante" value="Nome do pai: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="paiParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.nomePai}"
+												label="Contrato" />
+
+											<p:outputLabel for="maeParticipante" value="Nome da mãe: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="maeParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.nomeMae}"
+												label="Contrato" />
+
+										</h:panelGrid>
+
+										<h:panelGroup id="conjugueParticipante">
+											<p:panel header="Coinjugue Participante"
+												style="margin-bottom:10px;"
+												rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO' and !ccbMB.participanteSelecionado.empresa}">
+												<h:panelGrid columns="4">
+
+													<p:outputLabel for="regimeCasamentoParticipante"
+														value="Regime do Casamento: " styleClass="labelBold"
+														style="font-weight: bold; font-size: 18px;" />
+													<p:selectOneMenu id="regimeCasamentoParticipante"
+														value="#{ccbMB.participanteSelecionado.pessoa.regimeCasamento}"
+														ajax="true">
+														<f:selectItem itemValue="universal de bens"
+															itemLabel="Universal de bens" />
+														<f:selectItem itemValue="de comunhão parcial de bens"
+															itemLabel="Comunhão parcial de bens" />
+														<f:selectItem itemValue="de separação total de bens"
+															itemLabel="Separação total de bens" />
+														<f:selectItem itemValue="obrigatório de separação de bens"
+															itemLabel="Obrigatório de separação de bens" />
+													</p:selectOneMenu>
+
+													<p:outputLabel for="nomeConjugeParticipante"
+														value="Nome do Conjuge: " styleClass="labelBold"
+														style="font-weight: bold; font-size: 18px;" />
+													<p:inputText id="nomeConjugeParticipante"
+														value="#{ccbMB.participanteSelecionado.pessoa.nomeConjuge}"
+														label="Contrato" />
+
+													<p:outputLabel for="cpfConjugeParticipante" value="CPF: "
+														styleClass="labelBold"
+														style="font-weight: bold; font-size: 18px;" />
+													<p:inputMask id="cpfConjugeParticipante"
+														value="#{ccbMB.participanteSelecionado.pessoa.cpfConjuge}"
+														label="Contrato" mask="999.999.999-99" />
+
+												</h:panelGrid>
+											</p:panel>
+										</h:panelGroup>
+
+										<h:panelGrid columns="4"
+											rendered="#{ccbMB.participanteSelecionado.empresa}">
+
+											<p:outputLabel for="razaoSocial" value="Razão social: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<h:panelGroup>
+												<p:inputText id="razaoSocial"
+													value="#{ccbMB.participanteSelecionado.pessoa.nome}"
+													label="Contrato" />
+												<p:commandButton action="#{ccbMB.pesquisaParticipante}"
+													icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+													oncomplete="PF('pagadorRecebedorDialog').show();"
+													update="formReceborPagador" />
+											</h:panelGroup>
+
+											<p:outputLabel for="tipoPJ" value="Tipo na CCB: "
+												styleClass="labelBold" />
+											<p:inputText id="tipoPJ"
+												value="#{ccbMB.participanteSelecionado.tipoParticipante}"
+												required="false" style="FONT-SIZE: 10pt;" />
+
+											<p:outputLabel for="tipoEmpresa" value="Tipo: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="tipoEmpresa"
+												value="#{ccbMB.participanteSelecionado.tipoEmpresa}"
+												label="Contrato" />
+
+											<p:outputLabel for="cnpj" value="CNPJ: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputMask id="cnpj"
+												value="#{ccbMB.participanteSelecionado.pessoa.cnpj}"
+												label="Contrato" mask="99.999.999/9999-99" />
+
+											<p:outputLabel for="municipioEmpresa" value="Município: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="municipioEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.cidade}"
+												label="Contrato" />
+
+											<p:outputLabel for="estadoEmpresa" value="Estado: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="estadoEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.estado}"
+												label="Contrato" />
+
+											<p:outputLabel for="ruaEmpresa" value="Logradouro: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="ruaEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.endereco}"
+												label="Contrato" />
+
+											<p:outputLabel for="numeroEmpresa" value="Numero: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="numeroEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.numero}"
+												label="Contrato" />
+
+											<p:outputLabel for="salaEmpresa" value="Sala: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="salaEmpresa"
+												value="#{ccbMB.participanteSelecionado.salaEmpresa}"
+												label="Contrato" />
+
+											<p:outputLabel for="bairroEmpresa" value="Bairro: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="bairroEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.bairro}"
+												label="Contrato" />
+
+											<p:outputLabel for="cepEmpresa" value="CEP: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="cepEmpresa"
+												value="#{ccbMB.participanteSelecionado.pessoa.cep}"
+												label="Contrato" />
+
+											<p:outputLabel value="É fiduciante: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:selectBooleanCheckbox id="fiduciantePJ"
+												value="#{ccbMB.participanteSelecionado.fiduciante}" />
+
+										</h:panelGrid>
+
+										<h:panelGroup id="SociosPanel">
+											<p:panel header="Socios" style="margin-bottom:10px;"
+												rendered="#{ccbMB.participanteSelecionado.empresa}">
+												<f:facet name="header"> Sócios <p:outputLabel
+														value="" />
+													<p:selectBooleanButton value="#{ccbMB.addSocio}"
+														onLabel="Adicionar Socio" offLabel="Adicionar Socio">
+														<p:ajax update=":form:SociosPanel" event="change" />
+													</p:selectBooleanButton>
+												</f:facet>
+
+												<p:dataView var="socio"
+													value="#{ccbMB.participanteSelecionado.socios}"
+													paginator="false" layout="list"
+													paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+													<p:dataViewListItem>
+														<p:outputLabel value="Nome: " styleClass="labelBold" />
+														<p:outputLabel value="#{socio.pessoa.nome}"
+															styleClass="labelBold"
+															style="FONT-SIZE: 10pt;width:70px;" />
+														<p:spacer height="10" />
+														<p:commandButton value="Editar" icon="ui-icon-pencil"
+															action="#{ccbMB.editarSocio(socio)}" ajax="true"
+															update=":form:SociosPanel" />
+														<p:commandButton value="Remover" icon="ui-icon-trash"
+															action="#{ccbMB.removerSocio(socio)}" ajax="true"
+															update=":form:SociosPanel" />
+													</p:dataViewListItem>
+												</p:dataView>
+
+												<h:panelGroup id="adicionarSocio"
+													rendered="#{ccbMB.addSocio}">
+													<h:panelGrid columns="4">
+
+														<p:spacer height="10" />
+														<p:spacer height="10" />
+														<p:spacer height="10" />
+														<p:spacer height="10" />
+														<p:outputLabel value="Adicionar Sócio"
+															styleClass="labelBold" />
+														<p:spacer height="10" />
+														<p:spacer height="10" />
+														<p:spacer height="10" />
+
+														<p:outputLabel for="SocioNome" value="Nome do sócio: "
+															styleClass="labelBold" />
+														<h:panelGroup>
+															<p:inputText id="SocioNome"
+																value="#{ccbMB.socioSelecionado.pessoa.nome}"
+																required="false" style="FONT-SIZE: 10pt;" />
+															<p:commandButton action="#{ccbMB.pesquisaSocio}"
+																icon="ui-icon ui-icon-circle-zoomin"
+																oncomplete="PF('pagadorRecebedorDialog').show();"
+																update="formReceborPagador" />
+														</h:panelGroup>
+
+
+														<p:outputLabel for="nacionalidadeSocio"
+															value="Nacionalidade: " styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="nacionalidadeSocio"
+															value="#{ccbMB.socioSelecionado.nacionalidade}"
+															label="Contrato" />
+
+														<p:outputLabel for="profissaoSocio" value="Profissão: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="profissaoSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.atividade}"
+															label="Contrato" />
+
+														<p:outputLabel for="estadoCivilSocio"
+															value="Estado civil: " styleClass="labelBold" />
+														<p:selectOneMenu id="estadoCivilSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.estadocivil}"
+															ajax="true">
+															<f:selectItem itemValue="NÃO INFORMADO"
+																itemLabel="Não informado" />
+															<f:selectItem itemValue="SOLTEIRO" itemLabel="Solteiro" />
+															<f:selectItem itemValue="CASADO" itemLabel="Casado" />
+															<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />
+															<f:selectItem itemValue="UNIÃO ESTÁVEL"
+																itemLabel="União estável" />
+															<f:selectItem itemValue="DIVORCIADO"
+																itemLabel="Divorciado" />
+
+														</p:selectOneMenu>
+
+														<p:outputLabel for="numeroRgSocio" value="Numero do RG: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="numeroRgSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.rg}"
+															label="Contrato" />
+
+														<p:outputLabel value="É Feminino: " styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:selectBooleanCheckbox id="femininoSocio"
+															value="#{ccbMB.socioSelecionado.feminino}" />
+
+														<p:outputLabel for="ufSocio" value="UF: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="ufSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.estado}"
+															label="Contrato" />
+
+														<p:outputLabel for="cpfSocio" value="CPF: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputMask id="cpfSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.cpf}"
+															label="Contrato" mask="999.999.999-99" />
+
+														<p:outputLabel for="logradouroSocio" value="Logradouro: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="logradouroSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.endereco}"
+															label="Contrato" />
+
+														<p:outputLabel for="numeroSocio" value="Numero: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="numeroSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.numero}"
+															label="Contrato" />
+
+														<p:outputLabel for="complementoSocio"
+															value="Complemento: " styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="complementoSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.complemento}"
+															label="Contrato" />
+
+														<p:outputLabel for="cidadeSocio" value="Cidade: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="cidadeSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.cidade}"
+															label="Contrato" />
+
+														<p:outputLabel for="cepSocio" value="CEP: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="cepSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.cep}"
+															label="Contrato" />
+
+														<p:outputLabel for="emailSocio" value="Email: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="emailSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.email}"
+															label="Contrato" />
+
+														<p:outputLabel for="paiSocio" value="Nome do pai: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="paiSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.nomePai}"
+															label="Contrato" />
+
+														<p:outputLabel for="maeSocio" value="Nome da mãe: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="maeSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.nomeMae}"
+															label="Contrato" />
+													</h:panelGrid>
+													<p:commandButton value="Adicionar Socio" ajax="true"
+														action="#{ccbMB.concluirSocio()}"
+														update=":form:ParticipantesPanel"
+														image="ui-icon ui-icon-check" />
+												</h:panelGroup>
+											</p:panel>
+										</h:panelGroup>
+
+										<p:commandButton value="Adicionar" ajax="true"
+											action="#{ccbMB.concluirParticipante()}"
+											update=":form:ParticipantesPanel"
+											image="ui-icon ui-icon-check" />
+
+									</h:panelGroup>
+								</p:panel>
+							</h:panelGroup>
+						
+						</h:panelGroup>
+					</h:panelGroup>
 					
-						<h:panelGroup id="empresaAvalistaPanel">
-							<p:panel header="Empresa Avalista" style="margin-bottom:10px;"
-								rendered="#{ccbMB.empresaAvalista and ccbMB.addAvalista}">
-								<h:panelGrid columns="4">
-									<p:outputLabel for="razaoSocialAvalista" value="Razão social: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="razaoSocialAvalista" value="#{ccbMB.razaoSocialAvalista}"
-										label="Contrato" />
-										
-									<p:outputLabel for="tipoEmpresaAvalista" value="Tipo da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="tipoEmpresaAvalista" value="#{ccbMB.tipoEmpresaAvalista}"
-										label="Contrato" />
-
-									<p:outputLabel for="cnpjAvalista" value="CNPJ da empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputMask id="cnpjAvalista" value="#{ccbMB.cnpjAvalista}"
-										label="Contrato" mask="99.999.999/9999-99" />
-										
-									<p:outputLabel for="municipioEmpresaAvalista" value="Município da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="municipioEmpresaAvalista" value="#{ccbMB.municipioEmpresaAvalista}"
-										label="Contrato" />
-										
-										<p:outputLabel for="estadoEmpresaAvalista" value="Estado da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="estadoEmpresaAvalista" value="#{ccbMB.estadoEmpresaAvalista}"
-										label="Contrato" />
-									
-									<p:outputLabel for="ruaEmpresaAvalista" value="Logradouro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="ruaEmpresaAvalista" value="#{ccbMB.ruaEmpresaAvalista}"
-										label="Contrato" />
-										
-										<p:outputLabel for="numeroEmpresaAvalista" value="Numero da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="numeroEmpresaAvalista" value="#{ccbMB.numeroEmpresaAvalista}"
-										label="Contrato" />
-										
-										<p:outputLabel for="salaEmpresaAvalista" value="Sala da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="salaEmpresaAvalista" value="#{ccbMB.salaEmpresaAvalista}"
-										label="Contrato" />
-										
-									<p:outputLabel for="bairroEmpresaAvalista" value="Bairro da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="bairroEmpresaAvalista" value="#{ccbMB.bairroEmpresaAvalista}"
-										label="Contrato" />
-										
-									<p:outputLabel for="cepEmpresaAvalista" value="CEP da Empresa: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cepEmpresaAvalista" value="#{ccbMB.cepEmpresaAvalista}"
-										label="Contrato" />
-
-								</h:panelGrid>
-							</p:panel>
-						</h:panelGroup>
-					</p:panel>
-
 					<p:panel id="Dados" header="Dados" style="margin-bottom:10px;">
 						<h:panelGrid columns="2">
 							<p:panel header="Credito">
@@ -1071,15 +1601,15 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="contaCorrente" value="#{ccbMB.contaCorrente}"
 										label="Contrato" />
-										
+
 									<p:outputLabel for="agencia" value="Nº Agência: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="agencia" value="#{ccbMB.agencia}"
 										label="Contrato" />
-									
-									<p:outputLabel for="nomeBanco"
-										value="Nome do Banco: " styleClass="labelBold" />
+
+									<p:outputLabel for="nomeBanco" value="Nome do Banco: "
+										styleClass="labelBold" />
 									<p:autoComplete id="nomeBanco" value="#{ccbMB.nomeBanco}"
 										completeMethod="#{ccbMB.completeBancosNome}" var="bancoNome"
 										itemLabel="#{bancoNome}" itemValue="#{bancoNome}"
@@ -1093,14 +1623,15 @@
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:autoComplete id="numeroBanco" value="#{ccbMB.numeroBanco}"
-										completeMethod="#{ccbMB.completeBancosCodigo}" var="bancoCodigo"
-										itemLabel="#{bancoCodigo}" itemValue="#{bancoCodigo}"
-										forceSelection="true" styleClass="labelBold" label="Conta"
-										style="width:100px;" scrollHeight="250">
+										completeMethod="#{ccbMB.completeBancosCodigo}"
+										var="bancoCodigo" itemLabel="#{bancoCodigo}"
+										itemValue="#{bancoCodigo}" forceSelection="true"
+										styleClass="labelBold" label="Conta" style="width:100px;"
+										scrollHeight="250">
 										<p:ajax update="nomeBanco" event="itemSelect"
 											listener="#{ccbMB.populateNomesBanco()}" />
 									</p:autoComplete>
-									
+
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Parcelas Pagamento">
@@ -1109,9 +1640,9 @@
 										value="Nº de Parcelas:  " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="numeroParcelasPagamento"
-										value="#{ccbMB.numeroParcelasPagamento}" label="Contrato" >
+										value="#{ccbMB.numeroParcelasPagamento}" label="Contrato">
 									</p:inputText>
-									
+
 									<p:outputLabel for="vencimentoPrimeiraParcelaPagamento"
 										value="Vencimento Da Primeira Parcela:  "
 										styleClass="labelBold"
@@ -1125,7 +1656,7 @@
 											<p:ajax event="change" process="@form"
 												action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
 										</p:calendar>
-										<p:spacer height="10"/>
+										<p:spacer height="10" />
 										<p:commandButton ajax="true" value="Calcular Vencimento Final"
 											action="#{ccbMB.calculaDatavencimentoFinal}" update="Dados" />
 									</h:panelGroup>
@@ -1140,7 +1671,7 @@
 										label="Vencimento Da Última Parcela" size="100"
 										pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField">
 										<p:ajax event="change" process="@form"
-											action="#{ccbMB.populateParcelaSeguro}"	update="Dados" />
+											action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
 									</p:calendar>
 									<p:outputLabel for="montantePagamento" value="Montante :  "
 										styleClass="labelBold"
@@ -1151,7 +1682,7 @@
 										onkeydown="FormataValor(this,13, event, 2);"
 										converter="bigDecimalConverter" />
 									<p:commandButton ajax="true" value="Copiar para DFI e MIP"
-											action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
+										action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Parcelas MIP">
@@ -1265,7 +1796,7 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="ufImovel" value="#{ccbMB.ufImovel}"
 										label="Contrato" />
-										
+
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Leilão">
@@ -1277,25 +1808,31 @@
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this,13, event, 2);"
 										converter="bigDecimalConverter" />
-										
-									<p:outputLabel for="elaboradorNome" value="Nome do Elaborador: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:autoComplete id="elaboradorNome" dropdown="true" value="#{ccbMB.elaboradorNome}"
-                        			    completeMethod="#{ccbMB.completeTextNomes()}" scrollHeight="250"/>
-										
-									<p:outputLabel for="elaboradorCrea" value="Crea do Elaborador: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:autoComplete id="elaboradorCrea" dropdown="true" value="#{ccbMB.elaboradorCrea}"
-                        			    completeMethod="#{ccbMB.completeTextCrea()}" scrollHeight="250"/>	
 
-										
-									<p:outputLabel for="responsavelNome" value="Nome do Responsável: "
-										styleClass="labelBold"
+									<p:outputLabel for="elaboradorNome"
+										value="Nome do Elaborador: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:autoComplete id="responsavelNome" dropdown="true" value="#{ccbMB.responsavelNome}"
-                        			    completeMethod="#{ccbMB.completeTextNomes()}" scrollHeight="250"/>
+									<p:autoComplete id="elaboradorNome" dropdown="true"
+										value="#{ccbMB.elaboradorNome}"
+										completeMethod="#{ccbMB.completeTextNomes()}"
+										scrollHeight="250" />
+
+									<p:outputLabel for="elaboradorCrea"
+										value="Crea do Elaborador: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:autoComplete id="elaboradorCrea" dropdown="true"
+										value="#{ccbMB.elaboradorCrea}"
+										completeMethod="#{ccbMB.completeTextCrea()}"
+										scrollHeight="250" />
+
+
+									<p:outputLabel for="responsavelNome"
+										value="Nome do Responsável: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:autoComplete id="responsavelNome" dropdown="true"
+										value="#{ccbMB.responsavelNome}"
+										completeMethod="#{ccbMB.completeTextNomes()}"
+										scrollHeight="250" />
 
 
 									<p:outputLabel for="responsavelCrea"
@@ -1321,31 +1858,33 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this,13, event, 2);"
 										converter="bigDecimalConverter" />
-											
+
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Testemunhas">
 								<h:panelGrid columns="2">
 
-									<p:commandButton ajax="true" action="#{ccbMB.pesquisaTestemunha1}"
+									<p:commandButton ajax="true"
+										action="#{ccbMB.pesquisaTestemunha1}"
 										icon="ui-icon ui-icon-circle-zoomin"
 										oncomplete="PF('pagadorRecebedorDialog').show();"
 										update=":formReceborPagador" />
 									<p:spacer height="10" />
 
 
-									<p:outputLabel for="nomeTestemunha1" value="Nome da Testemunha 1: "
-										styleClass="labelBold"
+									<p:outputLabel for="nomeTestemunha1"
+										value="Nome da Testemunha 1: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="nomeTestemunha1" value="#{ccbMB.nomeTestemunha1}"
-										label="Contrato" />
-									<p:outputLabel for="cpfTestemunha1" value="CPF da Testemunha 1: "
-										styleClass="labelBold"
+									<p:inputText id="nomeTestemunha1"
+										value="#{ccbMB.nomeTestemunha1}" label="Contrato" />
+									<p:outputLabel for="cpfTestemunha1"
+										value="CPF da Testemunha 1: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-										
-									<p:inputMask id="cpfTestemunha1" value="#{ccbMB.cpfTestemunha1}"
-										label="Contrato" mask="999.999.999-99"/>
-								
+
+									<p:inputMask id="cpfTestemunha1"
+										value="#{ccbMB.cpfTestemunha1}" label="Contrato"
+										mask="999.999.999-99" />
+
 									<p:outputLabel for="rgTestemunha1" value="Rg da Testemunha 1: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
@@ -1359,22 +1898,23 @@
 										update=":formReceborPagador" />
 									<p:spacer height="10" />
 
-									<p:outputLabel for="nomeTestemunha2" value="Nome da Testemunha 2: "
-										styleClass="labelBold"
+									<p:outputLabel for="nomeTestemunha2"
+										value="Nome da Testemunha 2: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />
-									<p:inputText id="nomeTestemunha2" value="#{ccbMB.nomeTestemunha2}"
-										label="Contrato" />
-									<p:outputLabel for="cpfTestemunha2" value="CPF da Testemunha 2: "
-										styleClass="labelBold"
+									<p:inputText id="nomeTestemunha2"
+										value="#{ccbMB.nomeTestemunha2}" label="Contrato" />
+									<p:outputLabel for="cpfTestemunha2"
+										value="CPF da Testemunha 2: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />
-									<p:inputMask id="cpfTestemunha2" value="#{ccbMB.cpfTestemunha2}"
-										label="Contrato" mask="999.999.999-99"/>
+									<p:inputMask id="cpfTestemunha2"
+										value="#{ccbMB.cpfTestemunha2}" label="Contrato"
+										mask="999.999.999-99" />
 									<p:outputLabel for="rgTestemunha2" value="Rg da Testemunha 2: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 28px;" />
 									<p:inputText id="rgTestemunha2" value="#{ccbMB.rgTestemunha2}"
 										label="Contrato" />
-										
+
 								</h:panelGrid>
 							</p:panel>
 						</h:panelGrid>
@@ -1384,33 +1924,32 @@
 							<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 								style="margin-bottom:10px;text-align: center;">
 								<h:panelGrid columns="1">
-									<p:fileUpload label="Selecionar Arquivo(s)" value="#{ccbMB.filesList}"
-										uploadLabel="Salvar Arquivo(s)" multiple="true"
-										cancelLabel="Cancelar" sequential="true" 
+									<p:fileUpload label="Selecionar Arquivo(s)"
+										value="#{ccbMB.filesList}" uploadLabel="Salvar Arquivo(s)"
+										multiple="true" cancelLabel="Cancelar" sequential="true"
 										fileUploadListener="#{ccbMB.handleFileUpload}" mode="advanced"
 										dragDropSupport="true" update="arquivoDV" />
 								</h:panelGrid>
 							</p:panel>
 
 							<p:dataView var="arquivo" id="arquivoDV"
-								value="#{ccbMB.filesList}" 
-								paginator="false" layout="list"
+								value="#{ccbMB.filesList}" paginator="false" layout="list"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="Nome do arquivo: " styleClass="labelBold" />
 									<p:outputLabel value="#{arquivo.fileName}"
 										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
 									<p:spacer height="10" />
-									<p:commandButton icon="ui-icon ui-icon-cancel" 
-										action="#{ccbMB.removerArquivo(arquivo)}"
-										ajax="true" update=":form:UploadArquivos" />
+									<p:commandButton icon="ui-icon ui-icon-cancel"
+										action="#{ccbMB.removerArquivo(arquivo)}" ajax="true"
+										update=":form:UploadArquivos" />
 								</p:dataViewListItem>
 							</p:dataView>
 
 						</p:panel>
 					</p:panel>
-	
-						<!-- <p:outputLabel for="numeroContrato" value="Número do Contrato: "
+
+					<!-- <p:outputLabel for="numeroContrato" value="Número do Contrato: "
 							styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText id="numeroContrato" value="#{ccbMB.numeroContrato}"
@@ -1418,6 +1957,7 @@
 							
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 						icon="ui-icon ui-icon-print" value="Fazer Download" />
+						
 					<p:spacer height="10" />
 					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsEmitirCcb}"
 						icon="ui-icon ui-icon-cancel" value="Limpar Campos"  update=":form"/>

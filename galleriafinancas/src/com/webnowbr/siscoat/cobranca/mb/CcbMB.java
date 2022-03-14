@@ -90,6 +90,7 @@ import com.webnowbr.siscoat.common.ValidaCPF;
 public class CcbMB {
 	private String numeroContrato;
 	private String nomeEmitente;
+	private String classeEmitente;
 	private String nacionalidadeEmitente;
 	private String profissaoEmitente;
 	private String estadoCivilEmitente;
@@ -315,7 +316,10 @@ public class CcbMB {
     private boolean addSocio;
     
     private boolean terceiroGarantidor;
-   
+    
+    private boolean fiducianteGerado = false;
+    private boolean devedorGerado = false;
+    private boolean modeloAntigo = false;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -325,6 +329,29 @@ public class CcbMB {
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
+	
+	public void clearDocumentosNovos() {
+		fiducianteGerado = false;
+		devedorGerado = false;
+		modeloAntigo = false;
+		nomeEmitente = null;
+		cpfEmitente = null;
+		terceiroGarantidor = false;
+		logradouroEmitente = null;
+		numeroEmitente = null;
+		complementoEmitente = null;
+		cidadeEmitente = null;
+		ufEmitente = null;
+		cepEmitente = null;
+		
+		for (CcbVO participante : this.listaParticipantes) {
+			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
+				participante.setTipoOriginal(participante.getTipoParticipante());
+			} else {
+				participante.setTipoParticipante(participante.getTipoOriginal());
+			}
+		}
+	}
 	
 	public void pesquisaParticipante() {
 		this.tituloPagadorRecebedorDialog = "Participante";
@@ -336,6 +363,7 @@ public class CcbMB {
 	
 	public void concluirParticipante() {
 		this.getListaParticipantes().add(this.participanteSelecionado);
+		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
 		this.participanteSelecionado = new CcbVO();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
@@ -977,9 +1005,6 @@ public class CcbMB {
 				}
 			}
 
-			registraPagador = true;
-
-
 			if (pagadorRecebedor == null) {
 				pagadorRecebedor = this.objetoPagadorRecebedor;
 			}
@@ -1197,6 +1222,34 @@ public class CcbMB {
 			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"360\" w:hanging=\"0\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
 			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
 			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_bold = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"5\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"360\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_bold_Roman = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"6\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1-\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1080\" w:hanging=\"720\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:i w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1-.%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"720\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1-.%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2880\" w:hanging=\"720\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_bold2 = "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"7\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1)\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"360\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"lowerLetter\"/><w:lvlText w:val=\"%1).%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl>"
+			+ "</w:abstractNum>";
+	
+	static String cTAbstractNumBulletXML_bold_Roman_NoLeft_NoHanging= "<w:abstractNum xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" w:abstractNumId=\"8\">"
+			+ "<w:multiLevelType w:val=\"hybridMultilevel\"/>"
+			+ "<w:lvl w:ilvl=\"0\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"0\" w:hanging=\"0\"/></w:pPr><w:rPr><w:b w:val=\"true\"/><w:sz w:val=\"24\"/></w:rPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"1\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1.%2\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"720\"/></w:pPr></w:lvl>"
+			+ "<w:lvl w:ilvl=\"2\" w:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"upperRoman\"/><w:lvlText w:val=\"%1.%2.%3\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"720\"/></w:pPr></w:lvl>"
 			+ "</w:abstractNum>";
 	
 	public StreamedContent geraCcbDinamica() throws IOException {
@@ -2468,7 +2521,7 @@ public class CcbMB {
 			if (listaParticipantes.size() > 1) {
 				tableRow2.getCell(0).setParagraph(paragraph);
 				tableRow2.getCell(1).setParagraph(paragraph);
-				int QtdePessoasEsquerdo = 0;
+				int qtdePessoasEsquerdo = 0;
 				for (int iPartTab = 0; iPartTab < listaParticipantes.size(); iPartTab++) {
 
 					CcbVO participante = this.listaParticipantes.get(iPartTab);
@@ -2494,7 +2547,7 @@ public class CcbMB {
 							run3.setBold(false);
 							run3.addBreak();
 
-							QtdePessoasEsquerdo++;
+							qtdePessoasEsquerdo++;
 						} else {
 							run = tableRow2.getCell(1).getParagraphArray(0).createRun();
 							run.addBreak();
@@ -2514,6 +2567,7 @@ public class CcbMB {
 							run3.setText(participante.getTipoParticipante());
 							run3.setBold(false);
 							run3.addBreak();
+							qtdePessoasEsquerdo--;
 						}
 					}
 				}
@@ -2527,7 +2581,7 @@ public class CcbMB {
 
 				run4 = tableRow2.getCell(1).getParagraphArray(0).createRun();
 				run4.setFontSize(12);
-				for (int i = 0; i < QtdePessoasEsquerdo; i++) {
+				for (int i = 0; i <= qtdePessoasEsquerdo; i++) {
 					run4.addBreak();
 					run4.addBreak();
 					run4.addBreak();
@@ -2665,16 +2719,18 @@ public class CcbMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 
-			gerador.open(String.format("testeAaaaaaa %s.docx", ""));
+			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
+			
+			clearDocumentosNovos();
+			
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
-	
 
 	public StreamedContent geraAFDinamica() throws IOException {
 		try {
@@ -2691,14 +2747,7 @@ public class CcbMB {
 			run.setText("INSTRUMENTO PARTICULAR DE ALIENAÇÃO FIDUCIÁRIA DE BEM(NS) IMÓVEL(EIS) EM GARANTIA E OUTRAS AVENÇAS");
 			XWPFRun run2 = paragraph.createRun();
 			XWPFRun run3 = paragraph.createRun();
-			XWPFRun run4 = paragraph.createRun();
-			XWPFRun run5 = paragraph.createRun();
-			XWPFRun run6 = paragraph.createRun();
-			XWPFRun run7 = paragraph.createRun();
-			XWPFRun run8 = paragraph.createRun();
-			XWPFRun run9 = paragraph.createRun();
-			XWPFRun run10 = paragraph.createRun();
-			
+			XWPFRun run4 = paragraph.createRun();			
 			
 			run.setFontSize(12);
 			run.setBold(true);
@@ -2714,6 +2763,27 @@ public class CcbMB {
 			
 			int iParticipante = 1;
 			for (CcbVO participante : this.listaParticipantes) {
+				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(nomeEmitente)) {
+						nomeEmitente = participante.getPessoa().getNome();
+					}
+					
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							cpfEmitente = participante.getPessoa().getCpf();
+						} else {
+							cpfEmitente = participante.getPessoa().getCnpj();
+						}
+					}
+					
+					if(participante.isFiduciante()) {
+						classeEmitente = "FIDUCIANTE";
+					} else {
+						classeEmitente = "DEVEDOR";
+					}
+				}
+				
 				if(participante.isFiduciante()) {
 					participante.setTipoParticipante("FIDUCIANTE");
 				
@@ -2766,20 +2836,6 @@ public class CcbMB {
 						runSociosNome.addCarriageReturn();
 					}
 				}
-				
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-					if(CommonsUtil.semValor(nomeEmitente)) {
-						nomeEmitente = participante.getPessoa().getNome();
-					}
-					
-					if(CommonsUtil.semValor(cpfEmitente)) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
-							cpfEmitente = participante.getPessoa().getCpf();
-						} else {
-							cpfEmitente = participante.getPessoa().getCnpj();
-						}
-					}
-				}
 
 				iParticipante++;
 				} else {
@@ -2787,19 +2843,20 @@ public class CcbMB {
 				}
 			}
 			
+			fazParagrafoSimples(document, paragraph, run, "De outro lado, na qualidade de outorgada fiduciária, ", false);
+			
 			paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.BOTH);
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(0);
 			paragraph.setSpacingBetween(1);
-
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText(iParticipante + ")");
 			run.addTab();
 			run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., ");
 			run.setBold(true);
-
+			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
 			run2.setText("instituição financeira, inscrita no CNPJ/MF sob"
@@ -2808,11 +2865,13 @@ public class CcbMB {
 					+ " representada na forma do seu Estatuto Social (“");
 			run2.setBold(false);
 			
+			iParticipante++;
+			
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText("FIDUCIÁRIA");
+			run.setUnderline(UnderlinePatterns.SINGLE); 
 			run.setBold(true);
-			run.setUnderline(UnderlinePatterns.SINGLE);
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
@@ -2831,9 +2890,9 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText("PARTES");
+			run.setText( "PARTES");
+			run.setUnderline(UnderlinePatterns.SINGLE); 
 			run.setBold(true);
-			run.setUnderline(UnderlinePatterns.SINGLE);
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
@@ -2843,8 +2902,8 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText("PARTE");
+			run.setUnderline(UnderlinePatterns.SINGLE); 
 			run.setBold(true);
-			run.setUnderline(UnderlinePatterns.SINGLE);
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
@@ -2852,16 +2911,2191 @@ public class CcbMB {
 			run2.setBold(false);
 			run2.addCarriageReturn();
 			
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			for (CcbVO participante : this.listaParticipantes) {
+				if(!participante.isFiduciante()) {
+	
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
 
+				run = paragraph.createRun();
+				run.setFontSize(12);
+				run.setText(iParticipante + ")");
+				run.addTab();
+				run.setText("DEVEDOR: " + participante.getPessoa().getNome() + ", ");
+				run.setBold(true);
+
+				run2 = paragraph.createRun();
+				if (!participante.isEmpresa()) {
+					geraParagrafoPF(run2, participante);
+					run2.addCarriageReturn();
+
+				} else {
+					run2.setFontSize(12);
+					PagadorRecebedor pessoa = participante.getPessoa();
+
+					String socios = "";
+					if (participante.getSocios().size() > 1) {
+						socios = "pelos seus sócios, ";
+					} else {
+						if (participante.getSocios().iterator().next().isFeminino()) {
+							socios = "pela sua única sócia, ";
+						} else {
+							socios = "pelo seu único sócio, ";
+						}
+					}
+
+					run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+							+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+							+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+							+ "; neste ato representada " + socios);
+
+					for (CcbVO sociosParticipante : participante.getSocios()) {
+						XWPFRun runSocios = paragraph.createRun();
+						runSocios.setFontSize(12);
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setBold(true);
+						XWPFRun runSociosNome = paragraph.createRun();
+						geraParagrafoPF(runSociosNome, sociosParticipante);
+						runSociosNome.addCarriageReturn();
+					}
+				}
+				
+				iParticipante++;
+				} 
+			}
+			
+			fazParagrafoSimples(document, paragraph, run, "CONSIDERANDO QUE: ", true);
+			
+			CTNumbering cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML_bold);
+			CTAbstractNum cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+
+			// CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			XWPFNumbering numbering = document.createNumbering();
+			BigInteger abstractNumID = numbering.addAbstractNum(abstractNum);
+			BigInteger numID = numbering.addNum(abstractNumID);
+			
+			//criarParagrafo(document, paragraph, ParagraphAlignment.BOTH, numID);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Em ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy"));
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(" o ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("FIDUCIANTE " + nomeEmitente );
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(" emitiu a(s) Cédula(s) de Crédito Bancário nº ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("XXXXXX ");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("em favor da ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("FIDUCIÁRIA");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(", com as características previstas na Cláusula 3ª abaixo "
+					+ "(“CCB(s)”), passando a ser devedora da totalidade do valor principal, juros "
+					+ "remuneratórios e encargos, presentes e futuros, principais e acessórios "
+					+ "decorrentes do referido título (“Obrigações Garantidas”);");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			geraParagrafoBulletListComposta(document, paragraph, run, run2, "As obrigações, pecuniárias ou não,"
+					+ " previstas na(s) CCB(s) são garantidas pela alienação fiduciária de Imóvel(eis) descrito"
+					+ " abaixo bem como registrado(s) perante o "+ cartorioImovel +" Cartório de Registro de Imóveis da "
+					+ "Comarca de "+ cidadeImovel +" – "+ ufImovel +" “RGI”, de propriedade do(s) ", "FIDUCIANTE(S).", false, true, numID, UnderlinePatterns.NONE);
+			
+
+			geraParagrafoBulletList(document, paragraph, run, numID , "Nos termos da(s) CCB(s), o protocolo da garantia "
+					+ "de Alienação Fiduciária junto ao RGI é condição precedente ao seu desembolso devendo o "
+					+ "registro ser concluído no prazo de até 30(trinta) dias contados da emissão da CCB sob pena"
+					+ " de vencimento antecipado do referido título;", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID , "A presente garantia de Alienação Fiduciária é celebrada"
+					+ " sem prejuízo das outras garantias constituídas ou que venham a ser constituídas em favor da(s) CCB(s);", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID , "As Partes dispuseram de tempo e condições adequadas para "
+					+ "a avaliação e discussão de todas as cláusulas desta Alienação Fiduciária (abaixo definido), "
+					+ "cuja celebração, execução e extinção são pautadas pelos princípios da igualdade, probidade,"
+					+ " lealdade e boa-fé.", false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Resolvem, na melhor forma de direito, celebrar o presente ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Instrumento Particular de Alienação Fiduciária de Bens Imóveis em Garantia e Outras Avenças ");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("(“");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Contrato de Alienação Fiduciária");
+			run2.setBold(false);
+			run2.setItalic(false);
+			run2.setUnderline(UnderlinePatterns.SINGLE); 
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("”), que se regerá pelas cláusulas a seguir redigidas e demais disposições,"
+					+ " contratuais e legais, aplicáveis. ");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA PRIMEIRA – DO OBJETO", true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("1.1 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Em garantia do cumprimento das Obrigações Garantidas, "
+					+ "nesta data representadas pela(s) CCB nº ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("XXXXXX ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("melhor descritas na clausula 2ª abaixo, o(s) ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE(S) ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("aliena(m) fiduciariamente, em favor da ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA, ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("o(s) Imóvel(eis) de sua titularidade e de seguinte descrição: ");
+			run2.setBold(false);
+			
+			int iImagem = 0;
+			for (UploadedFile imagem : filesList) {
+				run3 = paragraph.createRun();
+				run3.addCarriageReturn();
+				this.populateFiles(iImagem);
+				run3.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+				run3.addCarriageReturn();
+				iImagem++;
+			}
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", objeto da matrícula nº "+ numeroImovel +" (“Bem Imóvel” ou “Imóvel”), "
+					+ "registrada perante o "+ cartorioImovel +" Cartório de Registro de Imóveis da "
+					+ "Comarca de "+ cidadeImovel +" – "+ ufImovel +" (");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("“RGI”");
+			run.setBold(false);
+			run.setItalic(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("(“Bem(ns) Imóvel(eis) ou Imóvel(eis)”) bem conforme identificado no ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Anexo I ");
+			run.setBold(true);
+			run.setItalic(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("ao presente (“");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Alienação Fiduciária");
+			run.setUnderline(UnderlinePatterns.SINGLE); 
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("”). ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "1.2 ", "Se solteiro(a), viúvo(a), divorciado(a)"
+					+ " ou separado(a) judicialmente, declara, sob responsabilidade civil e criminal, que o imóvel "
+					+ "aqui objetivado não foi adquirido na constância de união estável prevista na Lei nº 9.278,"
+					+ " de 10/05/96 e no Código Civil, razão pela qual é seu único e exclusivo proprietário.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "1.3 ", "O(s) FIDUCIANTE(S), declara(m), "
+					+ "sob as penas da lei, que não está(ão) vinculado(s) como empregador(es) ao INSS - Instituto"
+					+ " Nacional do Seguro Social, bem como não ser(em) produtor(es) rural(is), não estando, assim,"
+					+ " incurso(s) nas restrições da legislação pertinente, dispensando a apresentação de Certidão "
+					+ "Negativa de Débitos – CND. Todavia, na hipótese de ser(em) contribuinte(s) desse órgão,"
+					+ " declara(m) ciente(s) e responsável(eis) pela apresentação da CND-INSS ao Cartório de "
+					+ "Registro de Imóveis.", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("1.4 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("A transferência da propriedade fiduciária do(s) Imóvel(eis), pelo(s) ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE(S) ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("à ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("se opera com o registro desta Alienação Fiduciária no "
+					+ "competente Cartório de Registro de Imóveis indicado na "
+					+ "descrição acima e subsistirá, durante seu prazo de vigência,"
+					+ " até o cumprimento válido e eficaz da totalidade das"
+					+ " Obrigações Garantidas. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "1.5 ", "Obriga(m)-se o(s) FIDUCIANTE(S),"
+					+ " seus herdeiros e sucessores a qualquer título das Partes a providenciar o "
+					+ "registro do presente instrumento, com a constituição da Alienação Fiduciária "
+					+ "aqui prevista, e averbação da CCB na matrícula do Imóvel objeto da garantia,"
+					+ " no prazo de 30 (trinta) dias a contar de sua assinatura, sob pena deste"
+					+ " CONTRATO ser considerado automaticamente resolvido, independentemente"
+					+ " de qualquer notificação prévia ou outra formalidade, hipótese em que "
+					+ "não serão devidas quaisquer indenizações ao(s) EMITENTE(S). Nesta hipótese,"
+					+ " o(s) EMITENTE(S) deverá(ão) ressarcir o CREDOR das despesas de custo de"
+					+ " emissão da CCB e outras despesas decorrentes desta no prazo máximo de "
+					+ "48 (quarenta e oito) horas contadas da data em que for(em) notificado(s) "
+					+ "para tanto, sob pena de sofrer(em) execução específica.", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("1.6 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Em ocorrendo a cessão, endosso ou qualquer outra forma de transferência"
+					+ " da(s) CCB(s) e/ou dos créditos dela oriundos à terceiros(“");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Sucessores");
+			run.setBold(false);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("”), referidos Sucessores passarão a ser os legítimos titulares e beneficiários"
+					+ " da presente Alienação Fiduciária, de forma que toda menção à ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA ");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.NONE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("deverá ser interpretada como referindo-se aos Sucessores"
+					+ " (efetivos titulares dos créditos, conforme constante do SNA da CETIP)"
+					+ " e sendo certo, ainda, que todas as disposições do presente contrato"
+					+ " serão mantidas.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA SEGUNDA – DOS REQUISITOS DO ARTIGO 24º DA LEI 9514/1997", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "2.1 ", "As Partes declaram, para os fins do artigo 24 da Lei nº 9.514/1997, "
+					+ "que as Obrigações Garantidas apresentam as exatas características principais indicadas na abaixo: ", true, false);
+			
+			
+			cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML_bold_Roman);
+			cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+
+			// CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			numbering = document.createNumbering();
+			abstractNumID = numbering.addAbstractNum(abstractNum);
+			numID = numbering.addNum(abstractNumID);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Obrigação Garantida:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" Cédula de Crédito Bancário nº XXXXXX ");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor do Principal da Dívida:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" a soma do saldo devedor das Obrigações Garantidas,"
+					+ " na data do leilão, nele incluídos os juros convencionais, "
+					+ "as penalidades e os demais encargos contratuais conforme"
+					+ " termos da clausula 5.7 deste instrumento; ");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor do Crédito:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			valorPorExtenso.setNumber(valorCredito); 
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" "+ CommonsUtil.formataValorMonetario(valorCredito, "R$") + " ("+ valorPorExtenso.toString() +");");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Condições de Pagamento:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(montantePagamento));
+			valorPorExtenso.setNumber(valorCredito); 
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" "+ numeroParcelasPagamento+" ("+ numeroPorExtenso.toString() +") parcelas,"
+					+ " sendo a 1ª. parcela com vencimento em "+ CommonsUtil.formataData(vencimentoPrimeiraParcelaPagamento, "dd/MM/yyyy")  +""
+					+ " e a última parcela com vencimento em "+ CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")  +","
+					+ " totalizando o montante de "+ CommonsUtil.formataValorMonetario(montantePagamento, "R$") +" ("+ valorPorExtenso.toString() +");");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Encargos Financeiros:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("(X) ");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Pré-fixado");
+			run.setBold(true);
+			run.setItalic(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", calculado com base no ano de 365 dias;");
+			run2.setBold(false);
+			run2.setItalic(true);
+			run2.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("(X) ");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Pós-fixado");
+			run.setBold(true);
+			run.setItalic(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(": atualização dos valores pela variação mensal do Índice "
+					+ "Nacional de Preços ao Consumidor Amplo – IPCA/IBGE, apurado "
+					+ "a partir da data de emissão até a efetiva quitação da CCB;");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Taxa de Juros Efetiva: ");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Mes: ");
+			run2.setBold(true);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorTaxa(taxaDeJurosMes) + "%");
+			run.setBold(false);
+			run.setItalic(true);
+			run.addTab();
+			run.setUnderline(UnderlinePatterns.NONE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Ano: ");
+			run2.setBold(true);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorTaxa(taxaDeJurosAno) + "%");
+			run.setBold(false);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.NONE);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Custo Efetivo Total (“CET”)");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Mes: ");
+			run2.setBold(true);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorTaxa(cetMes) + "%");
+			run.setBold(false);
+			run.setItalic(true);
+			run.addTab();
+			run.setUnderline(UnderlinePatterns.NONE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Ano: ");
+			run2.setBold(true);
+			run2.setItalic(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorTaxa(cetAno) + "%");
+			run.setBold(false);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.NONE);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Data de Emissão:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy") +";");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Data de Vencimento:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" "+CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")+"." );
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Clausula de Constituição da Propriedade Fiduciária:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" vide clausula 1.1 deste instrumento;");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Clausula assegurando o Fiduciante – enquanto adimplente - ao uso do Bem(ns) Imóvel(eis):");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" vide clausula 3.9. deste instrumento;");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Indicação, para efeito de venda em público leilão, do valor do imóvel -");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" vide clausula 6.1 deste instrumento e");
+			run2.setBold(false);
+			run2.setItalic(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Cláusula dispondo sobre os procedimentos de que trata o art. 27 da Lei 9514/97:");
+			run.setBold(true);
+			run.setItalic(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" vide clausula 5ª deste instrumento");
+			run2.setBold(false);
+			run2.setItalic(true);
+			run2.addCarriageReturn();
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA TERCEIRA – DAS CARACTERÍSTICAS DA GARANTIA FIDUCIÁRIA", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.1. ", "Inicialmente as Partes fazem constar que a"
+					+ " presente garantia é constituída nos termos da Lei 9514/97 e suas atualizações e que, com base "
+					+ "na autorização constante no parágrafo primeiro do artigo 22 da referida lei, não é firmada no "
+					+ "âmbito de operação de financiamento imobiliário operado pelo SFI. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.2. ", "As Partes anuem e o(s) FIDUCIANTE(s) "
+					+ "ratificam que, entende-se por Obrigações Garantidas a totalidade da(s) cédula(s) de crédito"
+					+ " bancário que contenham a presente garantia fiduciária constituída em garantia"
+					+ " (“Garantia Fiduciária”).", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.3. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Ficará a cargo do FIDUCIANTE(S) realizar o "
+					+ "registro da Alienação Fiduciária do Imóvel(eis) na(s) respectiva(s) matrícula(s) do(s)"
+					+ " Imóvel(eis) perante o Cartório de Registro de Imóveis competente nos prazos estabelecidos "
+					+ "entre as Partes ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setBold(false);
+			run.setText("sendo tal descumprimento considerado como hipótese de vencimento antecipado das Obrigações Garantidas.");
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.4. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("As Partes desde já se obrigam a disponibilizar, "
+					+ "apresentar documentos e praticar os atos que vierem a ser"
+					+ " necessários para formalizar o registro da Alienação Fiduciária"
+					+ " (“Obrigações para Registro”) e, nesse sentido ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setBold(false);
+			run.setText("declaram anuência de que qualquer ação ou omissão realizada no sentindo "
+					+ "de prejudicar a efetiva constituição da Garantia Fiduciária será considerada "
+					+ "também como hipótese de vencimento antecipado das Obrigações Garantidas.");
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.5. ", "A presente Garantia Fiduciária "
+					+ "compreende a propriedade fiduciária do Imóvel(eis) e todas as acessões, "
+					+ "melhorias e benfeitorias existentes. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.6. ", "O(s) FIDUCIANTE(S) se obriga(m) "
+					+ "a manter o Imóvel(eis) ora alienado fiduciariamente nos termos deste instrumento,"
+					+ " em perfeito estado de segurança e utilização, além de realizar todas as obras,"
+					+ " reparos e benfeitorias necessárias. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.7. ", "Mediante o registro da presente"
+					+ " Alienação Fiduciária na(s) matrícula(s) do(s) Imóvel(eis), estará constituída a"
+					+ " propriedade fiduciária sobre o(s) Imóvel(eis) em nome do FIDUCIÁRIA, efetivando-se"
+					+ " o desdobramento da posse e tornando-se o(s) FIDUCIANTE(S) possuidor(es) direto(s)"
+					+ " com direito à utilização do(s) Imóvel(eis) e a FIDUCIÁRIA, ou os Sucessores,"
+					+ " conforme o caso, possuidores indiretos do(s) Imóvel(eis).", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.8. ", "A posse direta de que fica "
+					+ "investida o(s) FIDUCIANTE(S) manter-se-ão até o adimplemento total das Obrigações "
+					+ "Garantidas e enquanto estas permanecerem adimplidas, obrigando-se o(s) FIDUCIANTE(S)"
+					+ " a manter, conservar e guardar o(s) Imóvel(eis), pagar pontualmente todos os tributos,"
+					+ " taxas e quaisquer outras contribuições ou encargos que incidam ou venham "
+					+ "a incidir sobre estes ou que sejam inerentes à Garantia Fiduciária..", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("3.9. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Para fins de atendimento ao inciso V do artigo 24º da Lei 9.514/97,"
+					+ " as Partes anuem que é assegurado ao(s) FIDUCIANTE(S) titular do(s) Imóvel(eis),"
+					+ " enquanto adimplente(s), a livre utilização, por sua conta e risco do(s) Imóvel(eis). ");
+			run2.setUnderline(UnderlinePatterns.SINGLE);
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.10. ", "Caso o(s) FIDUCIANTE(S) não pague(m)"
+					+ " pontualmente todos os tributos, despesas e encargos relativos ao(s) Imóvel(eis), a FIDUCIÁRIA,"
+					+ " ou os Sucessores, conforme o caso, poderão, a seu critério, pagar tais tributos,"
+					+ " despesas e encargos e solicitar o correspondente reembolso, que deverá ser feito dentro "
+					+ "de 15 (quinze) dias de solicitação neste sentido, sob pena de, sobre o valor em atraso, "
+					+ "incidirem juros moratórios de 1% (um por cento) ao mês, ou fração de mês em atraso, mais "
+					+ "correção monetária de acordo com o IPCA/IBGE, tudo calculado desde a data de vencimento "
+					+ "até a data do respectivo pagamento, além de multa não compensatória de 2% (dois por cento)"
+					+ " sobre o valor em atraso.  ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.11. ", "A FIDUCIÁRIA, ou os Sucessores, "
+					+ "conforme o caso, reservam-se ao direito de, a qualquer tempo, com periodicidade não"
+					+ " inferior à trimestral e mediante aviso com 5 (cinco) dias de antecedência, exigir "
+					+ "comprovantes de pagamento dos referidos encargos fiscais e/ou tributários, ou de quaisquer "
+					+ "outras contribuições, ou ainda, conforme o caso, a comprovação de questionamentos"
+					+ " administrativo e/ou judicial referentes a valores eventualmente não pagos, relacionados"
+					+ " com os tributos incidentes. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.12. ", "O(s) FIDUCIANTE(S) titular(es)"
+					+ " do(s) Imóvel(eis) declara(m) e informa(m) que o(s) Bem(ns) Imóvel(eis) outorgado(s) "
+					+ "em garantia não é(são) nem faz(em) parte de bem de família de maneira que ratificam que,"
+					+ " caso em algum momento da vigência das Obrigações Garantidas tal condição venha a ser "
+					+ "contestada, servirá a presente clausula como RENÚNCIA aos benefícios de tal natureza. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "3.13. ", "O(s) FIDUCIANTE(S) titular(es) do(s) "
+					+ "Imóvel(eis) também declaram que o(s) Bem(ns) Imóvel(eis) não conta(m) com usufruto em nome "
+					+ "de terceiros se responsabilizando pelas penas impostas, inclusive indenizatórias, aos"
+					+ " que declaram condições que não contemplam a realidade dos fatos.", true, false);
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA QUARTA – DA CONSTITUIÇÃO DA MORA E DO INADIMPLEMENTO – "
+					+ "PROCEDIMENTOS DO ARTIGO 26º DA LEI 9514/1997", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.1. ", "Nos termos do artigo 26 da Lei nº 9.514/1997, "
+					+ "vencida e não paga, no todo ou em parte as Obrigações Garantidas, consolidar-se-á, a propriedade do(s) "
+					+ "Imóvel(eis) em nome da FIDUCIÁRIA, observadas as disposições a seguir. ", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("4.2. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Para fins do parágrafo 3º mesmo artigo, as Partes convencionam que, ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("decorrido o prazo de 15(quinze) dias corridos da data de vencimento"
+					+ " parcial ou total de qualquer dos títulos representativos das Obrigações"
+					+ " Garantidas (“Prazo de Carência”),");
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" a FIDUCIÁRIA, ou os eventuais sucessores, conforme o caso, "
+					+ "poderá, a seu critério, iniciar o procedimento de excussão da presente"
+					+ " Garantia Fiduciária através da intimação do(s) FIDUCIANTE(S) nos "
+					+ "termos do artigo 26, § 1º da Lei nº 9.514/1997.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.3. ", "O simples pagamento "
+					+ "do principal ou de parte dos valores atrasados, sem encargos pactuados, "
+					+ "não exonerará o(s) FIDUCIANTE(S) OU DEVEDOR, da responsabilidade de "
+					+ "liquidar(em) tais obrigações, continuando em mora para todos os efeitos "
+					+ "legais, contratuais e da excussão iniciada;", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4. ", "O procedimento de "
+					+ "intimação para pagamento obedecerá aos seguintes requisitos:", true, false);
+			
+			cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML_bold2);
+			cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+			// CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			numbering = document.createNumbering();
+			abstractNumID = numbering.addAbstractNum(abstractNum);
+			numID = numbering.addNum(abstractNumID);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "A intimação será requerida pela FIDUCIÁRIA, "
+					+ "ou por seu sucessor conforme o caso, ao Oficial do Serviço de Registro de Imóveis competente,"
+					+ " indicando o valor total das obrigações garantidas decorrentes da(s) CCB(s) vencidas e não pagas;", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "A intimação far-se-á pessoalmente ao(s) FIDUCIANTE(S)"
+					+ " e será realizada pelo Oficial do Serviço de Registro de Imóveis da circunscrição imobiliária onde "
+					+ "se localizar o Imóvel(eis), podendo, a critério do Oficial, vir a ser realizada por seu preposto ou"
+					+ " por meio do Serviço de Registro de Títulos e Documentos da respectiva comarca da situação do Imóvel(eis),"
+					+ " ou, a critério da FIDUCIÁRIA por meio do Serviço de Registro de Títulos e Documentos  do domicílio de"
+					+ " quem deva recebê-la, ou, ainda, pelo correio, com aviso de recebimento a ser firmado pelo(s) FIDUCIANTE(S),"
+					+ " ou por quem deva receber a intimação;", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "Quando se tratar de pessoa jurídica, a intimação será feita"
+					+ " ao(s) representantes ou a procuradores regularmente constituídos pelo(s) FIDUCIANTE(S);", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "Nos termos da Lei nº 13.465/2017, quando, por duas vezes,"
+					+ " o Oficial de Registro de Imóveis ou de Registro de Títulos e Documentos ou o serventuário por eles"
+					+ " credenciado ou o Oficial Registro de Títulos e Documentos  do domicilio do(s) FIDUCIANTE(S) "
+					+ "houver procurado o(s) FIDUCIANTE(S) titular(es) do(s) Imóvel(eis) em seu domicílio ou residência "
+					+ "sem o encontrar, deverá, havendo suspeita motivada de ocultação, intimar qualquer pessoa da família "
+					+ "ou, em sua falta, qualquer vizinho de que, no dia útil imediato, retornará ao imóvel, a fim de efetuar"
+					+ " a intimação, na hora que designar, aplicando-se subsidiariamente o disposto nos arts. 252, 253 e 254 "
+					+ "da Lei no 13.105, de 16 de março de 2015 (Código de Processo Civil);", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "Nos condomínios edilícios ou outras espécies de "
+					+ "conjuntos imobiliários com controle de acesso, a intimação poderá ser feita ao funcionário da"
+					+ " portaria responsável pelo recebimento de correspondência; e", false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID, "Quando o(s) FIDUCIANTE(ES), ou seu representante"
+					+ " legal ou procurador encontrar-se em local ignorado, incerto ou inacessível, o fato será "
+					+ "certificado pelo serventuário encarregado da diligência e informado ao oficial de Registro "
+					+ "de Imóveis, que, à vista da certidão, promoverá a intimação por edital publicado durante 3 "
+					+ "(três) dias, pelo menos, em um dos jornais de maior circulação local ou noutro de comarca "
+					+ "de fácil acesso, se no local não houver imprensa diária, contado o prazo para purgação da"
+					+ " mora da data da última publicação do edital;", false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Os FIDUCIANTES constituem-se bastantes procuradores, uns dos outros, "
+					+ "outorgando-se mutuamente poderes gerais, podendo qualquer um deles receber citações,"
+					+ " intimações, comunicações, notificações, acordar, negociar, quitar, dar e receber,"
+					+ " em nome um do outro, encarregando-se de dar ciência à outra parte de quaisquer"
+					+ " obrigações decorrentes da CCB e da presente garantia");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", não podendo qualquer um deles alegar desconhecimento do que a outra parte"
+					+ " fez e/ou realizou em relação ao presente instrumento e em especial receber "
+					+ "todas as intimações decorrentes da Lei 9514/97, promovidas dor Cartório de Registro "
+					+ "de Imóveis ou outro autorizado em lei, sem exceção.”;");
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.5. ", "Purgada a mora, perante o"
+					+ " Cartório de Registro de Imóvel(eis) competente, a presente Alienação Fiduciária"
+					+ " se restabelecerá, caso ainda exista(m) Obrigações Garantidas. Nesta hipótese, "
+					+ "nos 3 (três) dias seguintes, o Oficial entregará à FIDUCIÁRIA, ou aos Sucessores,"
+					+ " conforme o caso, as importâncias recebidas, deduzidas as despesas de cobrança e"
+					+ " de intimação.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.6. ", "O não pagamento, pelo(s) FIDUCIANTE(S)"
+					+ " de qualquer valor devido pelas Obrigações Garantidas vencidas e não pagas, depois de"
+					+ " devidamente comunicada nos termos da intimação tratada acima, bastará para a configuração"
+					+ " da não purgação da mora. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.7. ", "Não havendo purgação da mora, "
+					+ "o Oficial do Cartório de Registro de Imóvel(eis) certificará o fato e promoverá a "
+					+ "averbação, na matrícula do(s) Imóvel(eis), da consolidação da propriedade do(s) "
+					+ "Imóvel(eis) em nome da FIDUCIÁRIA, cabendo a esta, apresentar o comprovante de"
+					+ " recolhimento do respectivo Imposto sobre Transmissão de Bens Imóveis – ITBI e,"
+					+ " se for o caso, do laudêmio.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.7.1 ", "O(s) FIDUCIANTE(s) pode(rão),"
+					+ " com a anuência da FIDUCIÁRIA, dar seu direito eventual ao imóvel em pagamento da dívida,"
+					+ " dispensados os procedimentos previstos no art. 27º da Lei 9.514/1997.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.7.2 ", "Até a data da averbação"
+					+ " da consolidação da propriedade fiduciária, é assegurado ao(s) FIDUCIANTE(S) ou DEVEDOR,"
+					+ " quando aplicável, pagar as parcelas da dívida vencidas e as despesas de que trata o"
+					+ " inciso II do § 3o do art. 27, hipótese em que convalescerá o contrato de Alienação"
+					+ " Fiduciária.", true, false);
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA QUINTA – DOS LEILÕES PÚBLICOS EXTRAJUDICIAIS E PROCEDIMENTOS DO ARTIGO 27º DA LEI 9514/97 ", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.1. ", "Consolidada a propriedade do(s)"
+					+ " Imóvel(eis) em nome da FIDUCIÁRIA, esta promoverá os públicos leilões, extrajudicialmente,"
+					+ " para alienação em questão, no prazo de 30 (trinta) dias contados do registro da referida"
+					+ " consolidação. ", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.2. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Se no primeiro público leilão, o maior "
+					+ "lance oferecido for inferior ao ");
+			run2.setBold(false);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor do Imóvel");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" leiloado, conforme definição na clausula 6ª abaixo, será realizado o segundo leilão,"
+					+ " nos 15 (quinze) dias seguintes.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.3. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("No segundo leilão, será aceito o maior lance oferecido, desde que igual ou superior ao ");
+			run2.setBold(false);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor da Dívida");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", das despesas, dos prêmios de seguro, dos encargos legais, inclusive tributos,"
+					+ " e das contribuições condominiais. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();			
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.4. ", "Os leilões públicos extrajudiciais"
+					+ " (primeiro e segundo) serão anunciados em edital único, resumido,"
+					+ " por três vezes em jornal de ampla circulação na Comarca da situação do(s)"
+					+ " Imóvel(eis) ou em outro de comarca de fácil acesso, se, no local do(s) Imóvel(eis) "
+					+ "não houver imprensa com circulação diária; ", true, false);
+			
+			geraParagrafoCompostoSemReturn(document, paragraph, run, run2, "5.4.1. ", "Diante do acima exposto obriga-se o"
+					+ " FIDUCIANTE a manter seus dados de notificação atualizados de forma que, caso não o faça,"
+					+ " as notificações serão endereçadas aos seguintes endereços abaixo:", true, false);
+			
+			for (CcbVO participante : this.listaParticipantes) {
+				if(participante.isFiduciante()) {
+					if(!fiducianteGerado) {
+						paragraph = document.createParagraph();
+						paragraph.setAlignment(ParagraphAlignment.BOTH);
+						paragraph.setSpacingBefore(0);
+						paragraph.setSpacingAfter(0);
+						paragraph.setSpacingBetween(1);
+
+						run = paragraph.createRun();
+						run.setFontSize(12);
+						run.addCarriageReturn();
+						run.setText("Pelo FIDUCIANTE:");
+						run.setBold(false);
+						run.setUnderline(UnderlinePatterns.SINGLE);
+						fiducianteGerado = true;
+					}
+		
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
+
+				run = paragraph.createRun();
+				run.addCarriageReturn();
+				run.setFontSize(12);
+				run.setText(participante.getPessoa().getNome());
+				run.setBold(true);
+				run.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText(participante.getPessoa().getEndereco() + ", n° " + participante.getPessoa().getNumero() + ", " + participante.getPessoa().getCidade() + " - " + participante.getPessoa().getEstado());
+				run2.setBold(false);
+				run2.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText("CEP " + participante.getPessoa().getCep());
+				run2.setBold(false);
+				run2.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText("E-mail: " + participante.getPessoa().getEmail());
+				run2.setBold(false);
+				
+				} else {
+					if(!devedorGerado) {
+						paragraph = document.createParagraph();
+						paragraph.setAlignment(ParagraphAlignment.BOTH);
+						paragraph.setSpacingBefore(0);
+						paragraph.setSpacingAfter(0);
+						paragraph.setSpacingBetween(1);
+
+						run = paragraph.createRun();
+						run.setFontSize(12);
+						run.addCarriageReturn();
+						run.setText("Pelo DEVEDOR:");
+						run.setBold(false);
+						run.setUnderline(UnderlinePatterns.SINGLE);
+						devedorGerado = true;
+					}
+		
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				paragraph.setSpacingBetween(1);
+
+				run = paragraph.createRun();
+				run.addCarriageReturn();
+				run.setFontSize(12);
+				run.setText(participante.getPessoa().getNome());
+				run.setBold(true);
+				run.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText(participante.getPessoa().getEndereco() + ", n° " + participante.getPessoa().getNumero() + ", " + participante.getPessoa().getCidade() + " - " + participante.getPessoa().getEstado());
+				run2.setBold(false);
+				run2.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText("CEP " + participante.getPessoa().getCep());
+				run2.setBold(false);
+				run2.addCarriageReturn();
+				
+				run2 = paragraph.createRun();
+				run2.setFontSize(12);
+				run2.setText("E-mail: " + participante.getPessoa().getEmail());
+				run2.setBold(false);
+				}
+			}
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.addCarriageReturn();
+			run.setFontSize(12);
+			run.setText("Pela FIDUCIÁRIA:");
+			run.setBold(false);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			fiducianteGerado = true;
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.addCarriageReturn();
+			run.setFontSize(12);
+			run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A. ");
+			run.setBold(true);
+			run.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Av. Paulista, 1765, 1º Andar, CEP 01311-200, São Paulo, SP ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("E-mail: ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("cb@moneyp.com.br");
+			run.setBold(false);
+			run.setColor("0000ff");
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.5. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Após a averbação da consolidação da propriedade fiduciária no "
+					+ "patrimônio da FIDUCIÁRIA e até a data da realização do segundo leilão,"
+					+ " é assegurado aos FIDUCIANTE(S) o direito de preferência para adquirir"
+					+ " o(s) Imóvel(eis) por preço correspondente ao ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor da Dívida");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", somado aos encargos, dos prêmios de seguro, dos encargos legais,"
+					+ " inclusive tributos, e das contribuições condominiais, aos valores "
+					+ "correspondentes ao imposto sobre transmissão inter vivos e ao laudêmio,"
+					+ " se for o caso, pagos para efeito de consolidação da propriedade "
+					+ "fiduciária no patrimônio da FIDUCIÁRIA, e às ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Despesas ");
+			run.setBold(true);
+
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("inerentes ao procedimento de cobrança e leilão, incumbindo,"
+					+ " também, ao(s) FIDUCIANTE(S) o pagamento dos encargos tributários"
+					+ " e despesas exigíveis para a nova aquisição do(s) Imóvel(eis), de "
+					+ "que trata este parágrafo, inclusive custas, impostos e emolumentos. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.6. ", "Para os fins do disposto na cláusula 5.5."
+					+ " deste instrumento, as datas, horários e locais dos leilões serão comunicados ao devedor "
+					+ "mediante correspondência dirigida aos endereços constantes do contrato, inclusive ao endereço"
+					+ " eletrônico.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.7. ", "Para os fins do disposto no artigo 27º"
+					+ " da Lei 9.514/1997, entende-se por: ", true, false);
+			
+			cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML_bold_Roman_NoLeft_NoHanging);
+			cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+			// CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			numbering = document.createNumbering();
+			abstractNumID = numbering.addAbstractNum(abstractNum);
+			numID = numbering.addNum(abstractNumID);
+			
+			geraParagrafoBulletListComposta(document, paragraph, run, run2, "– Valor da Dívida: ", "a soma do saldo devedor das"
+					+ " operações representativas das Obrigações Garantidas, na data do leilão, nele incluídos os juros "
+					+ "convencionais, as penalidades e os demais encargos contratuais; ", true, false, numID, UnderlinePatterns.NONE);
+			
+			geraParagrafoBulletListComposta(document, paragraph, run, run2, "– Despesas: ", "a soma das importâncias correspondentes aos"
+					+ " encargos e custas de intimação, e as necessárias à realização do público leilão, nestas compreendidas"
+					+ " as relativas aos anúncios, publicações de editais, à comissão do leiloeiro, avaliações e perícias,"
+					+ " Imposto sob transmissão recolhido para fins de consolidação da propriedade bem como, adicionalmente,"
+					+ " honorários advocatícios extrajudiciais no importe de 20%(vinte por cento) sob o Valor da Dívida"
+					+ " relacionados aos procedimentos de cobrança.  ", true, false, numID, UnderlinePatterns.NONE);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.8. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Nos ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("cinco dias que se seguirem à venda do(s) Imóvel(eis)");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" no leilão, a FIDUCIÁRIA entregará ao(s) FIDUCIANTE(S) a importância que sobejar, "
+					+ "considerando-se nela compreendido o valor da indenização de benfeitorias, depois de deduzidos"
+					+ " o Valor da Dívida e das Despesas e encargos aplicáveis, fato esse que importará em recíproca "
+					+ "quitação, não se aplicando o disposto na parte final do art. 516 do Código Civil.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.9. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Se, no segundo leilão, o maior lance oferecido não for igual ou superior ao ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Valor da Dívida");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" somado às Despesas e dos Encargos, considerar-se-á extinta a dívida "
+					+ "e exonerada a FIDUCIÁRIA da obrigação de entregar ao(s) FIDUCIANTE(S) o sobejo"
+					+ " retratado na clausula acima. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.9.1. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Na hipótese dessa clausula, a FIDUCIÁRIA, ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("no prazo de cinco dias a contar da data do segundo leilão");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", dará ao(s) FIDUCIANTE(S) quitação da dívida, mediante termo próprio.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.10. ", "Se o(s) Imóvel (eis) estiver(em) locado(s),"
+					+ " a locação poderá ser denunciada com o prazo de 30(trinta) dias para desocupação, salvo se"
+					+ " tiver havido aquiescência por escrito da FIDUCIÁRIA, devendo a denúncia ser realizada no "
+					+ "prazo de 90(noventa) dias a contar da data da consolidação da propriedade na FIDUCIÁRIA, "
+					+ "devendo essa condição constar expressamente em cláusula contratual específica, destacando-se"
+					+ " das demais por sua apresentação gráfica.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.11. ", "A critério do CREDOR,"
+					+ " poderá ser realizada a alteração de propriedade do imóvel no contrato de aluguel,"
+					+ " mediante aditivo próprio que independerá de notificação ou anuência do DEVEDOR, "
+					+ "caso em que os alugueis serão devidos ao CREDOR desde a consolidação.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.12. ", "Responde o(s) FIDUCIANTE(S)"
+					+ " pelo pagamento dos impostos, taxas, contribuições condominiais e quaisquer outros "
+					+ "encargos que recaiam ou venham a recair sobre o(s) Imóvel(eis), cuja posse tenha sido "
+					+ "transferida para a FIDUCIÁRIA, até a data em que a FIDUCIÁRIA vier "
+					+ "a ser imitida na posse.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.13. ", "A cessão de quaisquer das Obrigações Garantidas"
+					+ " implicará a transferência, ao cessionário, de todos os direitos e obrigações inerentes à propriedade"
+					+ " fiduciária em garantia. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.14. ", "O(s) FIDUCIANTE(S), com anuência expressa da "
+					+ "FIDUCIÁRIA, poderá transmitir os direitos de que seja titular sobre o(s) Imóvel(eis) objeto da "
+					+ "alienação fiduciária em garantia, assumindo o adquirente as respectivas obrigações. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.15. ", "O(s) FIDUCIANTE(S) deverá(ão) desocupar"
+					+ " o imóvel até a data da realização do primeiro público leilão, deixando-o livre e desimpedido de "
+					+ "pessoas e coisas. ", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("5.16. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Não ocorrendo a desocupação do(s) Imóvel(eis), no prazo e forma ajustados, a FIDUCIÁRIA,"
+					+ " ou seus Sucessores, inclusive o adquirente do Imóvel(eis) em leilão ou posteriormente, "
+					+ "poderá requerer a reintegração de sua posse cumulada com cobrança do valor da Taxa de Ocupação"
+					+ " desde a data da consolidação (observado o limite máximo mensal ou por fração de 1% acima estabelecido)"
+					+ " e demais despesas previstas neste Instrumento de Alienação, sendo concedida, liminarmente, a ordem "
+					+ "judicial de desocupação no prazo máximo de 60 (sessenta) dias, desde que comprovada, mediante certidão"
+					+ " da matrícula do Imóvel(eis) a consolidação da plena propriedade em nome da ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", ou do registro do contrato celebrado em decorrência do leilão, "
+					+ "conforme quem seja o autor da ação de reintegração de posse. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.17. ", "O fiador ou terceiro"
+					+ " interessado que pagar a dívida ficará sub-rogado, de pleno direito, no crédito e na propriedade "
+					+ "fiduciária. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.18. ", "Na hipótese de insolvência do(s)"
+					+ " FIDUCIANTE(S) fica assegurada à FIDUCIÁRIA a restituição do(s) Imóvel(eis) alienado(s) "
+					+ "fiduciariamente, na forma da legislação pertinente.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.19. ", "Aplicam-se à propriedade fiduciária regida"
+					+ " por este instrumento, no que couber, as disposições dos arts. 647 e 648 do Código Civil.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "5.20. ", "Na hipótese de desapropriação, total ou parcial,"
+					+ " do(s) Imóvel(eis), a FIDUCIÁRIA, como proprietária, ainda que em caráter resolúvel, será o único e exclusivo"
+					+ " beneficiário da justa e prévia indenização paga pelo poder expropriante.", true, false);
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA SEXTA – DO VALOR DE VENDA DO(S) IMÓVEL(EIS) PARA FINS DE LEILÃO ", true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("6.1. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("As Partes convencionam que o valor de venda total do(s) Imóvel(eis) para fins de leilão, é de  ");
+			run2.setBold(false);
+			
+			valorPorExtenso.setNumber(vendaLeilao);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorMonetario( vendaLeilao, "R$") + " ("+ valorPorExtenso.toString() +"),");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("conforme Laudo de Avaliação (anexo) elaborado por ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(elaboradorNome +" - CREA "+ elaboradorCrea);
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" e responsável ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(responsavelNome +" - CREA "+ responsavelCrea +", ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("o qual deverá ser devidamente atualizado pelo IGP-M/FGV, desde a data base do"
+					+ " Laudo até a data de realização de cada leilão (“Valor de Venda do Imóvel(eis) em "
+					+ "Leilão” ou “Valor do Imóvel(eis)”).  (novo)");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("6.2. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Até o pagamento integral da(s) CCB(s), a qualquer momento e "
+					+ "independentemente do devido cumprimento das demais obrigações da ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE "+ nomeEmitente +" ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("contratadas no âmbito da CCB, o valor do Imóvel(eis) deverá ser equivalente a, pelo menos, ");
+			run2.setBold(false);
+			
+			porcentagemPorExtenso.setNumber(porcentagemImovel);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(CommonsUtil.formataValorTaxa(porcentagemImovel) +"% ("+ porcentagemPorExtenso.toString() +" por cento) ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("do saldo devedor da CCB, acrescido dos juros remuneratórios e, conforme o caso, encargos moratórios (“Razão Mínima”).");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("6.3. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Na hipótese de a Razão Mínima não ser observada, a qualquer momento, ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("o(s) FIDUCIANTE(S) ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("deverá(ão), no prazo de até 10 (dez) dias contados do recebimento de comunicação nesse sentido, oferecer à ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("outra garantia que este considere aceitável,"
+					+ " a seu exclusivo critério, para reforço das garantias nos termos da(s) CCBs. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("6.4. ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Nos termos do parágrafo único do artigo 24º da Lei 9.514/1997 "
+					+ "atualizado pela Lei nº 13.465/2017, anuem as Partes que, ");
+			run2.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("caso o Valor do Imóvel indicado na clausula 6.1 seja inferior"
+					+ " ao utilizado pelo órgão competente como base de cálculo para a apuração"
+					+ " do imposto sobre transmissão inter vivos, exigível por força da "
+					+ "consolidação da propriedade em nome do credor fiduciário, o Valor "
+					+ "Mínimo de Venda do Imóvel(eis) em Leilão deverá automaticamente "
+					+ "corresponder ao valor de tal apuração.");
+			run2.setBold(false);
+			run2.setUnderline(UnderlinePatterns.SINGLE);
+			run2.addCarriageReturn();
+			
+			fazParagrafoSimples(document, paragraph, run, "CLAUSULA SÉTIMA - DAS DISPOSIÇÕES GERAIS", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.1 ", "A tolerância por qualquer das "
+					+ "Partes quanto a alguma demora, atraso ou omissão das outras no cumprimento das "
+					+ "obrigações ajustadas nesta Alienação Fiduciária, ou a não aplicação, na ocasião "
+					+ "oportuna, das cominações aqui constantes, não acarretará o cancelamento das penalidades,"
+					+ " nem dos poderes ora conferidos, podendo ser aplicadas aquelas e exercidos estes,"
+					+ " a qualquer tempo, caso permaneçam as causas. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.1.1 ", "O disposto no item 7.1, acima,"
+					+ " prevalecerá ainda que a tolerância ou a não aplicação das cominações ocorra repetidas vezes,"
+					+ " consecutiva ou alternadamente. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.3 ", "As obrigações constituídas por "
+					+ "esta Alienação Fiduciária são extensivas e obrigatórias aos cessionários,"
+					+ " promissários-cessionários, herdeiros e sucessores a qualquer título"
+					+ " das Partes.  ", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("7.4 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Na hipótese de desapropriação total ou parcial do Imóvel(eis), a ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", ou os Sucessores, conforme o caso, como proprietários do Imóvel(eis),"
+					+ " ainda que em caráter fiduciário, serão os únicos e exclusivos beneficiários"
+					+ " da justa e prévia indenização paga pelo poder expropriante, até o limite do"
+					+ " saldo devedor das Obrigações Garantidas à época, sendo tais valores"
+					+ " amortizados das Obrigações Garantidas.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("7.4.1 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Se, no dia de seu recebimento pela ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(", ou pelos Sucessores, conforme o caso, a proporção da indenização conforme item 7.4, acima, for: ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			cTNumbering = CTNumbering.Factory.parse(cTAbstractNumBulletXML);
+			cTAbstractNum = cTNumbering.getAbstractNumArray(0);
+			// CTAbstractNum cTAbstractNum = getAbstractNumber(STNumberFormat.LOWER_LETTER);
+			abstractNum = new XWPFAbstractNum(cTAbstractNum);
+			numbering = document.createNumbering();
+			abstractNumID = numbering.addAbstractNum(abstractNum);
+			numID = numbering.addNum(abstractNumID);
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Superior ao saldo devedor das Obrigações Garantidas à época,"
+					+ " a importância que sobejar será entregue aos ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("FIDUCIANTE(S)");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("; ou");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setNumID(numID);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Inferior ao saldo devedor das Obrigações Garantidas à época, a ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("FIDUCIÁRIA");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(", ou os Sucessores, conforme o caso,"
+					+ " ficarão exonerados da obrigação de restituição de qualquer quantia, a que título for, em favor dos ");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("FIDUCIANTE(S)");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText(", pela integral liquidação das Obrigações Garantidas.");
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.5 ", "As Partes autorizam e determinam,"
+					+ " desde já, que o Sr. Oficial do Serviço de Registro de Imóveis competente proceda,"
+					+ " total ou parcialmente, a todos os assentamentos, registros e averbações necessários"
+					+ " decorrentes da presente Alienação Fiduciária, isentando-os de qualquer responsabilidade "
+					+ "pelo devido cumprimento do disposto neste instrumento.", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.6 ", "Fica desde logo estipulado que"
+					+ " a presente Alienação Fiduciária revoga e substitui todo e qualquer entendimento havido"
+					+ " entre as Partes anteriormente a esta data sobre o mesmo objeto. ", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.7 ", "Todas as comunicações entre as "
+					+ "Partes serão consideradas válidas a partir de seu recebimento nos endereços constantes da "
+					+ "cláusula 5.4.1  desta Alienação Fiduciária, ou em outros que venham a indicar, por escrito,"
+					+ " no curso desta relação. As comunicações serão consideradas entregues quando recebidas sob "
+					+ "protocolo, com “aviso de recebimento” expedido pela Empresa Brasileira de Correios e "
+					+ "Telégrafos ou por telegrama nos endereços acima. Cada Parte deverá comunicar imediatamente "
+					+ "a outra sobre a mudança de seu endereço, observado o disposto no item 4.4. alínea “g”. ", true, false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("7.8 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Neste ato e como condição de celebração do presente instrumento, o(s) ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE(S)");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" nomeia(m) a ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIÁRIA ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("de forma irrevogável e irretratável, para representá-lo(s) na celebração de"
+					+ " escrituras de registro da presente que eventualmente se façam necessárias por"
+					+ " exigência do competente Oficial de Registro de Imóveis, podendo este descrever "
+					+ "e caracterizar o(s) Imóvel(eis), suas benfeitorias, perímetro e confrontantes, "
+					+ "bem como cumprir alterar todo e qualquer outro item que se faça necessário, desde"
+					+ " que mantidas as condições comerciais ora pactuadas, podendo inclusive substabelecer,"
+					+ " com reservas os poderes ora conferidos. Ainda, o(s) ");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("FIDUCIANTE(S)");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText(" compromete-se neste ato a fornecer toda a documentação necessária para tanto. ");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("7.9 ");
+			run.setBold(true);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Os “");
+			run2.setBold(false);
+			
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("Considerandos");
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("” e os Anexos constituem partes integrantes e inseparáveis da"
+					+ " presente Alienação Fiduciária, e serão considerados meios válidos"
+					+ " e eficazes para fins de interpretação das Cláusulas deste. ");
+			run2.setBold(false);
+			
+			fazParagrafoSimples(document, paragraph, run, "CLÁUSULA OITAVA – DA LEI DE REGÊNCIA E DO FORO DE ELEIÇÃO ", true);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "8.1 ", "A presente Alienação Fiduciária é regida,"
+					+ " material e processualmente, pelas leis da República Federativa do Brasil e faz parte"
+					+ " acessória da(s) CCB(s).", true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "8.2 ", "Todo litígio ou controvérsia originário"
+					+ " ou decorrente desta Alienação Fiduciária e dos demais Documentos da Operação será submetido"
+					+ " ao Foro da Comarca de São Paulo, Estado de São Paulo, único competente para conhecer e "
+					+ "dirimir quaisquer questões ou litígios, com renúncia expressa a qualquer outro, por mais"
+					+ " privilegiado que seja ou venha a ser. ", true, false);
+			
+			fazParagrafoSimples(document, paragraph, run, "E, por estarem assim, justas e contratadas, as Partes assinam"
+					+ " a presente Alienação Fiduciária em 2 (duas) vias, de igual teor e forma, na presença das 2 (duas)"
+					+ " testemunhas abaixo identificadas. ", false);
+			
+			fazParagrafoSimples(document, paragraph, run,
+					"São Paulo, SP, " + dataDeEmissao.getDate() + " de "
+							+ CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() + " de "
+							+ (this.dataDeEmissao.getYear() + 1900) + ".",
+					false);
+			
+			paragraph = document.createParagraph();		
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(10);
+			run.setText("(O final desta página foi intencionalmente deixado em branco)");
+			run.setBold(false);
+			run.setItalic(true);
+			run.addCarriageReturn();
+			run.setText("(Segue a página de assinaturas)");
+
+			paragraph = document.createParagraph();
+			paragraph.setPageBreak(true);
+
+			fazParagrafoSimples(document, paragraph, run,
+					"(Página de assinaturas da Cédula de Crédito "
+							+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
+							+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
+							+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".",
+					false, ParagraphAlignment.BOTH);
+
+			XWPFTable table = document.createTable();
+
+			paragraph = document.createParagraph();
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setAlignment(ParagraphAlignment.LEFT);
+
+			table.getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf(6000));
+			table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
+
+			// create first row
+			XWPFTableRow tableRow1 = table.getRow(0);
+
+			tableRow1.getCell(0).setParagraph(paragraph);
+			run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("__________________________________");
+			run.setBold(false);
+			run.addBreak();
+
+			run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
+			run2.setFontSize(12);
+			run2.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+			run2.setBold(true);
+			run2.addBreak();
+
+			run4 = tableRow1.getCell(0).getParagraphArray(0).createRun();
+			run4.setFontSize(12);
+			run4.setText("FIDUCIÁRIA");
+			run4.setBold(false);
+
+			tableRow1.addNewTableCell();
+
+			tableRow1.getCell(1).setParagraph(paragraph);
+
+			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("__________________________________");
+			run.setBold(false);
+			run.addBreak();
+
+			run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run2.setFontSize(12);
+			run2.setText(nomeEmitente);
+			run2.setBold(true);
+			run2.addBreak();
+
+			run3 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run3.setFontSize(12);
+			run3.setText(" ");
+			run3.setBold(true);
+			run3.addBreak();
+
+			run4 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run4.setFontSize(12);
+			run4.setText("EMITENTE");
+			run4.setBold(false);
+
+			XWPFTableRow tableRow2 = table.createRow();
+
+			if (listaParticipantes.size() > 1) {
+				tableRow2.getCell(0).setParagraph(paragraph);
+				tableRow2.getCell(1).setParagraph(paragraph);
+				int qtdePessoasEsquerdo = 0;
+				for (int iPartTab = 0; iPartTab < listaParticipantes.size(); iPartTab++) {
+
+					CcbVO participante = this.listaParticipantes.get(iPartTab);
+					if (iPartTab != 0) {
+						if (iPartTab % 2 != 0) {
+
+							run = tableRow2.getCell(0).getParagraphArray(0).createRun();
+							run.addBreak();
+							run.setFontSize(12);
+							run.setText("__________________________________");
+							run.setBold(false);
+							run.addBreak();
+
+							run2 = tableRow2.getCell(0).getParagraphArray(0).createRun();
+							run2.setFontSize(12);
+							run2.setText(participante.getPessoa().getNome());
+							run2.setBold(true);
+							run2.addBreak();
+
+							run3 = tableRow2.getCell(0).getParagraphArray(0).createRun();
+							run3.setFontSize(12);
+							run3.setText(participante.getTipoParticipante());
+							run3.setBold(false);
+							run3.addBreak();
+
+							qtdePessoasEsquerdo++;
+						} else {
+							run = tableRow2.getCell(1).getParagraphArray(0).createRun();
+							run.addBreak();
+							run.setFontSize(12);
+							run.setText("__________________________________");
+							run.setBold(false);
+							run.addBreak();
+
+							run2 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+							run2.setFontSize(12);
+							run2.setText(participante.getPessoa().getNome());
+							run2.setBold(true);
+							run2.addBreak();
+
+							run3 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+							run3.setFontSize(12);
+							run3.setText(participante.getTipoParticipante());
+							run3.setBold(false);
+							run3.addBreak();
+							
+							qtdePessoasEsquerdo--;
+						}
+					}
+				}
+				run4 = tableRow2.getCell(0).getParagraphArray(0).createRun();
+				run4.setFontSize(12);
+				run4.addBreak();
+				run4.setText("Testemunhas");
+				run4.setBold(false);
+				run4.addBreak();
+				run4.setText("__________________________________");
+
+				run4 = tableRow2.getCell(1).getParagraphArray(0).createRun();
+				run4.setFontSize(12);
+				for (int i = 0; i <= qtdePessoasEsquerdo; i++) {
+					run4.addBreak();
+					run4.addBreak();
+					run4.addBreak();
+				}
+				run4.setText("__________________________________");
+				run4.setBold(false);
+
+			} else {
+				tableRow2.getCell(0).setParagraph(paragraph);
+				run = tableRow2.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.addBreak();
+				run.setText("Testemunhas");
+				run.setBold(false);
+				run.addBreak();
+				run.setText("__________________________________ ");
+
+				tableRow2.getCell(1).setParagraph(paragraph);
+				run = tableRow2.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.addBreak();
+				run.addBreak();
+				run.setText("__________________________________ ");
+				run.setBold(false);
+			}
+
+			// create third row
+			XWPFTableRow tableRow3 = table.createRow();
+			tableRow3.getCell(0).setParagraph(paragraph);
+			run = tableRow3.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("Nome:  nomeTestemunha1");
+			run.setBold(false);
+
+			tableRow3.getCell(1).setParagraph(paragraph);
+			run = tableRow3.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("Nome:  nomeTestemunha2");
+			run.setBold(false);
+
+			XWPFTableRow tableRow4 = table.createRow();
+			tableRow4.getCell(0).setParagraph(paragraph);
+			run = tableRow4.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("RG:  rgTestemunha1");
+			run.setBold(false);
+
+			tableRow4.getCell(1).setParagraph(paragraph);
+			run = tableRow4.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("RG:  rgTestemunha2");
+			run.setBold(false);
+
+			XWPFTableRow tableRow5 = table.createRow();
+			tableRow5.getCell(0).setParagraph(paragraph);
+			run = tableRow5.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("CPF:  cpfTestemunha1");
+			run.setBold(false);
+
+			tableRow5.getCell(1).setParagraph(paragraph);
+			run = tableRow5.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText("CPF:  cpfTestemunha2");
+			run.setBold(false);
+
+			CTTblPr tblpro = table.getCTTbl().getTblPr();
+
+			CTTblBorders borders = tblpro.addNewTblBorders();
+			borders.addNewBottom().setVal(STBorder.NONE);
+			borders.addNewLeft().setVal(STBorder.NONE);
+			borders.addNewRight().setVal(STBorder.NONE);
+			borders.addNewTop().setVal(STBorder.NONE);
+			// also inner borders
+			borders.addNewInsideH().setVal(STBorder.NONE);
+			borders.addNewInsideV().setVal(STBorder.NONE);
+			
+			
+			
+			fiducianteGerado = false;
+			devedorGerado = false;
+			
+			
+			
+			XWPFHeaderFooterPolicy headerFooterPolicy = document.getHeaderFooterPolicy();
+			if (headerFooterPolicy == null) {
+				headerFooterPolicy = document.createHeaderFooterPolicy();
+			}
+			
+			XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
+
+			paragraph = footer.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+
+			run = paragraph.createRun();
+			run.setFontSize(10);
+			run.setBold(true);
+			run.getCTR().addNewFldChar()
+					.setFldCharType(org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType.BEGIN);
+
+			run = paragraph.createRun();
+			run.setFontSize(10);
+			run.setBold(true);
+			run.getCTR().addNewInstrText().setStringValue("PAGE \\* MERGEFORMAT");
+			
+			run = paragraph.createRun();
+			run.setFontSize(10);
+			run.setBold(true);
+			run.getCTR().addNewFldChar().setFldCharType(org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType.END);
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 
-			gerador.open(String.format("testeAaaaaaa %s.docx", ""));
+			gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
+			
+			clearDocumentosNovos();
 			
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -2870,6 +5104,398 @@ public class CcbMB {
 		return null;
 	}
 	
+	public StreamedContent geraNCDinamica() throws IOException{
+			try {
+				XWPFDocument document = new XWPFDocument();	
+				
+				XWPFHeaderFooterPolicy headerFooterPolicy = document.getHeaderFooterPolicy();
+				if (headerFooterPolicy == null)
+					headerFooterPolicy = document.createHeaderFooterPolicy();
+
+				XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+				XWPFParagraph paragraphHeader = header.createParagraph();
+				paragraphHeader.setAlignment(ParagraphAlignment.LEFT);
+				XWPFRun runHeader = paragraphHeader.createRun();
+				runHeader.addPicture(getClass().getResourceAsStream("/resource/BMP MoneyPlus.png"), 6, "BMP MoneyPlus",
+						Units.toEMU(130), Units.toEMU(72));
+
+				XWPFRun run;
+				XWPFParagraph paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("São Paulo, SP, " + dataDeEmissao.getDate() + " de "
+								+ CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() + " de "
+								+ (this.dataDeEmissao.getYear() + 1900) + ".");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				XWPFRun run2 = paragraph.createRun();
+				XWPFRun run3 = paragraph.createRun();
+				XWPFRun run4 = paragraph.createRun();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("À");
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				for (CcbVO participante : this.listaParticipantes) {
+					if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+						if(CommonsUtil.semValor(nomeEmitente)) {
+							nomeEmitente = participante.getPessoa().getNome();
+						}
+						if(CommonsUtil.semValor(logradouroEmitente)) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getEndereco())) {
+								logradouroEmitente = participante.getPessoa().getEndereco();
+							}
+						}
+						if(CommonsUtil.semValor(numeroEmitente)) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getNumero())) {
+								numeroEmitente = participante.getPessoa().getNumero();
+							}
+						}
+						if(CommonsUtil.semValor(complementoEmitente)) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getComplemento())) {
+								complementoEmitente = participante.getPessoa().getComplemento();
+							}
+						}
+						if(CommonsUtil.semValor(cidadeEmitente )) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getCidade())) {
+								cidadeEmitente = participante.getPessoa().getCidade();
+							}
+						}
+						if(CommonsUtil.semValor(ufEmitente)) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getEstado())) {
+								ufEmitente = participante.getPessoa().getEstado();
+							}
+						}
+						if(CommonsUtil.semValor(cepEmitente)) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getCep())) {
+								cepEmitente = participante.getPessoa().getCep();
+							}
+						}						
+					}
+				}
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText(nomeEmitente);
+				run.setFontSize(10);
+				run.setBold(true);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText(logradouroEmitente +", nº "+ numeroEmitente +", "+ complementoEmitente);
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText(cidadeEmitente+" – "+ufEmitente);
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("CEP "+ cepEmitente +";");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("REF.: Contrato de CCB nº XXXXXX");
+				run.setFontSize(10);
+				run.setBold(true);
+				run.addCarriageReturn();
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("Prezado(s) Cliente(s) ");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("Pela presente, levamos ao seu conhecimento que, nesta data,"
+						+ " o GALLERIA FINANÇAS SECURITIZADORA S.A., inscrito no CNPJ/MF "
+						+ "sob nº 34.425.347/0001-06, adquiriu da BMP MONEY PLUS SOCIEDADE "
+						+ "DE CRÉDITO DIRETO S.A. os direitos de crédito, decorrentes da(s) "
+						+ "Cédula(s) de Crédito Bancário (“CCB”) em referência, celebrado por"
+						+ " V. Sa(s), dos vencimentos a partir de ");
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				run2 = paragraph.createRun();
+				run2.setText(vencimentoPrimeiraParcelaPagamento.getDate()+"");
+				run2.setFontSize(10);
+				run2.setBold(true);
+				run2.setUnderline(UnderlinePatterns.SINGLE);
+				
+				run = paragraph.createRun();
+				run.setText(" de ");
+				run.setFontSize(10);
+				run.setBold(true);
+				
+				run2 = paragraph.createRun();
+				run2.setText(CommonsUtil.formataMesExtenso(vencimentoPrimeiraParcelaPagamento).toLowerCase());
+				run2.setFontSize(10);
+				run2.setBold(true);
+				run2.setUnderline(UnderlinePatterns.SINGLE);
+				
+				run = paragraph.createRun();
+				run.setText(" de ");
+				run.setFontSize(10);
+				run.setBold(true);
+				
+				run2 = paragraph.createRun();
+				run2.setText( (this.vencimentoPrimeiraParcelaPagamento.getYear() + 1900)  + ",");
+				run2.setFontSize(10);
+				run2.setBold(true);
+				run2.setUnderline(UnderlinePatterns.SINGLE);
+				
+				run = paragraph.createRun();
+				run.setText(" (inclusive).");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText("Assim, em face da operação contratada, fica(m) V. "
+						+ "Sa(s) notificadas que a partir de "+ dataDeEmissao.getDate() +" de "+
+						CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() +" de "+ (this.dataDeEmissao.getYear() + 1900) +","
+						+ " (inclusive), o pagamento das parcelas referentes a(s) CCB ");
+				run.setFontSize(10);
+				run.setBold(false);
+								
+				run2 = paragraph.createRun();
+				run2.setText("Nº XXXXXX");
+				run2.setFontSize(10);
+				run2.setBold(true);
+				run = paragraph.createRun();
+				run.setText(" deverão ser efetuados diretamente ao GALLERIA FINANÇAS SECURITIZADORA S.A.,"
+						+ " na conta de nº 300793-6, mantida na agência nº 1515-6, Banco 001 - Banco do Brasil S.A.,"
+						+ " ou à sua ordem.");
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("Qualquer alteração dos procedimentos acima descritos dependerá"
+						+ " de prévia e expressa autorização do BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A. ");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("Atenciosamente, ");
+				run.setFontSize(10);
+				run.setBold(false);
+				run.addCarriageReturn();
+				run.addCarriageReturn();
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("___________________________________________________________");
+				run.setFontSize(9);
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+				run.setFontSize(11);
+				run.setBold(true);
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("CEDENTE");
+				run.setFontSize(9);
+				run.setBold(false);
+				run.addCarriageReturn();
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("Ciente: ");
+				run.setFontSize(9);
+				run.setBold(false);
+				run.addCarriageReturn();
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("___________________________________________________________");
+				run.setFontSize(9);
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText(nomeEmitente);
+				run.setFontSize(11);
+				run.setBold(true);
+				run.addCarriageReturn();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run.setText("EMITENTE");
+				run.setFontSize(9);
+				run.setBold(false);
+				
+				headerFooterPolicy = document.getHeaderFooterPolicy();
+				if (headerFooterPolicy == null) {
+					headerFooterPolicy = document.createHeaderFooterPolicy();
+				}
+				
+				XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
+
+				paragraph = footer.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.CENTER);
+
+				run = paragraph.createRun();
+				run.setFontSize(10);
+				run.setBold(true);
+				run.getCTR().addNewFldChar()
+						.setFldCharType(org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType.BEGIN);
+
+				run = paragraph.createRun();
+				run.setFontSize(10);
+				run.setBold(true);
+				run.getCTR().addNewInstrText().setStringValue("PAGE \\* MERGEFORMAT");
+				
+				run = paragraph.createRun();
+				run.setFontSize(10);
+				run.setBold(true);
+				run.getCTR().addNewFldChar().setFldCharType(org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType.END);
+				
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				document.write(out);
+				document.close();
+				final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+						FacesContext.getCurrentInstance());
+
+				gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
+				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+				gerador.close();
+				
+				clearDocumentosNovos();
+				
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+
+			return null;
+	}
+	
+	public void criarParagrafo(XWPFDocument document, XWPFParagraph paragraph, ParagraphAlignment alinhamento ){
+		paragraph = document.createParagraph();
+		paragraph.setAlignment(alinhamento);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setSpacingBetween(1);
+	}
+	
+	public void criarParagrafo(XWPFDocument document, XWPFParagraph paragraph, ParagraphAlignment alinhamento, BigInteger numID ){
+		paragraph = document.createParagraph();
+		paragraph.setNumID(numID);
+		paragraph.setAlignment(alinhamento);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		paragraph.setSpacingBetween(1);
+	}
+	
+	public void criarRun(XWPFParagraph paragraph, XWPFRun run, String texto, boolean bold, boolean tab ) {
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		if(tab) {
+			run.addTab();
+		}
+		run.setBold(bold);
+	}
+	
+	public void criarRun(XWPFParagraph paragraph, XWPFRun run, String texto, boolean bold, UnderlinePatterns underline ) {
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		run.setBold(bold);
+		run.setUnderline(underline);
+	}
+	
+	public void criarRun(XWPFParagraph paragraph, XWPFRun run, String texto, String texto2, boolean bold, boolean tab ) {
+		run = paragraph.createRun();
+		run.setFontSize(12);
+		run.setText(texto);
+		if(tab) {
+			run.addTab();
+		}
+		run.setText(texto2);
+		run.setBold(bold);
+	}
 	
 	private void geraParagrafoPF(XWPFRun run2, CcbVO participante){
 		run2.setFontSize(12);
@@ -3069,6 +5695,15 @@ public class CcbMB {
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"teste")){
 	    		this.geraCcbDinamica();
 	    		return null;
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CCBnova")){
+	    		clearDocumentosNovos();
+	    		return geraCcbDinamica();
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AFnova")){
+	    		clearDocumentosNovos();
+	    		return geraAFDinamica();
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NCnova")){
+	    		clearDocumentosNovos();
+	    		return geraNCDinamica();
 	    	} else {
 	    		
 	    	}
@@ -3146,7 +5781,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "\n"
 										+ "nomeEmitente \n"
 										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente \n"
-										+ "CEP cepEmitente \n"
+										+ "CEP cepEmitente \n" 
 										+ "E-mail: emailEmitente \n");
 								
 								text = trocaValoresXWPF(text, r, "devedorEmitente","");
@@ -3657,6 +6292,28 @@ public class CcbMB {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
+	}
+	
+	public void verificaModeloAntigo() {
+		if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
+			this.setModeloAntigo(true);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
+    		this.setModeloAntigo(true);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NC")) {
+    		this.setModeloAntigo(true);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"Excel")) {
+    		this.setModeloAntigo(false);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"teste")){
+    		this.setModeloAntigo(false);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CCBnova")){
+    		this.setModeloAntigo(false);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AFnova")){
+    		this.setModeloAntigo(false);
+    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NCnova")){
+    		this.setModeloAntigo(false);
+    	} else {
+    		this.setModeloAntigo(false);
+    	}
 	}
 
 	public StreamedContent readXLSXFile() throws IOException {
@@ -5540,6 +8197,14 @@ public class CcbMB {
 
 	public void setAddSocio(boolean addSocio) {
 		this.addSocio = addSocio;
+	}
+
+	public boolean isModeloAntigo() {
+		return modeloAntigo;
+	}
+
+	public void setModeloAntigo(boolean modeloAntigo) {
+		this.modeloAntigo = modeloAntigo;
 	}
 	
 }
