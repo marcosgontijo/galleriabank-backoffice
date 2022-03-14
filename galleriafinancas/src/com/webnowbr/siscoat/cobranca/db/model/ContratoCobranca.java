@@ -355,6 +355,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean agRegistro;
 	private String agRegistroUsuario;
 	
+	private Date documentosComiteData;
+	private boolean documentosComite;
+	private String documentosComiteUsuario;
+	
 	private Date preAprovadoComiteData;
 	private boolean preAprovadoComite;
 	private String preAprovadoComiteUsuario;
@@ -4555,4 +4559,28 @@ public class ContratoCobranca implements Serializable {
 	public void setObservacaoParaComite(String observacaoParaComite) {
 		this.observacaoParaComite = observacaoParaComite;
 	}
+
+	public Date getDocumentosComiteData() {
+		return documentosComiteData;
+	}
+
+	public void setDocumentosComiteData(Date documentosComiteData) {
+		this.documentosComiteData = documentosComiteData;
+	}
+
+	public boolean isDocumentosComite() {
+		return documentosComite;
+	}
+
+	public void setDocumentosComite(boolean documentosComite) {
+		this.documentosComite = documentosComite;
+	}
+
+	public String getDocumentosComiteUsuario() {
+		return documentosComiteUsuario;
+	}
+
+	public void setDocumentosComiteUsuario(String documentosComiteUsuario) {
+		this.documentosComiteUsuario = documentosComiteUsuario;
+	}	
 }

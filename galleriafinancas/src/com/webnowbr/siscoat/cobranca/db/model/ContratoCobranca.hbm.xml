@@ -744,6 +744,18 @@
 			<column name="preAprovadoComite" />
 		</property>
 		
+		<property name="documentosComiteData"
+			type="java.util.Date">
+			<column name="documentosComiteData" />
+		</property>
+		<property name="documentosComiteUsuario"
+			type="java.lang.String">
+			<column name="documentosComiteUsuario" />
+		</property>
+		<property name="documentosComite" type="boolean">
+			<column name="documentosComite" />
+		</property>
+		
 		<property name="aprovadoComiteData"
 			type="java.util.Date">
 			<column name="aprovadoComiteData" />

@@ -14,6 +14,7 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean pajuFavoravel;
 	private boolean laudoRecebido;
 	private boolean preAprovadoComite;
+	private boolean documentosComite;
 	private String contratoPreAprovado;
 	
 	public ContratoCobrancaStatus() {
@@ -67,5 +68,11 @@ public class ContratoCobrancaStatus implements Serializable {
 	}
 	public void setContratoPreAprovado(String contratoPreAprovado) {
 		this.contratoPreAprovado = contratoPreAprovado;
+	}
+	public boolean isDocumentosComite() {
+		return documentosComite;
+	}
+	public void setDocumentosComite(boolean documentosComite) {
+		this.documentosComite = documentosComite;
 	}
 }
