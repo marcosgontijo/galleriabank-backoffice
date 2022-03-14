@@ -46,6 +46,8 @@ public class PagadorRecebedor implements Serializable {
 	private String numero;
 	private String sexo;
 	
+	private String codigoMoneyPlus;
+	
 	private String estadocivil;
 	
 	private String regimeCasamento; 
@@ -1910,7 +1912,12 @@ public class PagadorRecebedor implements Serializable {
 	public void setIdadeConjuge(String idadeConjuge) {
 		this.idadeConjuge = idadeConjuge;
 	}
-	
-	
-}
 
+	public String getCodigoMoneyPlus() {
+		return codigoMoneyPlus;
+	}
+
+	public void setCodigoMoneyPlus(String codigoMoneyPlus) {
+		this.codigoMoneyPlus = codigoMoneyPlus;
+	}
+}
