@@ -1489,6 +1489,14 @@
 			<column name="divida" />
 		</property>	
 		
+		<property name="statusPropostaMoneyPlus" type="java.lang.String">
+			<column name="statusPropostaMoneyPlus" />
+		</property>	
+		
+		<property name="codigoPropostaMoneyPlus" type="java.lang.String">
+			<column name="codigoPropostaMoneyPlus" />
+		</property>	
+		
 		<property name="dividaValor" type="big_decimal">
 			<column name="dividaValor" />
 		</property>	

@@ -12,8 +12,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -42,6 +44,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 import org.primefaces.util.CalendarUtils;
 
 import com.itextpdf.text.BaseColor;
@@ -170,19 +173,7 @@ public class BmpDigitalCCBMB {
 		
 		return "/Atendimento/Cobranca/ConsultaSCR.xhtml";
 	}
-	
-	/***
-	 * GERA JSON PARA CRIAÇÃO E EDIÇÃO DE PESSOA
-	 * @param pessoa
-	 * @return
-	 */
-	public JSONObject getJSONPessoa(PagadorRecebedor pessoa) {
-		JSONObject jsonPessoa = new JSONObject();
-		jsonPessoa.put("auth", getJSONAuth());
-		jsonPessoa.put("dto", getJSONDTO(pessoa));
-		
-		return jsonPessoa;
-	}
+
 	
 	/***
 	 * GERA JSON PARA PESSOA - AUTH
@@ -198,13 +189,16 @@ public class BmpDigitalCCBMB {
 		
 		return auth;
 	}
-
+	
 	/***
 	 * GERA JSON PARA CLIENTE E FIDUCIANTE - DTO
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONDTO(PagadorRecebedor pessoa) {
+	public JSONObject getJSONPessoaDTO(PagadorRecebedor pessoa) {
+		JSONObject jsonPessoa = new JSONObject();
+		jsonPessoa.put("auth", getJSONAuth());
+		
 		JSONObject jsonDTOPessoa = new JSONObject();
 
 		jsonDTOPessoa.put("Nome", pessoa.getNome());
@@ -246,8 +240,10 @@ public class BmpDigitalCCBMB {
 		jsonDTOPessoa.put("PessoaDadosContato", pessoaDadosContatoDTO);
 	
 		//PessoaDadoFinanceiro (Foundation.Data.Facade.BMPDigital.PessoaDadoFinanceiroDTO, optional)
-
-		return jsonDTOPessoa;
+		
+		jsonPessoa.put("dto", jsonDTOPessoa);
+		
+		return jsonPessoa;
 	}
 	
 	/***
@@ -255,7 +251,7 @@ public class BmpDigitalCCBMB {
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONDTOEndereco(PagadorRecebedor pessoa) {
+	public JSONObject getJSONEnderecoDTO(PagadorRecebedor pessoa) {
 
 		JSONObject jsonDTOPessoaEndereco = new JSONObject();
 		//auth
@@ -264,9 +260,8 @@ public class BmpDigitalCCBMB {
 		// inserçao parametro
 		// Se pessoa física
 		JSONObject jsonDTOParam = new JSONObject();
-		//jsonDTOParam.put("DocumentoCliente", pessoa.getCodigoMoneyPlus());
 		if (pessoa.getCpf() != null && !pessoa.getCpf().equals("")) {
-			jsonDTOParam.put("DocumentoFederal", pessoa.getCpf());				
+			jsonDTOParam.put("DocumentoCliente", pessoa.getCpf());				
 		} else {
 			// se pessoa jurídica
 			jsonDTOParam.put("DocumentoCliente", pessoa.getCnpj());
@@ -291,14 +286,422 @@ public class BmpDigitalCCBMB {
 		return jsonDTOPessoaEndereco;
 	}
 	
+	/***
+	 * GERA JSON PARA ENVIO DA PROPOSTA
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante) {
+
+		JSONObject jsonEnvioProposta = new JSONObject();		
+		
+		//auth
+		jsonEnvioProposta.put("auth", getJSONAuth());
+		
+		//parametros ARRAY
+		JSONArray jsonParametros = new JSONArray();
+		JSONObject jsonParametro = new JSONObject();
+		
+		jsonParametro.put("nome", "");
+		jsonParametro.put("valor", "");
+		
+		jsonParametros.put(jsonParametro);
+
+		// DTO
+		JSONObject jsonDTOEnvioProposta = new JSONObject();
+		
+		// CLIENTE - Se pessoa física
+		if (cliente.getCpf() != null && !cliente.getCpf().equals("")) {
+			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCpf());				
+		} else {
+			// se pessoa jurídica
+			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCnpj());
+		}
+		
+		// FIDUCIANTE - Se pessoa física
+		if (fiduciante.getCpf() != null && !fiduciante.getCpf().equals("")) {
+			jsonDTOEnvioProposta.put("DocumentoParceiroCorrespondente", fiduciante.getCpf());				
+		} else {
+			// se pessoa jurídica
+			jsonDTOEnvioProposta.put("DocumentoParceiroCorrespondente", fiduciante.getCnpj());
+		}	
+		
+		jsonDTOEnvioProposta.put("CodigoOperacao", "");
+		jsonDTOEnvioProposta.put("VlrSolicitado", 0);
+		jsonDTOEnvioProposta.put("Prazo", 0);
+		jsonDTOEnvioProposta.put("PercJurosNegociado", 0);
+		jsonDTOEnvioProposta.put("VlrIOF", 0);
+		jsonDTOEnvioProposta.put("PercIOF", 0);
+		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
+		jsonDTOEnvioProposta.put("VlrParcela", 0);
+		jsonDTOEnvioProposta.put("VlrTAC", 0);
+		jsonDTOEnvioProposta.put("DtPrimeiroVencto", gerarDataHoje());
+		jsonDTOEnvioProposta.put("VlrSeguro", 0);
+		jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
+		jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
+		jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
+		jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
+
+		
+		JSONObject jsonContaPagamentoDTO = new JSONObject();
+		jsonContaPagamentoDTO.put("CodigoBanco", 0);
+		jsonContaPagamentoDTO.put("TipoConta", 0);
+		jsonContaPagamentoDTO.put("Agencia", "");
+		jsonContaPagamentoDTO.put("AgenciaDig", "");
+		jsonContaPagamentoDTO.put("Conta", "");
+		jsonContaPagamentoDTO.put("ContaDig", "");
+		jsonContaPagamentoDTO.put("NumeroBanco", "");
+		jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
+		jsonContaPagamentoDTO.put("NomePagamento", "");
+		
+		jsonDTOEnvioProposta.put("PropostaContaPagamentoDTO", jsonContaPagamentoDTO);
+		
+		return jsonDTOEnvioProposta;
+	}
+	
+	/***
+	 * GERA JSON PARA INCLUIR AVALISTA NA PROPOSTA
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONPropostaIncluirAvalista(PagadorRecebedor avalista) {
+
+		JSONObject jsonIncluiAvalista = new JSONObject();	
+		
+		//auth
+		jsonIncluiAvalista.put("auth", getJSONAuth());
+		
+		// busca proposta
+		JSONObject jsonFindProposta = new JSONObject();
+		jsonFindProposta.put("CodigoProposta", "");
+		jsonFindProposta.put("CodigoOperacao", "");
+		jsonIncluiAvalista.put("dto", jsonFindProposta);
+		
+		// Dados do Avalista		
+		JSONObject jsonDTOPessoa = new JSONObject();
+
+		jsonDTOPessoa.put("Nome", avalista.getNome());
+		
+		// Se pessoa física
+		if (avalista.getCpf() != null && !avalista.getCpf().equals("")) {
+			JSONObject pessoaPFDTO = new JSONObject();
+			pessoaPFDTO.put("Apelido", avalista.getNome());
+			pessoaPFDTO.put("Sexo", avalista.getSexo());
+			pessoaPFDTO.put("EstadoCivil ", avalista.getEstadocivil());
+			
+			jsonDTOPessoa.put("DocumentoFederal", avalista.getCpf()); 
+			
+			jsonDTOPessoa.put("avalistaPF", pessoaPFDTO);						
+		} else {
+			// se pessoa jurídica
+			JSONObject pessoaPJDTO = new JSONObject();
+			pessoaPJDTO.put("NomeFantasia", avalista.getNome());
+			pessoaPJDTO.put("DocumentoMunicipal", avalista.getCnpj());
+			
+			jsonDTOPessoa.put("DocumentoFederal", avalista.getCnpj()); 
+			
+			jsonDTOPessoa.put("avalistaPJ", pessoaPJDTO);
+		}
+		
+		jsonIncluiAvalista.put("avalista", jsonDTOPessoa);
+		
+		return jsonIncluiAvalista;
+	}
+	
+	/***
+	 * GERA JSON PARA INCLUIR CAMPOS EXTRAS
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONPropostaIncluirCamposExtras() {
+
+		JSONObject jsonIncluiCamposExtras = new JSONObject();	
+		
+		//auth
+		jsonIncluiCamposExtras.put("auth", getJSONAuth());
+		
+		// dto
+		JSONObject jsonIncluiCamposExtrasDTO = new JSONObject();
+		jsonIncluiCamposExtrasDTO.put("CodigoProposta", "");
+		jsonIncluiCamposExtrasDTO.put("CodigoOperacao", "");		
+		jsonIncluiCamposExtras.put("dto", jsonIncluiCamposExtrasDTO);
+		
+		// campos extra
+		// campos sugeridos no documento da money plus
+		JSONArray jsonCamposExtras = new JSONArray();
+		JSONObject jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "Identificação do imovel");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+		
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "Descricaodoimovel");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+		
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "tituloemodoaquisicao");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+		
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "registroimoveis");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+		
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "matricula");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+		
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "prefeitura");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "numerocadastro");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "valorvenal");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "valordoimovel");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "laudovaliacao");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "criteriorevisao");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "valorminimogarantia");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroDFInomeSeguradora");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroDFICNPJseguradora");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroDFIapolice");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroDFIvigencia");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroMIPnomeSeguradora");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "SeguroMIPapolice");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+
+		jsonIncluiCampoExtra = new JSONObject();
+		jsonIncluiCampoExtra.put("NomeCampo", "ClausulaIPCA");
+		jsonIncluiCampoExtra.put("ValorCampo", "");				
+		jsonCamposExtras.put(jsonIncluiCampoExtra);
+				
+		jsonIncluiCamposExtras.put("camposExtras", jsonCamposExtras);
+
+		return jsonIncluiCamposExtras;
+	}
+	
+	/***
+	 * GERA JSON PARA FINALIZAR PROPOSTA
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONPropostaFinalizar() {
+
+		JSONObject jsonPropostaFinalizar = new JSONObject();	
+		
+		//auth
+		jsonPropostaFinalizar.put("auth", getJSONAuth());
+		
+		// dto
+		JSONObject jsonPropostaFinalizarDTO = new JSONObject();
+		jsonPropostaFinalizarDTO.put("CodigoProposta", "");
+		jsonPropostaFinalizarDTO.put("CodigoOperacao", "");		
+		jsonPropostaFinalizar.put("dto", jsonPropostaFinalizarDTO);
+		
+		// campos sugeridos no documento da money plus
+		JSONArray jsonParametros = new JSONArray();
+		JSONObject jsonParametro = new JSONObject();
+		jsonParametro.put("NomeCampo", "FINALIZACAO_VALIDARPARCELAS");
+		jsonParametro.put("ValorCampo", "FALSE");				
+		jsonParametros.put(jsonParametro);
+		
+		jsonParametro = new JSONObject();
+		jsonParametro.put("NomeCampo", "IP_ADDRESS");
+		jsonParametro.put("ValorCampo", getIpAdress());	
+		
+		jsonParametros.put(jsonParametro);
+
+		jsonPropostaFinalizar.put("parametros", jsonParametros);
+
+		return jsonPropostaFinalizar;
+	}
+	
+	/***
+	 * GERA JSON PARA LIBERAR PROPOSTA
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONPropostaLiberar() {
+
+		JSONObject jsonPropostaLiberar = new JSONObject();	
+		
+		//auth
+		jsonPropostaLiberar.put("auth", getJSONAuth());
+		
+		// dto
+		JSONObject jsonPropostaFinalizarDTO = new JSONObject();
+		jsonPropostaFinalizarDTO.put("CodigoProposta", "");
+		jsonPropostaFinalizarDTO.put("CodigoOperacao", "");		
+		jsonPropostaLiberar.put("dto", jsonPropostaFinalizarDTO);
+		
+		// campos sugeridos no documento da money plus
+		JSONArray jsonParametros = new JSONArray();
+		JSONObject jsonParametro = new JSONObject();
+		jsonParametro.put("NomeCampo", "");
+		jsonParametro.put("ValorCampo", "");				
+		jsonParametros.put(jsonParametro);
+		
+		jsonParametros.put(jsonParametro);
+
+		jsonPropostaLiberar.put("parametros", jsonParametros);
+
+		return jsonPropostaLiberar;
+	}
+	
+	/***
+	 * GERA JSON PARA CANCELAR PROPOSTA
+	 * @param pessoa
+	 * @return
+	 */
+	public JSONObject getJSONPropostaCancelar() {
+
+		JSONObject jsonPropostaCancelar = new JSONObject();	
+		
+		//auth
+		jsonPropostaCancelar.put("auth", getJSONAuth());
+		
+		// dto
+		JSONObject jsonPropostaFinalizarDTO = new JSONObject();
+		jsonPropostaFinalizarDTO.put("CodigoProposta", "");
+		jsonPropostaFinalizarDTO.put("CodigoOperacao", "");		
+		jsonPropostaCancelar.put("dto", jsonPropostaFinalizarDTO);
+		
+		jsonPropostaCancelar.put("textoMotivoCancelamento", "");
+		
+		// campos sugeridos no documento da money plus
+		JSONArray jsonParametros = new JSONArray();
+		JSONObject jsonParametro = new JSONObject();
+		jsonParametro.put("NomeCampo", "");
+		jsonParametro.put("ValorCampo", "");				
+		jsonParametros.put(jsonParametro);
+		
+		jsonParametros.put(jsonParametro);
+
+		jsonPropostaCancelar.put("parametros", jsonParametros);
+
+		return jsonPropostaCancelar;
+	}
+	
+	/***
+	 * CHAMADA PRINCIPAL PARA MONEY PLUS
+	 * @param pessoa
+	 * @return
+	 */
 	public void integraCCBMoneyPlus() {
+		
+		/***
+		 * 
+		 * CHAVES DA MAIORIA DAS APIs
+		 * PagadorRecebedor - codigoMoneyPlus (código da pessoa no money plus)
+		 * ContratoCobranca - codigoPropostaMoneyPlus (código da proposta no money plus)
+		 * ContratoCobranca - numeroContrato (código da operação no Siscoat) 
+		 * 
+		 */
 		PagadorRecebedorDao pessoaDao = new PagadorRecebedorDao();
 		PagadorRecebedor pessoa = new PagadorRecebedor();
 		
 		pessoa = pessoaDao.findById((long) 11184);
-		getJSONPessoa(pessoa);
-		getJSONDTOEndereco(pessoa);
-		// "a09b3f13-16c2-41a9-9cee-4cf60dfc19e7"
+		// Pessoa teste "a09b3f13-16c2-41a9-9cee-4cf60dfc19e7"
+		//TESTADO OK
+		// Cadastro de cliente
+		// Cadastro do Fiduciante 
+		// /api/BMPDigital/CreateUpdatePessoa
+		getJSONPessoaDTO(pessoa);
+		//TESTADO OK
+		//	Cadastro de cliente
+		//  Cadastro do Fiduciante 
+		// /api/BMPDigital/CreateUpdatePessoaEndereco
+		getJSONEnderecoDTO(pessoa);
+		
+		// Envio da Proposta
+		// /api/BMPDigital/IncluirPropostaManualSimplificado
+		getJSONEnvioProposta(pessoa, pessoa);
+		
+		// Incluir avalista
+		// /api/BMPDigital/PropostaIncluirAvalista
+		getJSONPropostaIncluirAvalista(pessoa);
+		
+		// Incluir campos extras na Proposta
+		// /api/BMPDigital/PropostaIncluirCampoExtra
+		getJSONPropostaIncluirCamposExtras();
+		
+		// Impressao CCB é na tela através de link
+		// Para visualização da CCB utilize a URL abaixo, a variável será o guid da proposta devolvido no response da API de inclusão da proposta
+		// http://bmpteste.moneyp.com.br/imprimirccb.aspx?code={GUID_PROPOSTA}
+		
+		// TODO
+		//UploadDocumentoProposta
+		
+		// Após a CCB assinada Finalizar Proposta
+		// /api/BMPDigital/PropostaFinalizar
+		getJSONPropostaFinalizar();
+		
+		// /api/BMPDigital/PropostaLiberar
+		// Liberação para pagamento (Quando o Financeiro for pagar a proposta)
+		getJSONPropostaLiberar();
+		
+		// /api/BMPDigital/PropostaCancelar 
+		// Cancelamento da proposta
+		getJSONPropostaCancelar();
+		
+		// Call-back
+		// Podemos enviar call-back com o status da proposta a URL deve ser pública e tem que tratar os dois ou três parâmetros 
+		// (proposta número de operação gerado pelo sistema M Plus ou Identificador, número de operação do vosso sistema)
+		//http://sistema.galleriabank.com.br/galleriafinancas/siscoat/services/StatusPropostaMoneyPlus?proposta=XXXX&situacao=000&identificador=111111
+		
+		UploadedFile file;
+		
+		
+		
 		
 		// verifica se a pessoa já existe na money plus
 		/*
@@ -309,13 +712,26 @@ public class BmpDigitalCCBMB {
 
 		if (!pessoaExiste) {
 			// TODO Cria pessoa na money plus
-			// TODO atualiza código money plus
+			// TODO atualiza endereço money plus
 		}
 		*/
 		
 		// TODO integra CCB
 	}
 	
+	// retorna o IP da máquina virtual
+	public String getIpAdress() {
+		String ip = "";
+		try {
+			InetAddress myIP = InetAddress.getLocalHost();
+			ip = myIP.getHostAddress();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ip;
+	}
 	
 	public Date gerarDataHoje() {
 		TimeZone zone = TimeZone.getDefault();
