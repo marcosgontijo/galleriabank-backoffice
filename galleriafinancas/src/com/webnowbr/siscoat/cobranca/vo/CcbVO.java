@@ -10,6 +10,7 @@ public class CcbVO {
 	private String numeroContrato;
 	private PagadorRecebedor pessoa;
 	private String tipoParticipante;
+	private String tipoOriginal;
 	private String nacionalidade;	
 	private boolean fiduciante;
 	private boolean feminino;
@@ -95,5 +96,11 @@ public class CcbVO {
 	}
 	public void setSocios(Set<CcbVO> socios) {
 		this.socios = socios;
+	}
+	public String getTipoOriginal() {
+		return tipoOriginal;
+	}
+	public void setTipoOriginal(String tipoOriginal) {
+		this.tipoOriginal = tipoOriginal;
 	}
 }
