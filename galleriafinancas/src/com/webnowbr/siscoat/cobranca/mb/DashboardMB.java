@@ -2,13 +2,22 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -29,6 +38,7 @@ import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
@@ -195,7 +205,6 @@ public class DashboardMB {
 	}
 	
 	public StreamedContent readXLSXFile() throws IOException {
-		
 		//String sheetName =getClass().getResource("/resource/SeguroDFI.xlsx").getPath();
 		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/DashboardTabela.xlsx"));
 		
@@ -392,7 +401,114 @@ public class DashboardMB {
 		this.pieModel1 = pieModel1;
 	}
 */
+    
+    public StreamedContent gerarCSVleads() throws IOException {
+    	XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+		
+		XSSFSheet sheet = wb.getSheetAt(0);
+		DashboardDao dDao = new DashboardDao();
+		List<ContratoCobranca> contratos = dDao.getContratosLead();
+		
+		XSSFRow linha = sheet.getRow(0);
+		if(linha == null) {
+			sheet.createRow(0);
+			linha = sheet.getRow(0);
+		}
+		
+		gravaCelula(0, "Numero Contrato", linha);
+		gravaCelula(1, "Cidade", linha);
+		gravaCelula(2, "Estado", linha);
+		gravaCelula(3, "Data Contrato", linha);
+		gravaCelula(4, "Valor", linha);
+		gravaCelula(5, "Origem", linha);
+		gravaCelula(6, "Qualidade Lead", linha);
+		
+		int iLinha = 1;
+		for (int iContrato = 0 ; iContrato < contratos.size(); iContrato++) {
+			ContratoCobranca contrato = contratos.get(iContrato);
+						
+			linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
 
+			Locale locale = new Locale("pt", "BR");  
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT-3"));
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(contrato.getDataContrato());
+			cal.add(Calendar.HOUR, -3);
+			Date oneHourBack = cal.getTime();
+			String dataStr = sdf.format(oneHourBack.getTime());
+			
+			String qualidadeLead = "";
+			
+			if (CommonsUtil.mesmoValor(contrato.getStatus(), "Aprovado")) {
+				qualidadeLead = "Lead Convertido";
+			} else if (CommonsUtil.mesmoValor(contrato.getStatus(), "Reprovado")) {
+				qualidadeLead = "Lead Reprovado";
+			} else if (CommonsUtil.mesmoValor(contrato.getStatus(), "Desistência Cliente")) {
+				qualidadeLead = "Lead Reprovado";
+			} else {
+				if (!CommonsUtil.semValor(contrato.getStatusLead())){
+					if (contrato.getStatusLead().equals("Novo Lead")) {
+						qualidadeLead = "Ag Resposta Cliente";
+					} else if (contrato.getStatusLead().equals("Em Tratamento")) {
+						qualidadeLead = "Ag Resposta Cliente";
+					} else if (contrato.getStatusLead().equals("Reprovado")) {
+						qualidadeLead = "Lead Reprovado";
+					} else if (contrato.getStatusLead().equals("Completo")) {
+						qualidadeLead = "Cliente Respondeu";
+					}
+					
+					if (contrato.getCadastroAprovadoValor() != null) {
+						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado")) {
+							qualidadeLead = "Aprovado na analise";
+						} else if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Reprovado")){
+							qualidadeLead = "Lead Reprovado";
+						}
+						
+						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado") && contrato.isAprovadoComite()) {
+							qualidadeLead = "Aprovado no Comite";
+						}
+						
+						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado") && contrato.isAprovadoComite()
+								&& !contrato.isAgAssinatura()) {
+							qualidadeLead = "Contrato Assinado";
+						}
+					}
+				}
+			}
+	
+			gravaCelula(0, contrato.getNumeroContrato(), linha);
+			gravaCelula(1, contrato.getImovel().getCidade(), linha);
+			gravaCelula(2, contrato.getImovel().getEstado(), linha);
+			gravaCelula(3, dataStr, linha);
+			gravaCelula(4, CommonsUtil.formataValorMonetario(contrato.getQuantoPrecisa(),"R$ "), linha);
+			gravaCelula(5, contrato.getUrlLead(), linha);
+			gravaCelula(6, qualidadeLead, linha);
+			
+			iLinha++;
+		}
+		
+		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+		//escrever tudo o que foi feito no arquivo
+		
+		wb.write(fileOut);
+
+		//fecha a escrita de dados nessa planilha
+		wb.close();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+    }
     
     
 	public PieChartModel getPieOrigemLead() {

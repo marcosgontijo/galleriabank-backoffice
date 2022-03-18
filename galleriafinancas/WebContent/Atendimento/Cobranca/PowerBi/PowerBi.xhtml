@@ -21,118 +21,136 @@
 				<p:calendar id="dataConsultaHoje" showOn="button"
 					value="#{powerBiMb.powerBiHoje.dataConsulta}" label="Data"
 					size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" >
-					<!-- <p:ajax update="dadosHoje" event="dateSelect"
-						listener="#{powerBiMb.powerBiHoje}" /> -->
 				</p:calendar>
 
 				<h:panelGroup id="dadosHoje">
 					<h:panelGrid columns="14">
 						<p:outputLabel for="opCadastradasHoje" value="OP Cadastradas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="opCadastradasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.numeroOperacoesCadastradas}" />
 							
 						<p:outputLabel for="leadsNovosHoje" value="Leads Novos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="leadsNovosHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.numeroNovosLeadsCadastrados}" />
 							
 						<p:outputLabel for="leadsCompletosHoje" value="Leads Completos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="leadsCompletosHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.numeroLeadsCompletos}" />
 							
 						<p:outputLabel for="opInicioAnaliseHoje" value="OP Analisadas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
-						<p:outputLabel id="opInicioAnaliseHoje"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiHoje.numeroOperacoesInicioAnalise}" />
+							style="margin-bottom:50px;margin-left:03px;" />
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opInicioAnaliseHoje" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiHoje.analises}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiHoje.numeroOperacoesInicioAnalise}"/>
+						</p:commandLink>
 							
 						<p:outputLabel for="opAnalisadasHoje" value="OP Pré-Aprovadas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
-						<p:outputLabel id="opAnalisadasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiHoje.numeroOperacoesAnalisadas}" />
+							style="margin-bottom:50px;margin-left:03px;" />
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opAnalisadasHoje" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiHoje.preAprovacoes}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiHoje.numeroOperacoesAnalisadas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="opAssinadasHoje" value="OP Assinadas"
-							style="margin-bottom:50px;margin-left:20px;"
-							styleClass="labelBold" />
-						<p:outputLabel id="opAssinadasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiHoje.numeroOperacoesAssinadas}" />
+							style="margin-bottom:50px;margin-left:03px;"
+							styleClass="labelBold" />							
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opAssinadasHoje" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiHoje.assinaturas}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiHoje.numeroOperacoesAssinadas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="opRegistradasHoje" value="OP Registradas"
-							style="margin-bottom:50px;margin-left:20px;"
-							styleClass="labelBold" />
-						<p:outputLabel id="opRegistradasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiHoje.numeroOperacoesRegistradas}" />
+							style="margin-bottom:50px;margin-left:03px;"
+							styleClass="labelBold" />							
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opRegistradasHoje" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiHoje.registros}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiHoje.numeroOperacoesRegistradas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="vlrCadastradasHoje" value="Vlr Cadastradas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrCadastradasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="vlrLeadsNovosHoje" value="Vlr Leads Novos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="vlrLeadsNovosHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorNovosLeadsCadastrados}" />
 							
 						<p:outputLabel for="vlrLeadsCompletosHoje" value="Vlr Leads Completos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="vlrLeadsCompletosHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorLeadsCompletos}" />
 							
 						<p:outputLabel for="vlrInicioAnaliseHoje" value="Vlr Analisadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrInicioAnaliseHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesInicioAnalise}"
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="vlrAnalisadasHoje" value="Vlr Pré-Aprovadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAnalisadasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesAnalisadas}"
 							converter="bigDecimalConverter" />
 
 						<p:outputLabel for="vlrAssinadasHoje" value="Vlr Assinadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAssinadasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesAssinadas}"
 							converter="bigDecimalConverter" />
 
 						<p:outputLabel for="vlrRegistradasHoje" value="Vlr Registradas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrRegistradasHoje"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiHoje.valorOperacoesRegistradas}"
 							converter="bigDecimalConverter" />
 					</h:panelGrid>
 					
 						<p:outputLabel value="______________________________________________________________"
-						style="margin-bottom:50px;margin-left:20px;" styleClass="labelBold" />
+						style="margin-bottom:50px;margin-left:03px;" styleClass="labelBold" />
 						
 					<h:panelGrid columns="2">
 						<h:panelGrid columns="2">
@@ -360,119 +378,139 @@
 					<p:spacer width="10px"/>
 				</h:panelGrid>
 				
-				<p:outputLabel for="dataConsultaOntem" value="Data Ontem: "
+				<p:outputLabel for="dataConsultaHoje" value="Data Hoje: "
 					styleClass="labelBold" />
 				<p:calendar id="dataConsultaOntem" showOn="button"
 					value="#{powerBiMb.powerBiOntem.dataConsulta}" label="Data"
 					size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" >
-					<!-- <p:ajax update="dadosOntem" event="dateSelect"
-						listener="#{powerBiMb.powerBiOntem}" /> -->
+				
 				</p:calendar>
 				
 				<h:panelGroup id="dadosOntem">
 					<h:panelGrid columns="14">
 						<p:outputLabel for="opCadastradasOntem" value="OP Cadastradas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="opCadastradasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.numeroOperacoesCadastradas}" />
 							
 						<p:outputLabel for="leadsNovosOntem" value="Leads Novos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="leadsNovosOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.numeroNovosLeadsCadastrados}" />
 							
 						<p:outputLabel for="leadsCompletosOntem" value="Leads Completos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="leadsCompletosOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.numeroLeadsCompletos}" />
 							
 						<p:outputLabel for="opInicioAnaliseOntem" value="OP Analisadas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
-						<p:outputLabel id="opInicioAnaliseOntem"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiOntem.numeroOperacoesInicioAnalise}" />
+							style="margin-bottom:50px;margin-left:03px;" />
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opInicioAnaliseOntem" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiOntem.analises}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiOntem.numeroOperacoesInicioAnalise}"/>
+						</p:commandLink>
 							
 						<p:outputLabel for="opAnalisadasOntem" value="OP Pré-Aprovadas"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
-						<p:outputLabel id="opAnalisadasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiOntem.numeroOperacoesAnalisadas}" />
+							style="margin-bottom:50px;margin-left:03px;" />
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opAnalisadasOntem" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiOntem.preAprovacoes}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiOntem.numeroOperacoesAnalisadas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="opAssinadasOntem" value="OP Assinadas"
-							style="margin-bottom:50px;margin-left:20px;"
-							styleClass="labelBold" />
-						<p:outputLabel id="opAssinadasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiOntem.numeroOperacoesAssinadas}" />
+							style="margin-bottom:50px;margin-left:03px;"
+							styleClass="labelBold" />							
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opAssinadasOntem" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiOntem.assinaturas}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiOntem.numeroOperacoesAssinadas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="opRegistradasOntem" value="OP Registradas"
-							style="margin-bottom:50px;margin-left:20px;"
-							styleClass="labelBold" />
-						<p:outputLabel id="opRegistradasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
-							value="#{powerBiMb.powerBiOntem.numeroOperacoesRegistradas}" />
+							style="margin-bottom:50px;margin-left:03px;"
+							styleClass="labelBold" />							
+						<p:commandLink onclick="PF('listaDetalhes').show()"
+							id="opRegistradasOntem" update="detalhesForm">
+							<f:setPropertyActionListener
+								target="#{powerBiMb.powBiDetalhes}"
+								value="#{powerBiMb.powerBiOntem.registros}" />
+							<p:outputLabel
+								value="#{powerBiMb.powerBiOntem.numeroOperacoesRegistradas}"/>
+						</p:commandLink>
 
 						<p:outputLabel for="vlrCadastradasOntem" value="Vlr Cadastradas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrCadastradasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesCadastradas}"
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="vlrLeadsNovosOntem" value="Vlr Leads Novos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="vlrLeadsNovosOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorNovosLeadsCadastrados}" />
 							
 						<p:outputLabel for="vlrLeadsCompletosOntem" value="Vlr Leads Completos"
 							styleClass="labelBold"
-							style="margin-bottom:50px;margin-left:20px;" />
+							style="margin-bottom:50px;margin-left:03px;" />
 						<p:outputLabel id="vlrLeadsCompletosOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorLeadsCompletos}" />
 							
 						<p:outputLabel for="vlrInicioAnaliseOntem" value="Vlr Analisadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrInicioAnaliseOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesInicioAnalise}"
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="vlrAnalisadasOntem" value="Vlr Pré-Aprovadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAnalisadasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesAnalisadas}"
 							converter="bigDecimalConverter" />
 
 						<p:outputLabel for="vlrAssinadasOntem" value="Vlr Assinadas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrAssinadasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesAssinadas}"
 							converter="bigDecimalConverter" />
 
 						<p:outputLabel for="vlrRegistradasOntem" value="Vlr Registradas"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							styleClass="labelBold" />
 						<p:outputLabel id="vlrRegistradasOntem"
-							style="margin-bottom:50px;margin-left:20px;"
+							style="margin-bottom:50px;margin-left:03px;"
 							value="#{powerBiMb.powerBiOntem.valorOperacoesRegistradas}"
-							converter="bigDecimalConverter" />
+							converter="bigDecimalConverter" />					
+						
 					</h:panelGrid>
 					<p:outputLabel value="______________________________________________________________"
 						style="margin-bottom:50px;margin-left:20px;" styleClass="labelBold" />
@@ -708,6 +746,38 @@
 
 			</p:panel>
 		</h:form>
+		
+		<p:dialog header="Detalhes" overflow="auto"
+			widgetVar="listaDetalhes" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="detalhesForm">
+				<p:dataTable var="pessoas" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.powBiDetalhes}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Nomes"
+						filterBy="#{pessoas.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.nome}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{pessoas.qtdContratos}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.qtdContratos}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column> 
+						<p:commandButton onclick="PF('listaContratos').show()" value="Ver Contratos" update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{powerBiMb.contratosConsulta}"
+								value="#{pessoas.contratos}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 		
 		<p:dialog header="Lista de contratos" overflow="auto"
 			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"

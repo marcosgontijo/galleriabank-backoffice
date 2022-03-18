@@ -17,6 +17,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
@@ -394,6 +395,58 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						dashboard.setValorContratosRegistrados(rs.getBigDecimal(12));
 
 						objects.add(dashboard);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}	
+	
+	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.estado, datacontrato, quantoprecisa, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
+			+ " inner join cobranca.imovelcobranca imv on imv.id = cc.imovel "
+			+ " inner join cobranca.pagadorrecebedor pare on pare.id = cc.pagador "
+			+ " where urllead is not null and urllead != '' and pare.nome not LIKE '%teste%' and pare.nome  not LIKE '%Teste%' "
+			+ " order by cc.id desc ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratosLead() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_LEAD);
+					rs = ps.executeQuery();					
+
+					while (rs.next()) {
+						ContratoCobranca contrato = new ContratoCobranca();
+						
+						contrato.setNumeroContrato(rs.getString("numerocontrato"));
+						contrato.setImovel(new ImovelCobranca());
+						contrato.getImovel().setCidade(rs.getString("cidade"));
+						contrato.getImovel().setEstado(rs.getString("estado"));
+						contrato.setDataContrato(rs.getTimestamp("datacontrato"));
+						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contrato.setUrlLead(rs.getString("urllead"));
+						contrato.setStatusLead(rs.getString("statuslead"));
+						contrato.setStatus(rs.getString("status"));
+						contrato.setInicioAnalise(rs.getBoolean("inicioanalise"));
+						contrato.setCadastroAprovadoValor(rs.getString("cadastroaprovadovalor"));
+						contrato.setPagtoLaudoConfirmada(rs.getBoolean("PagtoLaudoConfirmada"));
+						contrato.setLaudoRecebido(rs.getBoolean("laudorecebido"));
+						contrato.setPajurFavoravel(rs.getBoolean("pajurfavoravel"));
+						contrato.setAprovadoComite(rs.getBoolean("aprovadocomite"));
+						contrato.setContratoAssinado(rs.getBoolean("AgAssinatura"));
+						objects.add(contrato);
 					}
 
 				} finally {

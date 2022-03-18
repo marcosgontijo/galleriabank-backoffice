@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 
@@ -11,7 +12,7 @@ public class PowerBiDetalhes {
 	
 	private String nome;
 	private int qtdContratos;
-	private Collection<ContratoCobranca> contratos;
+	private List<ContratoCobranca> contratos;
 	
 	public PowerBiDetalhes() {
 		super();
@@ -34,11 +35,11 @@ public class PowerBiDetalhes {
 		this.qtdContratos = qtdContratos;
 	}
 
-	public Collection<ContratoCobranca> getContratos() {
+	public List<ContratoCobranca> getContratos() {
 		return contratos;
 	}
 
-	public void setContratos(Collection<ContratoCobranca> contratos) {
+	public void setContratos(List<ContratoCobranca> contratos) {
 		this.contratos = contratos;
 	}
 }

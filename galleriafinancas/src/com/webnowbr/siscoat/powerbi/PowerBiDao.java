@@ -23,7 +23,195 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 
 public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
-
+	
+	private static final String CONTRATOS_INICIO_ANALISE = " SELECT ID, inicioanaliseusuario "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	and date_trunc('day', inicioanalisedata) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ " order by inicioanaliseusuario asc ";
+	
+	private static final String CONTRATOS_ANALISE = " SELECT ID, CadastroAprovadoUsuario "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	and CadastroAprovadovalor = 'Aprovado' "
+			+ " AND (PagtoLaudoConfirmadaData is null or date_trunc('day', CadastroAprovadoData) < date_trunc('day', PagtoLaudoConfirmadaData)) "
+			+ "	and date_trunc('day', CadastroAprovadoData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ " order by CadastroAprovadoUsuario asc ";
+	 
+	private static final String CONTRATOS_ASSINADOS = " SELECT  ID, AgAssinaturaUsuario "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	and date_trunc('day', AgAssinaturaData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ " order by AgAssinaturaUsuario asc ";
+	
+	private static final String CONTRATOS_REGISTRADOS = " SELECT  ID, AgRegistroUsuario "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	and date_trunc('day', AgRegistroData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ " order by AgRegistroUsuario asc " ;
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> listaContratos(Date data, String tipoPesquisa) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+				
+					if(CommonsUtil.mesmoValor(tipoPesquisa, "inicioAnalise")) {
+						ps = connection.prepareStatement(CONTRATOS_INICIO_ANALISE);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "analiseAprovada")) {
+						ps = connection.prepareStatement(CONTRATOS_ANALISE);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "assinatura")) {
+						ps = connection.prepareStatement(CONTRATOS_ASSINADOS);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "registro")) {
+						ps = connection.prepareStatement(CONTRATOS_REGISTRADOS);
+					}
+					
+					java.sql.Date dtRelSQL = new java.sql.Date(data.getTime());
+					ps.setDate(1, dtRelSQL);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					while (rs.next()) {
+						objects.add(contratoCobrancaDao.findById(rs.getLong(1)));				
+					}
+					
+				} finally {
+					closeResources(connection, ps);
+				}
+				return objects;
+			}
+		});
+	} 
+	
+	private static final String POWERBI_INICIO_ANALISE = " SELECT inicioanaliseusuario, "
+			+ "	SUM(CONTRATOSCADASTRADOS) CONTRATOSCADASTRADOS "
+			+ " from (SELECT inicioanaliseusuario, "
+			+ "	COUNT(C.ID) CONTRATOSCADASTRADOS "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ " WHERE C.STATUSLEAD = 'Completo' "
+			+ "	AND date_trunc('day', inicioanalisedata) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ "	GROUP BY inicioanaliseusuario) TOTAIS "
+			+ " GROUP BY inicioanaliseusuario ";
+	
+	private static final String POWERBI_ANALISE = " SELECT CadastroAprovadoUsuario, "
+			+ "	SUM(CONTRATOSCADASTRADOS) CONTRATOSCADASTRADOS "
+			+ " from (SELECT CadastroAprovadoUsuario, "
+			+ "	COUNT(C.ID) CONTRATOSCADASTRADOS "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	and CadastroAprovadovalor = 'Aprovado' "
+			+ "	AND date_trunc('day', CadastroAprovadoData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ " AND (PagtoLaudoConfirmadaData is null or date_trunc('day', CadastroAprovadoData) < date_trunc('day', PagtoLaudoConfirmadaData)) "
+			+ "	GROUP BY CadastroAprovadoUsuario) TOTAIS "
+			+ " GROUP BY CadastroAprovadoUsuario ";
+	
+	private static final String POWERBI_ASSINADOS = " SELECT AgAssinaturaUsuario, "
+			+ "	SUM(CONTRATOSCADASTRADOS) CONTRATOSCADASTRADOS "
+			+ " from (SELECT AgAssinaturaUsuario, "
+			+ "	COUNT(C.ID) CONTRATOSCADASTRADOS "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ " WHERE C.STATUSLEAD = 'Completo' "
+			+ "	AND date_trunc('day', AgAssinaturaData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ "	GROUP BY AgAssinaturaUsuario) TOTAIS "
+			+ " GROUP BY AgAssinaturaUsuario ";
+	
+	private static final String POWERBI_REGISTRADOS = " SELECT AgRegistroUsuario, "
+			+ "	SUM(CONTRATOSCADASTRADOS) CONTRATOSCADASTRADOS "
+			+ " from (SELECT AgRegistroUsuario, "
+			+ "	COUNT(C.ID) CONTRATOSCADASTRADOS "
+			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
+			+ "	WHERE C.STATUSLEAD = 'Completo' "
+			+ "	AND date_trunc('day', AgRegistroData) = date_trunc('day',  ? ::TIMESTAMP) "
+			+ "	GROUP BY AgRegistroUsuario) TOTAIS "
+			+ " GROUP BY AgRegistroUsuario ";
+	
+	@SuppressWarnings("unchecked")
+	public List<PowerBiDetalhes> listaPowerBiDetalhes(Date data, String tipoPesquisa) {
+		return (List<PowerBiDetalhes>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				
+				List<PowerBiDetalhes> objects = new ArrayList<PowerBiDetalhes>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					if(CommonsUtil.mesmoValor(tipoPesquisa, "inicioAnalise")) {
+						ps = connection.prepareStatement(POWERBI_INICIO_ANALISE);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "analiseAprovada")) {
+						ps = connection.prepareStatement(POWERBI_ANALISE);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "assinatura")) {
+						ps = connection.prepareStatement(POWERBI_ASSINADOS);
+					} else if(CommonsUtil.mesmoValor(tipoPesquisa, "registro")) {
+						ps = connection.prepareStatement(POWERBI_REGISTRADOS);
+					}
+					
+					java.sql.Date dtRelSQL = new java.sql.Date(data.getTime());
+					ps.setDate(1, dtRelSQL);
+					
+					rs = ps.executeQuery();
+					
+					PowerBiDao powerBiDao = new PowerBiDao();
+					
+					List<ContratoCobranca> todosContratos = powerBiDao.listaContratos( data,  tipoPesquisa);
+					
+					while (rs.next()) {
+						PowerBiDetalhes powBiDetalhes = new PowerBiDetalhes();
+						List<ContratoCobranca> contratosPowerBi = new ArrayList<ContratoCobranca>();
+						
+						for(ContratoCobranca contrato : todosContratos) {
+							
+							if(CommonsUtil.mesmoValor(tipoPesquisa, "inicioAnalise")) {
+								if(CommonsUtil.mesmoValor(contrato.getInicioAnaliseUsuario(), rs.getString("inicioanaliseusuario"))){
+									contratosPowerBi.add(contrato);
+									powBiDetalhes.setNome(rs.getString("InicioAnaliseUsuario"));
+								}
+							} else if(CommonsUtil.mesmoValor(tipoPesquisa, "analiseAprovada")) {
+								if(CommonsUtil.mesmoValor(contrato.getCadastroAprovadoUsuario(), rs.getString("CadastroAprovadoUsuario"))){
+									contratosPowerBi.add(contrato);
+									powBiDetalhes.setNome(rs.getString("CadastroAprovadoUsuario"));
+								}
+							} else if(CommonsUtil.mesmoValor(tipoPesquisa, "assinatura")) {
+								if(CommonsUtil.mesmoValor(contrato.getAgAssinaturaUsuario(), rs.getString("AgAssinaturaUsuario"))){
+									contratosPowerBi.add(contrato);
+									powBiDetalhes.setNome(rs.getString("AgAssinaturaUsuario"));
+								}
+							} else if(CommonsUtil.mesmoValor(tipoPesquisa, "registro")) {
+								if(CommonsUtil.mesmoValor(contrato.getAgRegistroUsuario(), rs.getString("AgRegistroUsuario"))){
+									powBiDetalhes.setNome(rs.getString("agRegistroUsuario"));
+									contratosPowerBi.add(contrato);
+								}
+							}
+							
+								
+						}
+						
+						powBiDetalhes.setQtdContratos(rs.getInt("CONTRATOSCADASTRADOS"));
+						powBiDetalhes.setContratos(contratosPowerBi);
+						objects.add(powBiDetalhes);
+					}
+					
+					
+				} finally {
+					closeResources(connection, ps);
+				}
+				return objects;
+			}
+		});
+	} 
+	
 	private static final String POWER_BI= " select datacontrato, status, statusLead, inicioanaliseusuario, inicioanalisedata, leadcompletodata, cadastroAprovadoData, PagtoLaudoConfirmadaData, cadastroAprovadoValor, agassinaturadata, aprovadodata, quantoprecisa, valorccb, contratoLead "
 			+ " from cobranca.contratocobranca coco  ";
 	
@@ -122,6 +310,7 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 								}
 							}
 						}
+						
 						if(!CommonsUtil.semValor(rs.getDate("PagtoLaudoConfirmadaData"))){
 							if (!CommonsUtil.semValor((rs.getDate("cadastroAprovadoData")))) {
 								if (!(rs.getDate("cadastroAprovadoData").getMonth() > rs.getDate("PagtoLaudoConfirmadaData").getMonth()) &&
