@@ -22635,5 +22635,4 @@ public class ContratoCobrancaMB {
 		this.contratoPrazoMin = contratoPrazoMin;
 	}
 	
-	
 }
