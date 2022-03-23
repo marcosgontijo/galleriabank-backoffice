@@ -1041,6 +1041,34 @@ public class InvestidorMB {
 
 		return totalLiquido.setScale(2);
 	}
+	
+	public BigDecimal getTotalLiquidoInvestidorBaixa(long idInvestidor) {
+		BigDecimal totalLiquido = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getValorLiquidoBaixa() != null) {
+					totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+				}
+			}
+		}
+
+		return totalLiquido.setScale(2);
+	}
+	
+	public BigDecimal getTotalParcelaInvestidorBaixa(long idInvestidor) {
+		BigDecimal totalParcela = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getParcelaMensalBaixa() != null) {
+					totalParcela = totalParcela.add(parcelas.getParcelaMensalBaixa());
+				}
+			}
+		}
+
+		return totalParcela;
+	}
 
 	public BigDecimal getTotalLiquidoInvestidorCorrespondente(long idInvestidor) {
 		BigDecimal totalLiquido = BigDecimal.ZERO;

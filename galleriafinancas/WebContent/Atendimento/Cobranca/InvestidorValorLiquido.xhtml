@@ -137,11 +137,11 @@
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
-							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
-							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
 						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
@@ -166,10 +166,10 @@
 				                <h:outputText value="Total:" />
 				            </p:column>
 				            <p:column style="text-align: center;">
-				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				                <h:outputText value="#{investidorMB.getTotalParcelaInvestidorBaixa(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>			            
 				            <p:column style="text-align: center;">
-				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorSA(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorBaixa(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>
 				            <p:column >
 				                <h:outputText value="" />
@@ -240,11 +240,11 @@
 						</p:column>
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
-							<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
 						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
-							<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
 						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
@@ -355,11 +355,11 @@
 						</p:column>
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Bruto da Parcela" >
-						<h:outputText value="#{parcelas.parcelaMensal}" converter="bigDecimalConverter"/>
+						<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 					</p:column>									
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Líquido a Receber" >
-						<h:outputText value="#{parcelas.valorLiquido}" converter="bigDecimalConverter"/>
+						<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 					</p:column>	
 					<p:column style="width:3px" headerText="Ações">
 						<shiro:hasAnyRoles name="ROOT">

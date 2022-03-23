@@ -17,14 +17,19 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private String empresa;
 	private Date dataVencimento;
 	private BigDecimal parcelaMensal;
-	private BigDecimal capitalizacao;
+	
 	private BigDecimal juros;
 	private BigDecimal amortizacao;
 	private BigDecimal saldoCredor;
 	private BigDecimal saldoCredorAtualizado;
 	private BigDecimal irRetido;
 	private BigDecimal valorLiquido;
-
+	
+	///
+	private BigDecimal parcelaMensalBaixa;
+	private BigDecimal capitalizacao;
+	private BigDecimal valorLiquidoBaixa;
+	
 	private boolean baixado;
 	private Date dataBaixa;
 	private BigDecimal valorBaixado;
@@ -47,11 +52,25 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	}
 	
+	
+	public void setParcelaMensalBaixa(BigDecimal parcelaMensalBaixa) {
+		this.parcelaMensalBaixa = parcelaMensalBaixa;
+	}
+
+
+	public void setValorLiquidoBaixa(BigDecimal valorLiquidoBaixa) {
+		this.valorLiquidoBaixa = valorLiquidoBaixa;
+	}
+
+
 	public BigDecimal getParcelaMensalBaixa() {		
-		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)
-			return this.capitalizacao.add(this.amortizacao);
-		else
-			return parcelaMensal;
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
+			this.parcelaMensalBaixa = this.capitalizacao.add(this.amortizacao);
+			return parcelaMensalBaixa;
+		} else {
+			this.parcelaMensalBaixa = parcelaMensal;
+			return parcelaMensalBaixa;
+		}
 	}
 
 	public BigDecimal getJurosBaixa() {
@@ -63,9 +82,9 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	
 	public BigDecimal getValorLiquidoBaixa() {		
 		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)
-			return this.capitalizacao.add(this.amortizacao).subtract(irRetido);
+			return this.valorLiquidoBaixa = this.capitalizacao.add(this.amortizacao).subtract(irRetido);
 		else
-			return valorLiquido;
+			return this.valorLiquidoBaixa = valorLiquido;
 	}
 
 	public long getId() {

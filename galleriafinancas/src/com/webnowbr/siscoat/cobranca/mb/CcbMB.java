@@ -1425,12 +1425,12 @@ public class CcbMB {
 
 			valorPorExtenso.setNumber(valorCredito);
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1. Valor do Crédito: ",
-					CommonsUtil.formataValorMonetario(valorCredito, "R$") + " (" + valorPorExtenso.toString() + ");",
+					CommonsUtil.formataValorMonetario(valorCredito, "R$ ") + " (" + valorPorExtenso.toString() + ");",
 					true, false);
 
 			valorPorExtenso.setNumber(custoEmissao);
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1.1. Custo de Emissão: ",
-					CommonsUtil.formataValorMonetario(custoEmissao, "R$") + " (" + valorPorExtenso.toString()
+					CommonsUtil.formataValorMonetario(custoEmissao, "R$ ") + " (" + valorPorExtenso.toString()
 							+ "), e será pago pelo EMITENTE na data"
 							+ " de emissão desta CCB, sendo o mesmo deduzido no ato da liberação do recurso"
 							+ " que entrará a crédito na Conta Corrente descrita no item 2.5 desta CCB, e"
@@ -1442,8 +1442,8 @@ public class CcbMB {
 			valorPorExtenso.setNumber(valorIOF);
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.1.2. Valor do Imposto sobre Operações Financeiras (IOF): ",
-					CommonsUtil.formataValorMonetario(valorIOF, "R$") + " (" + valorPorExtenso.toString()
-							+ ") , conforme apurado na Planilha"
+					CommonsUtil.formataValorMonetario(valorIOF, "R$ ") + " (" + valorPorExtenso.toString()
+							+ "), conforme apurado na Planilha"
 							+ " de Cálculo (Anexo I), calculado nos termos da legislação vigente"
 							+ " na data de ocorrência do fato gerador, tendo como base de cálculo"
 							+ " o Valor do Crédito mencionado no item 2.1;",
@@ -1452,7 +1452,7 @@ public class CcbMB {
 			valorPorExtenso.setNumber(valorDespesas);
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.1.3. Valor destinado ao pagamento de despesas acessórias (devidas a terceiros): ",
-					CommonsUtil.formataValorMonetario(valorDespesas, "R$") + " (" + valorPorExtenso.toString() + ");", true,
+					CommonsUtil.formataValorMonetario(valorDespesas, "R$ ") + " (" + valorPorExtenso.toString() + ") conforme anexo II;", true,
 					false);
 			
 			geraParagrafoComposto(document, paragraph, run, run2,
@@ -1467,7 +1467,7 @@ public class CcbMB {
 			valorPorExtenso.setNumber(valorLiquidoCredito);
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1.4. Valor Líquido do Crédito: ",
 					"O valor líquido do crédito concedido é de "
-							+ CommonsUtil.formataValorMonetario(valorLiquidoCredito, "R$") + "" + " ("
+							+ CommonsUtil.formataValorMonetario(valorLiquidoCredito, "R$ ") + "" + " ("
 							+ valorPorExtenso.toString() + "), após o desconto do Custo de Emissão,"
 							+ " IOF e Despesas Acessórias desta CCB;",
 					true, false);
@@ -1538,7 +1538,7 @@ public class CcbMB {
 							+ CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")
 							+ ", corrigidas pela variação"
 							+ " mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB," + " o montante de "
-							+ CommonsUtil.formataValorMonetario(montantePagamento, "R$") + " ("
+							+ CommonsUtil.formataValorMonetario(montantePagamento, "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I;",
 					true, false);
 
@@ -1552,7 +1552,7 @@ public class CcbMB {
 							+ "e a última com vencimento em "
 							+ CommonsUtil.formataData(vencimentoUltimaParcelaMIP, "dd/MM/yyyy") + ", corrigidas"
 							+ " pela variação mensal do IPCA/IBGE, totalizando, na data de emissão "
-							+ "desta CCB, o montante de " + CommonsUtil.formataValorMonetario(montanteMIP, "R$") + " ("
+							+ "desta CCB, o montante de " + CommonsUtil.formataValorMonetario(montanteMIP, "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I. ",
 					true, false);
 
@@ -1566,7 +1566,7 @@ public class CcbMB {
 							+ "e a última com vencimento em "
 							+ CommonsUtil.formataData(vencimentoUltimaParcelaDFI, "dd/MM/yyyy") + ", corrigidas pela"
 							+ " variação mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB,"
-							+ " o montante de " + CommonsUtil.formataValorMonetario(montanteDFI, "R$") + " ("
+							+ " o montante de " + CommonsUtil.formataValorMonetario(montanteDFI, "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I.",
 					true, false);
 
@@ -1590,9 +1590,12 @@ public class CcbMB {
 					true, false);
 
 			porcentagemPorExtenso.setNumber(tarifaAntecipada);
+			String tarifaAntecipadastr = porcentagemPorExtenso.toString();
+			if(CommonsUtil.semValor(tarifaAntecipada)) {
+				tarifaAntecipadastr = "Zero";
+			}
 			geraParagrafoComposto(document, paragraph, run, run2, "2.10. Tarifa de Liquidação Antecipada: ",
-					CommonsUtil.formataValorTaxa(tarifaAntecipada) + "% (" + porcentagemPorExtenso.toString()
-							+ " por cento);",
+					CommonsUtil.formataValorTaxa(tarifaAntecipada) + "% (" + tarifaAntecipadastr + " por cento);",
 					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.11. Data de Emissão: ",
@@ -1645,10 +1648,10 @@ public class CcbMB {
 			run4 = paragraph.createRun();
 			run4.setFontSize(12);
 			run4.removeCarriageReturn();
-			run4.setText(", objeto da matrícula nº " + numeroImovel + " "
+			run4.setText("Objeto da matrícula nº " + numeroImovel + " "
 					+ "(“Bem Imóvel” ou “Imóvel”), registrada perante o " + cartorioImovel
 					+ " Cartório de Registro de Imóveis da " + "Comarca de " + cidadeImovel + " – " + ufImovel
-					+ "  (“RGI”), nos termos" + " e condições anuídos pelas Partes no Instrumento Particular "
+					+ " (“RGI”), nos termos" + " e condições anuídos pelas Partes no Instrumento Particular "
 					+ "de Alienação Fiduciária Bem Imóvel (“Termo de Garantia”), o "
 					+ "qual faz parte desta CCB como parte acessória e inseparável.");
 			run4.addCarriageReturn();
@@ -2449,13 +2452,21 @@ public class CcbMB {
 
 			paragraph = document.createParagraph();
 			paragraph.setPageBreak(true);
-
-			fazParagrafoSimples(document, paragraph, run,
-					"(Página de assinaturas da Cédula de Crédito "
-							+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
-							+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
-							+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".",
-					false, ParagraphAlignment.BOTH);
+			
+			paragraph = document.createParagraph();	
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("(Página de assinaturas da Cédula de Crédito "
+					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
+					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
+					+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".)");
+			run.setBold(false);
+			run.setItalic(true);
+			run.addCarriageReturn();
 
 			XWPFTable table = document.createTable();
 
@@ -2607,45 +2618,44 @@ public class CcbMB {
 				run.setText("____________________________________   ");
 				run.setBold(false);
 			}
-
-			// create third row
+			
 			XWPFTableRow tableRow3 = table.createRow();
 			tableRow3.getCell(0).setParagraph(paragraph);
 			run = tableRow3.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  nomeTestemunha1");
+			run.setText("Nome:  " + nomeTestemunha1);
 			run.setBold(false);
 
 			tableRow3.getCell(1).setParagraph(paragraph);
 			run = tableRow3.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  nomeTestemunha2");
+			run.setText("Nome:  " + nomeTestemunha2);
 			run.setBold(false);
 
 			XWPFTableRow tableRow4 = table.createRow();
 			tableRow4.getCell(0).setParagraph(paragraph);
 			run = tableRow4.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  rgTestemunha1");
+			run.setText("RG:  " + rgTestemunha1);
 			run.setBold(false);
 
 			tableRow4.getCell(1).setParagraph(paragraph);
 			run = tableRow4.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  rgTestemunha2");
+			run.setText("RG:  " + rgTestemunha2);
 			run.setBold(false);
 
 			XWPFTableRow tableRow5 = table.createRow();
 			tableRow5.getCell(0).setParagraph(paragraph);
 			run = tableRow5.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  cpfTestemunha1");
+			run.setText("CPF:  " + cpfTestemunha1);
 			run.setBold(false);
 
 			tableRow5.getCell(1).setParagraph(paragraph);
 			run = tableRow5.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  cpfTestemunha2");
+			run.setText("CPF:  " + cpfTestemunha2);
 			run.setBold(false);
 
 			CTTblPr tblpro = table.getCTTbl().getTblPr();
@@ -2674,7 +2684,7 @@ public class CcbMB {
 			run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº XXXXXX");
 			run.addCarriageReturn();
 			run.setText("PLANILHA DE CÁLCULO");
-			run.setBold(false);
+			run.setBold(true);
 
 			XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
 
@@ -3153,7 +3163,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(", objeto da matrícula nº "+ numeroImovel +" (“Bem Imóvel” ou “Imóvel”), "
+			run2.setText("Objeto da matrícula nº "+ numeroImovel +" (“Bem Imóvel” ou “Imóvel”), "
 					+ "registrada perante o "+ cartorioImovel +" Cartório de Registro de Imóveis da "
 					+ "Comarca de "+ cidadeImovel +" – "+ ufImovel +" (");
 			run2.setBold(false);
@@ -3378,7 +3388,7 @@ public class CcbMB {
 			valorPorExtenso.setNumber(valorCredito); 
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" "+ CommonsUtil.formataValorMonetario(valorCredito, "R$") + " ("+ valorPorExtenso.toString() +");");
+			run2.setText(" "+ CommonsUtil.formataValorMonetario(valorCredito, "R$ ") + " ("+ valorPorExtenso.toString() +");");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -3396,14 +3406,14 @@ public class CcbMB {
 			run.setItalic(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
 			
-			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(montantePagamento));
-			valorPorExtenso.setNumber(valorCredito); 
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(numeroParcelasPagamento));
+			valorPorExtenso.setNumber(montantePagamento); 
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
 			run2.setText(" "+ numeroParcelasPagamento+" ("+ numeroPorExtenso.toString() +") parcelas,"
 					+ " sendo a 1ª. parcela com vencimento em "+ CommonsUtil.formataData(vencimentoPrimeiraParcelaPagamento, "dd/MM/yyyy")  +""
 					+ " e a última parcela com vencimento em "+ CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")  +","
-					+ " totalizando o montante de "+ CommonsUtil.formataValorMonetario(montantePagamento, "R$") +" ("+ valorPorExtenso.toString() +");");
+					+ " totalizando o montante de "+ CommonsUtil.formataValorMonetario(montantePagamento, "R$ ") +" ("+ valorPorExtenso.toString() +");");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -4426,7 +4436,7 @@ public class CcbMB {
 			valorPorExtenso.setNumber(vendaLeilao);
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorMonetario( vendaLeilao, "R$") + " ("+ valorPorExtenso.toString() +"),");
+			run.setText(CommonsUtil.formataValorMonetario( vendaLeilao, "R$ ") + " ("+ valorPorExtenso.toString() +"),");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4841,13 +4851,21 @@ public class CcbMB {
 
 			paragraph = document.createParagraph();
 			paragraph.setPageBreak(true);
-
-			fazParagrafoSimples(document, paragraph, run,
-					"(Página de assinaturas da Cédula de Crédito "
-							+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
-							+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
-							+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".",
-					false, ParagraphAlignment.BOTH);
+			
+			paragraph = document.createParagraph();	
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingBetween(1);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("(Página de assinaturas da Cédula de Crédito "
+					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
+					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
+					+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".)");
+			run.setBold(false);
+			run.setItalic(true);
+			run.addCarriageReturn();
 
 			XWPFTable table = document.createTable();
 
@@ -5006,39 +5024,39 @@ public class CcbMB {
 			tableRow3.getCell(0).setParagraph(paragraph);
 			run = tableRow3.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  nomeTestemunha1");
+			run.setText("Nome:  " + nomeTestemunha1);
 			run.setBold(false);
 
 			tableRow3.getCell(1).setParagraph(paragraph);
 			run = tableRow3.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  nomeTestemunha2");
+			run.setText("Nome:  " + nomeTestemunha2);
 			run.setBold(false);
 
 			XWPFTableRow tableRow4 = table.createRow();
 			tableRow4.getCell(0).setParagraph(paragraph);
 			run = tableRow4.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  rgTestemunha1");
+			run.setText("RG:  " + rgTestemunha1);
 			run.setBold(false);
 
 			tableRow4.getCell(1).setParagraph(paragraph);
 			run = tableRow4.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  rgTestemunha2");
+			run.setText("RG:  " + rgTestemunha2);
 			run.setBold(false);
 
 			XWPFTableRow tableRow5 = table.createRow();
 			tableRow5.getCell(0).setParagraph(paragraph);
 			run = tableRow5.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  cpfTestemunha1");
+			run.setText("CPF:  " + cpfTestemunha1);
 			run.setBold(false);
 
 			tableRow5.getCell(1).setParagraph(paragraph);
 			run = tableRow5.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  cpfTestemunha2");
+			run.setText("CPF:  " + cpfTestemunha2);
 			run.setBold(false);
 
 			CTTblPr tblpro = table.getCTTbl().getTblPr();
@@ -5256,7 +5274,7 @@ public class CcbMB {
 				run.setBold(false);
 				
 				run2 = paragraph.createRun();
-				run2.setText(vencimentoPrimeiraParcelaPagamento.getDate()+"");
+				run2.setText(dataDeEmissao.getDate()+"");
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5267,7 +5285,7 @@ public class CcbMB {
 				run.setBold(true);
 				
 				run2 = paragraph.createRun();
-				run2.setText(CommonsUtil.formataMesExtenso(vencimentoPrimeiraParcelaPagamento).toLowerCase());
+				run2.setText(CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase());
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5278,7 +5296,7 @@ public class CcbMB {
 				run.setBold(true);
 				
 				run2 = paragraph.createRun();
-				run2.setText( (this.vencimentoPrimeiraParcelaPagamento.getYear() + 1900)  + ",");
+				run2.setText( (this.dataDeEmissao.getYear() + 1900)  + ",");
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5506,6 +5524,7 @@ public class CcbMB {
 			filho = "filho";
 		}
 		String nacionalidade;
+		String estadoCivilStr;
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
 		
@@ -5515,17 +5534,24 @@ public class CcbMB {
 			} else {
 				nacionalidade = participante.getNacionalidade();
 			}
+			
+			if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
+				estadoCivilStr = "casada";
+			} else {
+				estadoCivilStr = "casado";
+			}
 		} else {
 			nacionalidade = participante.getNacionalidade();
+			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
 		}
 		String conjugeStr = "";
 		
 		if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
-			conjugeStr = ", (" + pessoa.getRegimeCasamento() + " " + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
 		}
 		
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
-				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ pessoa.getEstadocivil() 
+				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr 
 				+ conjugeStr + ","
 				+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + "SSP/"+ pessoa.getEstado() +","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
