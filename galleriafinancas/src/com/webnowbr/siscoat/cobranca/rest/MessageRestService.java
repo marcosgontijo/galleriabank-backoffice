@@ -9,11 +9,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 
 @Path("/services")
@@ -268,6 +271,51 @@ public class MessageRestService {
 					      .type(MediaType.APPLICATION_JSON)
 					      .build();				
 			}
+		}
+	}
+	
+	@POST
+	@Path("/StatusPropostaMoneyPlus")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response statusPropostaMoneyPlus(@QueryParam("proposta") String proposta, @QueryParam("situacao") String situacao, @QueryParam("identificador") String identificador) { 
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		ContratoCobranca contratoCobranca = new ContratoCobranca();
+		
+		System.out.println("StatusPropostaMoneyPlus - Inicio");
+				
+		try {
+		
+			contratoCobranca = cDao.getContratoPropostaMoneyPlus(identificador, proposta);
+			
+			if (contratoCobranca.getId() > 0) {
+				
+				contratoCobranca.setStatusPropostaMoneyPlus(situacao);
+				
+				cDao.merge(contratoCobranca);
+				
+				String message = "{\"retorno\": \"Status da operação atualizado com sucesso!!! " + proposta +  situacao + identificador + "\"}";
+
+			    return Response
+			      .status(Response.Status.OK)
+			      .entity(message)
+			      .type(MediaType.APPLICATION_JSON)
+			      .build();
+			} else {
+				String message = "{\"retorno\": \"Operação não encontrada!!! \"}";
+				
+				return Response
+					      .status(Response.Status.BAD_REQUEST)
+					      .entity(message)
+					      .type(MediaType.APPLICATION_JSON)
+					      .build();
+			}
+			
+		} catch (org.json.JSONException exception) {
+			return Response
+				      .status(Response.Status.BAD_REQUEST)
+				      .entity("erro na Atualização do Status da proposta!!!")
+				      .type(MediaType.APPLICATION_JSON)
+				      .build();
 		}
 	}
 }

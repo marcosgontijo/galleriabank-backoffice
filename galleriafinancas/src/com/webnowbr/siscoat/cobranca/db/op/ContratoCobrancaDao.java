@@ -6224,4 +6224,44 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	private static final String QUERY_CONTRATOS_MONEY_PLUS = "select c.id "
+			 + " from cobranca.contratocobranca c "  
+			 + " where c.numerocontrato = ? and c.codigoPropostaMoneyPlus = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public ContratoCobranca getContratoPropostaMoneyPlus(final String numeroContrato, final String codigoPropostaMoneyPlus) {
+		return (ContratoCobranca) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				ContratoCobranca contratoCobranca = new ContratoCobranca();
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+
+					String query = QUERY_CONTRATOS_MONEY_PLUS;
+					
+					ps = connection
+							.prepareStatement(query);
+					
+					ps.setString(1, numeroContrato);
+					ps.setString(2, codigoPropostaMoneyPlus);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {									
+						contratoCobranca = cDao.findById(rs.getLong(1));
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return contratoCobranca;
+			}
+		});	
+	}
 }

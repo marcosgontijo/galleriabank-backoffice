@@ -734,8 +734,8 @@ public class BRLTrustMB {
 		
 		jsonRecebivel.put("numeroControle", this.parcelaLiquidacao.getContrato().getNumeroContratoSeguro() + "-" + numeroParcela);
 		jsonRecebivel.put("coobrigacao", false);
-		jsonRecebivel.put("ocorrencia", 1);
-		jsonRecebivel.put("tipo", 77 ); // total
+		jsonRecebivel.put("ocorrencia", 77);
+		jsonRecebivel.put("tipo", 73 ); // total
 		//jsonRecebivel.put("tipo", 73); parcial 14
 		jsonRecebivel.put("documento", this.parcelaLiquidacao.getContrato().getNumeroContratoSeguro());
 		jsonRecebivel.put("termoCessao", this.parcelaLiquidacao.getContrato().getTermoCessao());

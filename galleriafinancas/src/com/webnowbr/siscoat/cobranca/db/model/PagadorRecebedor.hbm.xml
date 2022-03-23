@@ -21,6 +21,9 @@
         <property name="bairro" type="java.lang.String">
             <column name="BAIRRO"/>
         </property>  
+        <property name="codigoMoneyPlus" type="java.lang.String">
+            <column name="codigoMoneyPlus"/>
+        </property>  
         <property name="numero" type="java.lang.String">
             <column name="NUMERO"/>
         </property>                

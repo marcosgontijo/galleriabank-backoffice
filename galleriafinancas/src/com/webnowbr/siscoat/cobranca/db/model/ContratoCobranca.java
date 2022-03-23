@@ -563,6 +563,9 @@ public class ContratoCobranca implements Serializable {
 	private String divida;
 	private BigDecimal dividaValor;
 	private String observacaoParaComite;
+	
+	private String codigoPropostaMoneyPlus;
+	private String statusPropostaMoneyPlus;
 
 	public ContratoCobranca() {
 		super();
@@ -4582,5 +4585,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDocumentosComiteUsuario(String documentosComiteUsuario) {
 		this.documentosComiteUsuario = documentosComiteUsuario;
+	}
+
+	public String getCodigoPropostaMoneyPlus() {
+		return codigoPropostaMoneyPlus;
+	}
+
+	public void setCodigoPropostaMoneyPlus(String codigoPropostaMoneyPlus) {
+		this.codigoPropostaMoneyPlus = codigoPropostaMoneyPlus;
+	}
+
+	public String getStatusPropostaMoneyPlus() {
+		return statusPropostaMoneyPlus;
+	}
+	
+	public void setStatusPropostaMoneyPlus(String statusPropostaMoneyPlus) {
+		this.statusPropostaMoneyPlus = statusPropostaMoneyPlus;
 	}	
 }
