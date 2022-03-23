@@ -165,7 +165,7 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					
 					PowerBiDao powerBiDao = new PowerBiDao();
 					
-					List<ContratoCobranca> todosContratos = powerBiDao.listaContratos( data,  tipoPesquisa);
+					List<ContratoCobranca> todosContratos = powerBiDao.listaContratos(data,  tipoPesquisa);
 					
 					while (rs.next()) {
 						PowerBiDetalhes powBiDetalhes = new PowerBiDetalhes();
