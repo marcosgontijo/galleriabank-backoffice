@@ -13,7 +13,7 @@ public class ContratosAnalise {
 	
 	private ContratoCobranca contrato;
 	
-	private Time tempoDeAnalise;
+	private String tempoDeAnalise;
 	
 	public ContratosAnalise() {
 		super();
@@ -28,12 +28,19 @@ public class ContratosAnalise {
 		this.contrato = contrato;
 	}
 
-	public Time getTempoDeAnalise() {
+	public String getTempoDeAnalise() {
 		return tempoDeAnalise;
 	}
 
-	public void setTempoDeAnalise(Time tempoDeAnalise) {
-		this.tempoDeAnalise = tempoDeAnalise;
+	public void setTempoDeAnalise(long tempoDeAnalise) {
+		
+		long difference_In_Hours = (tempoDeAnalise / (1000 * 60 * 60)) % 24;
+		long difference_In_Minutes = (tempoDeAnalise / (1000 * 60)) % 60;
+		long difference_In_Seconds = (tempoDeAnalise / 1000) % 60;
+		
+		String tempoStr = difference_In_Hours + ":" + difference_In_Minutes + ":" + difference_In_Seconds;
+		
+		this.tempoDeAnalise = tempoStr;
 	}
 
 

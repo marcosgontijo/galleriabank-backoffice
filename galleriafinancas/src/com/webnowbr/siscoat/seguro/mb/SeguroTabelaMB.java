@@ -187,7 +187,8 @@ public class SeguroTabelaMB {
 			gravaCelula(1, seguroTabelaVO.getNumeroContratoSeguro(), linha);
 			gravaCelula(2, seguroTabelaVO.getParcelasOriginais(), linha);
 			gravaCelula(3, seguroTabelaVO.getParcelasFaltantes(), linha);
-			gravaCelula(4, seguroTabelaVO.getSaldoDevedor().doubleValue(), linha);
+			if(!CommonsUtil.semValor(seguroTabelaVO.getSaldoDevedor()))
+				gravaCelula(4, seguroTabelaVO.getSaldoDevedor().doubleValue(), linha);
 			gravaCelula(5, CommonsUtil.doubleValue(CommonsUtil.somenteNumeros(seguroTabelaVO.getCpfPrincipal())), linha);
 			gravaCelula(6, seguroTabelaVO.getNomePrincipal(), linha);
 			gravaCelula(7, CommonsUtil.dateValue(seguroTabelaVO.getDataNascimento(), "yyyy-MM-dd"), linha);

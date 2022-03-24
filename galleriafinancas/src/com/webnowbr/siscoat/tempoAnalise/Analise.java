@@ -14,7 +14,7 @@ public class Analise {
 	private String nome;
 	private int qtdAnalises;
 	private List<ContratosAnalise> contratos;
-	private Time tempoMedio;
+	private String tempoMedio;
 	
 	public Analise() {
 		super();
@@ -45,11 +45,11 @@ public class Analise {
 		this.contratos = contratos;
 	}
 
-	public Time getTempoMedio() {
+	public String getTempoMedio() {
 		return tempoMedio;
 	}
 
-	public void setTempoMedio(Time tempoMedio) {
+	public void setTempoMedio(String tempoMedio) {
 		this.tempoMedio = tempoMedio;
 	}
 }
