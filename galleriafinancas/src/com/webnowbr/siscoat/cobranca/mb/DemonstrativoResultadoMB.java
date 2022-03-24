@@ -50,6 +50,7 @@ public class DemonstrativoResultadoMB {
 			demonstrativoResultado.addDre(saidas);
 			DemonstrativoResultadosGrupo subTotal = new DemonstrativoResultadosGrupo();
 			subTotal.setTipo("Subtotal");
+			subTotal.setCodigo(1);
 			subTotal.addValor(entradas.getValorTotal().subtract(saidas.getValorTotal()));
 			subTotal.addJuros(entradas.getJurosTotal().subtract(saidas.getJurosTotal()));
 			subTotal.addAmortizacao(entradas.getAmortizacaoTotal().subtract(saidas.getAmortizacaoTotal()));
@@ -59,6 +60,7 @@ public class DemonstrativoResultadoMB {
 			
 			DemonstrativoResultadosGrupo total = new DemonstrativoResultadosGrupo();
 			total.setTipo("Total");
+			total.setCodigo(1);
 			total.addValor(subTotal.getValorTotal().subtract(contasPagar.getValorTotal()));
 			total.addJuros(subTotal.getJurosTotal().subtract(contasPagar.getJurosTotal()));
 			total.addAmortizacao(subTotal.getAmortizacaoTotal().subtract(contasPagar.getAmortizacaoTotal()));

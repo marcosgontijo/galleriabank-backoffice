@@ -4698,6 +4698,102 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public StreamedContent gerarExcelParcelasInvestidor(List<ContratoCobrancaParcelasInvestidor> listaParcelas, String nome) throws IOException {
+		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+		
+		XSSFSheet sheet = wb.getSheetAt(0);
+		DashboardDao dDao = new DashboardDao();
+		List<ContratoCobranca> contratos = dDao.getContratosLead();
+		
+		XSSFRow linha = sheet.getRow(0);
+		if(linha == null) {
+			sheet.createRow(0);
+			linha = sheet.getRow(0);
+		}
+		
+		gravaCelula(0, "Numero Parcela", linha);
+		gravaCelula(1, "Data Vencimento", linha);
+		gravaCelula(2, "Valor Parcela", linha);
+		gravaCelula(3, "Juros", linha);
+		gravaCelula(4, "Amortização", linha);
+		gravaCelula(5, "Saldo Credor", linha);
+		gravaCelula(6, "IR Retido", linha);
+		gravaCelula(7, "Valor Líquido", linha);
+		
+		int iLinha = 1;
+		for (int iParcela = 0 ; iParcela < listaParcelas.size(); iParcela++) {
+			ContratoCobrancaParcelasInvestidor parcela = listaParcelas.get(iParcela);
+						
+			linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			Locale locale = new Locale("pt", "BR");  
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
+			String dataStr = sdf.format(parcela.getDataVencimento());
+		
+			gravaCelula(0, parcela.getNumeroParcela(), linha);
+			gravaCelula(1, dataStr, linha);
+			if(!CommonsUtil.semValor(parcela.getParcelaMensalBaixa())) {
+				gravaCelula(2, CommonsUtil.formataValorMonetario(parcela.getParcelaMensalBaixa(),"R$ "), linha);
+			} else {
+				gravaCelula(2, "R$ 0,00 ", linha);
+			}
+			
+			if(!CommonsUtil.semValor(parcela.getJurosBaixa())) {
+				gravaCelula(3, CommonsUtil.formataValorMonetario(parcela.getJurosBaixa(),"R$ "), linha);
+			} else {
+				gravaCelula(3, "R$ 0,00 ", linha);
+			}
+			
+			if(!CommonsUtil.semValor(parcela.getAmortizacao())) {
+				gravaCelula(4, CommonsUtil.formataValorMonetario(parcela.getAmortizacao(),"R$ "), linha);
+			} else {
+				gravaCelula(4, "R$ 0,00 ", linha);
+			}
+			
+			if(!CommonsUtil.semValor(parcela.getSaldoCredorAtualizado())) {
+				gravaCelula(5, CommonsUtil.formataValorMonetario(parcela.getSaldoCredorAtualizado(),"R$ "), linha);
+			} else {
+				gravaCelula(5, "R$ 0,00 ", linha);
+			}
+			
+			if(!CommonsUtil.semValor(parcela.getIrRetido())) {
+				gravaCelula(6, CommonsUtil.formataValorMonetario(parcela.getIrRetido(),"R$ "), linha);
+			} else {
+				gravaCelula(6, "R$ 0,00 ", linha);
+			}
+			
+			if(!CommonsUtil.semValor(parcela.getValorLiquidoBaixa())) {
+				gravaCelula(7, CommonsUtil.formataValorMonetario(parcela.getValorLiquidoBaixa(),"R$ "), linha);
+			} else {
+				gravaCelula(7, "R$ 0,00 ", linha);
+			}
+			
+			iLinha++;
+		}
+		
+
+		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+		//escrever tudo o que foi feito no arquivo
+		
+		wb.write(fileOut);
+
+		//fecha a escrita de dados nessa planilha
+		wb.close();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+		gerador.open(String.format("Galleria Bank - Parcelas Investidor - " +  nome  + "%s.xlsx", ""));
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+    }
+	
 	public void viewFileInterno(String fileName) {
 
 		try {

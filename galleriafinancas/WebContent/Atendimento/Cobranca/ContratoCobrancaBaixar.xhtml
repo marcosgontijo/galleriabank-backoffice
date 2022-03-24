@@ -109,7 +109,8 @@
 						style="margin-bottom: 15px;margin-top: 15px;">
 						<p:tab
 							title="Favorecido 1 - #{contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC}"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.exibeRecebedor1}">
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.exibeRecebedor1}">						
+					
 							<h:panelGrid columns="2">
 								<p:outputLabel value="Banco: " styleClass="labelBold" />
 								<p:outputLabel
@@ -132,6 +133,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor.nomeCC) }" />
+									
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor1}"
@@ -160,7 +166,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -272,6 +278,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor2.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor2,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor2.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas2" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor2}"
@@ -300,7 +311,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -411,6 +422,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor3.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor3,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor3.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas3" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor3}"
@@ -439,7 +455,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -550,6 +566,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor4.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor4,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor4.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas4" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor4}"
@@ -578,7 +599,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -689,6 +710,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor5.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor5,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor5.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas5" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor5}"
@@ -717,7 +743,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -828,6 +854,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor6.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor6,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor6.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas6" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor6}"
@@ -856,7 +887,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -967,6 +998,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor7.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor7,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor7.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas7" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor7}"
@@ -995,7 +1031,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1105,6 +1141,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor8.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor8,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor8.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas8" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor8}"
@@ -1133,7 +1174,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1244,6 +1285,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor9.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor9,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor9.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas9" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor9}"
@@ -1272,7 +1318,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
@@ -1383,6 +1429,11 @@
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cpfCC}#{contratoCobrancaMB.objetoContratoCobranca.recebedor10.cnpjCC}" />
 							</h:panelGrid>
+							
+							<p:commandButton value="Gerar Excel" ajax="false"
+									action="#{contratoCobrancaMB.gerarExcelParcelasInvestidor(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor10,
+									contratoCobrancaMB.objetoContratoCobranca.recebedor10.nomeCC) }" />
+							
 							<h:panelGrid columns="1" style="margin-top: 30px;">
 								<p:dataTable id="dtParcelas10" var="parcelas"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaParcelasInvestidor10}"
@@ -1411,7 +1462,7 @@
 										</h:outputText>
 									</p:column>
 									<p:column style="text-align: center;" headerText="Juros (R$)">
-										<h:outputText value="#{parcelas.capitalizacao}"
+										<h:outputText value="#{parcelas.jurosBaixa}"
 											converter="bigDecimalConverter">
 										</h:outputText>
 									</p:column>
