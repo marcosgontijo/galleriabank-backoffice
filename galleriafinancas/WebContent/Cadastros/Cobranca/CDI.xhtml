@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		    <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:panel id="PanelCDI"
+				header="Tabela de CDI"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<p:panel id="PanelCDIInputs"
+						header="Dados Atual"
+						style="margin-bottom:10px;margin-top:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="data" value="Data Atualização: "
+						styleClass="labelBold" style="margin-right: 10px;" />
+						<p:datePicker id="data" view="month" value="#{cdiMB.data}" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+	
+						<p:outputLabel for="taxa" value="Taxa:  " styleClass="labelBold"/>
+						<p:inputText id="taxa"
+							value="#{cdiMB.taxa}"
+							onkeyup="mascara_num(this);﻿" required="true"
+							converter="bigDecimalConverter"/>
+					</h:panelGrid>
+				</p:panel>
+	
+				<div align="center">
+					<p:commandButton value="Inserir CDI" ajax="false" icon="ui-icon-check"
+						action="#{cdiMB.inserirCDI}" style="TEXT-DECORATION: bold;margin-bottom: 25px;" update="PanelCDI"/>
+				</div>
+			
+ 				<p:dataTable id="dtCDI" var="cdi" value="#{cdiMB.listCDI}" paginator="true" rows="20" lazy="true"
+	   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+	                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{cdi.data}" sortOrder="desc">	        
+			        <p:column style="text-align: center;" headerText="Data" sortBy="#{cdi.data}" sortOrder="desc">
+			            <h:outputText value="#{cdi.data}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Taxa" >
+						<h:outputText value="#{cdi.taxa}"
+							converter="bigDecimalConverter" />
+					</p:column>			        
+			        <p:column style="width:120px;">
+		                <p:commandButton action="#{cdiMB.excluirCDI}" icon="ui-icon-trash" title="Excluir" update=":form:PanelCDI">
+		                	<f:setPropertyActionListener target="#{cdiMB.selectedCDI}" value="#{cdi}" />
+		                    <p:confirm header="Confirmação" message="Deseja realmente excluir esta taxa?" icon="ui-icon-alert" />		                	
+		                </p:commandButton> 
+		                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+					    </p:confirmDialog>   
+		            </p:column>			        		               		        			        			           			 		
+				</p:dataTable>				
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -5485,6 +5485,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
 						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
 						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+						
+						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")) {
+							continue;
+						}
+						
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						
 						
@@ -5650,11 +5655,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						Date dataVencimento = rs.getDate("databaixa");						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));						
+						
+						if(!CommonsUtil.semValor(rs.getBigDecimal("valorbaixado"))) {
+							demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));				
+						} else {
+							demonstrativoResultadosGrupoDetalhe.setValor(BigDecimal.ZERO);	
+						}
+								
 						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("amortizacao"));
-						
 						demonstrativoResultadosGrupoDetalhe.setJuros(demonstrativoResultadosGrupoDetalhe.getValor().subtract(demonstrativoResultadosGrupoDetalhe.getAmortizacao()));
-						
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 
 						BigDecimal resto = demonstrativoResultadosGrupoDetalhe.getValor()
