@@ -252,7 +252,13 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}
 							
 							seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));
-							seguroTabelaVO.setcpfPrincipal(rs.getString("cpf"));
+							
+							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
+								seguroTabelaVO.setCpfPrincipal(rs.getString("cpf"));
+							}else {
+								seguroTabelaVO.setCpfPrincipal(rs.getString("cnpj"));
+							}
+							
 							seguroTabelaVO.setNomePrincipal(rs.getString("nome"));
 							seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));
 							seguroTabelaVO.setParcelasFaltantes(rs.getString("qtdeparcelasFaltantes"));
