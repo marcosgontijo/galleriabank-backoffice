@@ -26,9 +26,11 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private BigDecimal valorLiquido;
 	
 	///
-	private BigDecimal parcelaMensalBaixa;
+	
 	private BigDecimal capitalizacao;
 	private BigDecimal valorLiquidoBaixa;
+	private BigDecimal parcelaMensalBaixa;
+	private BigDecimal jurosBaixa;
 	
 	private boolean baixado;
 	private Date dataBaixa;
@@ -72,6 +74,11 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 			return parcelaMensalBaixa;
 		}
 	}
+
+	public void setJurosBaixa(BigDecimal jurosBaixa) {
+		this.jurosBaixa = jurosBaixa;
+	}
+
 
 	public BigDecimal getJurosBaixa() {
 		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1)

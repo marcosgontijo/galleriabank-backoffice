@@ -132,6 +132,16 @@
 						onkeydown="FormataValor(this, 13, event, 2);" required="false"
 						converter="bigDecimalConverter"
 						disabled="#{contasPagarMB.deleteMode}" />
+						
+					<p:outputLabel for="dataPagamento" value="Data Pagamento: "
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<p:calendar id="dataPagamento"
+						value="#{contasPagarMB.objetoContasPagar.dataPagamento}"
+						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						label="Data" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+					</p:calendar>
 
 				</h:panelGrid>
 			</p:panel>

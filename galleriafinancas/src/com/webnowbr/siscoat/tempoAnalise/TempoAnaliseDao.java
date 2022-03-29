@@ -50,8 +50,15 @@ public class TempoAnaliseDao extends HibernateDao <Analise,Long> {
 					connection = getConnection();
 					
 					ps = connection.prepareStatement(CONTRATOS);
-					java.sql.Date dtRelSQL = new java.sql.Date(dataInicio.getTime());
-					ps.setDate(1, dtRelSQL);
+										
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);
 					
 					rs = ps.executeQuery();
 					
@@ -75,7 +82,7 @@ public class TempoAnaliseDao extends HibernateDao <Analise,Long> {
 			+ "	COUNT(C.ID) CONTRATOSCADASTRADOS "
 			+ "	FROM COBRANCA.CONTRATOCOBRANCA C "
 			+ "	WHERE C.STATUSLEAD = 'Completo' "
-			+ "	and CadastroAprovadovalor = 'Aprovado'  "
+			+ "	and (CadastroAprovadovalor = 'Aprovado' or CadastroAprovadovalor = 'Pendente')  "
 			+ "	and inicioanalisedata >= ? ::timestamp  "
 			+ "	and inicioanalisedata <= ? ::timestamp  "
 			+ "	and CadastroAprovadoData >= ? ::timestamp  "
@@ -87,7 +94,7 @@ public class TempoAnaliseDao extends HibernateDao <Analise,Long> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Analise> listaPowerBiDetalhes(Date dataInicio, Date dataFim) {
+	public List<Analise> listaAnalises(Date dataInicio, Date dataFim) {
 		return (List<Analise>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -101,8 +108,15 @@ public class TempoAnaliseDao extends HibernateDao <Analise,Long> {
 					connection = getConnection();
 
 					ps = connection.prepareStatement(QT_DE_ANALISE);
-					java.sql.Date dtRelSQL = new java.sql.Date(dataInicio.getTime());
-					ps.setDate(1, dtRelSQL);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);
 					
 					rs = ps.executeQuery();
 					
@@ -110,27 +124,45 @@ public class TempoAnaliseDao extends HibernateDao <Analise,Long> {
 					
 					
 					List<ContratoCobranca> todosContratos = tempoAnaliseDao.listaContratos(dataInicio, dataFim);
-					
+					 
 					while (rs.next()) {
+						
+						long tempoMedio = 0;
+						long difference_In_Hours = 0;
+						long difference_In_Minutes = 0;
+						long difference_In_Seconds = 0;
 						
 						Analise analise = new Analise();
 						List<ContratosAnalise> contratosObjetoAnalise = new ArrayList<ContratosAnalise>();
-						ContratosAnalise contratosAnalise = new ContratosAnalise();
+												
 						for(ContratoCobranca contrato : todosContratos) {
 
 							if(CommonsUtil.mesmoValor(contrato.getInicioAnaliseUsuario(), rs.getString("inicioanaliseusuario"))){
+								ContratosAnalise contratosAnalise = new ContratosAnalise();
+								
 								contratosAnalise.setContrato(contrato);
+										
+								long difference_In_Time = contrato.getCadastroAprovadoData().getTime() - contrato.getInicioAnaliseData().getTime();
 								
+								contratosAnalise.setTempoDeAnalise(difference_In_Time);
 								
-								long diff = contrato.getCadastroAprovadoData().getTime() - contrato.getInicioAnaliseData().getTime();
-							
-								
+								tempoMedio = tempoMedio + difference_In_Time;
+										
 								contratosObjetoAnalise.add(contratosAnalise);
 							}
 						}
 						
+						tempoMedio = tempoMedio / rs.getInt("CONTRATOSCADASTRADOS");
+						
+						difference_In_Hours = (tempoMedio / (1000 * 60 * 60)) % 24;
+						difference_In_Minutes = (tempoMedio / (1000 * 60)) % 60;
+						difference_In_Seconds = (tempoMedio / 1000) % 60;
+						
+						String tempoMedioStr = difference_In_Hours + ":" + difference_In_Minutes + ":" + difference_In_Seconds;
+						
 						analise.setNome(rs.getString("InicioAnaliseUsuario"));
 						analise.setQtdAnalises(rs.getInt("CONTRATOSCADASTRADOS"));
+						analise.setTempoMedio(tempoMedioStr);
 						analise.setContratos(contratosObjetoAnalise);
 						objects.add(analise);
 					}

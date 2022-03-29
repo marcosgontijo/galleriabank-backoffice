@@ -686,7 +686,7 @@
 								style="FONT-SIZE: 10pt;width:400px;" />
 							
 							
-							<p:outputLabel for="divida" value="Tem previsão de divida para quitação? "
+							<p:outputLabel for="divida" value="Tem previsão de pagamento de dívida do imóvel? (IQ)"
 								styleClass="labelBold" />
 							<p:outputLabel id="divida"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
@@ -721,12 +721,28 @@
 							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
 							<f:selectItem itemLabel="Financiamento" itemValue="Financiamento" />
 						</p:selectOneRadio>
-
-						<p:outputLabel for="dataCompraComite" value="Data da compra do Imóvel " />
-						<p:calendar id="dataCompraComite" showOn="button"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
-							size="100" pattern="dd/MM/yyyy" locale="pt"
-							styleClass="dateTimeField" />
+							
+						<p:outputLabel for="dataCompraComite"
+						value="Data da compra do Imóvel " />			
+						<h:panelGroup>
+							<p:inputMask id="dataCompraComite"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idadeCompraComite"
+									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+							<p:spacer width="10px"/>
+							<p:outputLabel for="idadeCompraComite" value="Idade da Compra:  " />
+							<p:inputText id="idadeCompraComite" value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}"  />
+						</h:panelGroup>	
+						
+						<p:outputLabel for="nomeProprietarioComite"
+							value="Nome do Proprietario: " />
+						<p:inputText id="nomeProprietarioComite"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
+							style="width:400px;"/>
+							
 					</h:panelGrid>
 				</p:panel>
 				
@@ -2460,12 +2476,25 @@
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="dataCompra"
-							value="Data da compra do Imóvel " />							
-						<p:inputMask id="dataCompra"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
-							mask="99/99/9999" label="Data de Nascimento">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:inputMask>
+							value="Data da compra do Imóvel " />		
+						<h:panelGroup>
+							<p:inputMask id="dataCompra"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idadeCompra"
+									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+							<p:spacer width="10px"/>
+							<p:outputLabel for="idadeCompra" value="Idade da Compra:  " />
+							<p:inputText id="idadeCompra" value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}"  />
+						</h:panelGroup>	
+						
+						<p:outputLabel for="nomeProprietario"
+							value="Nome do Proprietario: " />
+						<p:inputText id="nomeProprietario"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
+							style="width:400px;"/>
 							
 
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />

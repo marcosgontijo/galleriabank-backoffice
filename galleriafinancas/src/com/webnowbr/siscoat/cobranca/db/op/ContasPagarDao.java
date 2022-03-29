@@ -11,6 +11,7 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
@@ -148,4 +149,126 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 		}
 		return listContasPagar;
 	}
+	
+	
+	
+	private static final String QUERY_GET_DRE_CONTASPAGAR_SECURITIZADORA = " SELECT COPA.ID,"
+			+ "	COPA.NUMERODOCUMENTO,"
+			+ "	PARE.NOME, "
+			+ "	COPA.VALORPAGAMENTO, "
+			+ "	COPA.DATAPAGAMENTO, "
+			+ "	CONT.ID CONTID, "
+			+ "	CONT.NOME CONTNOME, "
+			+ "	CONTPAI.ID CONTPAIID, "
+			+ "	CONTPAI.NOME CONTPAINOME, "
+			+ "	COPA.DESCRICAO "
+			+ " FROM COBRANCA.CONTASPAGAR COPA "
+			+ " LEFT JOIN COBRANCA.PAGADORRECEBEDOR PARE ON COPA.PAGADORRECEBEDOR = PARE.ID "
+			+ " inner JOIN COBRANCA.CONTACONTABIL CONT ON COPA.CONTACONTABIL = CONT.ID "
+			+ " inner JOIN COBRANCA.CONTACONTABIL CONTPAI ON CONT.CONTACONTABILPAI = CONTPAI.ID "
+			+ " WHERE CONTAPAGA = TRUE "
+			+ "	AND DATAPAGAMENTO BETWEEN ? ::timestamp AND ? ::timestamp "
+			+ "	AND TIPODESPESA = 'E' "
+			+ "	and (CONTPAI.nome = 'Securitizadora' or CONTPAI.nome = 'securitizadora') "
+			+ " ORDER BY CASE "
+			+ "	WHEN CONTPAI.NOME IS NULL THEN CONT.NOME "
+			+ "	ELSE CONTPAI.NOME "
+			+ "	END, "
+			+ "	CONT.NOME ";
+	
+	private static final String QUERY_GET_DRE_CONTASPAGAR_FIDC = " SELECT COPA.ID,"
+			+ "	COPA.NUMERODOCUMENTO,"
+			+ "	PARE.NOME, "
+			+ "	COPA.VALORPAGAMENTO, "
+			+ "	COPA.DATAPAGAMENTO, "
+			+ "	CONT.ID CONTID, "
+			+ "	CONT.NOME CONTNOME, "
+			+ "	CONTPAI.ID CONTPAIID, "
+			+ "	CONTPAI.NOME CONTPAINOME, "
+			+ "	COPA.DESCRICAO "
+			+ " FROM COBRANCA.CONTASPAGAR COPA "
+			+ " LEFT JOIN COBRANCA.PAGADORRECEBEDOR PARE ON COPA.PAGADORRECEBEDOR = PARE.ID "
+			+ " inner JOIN COBRANCA.CONTACONTABIL CONT ON COPA.CONTACONTABIL = CONT.ID "
+			+ " inner JOIN COBRANCA.CONTACONTABIL CONTPAI ON CONT.CONTACONTABILPAI = CONTPAI.ID "
+			+ " WHERE CONTAPAGA = TRUE "
+			+ "	AND DATAPAGAMENTO BETWEEN ? ::timestamp AND ? ::timestamp "
+			+ "	AND TIPODESPESA = 'E' "
+			+ "	and (CONTPAI.nome = 'Fidc' or CONTPAI.nome = 'fidc' or CONTPAI.nome = 'FIDC' ) "
+			+ " ORDER BY CASE "
+			+ "	WHEN CONTPAI.NOME IS NULL THEN CONT.NOME "
+			+ "	ELSE CONTPAI.NOME "
+			+ "	END, "
+			+ "	CONT.NOME ";
+	
+	public DemonstrativoResultadosGrupo getDreContasPagarEmpresa(final Date dataInicio, final Date dataFim, final String empresa) throws Exception {
+
+		DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
+		demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
+		demonstrativosResultadosGrupoDetalhe.setTipo("Contas Pagas " + empresa);
+		demonstrativosResultadosGrupoDetalhe.setCodigo(2);
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			String query_QUERY_GET_DRE_CONTASPAGAR_EMPRESA = "";
+			
+			if(!CommonsUtil.semValor(empresa)) {
+				if(CommonsUtil.mesmoValor(empresa, "Securitizadora")) {
+					query_QUERY_GET_DRE_CONTASPAGAR_EMPRESA = QUERY_GET_DRE_CONTASPAGAR_SECURITIZADORA;
+				} else if(CommonsUtil.mesmoValor(empresa, "Fidc")) {
+					query_QUERY_GET_DRE_CONTASPAGAR_EMPRESA = QUERY_GET_DRE_CONTASPAGAR_FIDC;
+				}
+			}
+			
+
+			ps = connection.prepareStatement(query_QUERY_GET_DRE_CONTASPAGAR_EMPRESA);
+
+			java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+			java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+
+			ps.setDate(1, dtRelInicioSQL);
+			ps.setDate(2, dtRelFimSQL);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+
+				demonstrativoResultadosGrupoDetalhe.setIdDetalhes(rs.getInt("id"));
+				demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroDocumento"));
+				
+				if ( rs.getString("nome") != null)
+					demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+				else
+					demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("descricao"));
+				Date dataVencimento = rs.getDate("datapagamento");
+				demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
+				demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorpagamento"));
+
+				demonstrativoResultadosGrupoDetalhe.setIdContaContabil(rs.getLong("contId"));
+				demonstrativoResultadosGrupoDetalhe.setNomeContaContabil(rs.getString("contNome"));
+				demonstrativoResultadosGrupoDetalhe.setIdContaContabilPai(rs.getLong("contPaiId"));
+				demonstrativoResultadosGrupoDetalhe.setNomeContaContabilPai(rs.getString("contPaiNome"));
+
+				demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
+
+				demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
+				demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
+				demonstrativosResultadosGrupoDetalhe
+						.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return demonstrativosResultadosGrupoDetalhe;
+
+	}
 }
+
+

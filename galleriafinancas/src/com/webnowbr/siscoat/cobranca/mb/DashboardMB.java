@@ -416,12 +416,14 @@ public class DashboardMB {
 		}
 		
 		gravaCelula(0, "Numero Contrato", linha);
-		gravaCelula(1, "Cidade", linha);
-		gravaCelula(2, "Estado", linha);
-		gravaCelula(3, "Data Contrato", linha);
-		gravaCelula(4, "Valor", linha);
-		gravaCelula(5, "Origem", linha);
-		gravaCelula(6, "Qualidade Lead", linha);
+		gravaCelula(1, "Origem", linha);
+		gravaCelula(2, "Valor", linha);
+		gravaCelula(3, "Valor Aprovado", linha);
+		gravaCelula(4, "Qualidade Lead", linha);	
+		
+		//gravaCelula(5, "Cidade", linha);
+		//gravaCelula(6, "Estado", linha);
+		//gravaCelula(7, "Data Contrato", linha);
 		
 		int iLinha = 1;
 		for (int iContrato = 0 ; iContrato < contratos.size(); iContrato++) {
@@ -450,44 +452,45 @@ public class DashboardMB {
 				qualidadeLead = "Lead Reprovado";
 			} else if (CommonsUtil.mesmoValor(contrato.getStatus(), "Desistência Cliente")) {
 				qualidadeLead = "Lead Reprovado";
+			} else if (CommonsUtil.mesmoValor(contrato.getStatus(), "Baixado")) {
+				qualidadeLead = "Lead Reprovado";
 			} else {
 				if (!CommonsUtil.semValor(contrato.getStatusLead())){
 					if (contrato.getStatusLead().equals("Novo Lead")) {
-						qualidadeLead = "Ag Resposta Cliente";
+						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Em Tratamento")) {
-						qualidadeLead = "Ag Resposta Cliente";
+						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Reprovado")) {
 						qualidadeLead = "Lead Reprovado";
 					} else if (contrato.getStatusLead().equals("Completo")) {
-						qualidadeLead = "Cliente Respondeu";
+						qualidadeLead = "Lead Pendente";
 					}
 					
 					if (contrato.getCadastroAprovadoValor() != null) {
-						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado")) {
-							qualidadeLead = "Aprovado na analise";
-						} else if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Reprovado")){
+						if (contrato.getCadastroAprovadoValor().equals("Reprovado")){
 							qualidadeLead = "Lead Reprovado";
 						}
 						
-						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado") && contrato.isAprovadoComite()) {
-							qualidadeLead = "Aprovado no Comite";
-						}
-						
-						if (contrato.isInicioAnalise() && contrato.getCadastroAprovadoValor().equals("Aprovado") && contrato.isAprovadoComite()
-								&& !contrato.isAgAssinatura()) {
-							qualidadeLead = "Contrato Assinado";
+						if (contrato.isAprovadoComite()) {
+							qualidadeLead = "Lead Convertido";
 						}
 					}
 				}
 			}
 	
 			gravaCelula(0, contrato.getNumeroContrato(), linha);
-			gravaCelula(1, contrato.getImovel().getCidade(), linha);
-			gravaCelula(2, contrato.getImovel().getEstado(), linha);
-			gravaCelula(3, dataStr, linha);
-			gravaCelula(4, CommonsUtil.formataValorMonetario(contrato.getQuantoPrecisa(),"R$ "), linha);
-			gravaCelula(5, contrato.getUrlLead(), linha);
-			gravaCelula(6, qualidadeLead, linha);
+			gravaCelula(1, contrato.getUrlLead(), linha);
+			gravaCelula(2, CommonsUtil.formataValorMonetario(contrato.getQuantoPrecisa(),"R$ "), linha);
+			if(!CommonsUtil.semValor(contrato.getValorCCB())) {
+				gravaCelula(3, CommonsUtil.formataValorMonetario(contrato.getValorCCB(),"R$ "), linha);
+			} else {
+				gravaCelula(3, CommonsUtil.formataValorMonetario(contrato.getValorAprovadoComite(),"R$ "), linha);
+			}
+			gravaCelula(4, qualidadeLead, linha);
+
+			//gravaCelula(5, contrato.getImovel().getCidade(), linha);
+			//gravaCelula(6, contrato.getImovel().getEstado(), linha);
+			//gravaCelula(7, dataStr, linha);
 			
 			iLinha++;
 		}

@@ -18,6 +18,9 @@ public class SiscoatConstants {
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO = BigDecimal.valueOf(3);
 	public static final BigDecimal CUSTO_EMISSAO_MINIMO 	 = BigDecimal.valueOf(3500);
 	
+	public static final BigDecimal VALOR_FIDC = BigDecimal.valueOf(75000000);
+	public static final BigDecimal TAXA_AA_FIDC = BigDecimal.valueOf(5.8);
+	
 	@SuppressWarnings("deprecation")
 	public static Date TROCA_IOF = new Date(2021-1900, 9-1, 19);
 	

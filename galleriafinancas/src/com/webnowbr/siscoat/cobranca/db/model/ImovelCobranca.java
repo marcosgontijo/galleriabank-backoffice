@@ -2,7 +2,13 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ImovelCobranca implements Serializable {
 
@@ -30,6 +36,8 @@ public class ImovelCobranca implements Serializable {
 	private String ocupacao;
 	private BigDecimal valoEstimado;
 	private Date dataCompra;
+	private String idadeCompra;
+	private String nomeProprietario;
 			
 	public ImovelCobranca(){
 	}
@@ -47,6 +55,19 @@ public class ImovelCobranca implements Serializable {
 		this.telResidencial = telResidencial;
 		this.observacao = observacao;
 		this.cep = cep;
+	}
+	
+	public void calcularDataDeCompra() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		
+		long idadeLong = dateHoje.getTime() - this.getDataCompra().getTime();
+		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+		idadeLong = idadeLong / 30;
+		idadeLong = idadeLong / 12;
+	    this.setIdadeCompra(CommonsUtil.stringValue(idadeLong));
 	}
 	
 	/**
@@ -321,4 +342,23 @@ public class ImovelCobranca implements Serializable {
 	public void setDataCompra(Date dataCompra) {
 		this.dataCompra = dataCompra;
 	}
+
+	public String getIdadeCompra() {
+		return idadeCompra;
+	}
+
+	public void setIdadeCompra(String idadeCompra) {
+		this.idadeCompra = idadeCompra;
+	}
+
+	public String getNomeProprietario() {
+		return nomeProprietario;
+	}
+
+	public void setNomeProprietario(String nomeProprietario) {
+		this.nomeProprietario = nomeProprietario;
+	}
+	
+	
+	
 }

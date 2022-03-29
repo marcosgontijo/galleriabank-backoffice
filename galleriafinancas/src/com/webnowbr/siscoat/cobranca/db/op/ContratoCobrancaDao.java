@@ -5485,6 +5485,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
 						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
 						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+						
+						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")) {
+							continue;
+						}
+						
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						
 						
@@ -5650,11 +5655,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						Date dataVencimento = rs.getDate("databaixa");						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));						
+						
+						if(!CommonsUtil.semValor(rs.getBigDecimal("valorbaixado"))) {
+							demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("valorbaixado"));				
+						} else {
+							demonstrativoResultadosGrupoDetalhe.setValor(BigDecimal.ZERO);	
+						}
+								
 						demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("amortizacao"));
-						
 						demonstrativoResultadosGrupoDetalhe.setJuros(demonstrativoResultadosGrupoDetalhe.getValor().subtract(demonstrativoResultadosGrupoDetalhe.getAmortizacao()));
-						
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 
 						BigDecimal resto = demonstrativoResultadosGrupoDetalhe.getValor()
@@ -6160,6 +6169,45 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					String query = QUERY_QUANTIDADE_CONTRATOS_COMITE;
+					ps = connection.prepareStatement(query);					
+					rs = ps.executeQuery();
+
+					ContratoCobranca contrato = new ContratoCobranca();
+					List<String> listaContratos = new ArrayList<String>();
+
+					while (rs.next()) {	
+						listaContratos.add(rs.getString("numerocontrato"));
+					}
+					
+					object = listaContratos.size();
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return object;
+			}
+		});
+	}
+	
+	private static final String QUERY_QUANTIDADE_CONTRATOS_DOCUMENTOS_COMITE = " select numeroContrato from cobranca.contratocobranca c\r\n"
+			+ "where c.InicioAnalise = true and c.CadastroAprovadoValor = 'Aprovado'\r\n"
+			+ "and c.PagtoLaudoConfirmada = true and c.LaudoRecebido = true and c.PajurFavoravel = true\r\n"
+			+ "and c.PreAprovadoComite = true and c.documentosComite = false and status = 'Pendente'";
+	
+	@SuppressWarnings("unchecked")
+	public int getQuantidadeContratosDocumentosComite() {
+		return (int) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				int object = 0;
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+					String query = QUERY_QUANTIDADE_CONTRATOS_DOCUMENTOS_COMITE;
 					ps = connection.prepareStatement(query);					
 					rs = ps.executeQuery();
 

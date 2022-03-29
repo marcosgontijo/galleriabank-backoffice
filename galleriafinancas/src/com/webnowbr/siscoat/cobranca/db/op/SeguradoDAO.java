@@ -20,61 +20,65 @@ import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 	
 	
-	private static final String QUERY_SEGURADOS_DFI = " select coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador,\r\n"
-			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep \r\n"
-			+ " from cobranca.contratocobranca coco \r\n"
-			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
-			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
-			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ?\r\n"
-			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
-			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temsegurodfi = true and ( ccd.id is not null or  to_char(coco.datacontrato, 'YYYYMM') = ? ) \r\n"
-			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep " ;
+	private static final String QUERY_SEGURADOS_DFI = " select coco.numerocontrato, datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep "
+			+ " from cobranca.contratocobranca coco "
+			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
+			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ? "
+			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
+			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
+			+ " where coco.temsegurodfi = true and ( ccd.id is not null or  to_char(coco.datacontrato, 'YYYYMM') = ? ) "
+			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep "
+			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
-	private static final String QUERY_SEGURADOS_DFI_EMPRESA = " select coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador,\r\n"
-			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep \r\n"
-			+ " from cobranca.contratocobranca coco \r\n"
-			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
-			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
-			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ?\r\n"
-			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
-			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temsegurodfi = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ?) \r\n"
-			+ " and coco.empresa = ? \r\n"
-			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep;" ;
+	private static final String QUERY_SEGURADOS_DFI_EMPRESA = " select coco.numerocontrato, datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep "
+			+ " from cobranca.contratocobranca coco "
+			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
+			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ? "
+			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
+			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
+			+ " where coco.temsegurodfi = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ?) "
+			+ " and coco.empresa = ? "
+			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep"
+			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
-	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato,  datacontrato, numerocontratoseguro, sum(ccd.vlrparcela) saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador,\r\n"
-			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo \r\n"
-			+ " from cobranca.contratocobranca coco \r\n"
-			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
-			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
-			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ?\r\n"
-			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
-			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temseguromip = true and (  ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) \r\n"
-			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
-			+ " pare.dtnascimento, pare.sexo ";
+	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
+			+ " from cobranca.contratocobranca coco "
+			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
+			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ? "
+			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
+			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
+			+ " where coco.temseguromip = true and (  ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
+			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
+			+ " pare.dtnascimento, pare.sexo "
+			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
-	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato,  datacontrato, numerocontratoseguro, sum(ccd.vlrparcela) saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador,\r\n"
-			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo \r\n"
-			+ " from cobranca.contratocobranca coco \r\n"
-			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca \r\n"
-			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id \r\n"
-			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id \r\n"
-			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ?\r\n"
-			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id \r\n"
-			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false\r\n"
-			+ " where coco.temseguromip = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) \r\n"
-			+ " and coco.empresa = ? \r\n"
-			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, \r\n"
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, \r\n"
-			+ " pare.dtnascimento, pare.sexo ";
+	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
+			+ " from cobranca.contratocobranca coco "
+			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
+			+ " inner join cobranca.pagadorrecebedor pare on segu.pessoa = pare.id "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and to_char(ccd.dataVencimento, 'YYYYMM') = ? "
+			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
+			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
+			+ " where coco.temseguromip = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
+			+ " and coco.empresa = ? "
+			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
+			+ " pare.dtnascimento, pare.sexo "
+			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
 	@SuppressWarnings("unchecked")
 	public List<SeguroTabelaVO> listaSeguradosDFI(final long idContrato, Date dataDesagio, String empresa) {
@@ -146,7 +150,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							seguroTabelaVO.setUf(rs.getString("estado"));
 							seguroTabelaVO.setCep(rs.getString("cep"));						
 							numeroContratoantigo = (rs.getString("numerocontrato"));
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 							
@@ -159,7 +163,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}
 							seguroTabelaVO.setNome2(rs.getString("nome"));			
 							porcentagemtotal += seguroTabelaVO.getPorcentagem2().doubleValue();
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 						}  else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
@@ -171,7 +175,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}							
 							seguroTabelaVO.setNome3(rs.getString("nome"));		
 							porcentagemtotal += seguroTabelaVO.getPorcentagem3().doubleValue();
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 						} else if (seguroTabelaVO != null ) {
@@ -267,7 +271,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							seguroTabelaVO.setDataNascimento(rs.getString("dtnascimento"));
 							seguroTabelaVO.setSexo(rs.getString("sexo"));
 							numeroContratoAntigo = (rs.getString("numerocontrato"));
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 							
@@ -280,7 +284,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}
 							seguroTabelaVO.setNome2(rs.getString("nome"));
 							porcentagemtotal += seguroTabelaVO.getPorcentagem2().doubleValue();
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 						}  else if (seguroTabelaVO != null && CommonsUtil.semValor(seguroTabelaVO.getPorcentagem3()) && CommonsUtil.semValor(seguroTabelaVO.getCpf3()) && CommonsUtil.semValor(seguroTabelaVO.getNome3())) {
@@ -292,7 +296,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}							
 							seguroTabelaVO.setNome3(rs.getString("nome"));	
 							porcentagemtotal += seguroTabelaVO.getPorcentagem3().doubleValue();
-							if(porcentagemtotal == 100) {
+							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
 							}
 						} else if (seguroTabelaVO != null ) {

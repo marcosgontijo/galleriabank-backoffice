@@ -70,6 +70,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DebenturesInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -141,13 +142,14 @@ public class ContasPagarMB {
 
 	public String clearFieldsInsert() {
 		this.objetoContasPagar = new ContasPagar();
-		objetoContasPagar.setTipoDespesa(tipoDespesa);
+		this.objetoContasPagar.setTipoDespesa(tipoDespesa);
+		this.objetoContasPagar.setDataPagamento(gerarDataHoje());
 
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
 
 	public String clearFieldsEditar() {
-
+		
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
 
@@ -223,12 +225,18 @@ public class ContasPagarMB {
 
 	public String baixarConta() {
 		ContasPagarDao cDao = new ContasPagarDao();
-
-		this.objetoContasPagar.setDataPagamento(gerarDataHoje());
-		this.objetoContasPagar.setContaPaga(true);
+		
 		if (this.objetoContasPagar.getValorPagamento() == null)
 			this.objetoContasPagar.setValorPagamento(this.objetoContasPagar.getValor());
-		cDao.merge(this.objetoContasPagar);
+		
+		if(CommonsUtil.mesmoValor(this.objetoContasPagar.getValorPagamento(), this.objetoContasPagar.getValor())) {
+			this.objetoContasPagar.setContaPaga(true);
+			cDao.merge(this.objetoContasPagar);
+		} else {
+			FacesContext facesContext = FacesContext.getCurrentInstance();;
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valor pago não corresponde valor a pagar", ""));
+			return "/Atendimento/Cobranca/ContasPagasConsultar.xhtml";
+		}
 
 		this.contasPagar.remove(this.objetoContasPagar);
 

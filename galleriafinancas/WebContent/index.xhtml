@@ -104,7 +104,7 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
-								<p:menuitem value="Leads"
+									<p:menuitem value="Leads"
 										action="/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
@@ -173,7 +173,7 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-									<p:menuitem value="05.5 - Ag. Validação DOCs"
+									<p:menuitem value="05.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Documentos Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />	

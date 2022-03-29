@@ -42,6 +42,12 @@
 									action="#{relatorioSemestralMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
+							
+							<p:submenu label="Analise" styleClass="titulosMenu">
+								<p:menuitem value="Tempo de Analise"
+									action="#{tempoAnaliseMB.clearTempoAnalise}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+							</p:submenu>
 						</shiro:hasAnyRoles>
 						
 					</p:menu>

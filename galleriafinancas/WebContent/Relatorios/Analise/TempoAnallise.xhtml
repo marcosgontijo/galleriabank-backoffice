@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="TempoAnalise" header="Relatorio Tempo de Analise"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio" showOn="button"
+						value="#{tempoAnaliseMB.dataInicio}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+
+					<p:outputLabel for="dataFinal" value="Data Final: "
+						styleClass="labelBold" />
+					<p:calendar id="dataFinal" showOn="button"
+						value="#{tempoAnaliseMB.dataFim}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+
+					<p:commandButton id="consultarBoletos" value="Consultar "
+						image="ui-icon ui-icon-circle-zoomin"
+						action="#{tempoAnaliseMB.consultarAnalise}" 
+						update="ConsultaTempoAnalise" />
+
+				</h:panelGrid>
+
+				<p:panel id="ConsultaTempoAnalise"
+					header="Resultados" style="margin-bottom:10px;">
+					<f:facet name="header"> Resultados
+						<p:outputLabel value="" />
+						<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"  ajax="false"/>
+					</f:facet>
+					<p:dataTable id="dtAnalistas" var="analise"
+						value="#{tempoAnaliseMB.analises}" emptyMessage="">
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Nº Contrato"
+							filterBy="#{analise.nome}"
+							filterMatchMode="contains"
+							sortBy="#{analise.nome}">
+							<h:outputText value="#{analise.nome}" />
+						</p:column>
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Qt de Analises"
+							filterBy="#{analise.qtdAnalises}" filterMatchMode="contains"
+							sortBy="#{analise.qtdAnalises}">
+							<h:outputText value="#{analise.qtdAnalises}" />
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Tempo medio de analise"
+							filterBy="#{analise.tempoMedio}" filterMatchMode="contains"
+							sortBy="#{analise.tempoMedio}">
+							<h:outputText value="#{analise.tempoMedio}" />
+						</p:column>
+						
+						
+						
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Ver contratos">
+							<p:commandLink onclick="PF('listaContratos').show()"
+								style="margin-bottom:50px;margin-left:20px;"
+								id="verContratos" update="contratosForm">
+								<f:setPropertyActionListener
+									target="#{tempoAnaliseMB.contratosConsulta}"
+									value="#{analise.contratos}" />
+								<h:outputText
+									value="Ver Contratos"/>
+							</p:commandLink>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Lista de contratos" overflow="auto"
+			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{tempoAnaliseMB.contratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{contratos.contrato.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.contrato.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{contratos.contrato.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.contrato.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="#{contratos.tempoDeAnalise}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
