@@ -330,6 +330,40 @@ public class CcbMB {
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
 	
+	public void enviarMoneyPlus() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		BmpDigitalCCBMB bmpMB = new BmpDigitalCCBMB();	
+		boolean validacao = true;
+		
+		/**
+		 * TRATA EMITENTE
+		 */
+		PagadorRecebedor eminenteDTO = null;
+		for (CcbVO pessoa : this.listaParticipantes) {
+			if (pessoa.getTipoParticipante().equals("EMITENTE")) {
+				eminenteDTO = pessoa.getPessoa();
+			}
+		}
+		if (eminenteDTO != null) {
+			// se não existe pessoa na money plus, cria!
+			if (eminenteDTO.getCodigoMoneyPlus() == null || eminenteDTO.getCodigoMoneyPlus().equals("")) {
+				bmpMB.enviaPessoa(eminenteDTO, this.nacionalidadeEmitente);	
+			}			
+		} else {	
+			validacao = false;
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[MoneyPlus] Envia Pessoa - Emitente não encontrado", ""));
+		}
+		
+		/**
+		 * TRATA AVALISTA
+		 */
+		if (validacao) {
+			
+		}
+	}
+	
 	public void clearDocumentosNovos() {
 		fiducianteGerado = false;
 		devedorGerado = false;

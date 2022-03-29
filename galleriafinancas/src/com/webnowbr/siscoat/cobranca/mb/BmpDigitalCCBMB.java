@@ -195,7 +195,7 @@ public class BmpDigitalCCBMB {
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONPessoaDTO(PagadorRecebedor pessoa) {
+	public JSONObject getJSONPessoaDTO(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
 		JSONObject jsonPessoa = new JSONObject();
 		jsonPessoa.put("auth", getJSONAuth());
 		
@@ -215,6 +215,14 @@ public class BmpDigitalCCBMB {
 			pessoaPFDTO.put("Apelido", pessoa.getNome());
 			pessoaPFDTO.put("Sexo", pessoa.getSexo());
 			pessoaPFDTO.put("EstadoCivil ", pessoa.getEstadocivil());
+			
+			pessoaPFDTO.put("Nacionalidade", nacionalidadeEmitente);
+			pessoaPFDTO.put("EstadoCivil", pessoa.getEstadocivil());
+			pessoaPFDTO.put("RG", pessoa.getRg());
+			pessoaPFDTO.put("NomePai", pessoa.getNomePai());
+			pessoaPFDTO.put("NomeMae", pessoa.getNomeMae());
+			pessoaPFDTO.put("NomeConjuge", pessoa.getNomeConjuge());
+			pessoaPFDTO.put("CPFConjuge", pessoa.getCpfConjuge());
 			
 			jsonDTOPessoa.put("DocumentoFederal", pessoa.getCpf()); 
 			
@@ -291,7 +299,7 @@ public class BmpDigitalCCBMB {
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante) {
+	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante, BigDecimal valorCredito) {
 
 		JSONObject jsonEnvioProposta = new JSONObject();		
 		
@@ -326,33 +334,35 @@ public class BmpDigitalCCBMB {
 			jsonDTOEnvioProposta.put("DocumentoParceiroCorrespondente", fiduciante.getCnpj());
 		}	
 		
+		//TODO
+		
 		jsonDTOEnvioProposta.put("CodigoOperacao", "");
-		jsonDTOEnvioProposta.put("VlrSolicitado", 0);
-		jsonDTOEnvioProposta.put("Prazo", 0);
-		jsonDTOEnvioProposta.put("PercJurosNegociado", 0);
-		jsonDTOEnvioProposta.put("VlrIOF", 0);
-		jsonDTOEnvioProposta.put("PercIOF", 0);
-		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
-		jsonDTOEnvioProposta.put("VlrParcela", 0);
-		jsonDTOEnvioProposta.put("VlrTAC", 0);
-		jsonDTOEnvioProposta.put("DtPrimeiroVencto", gerarDataHoje());
-		jsonDTOEnvioProposta.put("VlrSeguro", 0);
-		jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
-		jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
-		jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
-		jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
+		jsonDTOEnvioProposta.put("VlrSolicitado", valorCredito);
+		jsonDTOEnvioProposta.put("Prazo", numeroParcelasPagamento);
+		jsonDTOEnvioProposta.put("PercJurosNegociado", taxaDeJurosMes);
+		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);
+		//jsonDTOEnvioProposta.put("PercIOF", 0);
+		//jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
+		//jsonDTOEnvioProposta.put("VlrParcela", 0);
+		//jsonDTOEnvioProposta.put("VlrTAC", 0);
+		//jsonDTOEnvioProposta.put("DtPrimeiroVencto", vencimentoPrimeiraParcelaPagamento);
+		//jsonDTOEnvioProposta.put("VlrSeguro", 0);
+		//jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
+		//jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
+		///jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
+		//jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
 
 		
 		JSONObject jsonContaPagamentoDTO = new JSONObject();
-		jsonContaPagamentoDTO.put("CodigoBanco", 0);
+		jsonContaPagamentoDTO.put("CodigoBanco", numeroBanco);
 		jsonContaPagamentoDTO.put("TipoConta", 0);
-		jsonContaPagamentoDTO.put("Agencia", "");
-		jsonContaPagamentoDTO.put("AgenciaDig", "");
-		jsonContaPagamentoDTO.put("Conta", "");
-		jsonContaPagamentoDTO.put("ContaDig", "");
-		jsonContaPagamentoDTO.put("NumeroBanco", "");
-		jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
-		jsonContaPagamentoDTO.put("NomePagamento", "");
+		jsonContaPagamentoDTO.put("Agencia", agencia);
+		//jsonContaPagamentoDTO.put("AgenciaDig", "");
+		jsonContaPagamentoDTO.put("Conta", contaCorrente);
+		//jsonContaPagamentoDTO.put("ContaDig", "");
+		jsonContaPagamentoDTO.put("NumeroBanco", numeroBanco);
+		//jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
+		//jsonContaPagamentoDTO.put("NomePagamento", "");
 		
 		jsonDTOEnvioProposta.put("PropostaContaPagamentoDTO", jsonContaPagamentoDTO);
 		
@@ -364,7 +374,7 @@ public class BmpDigitalCCBMB {
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONPropostaIncluirAvalista(PagadorRecebedor avalista) {
+	public JSONObject getJSONPropostaIncluirAvalista(PagadorRecebedor avalista, String nacionalidadeAvalista) {
 
 		JSONObject jsonIncluiAvalista = new JSONObject();	
 		
@@ -388,6 +398,14 @@ public class BmpDigitalCCBMB {
 			pessoaPFDTO.put("Apelido", avalista.getNome());
 			pessoaPFDTO.put("Sexo", avalista.getSexo());
 			pessoaPFDTO.put("EstadoCivil ", avalista.getEstadocivil());
+			
+			pessoaPFDTO.put("Nacionalidade ", nacionalidadeAvalista);
+			pessoaPFDTO.put("EstadoCivil ", avalista.getEstadocivil());
+			pessoaPFDTO.put("RG ", avalista.getRg());
+			pessoaPFDTO.put("NomePai ", avalista.getNomePai());
+			pessoaPFDTO.put("NomeMae ", avalista.getNomeMae());
+			pessoaPFDTO.put("NomeConjuge ", avalista.getNomeConjuge());
+			pessoaPFDTO.put("CPFConjuge ", avalista.getCpfConjuge());
 			
 			jsonDTOPessoa.put("DocumentoFederal", avalista.getCpf()); 
 			
@@ -717,6 +735,108 @@ public class BmpDigitalCCBMB {
 		*/
 		
 		// TODO integra CCB
+	}
+	
+	public void enviaPessoa(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
+		try {		
+			System.out.println("[MoneyPlus] Envia Pessoa");
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoaEndereco");
+
+			JSONObject jsonObj = getJSONPessoaDTO(pessoa, nacionalidadeEmitente);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String erro = "";
+			
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				System.out.println("[MoneyPlus] Envia Pessoa - Erro ao enviar");
+			} else {	
+				
+				JSONObject myResponse = null;
+				myResponse = getJSONSucesso(myURLConnection.getInputStream());
+				
+				if (myResponse.has("Result")) {					
+					if (myResponse.getBoolean("Result")) {
+						System.out.println("[MoneyPlus] Envia Pessoa - Sucesso ao enviar pessoa");
+						
+						String codigoRetorno = "";
+						if (myResponse.has("Codigo")) {
+							codigoRetorno = myResponse.getString("Codigo");
+							
+							PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+							PagadorRecebedor p = new PagadorRecebedor();
+							
+							p.setCodigoMoneyPlus(codigoRetorno);
+							
+							pDao.merge(p);
+						}
+						
+						System.out.println("[MoneyPlus] Envia Pessoa - Pessoa atualizada no PagadorRecebedor");
+					} else {
+						System.out.println("[MoneyPlus] Envia Pessoa - Erro ao enviar - Msg: " + myResponse.getString("Msg"));
+					}
+				} 
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/***
+	 * 
+	 * PARSE DO RETORNO SUCESSO
+	 * 
+	 * @param inputStream
+	 * @return
+	 */
+	public JSONObject getJSONSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	// retorna o IP da máquina virtual

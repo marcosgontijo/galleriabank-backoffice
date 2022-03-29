@@ -1961,6 +1961,10 @@
 					<p:spacer height="10" />
 					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsEmitirCcb}"
 						icon="ui-icon ui-icon-cancel" value="Limpar Campos"  update=":form"/>
+					
+					<p:spacer height="10" />
+					<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
+						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />
 				</p:panel>
 			</shiro:hasAnyRoles>
 		</h:form>

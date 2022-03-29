@@ -16,6 +16,19 @@
 				<p:focus />
 				<p:messages />
 				<h:panelGrid columns="2">
+					<p:outputLabel value="Total Face: "
+						styleClass="labelBold" />
+					<h:outputText
+						value="#{brlTrustMB.valorTotalFaceCessao}"
+						styleClass="labelBold" converter="bigDecimalConverter" />
+					<p:outputLabel value="Total Aquisição:  "
+						styleClass="labelBold" />
+					<h:outputText
+						value="#{brlTrustMB.valorTotalAquisicaoCessao}"
+						styleClass="labelBold" converter="bigDecimalConverter" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
 					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
 						draggable="false" closable="false" resizable="false">
 						<p:graphicImage name="image/ajaxloadingbar.gif" />

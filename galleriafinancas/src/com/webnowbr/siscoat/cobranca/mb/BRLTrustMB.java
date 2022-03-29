@@ -63,6 +63,9 @@ public class BRLTrustMB {
 	private boolean usaTaxaJurosDiferenciada;
 	private BigDecimal txJurosCessao;
 	
+	private BigDecimal valorTotalFaceCessao;
+	private BigDecimal valorTotalAquisicaoCessao;
+	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
 
@@ -76,6 +79,9 @@ public class BRLTrustMB {
 		this.txJurosCessao = BigDecimal.ZERO;
 		
 		this.jsonGerado = false;
+		
+		this.valorTotalFaceCessao = BigDecimal.ZERO;
+		this.valorTotalAquisicaoCessao = BigDecimal.ZERO;
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJson.xhtml";
 	}
@@ -328,6 +334,9 @@ public class BRLTrustMB {
 		 * FIM - CALCULA MESES CARENCIA
 		 */
 		
+		this.valorTotalFaceCessao = BigDecimal.ZERO;
+		this.valorTotalAquisicaoCessao = BigDecimal.ZERO;
+		
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) { 
 			countParcelas = countParcelas + 1;
 			if (countParcelas > countCarencia) {
@@ -393,14 +402,25 @@ public class BRLTrustMB {
 					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 					JSONObject jsonValores = new JSONObject();
 					
-					jsonValores.put("face", parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+					BigDecimal valorTotalFaceCessaoCalc = BigDecimal.ZERO;
+					
+					valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
+					
+					this.valorTotalFaceCessao = this.valorTotalFaceCessao.add(valorTotalFaceCessaoCalc);
+					jsonValores.put("face", valorTotalFaceCessaoCalc);
+					
+					BigDecimal valorTotalAquisicaoCessaoCalc = BigDecimal.ZERO;
 					
 					if (this.usaTaxaJurosDiferenciada) {
-						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao));
+						valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao);
+						jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
 					} else {
-						jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao));
+						valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao);
+						jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
 					}					
 
+					this.valorTotalAquisicaoCessao = this.valorTotalAquisicaoCessao.add(valorTotalAquisicaoCessaoCalc);
+					
 					jsonRecebivel.put("valores", jsonValores);
 					
 					JSONObject jsonDados = new JSONObject();
@@ -1026,5 +1046,21 @@ public class BRLTrustMB {
 
 	public void setTxJurosCessao(BigDecimal txJurosCessao) {
 		this.txJurosCessao = txJurosCessao;
+	}
+
+	public BigDecimal getValorTotalFaceCessao() {
+		return valorTotalFaceCessao;
+	}
+
+	public void setValorTotalFaceCessao(BigDecimal valorTotalFaceCessao) {
+		this.valorTotalFaceCessao = valorTotalFaceCessao;
+	}
+
+	public BigDecimal getValorTotalAquisicaoCessao() {
+		return valorTotalAquisicaoCessao;
+	}
+
+	public void setValorTotalAquisicaoCessao(BigDecimal valorTotalAquisicaoCessao) {
+		this.valorTotalAquisicaoCessao = valorTotalAquisicaoCessao;
 	}
 }
