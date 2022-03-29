@@ -2219,13 +2219,26 @@
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="dataCompra"
-							value="Data da compra do Imóvel " />							
-						<p:inputMask id="dataCompra"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
-							mask="99/99/9999" label="Data de Nascimento">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:inputMask>
-
+							value="Data da compra do Imóvel " />		
+						<h:panelGroup>
+							<p:inputMask id="dataCompra"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idadeCompra"
+									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+							<p:spacer width="10px"/>
+							<p:outputLabel for="idadeCompra" value="Idade da Compra:  " />
+							<p:inputText id="idadeCompra" value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}"  />
+						</h:panelGroup>	
+						
+						<p:outputLabel for="nomeProprietario"
+							value="Nome do Proprietario: " />
+						<p:inputText id="nomeProprietario"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
+							style="width:400px;"/>
+						
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />
 						<p:selectOneMenu id="Ocupacao"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.ocupacao}"

@@ -50,6 +50,7 @@ public class LoginBean {
     private String newPassword;
     private boolean renderMenu = false; 
     private int numeroContratosComite;
+    private int numeroContratosDocumentosComite;
 
     public LoginBean() {
     }
@@ -96,6 +97,7 @@ public class LoginBean {
         
         ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
         numeroContratosComite = contratoCobrancaDao.getQuantidadeContratosComite();
+        numeroContratosDocumentosComite = contratoCobrancaDao.getQuantidadeContratosDocumentosComite();
         
         // let's login the current user so we can check against roles and
         // permissions:
@@ -287,4 +289,14 @@ public class LoginBean {
  	public void setNumeroContratosComite(int numeroContratosComite) {
  		this.numeroContratosComite = numeroContratosComite;
  	}
+
+	public int getNumeroContratosDocumentosComite() {
+		return numeroContratosDocumentosComite;
+	}
+
+	public void setNumeroContratosDocumentosComite(int numeroContratosDocumentosComite) {
+		this.numeroContratosDocumentosComite = numeroContratosDocumentosComite;
+	}
+ 	
+ 	
 }

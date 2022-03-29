@@ -173,7 +173,7 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-									<p:menuitem value="05.5 - Ag. Validação DOCs"
+									<p:menuitem value="05.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Documentos Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />	
