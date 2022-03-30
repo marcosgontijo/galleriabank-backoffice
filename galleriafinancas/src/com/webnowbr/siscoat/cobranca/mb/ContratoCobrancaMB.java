@@ -2924,6 +2924,15 @@ public class ContratoCobrancaMB {
 				"contrato_pronto_para_assinatura_operacao",
 				this.objetoContratoCobranca.getPagador().getNome(),
 				this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				
+				// envia para o gerente do responsável
+				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+					"contrato_pronto_para_assinatura_operacao",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
 			}
 		}
 	
@@ -2936,6 +2945,15 @@ public class ContratoCobrancaMB {
 					"contrato_dado_entrada_cartorio",
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					
+					// envia para o gerente do responsável
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"contrato_dado_entrada_cartorio",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					}
 				}				
 			}
 		}
@@ -2949,6 +2967,15 @@ public class ContratoCobrancaMB {
 				"contrato_recebido_laudo_paju",
 				this.objetoContratoCobranca.getPagador().getNome(),
 				this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				
+				// envia para o gerente do responsável
+				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+					"contrato_recebido_laudo_paju",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
 			}
 		}
 		
@@ -2998,11 +3025,23 @@ public class ContratoCobrancaMB {
 					// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-							"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
+							"contrato_pre_aprovado", 
+							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 					// }
+					
+					// envia para o gerente do responsável
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"contrato_pre_aprovado", 
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(),
+						this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+						this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+					}
 				}
 			}
 		}
