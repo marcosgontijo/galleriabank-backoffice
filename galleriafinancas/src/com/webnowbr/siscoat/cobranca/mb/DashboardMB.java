@@ -471,7 +471,15 @@ public class DashboardMB {
 							qualidadeLead = "Lead Reprovado";
 						}
 						
-						if (contrato.isAprovadoComite()) {
+						if(contrato.isPagtoLaudoConfirmada()) {
+							qualidadeLead = "Pediu laudo e paju";
+						}
+						
+						if(contrato.isAprovadoComite()) {
+							qualidadeLead = "Aprovado pelo comitê";
+						}
+						
+						if (!contrato.isAgAssinatura()) {
 							qualidadeLead = "Lead Convertido";
 						}
 					}

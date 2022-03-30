@@ -628,6 +628,9 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
 						style="border: none" header="Analise Reprovada">
 						<h:panelGrid columns="2">
+							<p:outputLabel for="motivoReprovaSelectItem"  value="Motivo Reprovação: " styleClass="labelBold" />
+							<p:outputLabel id="motivoReprovaSelectItem" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaSelectItem}" label="Tipo" style="width:250px;"/>
+						
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
 								styleClass="labelBold" />
 							<p:outputLabel id="motivo" rows="10" cols="48" maxlength="3000"
