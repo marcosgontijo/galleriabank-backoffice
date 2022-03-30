@@ -5475,8 +5475,12 @@ public class ContratoCobrancaMB {
 		this.numeroParcelaQuitar = 0;
 		this.dataQuitacao = auxDataHoje;
 		this.dataCalculoQuitacao = auxDataHoje;
-		this.valorPresenteTotal = BigDecimal.ZERO;
 		
+		simularQuitacaoContrato();
+	}
+	
+	public void simularQuitacaoContrato() {
+		this.valorPresenteTotal = BigDecimal.ZERO;
 		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
 		
 		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {

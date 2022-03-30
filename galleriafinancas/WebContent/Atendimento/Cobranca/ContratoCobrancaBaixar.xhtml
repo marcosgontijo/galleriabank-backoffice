@@ -2854,8 +2854,10 @@
 					<p:outputLabel for="dataCalculoQuitar" value="Data do Calculo: " />
 					<p:calendar id="dataCalculoQuitar" showOn="button"
 						value="#{contratoCobrancaMB.dataCalculoQuitacao}" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
-
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
+                		<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
+                			update="@form" />
+					</p:calendar>
 
 					<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
 					<p:commandButton id="quitarContrato" value="Quitar Contrato"
