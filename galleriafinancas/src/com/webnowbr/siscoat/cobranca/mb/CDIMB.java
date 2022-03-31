@@ -90,6 +90,24 @@ public class CDIMB {
 		return calendar.getTime();
 	}
 	
+	public Date getDataCom2MesesAnterior(Date dataOriginal) {
+		Date dataRetorno = new Date();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar calendar = Calendar.getInstance(zone, locale);	
+		
+		calendar.setTime(dataOriginal);
+		calendar.add(Calendar.MONTH, -2);		
+		calendar.set(Calendar.DAY_OF_MONTH, 14);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		
+		return calendar.getTime();
+	}
+	
 	public Date getDataComAcrescimoDeMes(Date dataOriginal) {
 		Date dataRetorno = new Date();
 		

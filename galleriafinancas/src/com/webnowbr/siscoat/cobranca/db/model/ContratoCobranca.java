@@ -477,6 +477,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataPrevistaVistoria;
 	private String motivoReprovacaoAnalise;
+	private String motivoReprovaSelectItem;
 	private String motivoPendenteAnalise;
 	private String comentarioPendencia;
 	
@@ -4601,5 +4602,13 @@ public class ContratoCobranca implements Serializable {
 	
 	public void setStatusPropostaMoneyPlus(String statusPropostaMoneyPlus) {
 		this.statusPropostaMoneyPlus = statusPropostaMoneyPlus;
+	}
+
+	public String getMotivoReprovaSelectItem() {
+		return motivoReprovaSelectItem;
+	}
+
+	public void setMotivoReprovaSelectItem(String motivoReprovaSelectItem) {
+		this.motivoReprovaSelectItem = motivoReprovaSelectItem;
 	}	
 }

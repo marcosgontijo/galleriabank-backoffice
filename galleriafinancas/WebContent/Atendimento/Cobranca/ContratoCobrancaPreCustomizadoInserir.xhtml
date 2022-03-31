@@ -486,6 +486,17 @@
 					style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
 					<p:panel id="AnaliseReprovadaPanel" style="border: none">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
+							<p:outputLabel for="motivoReprovaSelectItem"  value="Motivo Reprovação: " styleClass="labelBold" />
+							<p:selectOneMenu id="motivoReprovaSelectItem" required="true" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaSelectItem}" label="Tipo" style="width:250px;">
+								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItem itemLabel="Imóvel Reprovado" itemValue="Imóvel Reprovado" />
+					            <f:selectItem itemLabel="Cidade não atendida" itemValue="Cidade não atendida" />
+					            <f:selectItem itemLabel="Fora da política de crédito" itemValue="Fora da política de crédito" />
+					            <f:selectItem itemLabel="Problema na matrícula" itemValue="Problema na matrícula" />
+					            <f:selectItem itemLabel="Cliente com muitas restrições" itemValue="Cliente com muitas restrições" />
+					            <f:selectItem itemLabel="Outro motivo" itemValue="Outro motivo" />
+							</p:selectOneMenu>
+							
 							<p:outputLabel for="motivo" value="Motivo Reprovação Analise: "
 								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"/>
 							<p:inputTextarea id="motivo" rows="10" cols="48"

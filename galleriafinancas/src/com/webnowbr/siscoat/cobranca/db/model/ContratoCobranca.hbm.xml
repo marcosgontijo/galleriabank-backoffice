@@ -1505,5 +1505,9 @@
 			<column name="observacaoParaComite" />
 		</property>
 		
+		<property name="motivoReprovaSelectItem" type="java.lang.String">
+			<column name="motivoReprovaSelectItem" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
