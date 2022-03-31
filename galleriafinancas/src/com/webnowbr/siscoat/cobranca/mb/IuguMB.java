@@ -960,20 +960,21 @@ public class IuguMB {
 		} else {
 			endereco = this.selectedRecebedor.getEndereco();
 		}
+		
+		String emailFalso = "cobrancaiugu@galleriabank.com.br";
 
-		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
-		+ "\",\"number\":\"" + 000 + "\"}}";
-
-
+		+ "\",\"number\":\"" + 000 + "\"}}";		
+		
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
-		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
+		jsonFavorecido = "{\\\"email\\\":\\\"" + emailFalso + "\\\",\\\"due_date\\\":\\\"" + 
 				dataVencimento.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + "}";
 
-		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
+		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
 				dataVencimento.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
@@ -4986,10 +4987,9 @@ public class IuguMB {
 			endereco = this.selectedRecebedor.getEndereco();
 		}
 
-	
+		String emailFalso = "cobrancaiugu@galleriabank.com.br";
 		            		
-		            		
-		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
 		+ "\",\"number\":\"" + 000 + "\"}}";
@@ -4998,10 +4998,10 @@ public class IuguMB {
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
-		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
+		jsonFavorecido = "{\\\"email\\\":\\\"" + emailFalso + "\\\",\\\"due_date\\\":\\\"" + 
 				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
 
-		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
+		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
 				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
@@ -5155,8 +5155,10 @@ public class IuguMB {
 		} else {
 			endereco = this.selectedRecebedor.getEndereco();
 		}       		
+		
+		String emailFalso = "cobrancaiugu@galleriabank.com.br";
 		            		
-		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + this.selectedRecebedor.getEmail()
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
 		+ "\",\"number\":\"" + 000 + "\"}}";
@@ -5165,10 +5167,10 @@ public class IuguMB {
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
-		jsonFavorecido = "{\\\"email\\\":\\\"" + this.selectedRecebedor.getEmail() + "\\\",\\\"due_date\\\":\\\"" + 
+		jsonFavorecido = "{\\\"email\\\":\\\"" + emailFalso + "\\\",\\\"due_date\\\":\\\"" + 
 				dataHoje.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
 
-		jsonFavorecido = "{\"email\":\"" + this.selectedRecebedor.getEmail() + "\", \"due_date\":\"" + 
+		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
 				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;

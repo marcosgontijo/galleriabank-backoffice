@@ -27,6 +27,9 @@ public class RelatorioFinanceiroCobranca {
 	public Date dataUltimoPagamento;
 	private BigDecimal vlrTotalPago;
 	
+	public String ccb;
+	public String ccbParcela;
+	
 	private BigDecimal valorCCB;
 	
 	private boolean cartorio = false;
@@ -100,6 +103,26 @@ public class RelatorioFinanceiroCobranca {
 	}
 	
 	public RelatorioFinanceiroCobranca(String numeroContrato, Date dataContrato, String nomeResponsavel, String nomePagador, String nomeRecebedor, String parcela,
+			Date dataVencimento, BigDecimal valor, ContratoCobranca contratoCobranca, BigDecimal valorRetencao, BigDecimal valorComissao, boolean parcelaPaga, Date dataVencimentoAtual, long idParcela, BigDecimal vlrRepasse, String ccb) {
+		this.numeroContrato = numeroContrato;
+		this.dataContrato = dataContrato;
+		this.nomeResponsavel = nomeResponsavel;
+		this.nomePagador = nomePagador;
+		this.nomeRecebedor = nomeRecebedor;
+		this.parcela = parcela;
+		this.dataVencimento = dataVencimento;
+		this.valor = valor;
+		this.contratoCobranca = contratoCobranca;
+		this.valorRetencao = valorRetencao;
+		this.valorComissao = valorComissao;
+		this.parcelaPaga = parcelaPaga;
+		this.dataVencimentoAtual = dataVencimentoAtual;
+		this.idParcela = idParcela;
+		this.vlrRepasse = vlrRepasse;
+		this.ccb = ccb;	
+		}
+	
+	public RelatorioFinanceiroCobranca(String numeroContrato, Date dataContrato, String nomeResponsavel, String nomePagador, String nomeRecebedor, String parcela,
 			Date dataVencimento, BigDecimal valor, ContratoCobranca contratoCobranca, BigDecimal valorRetencao, BigDecimal valorComissao, boolean parcelaPaga, Date dataVencimentoAtual, long idParcela, BigDecimal vlrRepasse) {
 		this.numeroContrato = numeroContrato;
 		this.dataContrato = dataContrato;
@@ -115,7 +138,7 @@ public class RelatorioFinanceiroCobranca {
 		this.parcelaPaga = parcelaPaga;
 		this.dataVencimentoAtual = dataVencimentoAtual;
 		this.idParcela = idParcela;
-		this.vlrRepasse = vlrRepasse;	
+		this.vlrRepasse = vlrRepasse;
 		}
 	
 	public RelatorioFinanceiroCobranca(String numeroContrato, Date dataContrato, String nomeResponsavel, String nomePagador, String nomeRecebedor, String parcela,
@@ -799,5 +822,21 @@ public class RelatorioFinanceiroCobranca {
 
 	public void setParcelaCCB(String parcelaCCB) {
 		this.parcelaCCB = parcelaCCB;
+	}
+
+	public String getCcb() {
+		return ccb;
+	}
+
+	public void setCcb(String ccb) {
+		this.ccb = ccb;
+	}
+
+	public String getCcbParcela() {
+		return ccbParcela;
+	}
+
+	public void setCcbParcela(String ccbParcela) {
+		this.ccbParcela = ccbParcela;
 	}
 }

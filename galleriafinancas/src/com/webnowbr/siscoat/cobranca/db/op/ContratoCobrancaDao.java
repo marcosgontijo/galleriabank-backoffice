@@ -2778,7 +2778,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 									int totalParcela = contratoCobranca.getQtdeParcelas() + 1;
 									parcela = rs.getString(2) + " de " + totalParcela;
 								} else {
-									parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas();
+									parcela = rs.getString(2) + " de " + contratoCobranca.getQtdeParcelas(); 
 								}
 								
 								if (rs.getBoolean(7)) {
@@ -2787,9 +2787,22 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 									parcelaPagaStr = "Liq. Parcial";
 								}
 								
-								relatorioFinanceiroCobrancaTmp = new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
-										contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), contratoCobranca.getVlrParcela(), rs.getBigDecimal(4).subtract(contratoCobranca.getVlrParcela()), parcelaPagaStr);
-								
+								if (contratoCobranca.getRecebedor() != null && contratoCobranca.getVlrParcela() != null) {
+									relatorioFinanceiroCobrancaTmp = new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+											contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), contratoCobranca.getVlrParcela(), rs.getBigDecimal(4).subtract(contratoCobranca.getVlrParcela()), parcelaPagaStr);
+								} else {
+									if (contratoCobranca.getVlrParcela() != null) {
+										relatorioFinanceiroCobrancaTmp = new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+												contratoCobranca.getPagador().getNome(), "", parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), contratoCobranca.getVlrParcela(), rs.getBigDecimal(4).subtract(contratoCobranca.getVlrParcela()), parcelaPagaStr);
+									} else if (contratoCobranca.getRecebedor() != null)  {
+										relatorioFinanceiroCobrancaTmp = new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+												contratoCobranca.getPagador().getNome(), contratoCobranca.getRecebedor().getNome(), parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), BigDecimal.ZERO, rs.getBigDecimal(4), parcelaPagaStr);
+									} else {
+										relatorioFinanceiroCobrancaTmp = new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), contratoCobranca.getResponsavel().getNome(),
+												contratoCobranca.getPagador().getNome(), "", parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9), BigDecimal.ZERO, rs.getBigDecimal(4), parcelaPagaStr);
+									}
+									
+								}
 								if (rs.isLast()) {
 									if (relatorioFinanceiroCobrancaTmp.getAcrescimo().compareTo(BigDecimal.ZERO) == -1) {
 										relatorioFinanceiroCobrancaTmp.setAcrescimo(BigDecimal.ZERO);
@@ -3517,6 +3530,78 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_FIDC = "select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse, "
+			+ " cc.numeroContratoSeguro "
+			+ "from cobranca.contratocobrancadetalhes cd "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+			+ "where cc.status = 'Aprovado' "
+			+ "and cd.parcelapaga = false "
+			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
+			+ "and cc.empresa = 'FIDC GALLERIA' "
+			+ "and cd.datavencimentoatual < ? ::timestamp "
+			+ " order by cd.dataVencimentoatual desc ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFullFIDC(final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;	
+			
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_FIDC;
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+					
+					ps.setDate(1, dtRelFimSQL);	
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					boolean exiteParcela = false;
+					
+					while (rs.next()) {
+						exiteParcela = false;
+						
+						contratoCobranca = findById(rs.getLong(1));
+						
+						String parcela = rs.getString(2);
+						if (parcela.length() == 1) {
+							parcela = "00" + parcela;
+						} else if (parcela.length() == 2) {
+							parcela = "0" + parcela;
+						} else {
+							parcela = parcela;
+						}
+					
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+							
+							
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10), rs.getString(11)));																	
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
 	
 	private static final String QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL = "select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse "
 			+ "from cobranca.contratocobrancadetalhes cd "

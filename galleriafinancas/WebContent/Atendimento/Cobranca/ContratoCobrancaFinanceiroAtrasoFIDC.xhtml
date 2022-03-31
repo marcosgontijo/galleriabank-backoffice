@@ -59,19 +59,6 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-			draggable="false" closable="false" resizable="false">
-			<p:graphicImage name="image/ajaxloadingbar.gif" />
-			</p:dialog>
-			<script type="text/javascript">
-				function start() {
-					PF('statusDialog').show();
-				}
-	
-				function stop() {
-					PF('statusDialog').hide();
-				}
-			</script>
 			<p:panel id="ConsultaFinanceiro" header="Financeiro Atraso - Consultar"
 				style="margin-bottom:10px;">		
 				<h:panelGrid columns="1">
@@ -79,22 +66,9 @@
 						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado. "
 						styleClass="labelBold" style="margin-right: 59px;color: red" />
 				</h:panelGrid>
-				<h:panelGrid columns="2">
-					<p:outputLabel for="dataInicio" value="Data Inicio: "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataInicio"
-						value="#{contratoCobrancaMB.relDataContratoInicioAtraso}"
-						required="true" label="Data Inicio" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
-					<p:outputLabel for="dataFim" value="Data Fim "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataFim"
-						value="#{contratoCobrancaMB.relDataContratoFimAtraso}" required="true"
-						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField"/>
-						
+				<h:panelGrid columns="2">						
 					<p:commandButton value="Consultar"
-						action="#{contratoCobrancaMB.geraRelFinanceiroAtraso}"
+						action="#{contratoCobrancaMB.geraRelFinanceiroAtrasoFIDC}"
 						image="ui-icon ui-icon-check"
 						update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
 						 onclick="start();" oncomplete="stop();"
@@ -109,32 +83,15 @@
 					selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}"
 					emptyMessage="" sortBy="#{contratos.dataVencimentoAtual}" sortOrder="descending">
 					<f:facet name="header">
-						<p:commandButton value="Gerar PDF" ajax="false"
-							icon="ui-icon-print"
-							action="#{contratoCobrancaMB.geraPDFFinanceiroAtraso}"
-							update="PanelPDF"
-							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtraso}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoFIDC}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
-							
-						<p:commandButton value="Gerar docx" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.writeXWPFileBaixado}"
-							update="PanelPDF PanelXLS" />
-							
 					</f:facet>
 					<p:column style="text-align: center;width: 65px;"
 						headerText="Contrato" filterBy="#{contratos.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 						<h:outputText value="#{contratos.numeroContrato}" />
-					</p:column>
-					<p:column style="text-align: center;width: 100px;"
-						headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
-						<h:outputText value="#{contratos.dataContrato}">
-							<f:convertDateTime locale="pt_BR" />
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Responsável" filterBy="#{contratos.nomeResponsavel}"
@@ -150,8 +107,12 @@
 						<h:outputText value="#{contratos.contratoCobranca.pagador.nome}" />
 					</p:column>
 					<p:column style="text-align: center;width: 50px;"
-						headerText="Parcela" styleClass="colunaHiddenRelFinanceiro">
-						<h:outputText value="#{contratos.parcela}" />
+						headerText="CCB" styleClass="colunaHiddenRelFinanceiro" >
+						<h:outputText value="#{contratos.ccb}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="CCB/Parcela" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{contratos.ccb}-#{contratos.parcela}" />
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Vencimento Original"
@@ -162,38 +123,11 @@
 						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
-						headerText="Vencimento Atualizado"
-						sortBy="#{contratos.dataVencimentoAtual}"
-						styleClass="colunaHiddenRelFinanceiro">
-						<h:outputText value="#{contratos.dataVencimentoAtual}">
-							<f:convertDateTime locale="pt_BR" />
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-						</h:outputText>
-					</p:column>
-					<p:column style="text-align: center;width: 100px;"
 						headerText="Valor">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{contratos.valor}"
 							converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;width: 100px;"
-						headerText="Valor Atualizado">
-						<h:outputText value="--"
-							rendered="#{contratos.parcelaPaga or contratos.vlrParcelaAtualizada == null}" />
-						<h:outputText value="R$ "
-							rendered="#{!contratos.parcelaPaga and contratos.vlrParcelaAtualizada != null}" />
-						<h:outputText value="#{contratos.vlrParcelaAtualizada}"
-							converter="bigDecimalConverter" />
-					</p:column>
-					<p:column style="text-align: center;width: 50px;"
-						headerText="Parcelas em Aberto" >
-						<h:outputText value="#{contratos.qtdeAtrasos}" />
-					</p:column>		
-					<p:column style="text-align: center;width: 65px;"
-						headerText="Com Baixas Parciais (# Parcela)">
-						<h:outputText value="#{contratos.qtdeBaixasParciais}" />
-					</p:column>				
-
 					<p:column style="width:90px;" exportable="false">
 						<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}"
 							ajax="false" icon="ui-icon-zoomin" title="Detalhes">
@@ -224,20 +158,14 @@
 					</p:column>
 					
 					<f:facet name="footer">
-						<p:commandButton value="Gerar PDF" ajax="false"
-							icon="ui-icon-print"
-							action="#{contratoCobrancaMB.geraPDFFinanceiroAtraso}"
-							update="PanelPDF"
-							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtraso}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoFIDC}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 					</f:facet>
 				</p:dataTable>
 			</p:panel>
 		</h:form>
-
 		<p:panel id="PanelXLS"
 			header="Impressão em PDF / XLS Gerada com Sucesso"
 			style="margin-bottom:10px;"
