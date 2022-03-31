@@ -61,7 +61,7 @@ public class DemonstrativoResultadoMB {
 			taxaFidc = taxaFidc.divide(BigDecimal.valueOf(12), MathContext.DECIMAL128);
 			CDIDao cdiDao = new CDIDao();
 			CDIMB cdiMB = new CDIMB();
-			BigDecimal cdi = cdiDao.getTaxaCDIMes(cdiMB.getDataComMesAnterior(dataInicio));
+			BigDecimal cdi = cdiDao.getTaxaCDIMes(cdiMB.getDataCom2MesesAnterior(dataInicio));
 			taxaFidc = taxaFidc.add(cdi);
 			taxaFidc = taxaFidc.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 			jurosFidc = jurosFidc.multiply(taxaFidc);

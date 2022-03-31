@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -5343,7 +5344,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
 							}
 							AnaliseComite analiseComite = new AnaliseComite();
-							analiseComite.setUsuarioComite(rs.getString("usuarioComite"));
+							
+							String votoComiteBD = rs.getString("VotoAnaliseComite");
+							String marcadorVoto = "";
+							
+							if(CommonsUtil.mesmoValor(votoComiteBD, "Aprovado")) {
+								marcadorVoto = " ✓";
+							} else if(CommonsUtil.mesmoValor(votoComiteBD, "Reprovado")) {
+								marcadorVoto = " X";
+							} else {
+								marcadorVoto = " -";
+							}
+							
+							analiseComite.setUsuarioComite(rs.getString("usuarioComite") + marcadorVoto);
 							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
 						}
 					}

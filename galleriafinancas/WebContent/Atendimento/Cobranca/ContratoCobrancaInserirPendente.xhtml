@@ -80,6 +80,32 @@
 					<p:panel id="Status" header="Check-List"
 						style="margin-bottom:20px;">
 						<h:panelGrid columns="8" style="margin-top:20px;">
+							<shiro:hasAnyRoles name="ROOT">
+									<h:panelGrid columns="2" style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 2px;">	
+											<p:outputLabel styleClass="labelBold">Lead</p:outputLabel>	
+											<p:selectOneRadio id="lead" value="#{contratoCobrancaMB.objetoContratoCobranca.statusLead}" layout="responsive" columns="1" style="font-weight: bold;" >
+									            <f:selectItem itemLabel="Novo Lead" itemValue="Novo Lead" />
+									            <f:selectItem itemLabel="Em Tratamento" itemValue="Em Tratamento" />
+									            <f:selectItem itemLabel="Completo" itemValue="Completo" />
+									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+									            <p:ajax event="change" update="Status"/>  
+									        </p:selectOneRadio>
+									        <p:outputLabel for="statusLeadTratamento" value="Status " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
+											<p:inputText id="statusLeadTratamento" value="#{contratoCobrancaMB.objetoContratoCobranca.observacaolead}" label="Status Lead em Tratamento" onblur="" style="width:250px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
+											<p:outputLabel for="motivoReprova" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
+											<p:selectOneMenu id="motivoReprova" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaLead}" label="Tipo" style="width:250px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">
+												<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+												<f:selectItem itemLabel="Imóvel Ruim" itemValue="Imóvel Ruim" />
+									            <f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />
+									            <f:selectItem itemLabel="Cliente desistiu" itemValue="Cliente desistiu" />
+									            <f:selectItem itemLabel="Cliente fora do perfil" itemValue="Cliente fora do perfil" />
+									            <f:selectItem itemLabel="Imóvel fora do perfil" itemValue="Imóvel fora do perfil" />
+									            <p:ajax event="change" update="Status"/>  							    
+											</p:selectOneMenu>												    						    
+									</h:panelGrid>								
+								</shiro:hasAnyRoles>
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
