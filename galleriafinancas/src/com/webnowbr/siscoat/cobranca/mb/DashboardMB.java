@@ -469,19 +469,21 @@ public class DashboardMB {
 					if (contrato.getCadastroAprovadoValor() != null) {
 						if (contrato.getCadastroAprovadoValor().equals("Reprovado")){
 							qualidadeLead = "Lead Reprovado";
+						} else {
+							if(contrato.isPagtoLaudoConfirmada()) {
+								qualidadeLead = "Pediu laudo e paju";
+							}
+							
+							if(contrato.isAprovadoComite()) {
+								qualidadeLead = "Aprovado pelo comitê";
+							}
+							
+							if (!contrato.isAgAssinatura()) {
+								qualidadeLead = "Lead Convertido";
+							}
 						}
 						
-						if(contrato.isPagtoLaudoConfirmada()) {
-							qualidadeLead = "Pediu laudo e paju";
-						}
 						
-						if(contrato.isAprovadoComite()) {
-							qualidadeLead = "Aprovado pelo comitê";
-						}
-						
-						if (!contrato.isAgAssinatura()) {
-							qualidadeLead = "Lead Convertido";
-						}
 					}
 				}
 			}
