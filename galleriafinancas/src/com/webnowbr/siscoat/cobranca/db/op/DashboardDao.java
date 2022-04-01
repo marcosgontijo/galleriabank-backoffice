@@ -447,7 +447,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						contrato.setLaudoRecebido(rs.getBoolean("laudorecebido"));
 						contrato.setPajurFavoravel(rs.getBoolean("pajurfavoravel"));
 						contrato.setAprovadoComite(rs.getBoolean("aprovadocomite"));
-						contrato.setContratoAssinado(rs.getBoolean("AgAssinatura"));
+						contrato.setAgAssinatura(rs.getBoolean("AgAssinatura"));
 						objects.add(contrato);
 					}
 
