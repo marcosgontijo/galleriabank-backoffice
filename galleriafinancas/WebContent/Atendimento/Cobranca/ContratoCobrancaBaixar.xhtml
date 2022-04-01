@@ -1910,6 +1910,7 @@
 						
 					</h:panelGrid>
 				</p:panel>
+				
 				<p:panel id="DetalheParcelas"
 					header="Detalhamento - Forma de Pagamento"
 					style="margin-bottom:10px;">
@@ -2843,22 +2844,19 @@
 					<p:outputLabel for="numeroParcelaQuitar"
 						value="Numero Parcela para Quitação" />
 					<p:inputText id="numeroParcelaQuitar"
-						value="#{contratoCobrancaMB.numeroParcelaQuitar}" />
+						value="#{contratoCobrancaMB.numeroParcelaQuitar}" >
+						<p:ajax event="blur" update="valorPresenteTotal"
+							listener="#{contratoCobrancaMB.simularQuitacaoContrato}" />
+					</p:inputText>
 
 					<p:outputLabel for="dataQuitacao" value="Data da Quitacao" />
 					<p:calendar id="dataQuitacao" showOn="button"
 						value="#{contratoCobrancaMB.dataQuitacao}" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
-
-
-					<p:outputLabel for="dataCalculoQuitar" value="Data do Calculo: " />
-					<p:calendar id="dataCalculoQuitar" showOn="button"
-						value="#{contratoCobrancaMB.dataCalculoQuitacao}" size="100"
 						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
-                		<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
+						<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
                 			update="@form" />
-					</p:calendar>
-
+                	</p:calendar>		
+                		
 					<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
 					<p:commandButton id="quitarContrato" value="Quitar Contrato"
 						update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"

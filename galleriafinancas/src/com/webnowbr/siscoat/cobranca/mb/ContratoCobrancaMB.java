@@ -5341,7 +5341,6 @@ public class ContratoCobrancaMB {
 	private int numeroPresenteParcela;
 	private int numeroParcelaQuitar;
 	private Date dataQuitacao;
-	private Date dataCalculoQuitacao;
 	private BigDecimal valorPresenteTotal;
 
 	public void calcularValorPresenteParcela(){
@@ -5423,7 +5422,7 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
 				
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataCalculoQuitacao, parcelas);
+				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 				parcelas.setValorTotalPagamento(this.valorPresenteParcela);
 				valorPresenteTotal = valorPresenteTotal.add(valorPresenteParcela);
 				parcelas.setDataUltimoPagamento(this.dataQuitacao);
@@ -5474,7 +5473,6 @@ public class ContratoCobrancaMB {
 		
 		this.numeroParcelaQuitar = 0;
 		this.dataQuitacao = auxDataHoje;
-		this.dataCalculoQuitacao = auxDataHoje;
 		
 		simularQuitacaoContrato();
 	}
@@ -5484,14 +5482,21 @@ public class ContratoCobrancaMB {
 		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
 		
 		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
+			if(parcelas.isParcelaPaga()) {
+				continue;
+			}
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
 				
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataCalculoQuitacao, parcelas);
+				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 			}
 		}
+	}
+	
+	public void amortizarContratoValorPresente() {
+		
 	}
 	
 	public void calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas){
@@ -5528,14 +5533,6 @@ public class ContratoCobrancaMB {
 
 	public void setListContratoCobrancaDetalhesQuitar(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar) {
 		this.listContratoCobrancaDetalhesQuitar = listContratoCobrancaDetalhesQuitar;
-	}
-
-	public Date getDataCalculoQuitacao() {
-		return dataCalculoQuitacao;
-	}
-
-	public void setDataCalculoQuitacao(Date dataCalculoQuitacao) {
-		this.dataCalculoQuitacao = dataCalculoQuitacao;
 	}
 
 	public BigDecimal getValorPresenteTotal() {
@@ -12418,6 +12415,14 @@ public class ContratoCobrancaMB {
 		Date dateSelected = (Date) event.getObject();
 		this.rowEditNewDate = dateSelected;
 		calculaNovaData(dateSelected);
+		calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
+		this.setVlrRecebido(this.valorPresenteParcela);
+	}
+	
+	public void atualizaValorBaixaPresente() {
+		calculaNovaData(rowEditNewDate);
+		calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
+		this.setVlrRecebido(this.valorPresenteParcela);
 	}
 
 	public void calculaNovaData(Date novaData) {
@@ -12521,7 +12526,11 @@ public class ContratoCobrancaMB {
 		// e volta a data e valor originais
 		if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() == 1) {
 			this.bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimento());
-			this.bpContratoCobrancaDetalhes.setVlrParcela(this.objetoContratoCobranca.getVlrParcela());
+			this.bpContratoCobrancaDetalhes.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcela());
+			this.bpContratoCobrancaDetalhes.setDataUltimoPagamento(null);
+			this.bpContratoCobrancaDetalhes.setValorTotalPagamento(null);
+			
+			
 			// remove baixa da lista de parcelas
 			this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
 					.remove(contratoCobrancaDetalhesParcial);
@@ -12694,8 +12703,11 @@ public class ContratoCobrancaMB {
 		if (this.observacao != null) {
 			contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
 		}
+		
+		//calcula valor presente
+		calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
 
-		// se valor recebidfo é igual ao valor atualizado
+		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {
 			// se valor recebido é igual ou maior
 			if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0
@@ -12745,6 +12757,31 @@ public class ContratoCobrancaMB {
 				bpContratoCobrancaDetalhes.setVlrParcela(valorParcelaAtual);
 				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 				// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
+				
+				// verifica se pagamento é igual ao valor presente
+			} else if(this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0){
+				
+				// atualiza data de vencimento para a data atual se a data de vencimento for
+				// menor que a data de hoje
+				// if
+				// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
+				// {
+				bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+				// }
+				contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+				contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+				contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+				contratoCobrancaDetalhesParcial.setVlrParcela(valorPresenteParcela);
+				contratoCobrancaDetalhesParcial.setVlrRecebido(valorPresenteParcela);
+				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(valorPresenteParcela);
+				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+				bpContratoCobrancaDetalhes.setParcelaPaga(true);
+				
+				//valor da parcela continua o mesmo
+				
+				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 			} else {
 				// atualiza data de vencimento para a data atual se a data de vencimento for
 				// menor que a data de hoje

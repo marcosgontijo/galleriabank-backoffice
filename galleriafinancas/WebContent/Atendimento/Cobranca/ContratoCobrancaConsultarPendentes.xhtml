@@ -114,7 +114,8 @@
 			        </p:column>	
 			        
 			        <p:column style="width:180px;">
-			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes">
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes" 
+			        		disabled="#{contratos.status == 'Aprovado'}">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
