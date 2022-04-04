@@ -348,7 +348,8 @@ public class CcbMB {
 		if (eminenteDTO != null) {
 			// se não existe pessoa na money plus, cria!
 			if (eminenteDTO.getCodigoMoneyPlus() == null || eminenteDTO.getCodigoMoneyPlus().equals("")) {
-				bmpMB.enviaPessoa(eminenteDTO, this.nacionalidadeEmitente);	
+				bmpMB.enviaEmitente(eminenteDTO, this.nacionalidadeEmitente);	
+				bmpMB.enviaEndereco(eminenteDTO);
 			}			
 		} else {	
 			validacao = false;
@@ -357,11 +358,39 @@ public class CcbMB {
 		}
 		
 		/**
-		 * TRATA AVALISTA
+		 * TRATA FIDUCIANTE
 		 */
-		if (validacao) {
-			
+		/*
+		PagadorRecebedor fiducianteDTO = null;
+		if (validacao) {			
+			for (CcbVO pessoa : this.listaParticipantes) {
+				if (pessoa.getTipoParticipante().equals("FIDUCIANTE")) {
+					fiducianteDTO = pessoa.getPessoa();
+				}
+			}
+			if (fiducianteDTO != null) {
+				// se não existe pessoa na money plus, cria!
+				if (fiducianteDTO.getCodigoMoneyPlus() == null || fiducianteDTO.getCodigoMoneyPlus().equals("")) {
+					bmpMB.enviaEmitente(fiducianteDTO, this.nacionalidadeEmitente);	
+					bmpMB.enviaEndereco(fiducianteDTO);
+				}			
+			} else {	
+				validacao = false;
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Pessoa - Fiduciante não encontrado", ""));
+			}
 		}
+		*/
+		
+		/**
+		 * ENVIA PROPOSTA
+		 */
+		if (validacao) {			
+			//bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
+			//		this.agencia, this.contaCorrente, this.numeroBanco, this.valorCredito, this.numeroContrato);
+			bmpMB.enviaProposta(eminenteDTO, eminenteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
+					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato);
+		}		
 	}
 	
 	public void clearDocumentosNovos() {

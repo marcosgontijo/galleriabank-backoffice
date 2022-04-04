@@ -18492,6 +18492,12 @@ public class ContratoCobrancaMB {
 		cell.setCellValue("Valor Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(7);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Data Pagamento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 
@@ -18571,9 +18577,19 @@ public class ContratoCobrancaMB {
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			cell.setCellValue(((BigDecimal) record.getVlrParcela()).doubleValue());
+			
+			// Vencimento
+			cell = row.createCell(7);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+			
+			// Pagamento
+			cell = row.createCell(8);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataPagamento());
 						
 			// Valor Pago
-			cell = row.createCell(7);
+			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			cell.setCellValue(((BigDecimal) record.getVlrTotalPago()).doubleValue());			

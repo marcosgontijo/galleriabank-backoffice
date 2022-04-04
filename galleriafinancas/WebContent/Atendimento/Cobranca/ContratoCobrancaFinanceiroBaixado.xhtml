@@ -11,7 +11,23 @@
 	<ui:define name="conteudo">  
 		<h:form id="form" style="margin-bottom:10px;">	
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
-		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>				
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>		
+		 	
+		 	<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+					
 			<p:messages id="mensagens" showDetail="true"/>	
 			<p:panel id="PanelPDF" header="Impressão em PDF / XLS Gerada com Sucesso" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.contratoGerado}">
 				<p:focus /> 
@@ -139,8 +155,10 @@
 						</h:panelGrid>
 					</h:panelGrid>			  
 				</p:panel>										
-				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixado}" image="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;" />					
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixado}" image="ui-icon ui-icon-check" 
+					update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>			
 			</p:panel>
+			
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
                  	<f:facet name="header">

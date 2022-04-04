@@ -36,6 +36,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.xml.ws.Holder;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -299,7 +300,9 @@ public class BmpDigitalCCBMB {
 	 * @param pessoa
 	 * @return
 	 */
-	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante, BigDecimal valorCredito) {
+	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante, String numeroParcelasPagamento, 
+			BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato) {
 
 		JSONObject jsonEnvioProposta = new JSONObject();		
 		
@@ -314,6 +317,9 @@ public class BmpDigitalCCBMB {
 		jsonParametro.put("valor", "");
 		
 		jsonParametros.put(jsonParametro);
+		
+		//auth
+		jsonEnvioProposta.put("parametros", jsonParametros);
 
 		// DTO
 		JSONObject jsonDTOEnvioProposta = new JSONObject();
@@ -336,37 +342,40 @@ public class BmpDigitalCCBMB {
 		
 		//TODO
 		
-		jsonDTOEnvioProposta.put("CodigoOperacao", "");
+		jsonDTOEnvioProposta.put("CodigoOperacao", numeroContrato);
 		jsonDTOEnvioProposta.put("VlrSolicitado", valorCredito);
 		jsonDTOEnvioProposta.put("Prazo", numeroParcelasPagamento);
 		jsonDTOEnvioProposta.put("PercJurosNegociado", taxaDeJurosMes);
 		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);
-		//jsonDTOEnvioProposta.put("PercIOF", 0);
-		//jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
-		//jsonDTOEnvioProposta.put("VlrParcela", 0);
-		//jsonDTOEnvioProposta.put("VlrTAC", 0);
-		//jsonDTOEnvioProposta.put("DtPrimeiroVencto", vencimentoPrimeiraParcelaPagamento);
-		//jsonDTOEnvioProposta.put("VlrSeguro", 0);
-		//jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
-		//jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
-		///jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
-		//jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
+		jsonDTOEnvioProposta.put("PercIOF", 0);
+		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
+		jsonDTOEnvioProposta.put("VlrParcela", 0);
+		jsonDTOEnvioProposta.put("VlrTAC", 0);
+		//TODO
+		jsonDTOEnvioProposta.put("DtPrimeiroVencto", gerarDataHoje());
+		jsonDTOEnvioProposta.put("VlrSeguro", 0);
+		jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
+		jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
+		jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
+		jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
 
 		
 		JSONObject jsonContaPagamentoDTO = new JSONObject();
 		jsonContaPagamentoDTO.put("CodigoBanco", numeroBanco);
 		jsonContaPagamentoDTO.put("TipoConta", 0);
 		jsonContaPagamentoDTO.put("Agencia", agencia);
-		//jsonContaPagamentoDTO.put("AgenciaDig", "");
+		jsonContaPagamentoDTO.put("AgenciaDig", "");
 		jsonContaPagamentoDTO.put("Conta", contaCorrente);
-		//jsonContaPagamentoDTO.put("ContaDig", "");
+		jsonContaPagamentoDTO.put("ContaDig", "");
 		jsonContaPagamentoDTO.put("NumeroBanco", numeroBanco);
-		//jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
-		//jsonContaPagamentoDTO.put("NomePagamento", "");
+		jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
+		jsonContaPagamentoDTO.put("NomePagamento", "");
 		
 		jsonDTOEnvioProposta.put("PropostaContaPagamentoDTO", jsonContaPagamentoDTO);
 		
-		return jsonDTOEnvioProposta;
+		jsonEnvioProposta.put("dto", jsonDTOEnvioProposta);
+		
+		return jsonEnvioProposta;
 	}
 	
 	/***
@@ -673,12 +682,12 @@ public class BmpDigitalCCBMB {
 		// Cadastro de cliente
 		// Cadastro do Fiduciante 
 		// /api/BMPDigital/CreateUpdatePessoa
-		getJSONPessoaDTO(pessoa);
+		///getJSONPessoaDTO(pessoa);
 		//TESTADO OK
 		//	Cadastro de cliente
 		//  Cadastro do Fiduciante 
 		// /api/BMPDigital/CreateUpdatePessoaEndereco
-		getJSONEnderecoDTO(pessoa);
+		//getJSONEnderecoDTO(pessoa);
 		
 		// Envio da Proposta
 		// /api/BMPDigital/IncluirPropostaManualSimplificado
@@ -737,12 +746,13 @@ public class BmpDigitalCCBMB {
 		// TODO integra CCB
 	}
 	
-	public void enviaPessoa(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
+	// joão - 67fe4af8-fb58-4b3f-8ba3-8e9e469c26d3
+	public void enviaEmitente(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
 		try {		
-			System.out.println("[MoneyPlus] Envia Pessoa");
+			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoaEndereco");
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoa");
 
 			JSONObject jsonObj = getJSONPessoaDTO(pessoa, nacionalidadeEmitente);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -762,37 +772,258 @@ public class BmpDigitalCCBMB {
 			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
 			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
 			 * https://api.iugu.com/v1/withdraw_requests/id"
-			 */
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
-				System.out.println("[MoneyPlus] Envia Pessoa - Erro ao enviar");
-			} else {	
-				
-				JSONObject myResponse = null;
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
-				
+			 */			
+			JSONObject myResponse = null;
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
+						
+			if (!myResponse.getBoolean("Result")) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Pessoa - ERRO: " + myResponse.getString("Msg"), ""));
+			} else {					
 				if (myResponse.has("Result")) {					
 					if (myResponse.getBoolean("Result")) {
-						System.out.println("[MoneyPlus] Envia Pessoa - Sucesso ao enviar pessoa");
 						
 						String codigoRetorno = "";
 						if (myResponse.has("Codigo")) {
 							codigoRetorno = myResponse.getString("Codigo");
 							
 							PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-							PagadorRecebedor p = new PagadorRecebedor();
 							
-							p.setCodigoMoneyPlus(codigoRetorno);
+							pessoa.setCodigoMoneyPlus(codigoRetorno);
 							
-							pDao.merge(p);
+							pDao.merge(pessoa);
+							
+							context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+									"[MoneyPlus] Envia Pessoa - Pessoa inserida/atualizada com sucesso! Cód.: " + myResponse.getString("Codigo"), ""));
 						}
+					} 
+				} 
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void enviaAvalista(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoa");
+
+			JSONObject jsonObj = getJSONPessoaDTO(pessoa, nacionalidadeEmitente);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String erro = "";
+			
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */			
+			JSONObject myResponse = null;
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
 						
-						System.out.println("[MoneyPlus] Envia Pessoa - Pessoa atualizada no PagadorRecebedor");
-					} else {
-						System.out.println("[MoneyPlus] Envia Pessoa - Erro ao enviar - Msg: " + myResponse.getString("Msg"));
+			if (!myResponse.getBoolean("Result")) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Pessoa - ERRO: " + myResponse.getString("Msg"), ""));
+			} else {					
+				if (myResponse.has("Result")) {					
+					if (myResponse.getBoolean("Result")) {
+						
+						String codigoRetorno = "";
+						if (myResponse.has("Codigo")) {
+							codigoRetorno = myResponse.getString("Codigo");
+							
+							PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+							
+							pessoa.setCodigoMoneyPlus(codigoRetorno);
+							
+							pDao.merge(pessoa);
+							
+							context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+									"[MoneyPlus] Envia Pessoa - Pessoa inserida/atualizada com sucesso! Cód.: " + myResponse.getString("Codigo"), ""));
+						}
+					} 
+				} 
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void enviaFiduciante(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoa");
+
+			JSONObject jsonObj = getJSONPessoaDTO(pessoa, nacionalidadeEmitente);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String erro = "";
+			
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */			
+			JSONObject myResponse = null;
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
+						
+			if (!myResponse.getBoolean("Result")) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Pessoa - ERRO: " + myResponse.getString("Msg"), ""));
+			} else {					
+				if (myResponse.has("Result")) {					
+					if (myResponse.getBoolean("Result")) {
+						
+						String codigoRetorno = "";
+						if (myResponse.has("Codigo")) {
+							codigoRetorno = myResponse.getString("Codigo");
+							
+							PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+							
+							pessoa.setCodigoMoneyPlus(codigoRetorno);
+							
+							pDao.merge(pessoa);
+							
+							context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+									"[MoneyPlus] Envia Pessoa - Pessoa inserida/atualizada com sucesso! Cód.: " + myResponse.getString("Codigo"), ""));
+						}
+					} 
+				} 
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void enviaEndereco(PagadorRecebedor pessoa) {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoaEndereco");
+
+			JSONObject jsonObj = getJSONEnderecoDTO(pessoa);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String erro = "";
+			
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */			
+			JSONObject myResponse = null;
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
+						
+			if (!myResponse.getBoolean("Result")) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Endereço - ERRO: " + myResponse.getString("Msg"), ""));
+			} else {					
+				if (myResponse.has("Result")) {					
+					if (myResponse.getBoolean("Result")) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+								"[MoneyPlus] Envia Endereço - Endereço inserida/atualizada com sucesso! ", ""));
 					}
 				} 
 			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void enviaProposta(PagadorRecebedor emitente, PagadorRecebedor fiduciante,
+			String numeroParcelasPagamento, BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato) {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
 
+			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/IncluirPropostaManualSimplificado");
+
+			JSONObject jsonObj = getJSONEnvioProposta(emitente, fiduciante, numeroParcelasPagamento, taxaDeJurosMes, 
+					valorIOF, numeroBanco, agencia, contaCorrente, valorCredito, numeroContrato);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String erro = "";
+			
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */			
+			JSONObject myResponse = null;
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
+						
+			if (!myResponse.getBoolean("Result")) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[MoneyPlus] Envia Proposta - ERRO: " + myResponse.getString("Msg"), ""));
+			} else {					
+				if (myResponse.has("Result")) {					
+					if (myResponse.getBoolean("Result")) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+								"[MoneyPlus] Envia Proposta - Proposta enviada com sucesso! ", ""));
+					}
+				} 
+			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

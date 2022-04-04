@@ -2444,7 +2444,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC =  	
-			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela " + 
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento " + 
 			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
 			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
 			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
@@ -2498,6 +2498,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
 						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
 						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
+						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
 						if (!rs.getString(8).equals("")) {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
@@ -2811,8 +2813,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 									objects.add(relatorioFinanceiroCobrancaTmp);								
 								}
 							} else {
-								relatorioFinanceiroCobrancaTmp.setValor(relatorioFinanceiroCobrancaTmp.getValor().add(rs.getBigDecimal(4))); 
-								relatorioFinanceiroCobrancaTmp.setAcrescimo(relatorioFinanceiroCobrancaTmp.getValor().subtract(contratoCobranca.getVlrParcela()));
+								relatorioFinanceiroCobrancaTmp.setValor(relatorioFinanceiroCobrancaTmp.getValor().add(rs.getBigDecimal(4)));
+								
+								if (contratoCobranca.getVlrParcela() != null) {
+									relatorioFinanceiroCobrancaTmp.setAcrescimo(relatorioFinanceiroCobrancaTmp.getValor().subtract(contratoCobranca.getVlrParcela()));
+								} else {
+									relatorioFinanceiroCobrancaTmp.setAcrescimo(relatorioFinanceiroCobrancaTmp.getValor());
+								}
 								
 								if (rs.isLast()) {
 									if (relatorioFinanceiroCobrancaTmp.getAcrescimo().compareTo(BigDecimal.ZERO) == -1) {

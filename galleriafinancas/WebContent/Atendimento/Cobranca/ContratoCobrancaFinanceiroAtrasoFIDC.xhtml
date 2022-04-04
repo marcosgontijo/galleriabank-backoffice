@@ -10,7 +10,6 @@
 		<h:form id="form" style="margin-bottom:10px;">
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
-			<p:messages id="mensagens" showDetail="true" />
 			
 			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
 				draggable="false" closable="false" resizable="false">
@@ -26,6 +25,8 @@
 					PF('statusDialog').hide();
 				}
 			</script>
+			
+			<p:messages id="mensagens" showDetail="true" />
 			
 			<p:panel id="PanelPDF"
 				header="Impressão em PDF / XLS Gerada com Sucesso"
