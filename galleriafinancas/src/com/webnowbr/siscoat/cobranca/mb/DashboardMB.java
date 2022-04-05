@@ -58,12 +58,15 @@ public class DashboardMB {
     private Date dataInicio;
     private Date dataFim;
     private boolean consultaStatus;
+    private boolean consultarResponsaveisZerados;
     
     private List<Dashboard> dashContratos;
     
 	private Responsavel selectedResponsavel;
 	
 	private List<Responsavel> listResponsavel;
+	
+	private List<Responsavel> listResponsavelZerado;
 	
 	int totalContratosCadastrados;
 	int totalContratosPreAprovados;
@@ -112,6 +115,8 @@ public class DashboardMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.listResponsavel = rDao.findAll();
 		
+		listResponsavelZerado = new ArrayList<Responsavel>();
+		
 		this.dashContratos = new ArrayList<Dashboard>();
 		
 		return "/Atendimento/Cobranca/DashboardManager.xhtml";
@@ -125,6 +130,18 @@ public class DashboardMB {
 		} else {
 				this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
 		}
+		
+		if(consultarResponsaveisZerados) {
+			listResponsavelZerado = new ArrayList<Responsavel>();
+			ResponsavelDao rDao = new ResponsavelDao();
+			this.listResponsavelZerado = rDao.findAll();
+			for(Dashboard dash : dashContratos) {
+				if(listResponsavelZerado.contains(dash.getResponsavel())) {
+					listResponsavelZerado.remove(dash.getResponsavel());
+				}
+			}
+		}
+		
 		calculaSoma();
 	}
 
@@ -235,6 +252,26 @@ public class DashboardMB {
 			gravaCelula(11, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
 			
 			iLinha++;
+		}
+		
+		if(consultarResponsaveisZerados) {
+			for(Responsavel reponsavel : listResponsavelZerado) {
+				
+				XSSFRow linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				
+				gravaCelula(0, reponsavel.getNome(), linha);
+				formataCelula(linha.getCell(0), wb);
+				
+				if(!CommonsUtil.semValor(reponsavel.getDonoResponsavel())) {
+					gravaCelula(1, reponsavel.getDonoResponsavel().getNome(), linha);
+				}
+				
+				iLinha++;
+			} 
 		}
 		
 		calculaSoma();
@@ -688,4 +725,21 @@ public class DashboardMB {
 	public void setUpdateResponsavel(String updateResponsavel) {
 		this.updateResponsavel = updateResponsavel;
 	}
+
+	public boolean isConsultarResponsaveisZerados() {
+		return consultarResponsaveisZerados;
+	}
+
+	public void setConsultarResponsaveisZerados(boolean consultarResponsaveisZerados) {
+		this.consultarResponsaveisZerados = consultarResponsaveisZerados;
+	}
+
+	public List<Responsavel> getListResponsavelZerado() {
+		return listResponsavelZerado;
+	}
+
+	public void setListResponsavelZerado(List<Responsavel> listResponsavelZerado) {
+		this.listResponsavelZerado = listResponsavelZerado;
+	}
+	
 }
