@@ -12,6 +12,7 @@ public class Segurado implements Serializable {
 	private BigDecimal porcentagemSegurador;
 	private PagadorRecebedor pessoa;
 	private ContratoCobranca contratoCobranca;
+	private int posicao;
 
 	public long getId() {
 		return id;
@@ -43,6 +44,14 @@ public class Segurado implements Serializable {
 
 	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
 		this.contratoCobranca = contratoCobranca;
+	}
+
+	public int getPosicao() {
+		return posicao;
+	}
+
+	public void setPosicao(int posicao) {
+		this.posicao = posicao;
 	}
 
 }

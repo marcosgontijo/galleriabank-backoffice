@@ -12193,6 +12193,7 @@ public class ContratoCobrancaMB {
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
 		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
+		this.seguradoSelecionado.setPosicao(this.objetoContratoCobranca.getListSegurados().size() + 1);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
