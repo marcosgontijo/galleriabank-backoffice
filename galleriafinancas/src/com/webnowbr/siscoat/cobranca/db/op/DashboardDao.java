@@ -405,7 +405,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 		});
 	}	
 	
-	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.estado, datacontrato, quantoprecisa, valoraprovadocomite, valorccb, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
+	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.cep, imv.estado, datacontrato, motivoReprovaLead, motivoReprovaSelectItem, quantoprecisa, valoraprovadocomite, valorccb, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
 			+ " inner join cobranca.imovelcobranca imv on imv.id = cc.imovel "
 			+ " inner join cobranca.pagadorrecebedor pare on pare.id = cc.pagador "
 			+ " where urllead is not null and urllead != '' and pare.nome not LIKE '%teste%' and pare.nome  not LIKE '%Teste%' "
@@ -433,12 +433,15 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						contrato.setNumeroContrato(rs.getString("numerocontrato"));
 						contrato.setImovel(new ImovelCobranca());
 						contrato.getImovel().setCidade(rs.getString("cidade"));
+						contrato.getImovel().setCep(rs.getString("cep"));
 						contrato.getImovel().setEstado(rs.getString("estado"));
 						contrato.setDataContrato(rs.getTimestamp("datacontrato"));
 						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
 						contrato.setValorAprovadoComite(rs.getBigDecimal("valorAprovadoComite"));
 						contrato.setValorCCB(rs.getBigDecimal("valorccb"));
 						contrato.setUrlLead(rs.getString("urllead"));
+						contrato.setMotivoReprovaLead(rs.getString("motivoReprovaLead"));
+						contrato.setMotivoReprovaSelectItem(rs.getString("motivoReprovaSelectItem"));
 						contrato.setStatusLead(rs.getString("statuslead"));
 						contrato.setStatus(rs.getString("status"));
 						contrato.setInicioAnalise(rs.getBoolean("inicioanalise"));
