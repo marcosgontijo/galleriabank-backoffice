@@ -360,11 +360,10 @@ public class CcbMB {
 		/**
 		 * TRATA FIDUCIANTE
 		 */
-		/*
-		PagadorRecebedor fiducianteDTO = null;
+		PagadorRecebedor fiducianteDTO = null;		
 		if (validacao) {			
 			for (CcbVO pessoa : this.listaParticipantes) {
-				if (pessoa.getTipoParticipante().equals("FIDUCIANTE")) {
+				if (pessoa.getTipoParticipante().equals("TERCEIRO GARANTIDOR")) {
 					fiducianteDTO = pessoa.getPessoa();
 				}
 			}
@@ -375,20 +374,15 @@ public class CcbMB {
 					bmpMB.enviaEndereco(fiducianteDTO);
 				}			
 			} else {	
-				validacao = false;
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[MoneyPlus] Envia Pessoa - Fiduciante não encontrado", ""));
+				fiducianteDTO = eminenteDTO;
 			}
 		}
-		*/
 		
 		/**
 		 * ENVIA PROPOSTA
 		 */
 		if (validacao) {			
-			//bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
-			//		this.agencia, this.contaCorrente, this.numeroBanco, this.valorCredito, this.numeroContrato);
-			bmpMB.enviaProposta(eminenteDTO, eminenteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
+			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
 					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato);
 		}		
 	}
