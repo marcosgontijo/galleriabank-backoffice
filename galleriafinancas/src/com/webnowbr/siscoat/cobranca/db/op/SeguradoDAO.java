@@ -31,8 +31,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
 			+ " where coco.temsegurodfi = true and ( ccd.id is not null or  to_char(coco.datacontrato, 'YYYYMM') = ? ) "
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep "
-			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc " ;
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, segu.posicao "
+			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
 	private static final String QUERY_SEGURADOS_DFI_EMPRESA = " select coco.numerocontrato, datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep "
@@ -46,8 +46,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " where coco.temsegurodfi = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ?) "
 			+ " and coco.empresa = ? "
 			+ " group by coco.numerocontrato,  datacontrato, numerocontratoseguro, valorimovel, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
-			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep"
-			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc " ;
+			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, segu.posicao "
+			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
 	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
@@ -61,8 +61,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " where coco.temseguromip = true and (  ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
 			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
-			+ " pare.dtnascimento, pare.sexo "
-			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc ";
+			+ " pare.dtnascimento, pare.sexo , segu.posicao "
+			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
 	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
@@ -77,8 +77,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " and coco.empresa = ? "
 			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
-			+ " pare.dtnascimento, pare.sexo "
-			+ " order by coco.numerocontrato asc, segu.porcentagemsegurador desc, pare.nome asc ";
+			+ " pare.dtnascimento, pare.sexo, segu.posicao "
+			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
 	@SuppressWarnings("unchecked")
 	public List<SeguroTabelaVO> listaSeguradosDFI(final long idContrato, Date dataDesagio, String empresa) {
@@ -246,7 +246,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							if(CommonsUtil.compare(rs.getDate("datacontrato").getMonth(), dataDesagio.getMonth()) == 0 && 
 									CommonsUtil.compare(rs.getDate("datacontrato").getYear(), dataDesagio.getYear()) == 0 ) {
 								seguroTabelaVO.setCodigoSegurado("01");
-								
+							} else if(CommonsUtil.mesmoValor(CommonsUtil.bigDecimalValue(rs.getString("qtdeparcelasFaltantes")), BigDecimal.ZERO)){
+								seguroTabelaVO.setCodigoSegurado("03");
 							} else {
 								seguroTabelaVO.setCodigoSegurado("02");
 							}
@@ -289,6 +290,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCpf2(rs.getString("cnpj"));
 							}
 							seguroTabelaVO.setNome2(rs.getString("nome"));
+							seguroTabelaVO.setDataNascimento2(rs.getString("dtnascimento"));
+							seguroTabelaVO.setSexo2(rs.getString("sexo"));
 							porcentagemtotal += seguroTabelaVO.getPorcentagem2().doubleValue();
 							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
@@ -300,7 +303,9 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							}else {
 								seguroTabelaVO.setCpf3(rs.getString("cnpj"));
 							}							
-							seguroTabelaVO.setNome3(rs.getString("nome"));	
+							seguroTabelaVO.setNome3(rs.getString("nome"));
+							seguroTabelaVO.setDataNascimento3(rs.getString("dtnascimento"));
+							seguroTabelaVO.setSexo3(rs.getString("sexo"));
 							porcentagemtotal += seguroTabelaVO.getPorcentagem3().doubleValue();
 							if(CommonsUtil.mesmoValor(porcentagemtotal, CommonsUtil.doubleValue(100))) {
 								objects.add(seguroTabelaVO);
@@ -313,6 +318,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCpf4(rs.getString("cnpj"));
 							}
 							seguroTabelaVO.setNome4(rs.getString("nome"));
+							seguroTabelaVO.setDataNascimento4(rs.getString("dtnascimento"));
+							seguroTabelaVO.setSexo4(rs.getString("sexo"));
 							objects.add(seguroTabelaVO);
 						}
 					}

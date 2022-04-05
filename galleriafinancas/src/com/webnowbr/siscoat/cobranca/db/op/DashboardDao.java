@@ -68,7 +68,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, count(c.id) contratosCcbsEmitidas, sum(c.valorccb) valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where c.ccbpronta = 'true' "
+			+ " where c.AgAssinatura = 'false' "
 			+ " and inicioanalisedata >= ? ::timestamp "
 			+ " and inicioanalisedata <= ? ::timestamp "
 			+ " group by r.id, r.nome, c.datacontrato"
@@ -112,9 +112,9 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, count(c.id) contratosCcbsEmitidas, sum(c.valorccb) valorCcbsEmitidas, 0 contratosRegistrados, 0 valorContratosRegistrados"
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
-			+ " where c.ccbpronta = 'true' "
-			+ " and ccbProntaData >= ? ::timestamp "
-			+ " and ccbProntaData <= ? ::timestamp "
+			+ " where c.AgAssinatura = 'false' "
+			+ " and AgAssinaturaData >= ? ::timestamp "
+			+ " and AgAssinaturaData <= ? ::timestamp "
 			+ " group by r.id, r.nome, c.datacontrato"
 			+ " union all"
 			+ " select r.id idresponsavel, r.nome nomeresponsavel, 0 contratosCadastrados, 0 valorContratosCadastrados, 0 contratosPreAprovados, 0 valorContratosPreAprovados, 0 contratosBoletosPagos, 0 valorBoletosPagos, 0 contratosCcbsEmitidas, 0 valorCcbsEmitidas, count(c.id) contratosRegistrados, sum(c.valorccb) valorContratosRegistrados"
@@ -241,7 +241,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.ccbpronta = 'true' "
+			+ " where c.AgAssinatura = 'false' "
 			+ " and inicioanalisedata >= ? ::timestamp "
 			+ " and inicioanalisedata <= ? ::timestamp "
 			+ " and (r1.ID = ? or r.ID = ?) "
@@ -295,9 +295,9 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " from cobranca.contratocobranca c"
 			+ " inner join cobranca.responsavel r on r.id = c.responsavel"
 			+ " left join cobranca.responsavel r1 on r1.id = r.donoResponsavel"
-			+ " where c.ccbpronta = 'true' "
-			+ " and ccbProntaData >= ? ::timestamp "
-			+ " and ccbProntaData <= ? ::timestamp "
+			+ " where c.AgAssinatura = 'false' "
+			+ " and AgAssinaturaData >= ? ::timestamp "
+			+ " and AgAssinaturaData <= ? ::timestamp "
 			+ " and (r1.ID = ? or r.ID = ?) "
 			+ " group by r.id, r.nome, c.datacontrato "
 			+ " union all "
@@ -405,7 +405,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 		});
 	}	
 	
-	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.estado, datacontrato, quantoprecisa, valoraprovadocomite, valorccb, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
+	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.cep, imv.estado, datacontrato, motivoReprovaLead, motivoReprovaSelectItem, quantoprecisa, valoraprovadocomite, valorccb, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
 			+ " inner join cobranca.imovelcobranca imv on imv.id = cc.imovel "
 			+ " inner join cobranca.pagadorrecebedor pare on pare.id = cc.pagador "
 			+ " where urllead is not null and urllead != '' and pare.nome not LIKE '%teste%' and pare.nome  not LIKE '%Teste%' "
@@ -433,12 +433,15 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						contrato.setNumeroContrato(rs.getString("numerocontrato"));
 						contrato.setImovel(new ImovelCobranca());
 						contrato.getImovel().setCidade(rs.getString("cidade"));
+						contrato.getImovel().setCep(rs.getString("cep"));
 						contrato.getImovel().setEstado(rs.getString("estado"));
 						contrato.setDataContrato(rs.getTimestamp("datacontrato"));
 						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
 						contrato.setValorAprovadoComite(rs.getBigDecimal("valorAprovadoComite"));
 						contrato.setValorCCB(rs.getBigDecimal("valorccb"));
 						contrato.setUrlLead(rs.getString("urllead"));
+						contrato.setMotivoReprovaLead(rs.getString("motivoReprovaLead"));
+						contrato.setMotivoReprovaSelectItem(rs.getString("motivoReprovaSelectItem"));
 						contrato.setStatusLead(rs.getString("statuslead"));
 						contrato.setStatus(rs.getString("status"));
 						contrato.setInicioAnalise(rs.getBoolean("inicioanalise"));

@@ -58,12 +58,15 @@ public class DashboardMB {
     private Date dataInicio;
     private Date dataFim;
     private boolean consultaStatus;
+    private boolean consultarResponsaveisZerados;
     
     private List<Dashboard> dashContratos;
     
 	private Responsavel selectedResponsavel;
 	
 	private List<Responsavel> listResponsavel;
+	
+	private List<Responsavel> listResponsavelZerado;
 	
 	int totalContratosCadastrados;
 	int totalContratosPreAprovados;
@@ -112,6 +115,8 @@ public class DashboardMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.listResponsavel = rDao.findAll();
 		
+		listResponsavelZerado = new ArrayList<Responsavel>();
+		
 		this.dashContratos = new ArrayList<Dashboard>();
 		
 		return "/Atendimento/Cobranca/DashboardManager.xhtml";
@@ -125,6 +130,18 @@ public class DashboardMB {
 		} else {
 				this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
 		}
+		
+		if(consultarResponsaveisZerados) {
+			listResponsavelZerado = new ArrayList<Responsavel>();
+			ResponsavelDao rDao = new ResponsavelDao();
+			this.listResponsavelZerado = rDao.findAll();
+			for(Dashboard dash : dashContratos) {
+				if(listResponsavelZerado.contains(dash.getResponsavel())) {
+					listResponsavelZerado.remove(dash.getResponsavel());
+				}
+			}
+		}
+		
 		calculaSoma();
 	}
 
@@ -235,6 +252,26 @@ public class DashboardMB {
 			gravaCelula(11, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
 			
 			iLinha++;
+		}
+		
+		if(consultarResponsaveisZerados) {
+			for(Responsavel reponsavel : listResponsavelZerado) {
+				
+				XSSFRow linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				
+				gravaCelula(0, reponsavel.getNome(), linha);
+				formataCelula(linha.getCell(0), wb);
+				
+				if(!CommonsUtil.semValor(reponsavel.getDonoResponsavel())) {
+					gravaCelula(1, reponsavel.getDonoResponsavel().getNome(), linha);
+				}
+				
+				iLinha++;
+			} 
 		}
 		
 		calculaSoma();
@@ -420,10 +457,11 @@ public class DashboardMB {
 		gravaCelula(2, "Valor", linha);
 		gravaCelula(3, "Valor Aprovado", linha);
 		gravaCelula(4, "Qualidade Lead", linha);	
+		gravaCelula(5, "Motivo Reprova", linha);
 		
-		//gravaCelula(5, "Cidade", linha);
-		//gravaCelula(6, "Estado", linha);
-		//gravaCelula(7, "Data Contrato", linha);
+		gravaCelula(6, "Cidade", linha);
+		gravaCelula(7, "Estado", linha);
+		gravaCelula(8, "CEP", linha);
 		
 		int iLinha = 1;
 		for (int iContrato = 0 ; iContrato < contratos.size(); iContrato++) {
@@ -461,7 +499,7 @@ public class DashboardMB {
 					} else if (contrato.getStatusLead().equals("Em Tratamento")) {
 						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Reprovado")) {
-						qualidadeLead = "Lead Reprovado";
+						qualidadeLead = "Lead Reprovado na entrada";
 					} else if (contrato.getStatusLead().equals("Completo")) {
 						qualidadeLead = "Lead Pendente";
 					}
@@ -491,16 +529,28 @@ public class DashboardMB {
 			gravaCelula(0, contrato.getNumeroContrato(), linha);
 			gravaCelula(1, contrato.getUrlLead(), linha);
 			gravaCelula(2, CommonsUtil.formataValorMonetario(contrato.getQuantoPrecisa(),"R$ "), linha);
+			
 			if(!CommonsUtil.semValor(contrato.getValorCCB())) {
 				gravaCelula(3, CommonsUtil.formataValorMonetario(contrato.getValorCCB(),"R$ "), linha);
 			} else {
 				gravaCelula(3, CommonsUtil.formataValorMonetario(contrato.getValorAprovadoComite(),"R$ "), linha);
 			}
+			
 			gravaCelula(4, qualidadeLead, linha);
+			
+			if(CommonsUtil.mesmoValor(qualidadeLead, "Lead Reprovado") || CommonsUtil.mesmoValor(qualidadeLead, "Lead Reprovado na entrada") ) {
+				if(!CommonsUtil.semValor(contrato.getMotivoReprovaLead())) {
+					gravaCelula(5, contrato.getMotivoReprovaLead(), linha);
+				} else if(!CommonsUtil.semValor(contrato.getMotivoReprovaSelectItem())) {
+					gravaCelula(5, contrato.getMotivoReprovaSelectItem(), linha);
+				} else {
+					gravaCelula(5, "", linha);
+				}
+			}
 
-			//gravaCelula(5, contrato.getImovel().getCidade(), linha);
-			//gravaCelula(6, contrato.getImovel().getEstado(), linha);
-			//gravaCelula(7, dataStr, linha);
+			gravaCelula(6, contrato.getImovel().getCidade(), linha);
+			gravaCelula(7, contrato.getImovel().getEstado(), linha);
+			gravaCelula(8, contrato.getImovel().getCep(), linha);
 			
 			iLinha++;
 		}
@@ -675,4 +725,21 @@ public class DashboardMB {
 	public void setUpdateResponsavel(String updateResponsavel) {
 		this.updateResponsavel = updateResponsavel;
 	}
+
+	public boolean isConsultarResponsaveisZerados() {
+		return consultarResponsaveisZerados;
+	}
+
+	public void setConsultarResponsaveisZerados(boolean consultarResponsaveisZerados) {
+		this.consultarResponsaveisZerados = consultarResponsaveisZerados;
+	}
+
+	public List<Responsavel> getListResponsavelZerado() {
+		return listResponsavelZerado;
+	}
+
+	public void setListResponsavelZerado(List<Responsavel> listResponsavelZerado) {
+		this.listResponsavelZerado = listResponsavelZerado;
+	}
+	
 }

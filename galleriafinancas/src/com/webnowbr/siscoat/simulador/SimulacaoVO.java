@@ -405,7 +405,7 @@ public class SimulacaoVO {
 
 		parcelas = new ArrayList<SimulacaoDetalheVO>();
 
-		BigDecimal parcelaPGTO = this.valorCredito.divide(new BigDecimal(this.qtdParcelas.subtract(this.carencia)));
+		BigDecimal parcelaPGTO = this.valorCredito.divide(new BigDecimal(this.qtdParcelas.subtract(this.carencia)), MathContext.DECIMAL128);
 
 		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO(this.valorCredito);
 

@@ -1903,9 +1903,14 @@
 
 
 						<shiro:hasAnyRoles name="ROOT">
+						
 							<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" value="Quitar Contrato" update="quitarContratoForm" action="#{contratoCobrancaMB.clearQuitarContratoDialog}"/>
-							<!--  --> 
-							<!--  -->
+							<p:outputLabel value="" />
+							<p:outputLabel value="" />
+							
+							<p:commandButton id="amortizarContrato" oncomplete="PF('amortizarContratoDialog').show();" value="Amortizar Contrato" update="amortizarContratoForm"/>
+							<p:outputLabel value="" />
+							<p:outputLabel value="" />
 						</shiro:hasAnyRoles>
 						
 					</h:panelGrid>
@@ -2933,6 +2938,41 @@
 						</p:column>
 					</p:dataTable>
 				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Amortizar Contrato"
+			widgetVar="amortizarContratoDialog" resizable="true"
+			style="FONT-SIZE: 10pt;" responsive="true" height="480px" width="770px">
+			<h:form id="amortizarContratoForm">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="amortizacaoPresenteTotal" value="Valor Amortizaacao: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:panelGroup>
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="amortizacaoPresenteTotal"
+							value="#{contratoCobrancaMB.amortizacaoPresenteTotal}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGroup>
+					
+					<p:outputLabel for="dataAmortizacao" value="Data da Amortizaacao:" />
+					<p:calendar id="dataAmortizacao" showOn="button"
+						value="#{contratoCobrancaMB.dataAmortizacao}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />	
+                </h:panelGrid>
+                		
+               	<p:selectOneRadio id="tipoAmortizacao" value="#{contratoCobrancaMB.tipoAmortizacao}">
+					<f:selectItem itemLabel="Crescente" itemValue="crescente" />
+					<f:selectItem itemLabel="Decrescente" itemValue="decrescente" />
+				</p:selectOneRadio>
+               	
+				<p:commandButton id="amortizarContrato" value="Amortizar Contrato"
+					update=":form:DetalheParcelas amortizarContratoForm"
+					action="#{contratoCobrancaMB.amortizarContratoValorPresente}"
+					oncomplete="PF('amortizarContratoDialog').hide();" />
 			</h:form>
 		</p:dialog>
 		

@@ -29,6 +29,16 @@
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectBooleanCheckbox value="#{dashboardMB.consultaStatus}"/>
 					
+					<p:outputLabel value="Consultar Responsaveis Zerados: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:panelGroup>
+						<p:selectBooleanCheckbox value="#{dashboardMB.consultarResponsaveisZerados}"/>
+						<p:spacer height="10" />
+						<p:commandButton id="botaoZerados" type="button"
+							onclick="PF('responsavelZeradoDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"  
+							disabled="#{dashboardMB.listResponsavelZerado.size() == 0}"/>
+					</h:panelGroup>
 					<p:outputLabel for="responsavel" value="Gerente:  "
 						styleClass="labelBold" />
 					<h:panelGrid columns="2">
@@ -72,35 +82,35 @@
 					<p:column style="text-align: center;" headerText="Total cadastrados">
 						<h:outputText value="#{dashContratos.contratosCadastrados}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Valor Total cadastrados">
+					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>
 					<p:column style="text-align: center;" headerText="Total preaprovado">
 						<h:outputText value="#{dashContratos.contratosPreAprovados}"/>
 					</p:column>
-					<p:column style="text-align: center;" headerText=" Valor Total preaprovado">
+					<p:column style="text-align: center;" headerText=" Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total boleto">
+					<p:column style="text-align: center;" headerText="Pedido Laudo e Paju">
 						<h:outputText value="#{dashContratos.contratosBoletosPagos}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Valor Total boleto">
+					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorBoletosPagos}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total ccb">
+					<p:column style="text-align: center;" headerText="CCBs Emitidas">
 						<h:outputText value="#{dashContratos.contratosCcbsEmitidas}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Valor Total ccb">
+					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorCcbsEmitidas}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Total registrado">
+					<p:column style="text-align: center;" headerText="CCBs Pagas">
 						<h:outputText value="#{dashContratos.contratosRegistrados}"/>
 					</p:column>
-					<p:column style="text-align: center;" headerText="Valor Total registrado">
+					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosRegistrados}" converter="bigDecimalConverter" />
 					</p:column>
@@ -121,21 +131,21 @@
 									<h:outputText value="#{dashboardMB.totalValorContratosPreAprovados}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
-								<h:outputText value="Total Com Boletos Pagos: " />
+								<h:outputText value="Pedido Laudo e Paju: " />
 								<h:outputText value="#{dashboardMB.totalContratosBoletosPagos}" />
 								<h:panelGroup>
 									<h:outputText value="R$ " />
 									<h:outputText value="#{dashboardMB.totalValorBoletosPagos}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
-								<h:outputText value="Total Com CCB Emitidas: " />
+								<h:outputText value="CCBs Emitidas: " />
 								<h:outputText value="#{dashboardMB.totalContratosCcbsEmitidas}" />
 								<h:panelGroup>
 									<h:outputText value="R$ " />
 									<h:outputText value="#{dashboardMB.totalValorCcbsEmitidas}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
-								<h:outputText value="Total Registrados: " />
+								<h:outputText value="CCBs Pagas: " />
 								<h:outputText value="#{dashboardMB.totalContratosRegistrados}" />
 								<h:panelGroup>
 									<h:outputText value="R$ " />
@@ -153,5 +163,34 @@
 			<ui:param name="mbean" value="#{dashboardMB}"></ui:param>
 			<ui:param name="titulo" value="Gerente Responsável"></ui:param>
 		</ui:include>
+
+		<p:dialog header="Responsaveis Zerados"
+			widgetVar="responsavelZeradoDialog" resizable="true"
+			style="FONT-SIZE: 10pt;" responsive="true" height="480px"
+			width="770px">
+			<h:form id="responsavelZeradoForm">
+				<p:dataTable id="dtresponsavelZerado" var="responsavel"
+					value="#{dashboardMB.listResponsavelZerado}" paginator="true" rows="40"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					reflow="true">
+					
+					<p:column style="text-align: center;" headerText="Responsável"
+						filterBy="#{responsavel.nome}"
+						filterMatchMode="contains"
+						sortBy="#{responsavel.nome}">
+						<h:outputText value="#{responsavel.nome}" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Gerente"
+						filterBy="#{responsavel.donoResponsavel.nome}"
+						filterMatchMode="contains"
+						sortBy="#{responsavel.donoResponsavel.nome}">
+						<h:outputText value="#{responsavel.donoResponsavel.nome}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>
