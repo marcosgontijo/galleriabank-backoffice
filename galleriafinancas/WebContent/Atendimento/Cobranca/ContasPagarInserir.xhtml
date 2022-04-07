@@ -106,13 +106,13 @@
 					<p:inputText id="numeroDocumento"
 						value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
-						required="true" disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode}" />
 
 					<p:outputLabel for="descricao" value="Descrição: "
 						styleClass="labelBold" />
 					<p:inputText id="descricao"
 						value="#{contasPagarMB.objetoContasPagar.descricao}"
-						required="true" disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode}" />
 					<p:outputLabel for="valor" value="Valor (R$): "
 						styleClass="labelBold" />
 					<p:inputText id="valor"

@@ -285,11 +285,11 @@
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Voltar Contrato para Validação DOCs</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Voltar Contrato</p:outputLabel>
 											<p:spacer></p:spacer>
 											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-												<p:commandButton value="Voltar Contrato para Validação DOCs"
-													onclick="PF('voltarValidacaoDocsDialog').show();" />
+												<p:commandButton value="Voltar Contrato"
+													onclick="PF('sairComtieDialog').show();" />
 											</shiro:hasAnyRoles>
 										</h:panelGrid>
 									</ui:fragment>
@@ -3393,6 +3393,23 @@
 						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
 							action="#{contratoCobrancaMB.voltarContratoParaComite}"
 							style="TEXT-DECORATION: bold;" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Sair de Comitê" widgetVar="sairComtieDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="sairComiteForm">
+				<div align="center">
+					<h:outputText value="Para onde deseja voltar o Contrato?" styleClass="labelBold"  
+						style="width:250px;font-weight:bold;font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:50px"> 
+						<p:commandButton value="Voltar Contrato para Validação DOCs"
+							onclick="PF('voltarValidacaoDocsDialog').show();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Voltar Para Pré-Comite"
+							onclick="PF('voltarPreComiteDialog').show();" />
 					</h:panelGrid>
 				</div>
 			</h:form>
