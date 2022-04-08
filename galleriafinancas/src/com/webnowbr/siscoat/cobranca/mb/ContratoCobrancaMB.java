@@ -3418,6 +3418,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setDocumentosComite(false);
+		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
@@ -3432,6 +3433,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setPreAprovadoComite(false);
+		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
@@ -12289,6 +12291,16 @@ public class ContratoCobrancaMB {
 		contrato.setPrazoMaxAprovado(menorPrazoAprovado);
 		contrato.setValorAprovadoComite(menorValorAprovado);
 		contrato.setTipoValorComite(menorValorAprovadoTipo);
+		contrato.setComentarioComite(comentarioComiteFinal);
+	}
+	
+	public void concluirComentarioComite(ContratoCobranca contrato) {
+		String comentarioComiteFinal = "";
+		
+		for (AnaliseComite comite : contrato.getListaAnaliseComite()) {
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
+		}
+		
 		contrato.setComentarioComite(comentarioComiteFinal);
 	}
 	

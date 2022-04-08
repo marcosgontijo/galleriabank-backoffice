@@ -98,6 +98,8 @@
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
 						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+						<p:ajax event="dateSelect" update="dataPagamento"
+							listener="#{contasPagarMB.settarDataPagamento()}" />
 					</p:calendar>
 
 					<p:outputLabel for="numeroDocumento" value=" Numero Documento: "
@@ -106,13 +108,13 @@
 					<p:inputText id="numeroDocumento"
 						value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
-						required="true" disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode}" />
 
 					<p:outputLabel for="descricao" value="Descrição: "
 						styleClass="labelBold" />
 					<p:inputText id="descricao"
 						value="#{contasPagarMB.objetoContasPagar.descricao}"
-						required="true" disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode}" />
 					<p:outputLabel for="valor" value="Valor (R$): "
 						styleClass="labelBold" />
 					<p:inputText id="valor"
@@ -120,7 +122,10 @@
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
 						converter="bigDecimalConverter"
-						disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode}" >
+						<p:ajax event="blur" update="valorPagamento"
+							listener="#{contasPagarMB.settarValorPagamento()}" />
+					</p:inputText>
 
 					<p:outputLabel for="valorPagamento" value="Valor Pagamento (R$): "
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"

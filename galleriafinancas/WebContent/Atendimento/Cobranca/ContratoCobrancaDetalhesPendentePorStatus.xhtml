@@ -376,6 +376,14 @@
 				
 
 			<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">
+				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
+						<p:outputLabel id="comentarioComite"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
+							styleClass="labelBold" />
+					</p:panel>
+				</h:panelGroup>
+			
 				<h:panelGroup id="comentarioPreComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
 						<h:panelGrid columns="2">

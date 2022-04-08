@@ -38,6 +38,11 @@ public class Dashboard implements Serializable {
 	private BigDecimal valorCcbsEmitidas;
 	private BigDecimal valorContratosRegistrados;
 	
+	private List<ContratoCobranca> listaCadastrados;
+	private List<ContratoCobranca> listaPreAprovados;
+	private List<ContratoCobranca> listaBoletosPagos;
+	private List<ContratoCobranca> listaCcbsEmitidas;
+	private List<ContratoCobranca> listaRegistrados;
 	
 	private int totalAprovados;
 	private int totalReprovados;
@@ -279,5 +284,44 @@ public class Dashboard implements Serializable {
 	public void setValorContratosRegistrados(BigDecimal valorContratosRegistrados) {
 		this.valorContratosRegistrados = valorContratosRegistrados;
 	}
-	
+
+	public List<ContratoCobranca> getListaCadastrados() {
+		return listaCadastrados;
+	}
+
+	public void setListaCadastrados(List<ContratoCobranca> listaCadastrados) {
+		this.listaCadastrados = listaCadastrados;
+	}
+
+	public List<ContratoCobranca> getListaPreAprovados() {
+		return listaPreAprovados;
+	}
+
+	public void setListaPreAprovados(List<ContratoCobranca> listaPreAprovados) {
+		this.listaPreAprovados = listaPreAprovados;
+	}
+
+	public List<ContratoCobranca> getListaBoletosPagos() {
+		return listaBoletosPagos;
+	}
+
+	public void setListaBoletosPagos(List<ContratoCobranca> listaBoletosPagos) {
+		this.listaBoletosPagos = listaBoletosPagos;
+	}
+
+	public List<ContratoCobranca> getListaCcbsEmitidas() {
+		return listaCcbsEmitidas;
+	}
+
+	public void setListaCcbsEmitidas(List<ContratoCobranca> listaCcbsEmitidas) {
+		this.listaCcbsEmitidas = listaCcbsEmitidas;
+	}
+
+	public List<ContratoCobranca> getListaRegistrados() {
+		return listaRegistrados;
+	}
+
+	public void setListaRegistrados(List<ContratoCobranca> listaRegistrados) {
+		this.listaRegistrados = listaRegistrados;
+	}	
 }

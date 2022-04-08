@@ -80,6 +80,10 @@ public class DashboardMB {
 	BigDecimal totalValorCcbsEmitidas;
 	BigDecimal totalValorContratosRegistrados;
 	
+	private List<ContratoCobranca> listaContratosConsulta;
+	 
+	boolean consultarGerente = false;
+	
 	private String updateResponsavel = ":form:responsavel";
 	
 	public DashboardMB() {
@@ -119,6 +123,8 @@ public class DashboardMB {
 		
 		this.dashContratos = new ArrayList<Dashboard>();
 		
+		consultarGerente = false;
+		
 		return "/Atendimento/Cobranca/DashboardManager.xhtml";
 	}
 	
@@ -126,9 +132,9 @@ public class DashboardMB {
 		
 		DashboardDao dDao = new DashboardDao();
 		if(CommonsUtil.semValor(this.selectedResponsavel.getId())) {
-				this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus);	
+			this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus, this.consultarGerente);	
 		} else {
-				this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
+			this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
 		}
 		
 		if(consultarResponsaveisZerados) {
@@ -741,5 +747,22 @@ public class DashboardMB {
 	public void setListResponsavelZerado(List<Responsavel> listResponsavelZerado) {
 		this.listResponsavelZerado = listResponsavelZerado;
 	}
+
+	public List<ContratoCobranca> getListaContratosConsulta() {
+		return listaContratosConsulta;
+	}
+
+	public void setListaContratosConsulta(List<ContratoCobranca> listaContratosConsulta) {
+		this.listaContratosConsulta = listaContratosConsulta;
+	}
+
+	public boolean isConsultarGerente() {
+		return consultarGerente;
+	}
+
+	public void setConsultarGerente(boolean consultarGerente) {
+		this.consultarGerente = consultarGerente;
+	}
+
 	
 }
