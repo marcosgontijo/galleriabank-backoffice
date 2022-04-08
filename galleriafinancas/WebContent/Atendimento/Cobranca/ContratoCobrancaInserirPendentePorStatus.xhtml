@@ -474,6 +474,16 @@
 					</p:panel>
 				</shiro:hasAnyRoles>
 
+				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">
+					<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
+						<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
+							<p:outputLabel id="comentarioComite"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
+								styleClass="labelBold" />
+						</p:panel>
+					</h:panelGroup>
+				</shiro:hasAnyRoles>
+
 				<h:panelGroup id="CartorioPanel">
 					<p:panel header="Cartório" style="margin-bottom:10px;"
 						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">

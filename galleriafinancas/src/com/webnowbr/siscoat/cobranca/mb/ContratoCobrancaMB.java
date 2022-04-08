@@ -3418,6 +3418,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setDocumentosComite(false);
+		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
