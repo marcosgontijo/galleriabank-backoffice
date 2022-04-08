@@ -315,6 +315,14 @@ public class ContasPagarMB {
 
 		return clearFields();
 	}
+	
+	public void settarDataPagamento() {
+		this.objetoContasPagar.setDataPagamento(this.objetoContasPagar.getDataVencimento());	
+	}
+	
+	public void settarValorPagamento() {
+		this.objetoContasPagar.setValorPagamento(this.objetoContasPagar.getValor());	
+	}
 
 	public void clearPagadorRecebedor() {
 		this.objetoContasPagar.setPagadorRecebedor(null);

@@ -42,11 +42,8 @@ public class DemonstrativoResultadoMB {
 
 		try {
 			
-			DemonstrativoResultadosGrupo contratos = contratoCobrancaDao.getDreContrato(dataInicio, dataFim);
-			demonstrativoResultado.addDre(contratos);
-			
-			DemonstrativoResultadosGrupo debentures = debenturesInvestidorDao.getDreDebentures(dataInicio, dataFim);
-			demonstrativoResultado.addDre(debentures);
+			//DemonstrativoResultadosGrupo contratos = contratoCobrancaDao.getDreContrato(dataInicio, dataFim);
+			//demonstrativoResultado.addDre(contratos);
 			
 			DemonstrativoResultadosGrupo entradas = contratoCobrancaDao.getDreEntradas(dataInicio, dataFim);
 			demonstrativoResultado.addDre(entradas);
@@ -77,7 +74,26 @@ public class DemonstrativoResultadoMB {
 			subTotal.addValor(entradas.getValorTotal().subtract(saidas.getValorTotal()).subtract(jurosFidc));
 			subTotal.addJuros(entradas.getJurosTotal().subtract(saidas.getJurosTotal()).subtract(jurosFidc));
 			subTotal.addAmortizacao(entradas.getAmortizacaoTotal().subtract(saidas.getAmortizacaoTotal()));
-			demonstrativoResultado.addDre(subTotal);			
+			demonstrativoResultado.addDre(subTotal);	
+			
+			DemonstrativoResultadosGrupo debentures = debenturesInvestidorDao.getDreDebentures(dataInicio, dataFim);
+			demonstrativoResultado.addDre(debentures);
+			
+			DemonstrativoResultadosGrupo resgates = contratoCobrancaDao.getDreResgates(dataInicio, dataFim);
+			demonstrativoResultado.addDre(resgates);
+			
+			BigDecimal diferencaDebRes = debentures.getValorTotal().subtract(resgates.getValorTotal());
+			
+			DemonstrativoResultadosGrupo subTotal2 = new DemonstrativoResultadosGrupo();
+			subTotal2.setTipo("Subtotal2");
+			subTotal2.setCodigo(1);
+			subTotal2.addValor(entradas.getValorTotal().subtract(saidas.getValorTotal()).subtract(jurosFidc));
+			subTotal2.addJuros(entradas.getJurosTotal().subtract(saidas.getJurosTotal()).subtract(jurosFidc));
+			subTotal2.addAmortizacao(entradas.getAmortizacaoTotal().subtract(saidas.getAmortizacaoTotal()));
+			if(diferencaDebRes.compareTo(BigDecimal.ZERO) < 0) {
+				subTotal2.addValor(diferencaDebRes);
+			}
+			demonstrativoResultado.addDre(subTotal2);	
 				
 			//DemonstrativoResultadosGrupo contasPagar =	contasPagarDao.getDreContasPagar(dataInicio, dataFim);
 			//demonstrativoResultado.addDre(contasPagar);
@@ -95,9 +111,9 @@ public class DemonstrativoResultadoMB {
 			DemonstrativoResultadosGrupo total = new DemonstrativoResultadosGrupo();
 			total.setTipo("Total");
 			total.setCodigo(1);
-			total.addValor(subTotal.getValorTotal().subtract(valorTotalContas));
-			total.addJuros(subTotal.getJurosTotal().subtract(jurosTotalContas));
-			total.addAmortizacao(subTotal.getAmortizacaoTotal().subtract(amortizacaoTotalContas));
+			total.addValor(subTotal2.getValorTotal().subtract(valorTotalContas));
+			total.addJuros(subTotal2.getJurosTotal().subtract(jurosTotalContas));
+			total.addAmortizacao(subTotal2.getAmortizacaoTotal().subtract(amortizacaoTotalContas));
 			demonstrativoResultado.addDre(total);
 			
 		} catch (Exception e) {
