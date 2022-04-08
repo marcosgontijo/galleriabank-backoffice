@@ -1869,6 +1869,55 @@ public class CcbMB {
 							+ "assinado pelas partes litigantes nos autos, o qual deve"
 							+ " conter obrigatoriamente a menção à quitação e o pedido" + " extinção do processo.",
 					false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID2,
+					"Emissão da Certidão Negativa de Débitos – CND atualizada da Justiça Federal e do "
+					+ "Tribunal Regional Federal da 3ª Região (TRF3 – Primeira e segunda instâncias).",
+					false);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingBetween(1);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("4.4.1. ");
+			run.setBold(true);
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("Considerando que não é possível a consulta processual e emissão de Certidão "
+					+ "Negativa de Débitos – CND atualizada da Justiça Federal e do Tribunal Regional "
+					+ "Federal da 3ª Região devido ao ataque cibernético ocorrido em 30 de março de 2022 "
+					+ "relatado na Portaria CJF3R de 1º de abril de 2022, ");
+			run2.setBold(false);
+
+			run = paragraph.createRun();
+			run.setFontSize(12);
+			run.setText("a liberação do pagamento está condicionada à emissão da Certidão Negativa de Débitos – CND");
+			run.setBold(true);
+
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.removeCarriageReturn();
+			run2.setText(", que será possível quando os sistemas voltarem à normalidade.");
+			run2.setBold(false);
+			run2.addCarriageReturn();
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.2. ",
+					"Quando da normalidade dos sistemas da Justiça Federal e do Tribunal "
+					+ "Regional Federal da 3ª Região, caso a Certidão de Débitos seja positiva,"
+					+ " será facultado ao(à) EMITENTE realizar os pagamentos dos débitos com o "
+					+ "crédito concedido nesta CCB, visto que apresentam risco à garantia, ou resolver"
+					+ " o presente negócio jurídico mediante reembolso ao CREDOR dos valores gastos"
+					+ " com a operação até o registro da garantia, elencados no ANEXO II.",
+					true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.3. ",
+					"Caso a Certidão de Débitos seja positiva, a exclusivo critério do CREDOR a "
+					+ "operação poderá ser cancelada, devendo o EMITENTE reembolsar os valores "
+					+ "gastos até o registro da garantia.",
+					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "4.5. ",
 					"O(A) EMITENTE concorda que, caso as condições precedentes "
