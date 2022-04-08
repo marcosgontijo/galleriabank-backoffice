@@ -63,6 +63,7 @@ public class ConsultaPF {
 	 */
 	
 	private String accessToken = "0d54a6b5fa28f6dc42ce76d0011952e3";
+	//private String accessToken = "dc813b4fd1ef43b757538bbd3bd8cb32";	
 
 	private String cpf;
 	private PF retornoConsultaPF;
@@ -99,9 +100,8 @@ public class ConsultaPF {
 
 		URL myURL;
 		try {
-			myURL = new URL("https://apiv2.directd.com.br/consultas/cadastro/v1/consulta-pf-por-cpf?token=" + this.accessToken + "&cpf=" + this.cpf);
-
-
+			myURL = new URL("https://api.directd.com.br/consultas/cadastro/v1/consulta-pf-por-cpf?token=" + this.accessToken + "&cpf=" + this.cpf);
+			
 			if (valid) {
 				HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 				myURLConnection.setUseCaches(false);

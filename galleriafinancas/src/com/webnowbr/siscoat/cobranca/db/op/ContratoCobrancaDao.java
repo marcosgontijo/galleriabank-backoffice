@@ -374,8 +374,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"	left join cobranca.contratocobrancadetalhesparcial cdbp on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial  " +
 			"	where cc.status = 'Aprovado'   " +
 			"	and cdbp.datavencimentoatual >= ? ::timestamp " +
-			"	and cdbp.datavencimentoatual <= ? ::timestamp "
-			+ " order by cdj.idcontratocobranca, idContratoCobrancaDetalhes, cd.numeroParcela " ;	
+			"	and cdbp.datavencimentoatual <= ? ::timestamp ";
 	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_DT_ORIG_1 =  	
 			"	select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cdbp.vlrrecebido as valor, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.vlrRepasse,  cd.vlrParcela, cdbp.vlrrecebido - cd.vlrParcela as acrescimo, cd.id as idContratoCobrancaDetalhes" +
@@ -386,8 +385,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"	left join cobranca.contratocobrancadetalhesparcial cdbp on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial  " +
 			"	where cc.status = 'Aprovado'   " +
 			"	and cdbp.dataVencimento >= ? ::timestamp " +
-			"	and cdbp.dataVencimento <= ? ::timestamp "
-			+ " order by cdj.idcontratocobranca, idContratoCobrancaDetalhes, cd.numeroParcela " ;	
+			"	and cdbp.dataVencimento <= ? ::timestamp ";	
 	
 	
 	public int numeroParcela;
@@ -2006,7 +2004,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
 								pagadorNome,recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getBigDecimal(9),rs.getBigDecimal(10), rs.getBigDecimal(11)));												
-					}
+					} 
 	
 				} finally {
 					closeResources(connection, ps, rs);					
@@ -2522,7 +2520,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotal(final Date dtRelInicio, final Date dtRelFim, final long idPagador,
 			final long idRecebedor, final long idRecebedor2, final long idRecebedor3, final long idRecebedor4, final long idRecebedor5, 
 			final long idRecebedor6, final long idRecebedor7, final long idRecebedor8, final long idRecebedor9, final long idRecebedor10, final long idResponsavel,
-			final String filtrarDataVencimento) {
+			final String filtrarDataVencimento, String statusParcela) {
 		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -2705,6 +2703,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM_1 ;
 					
 					//query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + "	) as consulta order by idcontratocobranca, idContratoCobrancaDetalhes, numeroParcela ";	
+					
+					if (statusParcela.equals("Baixa Total")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelaPaga = true ";						
+					}
+					
+					if (statusParcela.equals("Baixa Parcial")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelaPaga = false "; 
+					}
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " order by cdj.idcontratocobranca, idContratoCobrancaDetalhes, cd.numeroParcela " ;
+					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
 					

@@ -383,7 +383,7 @@ public class CcbMB {
 		 */
 		if (validacao) {			
 			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
-					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato);
+					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato, this.vencimentoPrimeiraParcelaPagamento);
 		}		
 	}
 	

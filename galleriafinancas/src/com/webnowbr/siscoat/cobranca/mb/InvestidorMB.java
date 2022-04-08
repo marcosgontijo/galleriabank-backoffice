@@ -1175,8 +1175,8 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidor) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getParcelaMensal() != null) {
-					totalParcela = totalParcela.add(parcelas.getParcelaMensal());
+				if (parcelas.getParcelaMensalBaixa() != null) {
+					totalParcela = totalParcela.add(parcelas.getParcelaMensalBaixa());
 				}
 			}
 		}
@@ -1284,9 +1284,9 @@ public class InvestidorMB {
 
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidor) {
 			if (parcelas.getInvestidor().getId() == idInvestidor) {
-				if (parcelas.getJuros() != null) {
-					if (parcelas.getJuros() != null) {
-						totalJuros = totalJuros.add(parcelas.getJuros());
+				if (parcelas.getJurosBaixa() != null) {
+					if (parcelas.getJurosBaixa() != null) {
+						totalJuros = totalJuros.add(parcelas.getJurosBaixa());
 					}
 				}
 
@@ -9210,7 +9210,7 @@ public class InvestidorMB {
 				cell1.setColspan(1);
 				table.addCell(cell1);
 
-				cell1 = new PdfPCell(new Phrase(df.format(parcelas.getParcelaMensal()), normal));
+				cell1 = new PdfPCell(new Phrase(df.format(parcelas.getParcelaMensalBaixa()), normal));
 				cell1.setBorder(0);
 				cell1.setBorderWidthTop(1);
 				cell1.setBorderColorTop(BaseColor.BLACK);
@@ -9226,10 +9226,10 @@ public class InvestidorMB {
 				cell1.setColspan(1);
 				table.addCell(cell1);
 
-				if (parcelas.getJuros() == null || parcelas.getJuros().toString().equals("0.00")) {
+				if (parcelas.getJurosBaixa() == null || parcelas.getJurosBaixa().toString().equals("0.00")) {
 					cell1 = new PdfPCell(new Phrase("0,00", normal));
 				} else {
-					cell1 = new PdfPCell(new Phrase(df.format(parcelas.getJuros()), normal));
+					cell1 = new PdfPCell(new Phrase(df.format(parcelas.getJurosBaixa()), normal));
 				}
 
 				cell1.setBorder(0);

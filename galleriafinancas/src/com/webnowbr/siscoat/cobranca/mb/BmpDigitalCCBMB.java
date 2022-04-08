@@ -302,7 +302,7 @@ public class BmpDigitalCCBMB {
 	 */
 	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante, String numeroParcelasPagamento, 
 			BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
-			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato) {
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento) {
 
 		JSONObject jsonEnvioProposta = new JSONObject();		
 		
@@ -326,10 +326,12 @@ public class BmpDigitalCCBMB {
 		
 		// CLIENTE - Se pessoa física
 		if (cliente.getCpf() != null && !cliente.getCpf().equals("")) {
-			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCpf());				
+			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCpf());	
+			jsonDTOEnvioProposta.put("PercIOF", "0,0082");
 		} else {
 			// se pessoa jurídica
 			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCnpj());
+			jsonDTOEnvioProposta.put("PercIOF", "0,0041");
 		}
 		
 		// FIDUCIANTE - Se pessoa física
@@ -341,25 +343,24 @@ public class BmpDigitalCCBMB {
 		}	
 		
 		//TODO
-		
 		jsonDTOEnvioProposta.put("CodigoOperacao", numeroContrato);
 		jsonDTOEnvioProposta.put("VlrSolicitado", valorCredito);
 		jsonDTOEnvioProposta.put("Prazo", numeroParcelasPagamento);
 		jsonDTOEnvioProposta.put("PercJurosNegociado", taxaDeJurosMes);
-		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);
-		jsonDTOEnvioProposta.put("PercIOF", 0);
+		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);		
 		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
-		jsonDTOEnvioProposta.put("VlrParcela", 0);
+		jsonDTOEnvioProposta.put("VlrParcela", 0);XXXXXXXXXXXXXXXXXXXXX
 		jsonDTOEnvioProposta.put("VlrTAC", 0);
+		jsonDTOEnvioProposta.put("VlrBoleto", 0);
+		jsonDTOEnvioProposta.put("TipoContrato", "CSG");
 		//TODO
-		jsonDTOEnvioProposta.put("DtPrimeiroVencto", gerarDataHoje());
+		jsonDTOEnvioProposta.put("DtPrimeiroVencto", vencimentoPrimeiraParcelaPagamento);
 		jsonDTOEnvioProposta.put("VlrSeguro", 0);
 		jsonDTOEnvioProposta.put("VlrAvaliacao", 0);
 		jsonDTOEnvioProposta.put("VlrRegistroCartorio", 0);
 		jsonDTOEnvioProposta.put("VlrSeguroMensal1", 0);
 		jsonDTOEnvioProposta.put("VlrSeguroMensal2", 0);
 
-		
 		JSONObject jsonContaPagamentoDTO = new JSONObject();
 		jsonContaPagamentoDTO.put("CodigoBanco", numeroBanco);
 		jsonContaPagamentoDTO.put("TipoConta", 0);
@@ -984,14 +985,14 @@ public class BmpDigitalCCBMB {
 	
 	public void enviaProposta(PagadorRecebedor emitente, PagadorRecebedor fiduciante,
 			String numeroParcelasPagamento, BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
-			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato) {
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento) {
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/IncluirPropostaManualSimplificado");
 
 			JSONObject jsonObj = getJSONEnvioProposta(emitente, fiduciante, numeroParcelasPagamento, taxaDeJurosMes, 
-					valorIOF, numeroBanco, agencia, contaCorrente, valorCredito, numeroContrato);
+					valorIOF, numeroBanco, agencia, contaCorrente, valorCredito, numeroContrato, vencimentoPrimeiraParcelaPagamento);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();

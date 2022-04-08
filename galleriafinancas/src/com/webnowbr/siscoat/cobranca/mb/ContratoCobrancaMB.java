@@ -7876,11 +7876,18 @@ public class ContratoCobrancaMB {
 				cFim.add(Calendar.DATE, 1);
 				this.relDataContratoFim = cFim.getTime();
 
+				/*
 				this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoParcialPeriodo(
 						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
 						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
 						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
 						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento);
+				*/
+				this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotal(
+						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
+						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
+						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
+						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento, "Baixa Parcial");
 			}
 		}
 
@@ -7892,11 +7899,19 @@ public class ContratoCobrancaMB {
 						this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(), this.getIdRecebedor10(),
 						this.getIdResponsavel());
 			} else {
+				/*
 				this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodo(
 						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
 						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
 						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
 						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento);
+						*/
+				
+				this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotal(
+						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
+						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
+						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
+						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento, "Baixa Total");
 			}
 		}
 
@@ -7912,7 +7927,7 @@ public class ContratoCobrancaMB {
 						this.relDataContratoInicio, this.relDataContratoFim, this.getIdPagador(), this.getIdRecebedor(),
 						this.getIdRecebedor2(), this.getIdRecebedor3(), this.getIdRecebedor4(), this.getIdRecebedor5(),
 						this.getIdRecebedor6(), this.getIdRecebedor7(), this.getIdRecebedor8(), this.getIdRecebedor9(),
-						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento);
+						this.getIdRecebedor10(), this.getIdResponsavel(), this.filtrarDataVencimento, "Baixa Total e Parcial");
 			}
 		}
 

@@ -45,7 +45,15 @@
 								action="#{simuladorMB.clearFields}"
 								ajax="false" icon="ui-icon ui-icon-newwin"
 								styleClass="itemMenu" />
-						</p:submenu>						
+						</p:submenu>	
+						<p:submenu label="Consultas" styleClass="titulosMenu">
+							<shiro:hasAnyRoles name="ROOT">								
+								<p:menuitem value="Consulta PF por CPF"
+									action="#{consultaPF.clearConsultaPF}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+						</p:submenu>					
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
