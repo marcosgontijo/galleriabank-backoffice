@@ -6532,4 +6532,47 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	private static final String QUERY_PARCELA_BY_CONTRATO_NUMEROPARCELA = " select coco.numerocontrato, ccd.id, ccd.numeroparcela, ccd.vlrSaldoParcela , ccd.vlrsaldoinicial "
+			+ " from cobranca.contratocobranca coco "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id  "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes "
+			+ " where coco.numerocontrato = ? "
+			+ " AND ccd.numeroparcela = ? "
+			+ " order by coco.numerocontrato ";
+	
+	@SuppressWarnings("unchecked")
+	public BigDecimal getSaldoDevedorByContratoNumeroParcela(final String numeroContrato, final String numeroParcela) {
+		return (BigDecimal) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;		
+				BigDecimal saldoDevedor = BigDecimal.ZERO;
+				try {
+					connection = getConnection();
+
+					String query = QUERY_PARCELA_BY_CONTRATO_NUMEROPARCELA;
+					
+					ps = connection.prepareStatement(query);
+					
+					ps.setString(1, numeroContrato);
+					ps.setString(2, numeroParcela);
+					
+					rs = ps.executeQuery();
+					
+					saldoDevedor = BigDecimal.ZERO;
+					
+					while (rs.next()) {									
+						saldoDevedor = rs.getBigDecimal("vlrSaldoParcela");
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return saldoDevedor;
+			}
+		});	
+	}
 }
