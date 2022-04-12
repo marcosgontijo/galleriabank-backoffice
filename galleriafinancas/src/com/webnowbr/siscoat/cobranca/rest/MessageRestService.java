@@ -2,7 +2,10 @@ package com.webnowbr.siscoat.cobranca.rest;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,7 +19,9 @@ import javax.ws.rs.core.Response;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.UniProof;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 
 @Path("/services")
@@ -314,6 +319,156 @@ public class MessageRestService {
 			return Response
 				      .status(Response.Status.BAD_REQUEST)
 				      .entity("erro na Atualização do Status da proposta!!!")
+				      .type(MediaType.APPLICATION_JSON)
+				      .build();
+		}
+	}
+	
+	@POST
+	@Path("/uniproof/lot/management")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response uniproofLotManagement(String data) { 
+		try {
+			UniProof processo = new UniProof();
+			UniProofDao uniProofDao = new UniProofDao();
+			JSONObject dataObject = new JSONObject(data);
+			boolean isUpdate = false;
+			
+			// verifica se já existe o processo na base
+			if (dataObject.has("lotItemId")) {
+				if (!dataObject.isNull("lotItemId")) {
+					processo = uniProofDao.getProcessoByLotItemId(dataObject.getString("lotItemId"));
+					
+					// se existe processo a operação será de update
+					if (processo != null) {
+						isUpdate = true;
+					} else {
+						processo = new UniProof();
+					}
+				}
+			}
+	        
+	        if (dataObject.has("createdAt")) {
+				if (!dataObject.isNull("createdAt")) {
+					SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					try {
+						Date createAt = isoFormat.parse(dataObject.getString("createdAt"));
+						processo.setCreatedAt(createAt);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}			
+			}
+			
+			if (dataObject.has("updatedAt")) {
+				if (!dataObject.isNull("updatedAt")) {
+					SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					try {
+						Date updatedAt = isoFormat.parse(dataObject.getString("updatedAt"));
+						processo.setUpdatedAt(updatedAt);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}			
+			}
+			
+			if (dataObject.has("companyToken")) {
+				if (!dataObject.isNull("companyToken")) {
+					processo.setCompanyToken(dataObject.getString("companyToken"));
+				}			
+			}
+			
+			if (dataObject.has("lotId")) {
+				if (!dataObject.isNull("lotId")) {
+					processo.setLotId(dataObject.getString("lotId"));
+				}			
+			}
+			
+			if (dataObject.has("lotItemId")) {
+				if (!dataObject.isNull("lotItemId")) {
+					processo.setLotItemId(dataObject.getString("lotItemId"));
+				}			
+			}
+			
+			if (dataObject.has("folderId")) {
+				if (!dataObject.isNull("folderId")) {
+					processo.setFolderId(dataObject.getString("folderId"));
+				}			
+			}
+			
+			if (dataObject.has("folderName")) {
+				if (!dataObject.isNull("folderName")) {
+					processo.setFolderName(dataObject.getString("folderName"));
+				}			
+			}
+			
+			if (dataObject.has("folderDescription")) {
+				if (!dataObject.isNull("folderDescription")) {
+					processo.setFolderDescription(dataObject.getString("folderDescription"));
+				}			
+			}
+			
+			if (dataObject.has("serviceName")) {
+				if (!dataObject.isNull("serviceName")) {
+					processo.setServiceName(dataObject.getString("serviceName"));
+				}			
+			}
+
+			if (dataObject.has("protocol")) {
+				if (!dataObject.isNull("protocol")) {
+					processo.setProtocol(dataObject.getString("protocol"));
+				}			
+			}
+
+			if (dataObject.has("cityId")) {
+				if (!dataObject.isNull("cityId")) {
+					processo.setCityId(dataObject.getString("cityId"));
+				}			
+			}
+
+			if (dataObject.has("cityName")) {
+				if (!dataObject.isNull("cityName")) {
+					processo.setCityName(dataObject.getString("cityName"));
+				}			
+			}
+
+			if (dataObject.has("statusName")) {
+				if (!dataObject.isNull("statusName")) {
+					processo.setStatusName(dataObject.getString("statusName"));
+				}			
+			}
+		
+			if (dataObject.has("statusDescription")) {
+				if (!dataObject.isNull("statusDescription")) {
+					processo.setStatusDescription(dataObject.getString("statusDescription"));
+				}			
+			}
+
+			if (dataObject.has("statusLabel")) {
+				if (!dataObject.isNull("statusLabel")) {
+					processo.setStatusLabel(dataObject.getString("statusLabel"));
+				}			
+			}
+			
+			if (isUpdate) {
+				uniProofDao.merge(processo);
+			} else {
+				uniProofDao.create(processo);
+			}
+			
+			String message = "{\"retorno\": \"Processo " + processo.getLotItemId() + " recebido com sucesso!!!\"}";
+
+		    return Response
+		      .status(Response.Status.CREATED)
+		      .entity(message)
+		      .type(MediaType.APPLICATION_JSON)
+		      .build();
+		} catch (org.json.JSONException exception) {
+			return Response
+				      .status(Response.Status.BAD_REQUEST)
+				      .entity("Erro ao processar processo!!!")
 				      .type(MediaType.APPLICATION_JSON)
 				      .build();
 		}

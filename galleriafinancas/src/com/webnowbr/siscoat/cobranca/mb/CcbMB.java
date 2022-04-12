@@ -252,6 +252,8 @@ public class CcbMB {
 	private BigDecimal valorIOF;
 	private BigDecimal valorDespesas;
 	
+	private BigDecimal valorParcela;
+	
 	private BigDecimal taxaDeJurosMes;
 	private BigDecimal taxaDeJurosAno;
 	private BigDecimal cetMes;
@@ -383,7 +385,7 @@ public class CcbMB {
 		 */
 		if (validacao) {			
 			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
-					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato, this.vencimentoPrimeiraParcelaPagamento);
+					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato, this.vencimentoPrimeiraParcelaPagamento, this.valorParcela);
 		}		
 	}
 	
@@ -8289,5 +8291,12 @@ public class CcbMB {
 	public void setModeloAntigo(boolean modeloAntigo) {
 		this.modeloAntigo = modeloAntigo;
 	}
-	
+
+	public BigDecimal getValorParcela() {
+		return valorParcela;
+	}
+
+	public void setValorParcela(BigDecimal valorParcela) {
+		this.valorParcela = valorParcela;
+	}
 }

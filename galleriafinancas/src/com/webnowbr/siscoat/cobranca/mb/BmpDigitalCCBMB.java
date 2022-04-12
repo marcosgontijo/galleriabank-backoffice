@@ -302,7 +302,7 @@ public class BmpDigitalCCBMB {
 	 */
 	public JSONObject getJSONEnvioProposta(PagadorRecebedor cliente, PagadorRecebedor fiduciante, String numeroParcelasPagamento, 
 			BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
-			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento) {
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento, BigDecimal valorParcela) {
 
 		JSONObject jsonEnvioProposta = new JSONObject();		
 		
@@ -349,7 +349,7 @@ public class BmpDigitalCCBMB {
 		jsonDTOEnvioProposta.put("PercJurosNegociado", taxaDeJurosMes);
 		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);		
 		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
-		jsonDTOEnvioProposta.put("VlrParcela", 0);XXXXXXXXXXXXXXXXXXXXX
+		jsonDTOEnvioProposta.put("VlrParcela", valorParcela);
 		jsonDTOEnvioProposta.put("VlrTAC", 0);
 		jsonDTOEnvioProposta.put("VlrBoleto", 0);
 		jsonDTOEnvioProposta.put("TipoContrato", "CSG");
@@ -692,7 +692,7 @@ public class BmpDigitalCCBMB {
 		
 		// Envio da Proposta
 		// /api/BMPDigital/IncluirPropostaManualSimplificado
-		getJSONEnvioProposta(pessoa, pessoa);
+		//getJSONEnvioProposta(pessoa, pessoa);
 		
 		// Incluir avalista
 		// /api/BMPDigital/PropostaIncluirAvalista
@@ -761,11 +761,14 @@ public class BmpDigitalCCBMB {
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 			myURLConnection.setUseCaches(false);
 			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			//myURLConnection.setRequestProperty("Accept", "application/json");
+			//myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Host", "galleriabank.com.br");
 			myURLConnection.setDoOutput(true);
 			myURLConnection.getOutputStream().write(postDataBytes);
+			
+			int status = myURLConnection.getResponseCode();
 
 			String erro = "";
 			
@@ -985,14 +988,14 @@ public class BmpDigitalCCBMB {
 	
 	public void enviaProposta(PagadorRecebedor emitente, PagadorRecebedor fiduciante,
 			String numeroParcelasPagamento, BigDecimal taxaDeJurosMes, BigDecimal valorIOF, String numeroBanco, 
-			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento) {
+			String agencia, String contaCorrente, BigDecimal valorCredito, String numeroContrato, Date vencimentoPrimeiraParcelaPagamento, BigDecimal valorParcela) {
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/IncluirPropostaManualSimplificado");
 
 			JSONObject jsonObj = getJSONEnvioProposta(emitente, fiduciante, numeroParcelasPagamento, taxaDeJurosMes, 
-					valorIOF, numeroBanco, agencia, contaCorrente, valorCredito, numeroContrato, vencimentoPrimeiraParcelaPagamento);
+					valorIOF, numeroBanco, agencia, contaCorrente, valorCredito, numeroContrato, vencimentoPrimeiraParcelaPagamento, valorParcela);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();

@@ -1667,7 +1667,6 @@
 											action="#{ccbMB.calculaDatavencimentoFinal}" update="Dados" />
 									</h:panelGroup>
 
-
 									<p:outputLabel for="vencimentoUltimaParcelaPagamento"
 										value="Vencimento Da Última Parcela:  " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
@@ -1682,13 +1681,25 @@
 									<p:outputLabel for="montantePagamento" value="Montante :  "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="montantePagamento"
-										value="#{ccbMB.montantePagamento}" label="Contrato"
+									<h:panelGroup>
+										<p:inputText id="montantePagamento"
+											value="#{ccbMB.montantePagamento}" label="Contrato"
+											onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this,13, event, 2);"
+											converter="bigDecimalConverter" />
+											<p:spacer height="10" />
+										<p:commandButton ajax="true" value="Copiar para DFI e MIP"
+											action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
+									</h:panelGroup>
+										
+									<p:outputLabel for="valorParcela" value="Valor Parcela (R$): "
+										styleClass="labelBold" />
+									<p:inputText id="valorParcela"
+										value="#{ccbMB.valorParcela}"
 										onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this,13, event, 2);"
-										converter="bigDecimalConverter" />
-									<p:commandButton ajax="true" value="Copiar para DFI e MIP"
-										action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
+										onkeydown="FormataValor(this, 13, event, 2);" required="true"
+										converter="bigDecimalConverter" >
+									</p:inputText>										
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Parcelas MIP">
