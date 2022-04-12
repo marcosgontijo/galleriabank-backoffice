@@ -49,7 +49,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
-	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
 			+ " from cobranca.contratocobranca coco "
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
@@ -59,12 +59,12 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
 			+ " where coco.temseguromip = true and (  ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
-			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
 			+ " pare.dtnascimento, pare.sexo , segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
-	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
 			+ " from cobranca.contratocobranca coco "
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
@@ -75,7 +75,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
 			+ " where coco.temseguromip = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
 			+ " and coco.empresa = ? "
-			+ " group by coco.numerocontrato, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
 			+ " pare.dtnascimento, pare.sexo, segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
@@ -206,7 +206,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			@Override
 			public Object run() throws Exception {
 				Collection<SeguroTabelaVO> objects = new ArrayList<SeguroTabelaVO>();
-	
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;			
@@ -252,14 +252,24 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								seguroTabelaVO.setCodigoSegurado("02");
 							}
 							
-							seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));
+							String numeroparcela = rs.getString("numeroparcela");
 							
+							if(CommonsUtil.semValor(rs.getBigDecimal("saldodevedor"))) {
+								if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização")) {
+									String numeroparcelaAnterior = CommonsUtil.stringValue((CommonsUtil.integerValue(numeroparcela) - 1));
+									seguroTabelaVO.setSaldoDevedor(cDao.getSaldoDevedorByContratoNumeroParcela(rs.getString("numerocontrato"), numeroparcelaAnterior));
+								}
+							} else {
+								seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));
+							}
+
 							if ( !CommonsUtil.semValor(rs.getString("cpf")) ) {
 								seguroTabelaVO.setCpfPrincipal(rs.getString("cpf"));
 							}else {
 								seguroTabelaVO.setCpfPrincipal(rs.getString("cnpj"));
 							}
 							
+							seguroTabelaVO.setNumeroContrato(rs.getString("numerocontrato"));
 							seguroTabelaVO.setNomePrincipal(rs.getString("nome"));
 							seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));
 							seguroTabelaVO.setParcelasFaltantes(rs.getString("qtdeparcelasFaltantes"));

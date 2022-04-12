@@ -53,6 +53,14 @@
 					value="#{seguroTabelaMB.contratosSeguroDFI}"
 					emptyMessage="" sortBy="#{segurado.numeroContratoSeguro}">
 					
+					<shiro:hasAnyRoles name="ROOT">
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Nº Contrato" filterBy="#{segurado.numeroContrato}"
+							filterMatchMode="contains" sortBy="#{segurado.numeroContrato}">
+							<h:outputText value="#{segurado.numeroContrato}" />
+						</p:column>
+					</shiro:hasAnyRoles>
+					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Nº Contrato" filterBy="#{segurado.numeroContratoSeguro}"
 						filterMatchMode="contains" sortBy="#{segurado.numeroContratoSeguro}">
@@ -157,6 +165,14 @@
 				<p:dataTable id="dtSeguradosMIP" var="segurado"
 					value="#{seguroTabelaMB.contratosSeguroMIP}"
 					emptyMessage="" sortBy="#{segurado.numeroContratoSeguro}">
+					
+					<shiro:hasAnyRoles name="ROOT">
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Nº Contrato" filterBy="#{segurado.numeroContrato}"
+							filterMatchMode="contains" sortBy="#{segurado.numeroContrato}">
+							<h:outputText value="#{segurado.numeroContrato}" />
+						</p:column>
+					</shiro:hasAnyRoles>
 					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Nº Contrato" filterBy="#{segurado.numeroContratoSeguro}"

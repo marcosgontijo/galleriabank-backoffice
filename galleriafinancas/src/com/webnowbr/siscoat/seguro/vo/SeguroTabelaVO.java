@@ -6,6 +6,7 @@ import java.sql.Date;
 
 public class SeguroTabelaVO {
 	Date dataContrato;
+	String numeroContrato;
 	String numeroContratoSeguro;
 	String codigoSegurado;
 	String parcelasOriginais;
@@ -256,5 +257,10 @@ public class SeguroTabelaVO {
 	public void setDataContrato(Date dataContrato) {
 		this.dataContrato = dataContrato;
 	}
-	
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
+	}
 }
