@@ -5469,6 +5469,169 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> geraConsultaContratosCRMBaixadoReprovado(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					String query = QUERY_CONTRATOS_CRM;
+					
+					query = query + "where status != 'Aprovado' and status != 'Desistência Cliente' and status != 'Pendente' " ;
+					
+					// Verifica o tipo da consulta de contratos
+					if (tipoConsulta.equals("Baixado")) {
+						//
+						query = query + " and status = 'Reprovado' ";
+					}
+					if (tipoConsulta.equals("Reprovado")) {
+						query = query + " and status != 'Baixado' "; 
+					}
+					
+					String queryResponsavel = "";
+							
+					// verifica as cláusulas dos repsonsáveis
+					if (codResponsavel != null || listResponsavel != null) {
+						if (queryResponsavel.equals("")) {
+							queryResponsavel = " and (res.codigo = '" + codResponsavel + "' ";
+						}
+						
+						String queryGuardaChuva = "";
+						if (listResponsavel != null) {
+							if (listResponsavel.size() > 0) {
+								for (Responsavel resp : listResponsavel) {
+									if (!resp.getCodigo().equals("")) {
+										// adiciona membro guarda-chuva
+										if (queryGuardaChuva.equals("")) {
+											queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
+										} else {
+											queryGuardaChuva = queryGuardaChuva + " or res.codigo = '"
+													+ resp.getCodigo() + "' ";
+										}
+
+										// busca recursiva no guarda-chuva
+										ResponsavelDao rDao = new ResponsavelDao();
+										List<String> retornoGuardaChuvaRecursivo = new ArrayList<String>();
+										retornoGuardaChuvaRecursivo = rDao
+												.getGuardaChuvaRecursivoPorResponsavel(resp.getCodigo());
+										for (String codigoResponsavel : retornoGuardaChuvaRecursivo) {
+											queryGuardaChuva = queryGuardaChuva + " or res.codigo = '"
+													+ codigoResponsavel + "' ";
+										}
+									}
+								}
+							}
+						}
+						
+						if (!queryResponsavel.equals("")) {
+							query = query + queryResponsavel;
+							
+							if (!queryGuardaChuva.equals("")) {
+								query = query + " or " + queryGuardaChuva;
+							}
+							
+							query = query + ")";
+						}
+					}
+					
+					query = query + " order by id desc";
+					
+					connection = getConnection();
+					ps = connection
+							.prepareStatement(query);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					List<String> idsContratoCobranca = new ArrayList<String>(0);
+					
+					while (rs.next()) {
+						
+						contratoCobranca = new ContratoCobranca();
+						
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						contratoCobranca.setDataContrato(rs.getTimestamp(3));
+						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
+						contratoCobranca.setStatusLead(rs.getString(7));
+						contratoCobranca.setNomePagador(rs.getString(8));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
+						contratoCobranca.setCcbPronta(rs.getBoolean(16));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
+						contratoCobranca.setAgRegistro(rs.getBoolean(18));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
+						contratoCobranca.setDocumentosComite(rs.getBoolean(20));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(21));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(22)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
+						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
+						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
+						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
+						
+						
+						//contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+					rs.close();
+					
+					if (!CommonsUtil.semValor(idsContratoCobranca)) {
+						query = QUERY_CONTRATOS_CRM_COMITE;
+						query = query + " where contratocobranca in (" + String.join(",", idsContratoCobranca) + " ) ";
+						// connection = getConnection();
+						ps = connection.prepareStatement(query);
+
+						// (0, CommonsUtil.getArray(idsContratoCobranca ));
+						rs = ps.executeQuery();
+						while (rs.next()) {
+
+							Long idCobranca = rs.getLong("contratocobranca");
+
+							ContratoCobranca contratoCobrancaFind = objects.stream()
+									.filter(c -> CommonsUtil.mesmoValor(c.getId(), idCobranca)).findFirst()
+									.orElse(null);
+							if (contratoCobrancaFind.getListaAnaliseComite() == null) {
+								contratoCobrancaFind.setListaAnaliseComite(new HashSet<AnaliseComite>());
+							}
+							AnaliseComite analiseComite = new AnaliseComite();
+							
+							String votoComiteBD = rs.getString("VotoAnaliseComite");
+							String marcadorVoto = "";
+							
+							if(CommonsUtil.mesmoValor(votoComiteBD, "Aprovado")) {
+								marcadorVoto = " ✓";
+							} else if(CommonsUtil.mesmoValor(votoComiteBD, "Reprovado")) {
+								marcadorVoto = " X";
+							} else {
+								marcadorVoto = " -";
+							}
+							
+							analiseComite.setUsuarioComite(rs.getString("usuarioComite") + marcadorVoto);
+							contratoCobrancaFind.getListaAnaliseComite().add(analiseComite);
+						}
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
 
 	private static final String QUERY_RELATORIO_VENDA_OPERACAO =  	
 			" select coco.id, numerocontrato, datapagamentofim , pare.nome, coco.vlrparcela," + 

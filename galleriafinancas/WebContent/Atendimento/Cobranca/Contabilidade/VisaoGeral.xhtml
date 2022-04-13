@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+
+		<h:outputStylesheet>
+			.row { 
+				width:100%
+			}
+			.columns { 
+				width:20%;
+				max-width:20%;
+				text-align:center;
+			}	 
+   		</h:outputStylesheet>
+
+		<style type="text/css">
+			.ui-datagrid-no-border>.ui-datagrid-content {
+				border: none;
+			}
+		</style>
+
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script
+				src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="DemonstrativoResultados" header="Visão Geral"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio" value="#{visaoGeralMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" />
+					<p:calendar id="dataFim" value="#{visaoGeralMB.dataFim}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+				</h:panelGrid>
+
+
+				<p:commandButton value="Consultar" action="#{visaoGeralMB.gerarVG}"
+					image="ui-icon ui-icon-check" update=" mensagens :form:visaoGeralDataGrid"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+
+			<!--  <h:panelGrid columns="2" styleClass="row" id="aasdasd">
+				<ui:repeat var="visaoGeralVo" value="#{visaoGeralMB.visaoGeral}">
+					<h:panelGrid columns="2" styleClass="row">
+
+						<ui:repeat var="vg" value="#{visaoGeralVo.vg}">
+							<h:panelGrid columns="2" styleClass="row">
+
+								<p:panelGrid columns="2" rendered="#{vg.codigo eq 1}">
+									<f:facet name="header">
+										<p:outputLabel value="#{vg.tipo}" />
+									</f:facet>
+
+									<p:outputLabel for="quantidade" value="Quantidade "
+										styleClass="labelBold col-4" />
+									<p:outputLabel for="valorTotal1" value="Valor Total "
+										styleClass="labelBold col-4" />
+
+									<h:outputText id="quantidade" value="#{vg.quantidade}">
+										<f:convertNumber pattern="#,##0" />
+									</h:outputText>
+									<h:outputText id="valorTotal1" value="#{vg.valorTotal}"
+										converter="bigDecimalConverter">
+										<f:convertNumber pattern="#,##0.00" />
+									</h:outputText>
+								</p:panelGrid>
+
+
+								<p:panelGrid columns="2" rendered="#{vg.codigo eq 2}">
+									<f:facet name="header">
+										<p:outputLabel value="#{vg.tipo}" />
+									</f:facet>
+
+									<p:outputLabel for="valorTotal2" value="Valor Total "
+										styleClass="labelBold col-4" />
+
+									<h:outputText id="valorTotal2" value="#{vg.valorTotal}"
+										converter="bigDecimalConverter">
+										<f:convertNumber pattern="#,##0.00" />
+									</h:outputText>
+								</p:panelGrid>
+
+
+								<p:panelGrid columns="2" rendered="#{vg.codigo eq 3}">
+									<f:facet name="header">
+										<p:outputLabel value="#{vg.tipo}" />
+									</f:facet>
+
+									<p:outputLabel for="valorTotal" value="Valor Total "
+										styleClass="labelBold col-4" />
+									<p:outputLabel for="jurosTotal" value="Juros Total "
+										styleClass="labelBold col-4" />
+									<p:outputLabel for="amortizacaoTotal"
+										value="Amortização Total " styleClass="labelBold " />
+
+									<h:outputText id="valorTotal" value="#{vg.valorTotal}"
+										converter="bigDecimalConverter" />
+									<h:outputText id="jurosTotal" value="#{vg.jurosTotal}"
+										converter="bigDecimalConverter" />
+									<h:outputText id="amortizacaoTotal"
+										value="#{vg.amortizacaoTotal}" converter="bigDecimalConverter" />
+								</p:panelGrid>
+
+							</h:panelGrid>
+						</ui:repeat>
+					</h:panelGrid>
+				</ui:repeat>
+			</h:panelGrid> --> 
+
+	<h:panelGrid columns="3" styleClass="row" id="visaoGeralDataGrid">
+	<p:spacer height="175" />
+			<p:dataGrid var="vg" value="#{visaoGeralMB.visaoGeral.vg}"
+				columns="2" layout="grid" paginator="false"
+				paginatorAlwaysVisible="false" styleClass="ui-datagrid-no-border" >
+				<div align="center">
+					<p:panelGrid columns="2" rendered="#{vg.codigo eq 1}">
+						<f:facet name="header">
+							<p:outputLabel value="#{vg.tipo}" />
+						</f:facet>
+
+						<p:outputLabel for="quantidade3" value="Quantidade "
+							styleClass="labelBold col-4" style="width:250px;"/>
+						<p:outputLabel for="valorTotal3" value="Valor Total "
+							styleClass="labelBold col-4" style="width:250px;"/>
+
+						<h:outputText id="quantidade3" value="#{vg.quantidade}">
+							<f:convertNumber pattern="#,##0" />
+						</h:outputText>
+						<h:outputText id="valorTotal3" value="#{vg.valorTotal}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:panelGrid>
+				</div>
+
+				<div align="center">
+					<p:panelGrid columns="2" rendered="#{vg.codigo eq 2}">
+						<f:facet name="header">
+							<p:outputLabel value="#{vg.tipo}" />
+						</f:facet>
+
+						<p:outputLabel for="valorTotal4" value="Valor Total "
+							styleClass="labelBold col-4" style="width:250px;" />
+
+						<h:outputText id="valorTotal4" value="#{vg.valorTotal}"
+							converter="bigDecimalConverter" style="width:250px;">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:panelGrid>
+				</div>
+				
+				<div align="center">
+					<p:panelGrid columns="2" rendered="#{vg.codigo eq 3}">
+						<f:facet name="header">
+							<p:outputLabel value="#{vg.tipo}" />
+						</f:facet>
+
+						<p:outputLabel for="quantidade4" value="Quantidade "
+							styleClass="labelBold col-4" style="width:250px;"/>
+
+						<h:outputText id="quantidade4" value="#{vg.quantidade}" style="width:250px;">
+							<f:convertNumber pattern="#,##0" />
+						</h:outputText>
+						
+					</p:panelGrid>
+				</div>
+				
+			</p:dataGrid>
+			<p:spacer height="175" />
+			</h:panelGrid>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>
