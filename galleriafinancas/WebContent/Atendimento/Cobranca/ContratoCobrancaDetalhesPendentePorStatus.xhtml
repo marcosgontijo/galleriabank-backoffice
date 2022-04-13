@@ -373,58 +373,124 @@
 						</h:panelGrid>
 					</p:tooltip>
 				</p:panel>
-				
 
-			<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">
-				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
-						<p:outputLabel id="comentarioComite"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
-							styleClass="labelBold" />
-					</p:panel>
-				</h:panelGroup>
-			
-				<h:panelGroup id="comentarioPreComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
+				<h:panelGroup id="CartorioPanel">
+					<p:panel header="Cartório" style="margin-bottom:10px;"
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
 						<h:panelGrid columns="2">
-							<p:outputLabel for="comentarioPreComite" value="Comentário Pré-Comitê: "
-								styleClass="labelBold" />
-							<h:inputTextarea id="comentarioPreComite"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPreComite}"
-								rows="10" cols="48" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								style="FONT-SIZE: 10pt;width:400px;" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</h:inputTextarea>
-							
-							<p:outputLabel for="divida" value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
-								styleClass="labelBold" />
-							<p:selectOneMenu id="divida" required="true"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
-								label="Status" style="width:100px;">
-								<f:selectItem itemValue="" itemLabel="" />
-								<f:selectItem itemValue="sim" itemLabel="Sim" />
-								<f:selectItem itemValue="nao" itemLabel="Não" />
-								<p:ajax update="comentarioPreComitePanel" event="change" />
-							</p:selectOneMenu>
-							
-							<p:outputLabel for="dividaValor" value="Valor da dívida: "
-								styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}"/>
+							<h:panelGrid columns="2">
+								<p:outputLabel for="entradaContratoCartorioData"
+									value="Data da Entrada do Cartório: " styleClass="labelBold" />
+								<p:outputLabel id="entradaContratoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.entradaContratoCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
 
-							<p:inputText id="dividaValor"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}">
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputText>
-	
+
+								<p:outputLabel for="preAnocaoCartorioData"
+									value="Data da Pré-Anotação: " styleClass="labelBold" />
+								<p:outputLabel id="preAnocaoCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.preAnocaoCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+
+
+								<p:outputLabel for="exigenciasCartorioData"
+									value="Data das Exigências:" styleClass="labelBold" />
+								<p:outputLabel id="exigenciasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+
+								<p:outputLabel for="pagamentoCustasCartorioData"
+									value="Data do Pagamentos das Custas: " styleClass="labelBold" />
+								<p:outputLabel id="pagamentoCustasCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pagamentoCustasCartorioData}"
+									size="100" styleClass="dateTimeField">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								</p:outputLabel>
+							</h:panelGrid>
+
+							<h:panelGrid columns="2">
+								<p:outputLabel for="numeroPreAnotacaoCartorio"
+									value="Número do Cartório: " styleClass="labelBold" />
+								<p:outputLabel id="numeroPreAnotacaoCartorio"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.numeroPreAnotacaoCartorio}" />
+
+								<p:outputLabel for="exigenciasCartorioObservacao"
+									value="Observação das Exigências: " styleClass="labelBold" />
+								<p:outputLabel id="exigenciasCartorioObservacao" rows="10"
+									cols="48" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioObservacao}" />
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-			</shiro:hasAnyRoles>
-			
-			
+
+				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">
+					<h:panelGroup id="comentarioComitePanel"
+						style="margin-bottom:20px;">
+						<p:panel header="Comentário Comitê"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
+							<p:outputLabel id="comentarioComite"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
+								styleClass="labelBold" />
+						</p:panel>
+					</h:panelGroup>
+
+					<h:panelGroup id="comentarioPreComitePanel"
+						style="margin-bottom:20px;">
+						<p:panel header="Comentário Pré-Comitê"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="comentarioPreComite"
+									value="Comentário Pré-Comitê: " styleClass="labelBold" />
+								<h:inputTextarea id="comentarioPreComite"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPreComite}"
+									rows="10" cols="48" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									style="FONT-SIZE: 10pt;width:400px;">
+									<p:ajax process="@this" partialSubmit="true" />
+								</h:inputTextarea>
+
+								<p:outputLabel for="divida"
+									value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="divida" required="true"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
+									label="Status" style="width:100px;">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="sim" itemLabel="Sim" />
+									<f:selectItem itemValue="nao" itemLabel="Não" />
+									<p:ajax update="comentarioPreComitePanel" event="change" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="dividaValor" value="Valor da dívida: "
+									styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}" />
+
+								<p:inputText id="dividaValor"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}">
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputText>
+
+							</h:panelGrid>
+						</p:panel>
+					</h:panelGroup>
+				</shiro:hasAnyRoles>
+
 				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
 						<h:panelGrid columns="2">

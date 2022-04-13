@@ -42,8 +42,8 @@ public class DemonstrativoResultadoMB {
 
 		try {
 			
-			//DemonstrativoResultadosGrupo contratos = contratoCobrancaDao.getDreContrato(dataInicio, dataFim);
-			//demonstrativoResultado.addDre(contratos);
+			DemonstrativoResultadosGrupo contratos = contratoCobrancaDao.getDreContrato(dataInicio, dataFim);
+			demonstrativoResultado.addDre(contratos);
 			
 			DemonstrativoResultadosGrupo entradas = contratoCobrancaDao.getDreEntradas(dataInicio, dataFim);
 			demonstrativoResultado.addDre(entradas);

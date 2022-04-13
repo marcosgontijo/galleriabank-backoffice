@@ -1955,6 +1955,10 @@
 					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
 				</p:commandButton>			 						
 				<p:spacer height="10" />
+				<p:commandButton value="Baixar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.baixarPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.baixarMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />	
+				</p:commandButton>
+				<p:spacer height="10" />
 				<shiro:hasAnyRoles name="ROOT"> 
 					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}">
 						<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="true" />	
