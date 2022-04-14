@@ -750,67 +750,27 @@
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
 						<h:panelGrid columns="2">
+							<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
+								styleClass="labelBold" />
 							<h:panelGroup>
-								<h:panelGrid columns="2">
-									<p:outputLabel for="taxaPreAprovada"
-										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:outputLabel id="taxaPreAprovada"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-											style="FONT-SIZE: 10pt;width:300px;"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
-									</h:panelGroup>
-									<p:outputLabel for="prazoMaxPreAprovado"
-										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:outputLabel id="prazoMaxPreAprovado" showOn="button"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
-											size="100" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="rendaComprovada" value="Renda Comprovada: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:outputLabel value="R$ " />
-										<p:outputLabel id="rendaComprovada" showOn="button"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
-											size="100" converter="bigDecimalConverter" />
-									</h:panelGroup>
-
-									<p:outputLabel for="ccbxRenda" value="CCB X Renda: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:outputLabel value="R$ " />
-										<p:outputLabel id="ccbxRenda" showOn="button"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
-											size="100" converter="bigDecimalConverter" />
-									</h:panelGroup>
-								</h:panelGrid>
+								<p:outputLabel id="taxaPreAprovada"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+									style="FONT-SIZE: 10pt;width:60px;"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 3, event, 2);"
+									disabled="#{contratoCobrancaMB.deleteMode}"  
+									converter="bigDecimalConverter"/>
+								<p:outputLabel value="% + IPCA a.m." />
 							</h:panelGroup>
+							<p:outputLabel for="prazoMaxPreAprovado"
+								value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 							<h:panelGroup>
-								<h:panelGrid columns="2">
-									<p:outputLabel for="observacaoRenda" value="Observação: "
-										styleClass="labelBold" />
-									<p:outputLabel id="observacaoRenda" rows="10" cols="48"
-										maxlength="3000" 
-										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
-								</h:panelGrid>
+								<p:outputLabel id="prazoMaxPreAprovado" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
+									label="Data Vistoria Imóvel" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses"/>
 							</h:panelGroup>
-							
-							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-								<!--  -->
-								<h:panelGroup>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="observacaoParaComite" value="Observação para o Comitê: "
-											styleClass="labelBold" />
-										<p:outputLabel id="observacaoParaComite" 
-										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
-									</h:panelGrid>
-								</h:panelGroup>
-							</shiro:hasAnyRoles>
-							
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

@@ -1011,12 +1011,17 @@
 									<p:outputLabel for="taxaPreAprovada"
 										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
 									<h:panelGroup>
-										<p:inputText id="taxaPreAprovada"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-											style="FONT-SIZE: 10pt;width:60px;"
-											disabled="#{contratoCobrancaMB.deleteMode}"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
+										<h:panelGrid columns="2">
+											<p:inputText id="taxaPreAprovada"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												disabled="#{contratoCobrancaMB.deleteMode}"
+												converter="bigDecimalConverter" />
+											<h:panelGrid columns="1">
+												<p:outputLabel value="% + IPCA a.m. - Mediante " />
+												<p:outputLabel value="comprovação de renda compatível" />
+											</h:panelGrid>
+										</h:panelGrid>
 									</h:panelGroup>
 									<p:outputLabel for="prazoMaxPreAprovado"
 										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
@@ -1060,15 +1065,72 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
 								</h:panelGrid>
 							</h:panelGroup>
+							<h:panelGroup>
+								<h:panelGrid columns="2">
+									<p:outputLabel for="proprietarioAnterior"
+										value="Proprietário Anterior: " styleClass="labelBold" />
+									<p:inputText id="proprietarioAnterior"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.proprietarioAnterior}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="terciroGarantidorRessalva"
+										value="3° Garantidor: " styleClass="labelBold" />
+									<p:inputText id="terciroGarantidorRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.terciroGarantidorRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel value="Ressalvas / Pendências. "
+										styleClass="labelBold" />
+									<!--  -->
+
+									<p:outputLabel for="matriculaRessalva" value="Matrícula: "
+										style="margin-left:30px;" />
+									<p:inputText id="matriculaRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="pefinRefinRessalva" value="Pefin / Refin: "
+										style="margin-left:30px;" />
+									<p:inputText id="pefinRefinRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.pefinRefinRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="protestoRessalva" value="Protesto: "
+										style="margin-left:30px;" />
+									<p:inputText id="protestoRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.protestoRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="processosRessalva" value="Processos: "
+										style="margin-left:30px;" />
+									<p:inputText id="processosRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.processosRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="trabalhistaRessalva" value="Trabalhista: "
+										style="margin-left:30px;" />
+									<p:inputText id="trabalhistaRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.trabalhistaRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+								</h:panelGrid>
+							</h:panelGroup>
 							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-								<!--  -->
 								<h:panelGroup>
 									<h:panelGrid columns="2">
-										<p:outputLabel for="observacaoParaComite" value="Observação para o Comitê: "
-											styleClass="labelBold" />
+										<p:outputLabel for="observacaoParaComite"
+											value="Observação para o Comitê: " styleClass="labelBold" />
 										<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
 											maxlength="3000" onblur=""
-											counterTemplate="{0} characters remaining." autoResize="false"
+											counterTemplate="{0} characters remaining."
+											autoResize="false"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
 									</h:panelGrid>
 								</h:panelGroup>
@@ -2834,7 +2896,8 @@
 							columns="1" layout="responsive"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
 							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
-							<f:selectItem itemLabel="Financiamento" itemValue="Financiamento" />
+							<f:selectItem itemLabel="Financiamento Aquisição" itemValue="Financiamento" />
+							<f:selectItem itemLabel="Financiamento Empréstimo" itemValue="Emprestimo" />
 						</p:selectOneRadio>
 					</h:panelGrid>
 				</p:panel>

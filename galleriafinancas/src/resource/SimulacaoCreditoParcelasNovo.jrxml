@@ -196,7 +196,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amortizacao}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{amortizacao})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="210" y="0" width="93" height="15" uuid="cfeb002c-46ca-4055-b312-10cf10c87090">
@@ -212,7 +212,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{juros}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{juros})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="292" y="0" width="78" height="15" uuid="8aae7a4e-fea6-4eb2-aef3-cc03115c28cb">
@@ -228,7 +228,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{seguroMIP}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{seguroMIP})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="370" y="0" width="80" height="15" uuid="6029851c-cda2-4a9c-842c-783415a3e8dd">
@@ -246,7 +246,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{seguroDFI}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{seguroDFI})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="450" y="0" width="102" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
@@ -263,7 +263,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorParcela}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="40" y="0" width="100" height="15" uuid="2b45328a-ea65-4f10-9fc9-64c6a6ed80be">
@@ -279,7 +279,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{saldoDevedorInicial}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{saldoDevedorInicial})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="450" y="0" width="102" height="15" uuid="ffff1489-c860-48bd-b658-dee5e07482dc">
@@ -296,7 +296,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{valorParcela}.toString()))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="530" y="-1" width="22" height="16" uuid="19733a66-83dd-4dae-91ab-b0e2c73490d9">

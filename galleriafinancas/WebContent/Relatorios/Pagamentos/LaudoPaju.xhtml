@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="SeguroTabela" header="Laudo + Paju"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+
+				<p:commandButton value="Consultar"
+					action="#{laudoPajuMB.carregaListagem()}"
+					update=":form:ConsultaTabelaLaudoPaju"
+					image="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"
+					ajax="false" />
+			</p:panel>
+
+			<p:panel id="ConsultaTabelaLaudoPaju" header="Tabela Laudo + Paju"
+				style="margin-bottom:10px;">
+				<f:facet name="header"> Tabela de Laudo + Paju
+					<p:outputLabel value="" />
+					<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"
+						action="#{laudoPajuMB.readXLSXFile}" ajax="false" />
+				</f:facet>
+				<p:dataTable id="dtLaudoPaju" var="laPa"
+					value="#{laudoPajuMB.listLaudoPaju}" emptyMessage=""
+					sortBy="#{laPa.numeroContrato}">
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Contrato" filterBy="#{laPa.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{laPa.numeroContrato}">
+						<h:outputText value="#{laPa.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Cliente" filterBy="#{laPa.nomePagador}"
+						filterMatchMode="contains" sortBy="#{laPa.nomePagador}">
+						<h:outputText value="#{laPa.nomePagador}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Total" filterBy="#{laPa.valorTotal}"
+						filterMatchMode="contains" sortBy="#{laPa.valorTotal}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{laPa.valorTotal}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Pago" filterBy="#{laPa.valorPago}"
+						filterMatchMode="contains" sortBy="#{laPa.valorPago}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{laPa.valorPago}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor Restante" filterBy="#{laPa.valorRestante}"
+						filterMatchMode="contains" sortBy="#{laPa.valorRestante}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{laPa.valorRestante}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
