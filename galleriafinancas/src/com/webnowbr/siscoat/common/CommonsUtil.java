@@ -564,6 +564,15 @@ public class CommonsUtil {
 		PT_BR_SYMBOLS.setGroupingSeparator('.');
 		PT_BR_SYMBOLS.setCurrencySymbol("R$");
 	};
+	
+	public static final DecimalFormatSymbols EN_US_SYMBOLS;
+	static {
+		EN_US_SYMBOLS = new DecimalFormatSymbols(new Locale("en_US"));
+		EN_US_SYMBOLS.setDecimalSeparator('.');
+		EN_US_SYMBOLS.setMonetaryDecimalSeparator('.');
+		EN_US_SYMBOLS.setGroupingSeparator(',');
+		EN_US_SYMBOLS.setCurrencySymbol("$");
+	};
 
 	public static final String formataNumero(Number numero, String formato) {
 		if (numero == null) {

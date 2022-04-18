@@ -49,7 +49,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc " ;
 	
-	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+	private static final String QUERY_SEGURADOS_MIP = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, coco.valorccb, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
 			+ " from cobranca.contratocobranca coco "
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
@@ -59,12 +59,12 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " inner join cobranca.contratocobranca_detalhes_join ccdj1 ON ccdj1.idcontratocobranca = coco.id "
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
 			+ " where coco.temseguromip = true and (  ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
-			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, valorccb, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
 			+ " pare.dtnascimento, pare.sexo , segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
 	
-	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+	private static final String QUERY_SEGURADOS_MIP_EMPRESA = " select coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, ccd.vlrSaldoInicial saldodevedor, coco.valorccb, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, count( ccd1.id  ) qtdeparcelasFaltantes, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, pare.dtnascimento, pare.sexo "
 			+ " from cobranca.contratocobranca coco "
 			+ " inner join cobranca.segurado segu on coco.id = segu.contratocobranca "
@@ -75,7 +75,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 			+ " left join cobranca.contratocobrancadetalhes ccd1 ON ccd1.id = ccdj1.idcontratocobrancadetalhes and ccd1.parcelapaga = false "
 			+ " where coco.temseguromip = true and ( ccd.id is not null or to_char(coco.datacontrato, 'YYYYMM') = ? ) "
 			+ " and coco.empresa = ? "
-			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
+			+ " group by coco.numerocontrato, ccd.numeroparcela, datacontrato, numerocontratoseguro, saldodevedor, valorccb, pare.cpf, pare.cnpj, pare.nome, segu.porcentagemsegurador, "
 			+ " coco.qtdeparcelas, pare.endereco, pare.numero, pare.complemento, pare.bairro, pare.cidade, pare.estado, pare.cep, "
 			+ " pare.dtnascimento, pare.sexo, segu.posicao "
 			+ " order by coco.numerocontrato asc, segu.posicao asc, segu.porcentagemsegurador desc, pare.nome asc ";
@@ -258,6 +258,9 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 								if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização")) {
 									String numeroparcelaAnterior = CommonsUtil.stringValue((CommonsUtil.integerValue(numeroparcela) - 1));
 									seguroTabelaVO.setSaldoDevedor(cDao.getSaldoDevedorByContratoNumeroParcela(rs.getString("numerocontrato"), numeroparcelaAnterior));
+									if(CommonsUtil.semValor(seguroTabelaVO.getSaldoDevedor())) {
+										seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("valorccb"));
+									}
 								}
 							} else {
 								seguroTabelaVO.setSaldoDevedor(rs.getBigDecimal("saldodevedor"));

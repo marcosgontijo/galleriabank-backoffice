@@ -421,6 +421,7 @@ public class CcbMB {
 	}
 	
 	public void concluirParticipante() {
+		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
 		this.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
 		this.participanteSelecionado = new CcbVO();
@@ -5631,27 +5632,31 @@ public class CcbMB {
 		} else {
 			filho = "filho";
 		}
-		String nacionalidade;
+		String nacionalidade = null;
 		String estadoCivilStr;
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
-		
-		if (participante.isFeminino() == true) {
-			if (CommonsUtil.mesmoValor(participante.getNacionalidade(), "brasileiro")) {
+
+		if (CommonsUtil.mesmoValor(participante.getNacionalidade(), "brasileiro")) {
+			if (participante.isFeminino() == true) {
 				nacionalidade = "brasileira";
 			} else {
 				nacionalidade = participante.getNacionalidade();
 			}
-			
-			if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
+		} else {
+			nacionalidade = participante.getNacionalidade();
+		}
+
+		if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "CASADO")) {
+			if (participante.isFeminino() == true) {
 				estadoCivilStr = "casada";
 			} else {
 				estadoCivilStr = "casado";
 			}
 		} else {
-			nacionalidade = participante.getNacionalidade();
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
 		}
+		
 		String conjugeStr = "";
 		
 		if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {

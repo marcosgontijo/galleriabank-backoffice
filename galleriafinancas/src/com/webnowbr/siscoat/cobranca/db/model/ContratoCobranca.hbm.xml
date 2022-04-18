@@ -1509,5 +1509,33 @@
 			<column name="motivoReprovaSelectItem" />
 		</property>
 		
+		<property name="proprietarioAnterior" type="java.lang.String">
+			<column name="proprietarioAnterior" />
+		</property>
+		
+		<property name="terciroGarantidorRessalva" type="java.lang.String">
+			<column name="terciroGarantidorRessalva" />
+		</property>
+		
+		<property name="matriculaRessalva" type="java.lang.String">
+			<column name="matriculaRessalva" />
+		</property>
+		
+		<property name="pefinRefinRessalva" type="java.lang.String">
+			<column name="pefinRefinRessalva" />
+		</property>
+		
+		<property name="protestoRessalva" type="java.lang.String">
+			<column name="protestoRessalva" />
+		</property>
+		
+		<property name="processosRessalva" type="java.lang.String">
+			<column name="processosRessalva" />
+		</property>
+		
+		<property name="trabalhistaRessalva" type="java.lang.String">
+			<column name="trabalhistaRessalva" />
+		</property>
+
 	</class>
 </hibernate-mapping>

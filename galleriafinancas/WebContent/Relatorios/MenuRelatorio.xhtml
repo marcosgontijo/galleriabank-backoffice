@@ -22,34 +22,41 @@
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						
+
 						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 							<p:submenu label="Seguro" styleClass="titulosMenu">
 								<p:menuitem value="Tabela"
 									action="#{seguroTabelaMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-									
+
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						
+
 						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 							<p:submenu label="Pagamentos" styleClass="titulosMenu">
 								<p:menuitem value="Boletos Pagos"
 									action="#{boletosPagosMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-										
+
 								<p:menuitem value="Relatorio Semestral"
 									action="#{relatorioSemestralMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+									
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="Laudo + Paju"
+										action="#{laudoPajuMB.clearFields}" ajax="false"
+										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>								
 							</p:submenu>
-							
+
 							<p:submenu label="Analise" styleClass="titulosMenu">
 								<p:menuitem value="Tempo de Analise"
 									action="#{tempoAnaliseMB.clearTempoAnalise}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 							</p:submenu>
+							
 						</shiro:hasAnyRoles>
-						
+
 					</p:menu>
 				</h:form>
 			</ui:define>

@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
@@ -25,6 +26,10 @@ public class CRMMB {
 	private List<ContratoCobranca> emAnalise;
 	private int qtdeEmAnalise;
 	private BigDecimal valorTotalEmAnalise;
+	
+	private List<ContratoCobranca> analisePendente;
+	private int qtdeAnalisePendente;
+	private BigDecimal valorAnalisePendente;
 	
 	private List<ContratoCobranca> analiseReprovada;
 	private int qtdeAnaliseReprovada;
@@ -61,6 +66,14 @@ public class CRMMB {
 	private List<ContratoCobranca> agRegistro;
 	private int qtdeAgRegistro;
 	private BigDecimal valorTotalAgRegistro;
+	
+	private List<ContratoCobranca> baixado;
+	private int qtdeBaixado;
+	private BigDecimal valorTotalBaixado;
+	
+	private List<ContratoCobranca> reprovado;
+	private int qtdeReprovado;
+	private BigDecimal valorTotalReprovado;
 	
 	private List<ContratoCobranca> todosContratos;
 	private int qtdeTodosContratos;
@@ -119,6 +132,15 @@ public class CRMMB {
 			this.valorTodosContratos = this.valorTotalEmAnalise;
 			
 			this.tituloPagina = "Em Análise";
+		}
+		
+		if (filtro.equals("AnalisePendente")) {
+			geraConsultaContratosAnalisePendente();
+			this.todosContratos = this.analisePendente;
+			this.qtdeTodosContratos = this.qtdeAnalisePendente;
+			this.valorTodosContratos = this.valorAnalisePendente;
+			
+			this.tituloPagina = "Análise Pendente";
 		}
 		
 		if (filtro.equals("AnaliseReprovada")) {
@@ -201,6 +223,24 @@ public class CRMMB {
 			this.tituloPagina = "Ag. Registro";
 		}
 		
+		else if(filtro.equals("Baixado")){
+			geraConsultaContratosBaixado();
+			this.todosContratos = this.baixado;
+			this.qtdeTodosContratos = this.qtdeBaixado;
+			this.valorTodosContratos = this.valorTotalBaixado;
+			
+			this.tituloPagina = "Baixado";
+		}
+		
+		else if(filtro.equals("Reprovado")){
+			geraConsultaContratosReprovado();
+			this.todosContratos = this.reprovado;
+			this.qtdeTodosContratos = this.qtdeReprovado;
+			this.valorTodosContratos = this.valorTotalReprovado;
+			
+			this.tituloPagina = "Reprovado";
+		}
+		
 		// popula status
 		this.todosContratos = populaStatus(this.todosContratos);
 	}
@@ -237,7 +277,6 @@ public class CRMMB {
 			}
 		}
 	}
-	
 	
 	public void geraConsultaContratosNovoLead() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -334,6 +373,39 @@ public class CRMMB {
 			
 			for (ContratoCobranca c : this.emAnalise) {
 				this.valorTotalEmAnalise = valorTotalEmAnalise.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
+	public void geraConsultaContratosAnalisePendente() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.analisePendente = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.analisePendente = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Analise Pendente");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.analisePendente = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Analise Pendente"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAnalisePendente = 0;
+		this.valorAnalisePendente = BigDecimal.ZERO;
+		
+		if (this.analisePendente.size() > 0) {
+			this.qtdeAnalisePendente = this.analisePendente.size();
+			
+			for (ContratoCobranca c : this.analisePendente) {
+				this.valorAnalisePendente = valorAnalisePendente.add(c.getQuantoPrecisa());
 			}
 		}
 	}
@@ -598,6 +670,75 @@ public class CRMMB {
 			
 			for (ContratoCobranca c : this.agRegistro) {
 				this.valorTotalAgRegistro = valorTotalAgRegistro.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
+	public void geraConsultaContratosBaixado() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.baixado = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.baixado = contratoCobrancaDao.geraConsultaContratosCRMBaixadoReprovado(null, null, "Baixado");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.baixado = contratoCobrancaDao.geraConsultaContratosCRMBaixadoReprovado(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Baixado"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeBaixado = 0;
+		this.valorTotalBaixado = BigDecimal.ZERO;
+		
+		if (this.baixado.size() > 0) {
+			this.qtdeBaixado = this.baixado.size();
+			
+			for (ContratoCobranca c : this.baixado) {
+				this.valorTotalBaixado = valorTotalBaixado.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
+	public void geraConsultaContratosReprovado() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.reprovado = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.reprovado = contratoCobrancaDao.geraConsultaContratosCRMBaixadoReprovado(null, null, "Reprovado");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.reprovado = contratoCobrancaDao.geraConsultaContratosCRMBaixadoReprovado(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Reprovado"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeReprovado = 0;
+		this.valorTotalReprovado = BigDecimal.ZERO;
+		
+		if (this.reprovado.size() > 0) {
+			this.qtdeReprovado = this.reprovado.size();
+
+			for (ContratoCobranca c : this.reprovado) {
+				if (!CommonsUtil.semValor(c.getQuantoPrecisa())) {
+					this.valorTotalReprovado = valorTotalReprovado.add(c.getQuantoPrecisa());
+
+				}
 			}
 		}
 	}

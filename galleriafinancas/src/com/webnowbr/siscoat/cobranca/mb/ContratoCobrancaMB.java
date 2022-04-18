@@ -5798,7 +5798,13 @@ public class ContratoCobrancaMB {
 
 		saveEstadoCheckListAtual();
 
-		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
+		
+		
+		if (this.baixarMode) {
+			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
+		} else {
+			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
+		}	
 	}
 	
 	public String clearFieldsDetalhesPendentes() {
@@ -6120,20 +6126,11 @@ public class ContratoCobrancaMB {
 
 		// saveEstadoCheckListAtual();
 		
-		if (loginBean != null) {
-			User usuarioLogado = new User();
-			UserDao u = new UserDao();
-			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-			
-			if (usuarioLogado != null) {
-				if (!this.objetoContratoCobranca.isInicioAnalise()) {
-					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
-				} else {
-					return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
-				}	
-			}
-		}
-		return null;
+		if (!this.objetoContratoCobranca.isInicioAnalise()) {
+			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
+		} else {
+			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
+		}	
 	}
 
 	public void saveEstadoCheckListAtual() {

@@ -567,7 +567,15 @@ public class ContratoCobranca implements Serializable {
 	
 	private String codigoPropostaMoneyPlus;
 	private String statusPropostaMoneyPlus;
-
+	
+	private String proprietarioAnterior;
+	private String terciroGarantidorRessalva;
+	private String matriculaRessalva;
+	private String pefinRefinRessalva;
+	private String protestoRessalva;
+	private String processosRessalva;
+	private String trabalhistaRessalva;
+	
 	public ContratoCobranca() {
 		super();
 		this.pagador = new PagadorRecebedor();
@@ -4610,5 +4618,62 @@ public class ContratoCobranca implements Serializable {
 
 	public void setMotivoReprovaSelectItem(String motivoReprovaSelectItem) {
 		this.motivoReprovaSelectItem = motivoReprovaSelectItem;
+	}
+
+	public String getProprietarioAnterior() {
+		return proprietarioAnterior;
+	}
+
+	public void setProprietarioAnterior(String proprietarioAnterior) {
+		this.proprietarioAnterior = proprietarioAnterior;
+	}
+
+	public String getTerciroGarantidorRessalva() {
+		return terciroGarantidorRessalva;
+	}
+
+	public void setTerciroGarantidorRessalva(String terciroGarantidorRessalva) {
+		this.terciroGarantidorRessalva = terciroGarantidorRessalva;
+	}
+
+	public String getMatriculaRessalva() {
+		return matriculaRessalva;
+	}
+
+	public void setMatriculaRessalva(String matriculaRessalva) {
+		this.matriculaRessalva = matriculaRessalva;
+	}
+
+	public String getPefinRefinRessalva() {
+		return pefinRefinRessalva;
+	}
+
+	public void setPefinRefinRessalva(String pefinRefinRessalva) {
+		this.pefinRefinRessalva = pefinRefinRessalva;
+	}
+
+	public String getProtestoRessalva() {
+		return protestoRessalva;
+	}
+
+	public void setProtestoRessalva(String protestoRessalva) {
+		this.protestoRessalva = protestoRessalva;
+	}
+
+	public String getProcessosRessalva() {
+		return processosRessalva;
+	}
+
+	public void setProcessosRessalva(String processosRessalva) {
+		this.processosRessalva = processosRessalva;
+	}
+
+	public String getTrabalhistaRessalva() {
+		return trabalhistaRessalva;
+	}
+
+	public void setTrabalhistaRessalva(String trabalhistaRessalva) {
+		this.trabalhistaRessalva = trabalhistaRessalva;
 	}	
+
 }
