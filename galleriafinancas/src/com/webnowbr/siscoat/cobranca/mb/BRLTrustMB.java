@@ -303,9 +303,12 @@ public class BRLTrustMB {
 			taxaJurosCessao = this.objetoContratoCobranca.getTxJurosParcelas();
 		}
 		
+		Date datahoje = gerarDataHoje();
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
-			BigDecimal valorPresenteParcela = calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao());
-			valorTotalPresenteContrato = valorTotalPresenteContrato.add(valorPresenteParcela);
+			if (parcela.getDataVencimento().after(datahoje)) {
+				BigDecimal valorPresenteParcela = calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao());
+				valorTotalPresenteContrato = valorTotalPresenteContrato.add(valorPresenteParcela);
+			}
 		}
 		
 		valorTotalPresenteContrato = valorTotalPresenteContrato.divide(this.objetoContratoCobranca.getValorImovel(), 4, RoundingMode.HALF_DOWN);
