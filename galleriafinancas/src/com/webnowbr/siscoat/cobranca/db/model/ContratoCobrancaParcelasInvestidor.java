@@ -75,7 +75,11 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	}
 
 	public void setJurosBaixa(BigDecimal jurosBaixa) {
-		this.jurosBaixa = jurosBaixa;
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
+			this.capitalizacao = jurosBaixa;
+		} else {
+			this.juros = jurosBaixa;
+		}
 	}
 
 
