@@ -745,31 +745,116 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+				
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="taxaPreAprovada" value="Taxa Pré-Aprovada: "
-								styleClass="labelBold" />
+						<h:panelGrid columns="1">
 							<h:panelGroup>
-								<p:outputLabel id="taxaPreAprovada"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-									style="FONT-SIZE: 10pt;width:60px;"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 3, event, 2);"
-									disabled="#{contratoCobrancaMB.deleteMode}"  
-									converter="bigDecimalConverter"/>
-								<p:outputLabel value="% + IPCA a.m." />
+								<h:panelGrid columns="2">
+									<p:outputLabel for="taxaPreAprovada"
+										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
+									<h:panelGroup>
+										<h:panelGrid columns="2">
+											<p:outputLabel id="taxaPreAprovada"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												disabled="#{contratoCobrancaMB.deleteMode}"
+												converter="bigDecimalConverter" />
+											<h:panelGrid columns="1">
+												<p:outputLabel value="% + IPCA a.m. - Mediante " />
+												<p:outputLabel value="comprovação de renda compatível" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</h:panelGroup>
+									<p:outputLabel for="prazoMaxPreAprovado"
+										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
+									<h:panelGroup>
+										<p:outputLabel id="prazoMaxPreAprovado" style="FONT-SIZE: 10pt;width:60px;"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
+											size="100" />
+										<p:outputLabel value=" meses" />
+									</h:panelGroup>
+
+									<p:outputLabel for="rendaComprovada" value="Renda Comprovada: "
+										styleClass="labelBold" />
+									<h:panelGroup>
+										<p:outputLabel value="R$ " />
+										<p:outputLabel id="rendaComprovada"  style="FONT-SIZE: 10pt;width:125px;"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
+											size="100" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+									</h:panelGroup>
+
+									<p:outputLabel for="ccbxRenda" value="CCB X Renda: "
+										styleClass="labelBold" />
+									<h:panelGroup>
+										<p:outputLabel value="R$ " />
+										<p:outputLabel id="ccbxRenda" style="FONT-SIZE: 10pt;width:125px;"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
+											size="100" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+									</h:panelGroup>
+								</h:panelGrid>
 							</h:panelGroup>
-							<p:outputLabel for="prazoMaxPreAprovado"
-								value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 							<h:panelGroup>
-								<p:outputLabel id="prazoMaxPreAprovado" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
-									label="Data Vistoria Imóvel" size="100"
-									style="width:60px;" />
-								<p:outputLabel value=" meses"/>
+								<h:panelGrid columns="2">
+									<p:outputLabel for="proprietarioAnterior"
+										value="Proprietário Anterior: " styleClass="labelBold" />
+									<p:outputLabel id="proprietarioAnterior"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.proprietarioAnterior}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="terciroGarantidorRessalva"
+										value="3° Garantidor: " styleClass="labelBold" />
+									<p:outputLabel id="terciroGarantidorRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.terciroGarantidorRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel value="Ressalvas / Pendências. "
+										styleClass="labelBold" />
+									<!--  -->
+
+									<p:outputLabel for="matriculaRessalva" value="Matrícula: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="matriculaRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="pefinRefinRessalva" value="Pefin / Refin: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="pefinRefinRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.pefinRefinRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="protestoRessalva" value="Protesto: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="protestoRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.protestoRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="processosRessalva" value="Processos: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="processosRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.processosRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+									<p:outputLabel for="trabalhistaRessalva" value="Trabalhista: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="trabalhistaRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.trabalhistaRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />
+
+								</h:panelGrid>
 							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
