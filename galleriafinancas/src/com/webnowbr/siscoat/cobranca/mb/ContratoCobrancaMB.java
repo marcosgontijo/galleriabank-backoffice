@@ -4974,6 +4974,76 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void viewFileFaltante(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void loadListRecebedores() {
 		cedentesIugu = new ArrayList<PagadorRecebedor>();
@@ -21311,11 +21381,11 @@ public class ContratoCobrancaMB {
 	StreamedContent downloadFile;
 	StreamedContent downloadAllFiles;
 	
-	
 	Collection<FileUploaded> filesInterno = new ArrayList<FileUploaded>();
-	
+	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
 	
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	
 	StreamedContent downloadAllFilesInterno;
 
@@ -21380,6 +21450,34 @@ public class ContratoCobrancaMB {
 		// atualiza lista de arquivos contidos no diretório
 		filesInterno = listaArquivosInterno();
 	}
+	
+	public void handleFileFaltanteUpload(FileUploadEvent event) throws IOException {
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
+
+		// cria o diretório, caso não exista
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+
+		// cria o arquivo
+		byte[] conteudo = event.getFile().getContents();
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+			fos.write(conteudo);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e);
+		}
+
+		// atualiza lista de arquivos contidos no diretório
+		filesFaltante = listaArquivosFaltante();
+	}
 
 	/**
 	 * deleta o arquivo selecionado na tela
@@ -21399,7 +21497,16 @@ public class ContratoCobrancaMB {
 		}
 
 		deletefilesInterno = new ArrayList<FileUploaded>();
-		filesInterno = listaArquivos();
+		filesInterno = listaArquivosInterno();
+	}
+	
+	public void deleteFileFaltante() {
+		for (FileUploaded f : deletefilesFaltante) {
+			f.getFile().delete();
+		}
+
+		deletefilesFaltante = new ArrayList<FileUploaded>();
+		filesFaltante = listaArquivosFaltante();
 	}
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
@@ -21409,6 +21516,12 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void deleteFilesInterno(Collection<FileUploaded> lista) {
+		for (FileUploaded f : lista) {
+			f.getFile().delete();
+		}
+	}
+	
+	public void deleteFilesFaltante(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
 			f.getFile().delete();
 		}
@@ -21447,6 +21560,26 @@ public class ContratoCobrancaMB {
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public Collection<FileUploaded> listaArquivosFaltante() {
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
 		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
@@ -21693,6 +21826,21 @@ public class ContratoCobrancaMB {
 
 	public void setDownloadAllFilesInterno(StreamedContent downloadAllFilesInterno) {
 		this.downloadAllFilesInterno = downloadAllFilesInterno;
+	}
+	public Collection<FileUploaded> getFilesFaltante() {
+		return filesFaltante;
+	}
+
+	public void setFilesFaltante(Collection<FileUploaded> filesFaltante) {
+		this.filesFaltante = filesFaltante;
+	}
+
+	public List<FileUploaded> getDeletefilesFaltante() {
+		return deletefilesFaltante;
+	}
+
+	public void setDeletefilesFaltante(List<FileUploaded> deletefilesFaltante) {
+		this.deletefilesFaltante = deletefilesFaltante;
 	}
 
 
