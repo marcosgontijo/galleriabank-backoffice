@@ -19,8 +19,10 @@ import javax.ws.rs.core.Response;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.UniProof;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 
@@ -162,6 +164,20 @@ public class MessageRestService {
 					contratoCobrancaMB.getObjetoContratoCobranca().setQuantoPrecisa(new BigDecimal(valorDesejado));
 	
 					contratoCobrancaMB.getObjetoContratoCobranca().setFinalidade(lead.getString("finalidade_emprestimo"));
+					
+					// Se o lead veio da EdanBank
+					if (lead.has("origem")) {
+						if (!lead.isNull("origem")) {
+							if (lead.getString("origem").equals("EDANBANK")) {								
+								// id 429 -11610 - Edanbank codigo 
+								contratoCobrancaMB.setCodigoResponsavel("11610");
+								Responsavel responsavel = new Responsavel();
+								ResponsavelDao rDao = new ResponsavelDao();
+								responsavel = rDao.findById(Long.getLong("429"));
+								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+							}
+						}
+					}
 					
 					if (lead.has("url")) {
 						if (!lead.isNull("url")) {

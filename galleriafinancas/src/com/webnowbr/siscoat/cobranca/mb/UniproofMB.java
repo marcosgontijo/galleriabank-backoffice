@@ -93,7 +93,7 @@ import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 
-@ManagedBean(name = "bmpDigitalCCBMB")
+@ManagedBean(name = "uniproofMB")
 @SessionScoped
 public class UniproofMB {
 
@@ -111,18 +111,25 @@ public class UniproofMB {
 	/***
 	 * INICIO ATRIBUTOS 
 	 */
-	private String documento;
+
+	static final String apiurl =  "https://api-stage.uniproof.com.br";
+	static final String apiLogin =  "webnowbr@gmail.com";
+	static final String apiPassword =  "Hvj28383*";
 	
-	static final String email =  "webnowbr@gmail.com";
-	static final String password =  "Hvj28383*";
+	private String authToken =  "";
+	private String companyToken =  "";
+	
+	private String lotId =  "";
+	private String containerId =  "";
+	private String lotItemId =  "";
+	
 	/***
 	 * FIM ATRIBUTOS RECIBO
 	 */
 
-	public String clearFields() {
-		this.documento = "";
-		
-		return "/Atendimento/Cobranca/ConsultaSCR.xhtml";
+	public void callUniProof() {
+		getTokenAuth();
+
 	}
 
 	
@@ -133,20 +140,20 @@ public class UniproofMB {
 	 */
 	public JSONObject getJSONAuth() {
 		JSONObject auth = new JSONObject();
-		auth.put("email", "webnowbr@gmail.com");
-		auth.put("password", "Hvj28383*");
+		auth.put("email", apiLogin);
+		auth.put("password", apiPassword);
 		
 		return auth;
 	}
-	/*
-	public void enviaFiduciante(PagadorRecebedor pessoa, String nacionalidadeEmitente) {
+
+	public void getTokenAuth() {
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://bmpteste.moneyp.com.br/api/BMPDigital/CreateUpdatePessoa");
+			URL myURL = new URL(apiurl + "/api/auth");
 
-			JSONObject jsonObj = getJSONPessoaDTO(pessoa, nacionalidadeEmitente);
+			JSONObject jsonObj = getJSONAuth();
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
@@ -157,36 +164,28 @@ public class UniproofMB {
 			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 			myURLConnection.setDoOutput(true);
 			myURLConnection.getOutputStream().write(postDataBytes);
-
-			String erro = "";
 	
 			JSONObject myResponse = null;
 			myResponse = getJSONSucesso(myURLConnection.getInputStream());
-						
-			if (!myResponse.getBoolean("Result")) {	
+			
+			int status = myURLConnection.getResponseCode();
+			
+			if (status == 201) {
+				if (myResponse.has("token")) {					
+					if (!myResponse.isNull("token")) {
+						authToken = myResponse.getString("token");
+					}
+				}
+				
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"[UniProof] Autenticação realizada com sucesso!", ""));
+			} else {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[MoneyPlus] Envia Pessoa - ERRO: " + myResponse.getString("Msg"), ""));
-			} else {					
-				if (myResponse.has("Result")) {					
-					if (myResponse.getBoolean("Result")) {
-						
-						String codigoRetorno = "";
-						if (myResponse.has("Codigo")) {
-							codigoRetorno = myResponse.getString("Codigo");
-							
-							PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-							
-							pessoa.setCodigoMoneyPlus(codigoRetorno);
-							
-							pDao.merge(pessoa);
-							
-							context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-									"[MoneyPlus] Envia Pessoa - Pessoa inserida/atualizada com sucesso! Cód.: " + myResponse.getString("Codigo"), ""));
-						}
-					} 
-				} 
+						"[UniProof] Problema ao fazer autenticação!", ""));
 			}
+						
 			myURLConnection.disconnect();
+			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -195,5 +194,41 @@ public class UniproofMB {
 			e.printStackTrace();
 		}
 	}
-	*/
+
+	
+	/***
+	 * 
+	 * PARSE DO RETORNO SUCESSO
+	 * 
+	 * @param inputStream
+	 * @return
+	 */
+	public JSONObject getJSONSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

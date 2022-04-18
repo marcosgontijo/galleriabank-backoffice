@@ -696,11 +696,11 @@ public class BmpDigitalCCBMB {
 		
 		// Incluir avalista
 		// /api/BMPDigital/PropostaIncluirAvalista
-		getJSONPropostaIncluirAvalista(pessoa);
+		//getJSONPropostaIncluirAvalista(pessoa);
 		
 		// Incluir campos extras na Proposta
 		// /api/BMPDigital/PropostaIncluirCampoExtra
-		getJSONPropostaIncluirCamposExtras();
+		//getJSONPropostaIncluirCamposExtras();
 		
 		// Impressao CCB é na tela através de link
 		// Para visualização da CCB utilize a URL abaixo, a variável será o guid da proposta devolvido no response da API de inclusão da proposta
@@ -759,17 +759,14 @@ public class BmpDigitalCCBMB {
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
-			myURLConnection.setUseCaches(false);
 			myURLConnection.setRequestMethod("POST");
-			//myURLConnection.setRequestProperty("Accept", "application/json");
-			//myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Host", "galleriabank.com.br");
+			myURLConnection.setRequestProperty("Content-Length", Integer.toString(postDataBytes.length));
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 			myURLConnection.setDoOutput(true);
 			myURLConnection.getOutputStream().write(postDataBytes);
 			
 			int status = myURLConnection.getResponseCode();
-
 			String erro = "";
 			
 			/**
