@@ -313,8 +313,8 @@ public class BmpDigitalCCBMB {
 		JSONArray jsonParametros = new JSONArray();
 		JSONObject jsonParametro = new JSONObject();
 		
-		jsonParametro.put("nome", "");
-		jsonParametro.put("valor", "");
+		jsonParametro.put("nome", "String");
+		jsonParametro.put("valor", "String");
 		
 		jsonParametros.put(jsonParametro);
 		
@@ -327,11 +327,11 @@ public class BmpDigitalCCBMB {
 		// CLIENTE - Se pessoa física
 		if (cliente.getCpf() != null && !cliente.getCpf().equals("")) {
 			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCpf());	
-			jsonDTOEnvioProposta.put("PercIOF", "0,0082");
+			jsonDTOEnvioProposta.put("PercIOF", 0.0082);
 		} else {
 			// se pessoa jurídica
 			jsonDTOEnvioProposta.put("DocumentoCliente", cliente.getCnpj());
-			jsonDTOEnvioProposta.put("PercIOF", "0,0041");
+			jsonDTOEnvioProposta.put("PercIOF", 0.0041);
 		}
 		
 		// FIDUCIANTE - Se pessoa física
@@ -345,7 +345,7 @@ public class BmpDigitalCCBMB {
 		//TODO
 		jsonDTOEnvioProposta.put("CodigoOperacao", numeroContrato);
 		jsonDTOEnvioProposta.put("VlrSolicitado", valorCredito);
-		jsonDTOEnvioProposta.put("Prazo", numeroParcelasPagamento);
+		jsonDTOEnvioProposta.put("Prazo", Integer.valueOf(numeroParcelasPagamento));
 		jsonDTOEnvioProposta.put("PercJurosNegociado", taxaDeJurosMes);
 		jsonDTOEnvioProposta.put("VlrIOF", valorIOF);		
 		jsonDTOEnvioProposta.put("PercIOFAdicional", 0);
@@ -372,7 +372,7 @@ public class BmpDigitalCCBMB {
 		jsonContaPagamentoDTO.put("DocumentoFederalPagamento", "");
 		jsonContaPagamentoDTO.put("NomePagamento", "");
 		
-		jsonDTOEnvioProposta.put("PropostaContaPagamentoDTO", jsonContaPagamentoDTO);
+		//jsonDTOEnvioProposta.put("PropostaContaPagamentoDTO", jsonContaPagamentoDTO);
 		
 		jsonEnvioProposta.put("dto", jsonDTOEnvioProposta);
 		

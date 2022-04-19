@@ -125,6 +125,8 @@ public class IuguMB {
 	private BigDecimal valorItem;
 	private Date dataVencimento;
 	private boolean splitBoletoIugu;	
+	
+	private String filtrarRelatorioPorData;
 
 	private ContratoCobranca contratoCobranca;
 	private ContratoCobrancaDetalhes contratoCobrancaDetalhes;
@@ -2617,6 +2619,23 @@ public class IuguMB {
 
 		return "/Atendimento/Cobranca/FaturasIuguPeriodo.xhtml";
 	}	
+	
+	public String clearFieldsFaturasPeriodoIuguCompleto() {
+		this.relDataContratoInicio = null;
+		this.relDataContratoFim = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		// get somente PagadorRecebedor com subcontas
+		this.listCedentes = pagadorRecebedorDao.getSubContasIugu();	
+		this.faturasIUGU = new ArrayList<FaturaIUGU>();
+		this.relByVencimento = true;
+		this.filtrarRelatorioPorData = "Sem Filtro";
+		this.relByStatus = "Todas";
+		this.numeroContrato = "";
+
+		clearCedentes();
+
+		return "/Atendimento/Cobranca/FaturasIuguPeriodoCompleto.xhtml";
+	}	
 
 	/**
 	 * CHAMADO PELO MENU DE CONSULTA FATURAS PERIODO
@@ -2639,6 +2658,198 @@ public class IuguMB {
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
 	}
+	
+	public void geraRelatorioFaturaConsolidadasPeriodoCompleto() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.faturasIUGU = new ArrayList<FaturaIUGU>();
+		
+		String liveTokenCedente = "";
+		
+		if (this.selectedCedente != null) {
+			if (this.selectedCedente.getId() > 0) {
+				liveTokenCedente = this.selectedCedente.getIuguLiveApiToken();
+			}
+		}
+		
+		if (!liveTokenCedente.equals("")) {
+			consultarFaturasPeriodoSubContaByToken(liveTokenCedente, this.selectedCedente.getNome());
+		} else {
+			consultarFaturasPeriodoSubContaByToken("bd88479c57011124c25638b26572e453", "Galleria Correspondente Bancario Eireli");
+		}
+
+		context.addMessage(null, new FacesMessage(
+				FacesMessage.SEVERITY_INFO, "Consultar Faturas SubConta IUGU: Consulta efetuada com sucesso!", ""));
+	}
+	
+	/**
+	 * CONSULTA FATURAS SUBCONTAS
+	 */
+	public void consultarFaturasPeriodoSubContaByToken(String token, String cedente) {
+		try {			
+			int HTTP_COD_SUCESSO = 200;
+			URL myURL;
+
+			/*
+			paid_at_from=2018-10-02T00%3A00%3A00-03%3A00
+			paid_at_to=2018-10-02T23%3A59%3A59-03%3A00
+
+			status_filter=paid 
+			pending, paid, canceled, partially_paid, refunded, expired, authorized
+
+			api_token=663718c5d28ceac2d975c85159e36412
+			 */
+			String urlComposed = "https://api.iugu.com/v1/invoices?";
+
+			if (this.filtrarRelatorioPorData.equals("De Vencimento") && relDataContratoInicio != null) {
+				Calendar calVencimento = Calendar.getInstance();
+				calVencimento.setTime(this.relDataContratoInicio);
+
+				String dia = String.valueOf(calVencimento.get(Calendar.DAY_OF_MONTH));
+				if (dia.length() == 1) {
+					dia = "0" + dia;
+				}
+
+				String mes = String.valueOf(calVencimento.get(Calendar.MONTH)+1);
+				if (mes.length() == 1) {
+					mes = "0" + mes;
+				}
+
+				String ano = String.valueOf(calVencimento.get(Calendar.YEAR));
+
+				urlComposed = urlComposed + "due_date=" + ano + "-" + mes + "-" + dia;
+			}  
+			
+			if (relDataContratoInicio != null && this.relDataContratoFim != null) {
+				Calendar calInicio = Calendar.getInstance();
+				calInicio.setTime(this.relDataContratoInicio);
+
+				String diaInicio = String.valueOf(calInicio.get(Calendar.DAY_OF_MONTH));
+				if (diaInicio.length() == 1) {
+					diaInicio = "0" + diaInicio;
+				}
+
+				String mesInicio = String.valueOf(calInicio.get(Calendar.MONTH)+1);
+				if (mesInicio.length() == 1) {
+					mesInicio = "0" + mesInicio;
+				}
+
+				String anoInicio = String.valueOf(calInicio.get(Calendar.YEAR));
+
+				Calendar calFim = Calendar.getInstance();
+				calFim.setTime(this.relDataContratoFim);
+
+				String diaFim = String.valueOf(calFim.get(Calendar.DAY_OF_MONTH));
+				if (diaFim.length() == 1) {
+					diaFim = "0" + diaFim;
+				}
+
+				String mesFim = String.valueOf(calFim.get(Calendar.MONTH)+1);
+				if (mesFim.length() == 1) {
+					mesFim = "0" + mesFim;
+				}
+
+				String anoFim = String.valueOf(calFim.get(Calendar.YEAR));
+
+				if (this.filtrarRelatorioPorData.equals("De Pagamento")) {
+					urlComposed = urlComposed + "paid_at_from=" + anoInicio + "-" + mesInicio + "-" + diaInicio + "T00%3A00%3A00-03%3A00&paid_at_to=" + anoFim + "-" + mesFim + "-" + diaFim + "T23%3A59%3A59-03%3A00";
+				}
+			
+				if (this.filtrarRelatorioPorData.equals("De Geração")) {
+					urlComposed = urlComposed + "created_at_from=" + anoInicio + "-" + mesInicio + "-" + diaInicio + "T00%3A00%3A00-03%3A00&created_at_to=" + anoFim + "-" + mesFim + "-" + diaFim + "T23%3A59%3A59-03%3A00";
+				}
+			}
+			
+			if (!this.numeroContrato.equals("")) {
+				urlComposed = urlComposed + "&query=" + this.numeroContrato;
+			}
+			
+			if (this.relByStatus.equals("paid")) {
+				urlComposed = urlComposed + "&status_filter=paid";
+			}
+			if (this.relByStatus.equals("pending")) {
+				urlComposed = urlComposed + "&status_filter=pending";
+			}
+			if (this.relByStatus.equals("expired")) {
+				urlComposed = urlComposed + "&status_filter=expired";
+			}
+			if (this.relByStatus.equals("canceled")) {
+				urlComposed = urlComposed + "&status_filter=canceled";
+			}
+			
+			urlComposed = urlComposed + "&api_token=" + token;
+
+			myURL = new URL(urlComposed);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */
+			if (myURLConnection.getResponseCode() == HTTP_COD_SUCESSO) {				
+				myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
+
+				JSONArray faturas = myResponse.getJSONArray("items");
+
+				for (int i = 0; i < faturas.length(); i++) {
+					FaturaIUGU faturaIUGU = new FaturaIUGU();
+
+					JSONObject obj = faturas.getJSONObject(i);
+
+					String dueDateOriginal = obj.getString("due_date").substring(8, 10) + "/" + obj.getString("due_date").substring(5, 7) + "/" + obj.getString("due_date").substring(0, 4);					
+					DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					Date dueDate = new java.sql.Date( ((java.util.Date)formatter.parse(dueDateOriginal)).getTime() );
+
+					faturaIUGU.setId(obj.getString("id"));
+					faturaIUGU.setDue_date(dueDate);
+					faturaIUGU.setSecure_url(obj.getString("secure_url"));
+					faturaIUGU.setTotal(obj.getString("total"));
+					faturaIUGU.setStatus(obj.getString("status"));    
+					faturaIUGU.setCedente(cedente);
+
+					if (!obj.isNull("paid_at")) {
+						String paidAtOriginal = obj.getString("paid_at").substring(8, 10) + "/" + obj.getString("paid_at").substring(5, 7) + "/" + obj.getString("paid_at").substring(0, 4);
+						Date paidAt = new java.sql.Date( ((java.util.Date)formatter.parse(paidAtOriginal)).getTime() );
+						faturaIUGU.setPaid_at(paidAt);
+					}
+
+					JSONArray variables = obj.getJSONArray("variables");
+
+					for (int j = 0; j < variables.length(); j++) {
+						JSONObject objVariables = variables.getJSONObject(j);
+
+						if (objVariables.getString("variable").equals("payer.email")) {
+							faturaIUGU.setEmail(objVariables.getString("value"));
+						}
+
+						if (objVariables.getString("variable").equals("payer.name")) {
+							faturaIUGU.setSacado(objVariables.getString("value"));
+						}
+					}	
+
+					this.faturasIUGU.add(faturaIUGU);
+				}				
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
 
 	/**
 	 * CHAMADO PELO MENU DE CONCILIAÇÃO DE SAQUES
@@ -7263,5 +7474,13 @@ public class IuguMB {
 
 	public void setFaturasDownloadIUGU(List<FaturaIUGU> faturasDownloadIUGU) {
 		this.faturasDownloadIUGU = faturasDownloadIUGU;
+	}
+
+	public String getFiltrarRelatorioPorData() {
+		return filtrarRelatorioPorData;
+	}
+
+	public void setFiltrarRelatorioPorData(String filtrarRelatorioPorData) {
+		this.filtrarRelatorioPorData = filtrarRelatorioPorData;
 	}
 }

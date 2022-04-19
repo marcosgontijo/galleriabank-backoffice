@@ -358,8 +358,11 @@
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles
 									name="ROOT, COBRANCA, COBRANCA_IUGU, PRECOBRANCAIUGU">
-									<p:menuitem value="Faturas Período"
+									<p:menuitem value="Faturas Período Dia"
 										action="#{iuguMB.clearFieldsFaturasPeriodoIugu}" ajax="false"
+										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
+									<p:menuitem value="Faturas Período Completo"
+										action="#{iuguMB.clearFieldsFaturasPeriodoIuguCompleto}" ajax="false"
 										icon="ui-icon ui-icon-search" styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT">
