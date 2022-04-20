@@ -77,6 +77,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.vo.CcbContrato;
 import com.webnowbr.siscoat.cobranca.vo.CcbVO;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -245,61 +246,6 @@ public class CcbMB {
 	private PagadorRecebedor testemunha1Selecionado;
 	private PagadorRecebedor testemunha2Selecionado;
 	private List<PagadorRecebedor> listPagadores;
-
-	private BigDecimal valorLiquidoCredito;
-	private BigDecimal valorCredito;
-	private BigDecimal custoEmissao;
-	private BigDecimal valorIOF;
-	private BigDecimal valorDespesas;
-	
-	private BigDecimal valorParcela;
-	
-	private BigDecimal taxaDeJurosMes;
-	private BigDecimal taxaDeJurosAno;
-	private BigDecimal cetMes;
-	private BigDecimal cetAno;
-	
-	private String contaCorrente;
-	private String agencia;
-	private String numeroBanco;
-	private String nomeBanco;
-	private String numeroParcelasPagamento;
-	private Date vencimentoPrimeiraParcelaPagamento;
-	private Date vencimentoUltimaParcelaPagamento;
-	private BigDecimal montantePagamento;
-
-	private String numeroParcelasDFI;
-	private Date vencimentoPrimeiraParcelaDFI;
-	private Date vencimentoUltimaParcelaDFI;
-	private BigDecimal montanteDFI;
-
-	private String numeroParcelasMIP;
-	private Date vencimentoPrimeiraParcelaMIP;
-	private Date vencimentoUltimaParcelaMIP;
-	private BigDecimal montanteMIP;
-
-	private BigDecimal tarifaAntecipada;
-	private Date dataDeEmissao;
-
-	private String numeroImovel;
-	private String cartorioImovel;
-	private String cidadeImovel;
-	private String ufImovel;
-	
-	private BigDecimal vendaLeilao;
-	private String elaboradorNome;
-	private String elaboradorCrea;
-	private String responsavelNome;
-	private String responsavelCrea;
-	private BigDecimal porcentagemImovel;
-	
-	private String nomeTestemunha1;
-	private String cpfTestemunha1;
-	private String rgTestemunha1;
-	
-	private String nomeTestemunha2;
-	private String cpfTestemunha2;
-	private String rgTestemunha2;
 	
 	private String tipoPesquisa;
 	private String tipoDownload;
@@ -311,17 +257,17 @@ public class CcbMB {
     ByteArrayInputStream bis = null;
     
     private CcbVO participanteSelecionado = new CcbVO();
-    private ArrayList<CcbVO> listaParticipantes;
+    
     private boolean addParticipante;
     
     private CcbVO socioSelecionado = new CcbVO();
     private boolean addSocio;
     
-    private boolean terceiroGarantidor;
-    
     private boolean fiducianteGerado = false;
     private boolean devedorGerado = false;
     private boolean modeloAntigo = false;
+    
+    CcbContrato objetoCcb = new CcbContrato();
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -342,7 +288,7 @@ public class CcbMB {
 		 * TRATA EMITENTE
 		 */
 		PagadorRecebedor eminenteDTO = null;
-		for (CcbVO pessoa : this.listaParticipantes) {
+		for (CcbVO pessoa : this.objetoCcb.getListaParticipantes()) {
 			if (pessoa.getTipoParticipante().equals("EMITENTE")) {
 				eminenteDTO = pessoa.getPessoa();
 			}
@@ -364,7 +310,7 @@ public class CcbMB {
 		 */
 		PagadorRecebedor fiducianteDTO = null;		
 		if (validacao) {			
-			for (CcbVO pessoa : this.listaParticipantes) {
+			for (CcbVO pessoa : objetoCcb.getListaParticipantes()) {
 				if (pessoa.getTipoParticipante().equals("TERCEIRO GARANTIDOR")) {
 					fiducianteDTO = pessoa.getPessoa();
 				}
@@ -384,8 +330,8 @@ public class CcbMB {
 		 * ENVIA PROPOSTA
 		 */
 		if (validacao) {			
-			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.numeroParcelasPagamento, this.taxaDeJurosMes, this.valorIOF, this.numeroBanco, 
-					this.agencia, this.contaCorrente, this.valorCredito, this.numeroContrato, this.vencimentoPrimeiraParcelaPagamento, this.valorParcela);
+			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.objetoCcb.getNumeroParcelasPagamento(), this.objetoCcb.getTaxaDeJurosMes(), this.objetoCcb.getValorIOF(), this.objetoCcb.getNumeroBanco(), 
+					this.objetoCcb.getAgencia(), this.objetoCcb.getContaCorrente(), this.objetoCcb.getValorCredito(), this.numeroContrato, this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), this.objetoCcb.getValorParcela());
 		}		
 	}
 	
@@ -395,7 +341,7 @@ public class CcbMB {
 		modeloAntigo = false;
 		nomeEmitente = null;
 		cpfEmitente = null;
-		terceiroGarantidor = false;
+		this.objetoCcb.setTerceiroGarantidor(false);
 		logradouroEmitente = null;
 		numeroEmitente = null;
 		complementoEmitente = null;
@@ -403,7 +349,7 @@ public class CcbMB {
 		ufEmitente = null;
 		cepEmitente = null;
 		
-		for (CcbVO participante : this.listaParticipantes) {
+		for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
 			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
 				participante.setTipoOriginal(participante.getTipoParticipante());
 			} else {
@@ -488,7 +434,7 @@ public class CcbMB {
 	
 	public void populateCodigosBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
-			if(CommonsUtil.mesmoValor(this.nomeBanco, banco.getNome().toString())) {
+			if(CommonsUtil.mesmoValor(this.objetoCcb.getNomeBanco(), banco.getNome().toString())) {
 				this.setNumeroBanco(banco.getCodigo());
 				break;
 			}
@@ -497,7 +443,7 @@ public class CcbMB {
 	
 	public void populateNomesBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
-			if(CommonsUtil.mesmoValor(this.numeroBanco,banco.getCodigo())) {
+			if(CommonsUtil.mesmoValor(this.objetoCcb.getNumeroBanco(),banco.getCodigo())) {
 				this.setNomeBanco(banco.getNome());
 				//PrimeFaces.current().ajax().update(":nomeBanco");
 				break;
@@ -550,13 +496,13 @@ public class CcbMB {
 	}
 	
 	public void populateParcelaSeguro() {
-		if(this.numeroParcelasPagamento != null) {
+		if(this.objetoCcb.getNumeroParcelasPagamento() != null) {
 			this.setNumeroParcelasDFI(this.getNumeroParcelasPagamento());
 			this.setNumeroParcelasMIP(this.getNumeroParcelasPagamento());
-		} if(this.vencimentoPrimeiraParcelaPagamento != null) {
+		} if(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento() != null) {
 			this.setVencimentoPrimeiraParcelaDFI(this.getVencimentoPrimeiraParcelaPagamento());
 			this.setVencimentoPrimeiraParcelaMIP(this.getVencimentoPrimeiraParcelaPagamento());
-		} if(this.vencimentoUltimaParcelaPagamento != null) {
+		} if(this.objetoCcb.getVencimentoUltimaParcelaPagamento() != null) {
 			this.setVencimentoUltimaParcelaDFI(this.getVencimentoUltimaParcelaPagamento());
 			this.setVencimentoUltimaParcelaMIP(this.getVencimentoUltimaParcelaPagamento());
 		}
@@ -566,7 +512,7 @@ public class CcbMB {
 		Integer parcelas = CommonsUtil.integerValue(getNumeroParcelasPagamento());	
 		parcelas -= 1;
 		Calendar c = Calendar.getInstance();
-		c.setTime(this.vencimentoPrimeiraParcelaPagamento);
+		c.setTime(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
 		c.add(Calendar.MONTH, parcelas);
 		this.setVencimentoUltimaParcelaPagamento(c.getTime());
 	}
@@ -579,6 +525,7 @@ public class CcbMB {
 		listaNome.add("Ana Maria F. Cooke");
 		return listaNome.stream().collect(Collectors.toList());
 	}
+	
 	public List<String> completeTextCrea(){
 		List<String> listaCrea = new ArrayList<>();
 		listaCrea.add("1009877");
@@ -1360,7 +1307,7 @@ public class CcbMB {
 					true, false);
 
 			int iParticipante = 2;
-			for (CcbVO participante : this.listaParticipantes) {
+			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
 				paragraph = document.createParagraph();
 				paragraph.setAlignment(ParagraphAlignment.BOTH);
 				paragraph.setSpacingBefore(0);
@@ -1425,7 +1372,7 @@ public class CcbMB {
 				}
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					terceiroGarantidor = true;
+					this.objetoCcb.setTerceiroGarantidor(true);
 				}
 
 				iParticipante++;
@@ -1433,7 +1380,7 @@ public class CcbMB {
 
 			fazParagrafoSimples(document, paragraph, run, "Considerando que: ", false);
 			
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				fazParagrafoSimples(document, paragraph, run,
 						"a)	O EMITENTE e o TERCEIRO(S) GARANTIDOR(ES) declara(m) e garante(m) "
 						+ "que está(ão) devidamente autorizado a firmar a presente Cédula de "
@@ -1476,14 +1423,14 @@ public class CcbMB {
 
 			fazParagrafoSimples(document, paragraph, run, "2.	DAS CARACTERÍSTICAS DA OPERAÇÃO DE CRÉDITO", true);
 
-			valorPorExtenso.setNumber(valorCredito);
+			valorPorExtenso.setNumber(this.objetoCcb.getValorCredito());
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1. Valor do Crédito: ",
-					CommonsUtil.formataValorMonetario(valorCredito, "R$ ") + " (" + valorPorExtenso.toString() + ");",
+					CommonsUtil.formataValorMonetario(this.objetoCcb.getValorCredito(), "R$ ") + " (" + valorPorExtenso.toString() + ");",
 					true, false);
 
-			valorPorExtenso.setNumber(custoEmissao);
+			valorPorExtenso.setNumber(this.objetoCcb.getCustoEmissao());
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1.1. Custo de Emissão: ",
-					CommonsUtil.formataValorMonetario(custoEmissao, "R$ ") + " (" + valorPorExtenso.toString()
+					CommonsUtil.formataValorMonetario(this.objetoCcb.getCustoEmissao(), "R$ ") + " (" + valorPorExtenso.toString()
 							+ "), e será pago pelo EMITENTE na data"
 							+ " de emissão desta CCB, sendo o mesmo deduzido no ato da liberação do recurso"
 							+ " que entrará a crédito na Conta Corrente descrita no item 2.5 desta CCB, e"
@@ -1492,20 +1439,20 @@ public class CcbMB {
 							+ " direitos e obrigações decorrentes deste instrumento;",
 					true, false);
 
-			valorPorExtenso.setNumber(valorIOF);
+			valorPorExtenso.setNumber(this.objetoCcb.getValorIOF());
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.1.2. Valor do Imposto sobre Operações Financeiras (IOF): ",
-					CommonsUtil.formataValorMonetario(valorIOF, "R$ ") + " (" + valorPorExtenso.toString()
+					CommonsUtil.formataValorMonetario(this.objetoCcb.getValorIOF(), "R$ ") + " (" + valorPorExtenso.toString()
 							+ "), conforme apurado na Planilha"
 							+ " de Cálculo (Anexo I), calculado nos termos da legislação vigente"
 							+ " na data de ocorrência do fato gerador, tendo como base de cálculo"
 							+ " o Valor do Crédito mencionado no item 2.1;",
 					true, false);
 
-			valorPorExtenso.setNumber(valorDespesas);
+			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.1.3. Valor destinado ao pagamento de despesas acessórias (devidas a terceiros): ",
-					CommonsUtil.formataValorMonetario(valorDespesas, "R$ ") + " (" + valorPorExtenso.toString() + ") conforme anexo II;", true,
+					CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ") + " (" + valorPorExtenso.toString() + ") conforme anexo II;", true,
 					false);
 			
 			geraParagrafoComposto(document, paragraph, run, run2,
@@ -1517,10 +1464,10 @@ public class CcbMB {
 							+ " quitação dos débitos, o CREDOR irá realizar o depósito da diferença"
 							+ " na Conta indicada no item 2.5.", true, false);
 
-			valorPorExtenso.setNumber(valorLiquidoCredito);
+			valorPorExtenso.setNumber(this.objetoCcb.getValorLiquidoCredito());
 			geraParagrafoComposto(document, paragraph, run, run2, "2.1.4. Valor Líquido do Crédito: ",
 					"O valor líquido do crédito concedido é de "
-							+ CommonsUtil.formataValorMonetario(valorLiquidoCredito, "R$ ") + "" + " ("
+							+ CommonsUtil.formataValorMonetario(this.objetoCcb.getValorLiquidoCredito(), "R$ ") + "" + " ("
 							+ valorPorExtenso.toString() + "), após o desconto do Custo de Emissão,"
 							+ " IOF e Despesas Acessórias desta CCB;",
 					true, false);
@@ -1556,22 +1503,22 @@ public class CcbMB {
 			fazParagrafoSimplesSemReturn(document, paragraph, run, "2.3. Taxa de Juros Efetiva: ", true);
 
 			geraParagrafoCompostoSemReturn(document, paragraph, run, run2, "Mês: ",
-					CommonsUtil.formataValorTaxa(taxaDeJurosMes) + "%", true, false);
+					CommonsUtil.formataValorTaxa(this.objetoCcb.getTaxaDeJurosMes()) + "%", true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "Ano: ",
-					CommonsUtil.formataValorTaxa(taxaDeJurosAno) + "%", true, false);
+					CommonsUtil.formataValorTaxa(this.objetoCcb.getTaxaDeJurosAno()) + "%", true, false);
 
 			fazParagrafoSimplesSemReturn(document, paragraph, run, "2.4. Custo Efetivo Total (“CET”):", true);
 
-			geraParagrafoCompostoSemReturn(document, paragraph, run, run2, "Mês: ", CommonsUtil.formataValorTaxa(cetMes) + "%",
+			geraParagrafoCompostoSemReturn(document, paragraph, run, run2, "Mês: ", CommonsUtil.formataValorTaxa(this.objetoCcb.getCetMes()) + "%",
 					true, false);
 
-			geraParagrafoComposto(document, paragraph, run, run2, "Ano: ", CommonsUtil.formataValorTaxa(cetAno) + "%",
+			geraParagrafoComposto(document, paragraph, run, run2, "Ano: ", CommonsUtil.formataValorTaxa(this.objetoCcb.getCetAno()) + "%",
 					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.5. Forma de Liberação do Crédito: ",
-					"O CREDOR realizará o crédito na Conta Corrente nº " + contaCorrente + "," + " Agência nº "
-							+ agencia + ", BANCO " + numeroBanco + " – " + nomeBanco + ", em até 5 (cinco)"
+					"O CREDOR realizará o crédito na Conta Corrente nº " + this.objetoCcb.getContaCorrente() + "," + " Agência nº "
+							+ this.objetoCcb.getAgencia() + ", BANCO " + this.objetoCcb.getNumeroBanco() + " – " + this.objetoCcb.getNomeBanco() + ", em até 5 (cinco)"
 							+ " dias úteis após o cumprimento das condições precedentes estabelecidas "
 							+ "na cláusula 4.4 abaixo;",
 					true, false);
@@ -1581,45 +1528,45 @@ public class CcbMB {
 							+ "I desta CCB, em conta corrente do CREDOR ou a quem este indicar; ",
 					true, false);
 
-			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(numeroParcelasPagamento));
-			valorPorExtenso.setNumber(montantePagamento);
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(this.objetoCcb.getNumeroParcelasPagamento()));
+			valorPorExtenso.setNumber(this.objetoCcb.getMontantePagamento());
 			geraParagrafoComposto(document, paragraph, run, run2, "2.7. Fluxo de Pagamento (Juros e Amortização): ",
-					numeroParcelasPagamento + " (" + numeroPorExtenso.toString() + ")"
+					this.objetoCcb.getNumeroParcelasPagamento() + " (" + numeroPorExtenso.toString() + ")"
 							+ " parcelas mensais, sendo a 1ª parcela com vencimento em "
-							+ CommonsUtil.formataData(vencimentoPrimeiraParcelaPagamento, "dd/MM/yyyy")
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), "dd/MM/yyyy")
 							+ " e a última com vencimento " + "em "
-							+ CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy")
 							+ ", corrigidas pela variação"
 							+ " mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB," + " o montante de "
-							+ CommonsUtil.formataValorMonetario(montantePagamento, "R$ ") + " ("
+							+ CommonsUtil.formataValorMonetario(this.objetoCcb.getMontantePagamento(), "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I;",
 					true, false);
 
-			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(numeroParcelasMIP));
-			valorPorExtenso.setNumber(montanteMIP);
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(this.objetoCcb.getNumeroParcelasMIP()));
+			valorPorExtenso.setNumber(this.objetoCcb.getMontanteMIP());
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.7.1. Valor e Fluxo de Pagamento do Seguro de Morte e Invalidez Permanente (MIP): ",
-					numeroParcelasMIP + " (" + numeroPorExtenso.toString() + ") parcelas mensais,"
+					this.objetoCcb.getNumeroParcelasMIP() + " (" + numeroPorExtenso.toString() + ") parcelas mensais,"
 							+ " sendo a 1ª parcela com vencimento em "
-							+ CommonsUtil.formataData(vencimentoPrimeiraParcelaMIP, "dd/MM/yyyy") + " "
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaMIP(), "dd/MM/yyyy") + " "
 							+ "e a última com vencimento em "
-							+ CommonsUtil.formataData(vencimentoUltimaParcelaMIP, "dd/MM/yyyy") + ", corrigidas"
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaMIP(), "dd/MM/yyyy") + ", corrigidas"
 							+ " pela variação mensal do IPCA/IBGE, totalizando, na data de emissão "
-							+ "desta CCB, o montante de " + CommonsUtil.formataValorMonetario(montanteMIP, "R$ ") + " ("
+							+ "desta CCB, o montante de " + CommonsUtil.formataValorMonetario(this.objetoCcb.getMontanteMIP(), "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I. ",
 					true, false);
 
-			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(numeroParcelasDFI));
-			valorPorExtenso.setNumber(montanteDFI);
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(this.objetoCcb.getNumeroParcelasDFI()));
+			valorPorExtenso.setNumber(this.objetoCcb.getMontanteDFI());
 			geraParagrafoComposto(document, paragraph, run, run2,
 					"2.7.2. Valor e Fluxo de Pagamento do Seguro de Danos Físicos ao Imóvel (DFI): ",
-					numeroParcelasDFI + " (" + numeroPorExtenso.toString() + ") parcelas"
+					this.objetoCcb.getNumeroParcelasDFI() + " (" + numeroPorExtenso.toString() + ") parcelas"
 							+ " mensais, sendo a 1ª parcela com vencimento em "
-							+ CommonsUtil.formataData(vencimentoPrimeiraParcelaDFI, "dd/MM/yyyy") + " "
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaDFI(), "dd/MM/yyyy") + " "
 							+ "e a última com vencimento em "
-							+ CommonsUtil.formataData(vencimentoUltimaParcelaDFI, "dd/MM/yyyy") + ", corrigidas pela"
+							+ CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaDFI(), "dd/MM/yyyy") + ", corrigidas pela"
 							+ " variação mensal do IPCA/IBGE, totalizando, na data de emissão desta CCB,"
-							+ " o montante de " + CommonsUtil.formataValorMonetario(montanteDFI, "R$ ") + " ("
+							+ " o montante de " + CommonsUtil.formataValorMonetario(this.objetoCcb.getMontanteDFI(), "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I.",
 					true, false);
 
@@ -1642,20 +1589,20 @@ public class CcbMB {
 							+ ", ou em outro que vier a substituí-lo.",
 					true, false);
 
-			porcentagemPorExtenso.setNumber(tarifaAntecipada);
+			porcentagemPorExtenso.setNumber(this.objetoCcb.getTarifaAntecipada());
 			String tarifaAntecipadastr = porcentagemPorExtenso.toString();
-			if(CommonsUtil.semValor(tarifaAntecipada)) {
+			if(CommonsUtil.semValor(this.objetoCcb.getTarifaAntecipada())) {
 				tarifaAntecipadastr = "Zero";
 			}
 			geraParagrafoComposto(document, paragraph, run, run2, "2.10. Tarifa de Liquidação Antecipada: ",
-					CommonsUtil.formataValorTaxa(tarifaAntecipada) + "% (" + tarifaAntecipadastr + " por cento);",
+					CommonsUtil.formataValorTaxa(this.objetoCcb.getTarifaAntecipada()) + "% (" + tarifaAntecipadastr + " por cento);",
 					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.11. Data de Emissão: ",
-					CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy") + ";", true, false);
+					CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") + ";", true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.12. Data de Vencimento: ",
-					CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy") + ";", true, false);
+					CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy") + ";", true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.13. Praça de Pagamento: ", "São Paulo/SP.", true,
 					false);
@@ -1673,7 +1620,7 @@ public class CcbMB {
 			run.setBold(true);
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				run2.setText("Em garantia do fiel, integral e pontual cumprimento "
 						+ "de todas as obrigações assumidas na presente CCB, o(s) TERCEIRO(S)"
 						+ " GARANTIDOR(ES) aliena(m) fiduciariamente ao CREDOR o(s) bem(ens) "
@@ -1701,9 +1648,9 @@ public class CcbMB {
 			run4 = paragraph.createRun();
 			run4.setFontSize(12);
 			run4.removeCarriageReturn();
-			run4.setText("Objeto da matrícula nº " + numeroImovel + " "
-					+ "(“Bem Imóvel” ou “Imóvel”), registrada perante o " + cartorioImovel
-					+ " Cartório de Registro de Imóveis da " + "Comarca de " + cidadeImovel + " – " + ufImovel
+			run4.setText("Objeto da matrícula nº " + this.objetoCcb.getNumeroImovel() + " "
+					+ "(“Bem Imóvel” ou “Imóvel”), registrada perante o " + this.objetoCcb.getCartorioImovel()
+					+ " Cartório de Registro de Imóveis da " + "Comarca de " + this.objetoCcb.getCidadeImovel() + " – " + this.objetoCcb.getUfImovel()
 					+ " (“RGI”), nos termos" + " e condições anuídos pelas Partes no Instrumento Particular "
 					+ "de Alienação Fiduciária Bem Imóvel (“Termo de Garantia”), o "
 					+ "qual faz parte desta CCB como parte acessória e inseparável.");
@@ -1732,7 +1679,7 @@ public class CcbMB {
 							+ " apólice de seguros que são estipuladas pela companhia seguradora. ",
 					true, false);
 			
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				geraParagrafoComposto(document, paragraph, run, run2, "3.3.1.1. ",
 						"Assim, declaram-se cientes o EMITENTE e o(s) TERCEIRO(S) "
 						+ "GARANTIDOR(ES) que qualquer alteração nas condições "
@@ -2080,7 +2027,7 @@ public class CcbMB {
 							+ "intervenções, regime de administração especial temporária, ou liquidação judicial ou"
 							+ " extrajudicial;",
 					false);
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				geraParagrafoBulletList(document, paragraph, run, numID2, "Se for comprovada a falsidade de qualquer"
 						+ " declaração, informação ou documento que houver sido, respectivamente, firmada, prestada ou "
 						+ "entregue pelo EMITENTE e TERCEIRO(S) GARANTIDOR(ES), ao CREDOR;", false);
@@ -2144,7 +2091,7 @@ public class CcbMB {
 							+ " registrada junto ao RGI no prazo de até 30(trinta) dias corridos a contar da"
 							+ " emissão desta CCB; e",
 					false);
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				geraParagrafoBulletList(document, paragraph, run, numID2,
 						"o)	Se o Bem Imóvel objeto da garantia à presente CCB apresentar quaisquer características,"
 						+ " ônus ou gravame ou caso ocorra qualquer ato ou omissão por parte de EMITENTE e/ou TERCEIRO(S)"
@@ -2432,7 +2379,7 @@ public class CcbMB {
 							+ "de crédito vencido antecipadamente, nas hipóteses contratadas com o EMITENTE e naquelas previstas na"
 							+ " legislação aplicável;",
 					true, false);
-			if(terceiroGarantidor) {
+			if(this.objetoCcb.isTerceiroGarantidor()) {
 				geraParagrafoComposto(document, paragraph, run, run2, "10.12.4 ", "O EMITENTE e/ou TERCEIRO(S) GARANTIDOR(ES),"
 						+ " está(ão) integralmente ciente(s) e de acordo com o seguinte: (i) qualquer litígio ou questionamento,"
 						+ " judicial ou extrajudicial, que possa vir a ser ajuizado, deverá ser ajuizado, àquele portador"
@@ -2489,9 +2436,9 @@ public class CcbMB {
 					+ "“Via Não Negociável”. ", true, false);
 
 			fazParagrafoSimples(document, paragraph, run,
-					"São Paulo, SP, " + dataDeEmissao.getDate() + " de "
-							+ CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() + " de "
-							+ (this.dataDeEmissao.getYear() + 1900) + ".",
+					"São Paulo, SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+							+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
+							+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".",
 					false);
 
 			fazParagrafoSimples(document, paragraph, run,
@@ -2516,7 +2463,7 @@ public class CcbMB {
 			run.setText("(Página de assinaturas da Cédula de Crédito "
 					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
 					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
-					+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".)");
+					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
 			run.setItalic(true);
 			run.addCarriageReturn();
@@ -2582,13 +2529,13 @@ public class CcbMB {
 
 			XWPFTableRow tableRow2 = table.createRow();
 
-			if (listaParticipantes.size() > 1) {
+			if (this.objetoCcb.getListaParticipantes().size() > 1) {
 				tableRow2.getCell(0).setParagraph(paragraph);
 				tableRow2.getCell(1).setParagraph(paragraph);
 				int qtdePessoasEsquerdo = 0;
-				for (int iPartTab = 0; iPartTab < listaParticipantes.size(); iPartTab++) {
+				for (int iPartTab = 0; iPartTab < this.objetoCcb.getListaParticipantes().size(); iPartTab++) {
 
-					CcbVO participante = this.listaParticipantes.get(iPartTab);
+					CcbVO participante = this.objetoCcb.getListaParticipantes().get(iPartTab);
 					if (iPartTab != 0) {
 						if (iPartTab % 2 != 0) {
 
@@ -2676,39 +2623,39 @@ public class CcbMB {
 			tableRow3.getCell(0).setParagraph(paragraph);
 			run = tableRow3.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  " + nomeTestemunha1);
+			run.setText("Nome:  " + this.objetoCcb.getNomeTestemunha1());
 			run.setBold(false);
 
 			tableRow3.getCell(1).setParagraph(paragraph);
 			run = tableRow3.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  " + nomeTestemunha2);
+			run.setText("Nome:  " + this.objetoCcb.getNomeTestemunha2());
 			run.setBold(false);
 
 			XWPFTableRow tableRow4 = table.createRow();
 			tableRow4.getCell(0).setParagraph(paragraph);
 			run = tableRow4.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  " + rgTestemunha1);
+			run.setText("RG:  " + this.objetoCcb.getRgTestemunha1());
 			run.setBold(false);
 
 			tableRow4.getCell(1).setParagraph(paragraph);
 			run = tableRow4.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  " + rgTestemunha2);
+			run.setText("RG:  " + this.objetoCcb.getRgTestemunha2());
 			run.setBold(false);
 
 			XWPFTableRow tableRow5 = table.createRow();
 			tableRow5.getCell(0).setParagraph(paragraph);
 			run = tableRow5.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  " + cpfTestemunha1);
+			run.setText("CPF:  " + this.objetoCcb.getCpfTestemunha1());
 			run.setBold(false);
 
 			tableRow5.getCell(1).setParagraph(paragraph);
 			run = tableRow5.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  " + cpfTestemunha2);
+			run.setText("CPF:  " + this.objetoCcb.getCpfTestemunha2());
 			run.setBold(false);
 
 			CTTblPr tblpro = table.getCTTbl().getTblPr();
@@ -2825,7 +2772,7 @@ public class CcbMB {
 			geraParagrafoComposto(document, paragraph, run, run2, "De um lado, na qualidade de outorgante(s) ", "FIDUCIANTE(s),", false, true);
 			
 			int iParticipante = 1;
-			for (CcbVO participante : this.listaParticipantes) {
+			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
 					if(CommonsUtil.semValor(nomeEmitente)) {
@@ -2974,7 +2921,7 @@ public class CcbMB {
 			run2.setBold(false);
 			run2.addCarriageReturn();
 			
-			for (CcbVO participante : this.listaParticipantes) {
+			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
 				if(!participante.isFiduciante()) {
 	
 				paragraph = document.createParagraph();
@@ -6743,7 +6690,6 @@ public class CcbMB {
 	public String getNomeEmitente() {
 		return nomeEmitente;
 	}
-
 	
 	public void setNomeEmitente(String nomeEmitente) {
 		this.nomeEmitente = nomeEmitente;
