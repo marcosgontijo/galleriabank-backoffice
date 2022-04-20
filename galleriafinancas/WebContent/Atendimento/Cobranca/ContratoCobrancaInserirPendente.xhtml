@@ -2328,7 +2328,7 @@
 							label="Cartório" onblur="" style="width:400px;" />
 
 						<p:outputLabel for="CepImovel" value="Cep: " />
-						<p:inputMask id="CepImovel"
+						<p:inputMask id="CepImovel" required="true"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
 							mask="99999-999" label="Cep">
 							<p:ajax event="blur"
@@ -2896,8 +2896,8 @@
 							columns="1" layout="responsive"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
 							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
-							<f:selectItem itemLabel="Financiamento Aquisição" itemValue="Financiamento" />
-							<f:selectItem itemLabel="Financiamento Empréstimo" itemValue="Emprestimo" />
+							<f:selectItem itemLabel="Home Equity com aquisição Imóvel " itemValue="Financiamento" />
+							<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
 						</p:selectOneRadio>
 					</h:panelGrid>
 				</p:panel>

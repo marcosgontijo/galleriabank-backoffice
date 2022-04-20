@@ -54,16 +54,30 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	}
 	
-	
-	public void setParcelaMensalBaixa(BigDecimal parcelaMensalBaixa) {
-		this.parcelaMensalBaixa = parcelaMensalBaixa;
+	public void setParcelaMensalBaixa(BigDecimal parcelaMensalBaixa) {		
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
+			this.parcelaMensalBaixa = parcelaMensalBaixa;
+		} else {
+			this.parcelaMensal = parcelaMensalBaixa;
+		}
 	}
 
 
 	public void setValorLiquidoBaixa(BigDecimal valorLiquidoBaixa) {
-		this.valorLiquidoBaixa = valorLiquidoBaixa;
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
+			this.valorLiquidoBaixa = valorLiquidoBaixa;
+		} else {
+			this.valorLiquido = valorLiquidoBaixa;
+		}
 	}
-
+	
+	public void setJurosBaixa(BigDecimal jurosBaixa) {
+		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
+			this.capitalizacao = jurosBaixa;
+		} else {
+			this.juros = jurosBaixa;
+		}
+	}
 
 	public BigDecimal getParcelaMensalBaixa() {		
 		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
@@ -73,15 +87,6 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 		}
 		return parcelaMensalBaixa;
 	}
-
-	public void setJurosBaixa(BigDecimal jurosBaixa) {
-		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {
-			this.capitalizacao = jurosBaixa;
-		} else {
-			this.juros = jurosBaixa;
-		}
-	}
-
 
 	public BigDecimal getJurosBaixa() {
 		if (BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(capitalizacao)) == -1) {

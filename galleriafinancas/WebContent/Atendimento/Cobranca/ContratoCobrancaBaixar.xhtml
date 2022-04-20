@@ -1902,7 +1902,7 @@
 						<!--  -->
 
 
-						<shiro:hasAnyRoles name="ROOT">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU">
 						
 							<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" value="Quitar Contrato" update="quitarContratoForm" action="#{contratoCobrancaMB.clearQuitarContratoDialog}"/>
 							<p:outputLabel value="" />

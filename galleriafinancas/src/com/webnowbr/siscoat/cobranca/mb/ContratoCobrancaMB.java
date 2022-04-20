@@ -5293,7 +5293,6 @@ public class ContratoCobrancaMB {
 	
 	public void reprovarContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatusContrato("Reprovado");
 		this.objetoContratoCobranca.setReprovado(true);
 		this.objetoContratoCobranca.setStatus("Reprovado");
@@ -5319,7 +5318,6 @@ public class ContratoCobrancaMB {
 	
 	public void baixarPreContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(false);
@@ -5388,7 +5386,6 @@ public class ContratoCobrancaMB {
 	
 	public void retirarPendencia() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setInicioAnalise(false);
 		this.objetoContratoCobranca.setCadastroAprovadoValor("");
 		updateCheckList();
