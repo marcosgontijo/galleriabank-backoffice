@@ -69,12 +69,16 @@
 										action="#{crmMB.clearFieldsDetalhado}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
-								<p:menuitem value="Leads"
-										action="/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml"
+									<p:menuitem value="Leads Terceiros"
+										action="#{contratoCobrancaMB.geraConsultaLeadsTerceiros()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
+									<p:menuitem value="Leads"
+										action="/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />									
 									<p:menuitem value="Leads em Tratamento"
 										action="#{contratoCobrancaMB.geraConsultaLeads('Em Tratamento')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -199,6 +203,10 @@
 										action="#{contratoCobrancaMB.clearFieldsContratos('FIDC')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<p:menuitem value="Contratos CRI 1"
+										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Debênturistas"
@@ -239,6 +247,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoFIDC}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Atraso CRI 1"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoCRI1}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Dia Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('Securitizadora')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -246,7 +258,11 @@
 									<p:menuitem value="Financeiro Dia FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('FIDC')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />										
+										styleClass="itemMenu" />	
+									<p:menuitem value="Financeiro Dia CRI 1"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('CRI 1')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />									
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -259,6 +275,10 @@
 										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Baixado FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Baixado CRI 1"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Recebedores"
