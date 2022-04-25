@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.CcbContrato" table="CcbContrato">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+
+		<property name="data" type="java.util.Date">
+			<column name="data" />
+		</property>
+
+		<property name="taxa" type="big_decimal">
+			<column name="taxa" />
+		</property>
+
+		<property name="nomeEmitente" type="java.lang.String">
+			<column name="nomeEmitente" />
+		</property>
+
+		<property name="cpfEmitente" type="java.lang.String">
+			<column name="cpfEmitente" />
+		</property>
+
+		<property name="logradouroEmitente" type="java.lang.String">
+			<column name="logradouroEmitente" />
+		</property>
+
+		<property name="complementoEmitente" type="java.lang.String">
+			<column name="complementoEmitente" />
+		</property>
+
+		<property name="cidadeEmitente" type="java.lang.String">
+			<column name="cidadeEmitente" />
+		</property>
+
+		<property name="ufEmitente" type="java.lang.String">
+			<column name="ufEmitente" />
+		</property>
+
+		<property name="cepEmitente" type="java.lang.String">
+			<column name="cepEmitente" />
+		</property>
+
+		<property name="valorLiquidoCredito" type="big_decimal">
+			<column name="valorLiquidoCredito" />
+		</property>
+
+		<property name="valorCredito" type="big_decimal">
+			<column name="valorCredito" />
+		</property>
+
+		<property name="custoEmissao" type="big_decimal">
+			<column name="custoEmissao" />
+		</property>
+
+		<property name="valorIOF" type="big_decimal">
+			<column name="valorIOF" />
+		</property>
+
+		<property name="valorDespesas" type="big_decimal">
+			<column name="valorDespesas" />
+		</property>
+		
+		<property name="valorParcela" type="big_decimal">
+			<column name="valorParcela" />
+		</property>
+
+		<property name="taxaDeJurosMes" type="big_decimal">
+			<column name="taxaDeJurosMes" />
+		</property>
+		
+		<property name="taxaDeJurosAno" type="big_decimal">
+			<column name="taxaDeJurosAno" />
+		</property>
+		
+		<property name="cetMes" type="big_decimal">
+			<column name="cetMes" />
+		</property>
+		
+		<property name="cetAno" type="big_decimal">
+			<column name="cetAno" />
+		</property>
+		
+		<property name="contaCorrente" type="java.lang.String">
+			<column name="contaCorrente" />
+		</property> 
+		
+		<property name="agencia" type="java.lang.String">
+			<column name="agencia" />
+		</property> 
+		
+		<property name="numeroBanco" type="java.lang.String">
+			<column name="numeroBanco" />
+		</property> 
+		
+		<property name="nomeBanco" type="java.lang.String">
+			<column name="nomeBanco" />
+		</property> 
+		
+		<property name="numeroParcelasPagamento" type="java.lang.String">
+			<column name="numeroParcelasPagamento" />
+		</property> 
+		
+		<property name="vencimentoPrimeiraParcelaPagamento" type="java.util.Date">
+			<column name="vencimentoPrimeiraParcelaPagamento" />
+		</property>
+		
+		<property name="vencimentoUltimaParcelaPagamento" type="java.util.Date">
+			<column name="vencimentoUltimaParcelaPagamento" />
+		</property>
+		
+		<property name="montantePagamento" type="big_decimal">
+			<column name="montantePagamento" />
+		</property>
+		
+		<property name="numeroParcelasDFI" type="java.lang.String">
+			<column name="numeroParcelasDFI" />
+		</property> 
+		
+		<property name="vencimentoPrimeiraParcelaDFI" type="java.util.Date">
+			<column name="vencimentoPrimeiraParcelaDFI" />
+		</property>
+		
+		<property name="vencimentoUltimaParcelaDFI" type="java.util.Date">
+			<column name="vencimentoUltimaParcelaDFI" />
+		</property>
+		
+		<property name="montanteDFI" type="big_decimal">
+			<column name="montanteDFI" />
+		</property>
+		
+		<property name="numeroParcelasMIP" type="java.lang.String">
+			<column name="numeroParcelasMIP" />
+		</property>
+		
+		<property name="vencimentoPrimeiraParcelaMIP" type="java.util.Date">
+			<column name="vencimentoPrimeiraParcelaMIP" />
+		</property>
+		
+		<property name="vencimentoUltimaParcelaMIP" type="java.util.Date">
+			<column name="vencimentoUltimaParcelaMIP" />
+		</property>
+		
+		<property name="montanteMIP" type="big_decimal">
+			<column name="montanteMIP" />
+		</property>
+		
+		<property name="tarifaAntecipada" type="big_decimal">
+			<column name="tarifaAntecipada" />
+		</property>
+		
+		<property name="dataDeEmissao" type="java.util.Date">
+			<column name="dataDeEmissao" />
+		</property>
+		
+		<property name="numeroImovel" type="java.lang.String">
+			<column name="numeroImovel" />
+		</property> 
+		
+		<property name="cartorioImovel" type="java.lang.String">
+			<column name="cartorioImovel" />
+		</property> 
+		
+		<property name="cidadeImovel" type="java.lang.String">
+			<column name="cidadeImovel" />
+		</property> 
+		
+		<property name="ufImovel" type="java.lang.String">
+			<column name="ufImovel" />
+		</property> 
+		
+		<property name="vendaLeilao" type="big_decimal">
+			<column name="vendaLeilao" />
+		</property>
+		
+		<property name="elaboradorNome" type="java.lang.String">
+			<column name="elaboradorNome" />
+		</property> 
+		
+		<property name="elaboradorCrea" type="java.lang.String">
+			<column name="elaboradorCrea" />
+		</property> 
+		
+		<property name="responsavelNome" type="java.lang.String">
+			<column name="responsavelNome" />
+		</property> 
+		
+		<property name="responsavelCrea" type="java.lang.String">
+			<column name="responsavelCrea" />
+		</property> 
+		
+		<property name="porcentagemImovel" type="big_decimal">
+			<column name="porcentagemImovel" />
+		</property>
+		
+		<property name="nomeTestemunha1" type="java.lang.String">
+			<column name="nomeTestemunha1" />
+		</property>
+		
+		<property name="cpfTestemunha1" type="java.lang.String">
+			<column name="cpfTestemunha1" />
+		</property>
+		
+		<property name="rgTestemunha1" type="java.lang.String">
+			<column name="rgTestemunha1" />
+		</property>
+		
+		<property name="nomeTestemunha2" type="java.lang.String">
+			<column name="nomeTestemunha2" />
+		</property> 
+		
+		<property name="cpfTestemunha2" type="java.lang.String">
+			<column name="cpfTestemunha2" />
+		</property> 
+		
+		<property name="rgTestemunha2" type="java.lang.String">
+			<column name="rgTestemunha2" />
+		</property> 
+		
+		<property name="terceiroGarantidor" type="boolean">
+			<column name="terceiroGarantidor" />
+		</property>
+		
+		<many-to-one name="objetoContratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="objetoContratoCobranca" />
+		</many-to-one>
+		
+		<list name="listaParticipantes"
+			table="ContratoCobranca_Detalhes_Join" cascade="all" lazy="false">
+			<key column="idCcbContrato" />
+			<list-index></list-index>
+			<many-to-many column="idCcbParticipante"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes" />
+		</list>
+		       
+    </class>
+</hibernate-mapping>

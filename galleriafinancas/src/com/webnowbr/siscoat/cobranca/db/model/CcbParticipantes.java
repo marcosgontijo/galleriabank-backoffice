@@ -1,12 +1,9 @@
-package com.webnowbr.siscoat.cobranca.vo;
+package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
-
-public class CcbVO {
+public class CcbParticipantes {
 	private String numeroContrato;
 	private PagadorRecebedor pessoa;
 	private String tipoParticipante;
@@ -19,10 +16,10 @@ public class CcbVO {
 	private String tipoEmpresa;
 	private String municipioEmpresa;
 	private String salaEmpresa;
-	private Set<CcbVO> socios;
+	private Set<CcbParticipantes> socios;
 	
 	
-	public CcbVO() {
+	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();
 		this.socios	= new HashSet<>();
 		this.fiduciante = false;
@@ -91,10 +88,10 @@ public class CcbVO {
 	public void setTipoParticipante(String tipoParticipante) {
 		this.tipoParticipante = tipoParticipante;
 	}
-	public Set<CcbVO> getSocios() {
+	public Set<CcbParticipantes> getSocios() {
 		return socios;
 	}
-	public void setSocios(Set<CcbVO> socios) {
+	public void setSocios(Set<CcbParticipantes> socios) {
 		this.socios = socios;
 	}
 	public String getTipoOriginal() {
