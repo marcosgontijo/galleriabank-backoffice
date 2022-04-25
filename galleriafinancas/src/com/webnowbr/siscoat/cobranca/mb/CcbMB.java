@@ -72,13 +72,14 @@ import org.primefaces.model.UploadedFile;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
+import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
+import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
+import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.vo.CcbContrato;
-import com.webnowbr.siscoat.cobranca.vo.CcbVO;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -256,18 +257,20 @@ public class CcbMB {
     public int fileTypeInt;
     ByteArrayInputStream bis = null;
     
-    private CcbVO participanteSelecionado = new CcbVO();
+    private CcbParticipantes participanteSelecionado = new CcbParticipantes();
     
     private boolean addParticipante;
     
-    private CcbVO socioSelecionado = new CcbVO();
+    private CcbParticipantes socioSelecionado = new CcbParticipantes();
     private boolean addSocio;
     
     private boolean fiducianteGerado = false;
     private boolean devedorGerado = false;
     private boolean modeloAntigo = false;
     
-    CcbContrato objetoCcb = new CcbContrato();
+    private CcbContrato objetoCcb = new CcbContrato();
+    
+    private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -288,7 +291,7 @@ public class CcbMB {
 		 * TRATA EMITENTE
 		 */
 		PagadorRecebedor eminenteDTO = null;
-		for (CcbVO pessoa : this.objetoCcb.getListaParticipantes()) {
+		for (CcbParticipantes pessoa : this.objetoCcb.getListaParticipantes()) {
 			if (pessoa.getTipoParticipante().equals("EMITENTE")) {
 				eminenteDTO = pessoa.getPessoa();
 			}
@@ -310,7 +313,7 @@ public class CcbMB {
 		 */
 		PagadorRecebedor fiducianteDTO = null;		
 		if (validacao) {			
-			for (CcbVO pessoa : objetoCcb.getListaParticipantes()) {
+			for (CcbParticipantes pessoa : objetoCcb.getListaParticipantes()) {
 				if (pessoa.getTipoParticipante().equals("TERCEIRO GARANTIDOR")) {
 					fiducianteDTO = pessoa.getPessoa();
 				}
@@ -349,7 +352,7 @@ public class CcbMB {
 		ufEmitente = null;
 		cepEmitente = null;
 		
-		for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
+		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
 				participante.setTipoOriginal(participante.getTipoParticipante());
 			} else {
@@ -362,53 +365,53 @@ public class CcbMB {
 		this.tituloPagadorRecebedorDialog = "Participante";
 		this.tipoPesquisa = "Participante";
 		this.updatePagadorRecebedor = ":form:ParticipantesPanel :form:Dados";
-		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	public void concluirParticipante() {
 		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
-		this.getListaParticipantes().add(this.participanteSelecionado);
+		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
-		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
 	}
 	
-	public void editarParticipante(CcbVO participante) {
+	public void editarParticipante(CcbParticipantes participante) {
 		this.addParticipante = true;
-		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado = new CcbParticipantes();
 		this.setParticipanteSelecionado(participante);
 		this.removerParticipante(participante);
 	}
 	
-	public void removerParticipante(CcbVO participante) {
-		this.getListaParticipantes().remove(participante);
+	public void removerParticipante(CcbParticipantes participante) {
+		this.objetoCcb.getListaParticipantes().remove(participante);
 	}
 	
 	public void pesquisaSocio() {
 		this.tituloPagadorRecebedorDialog = "Socio";
 		this.tipoPesquisa = "Socio";
 		this.updatePagadorRecebedor = ":form:SociosPanel ";
-		this.socioSelecionado = new CcbVO();
+		this.socioSelecionado = new CcbParticipantes();
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	public void concluirSocio() {
 		this.getParticipanteSelecionado().getSocios().add(socioSelecionado); 
-		this.socioSelecionado = new CcbVO();
+		this.socioSelecionado = new CcbParticipantes();
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSocio = false;
 	}
 	
-	public void editarSocio(CcbVO socio) {
+	public void editarSocio(CcbParticipantes socio) {
 		this.addSocio = true;
-		this.socioSelecionado = new CcbVO();
+		this.socioSelecionado = new CcbParticipantes();
 		this.setSocioSelecionado(socio);
 		this.removerSocio(socio);
 	}
 	
-	public void removerSocio(CcbVO socio) {
+	public void removerSocio(CcbParticipantes socio) {
 		this.getParticipanteSelecionado().getSocios().remove(socio);
 	}
 	
@@ -435,7 +438,7 @@ public class CcbMB {
 	public void populateCodigosBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
 			if(CommonsUtil.mesmoValor(this.objetoCcb.getNomeBanco(), banco.getNome().toString())) {
-				this.setNumeroBanco(banco.getCodigo());
+				this.objetoCcb.setNumeroBanco(banco.getCodigo());
 				break;
 			}
 		}
@@ -444,7 +447,7 @@ public class CcbMB {
 	public void populateNomesBanco() {
 		for(BancosEnum banco : BancosEnum.values()) {
 			if(CommonsUtil.mesmoValor(this.objetoCcb.getNumeroBanco(),banco.getCodigo())) {
-				this.setNomeBanco(banco.getNome());
+				this.objetoCcb.setNomeBanco(banco.getNome());
 				//PrimeFaces.current().ajax().update(":nomeBanco");
 				break;
 			}
@@ -497,24 +500,24 @@ public class CcbMB {
 	
 	public void populateParcelaSeguro() {
 		if(this.objetoCcb.getNumeroParcelasPagamento() != null) {
-			this.setNumeroParcelasDFI(this.getNumeroParcelasPagamento());
-			this.setNumeroParcelasMIP(this.getNumeroParcelasPagamento());
+			this.objetoCcb.setNumeroParcelasDFI(this.objetoCcb.getNumeroParcelasPagamento());
+			this.objetoCcb.setNumeroParcelasMIP(this.objetoCcb.getNumeroParcelasPagamento());
 		} if(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento() != null) {
-			this.setVencimentoPrimeiraParcelaDFI(this.getVencimentoPrimeiraParcelaPagamento());
-			this.setVencimentoPrimeiraParcelaMIP(this.getVencimentoPrimeiraParcelaPagamento());
+			this.objetoCcb.setVencimentoPrimeiraParcelaDFI(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+			this.objetoCcb.setVencimentoPrimeiraParcelaMIP(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
 		} if(this.objetoCcb.getVencimentoUltimaParcelaPagamento() != null) {
-			this.setVencimentoUltimaParcelaDFI(this.getVencimentoUltimaParcelaPagamento());
-			this.setVencimentoUltimaParcelaMIP(this.getVencimentoUltimaParcelaPagamento());
+			this.objetoCcb.setVencimentoUltimaParcelaDFI(this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+			this.objetoCcb.setVencimentoUltimaParcelaMIP(this.objetoCcb.getVencimentoUltimaParcelaPagamento());
 		}
 	}
 	
 	public void calculaDatavencimentoFinal() {
-		Integer parcelas = CommonsUtil.integerValue(getNumeroParcelasPagamento());	
+		Integer parcelas = CommonsUtil.integerValue(this.objetoCcb.getNumeroParcelasPagamento());	
 		parcelas -= 1;
 		Calendar c = Calendar.getInstance();
 		c.setTime(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
 		c.add(Calendar.MONTH, parcelas);
-		this.setVencimentoUltimaParcelaPagamento(c.getTime());
+		this.objetoCcb.setVencimentoUltimaParcelaPagamento(c.getTime());
 	}
 
 	public List<String> completeTextNomes(){
@@ -895,16 +898,16 @@ public class CcbMB {
 		
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa ,"Testemunha1")) {
 			this.testemunha1Selecionado = (this.selectedPagadorGenerico);
-			this.setNomeTestemunha1(this.testemunha1Selecionado.getNome());
-			this.setCpfTestemunha1(this.testemunha1Selecionado.getCpf());
-			this.setRgTestemunha1(this.testemunha1Selecionado.getRg());
+			this.objetoCcb.setNomeTestemunha1(this.testemunha1Selecionado.getNome());
+			this.objetoCcb.setCpfTestemunha1(this.testemunha1Selecionado.getCpf());
+			this.objetoCcb.setRgTestemunha1(this.testemunha1Selecionado.getRg());
 		}
 		
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa ,"Testemunha2")) {
 			this.testemunha2Selecionado = (this.selectedPagadorGenerico);
-			this.setNomeTestemunha2(this.testemunha2Selecionado.getNome());
-			this.setCpfTestemunha2(this.testemunha2Selecionado.getCpf());
-			this.setRgTestemunha2(this.testemunha2Selecionado.getRg());
+			this.objetoCcb.setNomeTestemunha2(this.testemunha2Selecionado.getNome());
+			this.objetoCcb.setCpfTestemunha2(this.testemunha2Selecionado.getCpf());
+			this.objetoCcb.setRgTestemunha2(this.testemunha2Selecionado.getRg());
 		}
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Participante")) {
 			if(CommonsUtil.semValor(selectedPagadorGenerico.getCpf())) {
@@ -1307,7 +1310,7 @@ public class CcbMB {
 					true, false);
 
 			int iParticipante = 2;
-			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 				paragraph = document.createParagraph();
 				paragraph.setAlignment(ParagraphAlignment.BOTH);
 				paragraph.setSpacingBefore(0);
@@ -1346,7 +1349,7 @@ public class CcbMB {
 							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
 							+ "; neste ato representada " + socios);
 
-					for (CcbVO sociosParticipante : participante.getSocios()) {
+					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
 						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
@@ -2535,7 +2538,7 @@ public class CcbMB {
 				int qtdePessoasEsquerdo = 0;
 				for (int iPartTab = 0; iPartTab < this.objetoCcb.getListaParticipantes().size(); iPartTab++) {
 
-					CcbVO participante = this.objetoCcb.getListaParticipantes().get(iPartTab);
+					CcbParticipantes participante = this.objetoCcb.getListaParticipantes().get(iPartTab);
 					if (iPartTab != 0) {
 						if (iPartTab % 2 != 0) {
 
@@ -2772,7 +2775,7 @@ public class CcbMB {
 			geraParagrafoComposto(document, paragraph, run, run2, "De um lado, na qualidade de outorgante(s) ", "FIDUCIANTE(s),", false, true);
 			
 			int iParticipante = 1;
-			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
 					if(CommonsUtil.semValor(nomeEmitente)) {
@@ -2836,7 +2839,7 @@ public class CcbMB {
 							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
 							+ "; neste ato representada " + socios);
 
-					for (CcbVO sociosParticipante : participante.getSocios()) {
+					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
 						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
@@ -2921,7 +2924,7 @@ public class CcbMB {
 			run2.setBold(false);
 			run2.addCarriageReturn();
 			
-			for (CcbVO participante : this.objetoCcb.getListaParticipantes()) {
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 				if(!participante.isFiduciante()) {
 	
 				paragraph = document.createParagraph();
@@ -2963,7 +2966,7 @@ public class CcbMB {
 							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
 							+ "; neste ato representada " + socios);
 
-					for (CcbVO sociosParticipante : participante.getSocios()) {
+					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
 						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
@@ -3005,7 +3008,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy"));
+			run2.setText(CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			run2.setBold(true);
 			
 			run = paragraph.createRun();
@@ -3049,8 +3052,8 @@ public class CcbMB {
 			
 			geraParagrafoBulletListComposta(document, paragraph, run, run2, "As obrigações, pecuniárias ou não,"
 					+ " previstas na(s) CCB(s) são garantidas pela alienação fiduciária de Imóvel(eis) descrito"
-					+ " abaixo bem como registrado(s) perante o "+ cartorioImovel +" Cartório de Registro de Imóveis da "
-					+ "Comarca de "+ cidadeImovel +" – "+ ufImovel +" “RGI”, de propriedade do(s) ", "FIDUCIANTE(S).", false, true, numID, UnderlinePatterns.NONE);
+					+ " abaixo bem como registrado(s) perante o "+ this.objetoCcb.getCartorioImovel() +" Cartório de Registro de Imóveis da "
+					+ "Comarca de "+ this.objetoCcb.getCidadeImovel() +" – "+ this.objetoCcb.getUfImovel() +" “RGI”, de propriedade do(s) ", "FIDUCIANTE(S).", false, true, numID, UnderlinePatterns.NONE);
 			
 
 			geraParagrafoBulletList(document, paragraph, run, numID , "Nos termos da(s) CCB(s), o protocolo da garantia "
@@ -3163,9 +3166,9 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText("Objeto da matrícula nº "+ numeroImovel +" (“Bem Imóvel” ou “Imóvel”), "
-					+ "registrada perante o "+ cartorioImovel +" Cartório de Registro de Imóveis da "
-					+ "Comarca de "+ cidadeImovel +" – "+ ufImovel +" (");
+			run2.setText("Objeto da matrícula nº "+ this.objetoCcb.getNumeroImovel() +" (“Bem Imóvel” ou “Imóvel”), "
+					+ "registrada perante o "+ this.objetoCcb.getCartorioImovel() +" Cartório de Registro de Imóveis da "
+					+ "Comarca de "+ this.objetoCcb.getCidadeImovel() +" – "+ this.objetoCcb.getUfImovel() +" (");
 			run2.setBold(false);
 			
 			run = paragraph.createRun();
@@ -3385,10 +3388,10 @@ public class CcbMB {
 			run.setItalic(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
 			
-			valorPorExtenso.setNumber(valorCredito); 
+			valorPorExtenso.setNumber(this.objetoCcb.getValorCredito()); 
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" "+ CommonsUtil.formataValorMonetario(valorCredito, "R$ ") + " ("+ valorPorExtenso.toString() +");");
+			run2.setText(" "+ CommonsUtil.formataValorMonetario(this.objetoCcb.getValorCredito(), "R$ ") + " ("+ valorPorExtenso.toString() +");");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -3406,14 +3409,14 @@ public class CcbMB {
 			run.setItalic(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
 			
-			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(numeroParcelasPagamento));
-			valorPorExtenso.setNumber(montantePagamento); 
+			numeroPorExtenso.setNumber(CommonsUtil.bigDecimalValue(this.objetoCcb.getNumeroParcelasPagamento()));
+			valorPorExtenso.setNumber(this.objetoCcb.getMontantePagamento()); 
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" "+ numeroParcelasPagamento+" ("+ numeroPorExtenso.toString() +") parcelas,"
-					+ " sendo a 1ª. parcela com vencimento em "+ CommonsUtil.formataData(vencimentoPrimeiraParcelaPagamento, "dd/MM/yyyy")  +""
-					+ " e a última parcela com vencimento em "+ CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")  +","
-					+ " totalizando o montante de "+ CommonsUtil.formataValorMonetario(montantePagamento, "R$ ") +" ("+ valorPorExtenso.toString() +");");
+			run2.setText(" "+ this.objetoCcb.getNumeroParcelasPagamento() +" ("+ numeroPorExtenso.toString() +") parcelas,"
+					+ " sendo a 1ª. parcela com vencimento em "+ CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), "dd/MM/yyyy")  +""
+					+ " e a última parcela com vencimento em "+ CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy")  +","
+					+ " totalizando o montante de "+ CommonsUtil.formataValorMonetario(this.objetoCcb.getMontantePagamento(), "R$ ") +" ("+ valorPorExtenso.toString() +");");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -3494,7 +3497,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorTaxa(taxaDeJurosMes) + "%");
+			run.setText(CommonsUtil.formataValorTaxa(this.objetoCcb.getTaxaDeJurosMes()) + "%");
 			run.setBold(false);
 			run.setItalic(true);
 			run.addTab();
@@ -3508,7 +3511,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorTaxa(taxaDeJurosAno) + "%");
+			run.setText(CommonsUtil.formataValorTaxa(this.objetoCcb.getTaxaDeJurosAno()) + "%");
 			run.setBold(false);
 			run.setItalic(true);
 			run.setUnderline(UnderlinePatterns.NONE);
@@ -3536,7 +3539,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorTaxa(cetMes) + "%");
+			run.setText(CommonsUtil.formataValorTaxa(this.objetoCcb.getCetMes()) + "%");
 			run.setBold(false);
 			run.setItalic(true);
 			run.addTab();
@@ -3550,7 +3553,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorTaxa(cetAno) + "%");
+			run.setText(CommonsUtil.formataValorTaxa(this.objetoCcb.getCetAno()) + "%");
 			run.setBold(false);
 			run.setItalic(true);
 			run.setUnderline(UnderlinePatterns.NONE);
@@ -3571,7 +3574,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy") +";");
+			run2.setText(" "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") +";");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -3591,7 +3594,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" "+CommonsUtil.formataData(vencimentoUltimaParcelaPagamento, "dd/MM/yyyy")+"." );
+			run2.setText(" "+CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy")+"." );
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -4030,7 +4033,7 @@ public class CcbMB {
 					+ " FIDUCIANTE a manter seus dados de notificação atualizados de forma que, caso não o faça,"
 					+ " as notificações serão endereçadas aos seguintes endereços abaixo:", true, false);
 			
-			for (CcbVO participante : this.listaParticipantes) {
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 				if(participante.isFiduciante()) {
 					if(!fiducianteGerado) {
 						paragraph = document.createParagraph();
@@ -4433,10 +4436,10 @@ public class CcbMB {
 			run2.setText("As Partes convencionam que o valor de venda total do(s) Imóvel(eis) para fins de leilão, é de  ");
 			run2.setBold(false);
 			
-			valorPorExtenso.setNumber(vendaLeilao);
+			valorPorExtenso.setNumber(this.objetoCcb.getVendaLeilao());
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorMonetario( vendaLeilao, "R$ ") + " ("+ valorPorExtenso.toString() +"),");
+			run.setText(CommonsUtil.formataValorMonetario( this.objetoCcb.getVendaLeilao(), "R$ ") + " ("+ valorPorExtenso.toString() +"),");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4446,7 +4449,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(elaboradorNome +" - CREA "+ elaboradorCrea);
+			run.setText(this.objetoCcb.getElaboradorNome() +" - CREA "+ this.objetoCcb.getElaboradorCrea());
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4456,7 +4459,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(responsavelNome +" - CREA "+ responsavelCrea +", ");
+			run.setText(this.objetoCcb.getResponsavelNome() +" - CREA "+ this.objetoCcb.getResponsavelCrea() +", ");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4494,10 +4497,10 @@ public class CcbMB {
 			run2.setText("contratadas no âmbito da CCB, o valor do Imóvel(eis) deverá ser equivalente a, pelo menos, ");
 			run2.setBold(false);
 			
-			porcentagemPorExtenso.setNumber(porcentagemImovel);
+			porcentagemPorExtenso.setNumber(this.objetoCcb.getPorcentagemImovel());
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText(CommonsUtil.formataValorTaxa(porcentagemImovel) +"% ("+ porcentagemPorExtenso.toString() +" por cento) ");
+			run.setText(CommonsUtil.formataValorTaxa(this.objetoCcb.getPorcentagemImovel()) +"% ("+ porcentagemPorExtenso.toString() +" por cento) ");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4831,9 +4834,9 @@ public class CcbMB {
 					+ " testemunhas abaixo identificadas. ", false);
 			
 			fazParagrafoSimples(document, paragraph, run,
-					"São Paulo, SP, " + dataDeEmissao.getDate() + " de "
-							+ CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() + " de "
-							+ (this.dataDeEmissao.getYear() + 1900) + ".",
+					"São Paulo, SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+							+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
+							+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".",
 					false);
 			
 			paragraph = document.createParagraph();		
@@ -4862,7 +4865,7 @@ public class CcbMB {
 			run.setText("(Página de assinaturas da Cédula de Crédito "
 					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
 					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
-					+ " em "+ CommonsUtil.formataData(dataDeEmissao, "dd/MM/yyyy" )+".)");
+					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
 			run.setItalic(true);
 			run.addCarriageReturn();
@@ -4928,13 +4931,13 @@ public class CcbMB {
 
 			XWPFTableRow tableRow2 = table.createRow();
 
-			if (listaParticipantes.size() > 1) {
+			if (this.objetoCcb.getListaParticipantes().size() > 1) {
 				tableRow2.getCell(0).setParagraph(paragraph);
 				tableRow2.getCell(1).setParagraph(paragraph);
 				int qtdePessoasEsquerdo = 0;
-				for (int iPartTab = 0; iPartTab < listaParticipantes.size(); iPartTab++) {
+				for (int iPartTab = 0; iPartTab < this.objetoCcb.getListaParticipantes().size(); iPartTab++) {
 
-					CcbVO participante = this.listaParticipantes.get(iPartTab);
+					CcbParticipantes participante = this.objetoCcb.getListaParticipantes().get(iPartTab);
 					if (iPartTab != 0) {
 						if (iPartTab % 2 != 0) {
 
@@ -5024,39 +5027,39 @@ public class CcbMB {
 			tableRow3.getCell(0).setParagraph(paragraph);
 			run = tableRow3.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  " + nomeTestemunha1);
+			run.setText("Nome:  " + this.objetoCcb.getNomeTestemunha1());
 			run.setBold(false);
 
 			tableRow3.getCell(1).setParagraph(paragraph);
 			run = tableRow3.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("Nome:  " + nomeTestemunha2);
+			run.setText("Nome:  " + this.objetoCcb.getNomeTestemunha2());
 			run.setBold(false);
 
 			XWPFTableRow tableRow4 = table.createRow();
 			tableRow4.getCell(0).setParagraph(paragraph);
 			run = tableRow4.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  " + rgTestemunha1);
+			run.setText("RG:  " + this.objetoCcb.getRgTestemunha1());
 			run.setBold(false);
 
 			tableRow4.getCell(1).setParagraph(paragraph);
 			run = tableRow4.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("RG:  " + rgTestemunha2);
+			run.setText("RG:  " + this.objetoCcb.getRgTestemunha2());
 			run.setBold(false);
 
 			XWPFTableRow tableRow5 = table.createRow();
 			tableRow5.getCell(0).setParagraph(paragraph);
 			run = tableRow5.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  " + cpfTestemunha1);
+			run.setText("CPF:  " + this.objetoCcb.getCpfTestemunha1());
 			run.setBold(false);
 
 			tableRow5.getCell(1).setParagraph(paragraph);
 			run = tableRow5.getCell(1).getParagraphArray(0).createRun();
 			run.setFontSize(12);
-			run.setText("CPF:  " + cpfTestemunha2);
+			run.setText("CPF:  " + this.objetoCcb.getCpfTestemunha2());
 			run.setBold(false);
 
 			CTTblPr tblpro = table.getCTTbl().getTblPr();
@@ -5143,9 +5146,9 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText("São Paulo, SP, " + dataDeEmissao.getDate() + " de "
-								+ CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() + " de "
-								+ (this.dataDeEmissao.getYear() + 1900) + ".");
+				run.setText("São Paulo, SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+								+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
+								+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
 				run.setFontSize(10);
 				run.setBold(false);
 				run.addCarriageReturn();
@@ -5162,7 +5165,7 @@ public class CcbMB {
 				run.setFontSize(10);
 				run.setBold(false);
 				
-				for (CcbVO participante : this.listaParticipantes) {
+				for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 					if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
 						if(CommonsUtil.semValor(nomeEmitente)) {
 							nomeEmitente = participante.getPessoa().getNome();
@@ -5274,7 +5277,7 @@ public class CcbMB {
 				run.setBold(false);
 				
 				run2 = paragraph.createRun();
-				run2.setText(dataDeEmissao.getDate()+"");
+				run2.setText(this.objetoCcb.getDataDeEmissao().getDate()+"");
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5285,7 +5288,7 @@ public class CcbMB {
 				run.setBold(true);
 				
 				run2 = paragraph.createRun();
-				run2.setText(CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase());
+				run2.setText(CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5296,7 +5299,7 @@ public class CcbMB {
 				run.setBold(true);
 				
 				run2 = paragraph.createRun();
-				run2.setText( (this.dataDeEmissao.getYear() + 1900)  + ",");
+				run2.setText( (this.objetoCcb.getDataDeEmissao().getYear() + 1900)  + ",");
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run2.setUnderline(UnderlinePatterns.SINGLE);
@@ -5313,8 +5316,8 @@ public class CcbMB {
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
 				run.setText("Assim, em face da operação contratada, fica(m) V. "
-						+ "Sa(s) notificadas que a partir de "+ dataDeEmissao.getDate() +" de "+
-						CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase() +" de "+ (this.dataDeEmissao.getYear() + 1900) +","
+						+ "Sa(s) notificadas que a partir de "+ this.objetoCcb.getDataDeEmissao().getDate() +" de "+
+						CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() +" de "+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) +","
 						+ " (inclusive), o pagamento das parcelas referentes a(s) CCB ");
 				run.setFontSize(10);
 				run.setBold(false);
@@ -5465,6 +5468,7 @@ public class CcbMB {
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
+			
 
 			return null;
 	}
@@ -5515,7 +5519,7 @@ public class CcbMB {
 		run.setBold(bold);
 	}
 	
-	private void geraParagrafoPF(XWPFRun run2, CcbVO participante){
+	private void geraParagrafoPF(XWPFRun run2, CcbParticipantes participante){
 		run2.setFontSize(12);
 		String filho;
 		if(participante.isFeminino()) {
@@ -6121,85 +6125,85 @@ public class CcbMB {
 							text = trocaValoresXWPF(text, r, "fiducianteTerceiroG","");
 						}
 						
-						text = trocaValoresXWPF(text, r, "valorCredito", this.valorCredito, "R$ ");
-						text = trocaValoresXWPF(text, r, "custoEmissao", this.custoEmissao, "R$ ");
-						text = trocaValoresXWPF(text, r, "valorIOF", this.valorIOF, "R$ ");
-						text = trocaValoresXWPF(text, r, "valorDespesas", this.valorDespesas, "R$ ");
-						text = trocaValoresXWPF(text, r, "valorLiquidoCredito", this.valorLiquidoCredito, "R$ ");
-						text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.taxaDeJurosMes );
-						text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.taxaDeJurosAno);
+						text = trocaValoresXWPF(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+						text = trocaValoresXWPF(text, r, "custoEmissao", this.objetoCcb.getCustoEmissao(), "R$ ");
+						text = trocaValoresXWPF(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
+						text = trocaValoresXWPF(text, r, "valorDespesas", this.objetoCcb.getValorDespesas(), "R$ ");
+						text = trocaValoresXWPF(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
+						text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes() );
+						text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.objetoCcb.getTaxaDeJurosAno());
 						
-						text = trocaValoresXWPF(text, r, "cetMes", this.cetMes);
-						text = trocaValoresXWPF(text, r, "cetAno", this.cetAno);
-						text = trocaValoresXWPF(text, r, "contaCorrente", this.contaCorrente);
-						text = trocaValoresXWPF(text, r, "agencia", this.agencia);
-						text = trocaValoresXWPF(text, r, "numeroBanco", this.numeroBanco);
-						text = trocaValoresXWPF(text, r, "nomeBanco", this.nomeBanco);
+						text = trocaValoresXWPF(text, r, "cetMes", this.objetoCcb.getCetMes());
+						text = trocaValoresXWPF(text, r, "cetAno", this.objetoCcb.getCetAno());
+						text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());
+						text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
+						text = trocaValoresXWPF(text, r, "numeroBanco", this.objetoCcb.getNumeroBanco());
+						text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());
 						
-						text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.numeroParcelasPagamento);
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.vencimentoPrimeiraParcelaPagamento);
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.vencimentoUltimaParcelaPagamento);
-						text = trocaValoresXWPF(text, r, "montantePagamento", this.montantePagamento, "R$ ");
+						text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+						text = trocaValoresXWPF(text, r, "montantePagamento", this.objetoCcb.getMontantePagamento(), "R$ ");
 						
-						text = trocaValoresXWPF(text, r, "numeroParcelasMIP", this.numeroParcelasMIP);
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMIP", this.vencimentoPrimeiraParcelaMIP);
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaMIP", this.vencimentoUltimaParcelaMIP);
-						text = trocaValoresXWPF(text, r, "montanteMIP", this.montanteMIP, "R$ ");
+						text = trocaValoresXWPF(text, r, "numeroParcelasMIP", this.objetoCcb.getNumeroParcelasMIP());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMIP", this.objetoCcb.getVencimentoPrimeiraParcelaMIP());
+						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaMIP", this.objetoCcb.getVencimentoUltimaParcelaMIP());
+						text = trocaValoresXWPF(text, r, "montanteMIP", this.objetoCcb.getMontanteMIP(), "R$ ");
 						
-						text = trocaValoresXWPF(text, r, "numeroParcelasDFI", this.numeroParcelasDFI);
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDFI", this.vencimentoPrimeiraParcelaDFI);
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaDFI", this.vencimentoUltimaParcelaDFI);
-						text = trocaValoresXWPF(text, r, "montanteDFI", this.montanteDFI, "R$ ");
+						text = trocaValoresXWPF(text, r, "numeroParcelasDFI", this.objetoCcb.getNumeroParcelasDFI());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDFI", this.objetoCcb.getVencimentoPrimeiraParcelaDFI());
+						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaDFI", this.objetoCcb.getVencimentoUltimaParcelaDFI());
+						text = trocaValoresXWPF(text, r, "montanteDFI", this.objetoCcb.getMontanteDFI(), "R$ ");
 						
-						text = trocaValoresXWPF(text, r, "tarifaAntecipada", this.tarifaAntecipada);
-						text = trocaValoresXWPF(text, r, "dataDeEmissao", this.dataDeEmissao);
+						text = trocaValoresXWPF(text, r, "tarifaAntecipada", this.objetoCcb.getTarifaAntecipada());
+						text = trocaValoresXWPF(text, r, "dataDeEmissao", this.objetoCcb.getDataDeEmissao());
 								
-						text = trocaValoresXWPF(text, r, "numeroImovel", this.numeroImovel);
-						text = trocaValoresXWPF(text, r, "cartorioImovel", this.cartorioImovel);
-						text = trocaValoresXWPF(text, r, "cidadeImovel", this.cidadeImovel);
-						text = trocaValoresXWPF(text, r, "ufImovel", this.ufImovel);
+						text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+						text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
 						
-						text = trocaValoresXWPF(text, r, "emissaoDia", this.dataDeEmissao.getDate());
-						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(dataDeEmissao).toLowerCase());
-						text = trocaValoresXWPF(text, r, "emissaoAno", (this.dataDeEmissao.getYear() + 1900));
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
 						
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDia", this.vencimentoPrimeiraParcelaPagamento.getDate());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMes", CommonsUtil.formataMesExtenso(vencimentoPrimeiraParcelaPagamento).toLowerCase());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaAno", (this.vencimentoPrimeiraParcelaPagamento.getYear() + 1900));
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDia", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getDate());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaAno", (this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getYear() + 1900));
 						
-						text = trocaValoresXWPF(text, r, "vendaLeilao", this.vendaLeilao, "R$ ");
-						text = trocaValoresXWPF(text, r, "elaboradorNome", this.elaboradorNome);
-						text = trocaValoresXWPF(text, r, "elaboradorCrea", this.elaboradorCrea);
-						text = trocaValoresXWPF(text, r, "responsavelNome", this.responsavelNome);
-						text = trocaValoresXWPF(text, r, "responsavelCrea", this.responsavelCrea);
-						text = trocaValoresXWPF(text, r, "porcentagemImovel", this.porcentagemImovel);
+						text = trocaValoresXWPF(text, r, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
+						text = trocaValoresXWPF(text, r, "elaboradorNome", this.objetoCcb.getElaboradorNome());
+						text = trocaValoresXWPF(text, r, "elaboradorCrea", this.objetoCcb.getElaboradorCrea());
+						text = trocaValoresXWPF(text, r, "responsavelNome", this.objetoCcb.getResponsavelNome());
+						text = trocaValoresXWPF(text, r, "responsavelCrea", this.objetoCcb.getResponsavelCrea());
+						text = trocaValoresXWPF(text, r, "porcentagemImovel", this.objetoCcb.getPorcentagemImovel());
 
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.vendaLeilao);
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.objetoCcb.getVendaLeilao());
 					
 
 						if (text != null && text.contains("xtenso" + "PorcentagemImovel")) {
-							if(CommonsUtil.mesmoValor(this.porcentagemImovel,BigDecimal.ZERO)) {
+							if(CommonsUtil.mesmoValor(this.objetoCcb.getPorcentagemImovel(),BigDecimal.ZERO)) {
 								text = text.replace("xtenso" + "PorcentagemImovel", "Zero");
 							} else {
-								porcentagemPorExtenso.setNumber(this.porcentagemImovel);
+								porcentagemPorExtenso.setNumber(this.objetoCcb.getPorcentagemImovel());
 								text = text.replace("xtenso" + "PorcentagemImovel", porcentagemPorExtenso.toString());
 							}
 							r.setText(text, 0);
 						}
 						
 						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.valorCredito);
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.custoEmissao);
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.valorIOF);
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", this.valorDespesas);
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorLiquidoCredito", this.valorLiquidoCredito);						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasPagamento", this.numeroParcelasPagamento);						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontantePagamento", this.montantePagamento);						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasMIP", this.numeroParcelasMIP);						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteMIP", this.montanteMIP);						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasDFI", this.numeroParcelasDFI);						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteDFI", this.montanteDFI);
-						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.tarifaAntecipada);
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.objetoCcb.getCustoEmissao());
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.objetoCcb.getValorIOF());
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", this.objetoCcb.getValorDespesas());
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito());						
+						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());						
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontantePagamento", this.objetoCcb.getMontantePagamento());						
+						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasMIP", this.objetoCcb.getNumeroParcelasMIP());						
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteMIP", this.objetoCcb.getMontanteMIP());						
+						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasDFI", this.objetoCcb.getNumeroParcelasDFI());						
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteDFI", this.objetoCcb.getMontanteDFI());
+						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.objetoCcb.getTarifaAntecipada());
 								 
 						if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
 							int iImagem = 0;
@@ -6226,13 +6230,13 @@ public class CcbMB {
 								String text = r.getText(0);
 								
 								text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 		
-								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.nomeTestemunha1);
-								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.cpfTestemunha1);
-								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.rgTestemunha1);
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());
 								
-								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.nomeTestemunha2);
-								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.cpfTestemunha2);
-								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.rgTestemunha2);
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
 								
 								if (CommonsUtil.mesmoValor(this.fiduciante, true)) {
 									text = trocaValoresXWPF(text, r, "classeEmitente", "");
@@ -6384,7 +6388,7 @@ public class CcbMB {
 	}
 	
 	public void clearPagadorRecebedor() {
-		this.participanteSelecionado = new CcbVO();
+		this.participanteSelecionado = new CcbParticipantes();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
 		this.intervenienteSelecionado = new PagadorRecebedor();
@@ -6393,15 +6397,15 @@ public class CcbMB {
 	}
 
 	public void calculaValorLiquidoCredito() {
-		if (this.valorCredito != null && custoEmissao != null && this.valorIOF != null && this.valorDespesas != null)
-			this.setValorLiquidoCredito(
-					((this.getValorCredito().subtract(this.getCustoEmissao())).subtract(this.getValorIOF()))
-							.subtract(this.getValorDespesas()));
+		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getCustoEmissao() != null && this.objetoCcb.getValorIOF() != null && this.objetoCcb.getValorDespesas() != null)
+			this.objetoCcb.setValorLiquidoCredito(
+					((this.objetoCcb.getValorCredito().subtract(this.objetoCcb.getCustoEmissao())).subtract(this.objetoCcb.getValorIOF()))
+							.subtract(this.objetoCcb.getValorDespesas()));
 	}
 	
 	public void calculaPorcentagemImovel() {
-		if (this.valorCredito != null && vendaLeilao != null) {
-				this.setPorcentagemImovel(((this.vendaLeilao.divide(this.valorCredito, MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));
+		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getVendaLeilao() != null) {
+			this.objetoCcb.setPorcentagemImovel(((this.objetoCcb.getVendaLeilao().divide(this.objetoCcb.getValorCredito(), MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));
 						
 		}
 
@@ -6416,10 +6420,17 @@ public class CcbMB {
 		return dataHoje;
 	}
 	
+	public String clearFieldsConsultarCcb() {
+		CcbDao ccbDao = new CcbDao();
+		listaCcbs = ccbDao.findAll();
+		
+		return "/Atendimento/Cobranca/Ccb.xhtml";
+	}
+	
 	public String clearFieldsEmitirCcb() {
 		loadLovs();	
-		this.listaParticipantes = new ArrayList<>();
-		this.participanteSelecionado = new CcbVO();
+		this.objetoCcb.setListaParticipantes(new ArrayList<>());
+		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
@@ -6575,59 +6586,6 @@ public class CcbMB {
 		this.avalistaSelecionado = null;
 		this.testemunha1Selecionado = null;
 		this.testemunha2Selecionado = null;
-
-		this.valorLiquidoCredito = null;
-		this.valorCredito = null;
-		this.custoEmissao = null;
-		this.valorIOF = null;
-		this.valorDespesas = null;
-		
-		this.taxaDeJurosMes = null;
-		this.taxaDeJurosAno = null;
-		this.cetMes = null;
-		this.cetAno = null;
-		
-		this.contaCorrente = null;
-		this.agencia = null;
-		this.numeroBanco = null;
-		this.nomeBanco = null;
-		this.numeroParcelasPagamento = null;
-		this.vencimentoPrimeiraParcelaPagamento = null;
-		this.vencimentoUltimaParcelaPagamento = null;
-		this.montantePagamento = null;
-
-		this.numeroParcelasDFI = null;
-		this.vencimentoPrimeiraParcelaDFI = null;
-		this.vencimentoUltimaParcelaDFI = null;
-		this.montanteDFI = null;
-
-		this.numeroParcelasMIP = null;
-		this.vencimentoPrimeiraParcelaMIP = null;
-		this.vencimentoUltimaParcelaMIP = null;
-		this.montanteMIP = null;
-
-		this.tarifaAntecipada = BigDecimal.ZERO;
-		this.dataDeEmissao =  getDataHoje();
-
-		this.numeroImovel = null;
-		this.cartorioImovel = null;
-		this.cidadeImovel = null;
-		this.ufImovel = null;
-		
-		this.vendaLeilao = null;
-		this.elaboradorNome = null;
-		this.elaboradorCrea = null;
-		this.responsavelNome = null;
-		this.responsavelCrea = null;
-		this.porcentagemImovel = null;
-		
-		this.nomeTestemunha1 = null;
-		this.cpfTestemunha1 = null;
-		this.rgTestemunha1 = null;
-		
-		this.nomeTestemunha2 = null;
-		this.cpfTestemunha2 = null;
-		this.rgTestemunha2 = null;
 		
 		this.uploadedFile = null;
 	    this.fileName = null;
@@ -6971,254 +6929,6 @@ public class CcbMB {
 		this.tipoPesquisa = tipoPesquisa;
 	}
 
-	public BigDecimal getValorLiquidoCredito() {
-		return valorLiquidoCredito;
-	}
-
-	public void setValorLiquidoCredito(BigDecimal valorLiquidoCredito) {
-		this.valorLiquidoCredito = valorLiquidoCredito;
-	}
-
-	public BigDecimal getValorCredito() {
-		return valorCredito;
-	}
-
-	public void setValorCredito(BigDecimal valorCredito) {
-		this.valorCredito = valorCredito;
-	}
-
-	public BigDecimal getCustoEmissao() {
-		return custoEmissao;
-	}
-
-	public void setCustoEmissao(BigDecimal custoEmissao) {
-		this.custoEmissao = custoEmissao;
-	}
-
-	public BigDecimal getValorIOF() {
-		return valorIOF;
-	}
-
-	public void setValorIOF(BigDecimal valorIOF) {
-		this.valorIOF = valorIOF;
-	}
-
-	public BigDecimal getValorDespesas() {
-		return valorDespesas;
-	}
-
-	public void setValorDespesas(BigDecimal valorDespesas) {
-		this.valorDespesas = valorDespesas;
-	}
-
-	public BigDecimal getTaxaDeJurosMes() {
-		return taxaDeJurosMes;
-	}
-
-	public void setTaxaDeJurosMes(BigDecimal taxaDeJurosMes) {
-		this.taxaDeJurosMes = taxaDeJurosMes;
-	}
-
-	public BigDecimal getTaxaDeJurosAno() {
-		return taxaDeJurosAno;
-	}
-
-	public void setTaxaDeJurosAno(BigDecimal taxaDeJurosAno) {
-		this.taxaDeJurosAno = taxaDeJurosAno;
-	}
-
-	public BigDecimal getCetMes() {
-		return cetMes;
-	}
-
-	public void setCetMes(BigDecimal cetMes) {
-		this.cetMes = cetMes;
-	}
-
-	public BigDecimal getCetAno() {
-		return cetAno;
-	}
-
-	public void setCetAno(BigDecimal cetAno) {
-		this.cetAno = cetAno;
-	}
-
-	public String getContaCorrente() {
-		return contaCorrente;
-	}
-
-	public void setContaCorrente(String contaCorrente) {
-		this.contaCorrente = contaCorrente;
-	}
-
-	public String getAgencia() {
-		return agencia;
-	}
-
-	public void setAgencia(String agencia) {
-		this.agencia = agencia;
-	}
-
-	public String getNumeroBanco() {
-		return numeroBanco;
-	}
-
-	public void setNumeroBanco(String numeroBanco) {
-		this.numeroBanco = numeroBanco;
-	}
-
-	public String getNomeBanco() {
-		return nomeBanco;
-	}
-
-	public void setNomeBanco(String nomeBanco) {
-		this.nomeBanco = nomeBanco;
-	}
-
-	public String getNumeroParcelasPagamento() {
-		return numeroParcelasPagamento;
-	}
-
-	public void setNumeroParcelasPagamento(String numeroParcelasPagamento) {
-		this.numeroParcelasPagamento = numeroParcelasPagamento;
-	}
-
-	public Date getVencimentoPrimeiraParcelaPagamento() {
-		return vencimentoPrimeiraParcelaPagamento;
-	}
-
-	public void setVencimentoPrimeiraParcelaPagamento(Date vencimentoPrimeiraParcelaPagamento) {
-		this.vencimentoPrimeiraParcelaPagamento = vencimentoPrimeiraParcelaPagamento;
-	}
-
-	public Date getVencimentoUltimaParcelaPagamento() {
-		return vencimentoUltimaParcelaPagamento;
-	}
-
-	public void setVencimentoUltimaParcelaPagamento(Date vencimentoUltimaParcelaPagamento) {
-		this.vencimentoUltimaParcelaPagamento = vencimentoUltimaParcelaPagamento;
-	}
-
-	public BigDecimal getMontantePagamento() {
-		return montantePagamento;
-	}
-
-	public void setMontantePagamento(BigDecimal montantePagamento) {
-		this.montantePagamento = montantePagamento;
-	}
-
-	public String getNumeroParcelasDFI() {
-		return numeroParcelasDFI;
-	}
-
-	public void setNumeroParcelasDFI(String numeroParcelasDFI) {
-		this.numeroParcelasDFI = numeroParcelasDFI;
-	}
-
-	public Date getVencimentoPrimeiraParcelaDFI() {
-		return vencimentoPrimeiraParcelaDFI;
-	}
-
-	public void setVencimentoPrimeiraParcelaDFI(Date vencimentoPrimeiraParcelaDFI) {
-		this.vencimentoPrimeiraParcelaDFI = vencimentoPrimeiraParcelaDFI;
-	}
-
-	public Date getVencimentoUltimaParcelaDFI() {
-		return vencimentoUltimaParcelaDFI;
-	}
-
-	public void setVencimentoUltimaParcelaDFI(Date vencimentoUltimaParcelaDFI) {
-		this.vencimentoUltimaParcelaDFI = vencimentoUltimaParcelaDFI;
-	}
-
-	public BigDecimal getMontanteDFI() {
-		return montanteDFI;
-	}
-
-	public void setMontanteDFI(BigDecimal montanteDFI) {
-		this.montanteDFI = montanteDFI;
-	}
-
-	public String getNumeroParcelasMIP() {
-		return numeroParcelasMIP;
-	}
-
-	public void setNumeroParcelasMIP(String numeroParcelasMIP) {
-		this.numeroParcelasMIP = numeroParcelasMIP;
-	}
-
-	public Date getVencimentoPrimeiraParcelaMIP() {
-		return vencimentoPrimeiraParcelaMIP;
-	}
-
-	public void setVencimentoPrimeiraParcelaMIP(Date vencimentoPrimeiraParcelaMIP) {
-		this.vencimentoPrimeiraParcelaMIP = vencimentoPrimeiraParcelaMIP;
-	}
-
-	public Date getVencimentoUltimaParcelaMIP() {
-		return vencimentoUltimaParcelaMIP;
-	}
-
-	public void setVencimentoUltimaParcelaMIP(Date vencimentoUltimaParcelaMIP) {
-		this.vencimentoUltimaParcelaMIP = vencimentoUltimaParcelaMIP;
-	}
-
-	public BigDecimal getMontanteMIP() {
-		return montanteMIP;
-	}
-
-	public void setMontanteMIP(BigDecimal montanteMIP) {
-		this.montanteMIP = montanteMIP;
-	}
-
-	public BigDecimal getTarifaAntecipada() {
-		return tarifaAntecipada;
-	}
-
-	public void setTarifaAntecipada(BigDecimal tarifaAntecipada) {
-		this.tarifaAntecipada = tarifaAntecipada;
-	}
-
-	public Date getDataDeEmissao() {
-		return dataDeEmissao;
-	}
-
-	public void setDataDeEmissao(Date dataDeEmissao) {
-		this.dataDeEmissao = dataDeEmissao;
-	}
-
-	public String getNumeroImovel() {
-		return numeroImovel;
-	}
-
-	public void setNumeroImovel(String numeroImovel) {
-		this.numeroImovel = numeroImovel;
-	}
-
-	public String getCartorioImovel() {
-		return cartorioImovel;
-	}
-
-	public void setCartorioImovel(String cartorioImovel) {
-		this.cartorioImovel = cartorioImovel;
-	}
-
-	public String getCidadeImovel() {
-		return cidadeImovel;
-	}
-
-	public void setCidadeImovel(String cidadeImovel) {
-		this.cidadeImovel = cidadeImovel;
-	}
-
-	public String getUfImovel() {
-		return ufImovel;
-	}
-
-	public void setUfImovel(String ufImovel) {
-		this.ufImovel = ufImovel;
-	}
-
 	public String getTipoDownload() {
 		return tipoDownload;
 	}
@@ -7242,55 +6952,7 @@ public class CcbMB {
 	public void setRegimeCasamentoEmitente(String regimeCasamentoEmitente) {
 		this.regimeCasamentoEmitente = regimeCasamentoEmitente;
 	}
-
-	public BigDecimal getVendaLeilao() {
-		return vendaLeilao;
-	}
-
-	public void setVendaLeilao(BigDecimal vendaLeilao) {
-		this.vendaLeilao = vendaLeilao;
-	}
-
-	public String getElaboradorNome() {
-		return elaboradorNome;
-	}
-
-	public void setElaboradorNome(String elaboradorNome) {
-		this.elaboradorNome = elaboradorNome;
-	}
-
-	public String getElaboradorCrea() {
-		return elaboradorCrea;
-	}
-
-	public void setElaboradorCrea(String elaboradorCrea) {
-		this.elaboradorCrea = elaboradorCrea;
-	}
-
-	public String getResponsavelNome() {
-		return responsavelNome;
-	}
-
-	public void setResponsavelNome(String responsavelNome) {
-		this.responsavelNome = responsavelNome;
-	}
-
-	public String getResponsavelCrea() {
-		return responsavelCrea;
-	}
-
-	public void setResponsavelCrea(String responsavelCrea) {
-		this.responsavelCrea = responsavelCrea;
-	}
-
-	public BigDecimal getPorcentagemImovel() {
-		return porcentagemImovel;
-	}
-
-	public void setPorcentagemImovel(BigDecimal porcentagemImovel) {
-		this.porcentagemImovel = porcentagemImovel;
-	}
-
+	
 	public boolean isAddAvalista() {
 		return addAvalista;
 	}
@@ -7537,54 +7199,6 @@ public class CcbMB {
 
 	public void setCpfConjugeAvalista(String cpfConjugeAvalista) {
 		this.cpfConjugeAvalista = cpfConjugeAvalista;
-	}
-
-	public String getNomeTestemunha1() {
-		return nomeTestemunha1;
-	}
-
-	public void setNomeTestemunha1(String nomeTestemunha1) {
-		this.nomeTestemunha1 = nomeTestemunha1;
-	}
-
-	public String getCpfTestemunha1() {
-		return cpfTestemunha1;
-	}
-
-	public void setCpfTestemunha1(String cpfTestemunha1) {
-		this.cpfTestemunha1 = cpfTestemunha1;
-	}
-
-	public String getRgTestemunha1() {
-		return rgTestemunha1;
-	}
-
-	public void setRgTestemunha1(String rgTestemunha1) {
-		this.rgTestemunha1 = rgTestemunha1;
-	}
-
-	public String getNomeTestemunha2() {
-		return nomeTestemunha2;
-	}
-
-	public void setNomeTestemunha2(String nomeTestemunha2) {
-		this.nomeTestemunha2 = nomeTestemunha2;
-	}
-
-	public String getCpfTestemunha2() {
-		return cpfTestemunha2;
-	}
-
-	public void setCpfTestemunha2(String cpfTestemunha2) {
-		this.cpfTestemunha2 = cpfTestemunha2;
-	}
-
-	public String getRgTestemunha2() {
-		return rgTestemunha2;
-	}
-
-	public void setRgTestemunha2(String rgTestemunha2) {
-		this.rgTestemunha2 = rgTestemunha2;
 	}
 
 	public boolean isFiduciante() {
@@ -8180,14 +7794,6 @@ public class CcbMB {
 		this.bis = bis;
 	}
 
-	public ArrayList<CcbVO> getListaParticipantes() {
-		return listaParticipantes;
-	}
-
-	public void setListaParticipantes(ArrayList<CcbVO> listaParticipantes) {
-		this.listaParticipantes = listaParticipantes;
-	}
-
 	public ArrayList<UploadedFile> getFilesList() {
 		return filesList;
 	}
@@ -8196,11 +7802,11 @@ public class CcbMB {
 		this.filesList = filesList;
 	}
 
-	public CcbVO getParticipanteSelecionado() {
+	public CcbParticipantes getParticipanteSelecionado() {
 		return participanteSelecionado;
 	}
 
-	public void setParticipanteSelecionado(CcbVO participanteSelecionado) {
+	public void setParticipanteSelecionado(CcbParticipantes participanteSelecionado) {
 		this.participanteSelecionado = participanteSelecionado;
 	}
 
@@ -8212,11 +7818,11 @@ public class CcbMB {
 		this.addParticipante = addParticipante;
 	}
 
-	public CcbVO getSocioSelecionado() {
+	public CcbParticipantes getSocioSelecionado() {
 		return socioSelecionado;
 	}
 
-	public void setSocioSelecionado(CcbVO socioSelecionado) {
+	public void setSocioSelecionado(CcbParticipantes socioSelecionado) {
 		this.socioSelecionado = socioSelecionado;
 	}
 
@@ -8236,11 +7842,19 @@ public class CcbMB {
 		this.modeloAntigo = modeloAntigo;
 	}
 
-	public BigDecimal getValorParcela() {
-		return valorParcela;
+	public CcbContrato getObjetoCcb() {
+		return objetoCcb;
 	}
 
-	public void setValorParcela(BigDecimal valorParcela) {
-		this.valorParcela = valorParcela;
+	public void setObjetoCcb(CcbContrato objetoCcb) {
+		this.objetoCcb = objetoCcb;
+	}
+
+	public List<CcbContrato> getListaCcbs() {
+		return listaCcbs;
+	}
+
+	public void setListaCcbs(List<CcbContrato> listaCcbs) {
+		this.listaCcbs = listaCcbs;
 	}
 }
