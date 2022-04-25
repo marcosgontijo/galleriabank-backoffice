@@ -2655,6 +2655,89 @@ public class ContratoCobrancaMB {
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Contrato Cobrança: Os dados do responsável foram atualizados com sucesso!", ""));
 	}
+	
+	public String saveLeadTerceiros() {
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+
+			this.objetoContratoCobranca.setResponsavel(responsavel);
+			
+			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
+				this.objetoContratoCobranca.setContratoLead(true);
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.isContratoLead(), null)) {
+				this.objetoContratoCobranca.setContratoLead(false);
+			}
+
+			if (this.objetoPagadorRecebedor.getSite() != null) {
+				if (!this.objetoPagadorRecebedor.getSite().contains("http")
+						&& !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
+					this.objetoPagadorRecebedor
+							.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
+				}
+			}			
+
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
+
+			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
+			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+
+			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
+				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+			}
+
+			if (this.objetoContratoCobranca.getVlrParcela() != null) {
+				BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+
+				this.objetoContratoCobranca.setVlrParcelaStr(
+						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
+			}
+			
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+				
+				return "";
+			}
+
+			updateCheckList();
+			
+			//gerando parcelas quando contrato esta em ag registro
+			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
+				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
+			}
+
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			// verifica se o contrato for aprovado, manda um tipo de email..
+			// senao valida se houve alteração no checklist para envio de email.
+			
+			enviaEmailAtualizacaoPreContrato();
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			return geraConsultaLeadsTerceiros();
+		} else {
+			if (context != null) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Erro de validação: O código do responsável digitado não foi encontrado ("
+								+ this.codigoResponsavel + ")!",
+						""));
+			}
+
+			return null;
+		}
+	}
 
 	public String editPreContrato() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
@@ -6199,6 +6282,54 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
 		}	
 	}
+	
+	public String clearFieldsLeadsTerceirosEditar() {
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		this.contratos = new ArrayList<ContratoCobranca>();
+		
+		this.tituloPainel = "Editar";
+
+		files = new ArrayList<FileUploaded>();
+		files = listaArquivos();
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+
+		loadLovs();
+
+		loadSelectedLovsPendentes();
+
+		if (this.objetoContratoCobranca.getPagador() != null) {
+			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
+					&& !this.objetoContratoCobranca.getPagador().getCnpj().equals("")) {
+				this.tipoPessoaIsFisica = false;
+			} else {
+				this.tipoPessoaIsFisica = true;
+			}
+		}
+		
+		this.seguradoSelecionado = new Segurado();
+		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		this.socioSelecionado = new PagadorRecebedorSocio();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
+		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSegurador = false;
+		this.addSocio = false;
+		this.addPagador = false;
+
+		// this.qtdeParcelas =
+		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
+
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
+
+		// saveEstadoCheckListAtual();
+		return "/Atendimento/Cobranca/ContratoCobrancaLeadsTerceirosEditar.xhtml";
+	}
 
 	public void saveEstadoCheckListAtual() {
 		this.contratoCobrancaCheckList = new ContratoCobranca();
@@ -6826,6 +6957,17 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoFIDC.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroBaixadoCRI1() {
+		this.relDataContratoInicio = gerarDataHoje();
+		this.relDataContratoFim = gerarDataHoje();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI1.xhtml";
+	}
 
 	public String clearFieldsRelFinanceiroRecebedor() {
 		this.relDataContratoInicio = null;
@@ -6960,6 +7102,15 @@ public class ContratoCobrancaMB {
 			this.tituloPainel = "FIDC GALLERIA";
 		}
 		
+		if (empresa.equals("CRI 1")) {
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			
+			clearCRI1();
+			stackedGroupBarModel = new BarChartModel();
+		
+			this.tituloPainel = "CRI 1";
+		}
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
 	}
 	
@@ -7060,7 +7211,224 @@ public class ContratoCobrancaMB {
 	private BigDecimal totalAVencer;
 	
 	private BarChartModel stackedGroupBarModel;
+	
+	public void clearCRI1() {
+		this.somaContratos240 = BigDecimal.ZERO;
+		this.volumeCarteira = BigDecimal.ZERO;
+		this.somaContratos180 = BigDecimal.ZERO;
+		this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+		this.qtdDeparcelasVencidas = 0;
+		this.inadimplencia30Soma = BigDecimal.ZERO;
+		this.inadimplencia60Soma = BigDecimal.ZERO;
+		this.inadimplencia90Soma = BigDecimal.ZERO;
+		this.inadimplencia30Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia60Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia90Porcentagem = BigDecimal.ZERO;
+		
+		this.contratosInadimplencia30 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
+		this.contratoPrazoMin = new ArrayList<ContratoCobranca>();
+		
+		this.prazoMax = BigDecimal.ZERO;
+		this.prazoMedio = BigDecimal.ZERO;
+		this.prazoMin =  BigDecimal.valueOf(0);
+		
+		this.taxaMax = BigDecimal.ZERO;
+		this.taxaMedia = BigDecimal.ZERO;
+		this.taxaMin =  BigDecimal.valueOf(0);
+		
+		this.taxaMaxIPCA = BigDecimal.ZERO;
+		this.taxaMediaIPCA = BigDecimal.ZERO;
+		this.taxaMinIPCA = BigDecimal.valueOf(0);
+		
+		this.ltvMax = BigDecimal.ZERO;
+		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(0);
+		
+		this.totalContratosConsultar = 0;
+		
+		this.totalAVencer = BigDecimal.ZERO;
+		this.porcentagem240 = BigDecimal.ZERO;
+		this.porcentagem180 = BigDecimal.ZERO;
+	}
+	
+	public void consultaDadosCRI1() {
+		clearCRI1();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Calendar dataVencimentoParcela = Calendar.getInstance(zone, locale);
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+		Date dataAtual = dataHoje.getTime();
+		Calendar dataVencimentoMínima = new GregorianCalendar(2021,9,31);	
+		
+		this.prazoMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMin =  BigDecimal.valueOf(100);
+		
+		this.taxaMinIPCA = BigDecimal.valueOf(100);
 
+		this.ltvMin = BigDecimal.valueOf(100);
+		
+		this.contratos = new ArrayList<ContratoCobranca>();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		this.contratos = contratoCobrancaDao.consultaContratos("CRI 1");	
+		this.totalContratosConsultar = this.contratos.size();
+		
+		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
+		
+		int qtdContratosSemIPCA = 0;
+		int qtdContratosComIPCA = 0;
+		
+		BigDecimal ltv = BigDecimal.ZERO;
+			
+
+		for(ContratoCobranca contrato : this.contratos) {
+			this.qtdDeparcelasVencidas = 0;
+			for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+				dataVencimentoParcela.setTime(ccd.getDataVencimento());		
+				
+				if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
+					ccd.setParcelaVencida(true);
+				}
+
+				else if (dataVencimentoParcela.getTime().equals(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
+					ccd.setParcelaVencendo(true);
+				}
+				
+				if (ccd.isParcelaPaga()) {
+					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
+					this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
+				} else if (ccd.isParcelaVencida()) {
+					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
+						this.qtdDeparcelasVencidas++;
+					}
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				}  else {
+					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+				}
+				
+				if(CommonsUtil.mesmoValor(ccd.getDataVencimento().getMonth(), dataAtual.getMonth()) && CommonsUtil.mesmoValor(ccd.getDataVencimento().getYear(), dataAtual.getYear()) && !CommonsUtil.semValor(contrato.getValorImovel())) {
+					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
+				}
+			}
+			
+			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
+				this.totalContratosConsultar--;
+				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+			} else {
+				contratosGraficoFidc.add(contrato);
+				
+				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
+				ltvMedio = ltvMedio.add(ltv);
+				
+				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
+					prazoMax = BigDecimal.valueOf(prazoContrato);
+				}
+				
+				if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 1){
+					prazoMin = BigDecimal.valueOf(prazoContrato);
+					contratoPrazoMin.clear();
+					contratoPrazoMin.add(contrato);
+				} else if (prazoMin.compareTo(BigDecimal.valueOf(prazoContrato)) == 0){
+					contratoPrazoMin.add(contrato);
+				}
+				
+				if(contrato.isCorrigidoIPCA()) {
+					if (taxaMaxIPCA.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMaxIPCA = contrato.getTxJurosParcelas();
+					}
+					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMinIPCA = contrato.getTxJurosParcelas();
+					}
+					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
+					qtdContratosComIPCA++;
+				} else {
+					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
+						taxaMax = contrato.getTxJurosParcelas();
+					}
+					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
+						taxaMin = contrato.getTxJurosParcelas();
+					}
+					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
+					qtdContratosSemIPCA++;
+				}
+				
+				if (ltvMax.compareTo(ltv) == -1){
+					ltvMax = ltv;
+				}
+				if (ltvMin.compareTo(ltv) == 1){
+					ltvMin = ltv;
+				}
+			}
+			
+			if(this.qtdDeparcelasVencidas == 1) {
+				this.inadimplencia30Soma = this.inadimplencia30Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia30.add(contrato);
+			} else if(this.qtdDeparcelasVencidas == 2) {
+				this.inadimplencia60Soma = this.inadimplencia60Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia60.add(contrato);
+			} else if(this.qtdDeparcelasVencidas >= 3) {
+				this.inadimplencia90Soma = this.inadimplencia90Soma.add(valorUltimaPareclaPaga);
+				this.contratosInadimplencia90.add(contrato);
+			}
+			
+			this.volumeCarteira = this.volumeCarteira.add(valorUltimaPareclaPaga);
+			
+			if(this.prazoContrato <= 180) {
+				this.somaContratos180 = this.somaContratos180.add(this.valorUltimaPareclaPaga);
+			} else if(this.prazoContrato > 180) {
+				this.somaContratos240 = this.somaContratos240.add(this.valorUltimaPareclaPaga);
+			}
+		}
+		
+		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
+		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
+		
+		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
+		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
+		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
+		
+		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMedio = this.ltvMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMax = this.ltvMax.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.ltvMin = this.ltvMin.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.inadimplencia30Porcentagem = this.inadimplencia30Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.multiply(BigDecimal.valueOf(100));
+		this.inadimplencia30Porcentagem = this.inadimplencia30Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.inadimplencia60Porcentagem = this.inadimplencia60Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+		this.inadimplencia60Porcentagem = this.inadimplencia60Porcentagem.multiply(BigDecimal.valueOf(100));
+		this.inadimplencia60Porcentagem = this.inadimplencia60Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.inadimplencia90Porcentagem = this.inadimplencia90Soma.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+		this.inadimplencia90Porcentagem = this.inadimplencia90Porcentagem.multiply(BigDecimal.valueOf(100));
+		this.inadimplencia90Porcentagem = this.inadimplencia90Porcentagem.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.porcentagem180 = this.somaContratos180.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+		this.porcentagem180 = this.porcentagem180.multiply(BigDecimal.valueOf(100));
+		this.porcentagem180 = this.porcentagem180.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		this.porcentagem240 = this.somaContratos240.divide(this.volumeCarteira,  MathContext.DECIMAL128);
+		this.porcentagem240 = this.porcentagem240.multiply(BigDecimal.valueOf(100));
+		this.porcentagem240 = this.porcentagem240.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		prazoMax = prazoMax.add(BigDecimal.ONE);
+		
+	//	createStackedGroupBarModel();
+	}
+	
 	public void clearFIDC() {
 		this.somaContratos240 = BigDecimal.ZERO;
 		this.volumeCarteira = BigDecimal.ZERO;
@@ -7277,6 +7645,152 @@ public class ContratoCobrancaMB {
 		
 	//	createStackedGroupBarModel();
 	}
+	
+	public StreamedContent geraRelatorioCRI1() throws IOException{
+		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+		int iLinha = 0;
+		int numeroLista = 1;
+		
+	        TimeZone zone = TimeZone.getDefault();
+			Locale locale = new Locale("pt", "BR");
+			Calendar dataHoje = Calendar.getInstance(zone, locale);
+			dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+			dataHoje.set(Calendar.MINUTE, 0);
+			dataHoje.set(Calendar.SECOND, 0);
+			dataHoje.set(Calendar.MILLISECOND, 0);
+			Date dataAtual = dataHoje.getTime();
+		
+		XSSFSheet sheet = wb.getSheetAt(0);
+		
+		XSSFRow linha = sheet.getRow(iLinha);
+		if(linha == null) {
+			sheet.createRow(iLinha);
+			linha = sheet.getRow(iLinha);
+		}
+		
+		gravaCelula(0, "Período", linha);
+		gravaCelula(1, "Saldo Inicial", linha);
+		gravaCelula(2, "Juros", linha);
+		gravaCelula(3, "Amortização", linha);
+		gravaCelula(4, "Valor Parcela", linha);
+		gravaCelula(5, "Amortização Total", linha);
+
+		BigDecimal saldoAnterior = BigDecimal.ZERO;
+		BigDecimal saldoInicial = BigDecimal.ZERO;
+		BigDecimal juros = BigDecimal.ZERO;
+		BigDecimal amortizacao = BigDecimal.ZERO;
+		BigDecimal valorParcela = BigDecimal.ZERO;
+		BigDecimal amortizacaoTotal = BigDecimal.ZERO;
+
+//		ContratoCobranca contrato = contratos.iterator().next();
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+//		ContratoCobranca contrato = contratoCobrancaDao.findByFilter("numeroContrato", "06445").get(0);
+		
+		int mesHoje = dataAtual.getMonth();
+		int anoHoje = dataAtual.getYear();
+		
+		int mesOntem = mesHoje;
+		mesOntem--;
+		int anoOntem = anoHoje;
+		
+		if (mesOntem < 0) {
+			mesOntem = 11;
+			anoOntem--;
+		}
+		
+		iLinha = 1;
+		
+		int i = 0;
+		for (i = 0; i <= prazoMax.intValue() ; i++) {
+			juros = BigDecimal.ZERO;
+			amortizacao = BigDecimal.ZERO;
+			valorParcela = BigDecimal.ZERO;
+			
+			for (ContratoCobranca contrato : this.contratosGraficoFidc) {
+				for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+					int mesVencimento = ccd.getDataVencimento().getMonth();
+					int anoVencimetno = ccd.getDataVencimento().getYear();
+					
+					if(i==0) {
+						if (CommonsUtil.mesmoValor(mesVencimento, mesOntem) && CommonsUtil.mesmoValor(anoVencimetno, anoOntem)) {
+							saldoAnterior = ccd.getVlrSaldoParcela();
+						}
+					}
+					
+					if (CommonsUtil.mesmoValor(mesVencimento, mesHoje) && CommonsUtil.mesmoValor(anoVencimetno, anoHoje)) {
+						if (i == 0) {
+							if (!CommonsUtil.semValor(ccd.getVlrSaldoInicial())) {
+								saldoInicial = saldoInicial.add(ccd.getVlrSaldoInicial());
+							} else {
+								saldoInicial = saldoInicial.add(saldoAnterior);
+							}
+						}
+						juros = juros.add(ccd.getVlrJurosParcela());
+						amortizacao = amortizacao.add(ccd.getVlrAmortizacaoParcela());
+						amortizacaoTotal = amortizacaoTotal.add(ccd.getVlrAmortizacaoParcela());
+						valorParcela = valorParcela.add(ccd.getVlrAmortizacaoParcela().add(ccd.getVlrJurosParcela()));
+					}
+				}
+			}
+			
+			if(i == 0) {
+				linha = sheet.getRow(iLinha);
+				if(linha == null) {
+					sheet.createRow(iLinha);
+					linha = sheet.getRow(iLinha);
+				}
+				gravaCelula(0, 0, linha);
+				gravaCelula(1, saldoInicial, linha);
+				gravaCelula(2, BigDecimal.ZERO, linha);
+				gravaCelula(3, BigDecimal.ZERO, linha);
+				gravaCelula(4, BigDecimal.ZERO, linha);
+				gravaCelula(5, BigDecimal.ZERO, linha);
+
+				iLinha++;
+			} 
+			
+			BigDecimal saldoInicial2 = saldoInicial.subtract(amortizacaoTotal);
+			
+			linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+			
+			gravaCelula(0, numeroLista, linha);
+			gravaCelula(1, saldoInicial2, linha);
+			gravaCelula(2, juros, linha);
+			gravaCelula(3, amortizacao, linha);
+			gravaCelula(4, valorParcela, linha);
+			gravaCelula(5, amortizacaoTotal, linha);
+
+			iLinha++;
+			
+			numeroLista++;
+			mesHoje++;
+			if (mesHoje == 12) {
+				mesHoje = 0;
+				anoHoje++;
+			}
+		}       
+					
+		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+		//escrever tudo o que foi feito no arquivo
+		wb.write(fileOut);
+
+		//fecha a escrita de dados nessa planilha
+		wb.close();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+		gerador.open(String.format("Galleria Bank - Relatorio CRI 1 %s.xlsx", ""));
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+		
+		return null;
+}
 	
 	public StreamedContent geraRelatorioFIDC() throws IOException{
 			XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
@@ -7793,6 +8307,22 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoFIDC.xhtml";
 	}
 	
+	public String clearFieldsRelFinanceiroAtrasoCRI1() {
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+		
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI1.xhtml";
+	}
+	
 
 	public String clearFieldsRelFinanceiroContabilidade() {
 		TimeZone zone = TimeZone.getDefault();
@@ -8007,6 +8537,21 @@ public class ContratoCobrancaMB {
 	}
 
 	public void geraRelFinanceiroBaixadoFIDC() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
+				this.relDataContratoInicio, this.relDataContratoFim);
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroBaixadoCRI1() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
@@ -8609,6 +9154,30 @@ public class ContratoCobrancaMB {
 
 		return "";
 	}
+	
+	public String geraConsultaLeadsTerceiros() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.contratosPendentes = contratoCobrancaDao.consultaLeadsTerceiros(null);
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.contratosPendentes = contratoCobrancaDao.consultaLeadsTerceiros(
+								usuarioLogado.getCodigoResponsavel());
+					}
+				}
+			}
+		}
+
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsTerceiros.xhtml";
+	}
 
 	public String geraConsultaContratosCustomizados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -8813,6 +9382,39 @@ public class ContratoCobrancaMB {
 
 		// Busca Contratos com Parcelas que vencem no dia atual
 		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullFIDC(gerarDataHoje());
+
+		// exclui o registro, quando o pagador é a Galleria SA
+		/*
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			for (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) {
+				if (r.getContratoCobranca().getPagador().getId() != 14) {
+					this.relObjetoContratoCobranca.add(r);
+				}
+			}
+		}
+		*/
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
+		}
+		
+		processaDadosRelFinanceiroAtrasoFull();
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroAtrasoCRI1() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		List<RelatorioFinanceiroCobranca> relObjetoContratoCobrancaAux = new ArrayList<RelatorioFinanceiroCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullCRI1(gerarDataHoje());
 
 		// exclui o registro, quando o pagador é a Galleria SA
 		/*
@@ -18744,6 +19346,186 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 	}
 	
+	public void gerarXLSFinanceiroBaixadoCRI1() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomeContrato = "Relatório Financeiro Baixado CRI 1.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Responsável");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("CCB");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Valor CCB");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Valor Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Data Pagamento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
+		cell.setCellValue("Valor Pago");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (RelatorioFinanceiroCobranca record : this.relObjetoContratoCobranca) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Contrato
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());
+
+			// Responsável
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNomeResponsavel());
+			
+			// Pagador
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNomePagador());
+						
+			// CCB
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getParcelaCCB());
+			
+			// Valor CCB
+			cell = row.createCell(4);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getValorCCB()).doubleValue());
+			
+			// Parcela
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getParcela());
+			
+			// Valor Parcela
+			cell = row.createCell(6);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getVlrParcela()).doubleValue());
+			
+			// Vencimento
+			cell = row.createCell(7);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+			
+			// Pagamento
+			cell = row.createCell(8);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataPagamento());
+						
+			// Valor Pago
+			cell = row.createCell(9);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.getVlrTotalPago()).doubleValue());			
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.contratoGerado = true;
+	}
+	
 	public void gerarXLSFinanceiroBaixadoFIDC() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -19199,6 +19981,166 @@ public class ContratoCobrancaMB {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 		this.nomeContrato = "Relatório Atraso FIDC.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Responsável");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("CCB");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("CCB/Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (RelatorioFinanceiroCobranca record : this.relObjetoContratoCobranca) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Contrato
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());
+
+			// Responsavel
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getContratoCobranca().getResponsavel().getNome());
+
+			// Pagador
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getContratoCobranca().getPagador().getNome());
+
+			// CCB
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getCcb());
+			
+			// CCB/Parcela
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getCcb() + "-" + record.getParcela());
+
+			// Vencimento
+			cell = row.createCell(5);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+
+			// Valor
+			cell = row.createCell(6);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			cell.setCellValue(((BigDecimal) record.valor).doubleValue());
+		}
+
+		// Resize columns to fit data
+		// TODO MIGRACAO POI
+		/*
+		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
+		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
+		 */
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.contratoGerado = true;
+	}
+	
+	public void geraXLSFinanceiroAtrasoCRI1() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomeContrato = "Relatório Atraso CRI 1.xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");

@@ -173,7 +173,7 @@ public class MessageRestService {
 								contratoCobrancaMB.setCodigoResponsavel("11610");
 								Responsavel responsavel = new Responsavel();
 								ResponsavelDao rDao = new ResponsavelDao();
-								responsavel = rDao.findById(Long.getLong("429"));
+								responsavel = rDao.findById((long) 429);
 								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
 							}
 						}
