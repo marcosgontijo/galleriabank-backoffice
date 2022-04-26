@@ -52,6 +52,7 @@ public class BRLTrustMB {
 	private StreamedContent file;	
 	
 	List<ContratoCobranca> contratos = new ArrayList<ContratoCobranca>();
+	private List<ContratoCobranca> selectedContratos = new ArrayList<ContratoCobranca>();
 	ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
 	
 	private String numContrato;
@@ -140,6 +141,8 @@ public class BRLTrustMB {
 		this.numContrato = "";
 		this.cedenteCessao = "";		
 		this.contratos = new ArrayList<ContratoCobranca>();
+		this.selectedContratos = new ArrayList<ContratoCobranca>();
+		
 		this.dataAquisicao = new Date();
 		
 		this.dataBaixaInicial = gerarDataOntem();
@@ -150,7 +153,7 @@ public class BRLTrustMB {
 		
 		this.jsonGerado = false;
 		
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonLiquidacaoMigracao.xhtml";
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonMigracao.xhtml";
 	}
 	
 	public void pesquisaContratosLiquidacao() {
@@ -177,7 +180,7 @@ public class BRLTrustMB {
 		} 
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao);
+		this.contratos = contratoCobrancaDao.consultaContratosBRLLiquidacaoMigracao(this.cedenteCessao);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -558,106 +561,109 @@ public class BRLTrustMB {
 		jsonCessao.put("identificadorCessao", identificadorCessao);
 		
 		JSONArray jsonRecebiveis = new JSONArray();
+		Date dataHoje = gerarDataHoje();
 		
-		for (ContratoCobrancaBRLLiquidacao parcela : this.parcelasLiquidacao) {
-			JSONObject jsonRecebivel = new JSONObject();
+		for (ContratoCobranca contrato : this.selectedContratos) {
+			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+				if (parcela.getDataVencimento().after(dataHoje)) {
+					JSONObject jsonRecebivel = new JSONObject();
+					
+					String numeroParcela = "";
+					
+					if (parcela.getNumeroParcela().length() == 1) {
+						numeroParcela = "00" + parcela.getNumeroParcela();
+					} else if (parcela.getNumeroParcela().length() == 2) {
+						numeroParcela = "0" + parcela.getNumeroParcela();
+					} else {
+						numeroParcela = parcela.getNumeroParcela();
+					}
+					
+					jsonRecebivel.put("numeroControle", contrato.getNumeroContratoSeguro() + "-" + numeroParcela);
+					jsonRecebivel.put("coobrigacao", false);
+					jsonRecebivel.put("ocorrencia", 77);
+					jsonRecebivel.put("tipo", 95);
+					jsonRecebivel.put("documento", contrato.getNumeroContratoSeguro());
+					jsonRecebivel.put("termoCessao", contrato.getTermoCessao());
+					
+					JSONObject jsonSacado = new JSONObject();
+					
+					JSONObject jsonPessoa = new JSONObject();
+					if (contrato.getPagador().getCpf() != null && !contrato.getPagador().getCpf().equals("")) {
+						jsonPessoa.put("tipo", "PF");
+						jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCpf())));				
+					} else {
+						jsonPessoa.put("tipo", "PJ");
+						jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCnpj())));
+					}
+					jsonPessoa.put("nome", contrato.getPagador().getNome());
+					jsonSacado.put("pessoa", jsonPessoa);
+					
+					JSONObject jsonEndereco = new JSONObject();
+					jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCep())));
+					jsonEndereco.put("logradouro", contrato.getPagador().getEndereco());
+					jsonEndereco.put("numero", contrato.getPagador().getNumero());
+					jsonEndereco.put("complemento", contrato.getPagador().getComplemento());
+					jsonEndereco.put("bairro", contrato.getPagador().getBairro());
+					jsonEndereco.put("municipio", contrato.getPagador().getCidade());
+					jsonEndereco.put("uf", contrato.getPagador().getEstado());
+					jsonSacado.put("endereco", jsonEndereco);
 			
-			String numeroParcela = "";
-			
-			if (parcela.getNumeroParcela().length() == 1) {
-				numeroParcela = "00" + parcela.getNumeroParcela();
-			} else if (parcela.getNumeroParcela().length() == 2) {
-				numeroParcela = "0" + parcela.getNumeroParcela();
-			} else {
-				numeroParcela = parcela.getNumeroParcela();
-			}
-			
-			jsonRecebivel.put("numeroControle", parcela.getContrato().getNumeroContratoSeguro() + "-" + numeroParcela);
-			jsonRecebivel.put("coobrigacao", false);
-			jsonRecebivel.put("ocorrencia", 77);
-			jsonRecebivel.put("tipo", 95);
-			jsonRecebivel.put("documento", parcela.getContrato().getNumeroContratoSeguro());
-			jsonRecebivel.put("termoCessao", parcela.getContrato().getTermoCessao());
-			
-			JSONObject jsonSacado = new JSONObject();
-			
-			JSONObject jsonPessoa = new JSONObject();
-			if (parcela.getContrato().getPagador().getCpf() != null && !parcela.getContrato().getPagador().getCpf().equals("")) {
-				jsonPessoa.put("tipo", "PF");
-				jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCpf())));				
-			} else {
-				jsonPessoa.put("tipo", "PJ");
-				jsonPessoa.put("identificacao", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCnpj())));
-			}
-			jsonPessoa.put("nome", parcela.getContrato().getPagador().getNome());
-			jsonSacado.put("pessoa", jsonPessoa);
-			
-			JSONObject jsonEndereco = new JSONObject();
-			jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCep())));
-			jsonEndereco.put("logradouro", parcela.getContrato().getPagador().getEndereco());
-			jsonEndereco.put("numero", parcela.getContrato().getPagador().getNumero());
-			jsonEndereco.put("complemento", parcela.getContrato().getPagador().getComplemento());
-			jsonEndereco.put("bairro", parcela.getContrato().getPagador().getBairro());
-			jsonEndereco.put("municipio", parcela.getContrato().getPagador().getCidade());
-			jsonEndereco.put("uf", parcela.getContrato().getPagador().getEstado());
-			jsonSacado.put("endereco", jsonEndereco);
-	
-			jsonRecebivel.put("sacado", jsonSacado);
-			
-			JSONObject jsonCedente = new JSONObject();
-			jsonCedente.put("tipo", "PJ");
-			
-			if (parcela.getContrato().getCedenteBRLCessao().equals("BMP Money Plus SCD S.A.")) {
-				jsonCedente.put("identificacao", Long.valueOf("34337707000100"));
-				jsonCedente.put("nome", "BMP Money Plus SCD S.A.");		
-			} else {
-				jsonCedente.put("identificacao", Long.valueOf("34425347000106"));
-				jsonCedente.put("nome", "Galleria Finanças Securitizadora S.A.");	
-			}
-			jsonRecebivel.put("cedente", jsonCedente);
-			
-			jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(parcela.getContrato().getDataAquisicaoCessao()));
-			jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(parcela.getContrato().getDataInicio()));
-			jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
-			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
-			JSONObject jsonValores = new JSONObject();
-			
-			if (parcela.getVlrAmortizacaoSemIPCA() != null && parcela.getVlrJurosSemIPCA() != null) {
-				jsonValores.put("face", parcela.getVlrAmortizacaoSemIPCA().add(parcela.getVlrJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
-			} else {
-				this.jsonGerado = false;
-				
-				if (contratosErros == null) {
-					contratosErros = parcela.getContrato().getNumeroContrato();
-				} else {
-					contratosErros = contratosErros + " / " + parcela.getContrato().getNumeroContrato();
+					jsonRecebivel.put("sacado", jsonSacado);
+					
+					JSONObject jsonCedente = new JSONObject();
+					jsonCedente.put("tipo", "PJ");
+					
+					if (contrato.getCedenteBRLCessao().equals("BMP Money Plus SCD S.A.")) {
+						jsonCedente.put("identificacao", Long.valueOf("34337707000100"));
+						jsonCedente.put("nome", "BMP Money Plus SCD S.A.");		
+					} else {
+						jsonCedente.put("identificacao", Long.valueOf("34425347000106"));
+						jsonCedente.put("nome", "Galleria Finanças Securitizadora S.A.");	
+					}
+					jsonRecebivel.put("cedente", jsonCedente);
+					
+					jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(contrato.getDataAquisicaoCessao()));
+					jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(contrato.getDataInicio()));
+					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+					jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+					JSONObject jsonValores = new JSONObject();
+					
+					if (parcela.getValorAmortizacaoSemIPCA() != null && parcela.getValorJurosSemIPCA() != null) {
+						jsonValores.put("face", parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+					} else {
+						this.jsonGerado = false;
+						
+						if (contratosErros == null) {
+							contratosErros = contrato.getNumeroContrato();
+						} else {
+							contratosErros = contratosErros + " / " + contrato.getNumeroContrato();
+						}
+					}
+					
+					System.out.println("contrato: " + contrato.getNumeroContrato());
+					System.out.println("cessao: " + contrato.getTxJurosCessao());
+					System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					
+					if (contrato != null) {
+						if (contrato.getTxJurosCessao() != null) {
+							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosCessao(), contrato.getDataAquisicaoCessao()));
+						} else {
+							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+						}
+					} 
+					
+					//jsonValores.put("liquidacao", parcela.getVlrRecebido());
+					jsonValores.put("liquidacao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+					
+					jsonRecebivel.put("valores", jsonValores);
+					
+					JSONObject jsonDados = new JSONObject();
+					jsonDados.put("indice", "IPCA");			
+					jsonRecebivel.put("dados", jsonDados);		
+					
+					jsonRecebiveis.put(jsonRecebivel);
 				}
 			}
-			
-			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
-			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
-			System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
-			
-			if (parcela.getContrato() != null) {
-				if (parcela.getContrato().getTxJurosCessao() != null) {
-					jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosCessao(), parcela.getContrato().getDataAquisicaoCessao()));
-				} else {
-					jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
-				}
-			} else {
-				jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
-			}
-			
-			//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-			jsonValores.put("liquidacao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
-			
-			jsonRecebivel.put("valores", jsonValores);
-			
-			JSONObject jsonDados = new JSONObject();
-			jsonDados.put("indice", "IPCA");			
-			jsonRecebivel.put("dados", jsonDados);		
-			
-			jsonRecebiveis.put(jsonRecebivel);
 		}
 		
 		jsonCessao.put("recebiveis", jsonRecebiveis);
@@ -1277,5 +1283,13 @@ public class BRLTrustMB {
 
 	public void setValorTotalAquisicaoCessao(BigDecimal valorTotalAquisicaoCessao) {
 		this.valorTotalAquisicaoCessao = valorTotalAquisicaoCessao;
+	}
+
+	public List<ContratoCobranca> getSelectedContratos() {
+		return selectedContratos;
+	}
+
+	public void setSelectedContratos(List<ContratoCobranca> selectedContratos) {
+		this.selectedContratos = selectedContratos;
 	}
 }

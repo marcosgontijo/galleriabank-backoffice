@@ -3018,20 +3018,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONSULTA_BRL_CONTRATO_MIGRACAO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cd.dataVencimento , cd.dataVencimento , cd.vlrParcela , cd.vlrParcela, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA  "
-			+ " from cobranca.contratocobrancadetalhes cd "
-			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idontratocobrancadetalhes "
-			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
-			+ " where cc.dataAquisicaoCessao >= ? ::timestamp "
-			+ " and cc.dataAquisicaoCessao <= ? ::timestamp "
-			+ " and cc.cedenteBRLCessao = ? ";	
+	private static final String QUERY_CONSULTA_BRL_CONTRATO_MIGRACAO =  	"select cc.id "
+			+ " from cobranca.contratocobranca cc "
+			+ " where cc.cedenteBRLCessao = ? " 
+			+ " and cc.empresa = 'FIDC GALLERIA' ";
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacaoMigracao(final Date dataInicial, final Date dataFinal, final String cedenteCessao) {
-		return (List<ContratoCobrancaBRLLiquidacao>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobranca> consultaContratosBRLLiquidacaoMigracao(final String cedenteCessao) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<ContratoCobrancaBRLLiquidacao> objects = new ArrayList<ContratoCobrancaBRLLiquidacao>();
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
 	
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -3040,42 +3037,23 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO;
-					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicial.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFinal.getTime());
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO_MIGRACAO;
 
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);			
-	
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);
-					ps.setString(3, cedenteCessao);
-					
+
+					ps.setString(1, cedenteCessao);
+				
 					rs = ps.executeQuery();
 					
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					ContratoCobrancaBRLLiquidacao contratoCobrancaBRLLiquidacao = new ContratoCobrancaBRLLiquidacao();					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();				
 					
 					while (rs.next()) {
-						contratoCobrancaBRLLiquidacao = new ContratoCobrancaBRLLiquidacao();
+						contratoCobranca = new ContratoCobranca();
 						
 						contratoCobranca = findById(rs.getLong(1));
-						
-						contratoCobrancaBRLLiquidacao.setContrato(contratoCobranca);
-						
-						contratoCobrancaBRLLiquidacao.setNumeroParcela(rs.getString(2));
-						contratoCobrancaBRLLiquidacao.setVlrJurosParcela(rs.getBigDecimal(3));
-						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoParcela(rs.getBigDecimal(4));
-						contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate(5));
-						contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate(6));
-						contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal(7));
-						contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal(8));
-						contratoCobrancaBRLLiquidacao.setId(rs.getLong(9));
-						contratoCobrancaBRLLiquidacao.setVlrJurosSemIPCA(rs.getBigDecimal(10));
-						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoSemIPCA(rs.getBigDecimal(11));
 
-						objects.add(contratoCobrancaBRLLiquidacao);
+						objects.add(contratoCobranca);
 					}
 	
 				} finally {
