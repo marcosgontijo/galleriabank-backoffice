@@ -580,8 +580,8 @@ public class BRLTrustMB {
 					
 					jsonRecebivel.put("numeroControle", contrato.getNumeroContratoSeguro() + "-" + numeroParcela);
 					jsonRecebivel.put("coobrigacao", false);
-					jsonRecebivel.put("ocorrencia", 77);
-					jsonRecebivel.put("tipo", 95);
+					jsonRecebivel.put("ocorrencia", 95);
+					jsonRecebivel.put("tipo", 73);
 					jsonRecebivel.put("documento", contrato.getNumeroContratoSeguro());
 					jsonRecebivel.put("termoCessao", contrato.getTermoCessao());
 					
