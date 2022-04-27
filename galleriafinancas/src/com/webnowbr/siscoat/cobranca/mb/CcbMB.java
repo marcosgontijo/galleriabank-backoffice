@@ -1865,6 +1865,34 @@ public class CcbMB {
 							+ "assinado pelas partes litigantes nos autos, o qual deve"
 							+ " conter obrigatoriamente a menção à quitação e o pedido" + " extinção do processo.",
 					false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID2,
+					"Emissão da Certidão Negativa de Débitos – CND Municipal atualizada, em que não"
+					+ " conste débitos de Importo Predial e Territorial Urbano – IPTU.",
+					false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID2,
+					"Emissão da Certidão Negativa de Débitos – CND dos débitos condominiais.",
+					false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.1. ",
+					"Caso haja parcelamento judicial ou administrativo vigente para pagamento dos débitos de IPTU "
+					+ "ou condomínio que torne possível a emissão da CND, pelo fato da existência da dívida ainda"
+					+ " representar risco à garantia, é condição necessária à Liberação do Crédito que toda a dívida"
+					+ " seja quitada.",
+					true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.2. ",
+					"Caso existam débitos municipais de IPTU ou condomínio, parcelados ou não, ajuizados ou não,"
+					+ " o(a) EMITENTE autoriza o desconto destes valores para quitação das dívidas nos termos do"
+					+ " ANEXO II, caso em que se compromete a encaminhar ao CREDOR as respectivas guias para pagamento.",
+					true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2, "4.4.3. ",
+					"Caso a Certidão de Débitos seja positiva, a exclusivo critério do CREDOR a operação "
+					+ "poderá ser cancelada, devendo o EMITENTE reembolsar os valores gastos até o registro"
+					+ " da garantia.",
+					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "4.5. ",
 					"O(A) EMITENTE concorda que, caso as condições precedentes "
@@ -2268,6 +2296,14 @@ public class CcbMB {
 							+ "acostumadas a celebrar, em seus respectivos campos de atuação, títulos e instrumentos de garantia semelhantes"
 							+ " aos previstos nesta CCB, não havendo entre as Partes qualquer relação de hipossuficiência ou ainda natureza de"
 							+ " consumo na relação aqui tratada.",
+					false);
+			
+			geraParagrafoBulletList(document, paragraph, run, numID,
+					"EMITENTE(S), TERCEIRO(S) GARANTIDOR(ES), AVALISTA(S) e ANUENTE(S) declaram expressamente,"
+					+ " sob pena de responsabilidade civil e criminal, que não possuem nenhum negócio jurídico"
+					+ " pactuado entre si ou com terceiros que tenha relação com emissão desta CCB ou com a garantia"
+					+ " oferecida, estando cientes de que nada poderá ser oponível ao credor com a finalidade de "
+					+ "prejudicar os pagamentos ou a execução da garantia.",
 					false);
 
 			fazParagrafoSimples(document, paragraph, run, "10.	DAS DISPOSIÇÕES FINAIS", true);
