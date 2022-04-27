@@ -5514,9 +5514,11 @@ public class ContratoCobrancaMB {
 		
 		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
 			
+		/*
 		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
 			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 		} 
+		*/
 
 		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
 		
@@ -5547,9 +5549,11 @@ public class ContratoCobrancaMB {
 			
 			quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
 				
+			/*
 			if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
 				quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 			} 
+			*/
 	
 			Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
 			
@@ -5820,10 +5824,12 @@ public class ContratoCobrancaMB {
 		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(data, parcelas.getDataVencimento()));
 		
 		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
-			
+		
+		/*
 		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
 			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 		} 
+		*/
 
 		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
 		
