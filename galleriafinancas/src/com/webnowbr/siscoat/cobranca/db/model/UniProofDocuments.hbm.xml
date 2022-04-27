@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.UniProofDocuments" table="UNIPROOFDOCUMENTS">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="createdAt" type="java.util.Date">
+            <column name="createdAt" />
+        </property>  
+        <property name="attachedAt" type="java.util.Date">
+            <column name="attachedAt" />
+        </property>       			    
+       	<property name="idDocuments" type="java.lang.String">
+            <column name="idDocuments"/>
+       	</property>
+       	<property name="currentVersion" type="int">
+			<column name="currentVersion" />
+		</property>
+		<property name="pages" type="int">
+			<column name="pages" />
+		</property>
+       	<property name="name" type="java.lang.String">
+            <column name="name"/>
+       	</property>    
+       	<property name="extension" type="java.lang.String">
+            <column name="extension"/>
+       	</property>    
+       	<property name="typeId" type="java.lang.String">
+            <column name="typeId"/>
+       	</property>    
+       	<property name="typeName" type="java.lang.String">
+            <column name="typeName"/>
+       	</property>    
+       	<property name="typeLabel" type="java.lang.String">
+            <column name="typeLabel"/>
+       	</property>    
+    </class>
+</hibernate-mapping>

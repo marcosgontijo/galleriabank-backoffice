@@ -8,50 +8,72 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
-        <property name="createdAt" type="java.util.Date">
-            <column name="createdAt" />
-        </property>  
-        <property name="updatedAt" type="java.util.Date">
-            <column name="updatedAt" />
-        </property>       			    
-       	<property name="companyToken" type="java.lang.String">
-            <column name="companyToken"/>
+        <property name="statusLabel" type="java.lang.String">
+            <column name="statusLabel"/>
        	</property>
-       	<property name="lotId" type="java.lang.String">
-            <column name="lotId"/>
+        <property name="statusDescription" type="java.lang.String">
+            <column name="statusDescription"/>
+       	</property>	    
+       	<property name="statusName" type="java.lang.String">
+            <column name="statusName"/>
+       	</property>
+       	<property name="cityName" type="java.lang.String">
+            <column name="cityName"/>
        	</property>    
-       	<property name="lotItemId" type="java.lang.String">
-            <column name="lotItemId"/>
+       	<property name="cityId" type="java.lang.String">
+            <column name="cityId"/>
        	</property>    
-       	<property name="folderId" type="java.lang.String">
-            <column name="folderId"/>
+       	<property name="protocol" type="java.lang.String">
+            <column name="protocol"/>
        	</property>    
-       	<property name="folderName" type="java.lang.String">
-            <column name="folderName"/>
+       	<property name="serviceName" type="java.lang.String">
+            <column name="serviceName"/>
        	</property>    
        	<property name="folderDescription" type="java.lang.String">
             <column name="folderDescription"/>
        	</property>    
-       	<property name="serviceName" type="java.lang.String">
-            <column name="serviceName"/>
+       	<property name="folderName" type="java.lang.String">
+            <column name="folderName"/>
        	</property> 
-       	<property name="protocol" type="java.lang.String">
-            <column name="protocol"/>
+       	<property name="folderId" type="java.lang.String">
+            <column name="folderId"/>
        	</property> 
-       	<property name="cityId" type="java.lang.String">
-            <column name="cityId"/>
+       	<property name="lotDescription" type="java.lang.String">
+            <column name="lotDescription"/>
        	</property> 
-       	<property name="cityName" type="java.lang.String">
-            <column name="cityName"/>
+       	<property name="lotName" type="java.lang.String">
+            <column name="lotName"/>
        	</property> 
-       	<property name="statusName" type="java.lang.String">
-            <column name="statusName"/>
+       	<property name="lotItemId" type="java.lang.String">
+            <column name="lotItemId"/>
        	</property> 
-       	<property name="statusDescription" type="java.lang.String">
-            <column name="statusDescription"/>
+       	<property name="lotId" type="java.lang.String">
+            <column name="lotId"/>
        	</property> 
-       	<property name="statusLabel" type="java.lang.String">
-            <column name="statusLabel"/>
+       	<property name="companyToken" type="java.lang.String">
+            <column name="companyToken"/>
        	</property> 
+       	<property name="createdAt" type="java.util.Date">
+            <column name="createdAt" />
+        </property>  
+        <property name="updatedAt" type="java.util.Date">
+            <column name="updatedAt" />
+        </property> 
+       	<property name="notaryPrice" type="big_decimal">
+			<column name="notaryPrice" />
+		</property>
+		<property name="uniproofPrice" type="big_decimal">
+			<column name="uniproofPrice" />
+		</property>
+		<property name="finalPrice" type="big_decimal">
+			<column name="finalPrice" />
+		</property>		     	
+       	<list name="listUniProofDocuments"
+			table="UniProofDocuments_Join" cascade="all" lazy="false">
+			<key column="idUniProof" />
+			<list-index></list-index>
+			<many-to-many column="idUniProofDocuments"
+				class="com.webnowbr.siscoat.cobranca.db.model.UniProofDocuments" />
+		</list>	
     </class>
 </hibernate-mapping>

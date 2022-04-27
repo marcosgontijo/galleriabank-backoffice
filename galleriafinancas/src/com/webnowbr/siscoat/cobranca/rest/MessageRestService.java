@@ -4,8 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,11 +18,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.UniProof;
+import com.webnowbr.siscoat.cobranca.db.model.UniProofDocuments;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
@@ -408,6 +412,18 @@ public class MessageRestService {
 				}			
 			}
 			
+			if (dataObject.has("lotName")) {
+				if (!dataObject.isNull("lotName")) {
+					processo.setLotName(dataObject.getString("lotName"));
+				}			
+			}
+			
+			if (dataObject.has("lotDescription")) {
+				if (!dataObject.isNull("lotDescription")) {
+					processo.setLotDescription(dataObject.getString("lotDescription"));
+				}			
+			}
+			
 			if (dataObject.has("folderId")) {
 				if (!dataObject.isNull("folderId")) {
 					processo.setFolderId(dataObject.getString("folderId"));
@@ -466,6 +482,123 @@ public class MessageRestService {
 				if (!dataObject.isNull("statusLabel")) {
 					processo.setStatusLabel(dataObject.getString("statusLabel"));
 				}			
+			}
+			
+			if (dataObject.has("notaryPrice")) {
+				if (!dataObject.isNull("notaryPrice")) {
+					processo.setNotaryPrice(BigDecimal.valueOf(dataObject.getLong("notaryPrice")));
+				}			
+			}
+			
+			if (dataObject.has("uniproofPrice")) {
+				if (!dataObject.isNull("uniproofPrice")) {
+					processo.setNotaryPrice(BigDecimal.valueOf(dataObject.getLong("uniproofPrice")));
+				}			
+			}
+			
+			if (dataObject.has("finalPrice")) {
+				if (!dataObject.isNull("finalPrice")) {
+					processo.setNotaryPrice(BigDecimal.valueOf(dataObject.getLong("finalPrice")));
+				}			
+			}
+			
+			// GET lista de documentos
+			JSONArray documents = new JSONArray();
+			JSONObject document = new JSONObject();
+			List<UniProofDocuments> uniProofDocuments = new ArrayList<UniProofDocuments>();
+			UniProofDocuments uniProofDocument = new UniProofDocuments();
+			
+			if (dataObject.has("documents")) {
+				documents = dataObject.getJSONArray("documents");
+				
+				for (int i = 0; i < documents.length(); i++) {
+					uniProofDocument = new UniProofDocuments();
+					document = documents.getJSONObject(i);
+					
+					if (document.has("idDocuments")) {
+						if (!document.isNull("idDocuments")) {
+							uniProofDocument.setIdDocuments(document.getString("idDocuments"));
+						}			
+					}
+					if (document.has("name")) {
+						if (!document.isNull("name")) {
+							uniProofDocument.setName(document.getString("name"));
+						}			
+					}
+					if (document.has("extension")) {
+						if (!document.isNull("extension")) {
+							uniProofDocument.setExtension(document.getString("extension"));
+						}			
+					}
+					if (document.has("currentVersion")) {
+						if (!document.isNull("currentVersion")) {
+							uniProofDocument.setCurrentVersion(document.getInt("currentVersion"));
+						}			
+					}
+					if (document.has("pages")) {
+						if (!document.isNull("pages")) {
+							uniProofDocument.setCurrentVersion(document.getInt("pages"));
+						}			
+					}
+					if (document.has("typeId")) {
+						if (!document.isNull("typeId")) {
+							uniProofDocument.setTypeId(document.getString("typeId"));
+						}			
+					}
+					if (document.has("typeName")) {
+						if (!document.isNull("typeName")) {
+							uniProofDocument.setTypeName(document.getString("typeName"));
+						}			
+					}
+					if (document.has("typeLabel")) {
+						if (!document.isNull("typeLabel")) {
+							uniProofDocument.setTypeLabel(document.getString("typeLabel"));
+						}			
+					}
+					if (document.has("extension")) {
+						if (!document.isNull("extension")) {
+							uniProofDocument.setExtension(document.getString("extension"));
+						}			
+					}
+					if (document.has("extension")) {
+						if (!document.isNull("extension")) {
+							uniProofDocument.setExtension(document.getString("extension"));
+						}			
+					}
+					
+					if (document.has("createdAt")) {
+						if (!document.isNull("createdAt")) {
+							SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+							try {
+								Date createdAt = isoFormat.parse(document.getString("createdAt"));
+								uniProofDocument.setCreatedAt(createdAt);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}			
+					}
+					
+					if (document.has("attachedAt")) {
+						if (!document.isNull("attachedAt")) {
+							SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+							try {
+								Date attachedAt = isoFormat.parse(document.getString("attachedAt"));
+								uniProofDocument.setAttachedAt(attachedAt);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}			
+					}
+	
+					
+					uniProofDocuments.add(uniProofDocument);
+				}
+				
+				if (uniProofDocuments.size() > 0) {
+					processo.setListUniProofDocuments(uniProofDocuments);
+				}
 			}
 			
 			if (isUpdate) {

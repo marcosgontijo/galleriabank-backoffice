@@ -10,11 +10,11 @@ public class UniProof implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long id;
 	
-	private Date createdAt;
-	private Date updatedAt;
 	private String companyToken;
 	private String lotId;
 	private String lotItemId;
+	private String lotName;
+	private String lotDescription;
 	private String folderId;
 	private String folderName;
 	private String folderDescription;
@@ -22,9 +22,16 @@ public class UniProof implements Serializable {
 	private String protocol;
 	private String cityId;
 	private String cityName;
+	private Date createdAt;
+	private Date updatedAt;
 	private String statusName;
 	private String statusDescription;
 	private String statusLabel;
+	private BigDecimal notaryPrice;
+	private BigDecimal uniproofPrice;
+	private BigDecimal finalPrice;
+	
+	private List<UniProofDocuments> listUniProofDocuments;
 	
 	public UniProof(){
 
@@ -36,22 +43,6 @@ public class UniProof implements Serializable {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public String getCompanyToken() {
@@ -76,6 +67,22 @@ public class UniProof implements Serializable {
 
 	public void setLotItemId(String lotItemId) {
 		this.lotItemId = lotItemId;
+	}
+
+	public String getLotName() {
+		return lotName;
+	}
+
+	public void setLotName(String lotName) {
+		this.lotName = lotName;
+	}
+
+	public String getLotDescription() {
+		return lotDescription;
+	}
+
+	public void setLotDescription(String lotDescription) {
+		this.lotDescription = lotDescription;
 	}
 
 	public String getFolderId() {
@@ -156,5 +163,53 @@ public class UniProof implements Serializable {
 
 	public void setStatusLabel(String statusLabel) {
 		this.statusLabel = statusLabel;
+	}
+
+	public BigDecimal getNotaryPrice() {
+		return notaryPrice;
+	}
+
+	public void setNotaryPrice(BigDecimal notaryPrice) {
+		this.notaryPrice = notaryPrice;
+	}
+
+	public BigDecimal getUniproofPrice() {
+		return uniproofPrice;
+	}
+
+	public void setUniproofPrice(BigDecimal uniproofPrice) {
+		this.uniproofPrice = uniproofPrice;
+	}
+
+	public List<UniProofDocuments> getListUniProofDocuments() {
+		return listUniProofDocuments;
+	}
+
+	public void setListUniProofDocuments(List<UniProofDocuments> listUniProofDocuments) {
+		this.listUniProofDocuments = listUniProofDocuments;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public BigDecimal getFinalPrice() {
+		return finalPrice;
+	}
+
+	public void setFinalPrice(BigDecimal finalPrice) {
+		this.finalPrice = finalPrice;
 	}
 }

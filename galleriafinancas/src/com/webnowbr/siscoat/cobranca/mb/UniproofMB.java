@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +40,11 @@ import javax.faces.context.FacesContext;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
@@ -74,10 +80,12 @@ import com.webnowbr.siscoat.cobranca.db.model.SaqueIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.SubContaIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
+import com.webnowbr.siscoat.cobranca.db.model.UniProof;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
+import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.BcMsgRetorno;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDaOperacao;
@@ -128,7 +136,7 @@ public class UniproofMB {
 	 */
 
 	public void callUniProof() {
-		getTokenAuth();
+		loadDatabase();
 
 	}
 
@@ -195,6 +203,77 @@ public class UniproofMB {
 		}
 	}
 
+	
+	public void loadDatabase() {
+	    try
+        {
+            FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//processosHermes.xlsx"));
+            ZipSecureFile.setMinInflateRatio(-1.0d);
+ 
+            //Create Workbook instance holding reference to .xlsx file
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+ 
+            //Get first/desired sheet from the workbook
+            XSSFSheet sheet = workbook.getSheetAt(0);
+ 
+            //Iterate through each rows one by one
+            Iterator<Row> rowIterator = sheet.iterator();
+            UniProof processo = new UniProof();
+			UniProofDao uniProofDao = new UniProofDao();
+			int countLine = 0;
+			
+            while (rowIterator.hasNext()) 
+            {
+                Row row = rowIterator.next();
+                //For each row, iterate through all the columns
+                Iterator<Cell> cellIterator = row.cellIterator();                
+                
+                if (countLine == 0) {
+                	row = rowIterator.next();
+                	countLine = countLine + 1;
+                }  
+                
+                	processo = new UniProof();
+
+                	Cell cell = row.getCell(0);
+                	//SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                    //Date dataFormatada = formato.parse(cell.getStringCellValue()); 
+                    processo.setUpdatedAt(cell.getDateCellValue());
+                                  
+                    cell = row.getCell(1);
+                    processo.setStatusLabel(cell.getStringCellValue());
+                                        
+                    cell = row.getCell(2);
+                    processo.setLotName(cell.getStringCellValue());
+                    
+            		cell = row.getCell(3);
+                    processo.setLotDescription(cell.getStringCellValue());
+                    
+                    cell = row.getCell(6);
+                    processo.setServiceName(cell.getStringCellValue());
+                    
+                    cell = row.getCell(8);
+                    BigDecimal notPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setNotaryPrice(notPrice);
+                    
+                    cell = row.getCell(9);
+                    BigDecimal uniPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setUniproofPrice(uniPrice);
+                    
+                    cell = row.getCell(10);
+                    BigDecimal finalPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setFinalPrice(finalPrice);
+           
+                    uniProofDao.create(processo);
+            }
+            
+            file.close();
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+    }
 	
 	/***
 	 * 
