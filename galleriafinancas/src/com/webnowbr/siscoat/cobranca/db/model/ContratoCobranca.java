@@ -113,6 +113,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal txJurosParcelas;
 	
 	private BigDecimal txMulta;
+	
+	private BigDecimal somatoriaValorPresente;
 
 	private PagadorRecebedor pagador;
 	private String empresa;
@@ -4674,6 +4676,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTrabalhistaRessalva(String trabalhistaRessalva) {
 		this.trabalhistaRessalva = trabalhistaRessalva;
-	}	
-
+	}
+	
+	public BigDecimal getSomatoriaValorPresente() {
+		return somatoriaValorPresente;
+	}
+	
+	public void setSomatoriaValorPresente(BigDecimal somatoriaValorPresente) {
+		this.somatoriaValorPresente = somatoriaValorPresente;
+	}
 }
