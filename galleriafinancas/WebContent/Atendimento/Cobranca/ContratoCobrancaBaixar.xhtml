@@ -2860,13 +2860,15 @@
 						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
 						<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
                 			update="@form" />
-                	</p:calendar>		
-                		
-					<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
-					<p:commandButton id="quitarContrato" value="Quitar Contrato"
-						update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
-						action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.listContratoCobrancaDetalhesQuitar)}" />
-
+                	</p:calendar>	
+                	
+                	<shiro:hasAnyRoles name="ROOT">                		
+						<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
+						<p:commandButton id="quitarContrato" value="Quitar Contrato"
+							update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
+							action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.listContratoCobrancaDetalhesQuitar)}" />
+					</shiro:hasAnyRoles>	
+					
 					<p:outputLabel for="valorPresenteTotal" value="valorPresenteTotal" />
 					<p:outputLabel id="valorPresenteTotal"
 						value="#{contratoCobrancaMB.valorPresenteTotal}"

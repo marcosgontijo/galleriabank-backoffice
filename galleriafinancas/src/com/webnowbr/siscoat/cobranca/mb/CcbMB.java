@@ -46,6 +46,7 @@ import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.hibernate.JDBCException;
 import org.jasypt.encryption.BigDecimalEncryptor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
@@ -78,6 +79,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.BancosEnum;
@@ -370,9 +372,11 @@ public class CcbMB {
 	}
 	
 	public void concluirParticipante() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
 		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
 		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
+		ccbDao.create(this.participanteSelecionado);
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
@@ -923,6 +927,8 @@ public class CcbMB {
 				}
 			}
 			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
+			
+			//pegar participante na base de dados
 		} 
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Socio")) {
 			if(this.selectedPagadorGenerico.getSexo() != null) {
@@ -1257,6 +1263,7 @@ public class CcbMB {
 	
 	public StreamedContent geraCcbDinamica() throws IOException {
 		try {
+			CcbDao ccbDao = new CcbDao();
 			XWPFDocument document = new XWPFDocument();
 			XWPFHeaderFooterPolicy headerFooterPolicy = document.getHeaderFooterPolicy();
 			if (headerFooterPolicy == null)
@@ -2738,9 +2745,18 @@ public class CcbMB {
 			
 			clearDocumentosNovos();
 			
+			if (this.objetoCcb.getId() > 0) {
+				ccbDao.merge(this.objetoCcb);
+			} else {
+				ccbDao.create(this.objetoCcb);
+			}
+			
+		
+		} catch (JDBCException jdbce) {
+		    jdbce.getSQLException().getNextException().printStackTrace();
 		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+			e.getCause().printStackTrace();
+		} 
 
 		return null;
 	}
@@ -6428,8 +6444,10 @@ public class CcbMB {
 	}
 	
 	public String clearFieldsEmitirCcb() {
+		ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
 		loadLovs();	
-		this.objetoCcb.setListaParticipantes(new ArrayList<>());
+		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
+		this.objetoCcb.setObjetoContratoCobranca(ccDao.findByFilter("numeroContrato", "12321").get(0));
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
@@ -6600,6 +6618,10 @@ public class CcbMB {
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
+		
+		if (this.objetoCcb.getId() > 0) {
+			this.objetoCcb = new CcbContrato();
+		}
 	}
 
 	public static String RomanNumerals(int Int) {

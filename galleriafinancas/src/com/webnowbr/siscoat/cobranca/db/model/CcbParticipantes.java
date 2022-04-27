@@ -1,9 +1,17 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CcbParticipantes {
+public class CcbParticipantes implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private long id;
+	
 	private String numeroContrato;
 	private PagadorRecebedor pessoa;
 	private String tipoParticipante;
@@ -99,5 +107,11 @@ public class CcbParticipantes {
 	}
 	public void setTipoOriginal(String tipoOriginal) {
 		this.tipoOriginal = tipoOriginal;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
 	}
 }

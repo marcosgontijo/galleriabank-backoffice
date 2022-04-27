@@ -3,19 +3,12 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-	<class name="com.webnowbr.siscoat.cobranca.db.model.CcbContrato" table="CcbContrato">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.CcbContrato" table="ccbcontrato">
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
 
-		<property name="data" type="java.util.Date">
-			<column name="data" />
-		</property>
-
-		<property name="taxa" type="big_decimal">
-			<column name="taxa" />
-		</property>
 
 		<property name="nomeEmitente" type="java.lang.String">
 			<column name="nomeEmitente" />
@@ -232,12 +225,12 @@
 		</many-to-one>
 		
 		<list name="listaParticipantes"
-			table="ContratoCobranca_Detalhes_Join" cascade="all" lazy="false">
+			table="ccbcontrato_ccbparticipantes_join" cascade="all" lazy="true">
 			<key column="idCcbContrato" />
-			<list-index></list-index>
+			<list-index column = "idx"/>
 			<many-to-many column="idCcbParticipante"
-				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes" />
+				class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
 		</list>
-		       
+		        
     </class>
 </hibernate-mapping>

@@ -3,12 +3,12 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-    <class name="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" table="CcbParticipantes">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" table="ccbparticipantes">
         <id name="id" type="long">
             <column name="ID" />
             <generator class="increment" />
         </id>
-        
+    
         <property name="numeroContrato" type="java.lang.String">
 			<column name="numeroContrato" />
 		</property> 
@@ -54,7 +54,7 @@
 			lazy="false">
 			<column name="pessoa" />
 		</many-to-one>
-		
+		    
 		<set name="socios" table="CcbParticipantes" cascade="all-delete-orphan"
                  lazy="false" fetch="select">
             <key>
@@ -62,6 +62,7 @@
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
         </set>   
+	 <!-- -->
         
     </class>
 </hibernate-mapping>

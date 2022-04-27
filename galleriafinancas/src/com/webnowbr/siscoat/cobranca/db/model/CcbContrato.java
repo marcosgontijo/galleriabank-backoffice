@@ -1,13 +1,20 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.primefaces.model.UploadedFile;
 
-public class CcbContrato {
+public class CcbContrato implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private long id;
 	
 	private String nomeEmitente = null;
 	private String cpfEmitente = null;
@@ -87,6 +94,11 @@ public class CcbContrato {
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
     private ContratoCobranca objetoContratoCobranca;
+    
+    public CcbContrato() {
+    	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
+    }
+    
 
 	public String getNomeEmitente() {
 		return nomeEmitente;
@@ -575,5 +587,12 @@ public class CcbContrato {
 	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
 		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
-      
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}      
 }
