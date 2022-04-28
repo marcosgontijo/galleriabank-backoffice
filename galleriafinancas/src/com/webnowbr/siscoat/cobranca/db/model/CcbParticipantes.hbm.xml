@@ -8,10 +8,6 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
-    
-        <property name="numeroContrato" type="java.lang.String">
-			<column name="numeroContrato" />
-		</property> 
         
         <property name="tipoParticipante" type="java.lang.String">
 			<column name="tipoParticipante" />

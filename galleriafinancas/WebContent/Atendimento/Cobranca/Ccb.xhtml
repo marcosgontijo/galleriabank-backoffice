@@ -6,6 +6,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:shiro="http://shiro.apache.org/tags"
 	template="../MenuAtendimento.xhtml">
+	
 	<ui:define name="conteudo">
 		<h:form id="form">
 			<script
@@ -48,9 +49,22 @@
 							
 							<p:outputLabel for="numeroContrato" value="Número do Contrato: "
 								styleClass="labelBold"
-							style="font-weight: bold; font-size: 18px;" />
+								style="font-weight: bold; font-size: 18px;" />
 							<p:inputText id="numeroContrato" value="#{ccbMB.numeroContrato}"
-							label="Contrato" style="width:150px;" />
+								label="Contrato" style="width:150px;" />
+							
+							<p:outputLabel for="contrato" value="Referente a operacao: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+						<h:panelGroup>
+							<p:outputLabel id="contrato" disabled="true"
+								value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
+								required="false" style="FONT-SIZE: 10pt;" />
+							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+								action="#{ccbMB.pesquisaContratoCobranca}"
+								oncomplete="PF('contratoCobrancaDialog').show();"
+								update="contrato contratoDialogdlg" />
+						</h:panelGroup>
 					</h:panelGrid>
 					
 					<h:panelGroup id="pagadoresAntigos">
@@ -1980,10 +1994,69 @@
 			</shiro:hasAnyRoles>
 		</h:form>
 	
-			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
-				<ui:param name="mbean" value="#{ccbMB}"></ui:param>
-				<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
-			</ui:include>
-	
+		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+			<ui:param name="mbean" value="#{ccbMB}"></ui:param>
+			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
+		</ui:include>
+
+		<p:dialog header="Contratos" widgetVar="contratoCobrancaDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="contratoDialogdlg">
+				<p:dataTable var="contratos"
+					value="#{ccbMB.listaContratosConsultar}" paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{ccbMB.objetoContratoCobranca}"
+					style="FONT-SIZE: 10pt;" emptyMessage="">
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratos.numeroContrato}"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Numero Contrato" />
+						</f:facet>
+						<h:outputText value="#{contratos.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratos.pagador.nome}"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome Pagador" />
+						</f:facet>
+						<h:outputText value="#{contratos.pagador.nome}" />
+					</p:column>
+					
+					<p:column style="text-align: center;"
+						sortBy="#{contratos.numeroContratoSeguro}"
+						filterBy="#{contratos.numeroContratoSeguro}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Numero CCB" />
+						</f:facet>
+						<h:outputText value="#{contratos.numeroContratoSeguro}" />
+					</p:column>
+
+					<p:column style="text-align: center;">
+						<p:commandButton ajax="true" icon="ui-icon ui-icon-check"
+							action="#{ccbMB.populateSelectedContratoCobranca}"
+							update=":form:contrato :form:Dados"
+							oncomplete="PF('contratoCobrancaDialog').hide();" >
+							<f:setPropertyActionListener 
+								target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
+						</p:commandButton>
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Limpar Seleção"
+							action="#{ccbMB.clearContratocobranca}"
+							image="ui-icon ui-icon-trash" update="contratoDialogdlg"
+							oncomplete="PF('contratoCobrancaDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('contratoCobrancaDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>

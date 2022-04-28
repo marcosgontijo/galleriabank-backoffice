@@ -8,7 +8,14 @@
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
-
+		
+		<property name="numeroCcb" type="java.lang.String">
+			<column name="numeroCcb" />
+		</property>
+		
+		<property name="numeroOperacao" type="java.lang.String">
+			<column name="numeroOperacao" />
+		</property>
 
 		<property name="nomeEmitente" type="java.lang.String">
 			<column name="nomeEmitente" />
@@ -225,10 +232,10 @@
 		</many-to-one>
 		
 		<list name="listaParticipantes"
-			table="ccbcontrato_ccbparticipantes_join" cascade="all" lazy="true">
-			<key column="idCcbContrato" />
-			<list-index column = "idx"/>
-			<many-to-many column="idCcbParticipante"
+			table="Ccbcontrato_Ccbparticipantes_Join" cascade="all" lazy="false">
+			<key column="idccbcontrato" />
+			<list-index></list-index>
+			<many-to-many column="idccbparticipante"
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
 		</list>
 		        

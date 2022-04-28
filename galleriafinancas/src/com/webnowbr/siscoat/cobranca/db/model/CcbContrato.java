@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.primefaces.model.UploadedFile;
 
@@ -16,16 +17,18 @@ public class CcbContrato implements Serializable{
 
 	private long id;
 	
-	private String nomeEmitente = null;
-	private String cpfEmitente = null;
-	private String logradouroEmitente = null;
-	private String numeroEmitente = null;
-	private String complementoEmitente = null;
-	private String cidadeEmitente = null;
-	private String ufEmitente = null;
-	private String cepEmitente = null;
+	private String numeroCcb;
+	private String numeroOperacao;
+	private String nomeEmitente;
+	private String cpfEmitente;
+	private String logradouroEmitente;
+	private String numeroEmitente;
+	private String complementoEmitente;
+	private String cidadeEmitente;
+	private String ufEmitente;
+	private String cepEmitente;
 	
-	private ArrayList<CcbParticipantes> listaParticipantes;
+	private List<CcbParticipantes> listaParticipantes;
 
 	private BigDecimal valorLiquidoCredito;
 	private BigDecimal valorCredito;
@@ -89,7 +92,7 @@ public class CcbContrato implements Serializable{
     public int fileTypeInt;
     ByteArrayInputStream bis = null;
     
-    private boolean terceiroGarantidor;
+    private boolean terceiroGarantidor = false;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -164,11 +167,11 @@ public class CcbContrato implements Serializable{
 		this.cepEmitente = cepEmitente;
 	}
 
-	public ArrayList<CcbParticipantes> getListaParticipantes() {
+	public List<CcbParticipantes> getListaParticipantes() {
 		return listaParticipantes;
 	}
 
-	public void setListaParticipantes(ArrayList<CcbParticipantes> listaParticipantes) {
+	public void setListaParticipantes(List<CcbParticipantes> listaParticipantes) {
 		this.listaParticipantes = listaParticipantes;
 	}
 
@@ -594,5 +597,21 @@ public class CcbContrato implements Serializable{
 
 	public void setId(long id) {
 		this.id = id;
-	}      
+	}
+
+	public String getNumeroCcb() {
+		return numeroCcb;
+	}
+
+	public void setNumeroCcb(String numeroCcb) {
+		this.numeroCcb = numeroCcb;
+	}
+
+	public String getNumeroOperacao() {
+		return numeroOperacao;
+	}
+
+	public void setNumeroOperacao(String numeroOperacao) {
+		this.numeroOperacao = numeroOperacao;
+	}    
 }

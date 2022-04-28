@@ -87,12 +87,15 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
+import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /** ManagedBean. */
 @ManagedBean(name = "ccbMB")
 @SessionScoped
 public class CcbMB {
 	private String numeroContrato;
+	private String numeroCcb;
+	
 	private String nomeEmitente;
 	private String classeEmitente;
 	private String nacionalidadeEmitente;
@@ -279,6 +282,9 @@ public class CcbMB {
     String tituloPagadorRecebedorDialog = "";
     
     private ContratoCobranca objetoContratoCobranca;
+   
+    private List<ContratoCobranca> listaContratosConsultar = new ArrayList<ContratoCobranca>();
+    
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
@@ -344,15 +350,15 @@ public class CcbMB {
 		fiducianteGerado = false;
 		devedorGerado = false;
 		modeloAntigo = false;
-		nomeEmitente = null;
-		cpfEmitente = null;
+		this.objetoCcb.setNomeEmitente(null);
+		this.objetoCcb.setCpfEmitente(null);
 		this.objetoCcb.setTerceiroGarantidor(false);
-		logradouroEmitente = null;
-		numeroEmitente = null;
-		complementoEmitente = null;
-		cidadeEmitente = null;
-		ufEmitente = null;
-		cepEmitente = null;
+		this.objetoCcb.setLogradouroEmitente(null);
+		this.objetoCcb.setNumeroEmitente(null);
+		this.objetoCcb.setComplementoEmitente(null);
+		this.objetoCcb.setCidadeEmitente(null);
+		this.objetoCcb.setUfEmitente(null);
+		this.objetoCcb.setCepEmitente(null); 
 		
 		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
@@ -374,9 +380,15 @@ public class CcbMB {
 	public void concluirParticipante() {
 		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
 		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
+		
 		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
-		ccbDao.create(this.participanteSelecionado);
+		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
+		if(ccbPartDao.findByFilter("pessoa", selectedPagadorGenerico).size() > 0){
+			ccbDao.merge(this.participanteSelecionado);
+		} else {
+			ccbDao.create(this.participanteSelecionado);
+		}
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
@@ -417,6 +429,24 @@ public class CcbMB {
 	
 	public void removerSocio(CcbParticipantes socio) {
 		this.getParticipanteSelecionado().getSocios().remove(socio);
+	}
+	
+	public void pesquisaContratoCobranca() {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.listaContratosConsultar = cDao.consultaContratosCCBs();
+	}
+	
+	public void populateSelectedContratoCobranca() {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.objetoCcb.setObjetoContratoCobranca(cDao.findById(this.getObjetoContratoCobranca().getId()));
+		this.objetoCcb.setNumeroOperacao(this.getObjetoContratoCobranca().getNumeroContrato());
+	}
+	
+	public void clearContratoCobranca() {
+		this.objetoContratoCobranca = new ContratoCobranca();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.objetoCcb.setObjetoContratoCobranca(new ContratoCobranca());
+		this.listaContratosConsultar = cDao.consultaContratosCCBs();
 	}
 	
 	public List<String> completeBancosNome(String query) {
@@ -914,19 +944,26 @@ public class CcbMB {
 			this.objetoCcb.setRgTestemunha2(this.testemunha2Selecionado.getRg());
 		}
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Participante")) {
-			if(CommonsUtil.semValor(selectedPagadorGenerico.getCpf())) {
-				this.participanteSelecionado.setEmpresa(true);
-			}
-			if(this.selectedPagadorGenerico.getSexo() != null) {
-				if(this.selectedPagadorGenerico.getSexo() == "MASCULINO") {
-					this.participanteSelecionado.setFeminino(false);
-				} else if(this.selectedPagadorGenerico.getSexo() == "FEMININO") {
-					this.participanteSelecionado.setFeminino(true);
-				} else {
-					this.participanteSelecionado.setFeminino(false);
+			CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
+			
+			if(ccbPartDao.findByFilter("pessoa", selectedPagadorGenerico).size() > 0){
+				CcbParticipantes participanteBD = ccbPartDao.findByFilter("pessoa", selectedPagadorGenerico).get(0);
+				this.setParticipanteSelecionado(ccbPartDao.findById(participanteBD.getId()));
+			} else {
+				if(CommonsUtil.semValor(selectedPagadorGenerico.getCpf())) {
+					this.participanteSelecionado.setEmpresa(true);
 				}
+				if(this.selectedPagadorGenerico.getSexo() != null) {
+					if(this.selectedPagadorGenerico.getSexo() == "MASCULINO") {
+						this.participanteSelecionado.setFeminino(false);
+					} else if(this.selectedPagadorGenerico.getSexo() == "FEMININO") {
+						this.participanteSelecionado.setFeminino(true);
+					} else {
+						this.participanteSelecionado.setFeminino(false);
+					}
+				}
+				this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
 			}
-			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
 			
 			//pegar participante na base de dados
 		} 
@@ -1033,6 +1070,25 @@ public class CcbMB {
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 			pagadorRecebedor = this.objetoPagadorRecebedor;
 		}
+	}
+	
+	public void criarCcbNosistema() {
+		
+		CcbDao ccbDao = new CcbDao();
+		
+		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
+			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
+				participante.setTipoOriginal(participante.getTipoParticipante());
+			} else {
+				participante.setTipoParticipante(participante.getTipoOriginal());
+			}
+		}
+		
+		if (this.objetoCcb.getId() > 0) {
+			ccbDao.merge(this.objetoCcb);
+		} else {
+			ccbDao.create(this.objetoCcb);
+		}	
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, String valorSobrescrever) {
@@ -1368,15 +1424,15 @@ public class CcbMB {
 				}
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-					if(CommonsUtil.semValor(nomeEmitente)) {
-						nomeEmitente = participante.getPessoa().getNome();
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
 					
 					if(CommonsUtil.semValor(cpfEmitente)) {
 						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
-							cpfEmitente = participante.getPessoa().getCpf();
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
 						} else {
-							cpfEmitente = participante.getPessoa().getCnpj();
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
 				}
@@ -2522,7 +2578,7 @@ public class CcbMB {
 
 			run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 			run2.setFontSize(12);
-			run2.setText(nomeEmitente);
+			run2.setText(this.objetoCcb.getNomeEmitente());
 			run2.setBold(true);
 			run2.addBreak();
 
@@ -2742,14 +2798,8 @@ public class CcbMB {
 			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
-			
-			clearDocumentosNovos();
-			
-			if (this.objetoCcb.getId() > 0) {
-				ccbDao.merge(this.objetoCcb);
-			} else {
-				ccbDao.create(this.objetoCcb);
-			}
+
+			criarCcbNosistema();
 			
 		
 		} catch (JDBCException jdbce) {
@@ -2794,15 +2844,15 @@ public class CcbMB {
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-					if(CommonsUtil.semValor(nomeEmitente)) {
-						nomeEmitente = participante.getPessoa().getNome();
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
 					
-					if(CommonsUtil.semValor(cpfEmitente)) {
+					if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
 						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
-							cpfEmitente = participante.getPessoa().getCpf();
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
 						} else {
-							cpfEmitente = participante.getPessoa().getCnpj();
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
 					
@@ -3034,7 +3084,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText("FIDUCIANTE " + nomeEmitente );
+			run2.setText("FIDUCIANTE " + this.objetoCcb.getNomeEmitente() );
 			run2.setBold(true);
 			
 			run = paragraph.createRun();
@@ -4505,7 +4555,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText("FIDUCIANTE "+ nomeEmitente +" ");
+			run.setText("FIDUCIANTE "+ this.objetoCcb.getNomeEmitente() +" ");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4879,7 +4929,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText("(Página de assinaturas da Cédula de Crédito "
-					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
+					+ "Bancário nº XXXXXX, emitida por "+ this.objetoCcb.getNomeEmitente() +", CPF/MF nº "+ cpfEmitente +", em favor de "
 					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
 					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
@@ -4930,7 +4980,7 @@ public class CcbMB {
 
 			run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 			run2.setFontSize(12);
-			run2.setText(nomeEmitente);
+			run2.setText(this.objetoCcb.getNomeEmitente());
 			run2.setBold(true);
 			run2.addBreak();
 
@@ -5132,7 +5182,7 @@ public class CcbMB {
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			
-			clearDocumentosNovos();
+			criarCcbNosistema();
 			
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -5183,37 +5233,37 @@ public class CcbMB {
 				
 				for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
 					if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-						if(CommonsUtil.semValor(nomeEmitente)) {
-							nomeEmitente = participante.getPessoa().getNome();
+						if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+							this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 						}
-						if(CommonsUtil.semValor(logradouroEmitente)) {
+						if(CommonsUtil.semValor(this.objetoCcb.getLogradouroEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getEndereco())) {
-								logradouroEmitente = participante.getPessoa().getEndereco();
+								this.objetoCcb.setLogradouroEmitente(participante.getPessoa().getEndereco());
 							}
 						}
-						if(CommonsUtil.semValor(numeroEmitente)) {
+						if(CommonsUtil.semValor(this.objetoCcb.getNumeroEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getNumero())) {
-								numeroEmitente = participante.getPessoa().getNumero();
+								this.objetoCcb.setNumeroEmitente(participante.getPessoa().getNumero());
 							}
 						}
-						if(CommonsUtil.semValor(complementoEmitente)) {
+						if(CommonsUtil.semValor(this.objetoCcb.getComplementoEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getComplemento())) {
-								complementoEmitente = participante.getPessoa().getComplemento();
+								this.objetoCcb.setComplementoEmitente(participante.getPessoa().getComplemento());
 							}
 						}
-						if(CommonsUtil.semValor(cidadeEmitente )) {
+						if(CommonsUtil.semValor(this.objetoCcb.getCidadeEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getCidade())) {
-								cidadeEmitente = participante.getPessoa().getCidade();
+								this.objetoCcb.setCidadeEmitente(participante.getPessoa().getCidade());
 							}
 						}
-						if(CommonsUtil.semValor(ufEmitente)) {
+						if(CommonsUtil.semValor(this.objetoCcb.getUfEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getEstado())) {
-								ufEmitente = participante.getPessoa().getEstado();
+								this.objetoCcb.setUfEmitente(participante.getPessoa().getEstado());
 							}
 						}
-						if(CommonsUtil.semValor(cepEmitente)) {
+						if(CommonsUtil.semValor(this.objetoCcb.getCepEmitente())) {
 							if(!CommonsUtil.semValor(participante.getPessoa().getCep())) {
-								cepEmitente = participante.getPessoa().getCep();
+								this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
 							}
 						}						
 					}
@@ -5224,7 +5274,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText(nomeEmitente);
+				run.setText(this.objetoCcb.getNomeEmitente());
 				run.setFontSize(10);
 				run.setBold(true);
 				run.addCarriageReturn();
@@ -5234,7 +5284,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText(logradouroEmitente +", nº "+ numeroEmitente +", "+ complementoEmitente);
+				run.setText(this.objetoCcb.getLogradouroEmitente() +", nº "+ this.objetoCcb.getNumeroEmitente() +", "+ this.objetoCcb.getComplementoEmitente());
 				run.setFontSize(10);
 				run.setBold(false);
 				
@@ -5243,7 +5293,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText(cidadeEmitente+" – "+ufEmitente);
+				run.setText(cidadeEmitente+" – " + this.objetoCcb.getUfEmitente());
 				run.setFontSize(10);
 				run.setBold(false);
 				
@@ -5252,7 +5302,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText("CEP "+ cepEmitente +";");
+				run.setText("CEP "+ this.objetoCcb.getCepEmitente() +";");
 				run.setFontSize(10);
 				run.setBold(false);
 				run.addCarriageReturn();
@@ -5429,7 +5479,7 @@ public class CcbMB {
 				paragraph.setAlignment(ParagraphAlignment.BOTH);
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
-				run.setText(nomeEmitente);
+				run.setText(this.objetoCcb.getNomeEmitente());
 				run.setFontSize(11);
 				run.setBold(true);
 				run.addCarriageReturn();
@@ -5479,7 +5529,7 @@ public class CcbMB {
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 				gerador.close();
 				
-				clearDocumentosNovos();
+				criarCcbNosistema();
 				
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -6440,14 +6490,21 @@ public class CcbMB {
 		CcbDao ccbDao = new CcbDao();
 		listaCcbs = ccbDao.findAll();
 		
+		return "/Atendimento/Cobranca/CcbConsultar.xhtml";
+	}
+	
+	public String clearFieldsEditarCcb() {
+		loadLovs();	
+		clearPagadorRecebedor();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
-	public String clearFieldsEmitirCcb() {
+	public String clearFieldsInserirCcb() {
 		ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
 		loadLovs();	
+		this.objetoCcb = new CcbContrato();
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
-		this.objetoCcb.setObjetoContratoCobranca(ccDao.findByFilter("numeroContrato", "12321").get(0));
+		this.objetoCcb.setObjetoContratoCobranca(new ContratoCobranca());
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
@@ -6618,10 +6675,6 @@ public class CcbMB {
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
-		
-		if (this.objetoCcb.getId() > 0) {
-			this.objetoCcb = new CcbContrato();
-		}
 	}
 
 	public static String RomanNumerals(int Int) {
@@ -7879,4 +7932,23 @@ public class CcbMB {
 	public void setListaCcbs(List<CcbContrato> listaCcbs) {
 		this.listaCcbs = listaCcbs;
 	}
+
+	public String getNumeroCcb() {
+		return numeroCcb;
+	}
+
+	public void setNumeroCcb(String numeroCcb) {
+
+		this.numeroCcb = numeroCcb;
+	}
+	
+
+	public List<ContratoCobranca> getListaContratosConsultar() {
+		return listaContratosConsultar;
+	}
+
+	
+	public void setListaContratosConsultar(List<ContratoCobranca> listaContratosConsultar) {
+		this.listaContratosConsultar = listaContratosConsultar;
+	}	
 }

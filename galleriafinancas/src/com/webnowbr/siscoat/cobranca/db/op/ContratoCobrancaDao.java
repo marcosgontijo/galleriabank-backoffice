@@ -6747,4 +6747,41 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_CCBS =  "select cc.id, cc.numerocontrato, cc.numerocontratoseguro, pare.nome "
+			+ " from cobranca.contratocobranca cc"
+			+ " inner join cobranca.pagadorrecebedor pare on cc.pagador = pare.id  ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosCCBs() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_CCBS);
+	
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						ContratoCobranca contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong("id"));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setNumeroContratoSeguro(rs.getString("numerocontratoseguro"));
+						contratoCobranca.setPagador(new PagadorRecebedor());
+						contratoCobranca.getPagador().setNome(rs.getString("nome"));
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
 }

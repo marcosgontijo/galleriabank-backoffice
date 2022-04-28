@@ -11,8 +11,7 @@ public class CcbParticipantes implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private long id;
-	
-	private String numeroContrato;
+
 	private PagadorRecebedor pessoa;
 	private String tipoParticipante;
 	private String tipoOriginal;
@@ -41,12 +40,6 @@ public class CcbParticipantes implements Serializable{
 	}
 	public void setPessoa(PagadorRecebedor pessoa) {
 		this.pessoa = pessoa;
-	}
-	public String getNumeroContrato() {
-		return numeroContrato;
-	}
-	public void setNumeroContrato(String numeroContrato) {
-		this.numeroContrato = numeroContrato;
 	}
 	public String getNacionalidade() {
 		return nacionalidade;
