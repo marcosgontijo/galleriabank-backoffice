@@ -214,7 +214,7 @@ public class UniproofMB {
 	    try
         {
             //FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//ProcessosFinancas.xlsx"));
-	    	FileInputStream file = new FileInputStream(new File("/home/webnowbr/Siscoat/GalleriaFinancas/ContratosCobranca/BDUniProof/ProcessosFinancas.xlsx"));
+	    	FileInputStream file = new FileInputStream(new File("//home//webnowbr//Siscoat//GalleriaFinancas//BDUniProof//ProcessosFinancas.xlsx"));
             ZipSecureFile.setMinInflateRatio(-1.0d);
  
             //Create Workbook instance holding reference to .xlsx file
@@ -289,7 +289,7 @@ public class UniproofMB {
 	    try
         {
             //FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//ProcessosCorrespondente.xlsx"));
-            FileInputStream file = new FileInputStream(new File("/home/webnowbr/Siscoat/GalleriaFinancas/ContratosCobranca/BDUniProof/ProcessosCorrespondente.xlsx"));
+            FileInputStream file = new FileInputStream(new File("//home//webnowbr//Siscoat//GalleriaFinancas//BDUniProof//ProcessosCorrespondente.xlsx"));
             ZipSecureFile.setMinInflateRatio(-1.0d);
  
             //Create Workbook instance holding reference to .xlsx file
