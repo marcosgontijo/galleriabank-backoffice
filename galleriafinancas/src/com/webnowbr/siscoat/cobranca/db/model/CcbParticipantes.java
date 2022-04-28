@@ -1,13 +1,17 @@
-package com.webnowbr.siscoat.cobranca.vo;
+package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
+public class CcbParticipantes implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-public class CcbVO {
-	private String numeroContrato;
+	private long id;
+
 	private PagadorRecebedor pessoa;
 	private String tipoParticipante;
 	private String tipoOriginal;
@@ -19,10 +23,10 @@ public class CcbVO {
 	private String tipoEmpresa;
 	private String municipioEmpresa;
 	private String salaEmpresa;
-	private Set<CcbVO> socios;
+	private Set<CcbParticipantes> socios;
 	
 	
-	public CcbVO() {
+	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();
 		this.socios	= new HashSet<>();
 		this.fiduciante = false;
@@ -36,12 +40,6 @@ public class CcbVO {
 	}
 	public void setPessoa(PagadorRecebedor pessoa) {
 		this.pessoa = pessoa;
-	}
-	public String getNumeroContrato() {
-		return numeroContrato;
-	}
-	public void setNumeroContrato(String numeroContrato) {
-		this.numeroContrato = numeroContrato;
 	}
 	public String getNacionalidade() {
 		return nacionalidade;
@@ -91,10 +89,10 @@ public class CcbVO {
 	public void setTipoParticipante(String tipoParticipante) {
 		this.tipoParticipante = tipoParticipante;
 	}
-	public Set<CcbVO> getSocios() {
+	public Set<CcbParticipantes> getSocios() {
 		return socios;
 	}
-	public void setSocios(Set<CcbVO> socios) {
+	public void setSocios(Set<CcbParticipantes> socios) {
 		this.socios = socios;
 	}
 	public String getTipoOriginal() {
@@ -102,5 +100,11 @@ public class CcbVO {
 	}
 	public void setTipoOriginal(String tipoOriginal) {
 		this.tipoOriginal = tipoOriginal;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
 	}
 }

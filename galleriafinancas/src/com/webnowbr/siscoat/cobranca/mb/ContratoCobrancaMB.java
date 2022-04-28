@@ -945,7 +945,7 @@ public class ContratoCobrancaMB {
 	
 	public void emitirCCB() {
 		CcbMB ccbMb = new CcbMB();
-		ccbMb.clearFieldsEmitirCcb();
+		ccbMb.clearFieldsInserirCcb();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();

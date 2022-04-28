@@ -8,6 +8,7 @@
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
+		
         <property name="porcentagemSegurador" type="big_decimal">
             <column name="porcentagemsegurador"/>
         </property>
@@ -20,7 +21,8 @@
 			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
 			lazy="false">
 			<column name="pessoa" />
-		</many-to-one>   
+		</many-to-one>  
+		 
 		<many-to-one name="contratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
