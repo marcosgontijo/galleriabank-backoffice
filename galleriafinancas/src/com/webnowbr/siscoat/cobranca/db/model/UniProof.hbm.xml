@@ -53,6 +53,9 @@
        	<property name="companyToken" type="java.lang.String">
             <column name="companyToken"/>
        	</property> 
+       	<property name="companyName" type="java.lang.String">
+            <column name="companyName"/>
+       	</property> 
        	<property name="createdAt" type="java.util.Date">
             <column name="createdAt" />
         </property>  

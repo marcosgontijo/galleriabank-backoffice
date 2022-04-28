@@ -131,15 +131,22 @@ public class UniproofMB {
 	private String containerId =  "";
 	private String lotItemId =  "";
 	
+	private List<UniProof> processos = new ArrayList<UniProof>();
+	
 	/***
 	 * FIM ATRIBUTOS RECIBO
 	 */
 
-	public void callUniProof() {
-		loadDatabase();
-
+	public String clearFieldsProcessos() {
+		UniProofDao uniProofDao = new UniProofDao();
+		
+		this.processos = new ArrayList<UniProof>();
+		
+		this.processos = uniProofDao.findAll();
+		
+		return "/Atendimento/Cobranca/UniProofProcessosConsultar.xhtml";
 	}
-
+	
 	
 	/***
 	 * GERA JSON PARA AUTH
@@ -203,11 +210,11 @@ public class UniproofMB {
 		}
 	}
 
-	
-	public void loadDatabase() {
+	public void loadDatabaseFinancas() {
 	    try
         {
-            FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//processosHermes.xlsx"));
+            //FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//ProcessosFinancas.xlsx"));
+	    	FileInputStream file = new FileInputStream(new File("/home/webnowbr/Siscoat/GalleriaFinancas/ContratosCobranca/BDUniProof/ProcessosFinancas.xlsx"));
             ZipSecureFile.setMinInflateRatio(-1.0d);
  
             //Create Workbook instance holding reference to .xlsx file
@@ -263,6 +270,84 @@ public class UniproofMB {
                     cell = row.getCell(10);
                     BigDecimal finalPrice = BigDecimal.valueOf(cell.getNumericCellValue());
                     processo.setFinalPrice(finalPrice);
+                    
+					processo.setCompanyToken("93771b11-cab9-4ff7-b5dc-4439efb615fc");
+					processo.setCompanyName("GALLERIA FINANÇAS SECURITIZADORA S.A.");
+           
+                    uniProofDao.create(processo);
+            }
+            
+            file.close();
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+    }
+	
+	public void loadDatabaseCorrespondente() {
+	    try
+        {
+            //FileInputStream file = new FileInputStream(new File("C://Users//herme//Desktop//ProcessosCorrespondente.xlsx"));
+            FileInputStream file = new FileInputStream(new File("/home/webnowbr/Siscoat/GalleriaFinancas/ContratosCobranca/BDUniProof/ProcessosCorrespondente.xlsx"));
+            ZipSecureFile.setMinInflateRatio(-1.0d);
+ 
+            //Create Workbook instance holding reference to .xlsx file
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+ 
+            //Get first/desired sheet from the workbook
+            XSSFSheet sheet = workbook.getSheetAt(0);
+ 
+            //Iterate through each rows one by one
+            Iterator<Row> rowIterator = sheet.iterator();
+            UniProof processo = new UniProof();
+			UniProofDao uniProofDao = new UniProofDao();
+			int countLine = 0;
+			
+            while (rowIterator.hasNext()) 
+            {
+                Row row = rowIterator.next();
+                //For each row, iterate through all the columns
+                Iterator<Cell> cellIterator = row.cellIterator();                
+                
+                if (countLine == 0) {
+                	row = rowIterator.next();
+                	countLine = countLine + 1;
+                }  
+                
+                	processo = new UniProof();
+
+                	Cell cell = row.getCell(0);
+                	//SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                    //Date dataFormatada = formato.parse(cell.getStringCellValue()); 
+                    processo.setUpdatedAt(cell.getDateCellValue());
+                                  
+                    cell = row.getCell(1);
+                    processo.setStatusLabel(cell.getStringCellValue());
+                                        
+                    cell = row.getCell(2);
+                    processo.setLotName(cell.getStringCellValue());
+                    
+            		cell = row.getCell(3);
+                    processo.setLotDescription(cell.getStringCellValue());
+                    
+                    cell = row.getCell(6);
+                    processo.setServiceName(cell.getStringCellValue());
+                    
+                    cell = row.getCell(8);
+                    BigDecimal notPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setNotaryPrice(notPrice);
+                    
+                    cell = row.getCell(9);
+                    BigDecimal uniPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setUniproofPrice(uniPrice);
+                    
+                    cell = row.getCell(10);
+                    BigDecimal finalPrice = BigDecimal.valueOf(cell.getNumericCellValue());
+                    processo.setFinalPrice(finalPrice);
+                    
+					processo.setCompanyToken("c363640f-223d-4acc-8837-9d0557260820");
+					processo.setCompanyName("Galleria Correspondente Bancário Eireli");								
            
                     uniProofDao.create(processo);
             }
@@ -309,5 +394,13 @@ public class UniproofMB {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<UniProof> getProcessos() {
+		return processos;
+	}
+
+	public void setProcessos(List<UniProof> processos) {
+		this.processos = processos;
 	}
 }

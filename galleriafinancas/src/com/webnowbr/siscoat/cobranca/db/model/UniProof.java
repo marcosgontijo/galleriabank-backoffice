@@ -11,6 +11,7 @@ public class UniProof implements Serializable {
 	private long id;
 	
 	private String companyToken;
+	private String companyName;
 	private String lotId;
 	private String lotItemId;
 	private String lotName;
@@ -211,5 +212,13 @@ public class UniProof implements Serializable {
 
 	public void setFinalPrice(BigDecimal finalPrice) {
 		this.finalPrice = finalPrice;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

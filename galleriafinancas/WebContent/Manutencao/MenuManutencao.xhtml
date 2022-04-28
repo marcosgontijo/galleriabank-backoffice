@@ -23,7 +23,15 @@
 										<p:menuitem value="Money Plus Testes"
 										action="#{bmpDigitalCCBMB.integraCCBMoneyPlus}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />										
+										styleClass="itemMenu" />		
+										<p:menuitem value="Load Database UniProof Finanças"
+										action="#{uniproofMB.loadDatabaseFinancas}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+										<p:menuitem value="Load Database UniProof Correspondente"
+										action="#{uniproofMB.loadDatabaseCorrespondente}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />								
 									</shiro:hasRole>																							
 								</p:submenu>																																		
 							</p:menu>  	

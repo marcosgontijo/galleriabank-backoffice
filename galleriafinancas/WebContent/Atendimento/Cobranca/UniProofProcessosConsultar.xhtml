@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">			
+			<p:messages id="mensagens" showDetail="true"/>												
+			<p:panel id="ConsultaProcessos" header="Processos UniProof - Consultar" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtUniProof" var="processos" value="#{uniproofMB.processos}" paginator="true" rows="40" 
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="50,100,150" selection="" emptyMessage="" sortBy="#{processos.updatedAt}" sortOrder="descending"
+                 reflow="true"> 
+                 	<p:column style="text-align: center;" headerText="Processo" filterBy="#{processos.lotName}" filterMatchMode="contains" sortBy="#{processos.lotName}">
+			            <h:outputText value="#{processos.lotName}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{processos.lotDescription}" filterMatchMode="contains" sortBy="#{processos.lotDescription}">
+			            <h:outputText value="#{processos.lotDescription}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Serviço" filterBy="#{processos.serviceName}" filterMatchMode="contains" sortBy="#{processos.serviceName}">
+			            <h:outputText value="#{processos.serviceName}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Empresa" filterBy="#{processos.companyName}" filterMatchMode="contains" sortBy="#{processos.companyName}">
+			            <h:outputText value="#{processos.companyName}" />
+			        </p:column>                          	
+			        <p:column style="text-align: center;" headerText="Status" filterBy="#{processos.statusLabel}" filterMatchMode="contains" sortBy="#{processos.statusLabel}">
+			            <h:outputText value="#{processos.statusLabel}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Última Atualização" sortBy="#{processos.updatedAt}">
+			            <h:outputText value="#{processos.updatedAt}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	  
+			        <p:column style="text-align: center;"
+						headerText="Valor Cartório">
+				        <h:outputText value="#{processos.notaryPrice}"
+								converter="bigDecimalConverter" /> 
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Valor UniProof">
+				        <h:outputText value="#{processos.uniproofPrice}"
+								converter="bigDecimalConverter" /> 
+					</p:column>  
+					<p:column style="text-align: center;"
+						headerText="Valor Final">
+				        <h:outputText value="#{processos.finalPrice}"
+								converter="bigDecimalConverter" /> 
+					</p:column>    
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

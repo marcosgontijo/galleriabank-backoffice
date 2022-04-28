@@ -141,7 +141,11 @@
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />						
+										styleClass="itemMenu" />			
+									<p:menuitem value="Processos UniProof"
+										action="#{uniproofMB.clearFieldsProcessos}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />			
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Pré-Contratos"

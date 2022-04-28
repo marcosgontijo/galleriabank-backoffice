@@ -64,6 +64,14 @@
 				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">	
+				<h:panelGrid columns="3" style="margin-top: 30px !importante; margin-bottom: 30px !importante; ">
+					<p:outputLabel value="Valor Total Selecionado:  "
+						styleClass="labelBold" />
+					<h:outputText value="R$ " styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					<h:outputText value="#{brlTrustMB.somatoriaValorePresenteContratos}"
+							converter="bigDecimalConverter" styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+				</h:panelGrid>
+			
                  <p:dataTable id="dtContratos" var="contratos" value="#{brlTrustMB.contratos}" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         reflow="true"
    		         rows="10"
@@ -79,27 +87,21 @@
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
-			            <h:outputText value="#{contratos.dataContrato}" >			            	
-			            	<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-			            </h:outputText>
-			        </p:column>		
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	        
-			         <p:column style="text-align: center;" headerText="Cedente Cessão" filterBy="#{contratos.cedenteBRLCessao}" filterMatchMode="contains" >
-			            <h:outputText value="#{contratos.cedenteBRLCessao}" />
-			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Data Aquisição" sortBy="#{contratos.dataAquisicaoCessao}">
-			            <h:outputText value="#{contratos.dataAquisicaoCessao}" >			            	
-			            	<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-			            </h:outputText>
-			        </p:column>		
+			        <p:column style="text-align: center;width: 100px;"
+						headerText="Total Valor Presente">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contratos.somatoriaValorPresente}"
+							converter="bigDecimalConverter" />
+					</p:column>
 			       	<f:facet name="footer">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
-					</f:facet>  		        		               		        			        			           			 		
+					</f:facet>  	
+					<p:ajax event="rowSelectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.rowSelected()}"/>
+					<p:ajax event="rowUnselectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.rowUnSelected()}"/>
+					<p:ajax event="toggleSelect" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.rowUnSelected()}"/>	        		               		        			        			           			 		
 				</p:dataTable>				    		    
 			</p:panel>
 		</h:form>

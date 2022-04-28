@@ -397,6 +397,14 @@ public class MessageRestService {
 			if (dataObject.has("companyToken")) {
 				if (!dataObject.isNull("companyToken")) {
 					processo.setCompanyToken(dataObject.getString("companyToken"));
+					
+					if (processo.getCompanyToken().equals("c363640f-223d-4acc-8837-9d0557260820")) {
+						processo.setCompanyName("Galleria Correspondente Bancário Eireli");
+					}
+					
+					if (processo.getCompanyToken().equals("93771b11-cab9-4ff7-b5dc-4439efb615fc")) {
+						processo.setCompanyName("GALLERIA FINANÇAS SECURITIZADORA S.A.");
+					}
 				}			
 			}
 			

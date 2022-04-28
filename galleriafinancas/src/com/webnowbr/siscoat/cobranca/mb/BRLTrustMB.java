@@ -26,6 +26,8 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -66,6 +68,8 @@ public class BRLTrustMB {
 	
 	private BigDecimal valorTotalFaceCessao;
 	private BigDecimal valorTotalAquisicaoCessao;
+	
+	private BigDecimal somatoriaValorePresenteContratos;
 	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
@@ -151,10 +155,30 @@ public class BRLTrustMB {
 		this.parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 		this.parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
 		
+		this.somatoriaValorePresenteContratos = BigDecimal.ZERO;
+		
 		this.jsonGerado = false;
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonMigracao.xhtml";
 	}
+	
+    public void rowSelected() {
+    	this.somatoriaValorePresenteContratos = calculaValorPresenteTotalContrato();
+    }
+ 
+    public void rowUnSelected() {
+    	this.somatoriaValorePresenteContratos = calculaValorPresenteTotalContrato();
+    }
+    
+    private BigDecimal calculaValorPresenteTotalContrato() {
+    	BigDecimal total = BigDecimal.ZERO;
+    	
+    	for (ContratoCobranca contrato : this.selectedContratos) {
+    		total = total.add(contrato.getSomatoriaValorPresente());
+    	}
+    	
+    	return total;
+    }
 	
 	public void pesquisaContratosLiquidacao() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -182,6 +206,21 @@ public class BRLTrustMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratos = contratoCobrancaDao.consultaContratosBRLLiquidacaoMigracao(this.cedenteCessao);
 		
+		Date dataHoje = gerarDataHoje();
+		BigDecimal somatoriaValorPresente = BigDecimal.ZERO;
+		
+		for (ContratoCobranca contrato : this.contratos) {
+			somatoriaValorPresente = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+				if (parcela.getDataVencimento().after(dataHoje)) {
+					somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), dataHoje));
+				}
+			}
+			
+			contrato.setSomatoriaValorPresente(somatoriaValorPresente);
+		}
+
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"BRL JSON: Pesquisa efetuada com sucesso!",
@@ -1088,7 +1127,12 @@ public class BRLTrustMB {
 		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
 		
 		BigDecimal juros = txJuros;
-		BigDecimal saldo = parcelas.getValorJurosSemIPCA().add(parcelas.getValorAmortizacaoSemIPCA());
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getValorJurosSemIPCA() != null && parcelas.getValorAmortizacaoSemIPCA() != null) {
+			saldo = parcelas.getValorJurosSemIPCA().add(parcelas.getValorAmortizacaoSemIPCA());
+		}
+		
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
 		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
@@ -1291,5 +1335,13 @@ public class BRLTrustMB {
 
 	public void setSelectedContratos(List<ContratoCobranca> selectedContratos) {
 		this.selectedContratos = selectedContratos;
+	}
+
+	public BigDecimal getSomatoriaValorePresenteContratos() {
+		return somatoriaValorePresenteContratos;
+	}
+
+	public void setSomatoriaValorePresenteContratos(BigDecimal somatoriaValorePresenteContratos) {
+		this.somatoriaValorePresenteContratos = somatoriaValorePresenteContratos;
 	}
 }
