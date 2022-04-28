@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" table="ccbparticipantes">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        
+        <property name="tipoParticipante" type="java.lang.String">
+			<column name="tipoParticipante" />
+		</property> 
+		
+		<property name="tipoOriginal" type="java.lang.String">
+			<column name="tipoOriginal" />
+		</property> 
+		
+		<property name="nacionalidade" type="java.lang.String">
+			<column name="nacionalidade" />
+		</property> 
+		
+		<property name="fiduciante" type="boolean">
+			<column name="fiduciante" />
+		</property>
+		
+		<property name="feminino" type="boolean">
+			<column name="feminino" />
+		</property>
+		
+		<property name="empresa" type="boolean">
+			<column name="empresa" />
+		</property>
+		
+		<property name="tipoEmpresa" type="java.lang.String">
+			<column name="tipoEmpresa" />
+		</property> 
+		
+		<property name="municipioEmpresa" type="java.lang.String">
+			<column name="municipioEmpresa" />
+		</property> 
+		
+		<property name="salaEmpresa" type="java.lang.String">
+			<column name="salaEmpresa" />
+		</property> 
+		
+		<many-to-one name="pessoa"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pessoa" />
+		</many-to-one>
+		    
+		<set name="socios" table="CcbParticipantes" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="id" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
+        </set>   
+	 <!-- -->
+        
+    </class>
+</hibernate-mapping>
