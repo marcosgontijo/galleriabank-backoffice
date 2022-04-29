@@ -72,8 +72,8 @@ public class SimuladorMB {
 		tipoCalculo = "PRICE";
 		simulacao = null;
 		tipoCalculoFinal= 'L';
-		mostrarIPCA= false;
-		validar = false;
+		mostrarIPCA= true;
+		validar = true;
 		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
