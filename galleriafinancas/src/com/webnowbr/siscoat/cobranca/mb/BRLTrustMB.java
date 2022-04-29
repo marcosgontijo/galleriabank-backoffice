@@ -204,27 +204,54 @@ public class BRLTrustMB {
 		} 
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratos = contratoCobrancaDao.consultaContratosBRLLiquidacaoMigracao(this.cedenteCessao);
+		List<ContratoCobranca> contratosBD = new ArrayList<ContratoCobranca>();
+		contratosBD = contratoCobrancaDao.consultaContratosBRLLiquidacaoMigracao(this.cedenteCessao);
 		
 		Date dataHoje = gerarDataHoje();
 		BigDecimal somatoriaValorPresente = BigDecimal.ZERO;
-		
-		for (ContratoCobranca contrato : this.contratos) {
+
+		for (ContratoCobranca contrato : contratosBD) {
 			somatoriaValorPresente = BigDecimal.ZERO;
 			
-			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
-				if (parcela.getDataVencimento().after(dataHoje)) {
-					somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), dataHoje));
-				}
-			}
+			int parcelasVencidas = consideraContratoJSONMigracao(contrato);
 			
-			contrato.setSomatoriaValorPresente(somatoriaValorPresente);
+			if (parcelasVencidas <= 1) {
+				for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+						if (parcela.getDataVencimento().after(dataHoje)) {
+							somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), dataHoje));
+						}
+				}
+				
+				contrato.setParcelasVencidas(parcelasVencidas);
+				
+				contrato.setSomatoriaValorPresente(somatoriaValorPresente);
+				
+				this.contratos.add(contrato);
+			}
 		}
 
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"BRL JSON: Pesquisa efetuada com sucesso!",
 						""));	
+	}
+		
+	public int consideraContratoJSONMigracao(ContratoCobranca contrato) {
+		int parcelasVencidas = 0;
+		Date dataHoje = gerarDataHoje();
+		
+		for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+			// verifica parcelas vencidas, se maior que 1 não mostra contrato
+			if (parcela.getDataVencimento().before(dataHoje) && !parcela.isParcelaPaga()) {
+				parcelasVencidas = parcelasVencidas + 1;
+				
+				if (parcelasVencidas > 1) {
+					break;
+				}
+			}
+		}
+		
+		return parcelasVencidas;
 	}
 	
 	public void atualizaValorParcelaSemIPCA() {

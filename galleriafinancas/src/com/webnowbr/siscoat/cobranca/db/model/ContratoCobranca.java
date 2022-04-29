@@ -89,6 +89,8 @@ public class ContratoCobranca implements Serializable {
 	private int qtdeParcelas;
 	
 	private int mesesCarencia;
+	
+	private int parcelasVencidas;
 		
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
@@ -4684,5 +4686,13 @@ public class ContratoCobranca implements Serializable {
 	
 	public void setSomatoriaValorPresente(BigDecimal somatoriaValorPresente) {
 		this.somatoriaValorPresente = somatoriaValorPresente;
+	}
+
+	public int getParcelasVencidas() {
+		return parcelasVencidas;
+	}
+	
+	public void setParcelasVencidas(int parcelasVencidas) {
+		this.parcelasVencidas = parcelasVencidas;
 	}
 }
