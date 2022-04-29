@@ -53,13 +53,14 @@
 							<p:inputText id="numeroContrato" value="#{ccbMB.numeroContrato}"
 								label="Contrato" style="width:150px;" />
 							
-							<p:outputLabel for="contrato" value="Referente a operacao: "
+							<p:outputLabel for="contrato" value="Referente a Operação: "
 								styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
 						<h:panelGroup>
 							<p:outputLabel id="contrato" disabled="true"
 								value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
 								required="false" style="FONT-SIZE: 10pt;" />
+							<p:spacer height="10" />
 							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
 								action="#{ccbMB.pesquisaContratoCobranca}"
 								oncomplete="PF('contratoCobrancaDialog').show();"
@@ -1984,7 +1985,7 @@
 						icon="ui-icon ui-icon-print" value="Fazer Download" />
 						
 					<p:spacer height="10" />
-					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsEmitirCcb}"
+					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsInserirCcb}"
 						icon="ui-icon ui-icon-cancel" value="Limpar Campos"  update=":form"/>
 					
 					<p:spacer height="10" />
@@ -2048,7 +2049,7 @@
 
 					<f:facet name="footer">
 						<p:commandButton value="Limpar Seleção"
-							action="#{ccbMB.clearContratocobranca}"
+							action="#{ccbMB.clearContratoCobranca()}"
 							image="ui-icon ui-icon-trash" update="contratoDialogdlg"
 							oncomplete="PF('contratoCobrancaDialog').hide();" />
 						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
@@ -2057,6 +2058,6 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-
+		
 	</ui:define>
 </ui:composition>

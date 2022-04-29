@@ -28,6 +28,7 @@ public class CcbParticipantes implements Serializable{
 	
 	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();
+		this.nacionalidade = "brasileiro";
 		this.socios	= new HashSet<>();
 		this.fiduciante = false;
 		this.feminino = false;

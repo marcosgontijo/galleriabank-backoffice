@@ -445,7 +445,6 @@ public class CcbMB {
 	public void clearContratoCobranca() {
 		this.objetoContratoCobranca = new ContratoCobranca();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		this.objetoCcb.setObjetoContratoCobranca(new ContratoCobranca());
 		this.listaContratosConsultar = cDao.consultaContratosCCBs();
 	}
 	
@@ -6540,12 +6539,12 @@ public class CcbMB {
 		loadLovs();	
 		this.objetoCcb = new CcbContrato();
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
-		this.objetoCcb.setObjetoContratoCobranca(new ContratoCobranca());
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();
+		this.objetoCcb.setDataDeEmissao(getDataHoje());
 		this.numeroContrato = null;
 		this.nomeEmitente = null;
 		this.nacionalidadeEmitente = "brasileiro";
