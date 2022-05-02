@@ -223,13 +223,7 @@ public class PagadorRecebedor implements Serializable {
 	private BigDecimal saldoInvestidor;
 
 	public PagadorRecebedor(){
-		this.rgDocumentosCheckList = false;
-		this.comprovanteEnderecoDocumentosCheckList = false;
-		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
-		this.fichaCadastralDocumentosCheckList = false;
-		this.bancoDocumentosCheckList = false;
-		this.telefoneEmailDocumentosCheckList = false;
-		this.comprovanteRendaCheckList = false;
+		resetarBololean();
 	}
 	
 	public PagadorRecebedor(long id, String nome, String endereco, String bairro, String complemento,
@@ -250,6 +244,55 @@ public class PagadorRecebedor implements Serializable {
 		this.rg = rg;
 		this.cpf = cpf;
 		this.cep = cep;
+		
+		resetarBololean();
+		
+	}
+	
+	public void resetarBololean() {
+		this.rgDocumentosCheckList = false;
+		this.comprovanteEnderecoDocumentosCheckList = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
+		this.fichaCadastralDocumentosCheckList = false;
+		this.bancoDocumentosCheckList = false;
+		this.telefoneEmailDocumentosCheckList = false;
+		this.comprovanteRendaCheckList = false;
+		this.combateFraudeCheckList = false;
+		this.cargoOcupacaoCheckList = false;
+		this.taxaCheckList = false;
+		
+		this.rgDocumentosCheckListConjuge = false;
+		this.comprovanteEnderecoDocumentosCheckListConjuge = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckListConjuge = false;
+		this.fichaCadastralDocumentosCheckListConjuge = false;
+		this.bancoDocumentosCheckListConjuge = false;
+		this.telefoneEmailDocumentosCheckListConjuge = false;
+		this.comprovanteRendaCheckListConjuge = false;
+		this.combateFraudeCheckListConjuge = false;
+		this.cargoOcupacaoCheckListConjuge = false;
+		this.taxaCheckListConjuge = false;
+		
+		this.rgDocumentosCheckListCoobrigado = false;
+		this.comprovanteEnderecoDocumentosCheckListCoobrigado = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckListCoobrigado = false;
+		this.fichaCadastralDocumentosCheckListCoobrigado = false;
+		this.bancoDocumentosCheckListCoobrigado = false;
+		this.telefoneEmailDocumentosCheckListCoobrigado = false;
+		this.comprovanteRendaCheckListCoobrigado = false;
+		this.combateFraudeCheckListCoobrigado = false;
+		this.cargoOcupacaoCheckListCoobrigado = false;
+		this.taxaCheckListCoobrigado = false;
+	
+		this.rgDocumentosCheckListCoobrigadoCasado = false;
+		this.comprovanteEnderecoDocumentosCheckListCoobrigadoCasado = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckListCoobrigadoCasado = false;
+		this.fichaCadastralDocumentosCheckListCoobrigadoCasado = false;
+		this.bancoDocumentosCheckListCoobrigadoCasado = false;
+		this.telefoneEmailDocumentosCheckListCoobrigadoCasado = false;
+		this.comprovanteRendaCheckListCoobrigadoCasado = false;
+		this.combateFraudeCheckListCoobrigadoCasado = false;
+		this.cargoOcupacaoCheckListCoobrigadoCasado = false;
+		this.taxaCheckListCoobrigadoCasado = false;
 	}
 	
 	 public List<String> completeBancos(String query) {
