@@ -183,6 +183,19 @@ public class MessageRestService {
 						}
 					}
 					
+					if (lead.has("origem")) {
+						if (!lead.isNull("origem")) {
+							if (lead.getString("origem").equals("SELFCRED")) {								
+								// id 429 -11610 - Edanbank codigo 
+								contratoCobrancaMB.setCodigoResponsavel("12990");
+								Responsavel responsavel = new Responsavel();
+								ResponsavelDao rDao = new ResponsavelDao();
+								responsavel = rDao.findById((long) 568);
+								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+							}
+						}
+					}
+					
 					if (lead.has("url")) {
 						if (!lead.isNull("url")) {
 							
