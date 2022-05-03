@@ -32,6 +32,8 @@ public class ContratoCobranca implements Serializable {
 	private Integer qtdeParcelasInvestidor2;
 	private Integer carenciaInvestidor2;
 	private Date dataInicioInvestidor2;
+	
+	private Integer parcelasAVencer;
 
 	private String tipoCalculoInvestidor3;
 	private BigDecimal vlrInvestidor3;
@@ -4694,5 +4696,13 @@ public class ContratoCobranca implements Serializable {
 	
 	public void setParcelasVencidas(int parcelasVencidas) {
 		this.parcelasVencidas = parcelasVencidas;
+	}
+
+	public Integer getParcelasAVencer() {
+		return parcelasAVencer;
+	}
+
+	public void setParcelasAVencer(Integer parcelasAVencer) {
+		this.parcelasAVencer = parcelasAVencer;
 	}
 }

@@ -5818,7 +5818,19 @@ public class ContratoCobrancaMB {
 	public void calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas){
 		
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
-		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		
+		BigDecimal saldo = BigDecimal.ZERO;
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		} else {
+			if (parcelas.getVlrJurosParcela() != null) {
+				saldo = parcelas.getVlrJurosParcela();
+			} 
+			if (parcelas.getVlrAmortizacaoParcela() != null) {
+				saldo = parcelas.getVlrAmortizacaoParcela();
+			}
+		}
+
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
 		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(data, parcelas.getDataVencimento()));
@@ -8356,6 +8368,19 @@ public class ContratoCobrancaMB {
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroDia.xhtml";
+	}
+	
+	public String clearFieldsRelFinanceiroFIDCMigracao() {
+		this.relDataContratoInicio = gerarDataHoje();
+		this.contratoGerado = false;
+		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroFIDCMigracao.xhtml";
 	}
 
 	public void selectedRecebedores() {
