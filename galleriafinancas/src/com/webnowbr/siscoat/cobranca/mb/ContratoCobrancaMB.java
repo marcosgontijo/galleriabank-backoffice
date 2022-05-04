@@ -13650,7 +13650,9 @@ public class ContratoCobrancaMB {
 		}
 		
 		//calcula valor presente
-		calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+		if(!CommonsUtil.semValor(bpContratoCobrancaDetalhes.getVlrJurosParcela()) || !CommonsUtil.semValor(bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela())) {
+			calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+		}
 
 		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {
@@ -14115,9 +14117,9 @@ public class ContratoCobrancaMB {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor1();
 			investidor = objetoContratoCobranca.getRecebedor();
 			taxaRemuneracao = objetoContratoCobranca.getTaxaRemuneracaoInvestidor1();
-			saldo = objetoContratoCobranca.getVlrRecebedor();
+			saldo = objetoContratoCobranca.getVlrInvestidor1();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope();
-			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor();
+			parcelaMensal = this.objetoContratoCobranca.getVlrInvestidor1();
 		}else if (idAntecipacaoInvestidor == 2) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor2();
 			investidor = objetoContratoCobranca.getRecebedor2();
@@ -14287,8 +14289,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-		contratoDao.merge(this.objetoContratoCobranca);
+		/*
+		 * ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		 * contratoDao.merge(this.objetoContratoCobranca);
+		 */
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
