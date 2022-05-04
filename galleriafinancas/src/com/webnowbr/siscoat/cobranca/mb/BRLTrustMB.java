@@ -265,7 +265,7 @@ public class BRLTrustMB {
 				if (parcelasVencidas <= 1) {
 					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 							if (parcela.getDataVencimento().after(this.dataValorPresente) && !parcela.isParcelaPaga()) {
-								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
+								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaData(this.dataValorPresente, parcela, contrato.getTxJurosParcelas()));
 								parcelasAVencer = parcelasAVencer +1 ;
 							}
 					}
@@ -979,7 +979,19 @@ public class BRLTrustMB {
 					cell.setCellStyle(numericStyle);
 					cell.setCellType(CellType.NUMERIC);
 					if (parcelas.getVlrParcela() != null) {
-						cell.setCellValue(((BigDecimal) parcelas.getVlrParcela()).doubleValue());
+						BigDecimal seguros = BigDecimal.ZERO;
+						if (parcelas.getSeguroDFI() != null) {
+							seguros = seguros.add(parcelas.getSeguroDFI());
+						}
+						if (parcelas.getSeguroMIP() != null) {
+							seguros = seguros.add(parcelas.getSeguroMIP());
+						}
+						
+						if (seguros.compareTo(BigDecimal.ZERO) == 1) {
+							cell.setCellValue(((BigDecimal) parcelas.getVlrParcela().subtract(seguros)).doubleValue());
+						} else {
+							cell.setCellValue(((BigDecimal) parcelas.getVlrParcela()).doubleValue());
+						}						
 					} else {
 						cell.setCellValue(Double.valueOf("0"));
 					}
@@ -2070,6 +2082,47 @@ public class BRLTrustMB {
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Geração JSON BRL Liquidação: JSON gerado com sucesso!",
 						""));	
+	}
+	
+	public BigDecimal calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas, BigDecimal juros){
+
+		BigDecimal valorPresenteParcela = BigDecimal.ZERO;
+		
+		BigDecimal saldo = BigDecimal.ZERO;
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		} else {
+			if (parcelas.getVlrJurosParcela() != null) {
+				saldo = parcelas.getVlrJurosParcela();
+			} 
+			if (parcelas.getVlrAmortizacaoParcela() != null) {
+				saldo = parcelas.getVlrAmortizacaoParcela();
+			}
+		}
+
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(data, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+		
+		/*
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+		*/
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
 	}
 	
 	public BigDecimal calcularValorPresenteParcela(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
