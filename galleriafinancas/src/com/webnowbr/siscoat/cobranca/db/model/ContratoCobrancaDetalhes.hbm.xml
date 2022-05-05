@@ -130,5 +130,11 @@
 				column="idcontratocobrancadetalhesobservacoes"
 				class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes" />
 		</list>
+		<property name="urlBoletoKonana" type="java.lang.String">
+            <column name="urlBoletoKonana"/>
+       </property>
+       <property name="statusBoletoKonana" type="java.lang.String">
+            <column name="statusBoletoKonana"/>
+       </property>      		
 	</class>
 </hibernate-mapping>

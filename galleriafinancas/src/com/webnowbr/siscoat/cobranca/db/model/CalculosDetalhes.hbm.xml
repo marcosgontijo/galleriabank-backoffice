@@ -43,6 +43,6 @@
        </property>    
        <property name="observacao" type="java.lang.String">
             <column name="observacao"/>
-       </property>                                                  
+       </property>                                                   
     </class>
 </hibernate-mapping>

@@ -84,13 +84,21 @@
 						<f:selectItem itemValue="" itemLabel="SELECIONE" />
 						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
 						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
-					</p:selectOneMenu>					
+					</p:selectOneMenu>	
+					<p:outputLabel for="dataReferencia" value="Data Referência: "
+							styleClass="labelBold"
+							style="width:250px;font-weight: bold; font-size: 18px;" />
+						<p:calendar id="dataReferencia" showOn="button"
+							value="#{brlTrustMB.dataValorPresente}"
+							required="true" label="Data Referência" size="100"
+							pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />				
 				</h:panelGrid>
 				<h:panelGrid columns="3">
 				<p:commandButton value="Pesquisar Contratos"
 						ajax="false"
 						action="#{brlTrustMB.pesquisaContratosLiquidacaoMigracao()}"
 						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
 						image="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
 				</h:panelGrid>
@@ -113,11 +121,10 @@
                  rowsPerPageTemplate="10,50,100"
                  selection="#{brlTrustMB.selectedContratos}" rowKey="#{contratos.id}">    
                  	<f:facet name="header">
-						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
 							icon="ui-icon-print" action="#{brlTrustMB.processaRelatorioFIDCMigracao()}"
-							update="PanelPDF PanelXLS"
-							disabled="#{brlTrustMB.selectedContratos.size() == 0}" />
+							update="PanelPDF PanelXLS" onclick="PrimeFaces.monitorDownload(start, stop);" />
 					</f:facet>   	
 					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>         
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
@@ -136,11 +143,10 @@
 			            <h:outputText value="#{contratos.parcelasVencidas}" />
 			        </p:column>	 
 			       	<f:facet name="footer">
-						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
 							icon="ui-icon-print" action="#{brlTrustMB.processaRelatorioFIDCMigracao()}"
-							update="PanelPDF PanelXLS"
-							disabled="#{brlTrustMB.selectedContratos.size() == 0}" />
+							update="PanelPDF PanelXLS" onclick="PrimeFaces.monitorDownload(start, stop);" />
 					</f:facet>  	
 					<p:ajax event="rowSelectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.rowSelected()}"/>
 					<p:ajax event="rowUnselectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.rowUnSelected()}"/>

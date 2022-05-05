@@ -71,6 +71,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal seguroDFI;
 	private BigDecimal seguroMIP;
 	
+	private String urlBoletoKonana;
+	private String statusBoletoKonana;
+	
 	/**
 	 * Não persistido
 	 */
@@ -550,5 +553,21 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setValorAmortizacaoSemIPCA(BigDecimal valorAmortizacaoSemIPCA) {
 		this.valorAmortizacaoSemIPCA = valorAmortizacaoSemIPCA;
+	}
+
+	public String getUrlBoletoKonana() {
+		return urlBoletoKonana;
+	}
+
+	public void setUrlBoletoKonana(String urlBoletoKonana) {
+		this.urlBoletoKonana = urlBoletoKonana;
+	}
+
+	public String getStatusBoletoKonana() {
+		return statusBoletoKonana;
+	}
+
+	public void setStatusBoletoKonana(String statusBoletoKonana) {
+		this.statusBoletoKonana = statusBoletoKonana;
 	}
 }
