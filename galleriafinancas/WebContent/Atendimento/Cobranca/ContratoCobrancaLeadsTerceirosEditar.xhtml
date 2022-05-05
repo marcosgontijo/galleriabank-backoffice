@@ -390,8 +390,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
+								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -533,6 +533,13 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
 										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
 										locale="pt" styleClass="dateTimeField" />
+										
+									<p:spacer height="10"></p:spacer>
+									<p:outputLabel for="nomeVistoriador"
+										value="Nome Vistoriador: " styleClass="labelBold" />
+									<p:inputText id="nomeVistoriador"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
+										style="FONT-SIZE: 10pt;width:300px;"/>
 								</h:panelGroup>
 						</shiro:hasAnyRoles>
 					</p:panel>

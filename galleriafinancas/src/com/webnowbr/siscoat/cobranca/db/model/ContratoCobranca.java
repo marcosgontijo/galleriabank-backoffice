@@ -480,6 +480,8 @@ public class ContratoCobranca implements Serializable {
 	private String contratoAssinadoUsuario;
 	
 	private Date dataPrevistaVistoria;
+	private String nomeVistoriador;
+	
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
 	private String motivoPendenteAnalise;
@@ -4695,4 +4697,13 @@ public class ContratoCobranca implements Serializable {
 	public void setParcelasVencidas(int parcelasVencidas) {
 		this.parcelasVencidas = parcelasVencidas;
 	}
+
+	public String getNomeVistoriador() {
+		return nomeVistoriador;
+	}
+
+	public void setNomeVistoriador(String nomeVistoriador) {
+		this.nomeVistoriador = nomeVistoriador;
+	}
+	
 }
