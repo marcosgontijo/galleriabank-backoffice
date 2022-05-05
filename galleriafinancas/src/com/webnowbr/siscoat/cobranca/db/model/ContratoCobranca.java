@@ -482,6 +482,8 @@ public class ContratoCobranca implements Serializable {
 	private String contratoAssinadoUsuario;
 	
 	private Date dataPrevistaVistoria;
+	private String nomeVistoriador;
+	
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
 	private String motivoPendenteAnalise;
@@ -4704,5 +4706,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setParcelasAVencer(Integer parcelasAVencer) {
 		this.parcelasAVencer = parcelasAVencer;
+	}
+	
+	public String getNomeVistoriador() {
+		return nomeVistoriador;
+	}
+
+	public void setNomeVistoriador(String nomeVistoriador) {
+		this.nomeVistoriador = nomeVistoriador;
 	}
 }

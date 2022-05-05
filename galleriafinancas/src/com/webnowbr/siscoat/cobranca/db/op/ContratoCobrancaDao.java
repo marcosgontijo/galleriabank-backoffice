@@ -6190,7 +6190,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
 						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
 						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
-						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
+						if(CommonsUtil.semValor(CommonsUtil.integerValue(rs.getString("numeroParcela")))) {
+							demonstrativoResultadosGrupoDetalhe.setNumeroParcela(9999999);
+						} else {
+							demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
+						}
+						
 						Date dataVencimento = rs.getDate("databaixa");						
 						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
 						

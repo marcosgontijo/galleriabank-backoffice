@@ -5,8 +5,10 @@ import java.math.MathContext;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import com.webnowbr.siscoat.cobranca.db.op.CDIDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -39,6 +41,8 @@ public class DemonstrativoResultadoMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		DebenturesInvestidorDao debenturesInvestidorDao = new DebenturesInvestidorDao();
+		
+		FacesContext context = FacesContext.getCurrentInstance();
 
 		try {
 			
@@ -118,6 +122,9 @@ public class DemonstrativoResultadoMB {
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Erro: " + e,
+					""));
 			e.printStackTrace();
 		}
 

@@ -13675,7 +13675,9 @@ public class ContratoCobrancaMB {
 		}
 		
 		//calcula valor presente
-		calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+		if(!CommonsUtil.semValor(bpContratoCobrancaDetalhes.getVlrJurosParcela()) || !CommonsUtil.semValor(bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela())) {
+			calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+		}
 
 		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {

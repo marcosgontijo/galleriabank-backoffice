@@ -1536,6 +1536,10 @@
 		<property name="trabalhistaRessalva" type="java.lang.String">
 			<column name="trabalhistaRessalva" />
 		</property>
+		
+		<property name="nomeVistoriador" type="java.lang.String">
+			<column name="nomeVistoriador" />
+		</property>
 
 	</class>
 </hibernate-mapping>
