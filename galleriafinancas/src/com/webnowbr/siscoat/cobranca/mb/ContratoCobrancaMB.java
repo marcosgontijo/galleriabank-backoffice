@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +49,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -12763,13 +12765,7 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().remove(detalhe);
 				} 
 			}
-		}
-		
-		
-		
-		
-		
-		
+		}		
 	}
 
 	public void reparcelarPelaUltimaParcelaValidada() {
@@ -14113,6 +14109,7 @@ public class ContratoCobrancaMB {
 		BigDecimal saldoAtualizado = BigDecimal.ZERO;
 		Integer qtdeParcelasInvestidor = 0;
 		BigDecimal parcelaMensal = BigDecimal.ZERO;
+		String tipoCalculoInvestidor = "";
 
 		if (idAntecipacaoInvestidor == 1) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor1();
@@ -14122,6 +14119,7 @@ public class ContratoCobrancaMB {
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope();
 			parcelaMensal = this.objetoContratoCobranca.getVlrInvestidor1();
 			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor1();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor1();
 		}else if (idAntecipacaoInvestidor == 2) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor2();
 			investidor = objetoContratoCobranca.getRecebedor2();
@@ -14130,6 +14128,7 @@ public class ContratoCobrancaMB {
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope2();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor2();
 			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor2();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor2();
 		}else if (idAntecipacaoInvestidor == 3) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor3();
 			investidor = objetoContratoCobranca.getRecebedor3();
@@ -14138,6 +14137,7 @@ public class ContratoCobrancaMB {
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope3();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor3();
 			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor3();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor3();
 		}else if (idAntecipacaoInvestidor == 4) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor4();
 			investidor = objetoContratoCobranca.getRecebedor4();
@@ -14145,6 +14145,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor4();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope4();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor4();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor4();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor4();
 		}else if (idAntecipacaoInvestidor == 5) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor5();
 			investidor = objetoContratoCobranca.getRecebedor5();
@@ -14152,6 +14154,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor5();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope5();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor5();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor5();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor5();
 		}else if (idAntecipacaoInvestidor == 6) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor6();
 			investidor = objetoContratoCobranca.getRecebedor6();
@@ -14159,6 +14163,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor6();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope6();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor6();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor6();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor6();
 		}else if (idAntecipacaoInvestidor == 7) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor7();
 			investidor = objetoContratoCobranca.getRecebedor7();
@@ -14166,6 +14172,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor7();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope7();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor7();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor7();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor7();
 		}else if (idAntecipacaoInvestidor == 8) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor8();
 			investidor = objetoContratoCobranca.getRecebedor8();
@@ -14173,6 +14181,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor8();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope8();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor8();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor8();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor8();
 		}else if (idAntecipacaoInvestidor == 9) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor9();
 			investidor = objetoContratoCobranca.getRecebedor9();
@@ -14180,6 +14190,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor9();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope9();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor9();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor9();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor9();
 		}else if (idAntecipacaoInvestidor == 10) {
 			listaCobrancaParcelas = objetoContratoCobranca.getListContratoCobrancaParcelasInvestidor10();
 			investidor = objetoContratoCobranca.getRecebedor10();
@@ -14187,6 +14199,8 @@ public class ContratoCobrancaMB {
 			saldo = objetoContratoCobranca.getVlrRecebedor10();
 			isEnvelope = objetoContratoCobranca.isRecebedorEnvelope10();
 			parcelaMensal = this.objetoContratoCobranca.getVlrRecebedor10();
+			qtdeParcelasInvestidor = this.objetoContratoCobranca.getQtdeParcelasInvestidor10();
+			tipoCalculoInvestidor = this.objetoContratoCobranca.getTipoCalculoInvestidor10();
 		}
 
 		if (listaCobrancaParcelas == null)
@@ -14223,10 +14237,35 @@ public class ContratoCobrancaMB {
 
 		saldoAtualizado = antecipacao.getSaldoCredorAtualizado();
 
-		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
+		String numeroParcelaStr = "";
+		
+		BigInteger numeroParcela = BigInteger.ZERO;
+		
+		BigInteger qtdeParcelasInvestidorBi = BigInteger.ZERO;
 
 		Date dataParcela = this.objetoContratoCobranca.getDataInicio();
-
+		
+		for (int i = 0; i < listaCobrancaParcelas.size(); i++) {
+			ContratoCobrancaParcelasInvestidor parcelaInvestidor = listaCobrancaParcelas.get(i);
+			
+			if (parcelaInvestidor.isBaixado()
+					|| parcelaInvestidor.getDataVencimento().compareTo(antecipacao.getDataVencimento()) < 0) {
+				continue;
+			} else {
+				numeroParcelaStr =  parcelaInvestidor.getNumeroParcela();
+				numeroParcela = BigInteger.valueOf(CommonsUtil.longValue(numeroParcelaStr));
+				qtdeParcelasInvestidorBi = BigInteger.valueOf(CommonsUtil.longValue(qtdeParcelasInvestidor));
+				qtdeParcelasInvestidorBi = 	qtdeParcelasInvestidorBi.subtract(numeroParcela).subtract(BigInteger.ONE);
+				break;
+			}
+			
+			
+		}
+		
+		taxaRemuneracao = taxaRemuneracao.divide(BigDecimal.valueOf(100));
+		
+		BigDecimal parcelaPGTO = null;
+		
 		for (int i = 0; i < listaCobrancaParcelas.size(); i++) {
 			ContratoCobrancaParcelasInvestidor parcelaInvestidor = listaCobrancaParcelas.get(i);
 			
@@ -14234,7 +14273,6 @@ public class ContratoCobrancaMB {
 					|| parcelaInvestidor.getDataVencimento().compareTo(antecipacao.getDataVencimento()) < 0) {
 				continue;
 			}
-			
 			
 
 			if (isEnvelope) {
@@ -14253,34 +14291,92 @@ public class ContratoCobrancaMB {
 
 			} else {
 				parcelaInvestidor.setSaldoCredor(saldoAtualizado);/////
-
-				// se a taxa de remuneração for maior que zero
-				if (taxaRemuneracao.compareTo(BigDecimal.ZERO) == 1) {
-					parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setCapitalizacao(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
-					parcelaInvestidor.setParcelaMensal(parcelaInvestidor.getJuros().add(parcelaInvestidor.getAmortizacao()));////
-					parcelaInvestidor.setSaldoCredorAtualizado(saldoAtualizado.subtract(parcelaInvestidor.getAmortizacao()));
-				} else {
-					parcelaInvestidor.setJuros(BigDecimal.ZERO);
-					parcelaInvestidor.setCapitalizacao(BigDecimal.ZERO);
-					parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
-					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
-				}
 				
-				//se for a ultima parcela
-				if(CommonsUtil.mesmoValor(CommonsUtil.integerValue(parcelaInvestidor.getNumeroParcela()) , qtdeParcelasInvestidor )){
+				if(CommonsUtil.mesmoValor( tipoCalculoInvestidor, "Americano")){
+					// se a taxa de remuneração for maior que zero
+					if (taxaRemuneracao.compareTo(BigDecimal.ZERO) == 1) {
+						parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
+						parcelaInvestidor.setCapitalizacao(saldoAtualizado.multiply(taxaRemuneracao));
+						parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
+						parcelaInvestidor.setParcelaMensal(parcelaInvestidor.getJuros().add(parcelaInvestidor.getAmortizacao()));////
+						parcelaInvestidor.setSaldoCredorAtualizado(saldoAtualizado.subtract(parcelaInvestidor.getAmortizacao()));
+					} else {
+						parcelaInvestidor.setJuros(BigDecimal.ZERO);
+						parcelaInvestidor.setCapitalizacao(BigDecimal.ZERO);
+						parcelaInvestidor.setAmortizacao(BigDecimal.ZERO);
+						parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
+					}
 					
-					parcelaInvestidor.setSaldoCredor(BigDecimal.ZERO);
+					//se for a ultima parcela
+					if(CommonsUtil.mesmoValor(CommonsUtil.integerValue(parcelaInvestidor.getNumeroParcela()) , qtdeParcelasInvestidor )){
+						
+						parcelaInvestidor.setSaldoCredor(BigDecimal.ZERO);
+						
+						parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
+						parcelaInvestidor.setCapitalizacao(saldoAtualizado.multiply(taxaRemuneracao));
+						parcelaInvestidor.setAmortizacao(parcelaInvestidor.getSaldoCredorAtualizado());
+						parcelaInvestidor.setParcelaMensal(parcelaInvestidor.getJuros().add(parcelaInvestidor.getAmortizacao()));
+						parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
+					}
+				} else {
 					
-					parcelaInvestidor.setJuros(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setCapitalizacao(saldoAtualizado.multiply(taxaRemuneracao));
-					parcelaInvestidor.setAmortizacao(parcelaInvestidor.getSaldoCredorAtualizado());
-					parcelaInvestidor.setParcelaMensal(parcelaInvestidor.getJuros().add(parcelaInvestidor.getAmortizacao()));
-					parcelaInvestidor.setSaldoCredorAtualizado(BigDecimal.ZERO);
-				}
+					BigDecimal saldoDevedorAnterior = saldoAtualizado;
+					
+					BigDecimal saldoDevedorCacrencia = BigDecimal.valueOf(FinanceLib.fv(taxaRemuneracao.doubleValue(),
+								0, 0, saldoAtualizado.negate().doubleValue(), false));
+					
+					
 
-				saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+					if(CommonsUtil.semValor(parcelaPGTO)) {
+						qtdeParcelasInvestidorBi = qtdeParcelasInvestidorBi.add(BigInteger.valueOf(2));
+						
+						parcelaPGTO = BigDecimal
+						.valueOf(FinanceLib.pmt(taxaRemuneracao.doubleValue(), // taxa
+								qtdeParcelasInvestidorBi.intValue(), // prazo
+								saldoDevedorCacrencia.negate().doubleValue(), // valor credito - VP
+								Double.valueOf("0"), // VF
+								false // pagamento no inico
+						));		
+					}
+							
+					// seguro
+
+					BigDecimal juros = BigDecimal
+							.valueOf(FinanceLib.fv(taxaRemuneracao.doubleValue(), // taxa
+									1, // prazo
+									0, // parcela
+									saldoDevedorAnterior.negate().doubleValue(), // valor presente
+									false));
+					
+					juros = juros.subtract(saldoDevedorAnterior);
+
+					BigDecimal parcelaAmortizacao = BigDecimal.ZERO;						
+
+					if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
+						parcelaInvestidor.setParcelaMensal(BigDecimal.ZERO);
+					} else {
+						parcelaInvestidor.setParcelaMensal(parcelaPGTO);
+						parcelaAmortizacao = parcelaPGTO;
+					}
+					
+					parcelaInvestidor.setJuros(juros);
+					parcelaInvestidor.setCapitalizacao(juros);
+
+					parcelaInvestidor.setAmortizacao(parcelaAmortizacao.subtract(parcelaInvestidor.getJuros()));						
+					
+					parcelaInvestidor.setSaldoCredor(saldoDevedorAnterior.setScale(2, RoundingMode.HALF_EVEN));
+					
+					BigDecimal saldoInvestidorAtualizado = saldoDevedorAnterior.add(juros).subtract(parcelaAmortizacao);
+					if (saldoInvestidorAtualizado.compareTo(BigDecimal.ZERO) == -1)
+						saldoInvestidorAtualizado = BigDecimal.ZERO;
+
+					parcelaInvestidor.setSaldoCredorAtualizado(saldoInvestidorAtualizado);
+					
+					saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+					
+				}
+			
+				//saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
 				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 					BigDecimal txIR = BigDecimal.ZERO;
 
@@ -14308,11 +14404,13 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		
+		
 
-		/*
-		 * ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-		 * contratoDao.merge(this.objetoContratoCobranca);
-		 */
+		
+		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		contratoDao.merge(this.objetoContratoCobranca);
+		 
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
