@@ -6648,7 +6648,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {		
 					String query = QUERY_CONTRATOS_PENDENTES_VALIDACAO_NOVO_CONTRATO;
 					
-					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Desistência Cliente' and status != 'Baixado'" ;
+					query = query + "where status != 'Aprovado' " ;
 					
 					connection = getConnection();
 					
