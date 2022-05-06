@@ -14372,11 +14372,11 @@ public class ContratoCobrancaMB {
 
 					parcelaInvestidor.setSaldoCredorAtualizado(saldoInvestidorAtualizado);
 					
-					saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+					//saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
 					
 				}
 			
-				//saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
+				saldoAtualizado = parcelaInvestidor.getSaldoCredorAtualizado();
 				if (!this.objetoContratoCobranca.getEmpresa().equals("GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 					BigDecimal txIR = BigDecimal.ZERO;
 
