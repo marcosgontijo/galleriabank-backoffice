@@ -14405,9 +14405,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		
-
-		
 		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
 		contratoDao.merge(this.objetoContratoCobranca);
 		 
