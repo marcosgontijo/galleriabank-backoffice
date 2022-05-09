@@ -545,6 +545,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal rendaComprovada;
 	private BigDecimal ccbxRenda;
 	private String observacaoRenda;
+	private String finalidadeRecurso;
 	
 	private BigDecimal contaPagarValorTotal;
 	
@@ -4715,4 +4716,12 @@ public class ContratoCobranca implements Serializable {
 	public void setNomeVistoriador(String nomeVistoriador) {
 		this.nomeVistoriador = nomeVistoriador;
 	}
+
+	public String getFinalidadeRecurso() {
+		return finalidadeRecurso;
+	}
+
+	public void setFinalidadeRecurso(String finalidadeRecurso) {
+		this.finalidadeRecurso = finalidadeRecurso;
+	}	
 }
