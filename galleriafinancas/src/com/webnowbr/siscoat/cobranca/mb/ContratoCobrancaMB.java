@@ -14545,16 +14545,10 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-<<<<<<< HEAD
 
-		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-		contratoDao.merge(this.objetoContratoCobranca);
-=======
 		
 		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
 		contratoDao.merge(this.objetoContratoCobranca);
-		 
->>>>>>> refs/heads/Desenvolvimento
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
