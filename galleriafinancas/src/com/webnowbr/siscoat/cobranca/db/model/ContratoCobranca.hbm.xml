@@ -1541,5 +1541,9 @@
 			<column name="nomeVistoriador" />
 		</property>
 
+		<property name="finalidadeRecurso" type="java.lang.String">
+			<column name="finalidadeRecurso" />
+		</property>
+
 	</class>
 </hibernate-mapping>
