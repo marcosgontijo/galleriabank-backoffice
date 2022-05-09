@@ -32,6 +32,8 @@ public class ContratoCobranca implements Serializable {
 	private Integer qtdeParcelasInvestidor2;
 	private Integer carenciaInvestidor2;
 	private Date dataInicioInvestidor2;
+	
+	private Integer parcelasAVencer;
 
 	private String tipoCalculoInvestidor3;
 	private BigDecimal vlrInvestidor3;
@@ -543,6 +545,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal rendaComprovada;
 	private BigDecimal ccbxRenda;
 	private String observacaoRenda;
+	private String finalidadeRecurso;
 	
 	private BigDecimal contaPagarValorTotal;
 	
@@ -4698,6 +4701,14 @@ public class ContratoCobranca implements Serializable {
 		this.parcelasVencidas = parcelasVencidas;
 	}
 
+	public Integer getParcelasAVencer() {
+		return parcelasAVencer;
+	}
+
+	public void setParcelasAVencer(Integer parcelasAVencer) {
+		this.parcelasAVencer = parcelasAVencer;
+	}
+	
 	public String getNomeVistoriador() {
 		return nomeVistoriador;
 	}
@@ -4705,5 +4716,12 @@ public class ContratoCobranca implements Serializable {
 	public void setNomeVistoriador(String nomeVistoriador) {
 		this.nomeVistoriador = nomeVistoriador;
 	}
-	
+
+	public String getFinalidadeRecurso() {
+		return finalidadeRecurso;
+	}
+
+	public void setFinalidadeRecurso(String finalidadeRecurso) {
+		this.finalidadeRecurso = finalidadeRecurso;
+	}	
 }

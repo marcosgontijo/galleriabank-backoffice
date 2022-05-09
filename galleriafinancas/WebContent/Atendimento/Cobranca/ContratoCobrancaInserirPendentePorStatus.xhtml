@@ -955,6 +955,13 @@
 											onkeydown="FormataValor(this, 13, event, 2);"
 											converter="bigDecimalConverter" />
 									</h:panelGroup>
+									
+									<p:outputLabel for="finalidadeRecursos"
+										value="Finalidade do Recurso " styleClass="labelBold" />
+									<p:inputText id="finalidadeRecursos"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+										style="width:300px;" />
+									
 								</h:panelGrid>
 							</h:panelGroup>
 							<h:panelGroup>

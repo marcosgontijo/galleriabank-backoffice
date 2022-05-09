@@ -484,57 +484,6 @@
 					</p:panel>
 				</shiro:hasAnyRoles>
 
-				<h:panelGroup>
-					<h:panelGrid columns="2">
-						<h:panelGroup>
-							<h:panelGrid columns="2">
-								<p:outputLabel for="idadeComite" value="Idade Emitente: "
-									styleClass="labelBold" />
-								<p:inputText id="idadeComite"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}" />
-
-								<p:outputLabel for="idadeConjugeComite" value="Idade Conjuge: "
-									styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-								<p:inputText id="idadeConjugeComite"
-									value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
-									rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-							</h:panelGrid>
-						</h:panelGroup>
-						<p:dataView var="pagador"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
-							paginator="false" layout="list"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores.size() > 0}"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Nome: " styleClass="labelBold" />
-								<p:outputLabel value="#{pagador.pessoa.nome}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="10" />
-								<p:outputLabel value="Idade: " styleClass="labelBold" />
-								<p:outputLabel value="#{pagador.pessoa.idade}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-							</p:dataViewListItem>
-						</p:dataView>
-
-						<p:dataView var="socios"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listSocios}"
-							paginator="false" layout="list"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listSocios.size() > 0}"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Nome: " styleClass="labelBold" />
-								<p:outputLabel value="#{socios.pessoa.nome}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="10" />
-								<p:outputLabel value="Idade: " styleClass="labelBold" />
-								<p:outputLabel value="#{socios.pessoa.idade}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-							</p:dataViewListItem>
-						</p:dataView>
-					</h:panelGrid>
-				</h:panelGroup>
-
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
@@ -673,6 +622,197 @@
 					</p:panel>
 				</h:panelGroup>
 				
+				<h:panelGroup id="resumoComitePanel"
+					style="margin-bottom:20px;">
+					<p:panel header="Resumo Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
+						<h:panelGrid columns="2">
+						
+							<h:panelGroup>
+								<h:panelGrid columns="2">
+									<h:panelGroup>
+										<h:panelGrid columns="2">
+											<p:outputLabel for="idadeComite" value="Idade Emitente: "
+												styleClass="labelBold" />
+											<p:inputText id="idadeComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}" />
+
+											<p:outputLabel for="idadeConjugeComite"
+												value="Idade Conjuge: " styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+											<p:inputText id="idadeConjugeComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												
+											<p:outputLabel for="estadoCivilComite" value="Estado Civil Emitente: "
+												styleClass="labelBold" 
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"/>
+											<p:inputText id="estadoCivilComite"
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil}" />
+												
+											<p:outputLabel for="sexoComite"
+												value="Sexo Emitente: " styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+											<p:inputText id="sexoComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexo}"
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+												
+											<p:outputLabel for="sexoConjugeComite"
+												value="Sexo Conjuge: " styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+											<p:inputText id="sexoConjugeComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexoConjuge}"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />	
+
+											<p:outputLabel for="profissaoComite"
+												value="Profissão Emitente: " styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+											<p:inputText id="profissaoComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.atividade}"
+												rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}" />
+												
+											<p:outputLabel for="profissaoConjugeComite"
+												value="Profissão Conjuge: " styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+											<p:inputText id="profissaoConjugeComite"
+												value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoConjuge}"
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+
+											<p:outputLabel for="rendaComprovadaComite"
+												value="Renda Comprovada: " styleClass="labelBold" />
+											<h:panelGroup>
+												<p:outputLabel value="R$ " />
+												<p:inputText id="rendaComprovadaComite"
+													style="FONT-SIZE: 10pt;width:125px;"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
+													size="100" onkeypress="return isNumberKey(event);"
+													onkeydown="FormataValor(this, 13, event, 2);"
+													converter="bigDecimalConverter" />
+											</h:panelGroup>
+
+										</h:panelGrid>
+									</h:panelGroup>
+									<p:dataView var="pagador"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores}"
+										paginator="false" layout="list"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaPagadores.size() > 0}"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="Nome: " styleClass="labelBold" />
+											<p:outputLabel value="#{pagador.pessoa.nome}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:spacer height="10" />
+											<p:outputLabel value="Idade: " styleClass="labelBold" />
+											<p:outputLabel value="#{pagador.pessoa.idade}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<!--  <p:spacer height="10" />	
+											<p:outputLabel value="Estado Civil: " styleClass="labelBold"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />
+											<p:inputText value="#{pagador.pessoa.estadocivil}"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:outputLabel value="Sexo: " styleClass="labelBold"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:inputText value="#{pagador.pessoa.sexo}"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:outputLabel value="Profissão: " styleClass="labelBold"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />
+											<p:inputText value="#{pagador.pessoa.atividade}"
+												rendered="#{pagador.pessoa.cnpj eq null || pagador.pessoa.cnpj eq ''}" />-->
+										</p:dataViewListItem>
+									</p:dataView>
+
+									<p:dataView var="socios"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.listSocios}"
+										paginator="false" layout="list"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.listSocios.size() > 0}"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="Nome: " styleClass="labelBold" />
+											<p:outputLabel value="#{socios.pessoa.nome}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:spacer height="10" />
+											<p:outputLabel value="Idade: " styleClass="labelBold" />
+											<p:outputLabel value="#{socios.pessoa.idade}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<!--  <p:spacer height="10" />
+											<p:outputLabel value="Estado Civil: " styleClass="labelBold"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />
+											<p:inputText value="#{socio.pessoa.estadocivil}"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:outputLabel value="Sexo: " styleClass="labelBold"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:inputText value="#{socio.pessoa.sexo}"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />
+											<p:spacer height="10" />	
+											<p:outputLabel value="Profissão: " styleClass="labelBold"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />
+											<p:inputText value="#{socio.pessoa.atividade}"
+												rendered="#{socio.pessoa.cnpj eq null || socio.pessoa.cnpj eq ''}" />-->
+										</p:dataViewListItem>
+									</p:dataView>
+								</h:panelGrid>
+							</h:panelGroup>
+							<p:spacer height="10" />
+
+							</h:panelGrid>
+							
+						<h:panelGrid columns="2">
+							
+						<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
+							styleClass="labelBold" />
+						<p:inputText id="quantoPrecisa"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+						
+						<p:outputLabel for="finalidadeRecursosComite" value="Finalidade do Recurso "
+							styleClass="labelBold" />
+						<p:inputText id="finalidadeRecursosComite"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+							style="width:400px;" />
+							
+						<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
+						<p:selectOneRadio id="tipoOperacao" unselectable="true" columns="1"
+							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
+							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
+							<f:selectItem itemLabel="Home Equity com aquisição Imóvel " itemValue="Financiamento" />
+							<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
+						</p:selectOneRadio>
+							
+						<p:outputLabel for="dataCompraComite"
+						value="Data da compra do Imóvel " />			
+						<h:panelGroup>
+							<p:inputMask id="dataCompraComite"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idadeCompraComite"
+									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+							<p:spacer width="10px"/>
+							<p:outputLabel for="idadeCompraComite" value="Idade da Compra:  " />
+							<p:inputText id="idadeCompraComite" value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}"  />
+						</h:panelGroup>	
+						
+						<p:outputLabel for="nomeProprietarioComite"
+							value="Nome do Proprietario: " />
+						<p:inputText id="nomeProprietarioComite"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
+							style="width:400px;"/>
+								
+							<p:spacer height="10" />
+							<p:spacer height="10" />
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:panelGroup>
+				
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
 					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
@@ -704,48 +844,12 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<p:panel id="Infos" header="Outras Informações"
+				<!--  <p:panel id="Infos" header="Outras Informações"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
-						<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
-							styleClass="labelBold" />
-						<p:inputText id="quantoPrecisa"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);" required="true"
-							converter="bigDecimalConverter" />
-							
-						<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
-						<p:selectOneRadio id="tipoOperacao" unselectable="true" columns="1"
-							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
-							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
-							<f:selectItem itemLabel="Home Equity com aquisição Imóvel " itemValue="Financiamento" />
-							<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
-						</p:selectOneRadio>
-							
-						<p:outputLabel for="dataCompraComite"
-						value="Data da compra do Imóvel " />			
-						<h:panelGroup>
-							<p:inputMask id="dataCompraComite"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<p:ajax event="blur" update="idadeCompraComite"
-									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
-							<p:spacer width="10px"/>
-							<p:outputLabel for="idadeCompraComite" value="Idade da Compra:  " />
-							<p:inputText id="idadeCompraComite" value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}"  />
-						</h:panelGroup>	
-						
-						<p:outputLabel for="nomeProprietarioComite"
-							value="Nome do Proprietario: " />
-						<p:inputText id="nomeProprietarioComite"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
-							style="width:400px;"/>
-							
+	
 					</h:panelGrid>
-				</p:panel>
+				</p:panel>-->
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
@@ -798,6 +902,13 @@
 											onkeydown="FormataValor(this, 13, event, 2);"
 											converter="bigDecimalConverter" />
 									</h:panelGroup>
+
+									<p:outputLabel for="finalidadeRecursos"
+										value="Finalidade do Recurso " styleClass="labelBold" />
+									<p:inputText id="finalidadeRecursos"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+										style="width:400px;" />
+										
 								</h:panelGrid>
 							</h:panelGroup>
 							<h:panelGroup>
