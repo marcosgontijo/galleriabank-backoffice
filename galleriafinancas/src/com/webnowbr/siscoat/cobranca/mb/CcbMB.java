@@ -4829,13 +4829,11 @@ public class CcbMB {
 					+ " a presente Alienação Fiduciária revoga e substitui todo e qualquer entendimento havido"
 					+ " entre as Partes anteriormente a esta data sobre o mesmo objeto. ", true, false);
 			
-			geraParagrafoComposto(document, paragraph, run, run2, "7.7 ", "Todas as comunicações entre as "
-					+ "Partes serão consideradas válidas a partir de seu recebimento nos endereços constantes da "
-					+ "cláusula 5.4.1  desta Alienação Fiduciária, ou em outros que venham a indicar, por escrito,"
-					+ " no curso desta relação. As comunicações serão consideradas entregues quando recebidas sob "
-					+ "protocolo, com “aviso de recebimento” expedido pela Empresa Brasileira de Correios e "
-					+ "Telégrafos ou por telegrama nos endereços acima. Cada Parte deverá comunicar imediatamente "
-					+ "a outra sobre a mudança de seu endereço, observado o disposto no item 4.4. alínea “g”. ", true, false);
+			geraParagrafoComposto(document, paragraph, run, run2, "7.7 ", "Todas as comunicações entre as Partes "
+					+ "serão consideradas válidas quando enviadas nos endereços constantes da cláusula 5.4.1 desta"
+					+ " Alienação Fiduciária, observado, inclusive o disposto no item 4.4. alínea “g”, ou em outros"
+					+ " que venham a indicar, por escrito, no curso desta relação. Cada Parte deverá comunicar "
+					+ "imediatamente a outra sobre a mudança de seu endereço.", true, false);
 			
 			paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.BOTH);
