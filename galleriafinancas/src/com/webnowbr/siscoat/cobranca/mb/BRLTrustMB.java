@@ -1666,7 +1666,21 @@ public class BRLTrustMB {
 					jsonRecebivel.put("valores", jsonValores);
 					
 					JSONObject jsonDados = new JSONObject();
-					jsonDados.put("indice", "IPCA");			
+					jsonDados.put("indice", "IPCA");	
+					
+					JSONObject jsonCessionario = new JSONObject();
+					
+					JSONObject jsonCessionarioPessoa = new JSONObject();
+					
+					jsonCessionarioPessoa.put("tipo", "PJ");
+					jsonCessionarioPessoa.put("identificacao", "12.130.744/0001-00");
+					jsonCessionarioPessoa.put("nome", "True Securitizadora S.A.");
+					
+					jsonCessionario.put("pessoa", jsonCessionarioPessoa);
+					jsonCessionario.put("conta", "16182008");
+					
+					jsonDados.put("cessionario", jsonCessionario);
+					
 					jsonRecebivel.put("dados", jsonDados);		
 					
 					jsonRecebiveis.put(jsonRecebivel);
