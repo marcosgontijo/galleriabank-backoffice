@@ -584,6 +584,7 @@ public class ContratoCobranca implements Serializable {
 	private String protestoRessalva;
 	private String processosRessalva;
 	private String trabalhistaRessalva;
+	private String chequeDevolvidoRessalva;
 	
 	public ContratoCobranca() {
 		super();
@@ -4723,5 +4724,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setFinalidadeRecurso(String finalidadeRecurso) {
 		this.finalidadeRecurso = finalidadeRecurso;
+	}
+
+	public String getChequeDevolvidoRessalva() {
+		return chequeDevolvidoRessalva;
+	}
+
+	public void setChequeDevolvidoRessalva(String chequeDevolvidoRessalva) {
+		this.chequeDevolvidoRessalva = chequeDevolvidoRessalva;
 	}	
+	
 }

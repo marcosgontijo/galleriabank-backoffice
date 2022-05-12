@@ -1544,6 +1544,10 @@
 		<property name="finalidadeRecurso" type="java.lang.String">
 			<column name="finalidadeRecurso" />
 		</property>
+		
+		<property name="chequeDevolvidoRessalva" type="java.lang.String">
+			<column name="chequeDevolvidoRessalva" />
+		</property>
 
 	</class>
 </hibernate-mapping>
