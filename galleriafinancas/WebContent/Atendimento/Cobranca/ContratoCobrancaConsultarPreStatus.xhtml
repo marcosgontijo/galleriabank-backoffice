@@ -155,6 +155,12 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
+			                
+			                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
+				                and contratos.statusLead == 'Completo' 
+				                and contratos.inicioAnalise == true
+								and contratos.cadastroAprovadoValor == 'Aprovado'}"
+							action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" />
 
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>

@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -121,6 +123,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
+import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -139,6 +142,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -152,6 +156,12 @@ import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /** ManagedBean. */
 @ManagedBean(name = "contratoCobrancaMB")
@@ -3617,6 +3627,57 @@ public class ContratoCobrancaMB {
 			}
 		}
 
+	}
+	
+	public StreamedContent downloadPreAprovadoPDF(long idContrato) throws JRException, IOException {
+		
+		JasperPrint jp = null;
+		
+		jp = geraPDFPreAprovacao(idContrato);
+		
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		ContratoCobranca con = cDao.findById(idContrato);
+
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	
+		gerador.open("Galleria Bank - " + con.getPagador().getNome() + ".pdf");
+	
+		gerador.feed(jp);
+		gerador.close();
+		
+		return null;
+	}
+	
+	public JasperPrint geraPDFPreAprovacao(long idContrato) throws JRException, IOException {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("PreAprovadoPDF");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/imagem pdf preaprovado_PNG.png");
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
+		
+		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
+		ContratoCobranca con = cDao.findById(idContrato);
+		String cpf = "";	
+		if(!CommonsUtil.semValor(con.getPagador().getCpf())) {
+			cpf = con.getPagador().getCpf();
+		} else {
+			cpf = con.getPagador().getCnpj();
+		}		
+		
+		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
+				con.getNumeroContrato(), cpf , con.getTaxaPreAprovada(),
+				con.getMatriculaRessalva(), con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(),
+				con.getImovel().getEstado(), con.getPrazoMaxPreAprovado().toString());
+		list.add(documento);
+		
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
 
 	public Date getDataComMais15Dias(Date dataOriginal) {
