@@ -71,6 +71,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.hibernate.JDBCException;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -2641,12 +2642,14 @@ public class ContratoCobrancaMB {
 
 				return null;
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
-			return null;
-		}
+		} catch (JDBCException jdbce) {
+		    jdbce.getSQLException().getNextException().printStackTrace();
+		    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + jdbce, ""));
+		} catch (Throwable e) {
+			e.getCause().getCause().printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e.getCause().getCause(), ""));
+		} 
+		return null;
 	}
 
 	public void updatePagadorRecebedorDados() {

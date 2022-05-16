@@ -55,7 +55,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroOp}]]></textFieldExpression>
 			</textField>
@@ -65,7 +65,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14"/>
+					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{data})]]></textFieldExpression>
 			</textField>
@@ -75,7 +75,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxa}.toString())) + "% a.m."]]></textFieldExpression>
 			</textField>
@@ -85,7 +85,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{prazo} + " meses"]]></textFieldExpression>
 			</textField>
@@ -95,7 +95,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
@@ -105,7 +105,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
 			</textField>
@@ -115,7 +115,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{uf}]]></textFieldExpression>
 			</textField>
@@ -125,7 +125,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
 			</textField>
@@ -135,7 +135,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
 			</textField>
@@ -145,7 +145,7 @@
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
-					<font fontName="Calibri" size="12"/>
+					<font fontName="SansSerif" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Matrícula: " + $F{observacao}]]></textFieldExpression>
 			</textField>

@@ -5962,17 +5962,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_GET_DRE_ENTRADAS =  	"select codj.idContratoCobrancaDetalhes, codj.idContratoCobranca, coco.numeroContrato, pare.nome, ccde.numeroParcela,"
 			+ "        ccdp.vlrrecebido,      "
-			+ "        ccdp.datapagamento ,"
+			+ "        ccdp.datapagamento , "
 			+ "	COALESCE ( ( "
 			+ "          select  sum( vlrrecebido ) "
 			+ "            from  cobranca.contratocobrancadetalhesparcial ccdp2 "
-			+ "                  inner join cobranca.cobranca_detalhes_parcial_join cdpj2 on cdpj2.idcontratocobrancadetalhesparcial = ccdp2.id"
-			+ "            where cdpj2.idcontratocobrancadetalhes  = codj.idContratoCobrancaDetalhes and"
-			+ "                  ccdp2.id < ccdp.id ),0) totalrecebidoAnterior,"
-			+ "	vlrjurosparcela,"
-			+ "	vlramortizacaoparcela,"
-			+ "        ccdp.saldoapagar,"
-			+ "	ccdp.vlrrecebido"
+			+ "                  inner join cobranca.cobranca_detalhes_parcial_join cdpj2 on cdpj2.idcontratocobrancadetalhesparcial = ccdp2.id "
+			+ "            where cdpj2.idcontratocobrancadetalhes  = codj.idContratoCobrancaDetalhes and "
+			+ "                  ccdp2.id < ccdp.id ),0) totalrecebidoAnterior, "
+			+ "	vlrjurosparcela, "
+			+ "	vlramortizacaoparcela, "
+			+ " ccdp.saldoapagar, "
+			+ "	ccdp.vlrrecebido, "
+			+ "	ccde.seguromip, "
+			+ "	ccde.segurodfi "
 			+ " from cobranca.ContratoCobrancaDetalhes ccde"
 			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on ccde.id = cdpj.idcontratocobrancadetalhes  "
 			+ " inner join cobranca.contratocobrancadetalhesparcial ccdp on cdpj.idcontratocobrancadetalhesparcial = ccdp.id"
@@ -5980,7 +5982,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " inner join cobranca.ContratoCobranca coco on  codj.idContratoCobranca = coco.id"
 			+ " inner join cobranca.pagadorrecebedor pare on coco.pagador = pare.id"
 			+ " where ccdp.datapagamento between  ? ::timestamp and  ? ::timestamp"
-			//+ "  where  coco.numeroContrato = '01287'"
 			+ " and coco.status = 'Aprovado' "
 			+ " and coco.pagador not in (15, 34,14, 182, 417, 803) "
 			+ " order by ccdp.datapagamento;";
@@ -6039,6 +6040,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						BigDecimal vlramortizacaoparcela = rs.getBigDecimal("vlramortizacaoparcela");
 						BigDecimal saldoapagar = rs.getBigDecimal("saldoapagar");
 						BigDecimal vlrrecebido = rs.getBigDecimal("vlrrecebido");
+						BigDecimal seguroMip = rs.getBigDecimal("seguromip");
+						BigDecimal seguroDfi = rs.getBigDecimal("segurodfi");
 						
 						if ( vlrjurosparcela == null)
 							vlrjurosparcela = BigDecimal.ZERO;
@@ -6049,7 +6052,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						if ( vlrrecebido == null)
 							vlrrecebido = BigDecimal.ZERO;
 						
-						demonstrativoResultadosGrupoDetalhe.setValor(vlrrecebido);
+						if (CommonsUtil.semValor(seguroMip))
+							seguroMip = BigDecimal.ZERO;
+						if (CommonsUtil.semValor(seguroDfi))
+							seguroDfi = BigDecimal.ZERO;
+						
+						demonstrativoResultadosGrupoDetalhe.setValor((vlrrecebido.subtract(seguroDfi)).subtract(seguroMip));
 								
 						if ( vlrjurosparcela == BigDecimal.ZERO)						
 							demonstrativoResultadosGrupoDetalhe.setJuros(vlrjurosparcela);						
@@ -6064,9 +6072,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						else	
 							demonstrativoResultadosGrupoDetalhe.setJuros( BigDecimal.ZERO);	
-						
-						
-						
+
 						
 						if ( vlramortizacaoparcela == BigDecimal.ZERO)						
 							demonstrativoResultadosGrupoDetalhe.setJuros(vlramortizacaoparcela);
@@ -6093,13 +6099,102 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							}
 							
 						}
-							
-							
-						
+
 						//demonstrativoResultadosGrupoDetalhe.setAmortizacao(rs.getBigDecimal("vlramortizacaoparcela"));
 						
 						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 						
+						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
+						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
+						demonstrativosResultadosGrupoDetalhe.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
+						
+					}
+				} catch (SQLException e) {
+					throw new Exception(e.getMessage());
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return demonstrativosResultadosGrupoDetalhe;
+			
+	}
+	
+	private static final String QUERY_GET_DRE_SEGUROS = " select "
+			+ "		codj.idContratoCobrancaDetalhes, "
+			+ "		codj.idContratoCobranca, "
+			+ "		coco.numeroContrato, "
+			+ "		pare.nome, "
+			+ "		ccde.numeroParcela, "
+			+ "		ccdp.datapagamento, "
+			+ "		ccde.seguromip, "
+			+ "		ccde.segurodfi "
+			+ " from "
+			+ "		cobranca.ContratoCobrancaDetalhes ccde "
+			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on "
+			+ "		ccde.id = cdpj.idcontratocobrancadetalhes "
+			+ " inner join cobranca.contratocobrancadetalhesparcial ccdp on "
+			+ "		cdpj.idcontratocobrancadetalhesparcial = ccdp.id "
+			+ " inner join cobranca.ContratoCobranca_Detalhes_Join codj on "
+			+ "		ccde.id = codj.idContratoCobrancaDetalhes "
+			+ " inner join cobranca.ContratoCobranca coco on "
+			+ "		codj.idContratoCobranca = coco.id "
+			+ " inner join cobranca.pagadorrecebedor pare on "
+			+ "		coco.pagador = pare.id "
+			+ " where "
+			+ "		ccdp.datapagamento between  ? ::timestamp and  ? ::timestamp "
+			+ "		and coco.status = 'Aprovado' "
+			+ "		and coco.pagador not in (15, 34, 14, 182, 417, 803) "
+			+ "		and (ccde.seguromip notnull or ccde.segurodfi notnull) "
+			+ " order by "
+			+ "		ccdp.datapagamento ";
+	
+	@SuppressWarnings("unchecked")
+	public DemonstrativoResultadosGrupo getDreSeguros(final Date dataInicio, final Date dataFim) throws Exception {
+		
+				DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
+				demonstrativosResultadosGrupoDetalhe.setDetalhe(new ArrayList<DemonstrativoResultadosGrupoDetalhe>(0));
+				demonstrativosResultadosGrupoDetalhe.setTipo("Seguro");
+				demonstrativosResultadosGrupoDetalhe.setCodigo(1);
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					String query_QUERY_GET_DRE_ENTRADAS = QUERY_GET_DRE_SEGUROS;
+					ps = connection.prepareStatement(query_QUERY_GET_DRE_ENTRADAS);
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+
+						DemonstrativoResultadosGrupoDetalhe demonstrativoResultadosGrupoDetalhe = new DemonstrativoResultadosGrupoDetalhe();
+						demonstrativoResultadosGrupoDetalhe.setIdDetalhes(rs.getLong("idContratoCobrancaDetalhes"));
+						demonstrativoResultadosGrupoDetalhe.setIdContratoCobranca(rs.getLong("idContratoCobranca"));
+						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
+						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
+						
+						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")) {
+							continue;
+						}
+					
+						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
+						Date dataVencimento = rs.getDate("datapagamento");
+						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);	
+						BigDecimal seguroMip = rs.getBigDecimal("seguromip");
+						BigDecimal seguroDfi = rs.getBigDecimal("segurodfi");
+						
+						if (CommonsUtil.semValor(seguroMip))
+							seguroMip = BigDecimal.ZERO;
+						if (CommonsUtil.semValor(seguroDfi))
+							seguroDfi = BigDecimal.ZERO;
+						
+						demonstrativoResultadosGrupoDetalhe.setValor(seguroDfi.add(seguroMip));
+						demonstrativoResultadosGrupoDetalhe.setJuros(BigDecimal.ZERO);
+						demonstrativoResultadosGrupoDetalhe.setAmortizacao(BigDecimal.ZERO);
+						demonstrativosResultadosGrupoDetalhe.getDetalhe().add(demonstrativoResultadosGrupoDetalhe);
 						demonstrativosResultadosGrupoDetalhe.addValor(demonstrativoResultadosGrupoDetalhe.getValor());
 						demonstrativosResultadosGrupoDetalhe.addJuros(demonstrativoResultadosGrupoDetalhe.getJuros());
 						demonstrativosResultadosGrupoDetalhe.addAmortizacao(demonstrativoResultadosGrupoDetalhe.getAmortizacao());
