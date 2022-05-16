@@ -508,6 +508,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
+	private BigDecimal valorPreLaudo;
 	
 	private BigDecimal taxaAprovada;
 	private BigInteger prazoMaxAprovado;
@@ -4732,6 +4733,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setChequeDevolvidoRessalva(String chequeDevolvidoRessalva) {
 		this.chequeDevolvidoRessalva = chequeDevolvidoRessalva;
-	}	
-	
+	}
+
+	public BigDecimal getValorPreLaudo() {
+		return valorPreLaudo;
+	}
+
+	public void setValorPreLaudo(BigDecimal valorPreLaudo) {
+		this.valorPreLaudo = valorPreLaudo;
+	}		
 }

@@ -342,7 +342,7 @@ public class CcbMB {
 		 */
 		if (validacao) {			
 			bmpMB.enviaProposta(eminenteDTO, fiducianteDTO, this.objetoCcb.getNumeroParcelasPagamento(), this.objetoCcb.getTaxaDeJurosMes(), this.objetoCcb.getValorIOF(), this.objetoCcb.getNumeroBanco(), 
-					this.objetoCcb.getAgencia(), this.objetoCcb.getContaCorrente(), this.objetoCcb.getValorCredito(), this.numeroContrato, this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), this.objetoCcb.getValorParcela());
+					this.objetoCcb.getAgencia(), this.objetoCcb.getContaCorrente(), this.objetoCcb.getValorCredito(), this.objetoCcb.getNumeroCcb(), this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), this.objetoCcb.getValorParcela());
 		}		
 	}
 	
@@ -384,7 +384,8 @@ public class CcbMB {
 		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
 		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
-		if(ccbPartDao.findByFilter("pessoa", selectedPagadorGenerico).size() > 0){
+		if(ccbPartDao.findByFilter("pessoa", this.participanteSelecionado.getPessoa()).size() > 0){
+			this.participanteSelecionado.setId(ccbPartDao.findByFilter("pessoa", this.participanteSelecionado.getPessoa()).get(0).getId());
 			ccbDao.merge(this.participanteSelecionado);
 		} else {
 			ccbDao.create(this.participanteSelecionado);
@@ -1356,7 +1357,7 @@ public class CcbMB {
 			XWPFRun run4 = paragraph.createRun();
 			run.addCarriageReturn();
 
-			run.setText("Nº XXXXXX");
+			run.setText("Nº " + this.objetoCcb.getNumeroCcb());
 			run.setFontSize(14);
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.SINGLE);
@@ -1397,12 +1398,14 @@ public class CcbMB {
 					String socios = "";
 					if (participante.getSocios().size() > 1) {
 						socios = "pelos seus sócios, ";
-					} else {
+					} else if(participante.getSocios().size() > 0){
 						if (participante.getSocios().iterator().next().isFeminino()) {
 							socios = "pela sua única sócia, ";
 						} else {
 							socios = "pelo seu único sócio, ";
 						}
+					} else {
+						socios = "";
 					}
 
 					run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
@@ -2562,7 +2565,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText("(Página de assinaturas da Cédula de Crédito "
-					+ "Bancário nº XXXXXX, emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
+					+ "Bancário nº " + this.objetoCcb.getNumeroCcb() + ", emitida por "+ nomeEmitente +", CPF/MF nº "+ cpfEmitente +", em favor de "
 					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
 					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
@@ -2782,7 +2785,7 @@ public class CcbMB {
 			run.setFontSize(12);
 			run.setText("ANEXO I");
 			run.addCarriageReturn();
-			run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº XXXXXX");
+			run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº " + this.objetoCcb.getNumeroCcb());
 			run.addCarriageReturn();
 			run.setText("PLANILHA DE CÁLCULO");
 			run.setBold(true);
@@ -3129,7 +3132,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText("XXXXXX ");
+			run2.setText(this.objetoCcb.getNumeroCcb() + " ");
 			run2.setBold(true);
 			
 			run = paragraph.createRun();
@@ -3227,7 +3230,7 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setFontSize(12);
-			run.setText("XXXXXX ");
+			run.setText(this.objetoCcb.getNumeroCcb() + " ");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -3448,7 +3451,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(12);
-			run2.setText(" Cédula de Crédito Bancário nº XXXXXX ");
+			run2.setText(" Cédula de Crédito Bancário nº " + this.objetoCcb.getNumeroCcb() + " ");
 			run2.setBold(false);
 			run2.setItalic(true);
 			
@@ -4962,7 +4965,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setFontSize(12);
 			run.setText("(Página de assinaturas da Cédula de Crédito "
-					+ "Bancário nº XXXXXX, emitida por "+ this.objetoCcb.getNomeEmitente() +", CPF/MF nº "+ cpfEmitente +", em favor de "
+					+ "Bancário nº " + this.objetoCcb.getNumeroCcb() + ", emitida por "+ this.objetoCcb.getNomeEmitente() +", CPF/MF nº "+ cpfEmitente +", em favor de "
 					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
 					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
@@ -5345,7 +5348,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText("REF.: Contrato de CCB nº XXXXXX");
+				run.setText("REF.: Contrato de CCB nº " + this.objetoCcb.getNumeroCcb());
 				run.setFontSize(10);
 				run.setBold(true);
 				run.addCarriageReturn();
@@ -5422,7 +5425,7 @@ public class CcbMB {
 				run.setBold(false);
 								
 				run2 = paragraph.createRun();
-				run2.setText("Nº XXXXXX");
+				run2.setText("Nº " + this.objetoCcb.getNumeroCcb());
 				run2.setFontSize(10);
 				run2.setBold(true);
 				run = paragraph.createRun();
@@ -5874,508 +5877,9 @@ public class CcbMB {
 			 * );
 			 */ 
 			
-			for (XWPFParagraph p : document.getParagraphs()) {
-			    List<XWPFRun> runs = p.getRuns();
-			    if (runs != null) {  	
-			    	for (XWPFRun r : runs) {
-			            String text = r.getText(0);
-
-
-						if (CommonsUtil.mesmoValor(tipoDownload, "CCB")) {
-							if (this.addTerceiro == true) {
-								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										"\nIII – TERCEIRO GARANTIDOR: nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletrônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG; \n");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
-							}
-							if (this.addInterveniente == true) {
-								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\nIX – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletrônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
-							}
-							if (this.addAvalista == true) {
-								text = trocaValoresXWPF(text, r, "criaAvalista",
-										"\nIX – AVALISTA: nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletrônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista; \n");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaAvalista", "");
-							}		
-						} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
-							if (this.addTerceiro == true) {
-								text = trocaValoresXWPF(text, r, "criaTerceiroG",
-										"nomeEmpresaTerceiroG dadosEmpresaTerceiroG nomeTerceiroG, filhoTerceiroG de maeTerceiroG e paiTerceiroG, nacionalidadeTerceiroG, profissaoTerceiroG, estadoCivilTerceiroG regimeCasamentoTerceiroG nomeConjugeTerceiroG cpfConjugeTerceiroG, portador(a) da Cédula de Identidade RG nº numeroRgTerceiroG SSP/ufTerceiroG, inscrito(a) no CPF/MF sob o nº cpfTerceiroG, endereço eletrônico: emailTerceiroG, residente e domiciliado à logradouroTerceiroG, nº numeroTerceiroG,  complementoTerceiroG, cidadeTerceiroG/ufTerceiroG, CEP cepTerceiroG;");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaTerceiroG", "");
-							}
-							if(CommonsUtil.mesmoValor(fiduciante, true)) {
-								text = trocaValoresXWPF(text, r, "criaFiduciante", "nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
-								text = trocaValoresXWPF(text, r, "criaDevedor", "");
-								
-								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "\n"
-										+ "nomeEmitente \n"
-										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente \n"
-										+ "CEP cepEmitente \n" 
-										+ "E-mail: emailEmitente \n");
-								
-								text = trocaValoresXWPF(text, r, "devedorEmitente","");
-								
-							} else {
-								text = trocaValoresXWPF(text, r, "criaDevedor", "\n X) DEVEDOR: nomeEmpresaEmitente dadosEmpresaEmitente nomeEmitente, filhoEmitente de maeEmitente e paiEmitente, nacionalidadeEmitente, profissaoEmitente, estadoCivilEmitente regimeCasamentoEmitente nomeConjugeEmitente cpfConjugeEmitente, portador(a) da Cédula de Identidade RG nº numeroRgEmitente SSP/ufEmitente, inscrito(a) no CPF/MF sob o nº cpfEmitente, endereço eletrônico: emailEmitente, residente e domiciliado à logradouroEmitente, nº numeroEmitente, complementoEmitente, cidadeEmitente/ufEmitente, CEP cepEmitente;");
-								text = trocaValoresXWPF(text, r, "criaFiduciante", "");
-								text = trocaValoresXWPF(text, r, "fiducianteEmitente", "");
-								text = trocaValoresXWPF(text, r, "devedorEmitente", "\n \n"
-										+ "Pelo DEVEDOR: \n" 
-										+ "nomeEmitente \n"
-										+ "logradouroEmitente, nº numeroEmitente,  cidadeEmitente - ufEmitente - \n"
-										+ "CEP cepEmitente \n"
-										+ "E-mail: emailEmitente \n");
-							}
-							
-							
-							if (this.addInterveniente == true) {
-								text = trocaValoresXWPF(text, r, "criaInterveniente",
-										"\nX) – INTERVENIENTE ANUENTE: nomeEmpresaInterveniente dadosEmpresaInterveniente nomeInterveniente, nacionalidadeInterveniente, filhoInterveniente de maeInterveniente e paiInterveniente, profissaoInterveniente, estadoCivilInterveniente regimeCasamentoInterveniente nomeConjugeInterveniente cpfConjugeInterveniente, portador(a) da Cédula de Identidade RG nº numeroRgInterveniente SSP/ufInterveniente, inscrito(a) no CPF/MF sob o nº cpfInterveniente, endereço eletrônico: emailInterveniente, residente e domiciliado à logradouroInterveniente, nº numeroInterveniente,  complementoInterveniente, cidadeInterveniente/ufInterveniente, CEP cepInterveniente; \n");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaInterveniente", "");
-							}
-							if (this.addAvalista == true) {
-								text = trocaValoresXWPF(text, r, "criaAvalista",
-										" nomeEmpresaAvalista dadosEmpresaAvalista nomeAvalista, filhoAvalista de maeAvalista e paiAvalista, nacionalidadeAvalista, profissaoAvalista, estadoCivilAvalista regimeCasamentoAvalista nomeConjugeAvalista cpfConjugeAvalista,portador(a) da Cédula de Identidade RG nº numeroRgAvalista SSP/ufAvalista, inscrito(a) no CPF/MF sob o nº cpfAvalista, endereço eletrônico: emailAvalista, residente e domiciliado à logradouroAvalista, nº numeroAvalista,  complementoAvalista, cidadeAvalista/ufAvalista, CEP cepAvalista;");
-							} else {
-								text = trocaValoresXWPF(text, r, "criaAvalista", "");
-							}	
-						}
-						
-						if(this.empresaEmitente) {
-							text = trocaValoresXWPF(text, r, "nomeEmpresaEmitente", this.razaoSocialEmitente + ",");
-							text = trocaValoresXWPF(text, r, "dadosEmpresaEmitente", "tipoEmpresaEmitente, inscrita no CNPJ/MF sob o nº cnpjEmitente, com sede e foro no município de municipioEmpresaEmitente no Estado de estadoEmpresaEmitente, na ruaEmpresaEmitente, nº numeroEmpresaEmitente, Sala salaEmpresaEmitente, Bairro: bairroEmpresaEmitente, CEP cepEmpresaEmitente, neste ato representada na forma do seu contrato social socioEmitente,");
-							text = trocaValoresXWPF(text, r, "tipoEmpresaEmitente", this.tipoEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "cnpjEmitente", this.cnpjEmitente);
-							text = trocaValoresXWPF(text, r, "municipioEmpresaEmitente", this.municipioEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "estadoEmpresaEmitente", this.estadoEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "ruaEmpresaEmitente", this.ruaEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "numeroEmpresaEmitente", this.numeroEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "salaEmpresaEmitente", this.salaEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "bairroEmpresaEmitente", this.bairroEmpresaEmitente);
-							text = trocaValoresXWPF(text, r, "cepEmpresaEmitente", this.cepEmpresaEmitente);
-							if(this.femininoEmitente) {
-								text = trocaValoresXWPF(text, r, "socioEmitente", "pela sua única sócia");
-							} else {
-								text = trocaValoresXWPF(text, r, "socioEmitente", "pelo seu único sócio");
-							}
-						} else {
-								text = trocaValoresXWPF(text, r, "nomeEmpresaEmitente", "");
-								text = trocaValoresXWPF(text, r, "dadosEmpresaEmitente", "");
-						}
-			            
-						if(this.getNomeConjugeEmitente() != null) { 	
-							text = trocaValoresXWPF(text, r, "nomeConjugeEmitente", " (" + this.nomeConjugeEmitente + ",");	 
-							text = trocaValoresXWPF(text, r, "cpfConjugeEmitente", " " + this.cpfConjugeEmitente + ")");
-							text = trocaValoresXWPF(text, r, "regimeCasamentoEmitente", "sob o regime " + this.regimeCasamentoEmitente);
-						} else {
-							text = trocaValoresXWPF(text, r, "cpfConjugeEmitente", "");
-							text = trocaValoresXWPF(text, r, "nomeConjugeEmitente", "");		 
-							text = trocaValoresXWPF(text, r, "FiducianteConjugue","");
-							text = trocaValoresXWPF(text, r, "regimeCasamentoEmitente", "");
-						}
-						text = trocaValoresXWPF(text, r, "estadoCivilEmitente", verificaEstadoCivil(this.femininoEmitente,this.estadoCivilEmitente).toLowerCase());	 
-						text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 
-						text = trocaValoresXWPF(text, r, "cpfEmitente", this.cpfEmitente);
-						text = trocaValoresXWPF(text, r, "nacionalidadeEmitente",verificaNacionalidade(this.femininoEmitente, this.nacionalidadeEmitente));
-						text = trocaValoresXWPF(text, r, "profissaoEmitente",this.profissaoEmitente.toLowerCase());
-						text = trocaValoresXWPF(text, r, "numeroRgEmitente", this.numeroRgEmitente);
-						text = trocaValoresXWPF(text, r, "ufEmitente", this.ufEmitente);
-						text = trocaValoresXWPF(text, r, "cpfEmitente", this.cpfEmitente);
-						text = trocaValoresXWPF(text, r, "logradouroEmitente", this.logradouroEmitente);
-						text = trocaValoresXWPF(text, r, "numeroEmitente", this.numeroEmitente);
-						text = trocaValoresXWPF(text, r, "complementoEmitente", this.complementoEmitente);
-						text = trocaValoresXWPF(text, r, "cidadeEmitente", this.cidadeEmitente);
-						text = trocaValoresXWPF(text, r, "cepEmitente", this.cepEmitente);
-						text = trocaValoresXWPF(text, r, "emailEmitente", this.emailEmitente);
-						if(this.femininoEmitente) {
-							text = trocaValoresXWPF(text, r, "filhoEmitente", "filha");
-						} else {
-							text = trocaValoresXWPF(text, r, "filhoEmitente", "filho");
-						}
-						text = trocaValoresXWPF(text, r, "paiEmitente", this.paiEmitente);
-						text = trocaValoresXWPF(text, r, "maeEmitente", this.maeEmitente);
-
-						
-						if (this.addInterveniente == true) {
-							text = trocaValoresXWPF(text, r,"fiducianteInterveniente", "\n"
-									+ "Pelo ANUENTE: \n"
-
-									+ "nomeInterveniente \n"
-
-									+ "logradouroInterveniente, nº numeroInterveniente,  cidadeInterveniente - ufInterveniente - \n"
-
-									+ "CEP cepInterveniente \n"
-
-									+ "E-mail: emailInterveniente \n");
-							
-							if (this.getNomeConjugeInterveniente() != null) {
-								text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente",
-										" (" + this.nomeConjugeInterveniente + ",");
-								text = trocaValoresXWPF(text, r, "cpfConjugeInterveniente",
-										" " + this.cpfConjugeInterveniente + ")");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoInterveniente",
-										"sob o regime " + this.regimeCasamentoInterveniente);
-							} else {
-								text = trocaValoresXWPF(text, r, "cpfConjugeInterveniente", "");
-								text = trocaValoresXWPF(text, r, "nomeConjugeInterveniente", "");
-								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoInterveniente", "");					
-							}
-							
-							if(this.empresaInterveniente) {
-								text = trocaValoresXWPF(text, r, "nomeEmpresaInterveniente", this.razaoSocialInterveniente + ",");
-								text = trocaValoresXWPF(text, r, "dadosEmpresaInterveniente", "tipoEmpresaInterveniente, inscrita no CNPJ/MF sob o nº cnpjInterveniente, com sede e foro no município de municipioEmpresaInterveniente no Estado de estadoEmpresaInterveniente, na ruaEmpresaInterveniente, nº numeroEmpresaInterveniente, Sala salaEmpresaInterveniente, Bairro: bairroEmpresaInterveniente, CEP cepEmpresaInterveniente, neste ato representada na forma do seu contrato social socioInterveniente,");
-								text = trocaValoresXWPF(text, r, "tipoEmpresaInterveniente", this.tipoEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "cnpjInterveniente", this.cnpjInterveniente);
-								text = trocaValoresXWPF(text, r, "municipioEmpresaInterveniente", this.municipioEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "estadoEmpresaInterveniente", this.estadoEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "ruaEmpresaInterveniente", this.ruaEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "numeroEmpresaInterveniente", this.numeroEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "salaEmpresaInterveniente", this.salaEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "bairroEmpresaInterveniente", this.bairroEmpresaInterveniente);
-								text = trocaValoresXWPF(text, r, "cepEmpresaInterveniente", this.cepEmpresaInterveniente);
-								if(this.femininoInterveniente) {
-									text = trocaValoresXWPF(text, r, "socioInterveniente", "pela sua única sócia");
-								} else {
-									text = trocaValoresXWPF(text, r, "socioInterveniente", "pelo seu único sócio");
-								}
-							} else {
-									text = trocaValoresXWPF(text, r, "nomeEmpresaInterveniente", "");
-									text = trocaValoresXWPF(text, r, "dadosEmpresaInterveniente", "");
-							}
-							
-							text = trocaValoresXWPF(text, r, "estadoCivilInterveniente", verificaEstadoCivil(this.femininoInterveniente, this.estadoCivilInterveniente).toLowerCase());
-							text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);
-							text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
-							text = trocaValoresXWPF(text, r, "nacionalidadeInterveniente", verificaNacionalidade(this.femininoInterveniente, this.nacionalidadeInterveniente));
-							text = trocaValoresXWPF(text, r, "profissaoInterveniente", this.profissaoInterveniente.toLowerCase());
-							text = trocaValoresXWPF(text, r, "numeroRgInterveniente", this.numeroRgInterveniente);
-							text = trocaValoresXWPF(text, r, "ufInterveniente", this.ufInterveniente);
-							text = trocaValoresXWPF(text, r, "cpfInterveniente", this.cpfInterveniente);
-							text = trocaValoresXWPF(text, r, "logradouroInterveniente", this.logradouroInterveniente);
-							text = trocaValoresXWPF(text, r, "numeroInterveniente", this.numeroInterveniente);
-							text = trocaValoresXWPF(text, r, "complementoInterveniente", this.complementoInterveniente);
-							text = trocaValoresXWPF(text, r, "cidadeInterveniente", this.cidadeInterveniente);
-							text = trocaValoresXWPF(text, r, "cepInterveniente", this.cepInterveniente);
-							text = trocaValoresXWPF(text, r, "emailInterveniente", this.emailInterveniente);
-							if(this.femininoInterveniente) {
-								text = trocaValoresXWPF(text, r, "filhoInterveniente", "filha");
-							} else {
-								text = trocaValoresXWPF(text, r, "filhoInterveniente", "filho");
-							}
-							text = trocaValoresXWPF(text, r, "paiInterveniente", this.paiInterveniente);
-							text = trocaValoresXWPF(text, r, "maeInterveniente", this.maeInterveniente);
-
-						} else {
-							text = trocaValoresXWPF(text, r, "fiducianteInterveniente","");
-						}
-						if (this.addAvalista == true) {
-							text = trocaValoresXWPF(text, r, "fiducianteAvalista","\n"
-									+ "nomeAvalista	 \n"
-
-									+ "logradouroAvalista, nº numeroAvalista,  cidadeAvalista - ufAvalista - \n"
-
-									+ "CEP cepAvalista \n"
-
-									+ "E-mail: emailAvalista \n");
-							
-							if (this.getNomeConjugeAvalista() != null) {
-								text = trocaValoresXWPF(text, r, "nomeConjugeAvalista",
-										" (" + this.nomeConjugeAvalista + ",");
-								text = trocaValoresXWPF(text, r, "cpfConjugeAvalista",
-										" " + this.cpfConjugeAvalista + ")");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoAvalista",
-										"sob o regime " + this.regimeCasamentoAvalista);
-							} else {
-								text = trocaValoresXWPF(text, r, "cpfConjugeAvalista", "");
-								text = trocaValoresXWPF(text, r, "nomeConjugeAvalista", "");
-								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoAvalista", "");
-							}
-							
-							if(this.empresaAvalista) {
-								text = trocaValoresXWPF(text, r, "nomeEmpresaAvalista", this.razaoSocialAvalista + ",");
-								text = trocaValoresXWPF(text, r, "dadosEmpresaAvalista", "tipoEmpresaAvalista, inscrita no CNPJ/MF sob o nº cnpjAvalista, com sede e foro no município de municipioEmpresaAvalista no Estado de estadoEmpresaAvalista, na ruaEmpresaAvalista, nº numeroEmpresaAvalista, Sala salaEmpresaAvalista, Bairro: bairroEmpresaAvalista, CEP cepEmpresaAvalista, neste ato representada na forma do seu contrato social socioAvalista,");
-								text = trocaValoresXWPF(text, r, "tipoEmpresaAvalista", this.tipoEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "cnpjAvalista", this.cnpjAvalista);
-								text = trocaValoresXWPF(text, r, "municipioEmpresaAvalista", this.municipioEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "estadoEmpresaAvalista", this.estadoEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "ruaEmpresaAvalista", this.ruaEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "numeroEmpresaAvalista", this.numeroEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "salaEmpresaAvalista", this.salaEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "bairroEmpresaAvalista", this.bairroEmpresaAvalista);
-								text = trocaValoresXWPF(text, r, "cepEmpresaAvalista", this.cepEmpresaAvalista);
-								if(this.femininoAvalista) {
-									text = trocaValoresXWPF(text, r, "socioAvalista", "pela sua única sócia");
-								} else {
-									text = trocaValoresXWPF(text, r, "socioAvalista", "pelo seu único sócio");
-								}
-							} else {
-									text = trocaValoresXWPF(text, r, "nomeEmpresaAvalista", "");
-									text = trocaValoresXWPF(text, r, "dadosEmpresaAvalista", "");
-							}
-							
-							text = trocaValoresXWPF(text, r, "estadoCivilAvalista", verificaEstadoCivil(this.femininoAvalista, this.estadoCivilAvalista).toLowerCase());
-							text = trocaValoresXWPF(text, r, "nomeAvalista", this.nomeAvalista);
-							text = trocaValoresXWPF(text, r, "cpfAvalista", this.cpfAvalista);
-							text = trocaValoresXWPF(text, r, "nacionalidadeAvalista", verificaNacionalidade(this.femininoAvalista, this.nacionalidadeAvalista));
-							text = trocaValoresXWPF(text, r, "profissaoAvalista", this.profissaoAvalista.toLowerCase());
-							text = trocaValoresXWPF(text, r, "numeroRgAvalista", this.numeroRgAvalista);
-							text = trocaValoresXWPF(text, r, "ufAvalista", this.ufAvalista);
-							text = trocaValoresXWPF(text, r, "cpfAvalista", this.cpfAvalista);
-							text = trocaValoresXWPF(text, r, "logradouroAvalista", this.logradouroAvalista);
-							text = trocaValoresXWPF(text, r, "numeroAvalista", this.numeroAvalista);
-							text = trocaValoresXWPF(text, r, "complementoAvalista", this.complementoAvalista);
-							text = trocaValoresXWPF(text, r, "cidadeAvalista", this.cidadeAvalista);
-							text = trocaValoresXWPF(text, r, "cepAvalista", this.cepAvalista);
-							text = trocaValoresXWPF(text, r, "emailAvalista", this.emailAvalista);
-							if(this.femininoAvalista) {
-								text = trocaValoresXWPF(text, r, "filhoAvalista", "filha");
-							} else {
-								text = trocaValoresXWPF(text, r, "filhoAvalista", "filho");
-							}
-							text = trocaValoresXWPF(text, r, "paiAvalista", this.paiAvalista);
-							text = trocaValoresXWPF(text, r, "maeAvalista", this.maeAvalista);
-						} else {
-							text = trocaValoresXWPF(text, r, "fiducianteAvalista","");
-						}
-						
-						if (this.addTerceiro == true) {
-							text = trocaValoresXWPF(text, r, "fiducianteTerceiroG","\n"
-									+"nomeTerceiroG \n"
-
-									+ "logradouroTerceiroG, nº numeroTerceiroG,  cidadeTerceiroG - ufTerceiroG - \n"
-
-									+ "CEP cepTerceiroG \n"
-
-									+ "E-mail: emailTerceiroG \n");
-							
-							
-							if (this.getNomeConjugeTerceiroG() != null) {
-								text = trocaValoresXWPF(text, r, "nomeConjugeTerceiroG",
-										" (" + this.nomeConjugeTerceiroG + ",");
-								text = trocaValoresXWPF(text, r, "cpfConjugeTerceiroG",
-										" " + this.cpfConjugeTerceiroG + ")");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoTerceiroG",
-										"sob o regime " + this.regimeCasamentoTerceiroG);
-								
-								
-								
-							} else {
-								text = trocaValoresXWPF(text, r, "cpfConjugeTerceiroG", "");
-								text = trocaValoresXWPF(text, r, "nomeConjugeTerceiroG", "");
-								text = trocaValoresXWPF(text, r, "FiducianteConjugue", "");
-								text = trocaValoresXWPF(text, r, "regimeCasamentoTerceiroG", "");
-							}
-							
-							if(this.empresaTerceiroG) {
-								text = trocaValoresXWPF(text, r, "nomeEmpresaTerceiroG", this.razaoSocialTerceiroG + ",");
-								text = trocaValoresXWPF(text, r, "dadosEmpresaTerceiroG", "tipoEmpresaTerceiroG, inscrita no CNPJ/MF sob o nº cnpjTerceiroG, com sede e foro no município de municipioEmpresaTerceiroG no Estado de estadoEmpresaTerceiroG, na ruaEmpresaTerceiroG, nº numeroEmpresaTerceiroG, Sala salaEmpresaTerceiroG, Bairro: bairroEmpresaTerceiroG, CEP cepEmpresaTerceiroG, neste ato representada na forma do seu contrato social socioTerceiroG,");
-								text = trocaValoresXWPF(text, r, "tipoEmpresaTerceiroG", this.tipoEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "cnpjTerceiroG", this.cnpjTerceiroG);
-								text = trocaValoresXWPF(text, r, "municipioEmpresaTerceiroG", this.municipioEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "estadoEmpresaTerceiroG", this.estadoEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "ruaEmpresaTerceiroG", this.ruaEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "numeroEmpresaTerceiroG", this.numeroEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "salaEmpresaTerceiroG", this.salaEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "bairroEmpresaTerceiroG", this.bairroEmpresaTerceiroG);
-								text = trocaValoresXWPF(text, r, "cepEmpresaTerceiroG", this.cepEmpresaTerceiroG);
-								if(this.femininoTerceiroG) {
-									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pela sua única sócia");
-								} else {
-									text = trocaValoresXWPF(text, r, "socioTerceiroG", "pelo seu único sócio");
-								}
-							} else {
-									text = trocaValoresXWPF(text, r, "nomeEmpresaTerceiroG", "");
-									text = trocaValoresXWPF(text, r, "dadosEmpresaTerceiroG", "");
-							}
-							
-							text = trocaValoresXWPF(text, r, "estadoCivilTerceiroG",
-									verificaEstadoCivil(this.femininoTerceiroG, this.estadoCivilTerceiroG)
-											.toLowerCase());
-							text = trocaValoresXWPF(text, r, "nomeTerceiroG", this.nomeTerceiroG);
-							text = trocaValoresXWPF(text, r, "cpfTerceiroG", this.cpfTerceiroG);
-							text = trocaValoresXWPF(text, r, "nacionalidadeTerceiroG", verificaNacionalidade(this.femininoTerceiroG, this.nacionalidadeTerceiroG));
-							text = trocaValoresXWPF(text, r, "profissaoTerceiroG",
-									this.profissaoTerceiroG.toLowerCase());
-							text = trocaValoresXWPF(text, r, "numeroRgTerceiroG", this.numeroRgTerceiroG);
-							text = trocaValoresXWPF(text, r, "ufTerceiroG", this.ufTerceiroG);
-							text = trocaValoresXWPF(text, r, "cpfTerceiroG", this.cpfTerceiroG);
-							text = trocaValoresXWPF(text, r, "logradouroTerceiroG", this.logradouroTerceiroG);
-							text = trocaValoresXWPF(text, r, "numeroTerceiroG", this.numeroTerceiroG);
-							text = trocaValoresXWPF(text, r, "complementoTerceiroG", this.complementoTerceiroG);
-							text = trocaValoresXWPF(text, r, "cidadeTerceiroG", this.cidadeTerceiroG);
-							text = trocaValoresXWPF(text, r, "cepTerceiroG", this.cepTerceiroG);
-							text = trocaValoresXWPF(text, r, "emailTerceiroG", this.emailTerceiroG);
-	
-							if(this.femininoTerceiroG) {
-								text = trocaValoresXWPF(text, r, "filhoTerceiroG", "filha");
-							} else {
-								text = trocaValoresXWPF(text, r, "filhoTerceiroG", "filho");
-							}
-							text = trocaValoresXWPF(text, r, "paiTerceiroG", this.paiTerceiroG);
-							text = trocaValoresXWPF(text, r, "maeTerceiroG", this.maeTerceiroG);
-						} else {
-							text = trocaValoresXWPF(text, r, "fiducianteTerceiroG","");
-						}
-						
-						text = trocaValoresXWPF(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
-						text = trocaValoresXWPF(text, r, "custoEmissao", this.objetoCcb.getCustoEmissao(), "R$ ");
-						text = trocaValoresXWPF(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
-						text = trocaValoresXWPF(text, r, "valorDespesas", this.objetoCcb.getValorDespesas(), "R$ ");
-						text = trocaValoresXWPF(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
-						text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes() );
-						text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.objetoCcb.getTaxaDeJurosAno());
-						
-						text = trocaValoresXWPF(text, r, "cetMes", this.objetoCcb.getCetMes());
-						text = trocaValoresXWPF(text, r, "cetAno", this.objetoCcb.getCetAno());
-						text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());
-						text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
-						text = trocaValoresXWPF(text, r, "numeroBanco", this.objetoCcb.getNumeroBanco());
-						text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());
-						
-						text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());
-						text = trocaValoresXWPF(text, r, "montantePagamento", this.objetoCcb.getMontantePagamento(), "R$ ");
-						
-						text = trocaValoresXWPF(text, r, "numeroParcelasMIP", this.objetoCcb.getNumeroParcelasMIP());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMIP", this.objetoCcb.getVencimentoPrimeiraParcelaMIP());
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaMIP", this.objetoCcb.getVencimentoUltimaParcelaMIP());
-						text = trocaValoresXWPF(text, r, "montanteMIP", this.objetoCcb.getMontanteMIP(), "R$ ");
-						
-						text = trocaValoresXWPF(text, r, "numeroParcelasDFI", this.objetoCcb.getNumeroParcelasDFI());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDFI", this.objetoCcb.getVencimentoPrimeiraParcelaDFI());
-						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaDFI", this.objetoCcb.getVencimentoUltimaParcelaDFI());
-						text = trocaValoresXWPF(text, r, "montanteDFI", this.objetoCcb.getMontanteDFI(), "R$ ");
-						
-						text = trocaValoresXWPF(text, r, "tarifaAntecipada", this.objetoCcb.getTarifaAntecipada());
-						text = trocaValoresXWPF(text, r, "dataDeEmissao", this.objetoCcb.getDataDeEmissao());
-								
-						text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
-						text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
-						text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
-						text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
-						
-						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
-						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
-						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
-						
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaDia", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getDate());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento()).toLowerCase());
-						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaAno", (this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getYear() + 1900));
-						
-						text = trocaValoresXWPF(text, r, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
-						text = trocaValoresXWPF(text, r, "elaboradorNome", this.objetoCcb.getElaboradorNome());
-						text = trocaValoresXWPF(text, r, "elaboradorCrea", this.objetoCcb.getElaboradorCrea());
-						text = trocaValoresXWPF(text, r, "responsavelNome", this.objetoCcb.getResponsavelNome());
-						text = trocaValoresXWPF(text, r, "responsavelCrea", this.objetoCcb.getResponsavelCrea());
-						text = trocaValoresXWPF(text, r, "porcentagemImovel", this.objetoCcb.getPorcentagemImovel());
-
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.objetoCcb.getVendaLeilao());
-					
-
-						if (text != null && text.contains("xtenso" + "PorcentagemImovel")) {
-							if(CommonsUtil.mesmoValor(this.objetoCcb.getPorcentagemImovel(),BigDecimal.ZERO)) {
-								text = text.replace("xtenso" + "PorcentagemImovel", "Zero");
-							} else {
-								porcentagemPorExtenso.setNumber(this.objetoCcb.getPorcentagemImovel());
-								text = text.replace("xtenso" + "PorcentagemImovel", porcentagemPorExtenso.toString());
-							}
-							r.setText(text, 0);
-						}
-						
-						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.objetoCcb.getCustoEmissao());
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.objetoCcb.getValorIOF());
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", this.objetoCcb.getValorDespesas());
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito());						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontantePagamento", this.objetoCcb.getMontantePagamento());						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasMIP", this.objetoCcb.getNumeroParcelasMIP());						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteMIP", this.objetoCcb.getMontanteMIP());						
-						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasDFI", this.objetoCcb.getNumeroParcelasDFI());						
-						text = trocaValoresDinheiroExtensoXWPF(text, r, "MontanteDFI", this.objetoCcb.getMontanteDFI());
-						text = trocaValoresTaxaExtensoXWPF(text, r, "TarifaAntecipada", this.objetoCcb.getTarifaAntecipada());
-								 
-						if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
-							int iImagem = 0;
-							for(UploadedFile imagem :  filesList) {
-								r.addBreak();
-								this.populateFiles(iImagem);
-								r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
-								r.addBreak();	
-								iImagem++;
-							}
-						} 				
-						text = trocaValoresXWPF(text, r, "ImagemImovel", "");
-						
-						adicionarEnter(text, r);
-			        }
-			    }
-			}
+			for (XWPFParagraph p : document.getParagraphs()) {}
 			
-			for (XWPFTable tbl : document.getTables()) {
-				for (XWPFTableRow row : tbl.getRows()) {
-					for (XWPFTableCell cell : row.getTableCells()) {
-						for (XWPFParagraph p : cell.getParagraphs()) {
-							for (XWPFRun r : p.getRuns()) {
-								String text = r.getText(0);
-								
-								text = trocaValoresXWPF(text, r, "nomeEmitente", this.nomeEmitente);	 		
-								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
-								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
-								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());
-								
-								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
-								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
-								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
-								
-								if (CommonsUtil.mesmoValor(this.fiduciante, true)) {
-									text = trocaValoresXWPF(text, r, "classeEmitente", "");
-								} else {
-									text = trocaValoresXWPF(text, r, "classeEmitente", "DEVEDOR");
-								}
-								
-								if (this.addInterveniente == true) {
-									text = trocaValoresXWPF(text, r, "nomeInterveniente", this.nomeInterveniente);
-									text = trocaValoresXWPF(text, r, "_i", "________________________________________");
-
-								} else {
-									text = trocaValoresXWPF(text, r, "nomeInterveniente", "");
-									text = trocaValoresXWPF(text, r, "INTERVENIENTE", "");
-									text = trocaValoresXWPF(text, r, "ANUENTE", "");
-									text = trocaValoresXWPF(text, r, "_i", "");
-								}
-								if (this.addTerceiro == true) {
-									text = trocaValoresXWPF(text, r, "nomeTerceiroG", this.nomeTerceiroG);
-									text = trocaValoresXWPF(text, r, "_t", "_________________________________________");
-								} else {
-									text = trocaValoresXWPF(text, r, "nomeTerceiroG", "");
-									text = trocaValoresXWPF(text, r, "TERCEIRO", "");
-									text = trocaValoresXWPF(text, r, "GARANTIDOR", "");
-									text = trocaValoresXWPF(text, r, "_t", "");
-								}
-								if (this.addAvalista == true) {
-									text = trocaValoresXWPF(text, r, "nomeAvalista", this.nomeAvalista);
-									text = trocaValoresXWPF(text, r, "_a", "_________________________________________");
-
-								} else {
-									text = trocaValoresXWPF(text, r, "nomeAvalista", "");
-									text = trocaValoresXWPF(text, r, "AVALISTA", "");
-									text = trocaValoresXWPF(text, r, "_a", "");
-								}
-							}
-						}
-					}
-				}
-			}
+			for (XWPFTable tbl : document.getTables()) {}
 			
 			
 			ByteArrayOutputStream  out = new ByteArrayOutputStream ();

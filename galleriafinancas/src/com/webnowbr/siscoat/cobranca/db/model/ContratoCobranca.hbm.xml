@@ -1548,6 +1548,10 @@
 		<property name="chequeDevolvidoRessalva" type="java.lang.String">
 			<column name="chequeDevolvidoRessalva" />
 		</property>
+		
+		<property name="valorPreLaudo" type="big_decimal">
+			<column name="valorPreLaudo" />
+		</property>
 
 	</class>
 </hibernate-mapping>

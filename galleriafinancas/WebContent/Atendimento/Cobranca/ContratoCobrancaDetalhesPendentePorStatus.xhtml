@@ -880,6 +880,17 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido == true}"
 						header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">
+							
+							<p:outputLabel for="valorPreLaudo"
+								value="Valor Pré Laudo: " styleClass="labelBold" />
+							<p:outputLabel id="valorPreLaudo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter"
+								style="FONT-SIZE: 10pt;width:300px;"
+								disabled="#{contratoCobrancaMB.deleteMode}" />
+							
 							<p:outputLabel for="valorMercadoImovel"
 								value="Valor de mercado do imóvel: " styleClass="labelBold" />
 							<p:outputLabel id="valorMercadoImovel"
