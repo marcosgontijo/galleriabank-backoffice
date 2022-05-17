@@ -122,10 +122,10 @@
 									<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 									<p:spacer></p:spacer>
 									<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">
-										<p:selectBooleanButton id="PreAprovadoComite"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-close" style="width:=60px" />
+										<p:selectOneRadio id="PreAprovadoComite" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" >
+								            <f:selectItem itemLabel="Não" itemValue="false" />
+								            <f:selectItem itemLabel="Sim" itemValue="true" />
+									    </p:selectOneRadio>
 									</shiro:hasAnyRoles>
 								</h:panelGrid>								
 							</ui:fragment>
@@ -491,22 +491,6 @@
 					</h:panelGroup>
 				</shiro:hasAnyRoles>
 
-				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
-								styleClass="labelBold" />
-							<h:inputTextarea id="comentarioPendencia"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
-								rows="10" cols="48" maxlength="3000" onblur="" required="true"
-								counterTemplate="{0} characters remaining." autoResize="false"
-								style="FONT-SIZE: 10pt;width:400px;" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</h:inputTextarea>
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-
 				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
 					<h:panelGroup id="comentarioPreComitePanelView"
 						style="margin-bottom:20px;">
@@ -671,6 +655,22 @@
 									</h:panelGrid>
 								</p:panel>
 							</p:overlayPanel>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
+								styleClass="labelBold" />
+							<h:inputTextarea id="comentarioPendencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
+								rows="10" cols="48" maxlength="3000" onblur="" required="true"
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;" >
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

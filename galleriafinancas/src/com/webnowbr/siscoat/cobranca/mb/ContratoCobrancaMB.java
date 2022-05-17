@@ -1870,6 +1870,105 @@ public class ContratoCobrancaMB {
 			System.out.println(ex.getMessage());
 		}
 	}
+	
+	/******
+	 * novo método para envio de emails
+	 */
+	public void enviaEmailAtualizacaoPreContratoNovo() {
+		Locale locale = new Locale("pt", "BR");
+		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+		Date dataHoje = gerarDataHoje();
+
+		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
+				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+				+ "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'>\n"
+				+ "</head>\n" + "<body>\n"
+				+ "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style=' :#f9f7f7'>\n"
+				+ "<div class='adM'> </div>\n"
+				+ "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'>\n"
+				+ "<div class='adM'> </div>\n" + "<div align='center'>\n" + "<div class='adM'> </div>\n"
+				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td>\n"
+				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td width='20'> </td>\n" + "<td>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#71A241;font-size:20px'>Olá\n"
+				+ "<span style='font-weight:bold'>" + this.objetoContratoCobranca.getResponsavel().getNome()
+				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> (Pagador: <b>"
+				+ this.objetoContratoCobranca.getPagador().getNome() + "</b>) teve atualização. </td>\n" + "</tr>\n"
+				+ "</tbody>\n" + "</table>\n"
+				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
+				+ "<table width='100%' style='border-left:3px solid #71A241'>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>DATA DA ATUALIZAÇÃO\n"
+				+ "</span>\n" + "<br><b>" + sdfDataRelComHoras.format(dataHoje) + "\n" + "</b> </td>\n"
+				+ "</tr> </tbody> </table>";
+
+		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #71A241'>" + "<tbody>"
+				+ "<tr>";
+		
+		Collection<ContratoCobranca> listaContrato = new ArrayList<ContratoCobranca>();
+		listaContrato.add(this.objetoContratoCobranca);
+		listaContrato = populaStatus(listaContrato);
+		
+		for (ContratoCobranca c : listaContrato) {
+			if(CommonsUtil.mesmoValor(c.getStatus(), "Em Análise")){
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Pagto. Laudo")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepLaudoPaju.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. DOC")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Registro")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='57' width='120'>"
+						+ "</td>";
+			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='57' width='120'>"
+						+ "</td>";
+			}
+			
+			break;
+		}
+		
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
+
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tbody> " + " </table>" + " </td>" + " <td width='20'> </td>"
+				+ " </tr>" + " </tbod>" + " </table>" + " <br>"
+				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
+				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
+				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://sistema.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
+				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
+				+ " </html>";
+
+		try {
+			ResponsavelDao rDao = new ResponsavelDao();
+			EnviaEmail eec = new EnviaEmail();
+			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
+					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
+					mensagemHtmlTeste);
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	
+	}
 
 	/**
 	 * SERVICO PARA PEGAR O ENDEREÇO AUTOMATICAMENTE
