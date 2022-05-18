@@ -67,7 +67,7 @@
 				<textElement>
 					<font fontName="SansSerif" size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{data})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{data})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="222" width="130" height="20" forecolor="#FFFFFF" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
@@ -77,7 +77,7 @@
 				<textElement>
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxa}.toString())) + "% a.m."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxa}.toString())) + "% a.m. + IPCA"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="431" y="222" width="130" height="20" forecolor="#FFFFFF" uuid="c97eafd7-6f1d-4990-b83d-ca9d96eb7dde"/>
