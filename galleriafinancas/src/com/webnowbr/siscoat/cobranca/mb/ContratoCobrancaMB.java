@@ -1907,42 +1907,34 @@ public class ContratoCobrancaMB {
 		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #71A241'>" + "<tbody>"
 				+ "<tr>";
 		
-		Collection<ContratoCobranca> listaContrato = new ArrayList<ContratoCobranca>();
-		listaContrato.add(this.objetoContratoCobranca);
-		listaContrato = populaStatus(listaContrato);
+		ContratoCobranca contrato = new ContratoCobranca();
+		contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		ContratoCobranca c = contrato;
 		
-		for (ContratoCobranca c : listaContrato) {
-			if(CommonsUtil.mesmoValor(c.getStatus(), "Em Análise")){
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Pagto. Laudo")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepLaudoPaju.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. DOC")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Registro")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='57' width='120'>"
-						+ "</td>";
-			} else if(CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-				mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-						+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='57' width='120'>"
-						+ "</td>";
-			}
-			
-			break;
+		if(CommonsUtil.mesmoValor(c.getStatus(), "Em Análise")){
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='57' width='120'>"
+					+ "</td>";
+		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Pagto. Laudo")) {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='57' width='120'>"
+					+ "</td>";
+		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='57' width='120'>"
+					+ "</td>";
+		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. DOC")) {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='57' width='120'>"
+					+ "</td>";
+		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Registro")) {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='57' width='120'>"
+					+ "</td>";
+		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='57' width='120'>"
+					+ "</td>";
 		}
 		
 		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
@@ -3772,10 +3764,21 @@ public class ContratoCobrancaMB {
 			cpf = con.getPagador().getCnpj();
 		}		
 		
+		BigDecimal parcelaPGTO = BigDecimal
+				.valueOf(FinanceLib.pmt(con.getTaxaPreAprovada().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
+						con.getPrazoMaxPreAprovado().intValue(), // prazo
+						con.getQuantoPrecisa().negate().doubleValue(), // valor credito - VP
+						Double.valueOf("0"), // VF
+						false // pagamento no inico
+				));
+		
+		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
+		
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
-				con.getNumeroContrato(), cpf , con.getTaxaPreAprovada(),
-				con.getMatriculaRessalva(), con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(),
-				con.getImovel().getEstado(), con.getPrazoMaxPreAprovado().toString());
+				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
+				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
+				con.getPrazoMaxPreAprovado().toString(), con.getQuantoPrecisa(), con.getImovel().getValoEstimado(),
+				parcelaPGTO, rendaMinima);
 		list.add(documento);
 		
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
@@ -9284,6 +9287,125 @@ public class ContratoCobrancaMB {
 		return contratos;
 	}
 	
+	public ContratoCobranca populaStatusUnitario(ContratoCobranca contrato) {
+		// POPULA STATUS
+		ContratoCobranca c = contrato;
+
+		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+			c.setStatus("Aprovado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
+			c.setStatus("Reprovado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
+			c.setStatus("Baixado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
+			c.setStatus("Reprovado");
+		} else {
+
+			if (!CommonsUtil.semValor(c.getStatusLead())) {
+				if (c.getStatusLead().equals("Novo Lead")) {
+					c.setStatus("Novo Lead");
+				}
+
+				if (c.getStatusLead().equals("Em Tratamento")) {
+					c.setStatus("Lead em Tratamento");
+				}
+
+				if (c.getStatusLead().equals("Reprovado")) {
+					c.setStatus("Lead Reprovado");
+				}
+
+				if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
+					c.setStatus("Ag. Análise");
+				}
+
+			} else {
+				c.setStatus("Não Definido");
+			}
+
+			if (c.isInicioAnalise()) {
+				c.setStatus("Em Análise");
+			}
+
+			if (c.getCadastroAprovadoValor() != null) {
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+					c.setStatus("Em Análise");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
+					c.setStatus("Análise Pendente");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& !c.isPagtoLaudoConfirmada()) {
+					c.setStatus("Ag. Pagto. Laudo");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+					c.setStatus("Ag. PAJU e Laudo");
+				}
+				
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
+					c.setStatus("Análise Comercial");
+				}
+				
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && !c.isComentarioJuridicoEsteira() ) {
+					c.setStatus("Comentário Jurídico");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
+					c.setStatus("Pré-Comite");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& !c.isDocumentosComite()) {
+					c.setStatus("Ag. Validação DOCs");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && !c.isAprovadoComite()) {
+					c.setStatus("Ag. Comite");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+					c.setStatus("Ag. DOC");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& !c.isCcbPronta()) {
+					c.setStatus("Ag. CCB");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCcbPronta() && c.isAgAssinatura()) {
+					c.setStatus("Ag. Assinatura");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
+					c.setStatus("Ag. Registro");
+				}
+			}
+			if (c.isAnaliseReprovada()) {
+				c.setStatus("Análise Reprovada");
+			}
+		}
+		return contrato;
+	}
+
 	public String geraConsultaContratosPorStatus(String status) {
 		this.tituloTelaConsultaPreStatus = status;
 		
@@ -22915,7 +23037,7 @@ public class ContratoCobrancaMB {
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
 				
-				if(!arquivo.getName().contains("interno")) {
+				if(!arquivo.getName().contains("interno") && !arquivo.getName().contains("faltante")) {
 					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 				}
 			}
