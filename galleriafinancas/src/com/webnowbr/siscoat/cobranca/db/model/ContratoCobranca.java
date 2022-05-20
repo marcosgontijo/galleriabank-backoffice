@@ -344,6 +344,14 @@ public class ContratoCobranca implements Serializable {
 	private Date pagtoLaudoConfirmadaData;
 	private boolean pagtoLaudoConfirmada;
 	private String pagtoLaudoConfirmadaUsuario;
+	
+	private Date analiseComercialData;
+	private boolean analiseComercial;
+	private String analiseComercialUsuario;
+	
+	private Date comentarioJuridicoEsteiraData;
+	private boolean comentarioJuridicoEsteira;
+	private String comentarioJuridicoEsteiraUsuario;
 
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
@@ -609,6 +617,17 @@ public class ContratoCobranca implements Serializable {
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
 		
+		limparPrimitivos();
+	}
+	
+	public void limparPrimitivos() {
+		this.diaMes = 0;
+		this.qtdeParcelas = 0;
+		this.mesesCarencia = 0;
+		this.parcelasVencidas = 0;	
+		this.contratoResgatadoBaixar = false;
+		this.corrigidoIPCA = false;
+		this.recalculaIPCA = false;
 		this.exibeRecebedor1 = true;
 		this.exibeRecebedor2 = true;
 		this.exibeRecebedor3 = true;
@@ -619,9 +638,109 @@ public class ContratoCobranca implements Serializable {
 		this.exibeRecebedor8 = true;
 		this.exibeRecebedor9 = true;
 		this.exibeRecebedor10 = true;
+		this.ocultaRecebedor = false;
+		this.ocultaRecebedor2 = false;
+		this.ocultaRecebedor3 = false;
+		this.ocultaRecebedor4 = false;
+		this.ocultaRecebedor5 = false;
+		this.ocultaRecebedor6 = false;
+		this.ocultaRecebedor7 = false;
+		this.ocultaRecebedor8 = false;
+		this.ocultaRecebedor9 = false;
+		this.ocultaRecebedor10 = false;
+		this.recebedorEnvelope = false;
+		this.recebedorEnvelope2 = false;
+		this.recebedorEnvelope3 = false;
+		this.recebedorEnvelope4 = false;
+		this.recebedorEnvelope5 = false;
+		this.recebedorEnvelope6 = false;
+		this.recebedorEnvelope7 = false;
+		this.recebedorEnvelope8 = false;
+		this.recebedorEnvelope9 = false;
+		this.recebedorEnvelope10 = false;
+		this.recebedorGarantido1 = false;
+		this.recebedorGarantido2 = false;
+		this.recebedorGarantido3 = false;
+		this.recebedorGarantido4 = false;
+		this.recebedorGarantido5 = false;
+		this.recebedorGarantido6 = false;
+		this.recebedorGarantido7 = false;
+		this.recebedorGarantido8 = false;
+		this.recebedorGarantido9 = false;
+		this.recebedorGarantido10 = false;
+		this.parcelasAlteradas1 = false;
+		this.parcelasAlteradas2 = false;
+		this.parcelasAlteradas3 = false;
+		this.parcelasAlteradas4 = false;
+		this.parcelasAlteradas5 = false;
+		this.parcelasAlteradas6 = false;
+		this.parcelasAlteradas7 = false;
+		this.parcelasAlteradas8 = false;
+		this.parcelasAlteradas9 = false;
+		this.parcelasAlteradas10 = false;		
+		this.geraParcelaFinal = false;
+		this.contratoRestritoAdm = false;
+		this.contratoLead = false; 
+		this.leadCompleto = false;
+		this.inicioAnalise = false;
+		this.analiseReprovada = false;
+		this.cadastroAprovado = false;
+		this.matriculaAprovada = false;
+		this.laudoRecebido = false;	
+		this.pajurFavoravel = false;
+		this.pagtoLaudoConfirmada = false;
+		this.analiseComercial = false;
+		this.comentarioJuridicoEsteira = false;
+		this.documentosCompletos = false;
+		this.ccbPronta = false;
+		this.agAssinatura = false;
+		this.agRegistro = false;
+		this.documentosComite = false;
+		this.preAprovadoComite = false;
+		this.aprovadoComite = false;
+		this.aguardandoDocumento = false;
+		this.matriculaReprovada = false;
+		this.fotoImovelAprovada = false;	
+		this.fotoImovelReprovada = false;		
+		this.aprovado = false;		
+		this.reprovado = false;		
+		this.semFotoImovel = false;	
+		this.documentosIncompletos = false;
+		this.cadastroReprovado = false;	
+		this.aguardandoCertidoes = false;
+		this.aguardandoCND = false;	
+		this.agendarVisitaEmpresa = false;	
+		this.visitaEmpresaAprovada = false;
+		this.visitaEmpresaReprovada = false;		
+		this.agendarVisitaImovel = false;	
+		this.visitaImovelAprovada = false;
+		this.visitaImovelReprovada = false;	
+		this.enviadoCobrancaLaudo = false;
+		this.laudoSolicitado = false;	
+		this.pajurSolicitado = false;
+		this.pajurDesfavoravel = false;		
+		this.reanalisarPajur = false;	
+		this.aguardandoInvestidor = false;	
+		this.agendadoCartorio = false;
+		this.contratoAssinado = false;
+		this.temSeguro = false;
+		this.temSeguroDFI = false;
+		this.temSeguroMIP = false;
+		this.enviadoJsonBRL = false;
+		this.pagadorDonoGarantia = false;	
+		this.rgDocumentosCheckList = false;
+		this.comprovanteEnderecoDocumentosCheckList = false;
+		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
+		this.fichaCadastralDocumentosCheckList = false;
+		this.bancoDocumentosCheckList = false;
+		this.telefoneEmailDocumentosCheckList = false;		
+		this.rgDocumentosSecundarioCheckList = false;
+		this.comprovanteEnderecoDocumentosSecundarioCheckList = false;
+		this.certidaoCasamentoNascimentoDocumentosSecundarioCheckList = false;
+		this.fichaCadastralDocumentosSecundarioCheckList = false;
+		this.bancoDocumentosSecundarioCheckList = false;
+		this.telefoneEmailDocumentosSecundarioCheckList = false;
 	}
-	
-	
 	
 	private void reordenaListagemDetalhes() {
 		if (CommonsUtil.semValor(listContratoCobrancaDetalhes))
@@ -4741,5 +4860,53 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorPreLaudo(BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
+	}
+
+	public Date getAnaliseComercialData() {
+		return analiseComercialData;
+	}
+
+	public void setAnaliseComercialData(Date analiseComercialData) {
+		this.analiseComercialData = analiseComercialData;
+	}
+
+	public boolean isAnaliseComercial() {
+		return analiseComercial;
+	}
+
+	public void setAnaliseComercial(boolean analiseComercial) {
+		this.analiseComercial = analiseComercial;
+	}
+
+	public String getAnaliseComercialUsuario() {
+		return analiseComercialUsuario;
+	}
+
+	public void setAnaliseComercialUsuario(String analiseComercialUsuario) {
+		this.analiseComercialUsuario = analiseComercialUsuario;
+	}
+
+	public Date getComentarioJuridicoEsteiraData() {
+		return comentarioJuridicoEsteiraData;
+	}
+
+	public void setComentarioJuridicoEsteiraData(Date comentarioJuridicoEsteiraData) {
+		this.comentarioJuridicoEsteiraData = comentarioJuridicoEsteiraData;
+	}
+
+	public boolean isComentarioJuridicoEsteira() {
+		return comentarioJuridicoEsteira;
+	}
+
+	public void setComentarioJuridicoEsteira(boolean comentarioJuridicoEsteira) {
+		this.comentarioJuridicoEsteira = comentarioJuridicoEsteira;
+	}
+
+	public String getComentarioJuridicoEsteiraUsuario() {
+		return comentarioJuridicoEsteiraUsuario;
+	}
+
+	public void setComentarioJuridicoEsteiraUsuario(String comentarioJuridicoEsteiraUsuario) {
+		this.comentarioJuridicoEsteiraUsuario = comentarioJuridicoEsteiraUsuario;
 	}		
 }

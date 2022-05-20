@@ -5202,7 +5202,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
-							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, status ";
+							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status ";
 						
 					query = query + " order by id desc";
 					
@@ -5238,6 +5238,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDocumentosComite(rs.getBoolean("documentosComite"));
 						contratoCobranca.setAprovadoComite(rs.getBoolean("AprovadoComite"));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean("analisereprovada"));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean("comentarioJuridicoEsteira"));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean("analiseComercial"));
+						
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
@@ -5257,7 +5260,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	pare.nome, gerente.nome, "
 			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
-			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.status "
+			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -5294,7 +5297,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
-							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, status ";
+							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status ";
 						
 					query = query + " order by id desc";
 					
@@ -5330,6 +5333,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDocumentosComite(rs.getBoolean("documentosComite"));
 						contratoCobranca.setAprovadoComite(rs.getBoolean("AprovadoComite"));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean("analisereprovada"));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean("comentarioJuridicoEsteira"));
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
@@ -5496,7 +5500,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
-		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario " +
+		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -5552,38 +5556,48 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false) ";
 					} 
 					
+					if (tipoConsulta.equals("Análise Comercial")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = false ";
+					} 
+					
+					if (tipoConsulta.equals("Comentario Jurídico")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = false ";
+					} 
+					
 					if (tipoConsulta.equals("Pré-Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Documentos Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = true and documentosComite = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. DOC")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and  documentosCompletos = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and  documentosCompletos = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. CCB")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Assinatura")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
 					}
 					if (tipoConsulta.equals("Ag. Registro")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";
 					}
 					
 					if (tipoConsulta.equals("Análise Reprovada")) {
@@ -5676,6 +5690,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
 						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
 						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
+						contratoCobranca.setStatus(rs.getString(28));
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						
 						
@@ -5747,10 +5764,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					// Verifica o tipo da consulta de contratos
 					if (tipoConsulta.equals("Baixado")) {
 						//
-						query = query + " and status = 'Reprovado' ";
+						query = query + " and status = 'Baixado' ";
 					}
 					if (tipoConsulta.equals("Reprovado")) {
-						query = query + " and status != 'Baixado' "; 
+						query = query + " and status = 'Reprovado' "; 
 					}
 					
 					String queryResponsavel = "";
@@ -5839,6 +5856,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
 						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
 						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
+						contratoCobranca.setStatus(rs.getString(28));
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						
 						
