@@ -836,6 +836,10 @@ public class InvestidorMB {
 			}
 		}
 		
+		if (numeroContrato.equals("01287")) {			
+			saldoAnterior = new BigDecimal(177000.00).setScale(2);
+		}
+		
 		/****
 		 * TODOS CONTRATOS GERADOS NO ANTERIOR E QUE NÃO TIVERAM BAIXA
 		 */
