@@ -36,6 +36,18 @@
 	<field name="prazo" class="java.lang.String">
 		<fieldDescription><![CDATA[prazo]]></fieldDescription>
 	</field>
+	<field name="valorSolicitado" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorSolicitado]]></fieldDescription>
+	</field>
+	<field name="valorGarantia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorGarantia]]></fieldDescription>
+	</field>
+	<field name="valorParcela" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorParcela]]></fieldDescription>
+	</field>
+	<field name="rendaMinima" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[rendaMinima]]></fieldDescription>
+	</field>
 	<variable name="Number" class="java.lang.String">
 		<variableExpression><![CDATA["12.34"]]></variableExpression>
 	</variable>
@@ -70,17 +82,17 @@
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{data})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="160" y="222" width="130" height="20" forecolor="#FFFFFF" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
+				<reportElement x="136" y="222" width="160" height="20" forecolor="#FFFFFF" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement>
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxa}.toString())) + "% a.m. + IPCA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{taxa}) + "% a.m. + IPCA"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="431" y="222" width="130" height="20" forecolor="#FFFFFF" uuid="c97eafd7-6f1d-4990-b83d-ca9d96eb7dde"/>
+				<reportElement x="408" y="222" width="130" height="20" forecolor="#FFFFFF" uuid="c97eafd7-6f1d-4990-b83d-ca9d96eb7dde"/>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
@@ -130,7 +142,7 @@
 				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="36" y="385" width="254" height="20" forecolor="#92D050" uuid="87bb4f94-0044-4bba-972f-ce394751d760"/>
+				<reportElement x="35" y="385" width="254" height="20" forecolor="#92D050" uuid="87bb4f94-0044-4bba-972f-ce394751d760"/>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
@@ -140,7 +152,7 @@
 				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="35" y="460" width="86" height="20" forecolor="#000000" uuid="18a36d71-2282-4f00-9e36-6d92d02392a7"/>
+				<reportElement x="35" y="614" width="86" height="20" forecolor="#000000" uuid="18a36d71-2282-4f00-9e36-6d92d02392a7"/>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
@@ -148,6 +160,46 @@
 					<font fontName="SansSerif" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Matrícula: " + $F{observacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="467" width="255" height="20" forecolor="#92D050" uuid="2ef9b2fe-67a5-4d6e-b401-17f4f68f483b"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorSolicitado})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="306" y="467" width="255" height="20" forecolor="#92D050" uuid="2d316838-4a97-4d7c-a195-1aed8a61424e"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorGarantia})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="550" width="255" height="20" forecolor="#92D050" uuid="e2115c55-22e7-45f1-bbfb-3724ea1f7166"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="306" y="550" width="255" height="20" forecolor="#92D050" uuid="1e0342a9-402d-4dcb-b922-aa8ae22ca63d"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{rendaMinima})]]></textFieldExpression>
 			</textField>
 		</band>
 	</background>

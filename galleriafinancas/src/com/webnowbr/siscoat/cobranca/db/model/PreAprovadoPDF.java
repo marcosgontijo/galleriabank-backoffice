@@ -22,8 +22,14 @@ public class PreAprovadoPDF implements Serializable {
 	private String uf;
 	private String prazo;
 	
+	private BigDecimal valorSolicitado;
+	private BigDecimal valorGarantia;
+	private BigDecimal valorParcela;
+	private BigDecimal rendaMinima;
+	
 	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
-			String cidade, String matricula, String uf, String prazo) {
+			String cidade, String matricula, String uf, String prazo, BigDecimal valorSolicitado,
+			BigDecimal valorGarantia, BigDecimal valorParcela, BigDecimal rendaMinima) {
 		super();
 		this.nome = nome;
 		this.data = data;
@@ -35,8 +41,12 @@ public class PreAprovadoPDF implements Serializable {
 		this.matricula = matricula;
 		this.uf = uf;
 		this.prazo = prazo;
+		this.valorSolicitado = valorSolicitado;
+		this.valorGarantia = valorGarantia;
+		this.valorParcela = valorParcela;
+		this.rendaMinima = rendaMinima;
 	}
-	
+
 	public String getNome() {
 		return nome;
 	}
@@ -97,5 +107,28 @@ public class PreAprovadoPDF implements Serializable {
 	public void setPrazo(String prazo) {
 		this.prazo = prazo;
 	}
-	
+	public BigDecimal getValorSolicitado() {
+		return valorSolicitado;
+	}
+	public void setValorSolicitado(BigDecimal valorSolicitado) {
+		this.valorSolicitado = valorSolicitado;
+	}
+	public BigDecimal getValorGarantia() {
+		return valorGarantia;
+	}
+	public void setValorGarantia(BigDecimal valorGarantia) {
+		this.valorGarantia = valorGarantia;
+	}
+	public BigDecimal getValorParcela() {
+		return valorParcela;
+	}
+	public void setValorParcela(BigDecimal valorParcela) {
+		this.valorParcela = valorParcela;
+	}
+	public BigDecimal getRendaMinima() {
+		return rendaMinima;
+	}
+	public void setRendaMinima(BigDecimal rendaMinima) {
+		this.rendaMinima = rendaMinima;
+	}
 }

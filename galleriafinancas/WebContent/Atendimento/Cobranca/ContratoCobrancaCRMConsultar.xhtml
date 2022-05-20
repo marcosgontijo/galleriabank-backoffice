@@ -66,7 +66,7 @@
 				</div>
 				<div class="ui-g-8 ui-md-8 ui-lg-8">
 				    <p:fieldset id="opcoes" legend="Opções de Consulta" style="font-weight: bold;margin-top: 2px;background-color: #b7e6ba !important;">						        
-				        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 70px;padding-top: 0px;">
+				        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 100px;padding-top: 0px;">
 					        <p:commandButton value="Todos" ajax="false" action="#{crmMB.consultaContratosCRM('Todos')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Novo Lead" ajax="false" action="#{crmMB.consultaContratosCRM('NovoLead')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
@@ -81,6 +81,10 @@
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. PAJU e Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPAJULaudo')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Análise Comercial" ajax="false" action="#{crmMB.consultaContratosCRM('analiseComercial')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Comentário Jurídico" ajax="false" action="#{crmMB.consultaContratosCRM('comentarioJuridicoEsteira')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Pré-Comite" ajax="false" action="#{crmMB.consultaContratosCRM('PreComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. Comite" ajax="false" action="#{crmMB.consultaContratosCRM('AgComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
@@ -92,12 +96,10 @@
 							<p:commandButton value="Ag. Assinatura" ajax="false" action="#{crmMB.consultaContratosCRM('AgAssinatura')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. Registro" ajax="false" action="#{crmMB.consultaContratosCRM('AgRegistro')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-							<shiro:hasAnyRoles name="ROOT">
-								<p:spacer width="6"></p:spacer>
-								<p:commandButton value="Baixado" ajax="false" action="#{crmMB.consultaContratosCRM('Baixado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-								<p:spacer width="6"></p:spacer>
-								<p:commandButton value="Reprovado" ajax="false" action="#{crmMB.consultaContratosCRM('Reprovado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-							</shiro:hasAnyRoles>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Baixado" ajax="false" action="#{crmMB.consultaContratosCRM('Baixado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Reprovado" ajax="false" action="#{crmMB.consultaContratosCRM('Reprovado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
 				       	</div>					       	
   					</p:fieldset>					
 				</div>

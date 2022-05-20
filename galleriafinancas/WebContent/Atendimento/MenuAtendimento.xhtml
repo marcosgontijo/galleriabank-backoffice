@@ -98,18 +98,15 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">
 									<p:menuitem value="Pré-Contratos"
 										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PRECOBRANCA">
 									<p:menuitem value="Contratos Reprovados"
 										action="#{contratoCobrancaMB.geraConsultaContratosReprovados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-										
 									<p:menuitem value="Contratos Baixados"
 										action="#{contratoCobrancaMB.geraConsultaContratosBaixados}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -136,36 +133,39 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU e Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles
-									name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">
-									<p:menuitem value="05 - Pré-Comite"
+									<p:menuitem value="05 - Análise Comercial"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Comercial')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />						
+									<p:menuitem value="06 - Comentario Jurídico"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Comentario Jurídico')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />					
+									<p:menuitem value="07 - Pré-Comite"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pré-Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-									<p:menuitem value="05.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
+										styleClass="itemMenu" />							
+									<p:menuitem value="07.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Documentos Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />	
-									<p:menuitem value="06 - Ag. Comite:  #{loginBean.numeroContratosComite}"
+									<p:menuitem value="08 - Ag. Comite:  #{loginBean.numeroContratosComite}"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="07 - Ag. DOC"
+									<p:menuitem value="09 - Ag. DOC"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="08 - Ag. CCB"
+									<p:menuitem value="10 - Ag. CCB"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. CCB')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="09 - Ag. Assinatura"
+									<p:menuitem value="11 - Ag. Assinatura"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Assinatura')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="10 - Ag. Registro"
+									<p:menuitem value="12 - Ag. Registro"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />

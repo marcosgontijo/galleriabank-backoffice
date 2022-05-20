@@ -1552,6 +1552,30 @@
 		<property name="valorPreLaudo" type="big_decimal">
 			<column name="valorPreLaudo" />
 		</property>
+		
+		<property name="analiseComercialData" type="java.util.Date">
+			<column name="analiseComercialData" />
+		</property>
+		
+		<property name="analiseComercial" type="boolean">
+			<column name="analiseComercial" />
+		</property>		
+		
+		<property name="analiseComercialUsuario" type="java.lang.String">
+			<column name="analiseComercialUsuario" />
+		</property>	
+			
+		<property name="comentarioJuridicoEsteiraData" type="java.util.Date">
+			<column name="comentarioJuridicoEsteiraData" />
+		</property>
+		
+		<property name="comentarioJuridicoEsteira" type="boolean">
+			<column name="comentarioJuridicoEsteira" />
+		</property>	
+			
+		<property name="comentarioJuridicoEsteiraUsuario" type="java.lang.String">
+			<column name="comentarioJuridicoEsteiraUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>
