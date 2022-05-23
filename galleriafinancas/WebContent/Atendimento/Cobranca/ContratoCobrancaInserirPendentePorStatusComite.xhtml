@@ -153,31 +153,50 @@
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
+										<p:outputLabel styleClass="labelBold">Análise Comercial</p:outputLabel>
 										<p:spacer ></p:spacer>		
-										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
-											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
-											</p:selectBooleanButton>
-										</shiro:hasAnyRoles>														    						    
-									</h:panelGrid>
-								</ui:fragment>
-								
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
-									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
-										<p:spacer ></p:spacer>		
-										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
-											<p:selectBooleanButton id="DocumentosComite" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppComite}" />
-											</p:selectBooleanButton>
+										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">									
+											<p:selectBooleanButton id="analiseComercial" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />		
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>
 								</ui:fragment>
 								
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Comentário Jurídico</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="comentarioJuridicoEsteira" value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />		
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;" 
+										 rendered="#{!contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">	
+										<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
+											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+											</p:selectBooleanButton>
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">	
+										<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="documentosComite" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+											</p:selectBooleanButton>
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -193,7 +212,7 @@
 									</h:panelGrid>
 								</ui:fragment>
 								
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -205,7 +224,7 @@
 									</h:panelGrid>
 								</ui:fragment>
 																
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 9}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -213,12 +232,11 @@
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="ccbPronta" value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAgAssintura}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 10}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; 
@@ -227,12 +245,11 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="agAssinatura" value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}" onLabel="Não assinado" offLabel="Assinado" onIcon="ui-icon-close" offIcon="ui-icon-check" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppAssinado}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 9}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; margin-left: 20px;">	
@@ -243,7 +260,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 5)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 7)}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -266,7 +283,7 @@
 									</p:commandButton>	
 									
 									<!-- -->
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 6 and contratoCobrancaMB.indexStepsStatusContrato le 8}">
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 10}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -280,7 +297,7 @@
 										</h:panelGrid>
 									</ui:fragment>
 									
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 5}">
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 7}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -294,7 +311,7 @@
 										</h:panelGrid>
 									</ui:fragment>
 									
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 4 and contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 6 and contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
