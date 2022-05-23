@@ -5531,11 +5531,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 					}
 					if (tipoConsulta.equals("Lead")) {
-						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' "; 
+						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' and c.statusLead != 'Arquivado' "; 
 					}
 					
 					if (tipoConsulta.equals("Aguardando Análise")) {
-						query = query + " and analiseReprovada = false and inicioanalise = false and c.statusLead = 'Completo' "; 
+						query = query + " and analiseReprovada = false and inicioanalise = false and c.statusLead = 'Completo' and res.codigo != 'lead' "; 
 					}
 					
 					if (tipoConsulta.equals("Em Analise")) {
@@ -7000,7 +7000,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});
 	}
 
-	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel, laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite "
+	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel, laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite, analiseComercial, comentarioJuridicoEsteira, aprovadocomite "
 			 + " from cobranca.contratocobranca c "  
 			 + " where c.id = ?";
 	
@@ -7034,7 +7034,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobrancaStatus.setLaudoRecebido(rs.getBoolean(6));
 						contratoCobrancaStatus.setContratoPreAprovado(rs.getString(7));	
 						contratoCobrancaStatus.setPreAprovadoComite(rs.getBoolean(8));
-						contratoCobrancaStatus.setDocumentosComite(rs.getBoolean(9));	
+						contratoCobrancaStatus.setDocumentosComite(rs.getBoolean(9));
+						contratoCobrancaStatus.setAnaliseComercial(rs.getBoolean(10));
+						contratoCobrancaStatus.setComentarioJuridicoEsteira(rs.getBoolean(11));
+						contratoCobrancaStatus.setAprovadoComite(rs.getBoolean(12));
 					}
 	
 				} finally {
