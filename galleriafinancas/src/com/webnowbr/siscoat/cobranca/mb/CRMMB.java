@@ -23,6 +23,10 @@ public class CRMMB {
 	private int qtdeLeads;
 	private BigDecimal valorTotalLeads;
 	
+	private List<ContratoCobranca> agAnalise;
+	private int qtdeAgAnalise;
+	private BigDecimal valorTotalAgAnalise;
+	
 	private List<ContratoCobranca> emAnalise;
 	private int qtdeEmAnalise;
 	private BigDecimal valorTotalEmAnalise;
@@ -98,6 +102,7 @@ public class CRMMB {
 	
 	public String clearFields() {
 		geraConsultaContratosNovoLead();
+		geraConsultaContratosAgAnalise();
 		geraConsultaContratosEmAnalise();
 		geraConsultaContratosAgPagtoBoleto();
 		geraConsultaContratosAgPAJUeLaudo();
@@ -132,6 +137,14 @@ public class CRMMB {
 			this.valorTodosContratos = this.valorTotalLeads;
 			
 			this.tituloPagina = "Novo Lead";
+		}
+		if (filtro.equals("AgAnalise")) {
+			geraConsultaContratosAgAnalise();
+			this.todosContratos = this.agAnalise;
+			this.qtdeTodosContratos = this.qtdeAgAnalise;
+			this.valorTodosContratos = this.valorTotalAgAnalise;
+			
+			this.tituloPagina = "Ag Análise";
 		}
 		if (filtro.equals("EmAnalise")) {
 			geraConsultaContratosEmAnalise();
@@ -336,6 +349,40 @@ public class CRMMB {
 			}
 		}
 	}
+	
+	public void geraConsultaContratosAgAnalise() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.agAnalise = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.agAnalise = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Aguardando Análise");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.agAnalise = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Aguardando Análise"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAgAnalise = 0;
+		this.valorTotalAgAnalise = BigDecimal.ZERO;
+		
+		if (this.agAnalise.size() > 0) {
+			this.qtdeAgAnalise = this.agAnalise.size();
+			
+			for (ContratoCobranca c : this.agAnalise) {
+				this.valorTotalAgAnalise = valorTotalAgAnalise.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+
 	
 	public void geraConsultaContratosAnaliseReprovada() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -860,6 +907,10 @@ public class CRMMB {
 					
 					if (c.getStatusLead().equals("Reprovado")) {
 						c.setStatus("Lead Reprovado");
+					}
+					
+					if (c.getStatusLead().equals("Arquivado") && !c.isInicioAnalise()) {
+						c.setStatus("Lead Arquivado");
 					}
 
 					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
