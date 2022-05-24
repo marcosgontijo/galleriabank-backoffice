@@ -1919,28 +1919,30 @@ public class ContratoCobrancaMB {
 		
 		if(CommonsUtil.mesmoValor(c.getStatus(), "Em Análise")){
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='343.2' width='486'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Pagto. Laudo")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='343.2' width='486'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='343.2' width='486'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. DOC")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='343.2' width='486'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Registro")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='343.2' width='486'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='57' width='120'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='343.2' width='486'>"
 					+ "</td>";
+		} else {
+			return;
 		}
 			
 		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
@@ -1958,7 +1960,7 @@ public class ContratoCobrancaMB {
 		try {
 			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
+			eec.enviarEmailHtmlResponsavelAdms("lucaslamr@gmail.com",
 					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
 					mensagemHtmlTeste);
 
@@ -6654,7 +6656,7 @@ public class ContratoCobrancaMB {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";  
 			}
 		} else if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
-			if( CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(25)) || CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(176)) || CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(709))) {
+			if( CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(25)) || CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(176)) ) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
