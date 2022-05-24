@@ -14,6 +14,9 @@ public class SimulacaoDetalheVO {
 	private BigDecimal saldoDevedorFinal;
 
 	private BigDecimal valorIOF;
+	
+	private BigDecimal txAdm;
+	
 //	private BigDecimal valorIOFAdicional;
 
 	public SimulacaoDetalheVO() {
@@ -104,6 +107,14 @@ public class SimulacaoDetalheVO {
 		this.valorIOF = valorIOF;
 	}
 
+	public BigDecimal getTxAdm() {
+		return txAdm;
+	}
+
+	public void setTxAdm(BigDecimal txAdm) {
+		this.txAdm = txAdm;
+	}
+
 //	public BigDecimal getValorIOFAdicional() {
 //		return valorIOFAdicional;
 //	}
@@ -112,4 +123,5 @@ public class SimulacaoDetalheVO {
 //		this.valorIOFAdicional = valorIOFAdicional;
 //	}
 
+	
 }

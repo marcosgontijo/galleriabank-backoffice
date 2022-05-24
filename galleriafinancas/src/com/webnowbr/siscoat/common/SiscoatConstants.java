@@ -21,6 +21,8 @@ public class SiscoatConstants {
 	public static final BigDecimal VALOR_FIDC = BigDecimal.valueOf(75000000);
 	public static final BigDecimal TAXA_AA_FIDC = BigDecimal.valueOf(5.8);
 	
+	public static final BigDecimal TAXA_ADM = BigDecimal.valueOf(25);
+	
 	@SuppressWarnings("deprecation")
 	public static Date TROCA_IOF = new Date(2021-1900, 9-1, 19);
 	
@@ -37,4 +39,6 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_ADICIONAL = BigDecimal.valueOf(0.38);
 
 	public static final List<Long> PAGADOR_GALLERIA = Arrays.asList(15l, 34l, 14l, 182l, 417l, 803l);
+	
+	public static final List<Long> COMERCIAL_INTERNO = Arrays.asList(15l, 34l, 14l, 182l, 417l, 803l);
 }

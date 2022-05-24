@@ -284,8 +284,8 @@ public class SimuladorMB {
 
 		final ReportUtil ReportUtil = new ReportUtil();
 
-		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCredito");
-		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelas");
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoNovo");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelasNovo");
 		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -310,7 +310,7 @@ public class SimuladorMB {
 		final ReportUtil ReportUtil = new ReportUtil();
 
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoNovo");
-		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimulacaoCreditoParcelasNovo");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimuladorparcelasTeste");
 		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
