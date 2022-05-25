@@ -3029,6 +3029,7 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 									this.objetoContratoCobranca.setAprovadoComite(true);
+									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 								}
 							} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 								this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));

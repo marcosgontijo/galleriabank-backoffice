@@ -5329,7 +5329,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText(cidadeEmitente+" – " + this.objetoCcb.getUfEmitente());
+				run.setText(this.objetoCcb.getCidadeEmitente() +" – " + this.objetoCcb.getUfEmitente());
 				run.setFontSize(10);
 				run.setBold(false);
 				
