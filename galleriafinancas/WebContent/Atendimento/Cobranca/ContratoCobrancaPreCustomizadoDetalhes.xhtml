@@ -529,7 +529,7 @@
 
 
 								<p:outputLabel for="preAnocaoCartorioData"
-									value="Data da Pré-Anotação: " styleClass="labelBold" />
+									value="Data da Prenotação: " styleClass="labelBold" />
 								<p:outputLabel id="preAnocaoCartorioData"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.preAnocaoCartorioData}"
 									size="100" styleClass="dateTimeField">
@@ -1002,15 +1002,17 @@
 								converter="bigDecimalConverter"
 								style="FONT-SIZE: 10pt;width:300px;" />
 						</h:panelGrid>
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
-							<p:outputLabel for="comentarioJuridico"
-								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:outputLabel id="comentarioJuridico" rows="10" cols="48"
-								counter="display"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
-							<p:outputLabel id="display" />
-						</h:panelGrid>
+						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
+							<h:panelGrid columns="2"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
+								<p:outputLabel for="comentarioJuridico"
+									value="Comentario Juridico: " styleClass="labelBold" />
+								<p:outputLabel id="comentarioJuridico" rows="10" cols="48"
+									counter="display"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
+								<p:outputLabel id="display" />
+							</h:panelGrid>
+						</shiro:hasAnyRoles>
 					</p:panel>
 				</h:panelGroup>
 				
