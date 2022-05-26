@@ -1636,8 +1636,8 @@ public class BRLTrustMB {
 					jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
 					JSONObject jsonValores = new JSONObject();
 					
-					if (parcela.getValorAmortizacaoSemIPCA() != null && parcela.getValorJurosSemIPCA() != null) {
-						jsonValores.put("face", parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+					if (parcela.getVlrAmortizacaoParcela() != null && parcela.getVlrJurosParcela() != null) {
+						jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()).setScale(2, RoundingMode.HALF_EVEN));
 					} else {
 						this.jsonGerado = false;
 						
