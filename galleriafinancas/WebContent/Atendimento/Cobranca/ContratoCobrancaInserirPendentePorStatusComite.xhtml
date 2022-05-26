@@ -72,12 +72,16 @@
 							</p:steps>
 					 	</ui:fragment>		
 					 	<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
-					 		<h:panelGrid columns="12">	
+					 		<h:panelGrid columns="14">	
 								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
 								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
 								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
 								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
 								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>
+								    
+								    <p:menuitem id="analiseComercialStep" value="Análise Comercial"/>
+								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>
+								    
 								    <p:menuitem id="preComiteStep" value="Pré-Comitê"/>
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
 								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
@@ -106,7 +110,7 @@
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
 											<p:selectOneRadio id="cadastroAprovado" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 									            <f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-									             <f:selectItem itemLabel="Pendente" itemValue="Pendente" />
+									            <f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 									            <p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" event="change" /> 
 									        </p:selectOneRadio>
@@ -132,7 +136,6 @@
 										<p:spacer height="50"></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="laudoRecebido" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
@@ -143,7 +146,6 @@
 										<p:spacer ></p:spacer>	
 										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pajurFavoravel" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px">
-												<p:ajax	event="valueChange" listener="#{contratoCobrancaMB.controlaWhatsAppPajuLaudoRecebido}" />
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>
@@ -269,9 +271,9 @@
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">														
 											<p:selectOneRadio id="cadastroAprovadoAgAnalise" unselectable="true" value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}" >
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-										    	 <f:selectItem itemLabel="Pendente" itemValue="Pendente" />
+										    	<f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										    	<p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" event="change" /> 
+										    	<p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" /> 
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>
@@ -353,7 +355,6 @@
 										    	<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										    	 <f:selectItem itemLabel="Pendente" itemValue="Pendente" />
 										    	<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-										    	 <p:ajax update="AnaliseReprovadaPanel AnalisePendentePanel" listener="#{contratoCobrancaMB.controlaWhatsAppPreAprovado}"/>
 										    </p:selectOneRadio>
 										</shiro:hasAnyRoles>						    								    													    						   
 									</h:panelGrid>
@@ -421,6 +422,30 @@
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
 						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentAnaliseComercial" for="analiseComercialStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
 									<f:convertDateTime locale="pt_BR"  />
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
