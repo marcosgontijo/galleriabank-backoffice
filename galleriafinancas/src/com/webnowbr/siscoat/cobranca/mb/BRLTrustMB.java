@@ -1654,14 +1654,14 @@ public class BRLTrustMB {
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
-							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosCessao(), contrato.getDataAquisicaoCessao()));
+							jsonValores.put("aquisicao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosCessao(), contrato.getDataAquisicaoCessao()));
 						} else {
-							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+							jsonValores.put("aquisicao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
 						}
 					} 
 					
 					//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-					jsonValores.put("liquidacao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+					jsonValores.put("liquidacao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
 					
 					jsonRecebivel.put("valores", jsonValores);
 					
@@ -2155,6 +2155,47 @@ public class BRLTrustMB {
 		
 		if (parcelas.getValorJurosSemIPCA() != null && parcelas.getValorAmortizacaoSemIPCA() != null) {
 			saldo = parcelas.getValorJurosSemIPCA().add(parcelas.getValorAmortizacaoSemIPCA());
+		}
+		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
+	
+	public BigDecimal calcularValorPresenteParcelaComIPCA(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
+		BigDecimal valorPresenteParcela;
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
+		BigDecimal juros = txJuros;
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
 		}
 		
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
