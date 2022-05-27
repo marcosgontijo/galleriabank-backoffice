@@ -1661,7 +1661,7 @@ public class BRLTrustMB {
 					} 
 					
 					//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-					jsonValores.put("liquidacao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+					jsonValores.put("liquidacao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 					
 					jsonRecebivel.put("valores", jsonValores);
 					
