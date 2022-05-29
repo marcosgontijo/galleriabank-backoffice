@@ -265,7 +265,7 @@ public class BRLTrustMB {
 				if (parcelasVencidas <= 1) {
 					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 							if (parcela.getDataVencimento().after(this.dataValorPresente) && !parcela.isParcelaPaga()) {
-								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaDiaUtilComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
+								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaComIPCAGambiarra(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 								parcelasAVencer = parcelasAVencer +1 ;
 							}
 					}
