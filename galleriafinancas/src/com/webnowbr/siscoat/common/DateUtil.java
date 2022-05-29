@@ -1,8 +1,12 @@
 package com.webnowbr.siscoat.common;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -617,4 +621,179 @@ public final class DateUtil {
 	    	return false;
 	    }
 	}
+	
+	public static int getWorkingDaysBetweenTwoDates(Date startDate, Date endDate) {
+	    Calendar startCal = Calendar.getInstance();
+	    startCal.setTime(startDate);
+
+	    Calendar endCal = Calendar.getInstance();
+	    endCal.setTime(endDate);
+
+	    int workDays = 0;
+
+	    //Return 0 if start and end are the same
+	    if (startCal.getTimeInMillis() == endCal.getTimeInMillis()) {
+	        return 0;
+	    }
+
+	    if (startCal.getTimeInMillis() > endCal.getTimeInMillis()) {
+	        startCal.setTime(endDate);
+	        endCal.setTime(startDate);
+	    }
+	    
+	    
+	    
+	    List<Calendar> listaferiados = new ArrayList<Calendar>();
+	    listaferiados = getFeriados();
+	    
+	    while(endCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY 
+        		|| endCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+        		|| listaferiados.contains(endCal)) {
+	    	endCal.add(Calendar.DAY_OF_MONTH, 1);
+	    }
+	    
+	    endCal.add(Calendar.DAY_OF_MONTH, -1);
+	    
+	    do {
+	       //excluding start date
+	        startCal.add(Calendar.DAY_OF_MONTH, 1);
+	        if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY 
+	        		&& startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY
+	        		&& !listaferiados.contains(startCal)) {
+	            ++workDays;
+	        }
+	    } while (startCal.getTimeInMillis() < endCal.getTimeInMillis()); //excluding end date
+
+	    return workDays;
+	}
+	
+	private static List<Calendar> getFeriados(){
+		List<Calendar> listaferiados = new ArrayList<Calendar>();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		Date dataHj = dataHoje.getTime();
+		
+		for(int a = dataHj.getYear() + 1900; a < dataHj.getYear() + 2000; a++) {
+			List<Calendar> listaferiadosAno = new ArrayList<Calendar>();
+			listaferiadosAno = getFeriadosMoveis(a);
+			listaferiados.addAll(listaferiadosAno);
+		}
+		
+		return listaferiados;
+	}
+	
+	public static List<Calendar> getFeriadosMoveis(int year) {
+		//baseado no codigo: https://pt.stackoverflow.com/questions/318809/dias-%C3%BAteis-e-api-java-8-como-verificar/320353#320353
+		List<Calendar> dates = new ArrayList<Calendar>();
+
+		Date pascoaDate;
+		
+		Date anoNovoDate;
+		Date tiradentesDate;
+		Date diaDoTrabalhoDate;
+		Date independenciaDate;
+		Date nossaSenhoraDate;
+		Date finadosDate;
+		Date proclamacaoDate;
+		Date natalDate;
+		
+		Calendar pascoa = Calendar.getInstance();
+		Calendar carnaval = Calendar.getInstance();
+		Calendar corpusChristi = Calendar.getInstance();
+		Calendar sextaFeiraSanta = Calendar.getInstance();
+		
+		Calendar anoNovo = Calendar.getInstance();
+		Calendar tiradentes = Calendar.getInstance();
+		Calendar diaDoTrabalho = Calendar.getInstance();
+		Calendar independencia = Calendar.getInstance();
+		Calendar nossaSenhora = Calendar.getInstance();
+		Calendar finados = Calendar.getInstance();
+		Calendar proclamacao = Calendar.getInstance();
+		Calendar natal = Calendar.getInstance();
+
+	    int a = year % 19;
+	    int b = year / 100;
+	    int c = year % 100;
+	    int d = b / 4;
+	    int e = b % 4;
+	    int f = (b + 8) / 25;
+	    int g = (b - f + 1) / 3;
+	    int h = (19 * a + b - d - g + 15) % 30;
+	    int i = c / 4;
+	    int k = c % 4;
+	    int l = (32 + 2 * e + 2 * i - h - k) % 7;
+	    int m = (a + 11 * h + 22 * l) / 451;
+	    int month = (h + l - 7 * m + 114) / 31;
+	    int day = ((h + l - 7 * m + 114) % 31) + 1;
+
+	    pascoaDate = new Date(year - 1900, month - 1, day);
+	    pascoa.setTime(pascoaDate);	    
+	    anoNovoDate = new Date(year - 1900, 1 - 1, 1);
+	    anoNovo.setTime(anoNovoDate);
+	    tiradentesDate= new Date(year - 1900, 4 - 1, 21);
+	    tiradentes.setTime(tiradentesDate);
+	    diaDoTrabalhoDate = new Date(year - 1900, 5 - 1, 01);
+	    diaDoTrabalho.setTime(diaDoTrabalhoDate);
+	    independenciaDate = new Date(year - 1900, 9 - 1, 07);
+	    independencia.setTime(independenciaDate);
+	    nossaSenhoraDate = new Date(year - 1900, 10 - 1, 12);
+	    nossaSenhora.setTime(nossaSenhoraDate);	    
+	    finadosDate = new Date(year - 1900, 11 - 1, 2);
+	    finados.setTime(finadosDate);    
+	    proclamacaoDate = new Date(year - 1900, 11 - 1, 15);
+	    proclamacao.setTime(proclamacaoDate);	    
+	    natalDate = new Date(year - 1900, 12 - 1, 25);
+	    natal.setTime(natalDate);
+	    
+	    // Carnaval 47 dias antes da pascoa (sempre cai na terça)
+	    pascoa.add(Calendar.DAY_OF_MONTH, -47);
+	    carnaval.setTimeInMillis(pascoa.getTimeInMillis());;
+	    pascoa.add(Calendar.DAY_OF_MONTH, 47);
+	    
+	    // CorpusChristi 60 dias apos a pascoa
+	    pascoa.add(Calendar.DAY_OF_MONTH, 60);
+	    corpusChristi.setTimeInMillis(pascoa.getTimeInMillis());
+	    pascoa.add(Calendar.DAY_OF_MONTH, -60);
+
+	    pascoa.add(Calendar.DAY_OF_MONTH, -2);
+	    sextaFeiraSanta.setTimeInMillis(pascoa.getTimeInMillis());
+	    pascoa.add(Calendar.DAY_OF_MONTH, 2);
+
+	    // páscoa cai sempre no domingo, entao não precisaria adicionar como feriado
+	    // dates.add(pascoa);
+
+	    // carnaval: adicionar um dia antes e depois (emenda de segunda e quarta-feira de cinzas)
+	    dates.add(carnaval);
+	    Calendar diaAntCarnaval = Calendar.getInstance();
+	    diaAntCarnaval.setTimeInMillis(carnaval.getTimeInMillis());
+	    diaAntCarnaval.add(Calendar.DAY_OF_MONTH, -1);
+	    dates.add(diaAntCarnaval); // emenda a segunda-feira
+
+	    // corpus christi, emendar (adicionar a sexta)
+	    dates.add(corpusChristi);
+	    // if apenas para confirmar se é quinta-feira
+	    if(corpusChristi.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
+	    	corpusChristi.add(Calendar.DAY_OF_MONTH, -1);
+	    } else if(corpusChristi.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY){
+	    	corpusChristi.add(Calendar.DAY_OF_MONTH, 1);
+	    }
+	    
+	    dates.add(corpusChristi);
+	    dates.add(sextaFeiraSanta);	 
+	    dates.add(anoNovo);
+	    dates.add(tiradentes);
+	    dates.add(diaDoTrabalho);
+	    dates.add(independencia); 
+	    dates.add(nossaSenhora);	        
+	    dates.add(finados); 
+	    dates.add(proclamacao);      
+	    dates.add(natal);
+	    
+	    return dates;
+	}
+	
+	
 }
