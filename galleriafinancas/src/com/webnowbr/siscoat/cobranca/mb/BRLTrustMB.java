@@ -265,7 +265,7 @@ public class BRLTrustMB {
 				if (parcelasVencidas <= 1) {
 					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 							if (parcela.getDataVencimento().after(this.dataValorPresente) && !parcela.isParcelaPaga()) {
-								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaData(this.dataValorPresente, parcela, contrato.getTxJurosParcelas()));
+								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaDiaUtilComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 								parcelasAVencer = parcelasAVencer +1 ;
 							}
 					}
@@ -1648,9 +1648,20 @@ public class BRLTrustMB {
 						}
 					}
 					
-					System.out.println("contrato: " + contrato.getNumeroContrato());
-					System.out.println("cessao: " + contrato.getTxJurosCessao());
-					System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					//System.out.println("contrato: " + contrato.getNumeroContrato());
+					//System.out.println("cessao: " + contrato.getTxJurosCessao());
+					//System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					
+					System.out.println("parcela: " + parcela.getNumeroParcela());
+					System.out.println("vp: " + calcularValorPresenteParcelaDiaUtilComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
+					
+					BigDecimal quantidadeDeMeses = BigDecimal.valueOf(DateUtil.getWorkingDaysBetweenTwoDates(this.dataValorPresente, parcela.getDataVencimento()));
+					System.out.println("dup: " + quantidadeDeMeses);
+					
+					if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+						quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+					} 
+					
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
