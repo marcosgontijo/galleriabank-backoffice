@@ -97,6 +97,8 @@ public class BRLTrustMB {
 	
 	private BigDecimal somatoriaValorePresenteContratos;
 	
+	private BigDecimal taxaDesconto;
+	
 	private Date dataValorPresente;
 	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
@@ -1672,7 +1674,7 @@ public class BRLTrustMB {
 					} 
 					
 					//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-					jsonValores.put("liquidacao", calcularValorPresenteParcelaDiaUtilComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
+					jsonValores.put("liquidacao", calcularValorPresenteParcelaComIPCAGambiarra(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 					
 					jsonRecebivel.put("valores", jsonValores);
 					
@@ -2268,7 +2270,7 @@ public class BRLTrustMB {
 		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
 	
 		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
-		valorPresenteParcela = valorPresenteParcela.subtract(valorPresenteParcela.multiply(BigDecimal.valueOf(1.14).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		valorPresenteParcela = valorPresenteParcela.subtract(valorPresenteParcela.multiply(this.taxaDesconto.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
 		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
 		return valorPresenteParcela;
@@ -2576,5 +2578,13 @@ public class BRLTrustMB {
 
 	public void setDataValorPresente(Date dataValorPresente) {
 		this.dataValorPresente = dataValorPresente;
+	}
+
+	public BigDecimal getTaxaDesconto() {
+		return taxaDesconto;
+	}
+
+	public void setTaxaDesconto(BigDecimal taxaDesconto) {
+		this.taxaDesconto = taxaDesconto;
 	}
 }
