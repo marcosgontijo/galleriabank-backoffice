@@ -91,7 +91,17 @@
 						<p:calendar id="dataReferencia" showOn="button"
 							value="#{brlTrustMB.dataValorPresente}"
 							required="true" label="Data Referência" size="100"
-							pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />				
+							pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />			
+							
+					<p:outputLabel for="taxaDesconto" value="Taxa Desconto: "
+							styleClass="labelBold" />
+							
+					<p:inputText id="taxaDesconto" value="#{brlTrustMB.taxaDesconto}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 3, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+							
 				</h:panelGrid>
 				<h:panelGrid columns="3">
 				<p:commandButton value="Pesquisar Contratos"
