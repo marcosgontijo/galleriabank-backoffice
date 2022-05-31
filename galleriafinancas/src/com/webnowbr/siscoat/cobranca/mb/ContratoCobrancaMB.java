@@ -3052,6 +3052,9 @@ public class ContratoCobrancaMB {
 								"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 										+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 								""));
+				User usuarioLogado = new User();
+				UserDao u = new UserDao();
+				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 				if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
 					return geraConsultaContratosPorStatus("Aguardando Análise");
@@ -3065,10 +3068,19 @@ public class ContratoCobrancaMB {
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
 					return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
 				}
+				if (this.tituloTelaConsultaPreStatus.equals("Análise Aprovada")) {
+					if(usuarioLogado.isComiteConsultar()) {
+						return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
+					}
+					return geraConsultaContratosPorStatus("Análise Aprovada");
+				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
 					return geraConsultaContratosPorStatus("Ag. DOC");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Pré-Comite")) {
+					if(usuarioLogado.isComiteConsultar()) {
+						return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
+					}
 					return geraConsultaContratosPorStatus("Pré-Comite");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
@@ -3565,6 +3577,45 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getMatriculaAprovadaData());
 					this.objetoContratoCobranca.setMatriculaAprovadaUsuario(getNomeUsuarioLogado());
 				}
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isPedidoPreLaudoComercial()) {
+			this.objetoContratoCobranca.setPedidoPreLaudoComercialData(null);
+			this.objetoContratoCobranca.setPedidoPreLaudoComercialUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPedidoPreLaudoComercialData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPedidoPreLaudoComercialData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoPreLaudoComercialData());
+				this.objetoContratoCobranca.setPedidoPreLaudoComercialUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isPedidoPreLaudo()) {
+			this.objetoContratoCobranca.setPedidoPreLaudoData(null);
+			this.objetoContratoCobranca.setPedidoPreLaudoUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPedidoPreLaudoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPedidoPreLaudoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoPreLaudoData());
+				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isPedidoLaudoPajuComercial()) {
+			this.objetoContratoCobranca.setPedidoLaudoPajuComercialData(null);
+			this.objetoContratoCobranca.setPedidoLaudoPajuComercialUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPedidoLaudoPajuComercialData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPedidoLaudoPajuComercialData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoLaudoPajuComercialData());
+				this.objetoContratoCobranca.setPedidoLaudoPajuComercialUsuario(getNomeUsuarioLogado());
 			}
 		}
 
@@ -6650,7 +6701,8 @@ public class ContratoCobrancaMB {
 		UserDao u = new UserDao();
 		usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 		
-		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")) {
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")
+				 || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Aprovada")) {
 			if(usuarioLogado.isComiteConsultar()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			} else {
@@ -6866,7 +6918,8 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
 		} else {
 			if( (this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite())
-					|| ((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial())) {
+					|| ((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial())
+					|| (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPagtoLaudoConfirmada() )) {
 				User usuarioLogado = new User();
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
@@ -6874,8 +6927,10 @@ public class ContratoCobrancaMB {
 				
 					if((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial()) {
 						this.tituloTelaConsultaPreStatus = "Análise Comercial";
-					}else if(this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite()) {
+					} else if(this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite()) {
 						this.tituloTelaConsultaPreStatus = "Pré-Comite";
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
+						this.tituloTelaConsultaPreStatus = "Análise Aprovada";
 					}
 	
 					return clearFieldsEditarPendentesAnalistas();
@@ -9571,7 +9626,17 @@ public class ContratoCobrancaMB {
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& !c.isPagtoLaudoConfirmada()) {
-						c.setStatus("Ag. Pagto. Laudo");
+						c.setStatus("Análise Aprovada");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPedidoPreLaudoComercial() && !c.isPedidoPreLaudo()) {
+						c.setStatus("Pedir Pré-Laudo");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPedidoPreLaudoComercial() && c.isPedidoPreLaudo() && c.isPedidoLaudoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
+						c.setStatus("Pedir LaudoPAJU");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -9783,6 +9848,15 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Analise Pendente")) {
 			this.tituloTelaConsultaPreStatus = "Análise Pendente";
+		}
+		if (status.equals("Análise Aprovada")) {
+			this.tituloTelaConsultaPreStatus = "Análise Aprovada";
+		}
+		if (status.equals("Pedir Pré-Laudo")) {
+			this.tituloTelaConsultaPreStatus = "Pedir Pré-Laudo";
+		}
+		if (status.equals("Pedir LaudoPAJU")) {
+			this.tituloTelaConsultaPreStatus = "Pedir LaudoPAJU";
 		}
 		if (status.equals("Ag. Pagto. Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Pagto. Laudo";
@@ -13140,6 +13214,7 @@ public class ContratoCobrancaMB {
 
 		contratoCobrancaDetalhes.setSeguroDFI(parcela.getSeguroDFI().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		contratoCobrancaDetalhes.setSeguroMIP(parcela.getSeguroMIP().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		contratoCobrancaDetalhes.setTaxaAdm(parcela.getTxAdm().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
 //		contratoCobrancaDetalhes.setVlrRepasse(this.vlrRepasse);
 //		contratoCobrancaDetalhes.setVlrRetencao(this.vlrRetencao);
@@ -13214,6 +13289,7 @@ public class ContratoCobrancaMB {
 				!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
 		simulador.setNaoCalcularMIP(
 				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
+		simulador.setNaoCalcularTxAdm(!this.objetoContratoCobranca.isTemTxAdm());
 
 		simulador.calcular();
 		return simulador;

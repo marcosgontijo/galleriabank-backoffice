@@ -174,8 +174,16 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Analise Pendente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="03 - Ag. Pagto. Laudo"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Pagto. Laudo')}"
+									<p:menuitem value="03 - Análise Aprovada"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Aprovada')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.1 - Pedir Pré-Laudo"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pedir Pré-Laudo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.2 - Pedir Laudo+PAJU"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pedir LaudoPAJU')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									<p:menuitem value="04 - Ag. PAJU e Laudo"

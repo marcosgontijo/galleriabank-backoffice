@@ -30,6 +30,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrSaldoInicial;
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrParcelaOriginal;
+
 	
 	private BigDecimal valorJurosSemIPCA;
 	private BigDecimal valorAmortizacaoSemIPCA;
@@ -70,6 +71,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	private BigDecimal seguroDFI;
 	private BigDecimal seguroMIP;
+	
+	private BigDecimal taxaAdm;
 	
 	private String urlBoletoKonana;
 	private String statusBoletoKonana;
@@ -569,5 +572,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setStatusBoletoKonana(String statusBoletoKonana) {
 		this.statusBoletoKonana = statusBoletoKonana;
+	}
+	
+	public BigDecimal getTaxaAdm() {
+		return taxaAdm;
+	}
+	
+	public void setTaxaAdm(BigDecimal taxaAdm) {
+		this.taxaAdm = taxaAdm;
 	}
 }

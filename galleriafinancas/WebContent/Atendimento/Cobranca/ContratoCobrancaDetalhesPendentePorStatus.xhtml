@@ -118,6 +118,37 @@
 								</p:steps>
 							</shiro:hasAnyRoles>
 							
+							<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">
+								<ui:fragment
+									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}">
+									<h:panelGrid columns="2"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pedir Pré-Laudo</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectOneRadio id="pedidoPreLaudoComercial"
+											unselectable="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+											<f:selectItem itemLabel="Não" itemValue="false" />
+											<f:selectItem itemLabel="Sim" itemValue="true" />
+										</p:selectOneRadio>
+										<p:spacer width="10px"></p:spacer>
+
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectOneRadio id="pagtoLaudoConfirmada"
+											unselectable="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+											<f:selectItem itemLabel="Não" itemValue="false" />
+											<f:selectItem itemLabel="Sim" itemValue="true" />
+										</p:selectOneRadio>
+
+									</h:panelGrid>
+								</ui:fragment>
+							</shiro:hasAnyRoles>
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;

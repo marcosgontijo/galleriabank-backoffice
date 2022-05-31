@@ -121,10 +121,23 @@
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Laudo e Parecer Jurídico</p:outputLabel>
+										
+										<p:outputLabel styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">Pedir Pré-Laudo</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectBooleanButton id="pedidoPreLaudo"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
+											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
+										<p:spacer width="10px"></p:spacer>
+										
+										<p:outputLabel styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Laudo e Parecer Jurídico</p:outputLabel>
 										<p:spacer ></p:spacer>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="pagtoLaudoConfirmada" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
+											<p:selectBooleanButton id="pagtoLaudoConfirmada" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" 
+											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
 										</shiro:hasAnyRoles>															    						    
 									</h:panelGrid>	
 								</ui:fragment>
@@ -525,16 +538,14 @@
 			   			 </p:tooltip>																
 					</p:panel>
 				</shiro:hasAnyRoles>
-
-				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">
-					<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-						<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
-							<p:outputLabel id="comentarioComite"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
-								styleClass="labelBold" />
-						</p:panel>
-					</h:panelGroup>
-				</shiro:hasAnyRoles>
+				
+				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
+						<p:outputLabel id="comentarioComite"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
+							styleClass="labelBold" />
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="CartorioPanel">
 					<p:panel header="Cartório" style="margin-bottom:10px;"
@@ -2472,6 +2483,10 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
 
 							</p:selectBooleanCheckbox>
+																				
+							<p:outputLabel value="Incluir Taxa Admin: "/>
+								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">								
+							</p:selectBooleanCheckbox>													
 
 						</h:panelGrid>
 						<h:panelGrid columns="2" id="DadosSeguro"

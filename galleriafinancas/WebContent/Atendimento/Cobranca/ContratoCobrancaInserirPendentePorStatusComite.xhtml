@@ -2839,7 +2839,11 @@
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
 
-							</p:selectBooleanCheckbox>
+							</p:selectBooleanCheckbox>				
+														
+							<p:outputLabel value="Incluir Taxa Admin: "/>
+								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">								
+							</p:selectBooleanCheckbox>														
 
 						</h:panelGrid>
 						<h:panelGrid columns="2" id="DadosSeguro"

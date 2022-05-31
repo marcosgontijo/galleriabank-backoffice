@@ -26,6 +26,7 @@ public class SimulacaoVO {
 	private String tipoCalculo;
 	private boolean naoCalcularDFI;
 	private boolean naoCalcularMIP;
+	private boolean naoCalcularTxAdm;
 	private boolean mostrarIPCA;
 
 	// valores
@@ -92,8 +93,9 @@ public class SimulacaoVO {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
 		
-	
-		txAdm = SiscoatConstants.TAXA_ADM;
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
 	
 		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
@@ -245,7 +247,9 @@ public class SimulacaoVO {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
 		
-		txAdm = SiscoatConstants.TAXA_ADM;
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
 		
 		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
@@ -344,7 +348,9 @@ public class SimulacaoVO {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
 		
-		txAdm = SiscoatConstants.TAXA_ADM;
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
 		
 		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
@@ -655,6 +661,14 @@ public class SimulacaoVO {
 
 	public void setLtv(BigDecimal ltv) {
 		this.ltv = ltv;
+	}
+
+	public boolean isNaoCalcularTxAdm() {
+		return naoCalcularTxAdm;
+	}
+
+	public void setNaoCalcularTxAdm(boolean naoCalcularTxAdm) {
+		this.naoCalcularTxAdm = naoCalcularTxAdm;
 	}
 		
 }

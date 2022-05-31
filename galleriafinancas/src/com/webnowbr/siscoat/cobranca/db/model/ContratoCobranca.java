@@ -332,7 +332,23 @@ public class ContratoCobranca implements Serializable {
 	private Date matriculaAprovadaData;
 	private String matriculaAprovadaValor;
 	private String matriculaAprovadaUsuario;
+	
+	private Date pedidoPreLaudoComercialData;
+	private boolean pedidoPreLaudoComercial;
+	private String pedidoPreLaudoComercialUsuario;
+	
+	private Date pedidoPreLaudoData;
+	private boolean pedidoPreLaudo;
+	private String pedidoPreLaudoUsuario;
 
+	private Date pagtoLaudoConfirmadaData;
+	private boolean pagtoLaudoConfirmada;
+	private String pagtoLaudoConfirmadaUsuario;
+	
+	private Date pedidoLaudoPajuComercialData;
+	private boolean pedidoLaudoPajuComercial;
+	private String pedidoLaudoPajuComercialUsuario;
+	
 	private Date laudoRecebidoData;
 	private boolean laudoRecebido;
 	private String laudoRecebidoUsuario;
@@ -341,10 +357,6 @@ public class ContratoCobranca implements Serializable {
 	private boolean pajurFavoravel;
 	private String pajurFavoravelUsuario;
 
-	private Date pagtoLaudoConfirmadaData;
-	private boolean pagtoLaudoConfirmada;
-	private String pagtoLaudoConfirmadaUsuario;
-	
 	private Date analiseComercialData;
 	private boolean analiseComercial;
 	private String analiseComercialUsuario;
@@ -503,6 +515,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean temSeguro;
 	private boolean temSeguroDFI;
 	private boolean temSeguroMIP;
+	private boolean temTxAdm;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
 	private String termoCessao;
@@ -698,6 +711,9 @@ public class ContratoCobranca implements Serializable {
 		this.documentosComite = false;
 		this.preAprovadoComite = false;
 		this.aprovadoComite = false;
+		this.pedidoLaudoPajuComercial = false;
+		this.pedidoPreLaudo = false; 
+		this.pedidoPreLaudoComercial = false;
 		this.aguardandoDocumento = false;
 		this.matriculaReprovada = false;
 		this.fotoImovelAprovada = false;	
@@ -740,6 +756,7 @@ public class ContratoCobranca implements Serializable {
 		this.fichaCadastralDocumentosSecundarioCheckList = false;
 		this.bancoDocumentosSecundarioCheckList = false;
 		this.telefoneEmailDocumentosSecundarioCheckList = false;
+		this.temTxAdm = false;
 	}
 	
 	private void reordenaListagemDetalhes() {
@@ -4908,5 +4925,84 @@ public class ContratoCobranca implements Serializable {
 
 	public void setComentarioJuridicoEsteiraUsuario(String comentarioJuridicoEsteiraUsuario) {
 		this.comentarioJuridicoEsteiraUsuario = comentarioJuridicoEsteiraUsuario;
-	}		
+	}
+
+	public Date getPedidoPreLaudoComercialData() {
+		return pedidoPreLaudoComercialData;
+	}
+
+	public void setPedidoPreLaudoComercialData(Date pedidoPreLaudoComercialData) {
+		this.pedidoPreLaudoComercialData = pedidoPreLaudoComercialData;
+	}
+
+	public boolean isPedidoPreLaudoComercial() {
+		return pedidoPreLaudoComercial;
+	}
+
+	public void setPedidoPreLaudoComercial(boolean pedidoPreLaudoComercial) {
+		this.pedidoPreLaudoComercial = pedidoPreLaudoComercial;
+	}
+
+	public String getPedidoPreLaudoComercialUsuario() {
+		return pedidoPreLaudoComercialUsuario;
+	}
+
+	public void setPedidoPreLaudoComercialUsuario(String pedidoPreLaudoComercialUsuario) {
+		this.pedidoPreLaudoComercialUsuario = pedidoPreLaudoComercialUsuario;
+	}
+
+	public Date getPedidoPreLaudoData() {
+		return pedidoPreLaudoData;
+	}
+
+	public void setPedidoPreLaudoData(Date pedidoPreLaudoData) {
+		this.pedidoPreLaudoData = pedidoPreLaudoData;
+	}
+
+	public boolean isPedidoPreLaudo() {
+		return pedidoPreLaudo;
+	}
+
+	public void setPedidoPreLaudo(boolean pedidoPreLaudo) {
+		this.pedidoPreLaudo = pedidoPreLaudo;
+	}
+
+	public String getPedidoPreLaudoUsuario() {
+		return pedidoPreLaudoUsuario;
+	}
+
+	public void setPedidoPreLaudoUsuario(String pedidoPreLaudoUsuario) {
+		this.pedidoPreLaudoUsuario = pedidoPreLaudoUsuario;
+	}
+
+	public Date getPedidoLaudoPajuComercialData() {
+		return pedidoLaudoPajuComercialData;
+	}
+
+	public void setPedidoLaudoPajuComercialData(Date pedidoLaudoPajuComercialData) {
+		this.pedidoLaudoPajuComercialData = pedidoLaudoPajuComercialData;
+	}
+
+	public boolean isPedidoLaudoPajuComercial() {
+		return pedidoLaudoPajuComercial;
+	}
+
+	public void setPedidoLaudoPajuComercial(boolean pedidoLaudoPajuComercial) {
+		this.pedidoLaudoPajuComercial = pedidoLaudoPajuComercial;
+	}
+
+	public String getPedidoLaudoPajuComercialUsuario() {
+		return pedidoLaudoPajuComercialUsuario;
+	}
+
+	public void setPedidoLaudoPajuComercialUsuario(String pedidoLaudoPajuComercialUsuario) {
+		this.pedidoLaudoPajuComercialUsuario = pedidoLaudoPajuComercialUsuario;
+	}
+	public boolean isTemTxAdm() {
+		return temTxAdm;
+	}
+	public void setTemTxAdm(boolean temTxAdm) {
+		this.temTxAdm = temTxAdm;
+	}
+	
 }

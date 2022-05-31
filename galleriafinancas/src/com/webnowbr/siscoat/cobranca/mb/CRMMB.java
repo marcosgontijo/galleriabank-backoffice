@@ -179,7 +179,7 @@ public class CRMMB {
 			this.qtdeTodosContratos = this.qtdeAgPagtoBoleto;
 			this.valorTodosContratos = this.valorTotalAgPagtoBoleto;
 			
-			this.tituloPagina = "Ag. Pagto. Laudo";
+			this.tituloPagina = "Análise Aprovada";
 		}
 		if (filtro.equals("AgPAJULaudo")) {
 			geraConsultaContratosAgPAJUeLaudo();
@@ -936,7 +936,7 @@ public class CRMMB {
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& !c.isPagtoLaudoConfirmada()) {
-						c.setStatus("Ag. Pagto. Laudo");
+						c.setStatus("Análise Aprovada");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -962,7 +962,7 @@ public class CRMMB {
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& !c.isDocumentosComite()) {
-						c.setStatus("Ag. Validação DOCs");
+						c.setStatus("Ag. Comite");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
