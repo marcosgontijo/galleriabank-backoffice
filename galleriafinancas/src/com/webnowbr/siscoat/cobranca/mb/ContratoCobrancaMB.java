@@ -3153,6 +3153,18 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.getNumeroContrato(),
 						this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 						this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"ag_comentarios_juridico", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						}
 					}
 				}
 			}
@@ -3175,6 +3187,18 @@ public class ContratoCobrancaMB {
 					"contrato_recebido_laudo_paju",
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+						// Bia (assistente Gislaine)
+						ResponsavelDao rDao = new ResponsavelDao();
+						Responsavel rAssistente = new Responsavel();
+						rAssistente = rDao.findById((long) 359);
+
+						takeBlipMB.sendWhatsAppMessage(rAssistente,
+						"ag_comentarios_juridico", 
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(),
+						"", "");
+					}
 				}
 			}
 		}
@@ -3220,6 +3244,18 @@ public class ContratoCobrancaMB {
 					"comentado_juridico_interno",
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+						// Bia (assistente Gislaine)
+						ResponsavelDao rDao = new ResponsavelDao();
+						Responsavel rAssistente = new Responsavel();
+						rAssistente = rDao.findById((long) 359);
+
+						takeBlipMB.sendWhatsAppMessage(rAssistente,
+						"ag_comentarios_juridico", 
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(),
+						"", "");
+					}
 				} else {
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 					"comentado_juridico_interno",
@@ -3236,6 +3272,7 @@ public class ContratoCobrancaMB {
 				ResponsavelDao rDao = new ResponsavelDao();
 				Responsavel rValidaDocs1 = new Responsavel();
 				Responsavel rValidaDocs2 = new Responsavel();
+				Responsavel rValidaDocs3 = new Responsavel();
 				
 				// Valdir
 				rValidaDocs1 = rDao.findById((long) 619);
@@ -3250,6 +3287,15 @@ public class ContratoCobrancaMB {
 				rValidaDocs2 = rDao.findById((long) 620);
 
 				takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+				"ag_validacao_documentos", 
+				this.objetoContratoCobranca.getPagador().getNome(),
+				this.objetoContratoCobranca.getNumeroContrato(),
+				"", "");
+				
+				// Tati
+				rValidaDocs3 = rDao.findById((long) 643);
+
+				takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
 				"ag_validacao_documentos", 
 				this.objetoContratoCobranca.getPagador().getNome(),
 				this.objetoContratoCobranca.getNumeroContrato(),
@@ -5008,43 +5054,45 @@ public class ContratoCobrancaMB {
 			}
 
 			if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
-				ccd.setParcelaVencida(true);
-
-				// calcula coluna valor atualizado
-				ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
-				/*
-				 * if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
-				 * contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB( auxDataVencimento,
-				 * auxDataPagamento, ccd.getVlrParcela(), BigDecimal.valueOf(1.00),
-				 * ccd.getTxMulta()); } else { contratoCobrancaUtilsMB = new
-				 * ContratoCobrancaUtilsMB( auxDataVencimento, auxDataPagamento,
-				 * ccd.getVlrParcela(), ccd.getVlrJuros(), ccd.getTxMulta()); }
-				 */
-
-				if (ccd.getVlrJuros() != null) {
-					if (BigDecimal.ZERO.compareTo(ccd.getVlrJuros()) == 0) {
-						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-								ccd.getVlrParcela(), BigDecimal.valueOf(1.00), this.objetoContratoCobranca.getTxMulta());
+				if(DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 0 || DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 1 ) {
+					ccd.setParcelaVencida(true);
+	
+					// calcula coluna valor atualizado
+					ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
+					/*
+					 * if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
+					 * contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB( auxDataVencimento,
+					 * auxDataPagamento, ccd.getVlrParcela(), BigDecimal.valueOf(1.00),
+					 * ccd.getTxMulta()); } else { contratoCobrancaUtilsMB = new
+					 * ContratoCobrancaUtilsMB( auxDataVencimento, auxDataPagamento,
+					 * ccd.getVlrParcela(), ccd.getVlrJuros(), ccd.getTxMulta()); }
+					 */
+	
+					if (ccd.getVlrJuros() != null) {
+						if (BigDecimal.ZERO.compareTo(ccd.getVlrJuros()) == 0) {
+							contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+									ccd.getVlrParcela(), BigDecimal.valueOf(1.00), this.objetoContratoCobranca.getTxMulta());
+						} else {
+							contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
+									ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
+									this.objetoContratoCobranca.getTxMulta());
+						}
 					} else {
 						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-								ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
-								this.objetoContratoCobranca.getTxMulta());
+						ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
+						this.objetoContratoCobranca.getTxMulta());
 					}
-				} else {
-					contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-					ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
-					this.objetoContratoCobranca.getTxMulta());
-				}
-
-				if (!ccd.isParcelaPaga()) {
-					if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
-						contratoCobrancaUtilsMB.recalculaValorSemMulta();
+	
+					if (!ccd.isParcelaPaga()) {
+						if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
+							contratoCobrancaUtilsMB.recalculaValorSemMulta();
+						} else {
+							contratoCobrancaUtilsMB.recalculaValor();
+						}
+						ccd.setVlrParcelaAtualizada(contratoCobrancaUtilsMB.getValorAtualizado());
 					} else {
-						contratoCobrancaUtilsMB.recalculaValor();
+						ccd.setVlrParcelaAtualizada(null);
 					}
-					ccd.setVlrParcelaAtualizada(contratoCobrancaUtilsMB.getValorAtualizado());
-				} else {
-					ccd.setVlrParcelaAtualizada(null);
 				}
 			}
 
