@@ -112,6 +112,9 @@ public class KobanaMB {
 		Sandbox
 		8gCXkXseDkPQLLa6bzjaA-moKUol2TeXr8SDWCKAtBc
 		
+		Prod
+		YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8
+		
 		
 	 */
 	
@@ -172,7 +175,7 @@ public class KobanaMB {
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://api-sandbox.kobana.com.br/v1/bank_billets");
+			URL myURL = new URL("https://app.kobana.com.br/v1/bank_billets");
 
 			JSONObject jsonObj = getJSONBoletoKobana(contrato, parcela);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -183,7 +186,7 @@ public class KobanaMB {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer 8gCXkXseDkPQLLa6bzjaA-moKUol2TeXr8SDWCKAtBc");
+			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
 			myURLConnection.setRequestProperty("User-Agent", "webnowbr@gmail.com");
 		     
 			myURLConnection.setDoOutput(true);

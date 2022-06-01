@@ -2035,6 +2035,9 @@
 									target="#{contratoCobrancaMB.splitBoletoIugu}" value="false" />
 							</p:commandButton>
 							<p:spacer width="10" height="10" />
+							<p:commandButton ajax="false" icon="ui-icon-alert" 
+							action="#{kobanaMB.geraBoletoKobana(contratoCobrancaMB.objetoContratoCobranca, parcelas)}" />
+							<p:spacer width="10" height="10" />
 							<p:commandButton onclick="PF('observacoesDialog').show();"
 								title="Observação" icon="ui-icon-plus" update=":formObservacoes">
 								<f:setPropertyActionListener
@@ -2127,6 +2130,11 @@
 							<h:outputText value="#{parcelas.vlrSaldoParcela}"
 								converter="bigDecimalConverter">
 							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 45px;"
+							headerText="Kobana" filterMatchMode="contains"
+							sortBy="#{parcelas.urlBoletoKonana}">
+							<h:outputText value="#{parcelas.urlBoletoKonana}" />
 						</p:column>
 					</p:dataTable>
 				</p:panel>
