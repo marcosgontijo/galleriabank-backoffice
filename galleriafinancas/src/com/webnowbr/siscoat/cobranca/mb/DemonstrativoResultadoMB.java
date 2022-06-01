@@ -5,8 +5,10 @@ import java.math.MathContext;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import com.webnowbr.siscoat.cobranca.db.op.CDIDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -39,6 +41,8 @@ public class DemonstrativoResultadoMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		DebenturesInvestidorDao debenturesInvestidorDao = new DebenturesInvestidorDao();
+		
+		FacesContext context = FacesContext.getCurrentInstance();
 
 		try {
 			
@@ -47,6 +51,10 @@ public class DemonstrativoResultadoMB {
 			
 			DemonstrativoResultadosGrupo entradas = contratoCobrancaDao.getDreEntradas(dataInicio, dataFim);
 			demonstrativoResultado.addDre(entradas);
+			
+			DemonstrativoResultadosGrupo seguros = contratoCobrancaDao.getDreSeguros(dataInicio, dataFim);
+			demonstrativoResultado.addDre(seguros);
+			
 			DemonstrativoResultadosGrupo saidas = contratoCobrancaDao.getDreSaidas(dataInicio, dataFim);
 			demonstrativoResultado.addDre(saidas);
 			
@@ -68,10 +76,12 @@ public class DemonstrativoResultadoMB {
 			investidoresFidc.addAmortizacao(BigDecimal.ZERO);
 			demonstrativoResultado.addDre(investidoresFidc);
 			
+			BigDecimal valorEntradasTotal = entradas.getValorTotal().add(seguros.getValorTotal());
+			
 			DemonstrativoResultadosGrupo subTotal = new DemonstrativoResultadosGrupo();
 			subTotal.setTipo("Subtotal");
 			subTotal.setCodigo(1);
-			subTotal.addValor(entradas.getValorTotal().subtract(saidas.getValorTotal()).subtract(jurosFidc));
+			subTotal.addValor(valorEntradasTotal.subtract(saidas.getValorTotal()).subtract(jurosFidc));
 			subTotal.addJuros(entradas.getJurosTotal().subtract(saidas.getJurosTotal()).subtract(jurosFidc));
 			subTotal.addAmortizacao(entradas.getAmortizacaoTotal().subtract(saidas.getAmortizacaoTotal()));
 			demonstrativoResultado.addDre(subTotal);	
@@ -118,6 +128,9 @@ public class DemonstrativoResultadoMB {
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Erro: " + e,
+					""));
 			e.printStackTrace();
 		}
 

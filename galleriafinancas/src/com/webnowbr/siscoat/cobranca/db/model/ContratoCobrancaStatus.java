@@ -13,8 +13,11 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean agRegistro;
 	private boolean pajuFavoravel;
 	private boolean laudoRecebido;
+	private boolean analiseComercial;
+	private boolean comentarioJuridicoEsteira;
 	private boolean preAprovadoComite;
 	private boolean documentosComite;
+	private boolean aprovadoComite;
 	private String contratoPreAprovado;
 	
 	public ContratoCobrancaStatus() {
@@ -74,5 +77,23 @@ public class ContratoCobrancaStatus implements Serializable {
 	}
 	public void setDocumentosComite(boolean documentosComite) {
 		this.documentosComite = documentosComite;
+	}
+	public boolean isAnaliseComercial() {
+		return analiseComercial;
+	}
+	public void setAnaliseComercial(boolean analiseComercial) {
+		this.analiseComercial = analiseComercial;
+	}
+	public boolean isComentarioJuridicoEsteira() {
+		return comentarioJuridicoEsteira;
+	}
+	public void setComentarioJuridicoEsteira(boolean comentarioJuridicoEsteira) {
+		this.comentarioJuridicoEsteira = comentarioJuridicoEsteira;
+	}
+	public boolean isAprovadoComite() {
+		return aprovadoComite;
+	}
+	public void setAprovadoComite(boolean aprovadoComite) {
+		this.aprovadoComite = aprovadoComite;
 	}
 }

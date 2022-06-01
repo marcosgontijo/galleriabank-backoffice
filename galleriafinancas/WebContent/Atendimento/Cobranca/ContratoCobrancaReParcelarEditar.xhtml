@@ -889,7 +889,15 @@
 							<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
 									<h:outputText value="Não" />
 							</ui:fragment>		
-							
+																					
+							<p:outputLabel value="Incluir Taxa Admin: "/>
+								<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+									<h:outputText value="Não" />
+							</ui:fragment>
+														
 							<p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
 				        	<ui:fragment rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 								<h:outputText value="Sim" />

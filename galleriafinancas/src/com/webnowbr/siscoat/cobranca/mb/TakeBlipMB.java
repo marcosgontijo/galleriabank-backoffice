@@ -61,6 +61,26 @@ public class TakeBlipMB {
 	 	Olá {{1}}, ótima notícia! 😆
 		Cliente {{2}} do Contrato {{3}} foi pré aprovado com taxa de {{4}}% + IPCA e prazo de {{5}} meses
 	 */
+
+	// ag_comentarios_juridico
+	/*
+	 	Olá {{1}}, contrato {{2}} do cliente {{3}} está aguardando seu comentário jurídico
+	 */
+	
+	// comentado_juridico_interno
+	/*
+	 	Olá {{1}}, contrato {{2}} do cliente {{2}} já foi comentado pelo jurídico interno 
+	 */
+	
+	// ag_validacao_documentos
+	/*
+	 	Olá {{1}}, contrato {{2}} do cliente {{3}} está aguardando sua validação de documentos
+	 */
+	
+	// aprovado_comite_ag_ccb
+	/*
+	 	Olá {{1}}, contrato {{2}} do cliente {{3}} foi aprovado pelo comitê e está pronto para fazer a CCB
+	 */
 	
 	/*
 	   {
@@ -199,6 +219,27 @@ public class TakeBlipMB {
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
 					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				} else if (nomeTemplateMensagem.equals("ag_comentarios_juridico")
+						|| nomeTemplateMensagem.equals("comentado_juridico_interno")
+						|| nomeTemplateMensagem.equals("ag_validacao_documentos")
+						|| nomeTemplateMensagem.equals("aprovado_comite_ag_ccb")) {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Nome do cliente
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				} else {
 					// Nome do notificado

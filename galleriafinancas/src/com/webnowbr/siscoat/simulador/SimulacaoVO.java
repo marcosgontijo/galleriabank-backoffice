@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 
 public class SimulacaoVO {
 
@@ -25,6 +26,7 @@ public class SimulacaoVO {
 	private String tipoCalculo;
 	private boolean naoCalcularDFI;
 	private boolean naoCalcularMIP;
+	private boolean naoCalcularTxAdm;
 	private boolean mostrarIPCA;
 
 	// valores
@@ -36,6 +38,8 @@ public class SimulacaoVO {
 	private BigInteger qtdParcelas;
 	private BigDecimal valorImovel;
 	private BigDecimal custoEmissaoValor;
+	
+	private BigDecimal txAdm = BigDecimal.ZERO;
 	private BigDecimal valorSeguroDFI = BigDecimal.ZERO;
 	private BigDecimal valorSeguroMIP = BigDecimal.ZERO;
 
@@ -80,6 +84,7 @@ public class SimulacaoVO {
 				));
 
 		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO(this.valorCredito);
+		parcelaCalculo.setTxAdm(BigDecimal.ZERO);
 		parcelas.add(parcelaCalculo);
 
 		// seguros
@@ -87,6 +92,12 @@ public class SimulacaoVO {
 		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
+		
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
+	
+		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
@@ -111,6 +122,8 @@ public class SimulacaoVO {
 			valorSeguroMIPParcela = valorSeguroMIPParcela.add(valorSeguroMIP);
 
 			valorSeguroDFIParcela = valorSeguroDFIParcela.add(valorSeguroDFI);
+			
+			valorTaxaAdmParcela = valorTaxaAdmParcela.add(txAdm);
 
 			BigDecimal parcelaAmortizacao = BigDecimal.ZERO;
 
@@ -121,13 +134,14 @@ public class SimulacaoVO {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+				parcelaCalculo.setTxAdm(BigDecimal.ZERO);
 			} else {
 
 				if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
 					parcelaCalculo
-							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 				} else {
-					parcelaCalculo.setValorParcela(parcelaPGTO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+					parcelaCalculo.setValorParcela(parcelaPGTO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 					parcelaAmortizacao = parcelaPGTO;
 				}
 				parcelaCalculo.setJuros(juros);
@@ -140,6 +154,7 @@ public class SimulacaoVO {
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
+				parcelaCalculo.setTxAdm(valorTaxaAdmParcela);
 
 				calcularIOF(parcelaCalculo, i);
 //				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
@@ -149,6 +164,7 @@ public class SimulacaoVO {
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
+				valorTaxaAdmParcela = BigDecimal.ZERO;
 			}
 
 			BigDecimal saldo = saldoDevedorAnterior.add(juros).subtract(parcelaAmortizacao);
@@ -222,6 +238,7 @@ public class SimulacaoVO {
 		BigDecimal saldoDevedorCarencia = getSaldoDevedorCarencia();
 
 		SimulacaoDetalheVO parcelaCalculo = new SimulacaoDetalheVO(this.valorCredito);
+		parcelaCalculo.setTxAdm(BigDecimal.ZERO);
 		parcelas.add(parcelaCalculo);
 
 		// seguros
@@ -229,6 +246,12 @@ public class SimulacaoVO {
 		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
+		
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
+		
+		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
@@ -251,6 +274,7 @@ public class SimulacaoVO {
 			valorSeguroMIPParcela = valorSeguroMIPParcela.add(valorSeguroMIP);
 
 			valorSeguroDFIParcela = valorSeguroDFIParcela.add(valorSeguroDFI);
+			valorTaxaAdmParcela = valorTaxaAdmParcela.add(txAdm);
 
 			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
@@ -259,14 +283,15 @@ public class SimulacaoVO {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+				parcelaCalculo.setTxAdm(BigDecimal.ZERO);
 			} else {
 
 				if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
 					parcelaCalculo
-							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 				} else {
 					parcelaCalculo.setValorParcela(
-							juros.add(amortizacao).add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+							juros.add(amortizacao).add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 				}
 
 				parcelaCalculo.setJuros(juros);
@@ -274,6 +299,8 @@ public class SimulacaoVO {
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
+				
+				parcelaCalculo.setTxAdm(valorTaxaAdmParcela);
 
 				calcularIOF(parcelaCalculo, i);
 //				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
@@ -283,6 +310,7 @@ public class SimulacaoVO {
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
+				valorTaxaAdmParcela = BigDecimal.ZERO;
 			}
 
 			BigDecimal saldo = BigDecimal.ZERO;
@@ -319,6 +347,12 @@ public class SimulacaoVO {
 		if (!naoCalcularDFI) {
 			valorSeguroDFI = this.valorImovel.multiply(this.seguroDFI.divide(BigDecimal.valueOf(100)));
 		}
+		
+		if(!naoCalcularTxAdm) {
+			txAdm = SiscoatConstants.TAXA_ADM;
+		}
+		
+		BigDecimal valorTaxaAdmParcela = BigDecimal.ZERO;
 
 		BigDecimal valorSeguroDFIParcela = BigDecimal.ZERO;
 		BigDecimal valorSeguroMIPParcela = BigDecimal.ZERO;
@@ -340,6 +374,8 @@ public class SimulacaoVO {
 			valorSeguroMIPParcela = valorSeguroMIPParcela.add(valorSeguroMIP);
 
 			valorSeguroDFIParcela = valorSeguroDFIParcela.add(valorSeguroDFI);
+			
+			valorTaxaAdmParcela = valorTaxaAdmParcela.add(txAdm);
 
 			if ((this.carencia.compareTo(BigInteger.valueOf(i)) >= 0)) {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
@@ -348,17 +384,18 @@ public class SimulacaoVO {
 				parcelaCalculo.setValorParcela(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroDFI(BigDecimal.ZERO);
 				parcelaCalculo.setSeguroMIP(BigDecimal.ZERO);
+				parcelaCalculo.setTxAdm(BigDecimal.ZERO);
 			} else {
 
 				if (saldoDevedorAnterior.compareTo(BigDecimal.ZERO) <= 0) {
 					parcelaCalculo
-							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+							.setValorParcela(BigDecimal.ZERO.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 				} else if (this.qtdParcelas.compareTo(BigInteger.valueOf((long) i)) == 0) {
 					parcelaCalculo.setValorParcela(
-							saldoDevedorCarencia.add(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela)));
+							saldoDevedorCarencia.add(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela)));
 					amortizacao = saldoDevedorCarencia;
 				} else {
-					parcelaCalculo.setValorParcela(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela));
+					parcelaCalculo.setValorParcela(juros.add(valorSeguroDFIParcela).add(valorSeguroMIPParcela).add(valorTaxaAdmParcela));
 				}
 
 				parcelaCalculo.setJuros(juros);
@@ -366,6 +403,7 @@ public class SimulacaoVO {
 
 				parcelaCalculo.setSeguroDFI(valorSeguroDFIParcela);
 				parcelaCalculo.setSeguroMIP(valorSeguroMIPParcela);
+				parcelaCalculo.setTxAdm(valorTaxaAdmParcela);
 
 				calcularIOF(parcelaCalculo, i);
 //				parcelaCalculo.setValorIOFAdicional(valorIOFAdicional);
@@ -375,6 +413,7 @@ public class SimulacaoVO {
 
 				valorSeguroDFIParcela = BigDecimal.ZERO;
 				valorSeguroMIPParcela = BigDecimal.ZERO;
+				valorTaxaAdmParcela = BigDecimal.ZERO;
 			}
 
 			BigDecimal saldo = BigDecimal.ZERO;
@@ -622,6 +661,14 @@ public class SimulacaoVO {
 
 	public void setLtv(BigDecimal ltv) {
 		this.ltv = ltv;
+	}
+
+	public boolean isNaoCalcularTxAdm() {
+		return naoCalcularTxAdm;
+	}
+
+	public void setNaoCalcularTxAdm(boolean naoCalcularTxAdm) {
+		this.naoCalcularTxAdm = naoCalcularTxAdm;
 	}
 		
 }

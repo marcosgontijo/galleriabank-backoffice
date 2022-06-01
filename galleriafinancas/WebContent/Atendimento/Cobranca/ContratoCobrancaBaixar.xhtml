@@ -1583,6 +1583,16 @@
 								converter="bigDecimalConverter" />
 							<h:outputText value="%" />
 						</h:panelGroup>
+																		
+						<p:outputLabel value="Incluir Taxa Admin: "/>	
+						<ui:fragment
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+							<h:outputText value="Não" />
+						</ui:fragment>											
 
 						<p:outputLabel value="Corrigido IPCA: " styleClass="labelBold" />
 						<ui:fragment
@@ -2122,6 +2132,13 @@
 							headerText="Seguro MIP (R$)"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
 							<h:outputText value="#{parcelas.seguroMIP}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Taxa Administação (R$)"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+							<h:outputText value="#{parcelas.taxaAdm}"
 								converter="bigDecimalConverter">
 							</h:outputText>
 						</p:column>

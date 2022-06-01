@@ -45,6 +45,9 @@
 		<property name="seguroMIP" type="big_decimal">
 			<column name="seguroMIP" />
 		</property>
+		<property name="taxaAdm" type="big_decimal">
+			<column name="taxaAdm" />
+		</property>
 		<property name="txMulta" type="big_decimal">
 			<column name="txMulta" />
 		</property>

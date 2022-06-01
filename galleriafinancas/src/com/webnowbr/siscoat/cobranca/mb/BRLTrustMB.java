@@ -97,6 +97,8 @@ public class BRLTrustMB {
 	
 	private BigDecimal somatoriaValorePresenteContratos;
 	
+	private BigDecimal taxaDesconto;
+	
 	private Date dataValorPresente;
 	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
@@ -265,7 +267,7 @@ public class BRLTrustMB {
 				if (parcelasVencidas <= 1) {
 					for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 							if (parcela.getDataVencimento().after(this.dataValorPresente) && !parcela.isParcelaPaga()) {
-								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaData(this.dataValorPresente, parcela, contrato.getTxJurosParcelas()));
+								somatoriaValorPresente = somatoriaValorPresente.add(calcularValorPresenteParcelaComIPCAGambiarra(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 								parcelasAVencer = parcelasAVencer +1 ;
 							}
 					}
@@ -1633,11 +1635,11 @@ public class BRLTrustMB {
 					jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(contrato.getDataAquisicaoCessao()));
 					jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(contrato.getDataInicio()));
 					jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
-					jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+					jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(this.dataValorPresente));
 					JSONObject jsonValores = new JSONObject();
 					
-					if (parcela.getValorAmortizacaoSemIPCA() != null && parcela.getValorJurosSemIPCA() != null) {
-						jsonValores.put("face", parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+					if (parcela.getVlrAmortizacaoParcela() != null && parcela.getVlrJurosParcela() != null) {
+						jsonValores.put("face", parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()).setScale(2, RoundingMode.HALF_EVEN));
 					} else {
 						this.jsonGerado = false;
 						
@@ -1654,19 +1656,33 @@ public class BRLTrustMB {
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
-							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosCessao(), contrato.getDataAquisicaoCessao()));
+							jsonValores.put("aquisicao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosCessao(), contrato.getDataAquisicaoCessao()));
 						} else {
-							jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+							jsonValores.put("aquisicao", calcularValorPresenteParcelaComIPCA(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
 						}
 					} 
 					
 					//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-					jsonValores.put("liquidacao", calcularValorPresenteParcela(parcela.getId(), contrato.getTxJurosParcelas(), contrato.getDataAquisicaoCessao()));
+					jsonValores.put("liquidacao", calcularValorPresenteParcelaComIPCAGambiarra(parcela.getId(), contrato.getTxJurosParcelas(), this.dataValorPresente));
 					
 					jsonRecebivel.put("valores", jsonValores);
 					
 					JSONObject jsonDados = new JSONObject();
-					jsonDados.put("indice", "IPCA");			
+					jsonDados.put("indice", "IPCA");	
+					
+					JSONObject jsonCessionario = new JSONObject();
+					
+					JSONObject jsonCessionarioPessoa = new JSONObject();
+					
+					jsonCessionarioPessoa.put("tipo", "PJ");
+					jsonCessionarioPessoa.put("identificacao", "12.130.744/0001-00");
+					jsonCessionarioPessoa.put("nome", "True Securitizadora S.A.");
+					
+					jsonCessionario.put("pessoa", jsonCessionarioPessoa);
+					jsonCessionario.put("conta", "16182008");
+					
+					jsonDados.put("cessionario", jsonCessionario);
+					
 					jsonRecebivel.put("dados", jsonDados);		
 					
 					jsonRecebiveis.put(jsonRecebivel);
@@ -2165,6 +2181,145 @@ public class BRLTrustMB {
 		
 		return valorPresenteParcela;
 	}
+	
+	public BigDecimal calcularValorPresenteParcelaComIPCA(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
+		BigDecimal valorPresenteParcela;
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
+		BigDecimal juros = txJuros;
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		}
+		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
+	
+	public BigDecimal calcularValorPresenteParcelaComIPCAGambiarra(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
+		BigDecimal valorPresenteParcela;
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
+		BigDecimal juros = txJuros;
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		}
+		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.subtract(valorPresenteParcela.multiply(this.taxaDesconto.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
+	
+	public BigDecimal calcularValorPresenteParcelaDiaUtilComIPCA(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
+		BigDecimal valorPresenteParcela;
+		
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
+		BigDecimal juros = txJuros;
+		
+		BigDecimal jurosAoAno = BigDecimal.ZERO;
+		jurosAoAno = BigDecimal.ONE.add((txJuros.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		jurosAoAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosAoAno), 12));
+		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
+		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+		juros = jurosAoAno;
+		
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getVlrJurosParcela() != null && parcelas.getVlrAmortizacaoParcela() != null) {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		}
+		
+		if(CommonsUtil.mesmoValor(parcelas.getNumeroParcela(), "12")) {
+			dataHoje = null;
+		}
+		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.getWorkingDaysBetweenTwoDates(auxDataHoje, parcelas.getDataVencimento()));
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+		
+		//quantidadeDeMeses = BigDecimal.valueOf(21);
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(252), MathContext.DECIMAL128);
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+	
+		double divisor = Math.pow(juros.doubleValue(), (quantidadeDeMesesDouble)) ;
+		
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
 
 	public String getStringSemCaracteres(String documento) {
 		String retorno = "";
@@ -2412,5 +2567,13 @@ public class BRLTrustMB {
 
 	public void setDataValorPresente(Date dataValorPresente) {
 		this.dataValorPresente = dataValorPresente;
+	}
+
+	public BigDecimal getTaxaDesconto() {
+		return taxaDesconto;
+	}
+
+	public void setTaxaDesconto(BigDecimal taxaDesconto) {
+		this.taxaDesconto = taxaDesconto;
 	}
 }

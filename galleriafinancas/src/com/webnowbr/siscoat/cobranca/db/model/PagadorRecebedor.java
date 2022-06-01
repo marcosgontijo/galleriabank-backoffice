@@ -293,6 +293,10 @@ public class PagadorRecebedor implements Serializable {
 		this.combateFraudeCheckListCoobrigadoCasado = false;
 		this.cargoOcupacaoCheckListCoobrigadoCasado = false;
 		this.taxaCheckListCoobrigadoCasado = false;
+		
+		this.casado = false;
+		this.coobrigado = false;
+		this.userInvestidor = false;
 	}
 	
 	 public List<String> completeBancos(String query) {

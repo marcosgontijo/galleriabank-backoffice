@@ -23,6 +23,10 @@ public class CRMMB {
 	private int qtdeLeads;
 	private BigDecimal valorTotalLeads;
 	
+	private List<ContratoCobranca> agAnalise;
+	private int qtdeAgAnalise;
+	private BigDecimal valorTotalAgAnalise;
+	
 	private List<ContratoCobranca> emAnalise;
 	private int qtdeEmAnalise;
 	private BigDecimal valorTotalEmAnalise;
@@ -42,6 +46,14 @@ public class CRMMB {
 	private List<ContratoCobranca> agPAJUeLaudo;
 	private int qtdeAgPAJUeLaudo;
 	private BigDecimal valorTotalAgPAJUeLaudo;
+	
+	private List<ContratoCobranca> analiseComercial;
+	private int qtdeAnaliseComercial;
+	private BigDecimal valorTotalAnaliseComercial;
+	
+	private List<ContratoCobranca> comentarioJuridicoEsteira;
+	private int qtdeComentarioJuridicoEsteira;
+	private BigDecimal valorTotalComentarioJuridicoEsteira;
 	
 	private List<ContratoCobranca> preComite;
 	private int qtdePreComite;
@@ -90,6 +102,7 @@ public class CRMMB {
 	
 	public String clearFields() {
 		geraConsultaContratosNovoLead();
+		geraConsultaContratosAgAnalise();
 		geraConsultaContratosEmAnalise();
 		geraConsultaContratosAgPagtoBoleto();
 		geraConsultaContratosAgPAJUeLaudo();
@@ -125,6 +138,14 @@ public class CRMMB {
 			
 			this.tituloPagina = "Novo Lead";
 		}
+		if (filtro.equals("AgAnalise")) {
+			geraConsultaContratosAgAnalise();
+			this.todosContratos = this.agAnalise;
+			this.qtdeTodosContratos = this.qtdeAgAnalise;
+			this.valorTodosContratos = this.valorTotalAgAnalise;
+			
+			this.tituloPagina = "Ag Análise";
+		}
 		if (filtro.equals("EmAnalise")) {
 			geraConsultaContratosEmAnalise();
 			this.todosContratos = this.emAnalise;
@@ -158,7 +179,7 @@ public class CRMMB {
 			this.qtdeTodosContratos = this.qtdeAgPagtoBoleto;
 			this.valorTodosContratos = this.valorTotalAgPagtoBoleto;
 			
-			this.tituloPagina = "Ag. Pagto. Laudo";
+			this.tituloPagina = "Análise Aprovada";
 		}
 		if (filtro.equals("AgPAJULaudo")) {
 			geraConsultaContratosAgPAJUeLaudo();
@@ -167,6 +188,24 @@ public class CRMMB {
 			this.valorTodosContratos = this.valorTotalAgPAJUeLaudo;
 			
 			this.tituloPagina = "Ag. PAJU e Laudo";
+		}
+		
+		if (filtro.equals("analiseComercial")) {
+			geraConsultaContratosAnaliseComercial();
+			this.todosContratos = this.analiseComercial;
+			this.qtdeTodosContratos = this.qtdeAnaliseComercial;
+			this.valorTodosContratos = this.valorTotalAnaliseComercial;
+			
+			this.tituloPagina = "Análise Comercial";
+		}
+		
+		if (filtro.equals("comentarioJuridicoEsteira")) {
+			geraConsultaContratosComentarioJuridicoEsteira();
+			this.todosContratos = this.comentarioJuridicoEsteira;
+			this.qtdeTodosContratos = this.qtdeComentarioJuridicoEsteira;
+			this.valorTodosContratos = this.valorTotalComentarioJuridicoEsteira;
+			
+			this.tituloPagina = "Comentário Jurídico";
 		}
 		
 		if (filtro.equals("PreComite")) {
@@ -310,6 +349,40 @@ public class CRMMB {
 			}
 		}
 	}
+	
+	public void geraConsultaContratosAgAnalise() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.agAnalise = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.agAnalise = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Aguardando Análise");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.agAnalise = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Aguardando Análise"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAgAnalise = 0;
+		this.valorTotalAgAnalise = BigDecimal.ZERO;
+		
+		if (this.agAnalise.size() > 0) {
+			this.qtdeAgAnalise = this.agAnalise.size();
+			
+			for (ContratoCobranca c : this.agAnalise) {
+				this.valorTotalAgAnalise = valorTotalAgAnalise.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+
 	
 	public void geraConsultaContratosAnaliseReprovada() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -472,6 +545,72 @@ public class CRMMB {
 			
 			for (ContratoCobranca c : this.agPAJUeLaudo) {
 				this.valorTotalAgPAJUeLaudo = valorTotalAgPAJUeLaudo.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
+	public void geraConsultaContratosAnaliseComercial() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.analiseComercial = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.analiseComercial = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Comercial");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.analiseComercial = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Comercial"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeAnaliseComercial = 0;
+		this.valorTotalAnaliseComercial = BigDecimal.ZERO;
+		
+		if (this.analiseComercial.size() > 0) {
+			this.qtdeAnaliseComercial = this.analiseComercial.size();
+			
+			for (ContratoCobranca c : this.analiseComercial) {
+				this.valorTotalAnaliseComercial = valorTotalAnaliseComercial.add(c.getQuantoPrecisa());
+			}
+		}
+	}
+	
+	public void geraConsultaContratosComentarioJuridicoEsteira() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.comentarioJuridicoEsteira = new ArrayList<ContratoCobranca>();
+		
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (usuarioLogado != null) {
+				if (usuarioLogado.isAdministrador()) {
+					this.comentarioJuridicoEsteira = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Comentario Jurídico");
+				} else {
+					if (usuarioLogado.getCodigoResponsavel() != null) {
+						this.comentarioJuridicoEsteira = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Comentario Jurídico"); 	 
+					}
+				}
+			} 
+		}
+		
+		// soma valores total
+		this.qtdeComentarioJuridicoEsteira = 0;
+		this.valorTotalComentarioJuridicoEsteira = BigDecimal.ZERO;
+		
+		if (this.comentarioJuridicoEsteira.size() > 0) {
+			this.qtdeComentarioJuridicoEsteira = this.comentarioJuridicoEsteira.size();
+			
+			for (ContratoCobranca c : this.comentarioJuridicoEsteira) {
+				this.valorTotalComentarioJuridicoEsteira = valorTotalComentarioJuridicoEsteira.add(c.getQuantoPrecisa());
 			}
 		}
 	}
@@ -746,88 +885,124 @@ public class CRMMB {
 	public List<ContratoCobranca> populaStatus(List<ContratoCobranca> contratos) {
 		// POPULA STATUS
 		for (ContratoCobranca c : contratos) {
-			c.setStatus("Não Definido");
 			
-			if (c.getStatusLead().equals("Novo Lead")) {
-				c.setStatus("Novo Lead");
-			}
-			
-			if (c.getStatusLead().equals("Em Tratamento")) {
-				c.setStatus("Lead em Tratamento");
-			}
-			
-			if (c.getStatusLead().equals("Reprovado")) {
-				c.setStatus("Lead Reprovado");
-			}
-			
-			if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
-				c.setStatus("Ag. Análise");
-			}
-			
-			if (c.isInicioAnalise()) {
-				c.setStatus("Em Análise");
-			}
-			
-			if (c.getCadastroAprovadoValor() != null) {
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+			if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+				c.setStatus("Aprovado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
+				c.setStatus("Reprovado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
+				c.setStatus("Baixado");
+			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
+				c.setStatus("Reprovado");
+			} else {
+				
+				if (!CommonsUtil.semValor(c.getStatusLead())){
+					if (c.getStatusLead().equals("Novo Lead")) {
+						c.setStatus("Novo Lead");
+					}
+
+					if (c.getStatusLead().equals("Em Tratamento")) {
+						c.setStatus("Lead em Tratamento");
+					}
+					
+					if (c.getStatusLead().equals("Reprovado")) {
+						c.setStatus("Lead Reprovado");
+					}
+					
+					if (c.getStatusLead().equals("Arquivado") && !c.isInicioAnalise()) {
+						c.setStatus("Lead Arquivado");
+					}
+
+					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
+						c.setStatus("Ag. Análise");
+					}
+
+				} else {
+					c.setStatus("Não Definido");
+				}
+				
+				if (c.isInicioAnalise()) {
 					c.setStatus("Em Análise");
 				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
-					c.setStatus("Análise Pendente");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && !c.isPagtoLaudoConfirmada()) {
-					c.setStatus("Ag. Pagto. Laudo");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
-						(!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
-					c.setStatus("Ag. PAJU e Laudo");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
-					c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isPreAprovadoComite()) {
-					c.setStatus("Pré-Comite");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-						&& c.isPreAprovadoComite() && !c.isDocumentosComite()) {
-					c.setStatus("Ag. Validação DOCs");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() &&
-						c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && !c.isAprovadoComite()) {
-					c.setStatus("Ag. Comite");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
-					c.setStatus("Ag. DOC");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && !c.isCcbPronta()) {
-					c.setStatus("Ag. CCB");	
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && c.isAgAssinatura()) {
-					c.setStatus("Ag. Assinatura");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada() && 
-					c.isLaudoRecebido() && c.isPajurFavoravel() && c.isPreAprovadoComite() && c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCcbPronta() && !c.isAgAssinatura()  && c.isAgRegistro()) {
-					c.setStatus("Ag. Registro");
-				}
-			}
 
-			if (c.isAnaliseReprovada()) {
-				c.setStatus("Análise Reprovada");
+				if (c.getCadastroAprovadoValor() != null) {
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+						c.setStatus("Em Análise");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
+						c.setStatus("Análise Pendente");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& !c.isPagtoLaudoConfirmada()) {
+						c.setStatus("Análise Aprovada");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+						c.setStatus("Ag. PAJU e Laudo");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
+						c.setStatus("Análise Comercial");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && !c.isComentarioJuridicoEsteira() ) {
+						c.setStatus("Comentário Jurídico");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
+						c.setStatus("Pré-Comite");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& !c.isDocumentosComite()) {
+						c.setStatus("Ag. Comite");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && !c.isAprovadoComite()) {
+						c.setStatus("Ag. Comite");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+						c.setStatus("Ag. DOC");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& !c.isCcbPronta()) {
+						c.setStatus("Ag. CCB");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && c.isAgAssinatura()) {
+						c.setStatus("Ag. Assinatura");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
+						c.setStatus("Ag. Registro");
+					}
+				}
+				if (c.isAnaliseReprovada()) {
+					c.setStatus("Análise Reprovada");
+				}
 			}
 		}
-		
 		return contratos;
 	}
 

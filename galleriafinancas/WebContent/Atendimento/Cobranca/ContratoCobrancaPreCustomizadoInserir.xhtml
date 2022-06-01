@@ -68,6 +68,7 @@
 									            <f:selectItem itemLabel="Em Tratamento" itemValue="Em Tratamento" />
 									            <f:selectItem itemLabel="Completo" itemValue="Completo" />
 									            <f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+									            <f:selectItem itemLabel="Arquivado" itemValue="Arquivado" />
 									            <p:ajax event="change" update="Status"/>  
 									        </p:selectOneRadio>
 									        <p:outputLabel for="statusLeadTratamento" value="Status " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
@@ -390,8 +391,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
+								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -447,6 +448,17 @@
 						header="Recebido PAJU e laudo">
 
 						<h:panelGrid columns="2">
+						
+							<p:outputLabel for="valorPreLaudo"
+								value="Valor Pré Laudo: " styleClass="labelBold" />
+							<p:inputText id="valorPreLaudo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter"
+								style="FONT-SIZE: 10pt;width:300px;"
+								disabled="#{contratoCobrancaMB.deleteMode}" />
+						
 							<p:outputLabel for="valorMercadoImovel"
 								value="Valor de mercado do imóvel: " styleClass="labelBold" />
 							<p:inputText id="valorMercadoImovel"
@@ -533,6 +545,13 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
 										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
 										locale="pt" styleClass="dateTimeField" />
+										
+									<p:spacer height="10"></p:spacer>
+									<p:outputLabel for="nomeVistoriador"
+										value="Nome Vistoriador: " styleClass="labelBold" />
+									<p:inputText id="nomeVistoriador"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
+										style="FONT-SIZE: 10pt;width:300px;"/>
 								</h:panelGroup>
 						</shiro:hasAnyRoles>
 					</p:panel>
@@ -1593,7 +1612,6 @@
 						<p:selectOneRadio id="tipoOperacao" unselectable="true" required="true" columns="1"
 							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
 							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
-							<f:selectItem itemLabel="Home Equity com aquisição Imóvel " itemValue="Financiamento" />
 							<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
 						</p:selectOneRadio>
 					</h:panelGrid>

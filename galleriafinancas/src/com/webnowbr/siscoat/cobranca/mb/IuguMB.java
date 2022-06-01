@@ -5410,8 +5410,6 @@ public class IuguMB {
 				this.selectedRecebedor.setCep("13091-611");
 			}
 			
-			this.selectedRecebedor.setEmail("joaopedro.galleriafinancas@gmail.com");
-			
 			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
 				dadosValidos = false;
 	

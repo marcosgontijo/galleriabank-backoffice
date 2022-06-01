@@ -81,6 +81,7 @@
 				</shiro:hasAnyRoles>
 
 				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.status != 'Baixado' and contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
+					<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
 					<ui:fragment
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						<p:steps
@@ -93,28 +94,77 @@
 								rendered="true" />
 						</p:steps>
 					</ui:fragment>
+					</shiro:hasAnyRoles>
 					<ui:fragment
 						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
-						<h:panelGrid columns="12">
-							<p:steps
-								activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}"
-								styleClass="custom" readonly="false">
-								<p:menuitem id="agAnaliseStep" value="Aguardando Análise" />
-								<p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro" />
-								<p:menuitem id="pagtoLaudoConfirmadaStep"
-									value="Laudo e Parecer Jurídico Pago" />
-								<p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido" />
-								<p:menuitem id="preComiteStep" value="Pré-Comitê" />
-								<p:menuitem id="aprovadoComiteStep" value="Aguardando comitê" />
-								<p:menuitem id="documentosCompletosStep"
-									value="Aguardando Documentos" />
-								<p:menuitem id="ccbProntaStep" value="CCB Pronta" />
-								<p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura" />
-								<p:menuitem id="agRegistroStep" value="Aguardando Registro" />
-								<p:menuitem id="aprovadoStep" value="Contrato" />
-							</p:steps>
+						<h:panelGrid columns="14">	
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">
+								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
+								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
+								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
+								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
+								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>
+								    
+								    <p:menuitem id="analiseComercialStep" value="Análise Comercial"/>
+								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>
+								    
+								    <p:menuitem id="preComiteStep" value="Pré-Comitê"/>
+								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
+								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
+								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
+								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
+								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
+								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
+								</p:steps>
+							</shiro:hasAnyRoles>
+							
+							<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">
+								<ui:fragment
+									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}">
+									<h:panelGrid columns="2"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pedir Pré-Laudo</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectOneRadio id="pedidoPreLaudoComercial"
+											unselectable="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+											<f:selectItem itemLabel="Não" itemValue="false" />
+											<f:selectItem itemLabel="Sim" itemValue="true" />
+										</p:selectOneRadio>
+										<p:spacer width="10px"></p:spacer>
 
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectOneRadio id="pagtoLaudoConfirmada"
+											unselectable="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+											<f:selectItem itemLabel="Não" itemValue="false" />
+											<f:selectItem itemLabel="Sim" itemValue="true" />
+										</p:selectOneRadio>
+
+									</h:panelGrid>
+								</ui:fragment>
+							</shiro:hasAnyRoles>
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Enviar para Jurídico</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">									
+											<p:selectOneRadio id="analiseComercial" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >
+								           	 	<f:selectItem itemLabel="Não" itemValue="false" />
+								            	<f:selectItem itemLabel="Sim" itemValue="true" />
+									    	</p:selectOneRadio>
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>
+								</ui:fragment>
+
+							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
 								<h:panelGrid columns="2"
 									style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -122,10 +172,10 @@
 									<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 									<p:spacer></p:spacer>
 									<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">
-										<p:selectBooleanButton id="PreAprovadoComite"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-close" style="width:=60px" />
+										<p:selectOneRadio id="PreAprovadoComite" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" >
+								            <f:selectItem itemLabel="Não" itemValue="false" />
+								            <f:selectItem itemLabel="Sim" itemValue="true" />
+									    </p:selectOneRadio>
 									</shiro:hasAnyRoles>
 								</h:panelGrid>								
 							</ui:fragment>
@@ -252,6 +302,30 @@
 							</h:outputText>
 						</h:panelGrid>
 					</p:tooltip>
+					
+					<p:tooltip id="toolTipContentAnaliseComercial" for="analiseComercialStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   		<p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
 
 					<p:tooltip id="toolTipContentPreAprovadoComiteStep"
 						for="preComiteStep" position="bottom">
@@ -390,7 +464,7 @@
 
 
 								<p:outputLabel for="preAnocaoCartorioData"
-									value="Data da Pré-Anotação: " styleClass="labelBold" />
+									value="Data da Prenotação: " styleClass="labelBold" />
 								<p:outputLabel id="preAnocaoCartorioData"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.preAnocaoCartorioData}"
 									size="100" styleClass="dateTimeField">
@@ -440,16 +514,26 @@
 						style="margin-bottom:20px;">
 						<p:panel header="Comentário Comitê"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
-							<p:outputLabel id="comentarioComite"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
-								styleClass="labelBold" />
+							<p:dataView var="comite"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
+							paginator="false" layout="list"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<h:panelGrid columns="2">
+
+									<p:outputLabel value="#{comite.usuarioComite}:" styleClass="labelBold" />
+									<p:outputLabel value="#{comite.comentarioComite}" style="FONT-SIZE: 10pt; width:800px;white-space: pre-wrap;"/>
+
+								</h:panelGrid>
+							</p:dataViewListItem>
+						</p:dataView>
 						</p:panel>
 					</h:panelGroup>
 
 					<h:panelGroup id="comentarioPreComitePanel"
 						style="margin-bottom:20px;">
 						<p:panel header="Comentário Pré-Comitê"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira and !contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite }">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="comentarioPreComite"
 									value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -491,27 +575,11 @@
 					</h:panelGroup>
 				</shiro:hasAnyRoles>
 
-				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
-								styleClass="labelBold" />
-							<h:inputTextarea id="comentarioPendencia"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
-								rows="10" cols="48" maxlength="3000" onblur="" required="true"
-								counterTemplate="{0} characters remaining." autoResize="false"
-								style="FONT-SIZE: 10pt;width:400px;" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</h:inputTextarea>
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-
 				<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, PRECOBRANCAANALISTA">
 					<h:panelGroup id="comentarioPreComitePanelView"
 						style="margin-bottom:20px;">
 						<p:panel header="Comentário Pré-Comitê"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="comentarioPreComiteView"
 									value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -675,6 +743,22 @@
 					</p:panel>
 				</h:panelGroup>
 				
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
+								styleClass="labelBold" />
+							<h:inputTextarea id="comentarioPendencia"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia}"
+								rows="10" cols="48" maxlength="3000" onblur="" required="true"
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;" >
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
 				<h:panelGroup id="AnalisePendentePanel">
 					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}"
 						style="border: none" header="Analise Pendente">
@@ -725,8 +809,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="825,00"  itemLabel="50% - R$825,00" />
-								<f:selectItem itemValue="1.650,00"  itemLabel="100% - R$1.650,00" />
+								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
+								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
 							</p:selectOneMenu>
 							
 							
@@ -797,6 +881,13 @@
 											onkeydown="FormataValor(this, 13, event, 2);"
 											converter="bigDecimalConverter" />
 									</h:panelGroup>
+									
+									<p:outputLabel for="finalidadeRecursos"
+										value="Finalidade do Recurso " styleClass="labelBold" />
+									<p:outputLabel id="finalidadeRecursos"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+										style="width:300px;" />
+										
 								</h:panelGrid>
 							</h:panelGroup>
 							<h:panelGroup>
@@ -853,6 +944,13 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.trabalhistaRessalva}"
 										style="FONT-SIZE: 10pt;width:260px;"
 										disabled="#{contratoCobrancaMB.deleteMode}" />
+										
+									<p:outputLabel for="chequeDevolvidoRessalva" value="Cheque Devolvido: "
+										style="margin-left:30px;" />
+									<p:outputLabel id="chequeDevolvidoRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />	
 
 								</h:panelGrid>
 							</h:panelGroup>
@@ -866,6 +964,17 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido == true}"
 						header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">
+							
+							<p:outputLabel for="valorPreLaudo"
+								value="Valor Pré Laudo: " styleClass="labelBold" />
+							<p:outputLabel id="valorPreLaudo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter"
+								style="FONT-SIZE: 10pt;width:300px;"
+								disabled="#{contratoCobrancaMB.deleteMode}" />
+							
 							<p:outputLabel for="valorMercadoImovel"
 								value="Valor de mercado do imóvel: " styleClass="labelBold" />
 							<p:outputLabel id="valorMercadoImovel"
@@ -881,15 +990,17 @@
 								converter="bigDecimalConverter"
 								style="FONT-SIZE: 10pt;width:300px;" />
 						</h:panelGrid>
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
-							<p:outputLabel for="comentarioJuridico"
-								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:outputLabel id="comentarioJuridico" rows="10" cols="48"
-								counter="display"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
-							<p:outputLabel id="display" />
-						</h:panelGrid>
+						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
+							<h:panelGrid columns="2"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
+								<p:outputLabel for="comentarioJuridico"
+									value="Comentario Juridico: " styleClass="labelBold" />
+								<p:outputLabel id="comentarioJuridico" rows="10" cols="48"
+									counter="display"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
+								<p:outputLabel id="display" />
+							</h:panelGrid>
+						</shiro:hasAnyRoles>
 					</p:panel>
 				</h:panelGroup>
 
@@ -2547,6 +2658,110 @@
 			</p:panel>	
 			
 </shiro:hasAnyRoles>
+
+		 	
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" >						
+				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
+					<h:panelGrid columns="1">		
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosFaltantesSalvos" />								
+					</h:panelGrid>  
+				</p:panel>	
+				
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<p:panel id="ArquivosFaltantesSalvos" header="Arquivo(s) Faltante Salvo(s) no Contrato" style="margin-bottom:10px;">							
+					<h:panelGrid columns="1">			                      								
+						<p:dataTable id="dtFilesFaltante" var="filesFaltante" value="#{contratoCobrancaMB.filesFaltante}" rowKey="#{filesFaltante.name}" selection="#{contratoCobrancaMB.deletefilesFaltante}" emptyMessage="" sortBy="#{filesFaltante.name}" >	
+							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+							 <f:facet name="header">								 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
+					        </f:facet>	        
+					        <p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesFaltante.name}"
+								filterMatchMode="contains" sortBy="#{filesFaltante.name}">
+								<h:outputText value="#{filesFaltante.name}" />
+								<p:spacer height="10" />
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileFaltante(filesFaltante.name)}"
+									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>  
+					        
+					        <p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesFaltante}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+						    	</p:commandButton>	
+				            </p:column>						        
+
+				             <f:facet name="footer">				             
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>								
+					        </f:facet>             	        		               		        			        			           			 		
+						</p:dataTable>								
+					</h:panelGrid>  
+				</p:panel>
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</p:panel>	
+			
+			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
+				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >											
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+	
+					<p:panel id="ArquivosJuridicoSalvos" header="Arquivo(s) Juridico Salvo(s) no Contrato" style="margin-bottom:10px;">							
+						<h:panelGrid columns="1">			                      								
+							<p:dataTable id="dtFilesJuridico" var="filesJuridico" value="#{contratoCobrancaMB.filesJuridico}" rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesJuridico}" emptyMessage="" sortBy="#{filesJuridico.name}" >	
+								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+								 <f:facet name="header">							 
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+						        </f:facet>	        
+						        <p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
+									filterMatchMode="contains" sortBy="#{filesJuridico.name}">
+									<h:outputText
+									
+											value="#{filesJuridico.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									</p:commandButton>
+								</p:column>  
+						        
+						        <p:column style="width:100px;">
+									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesJuridico}" />
+							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+							    	</p:commandButton>	
+					            </p:column>						        
+	
+					             <f:facet name="footer">	             
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>								
+						        </f:facet>             	        		               		        			        			           			 		
+							</p:dataTable>								
+						</h:panelGrid>  
+					</p:panel>
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+					</script>
+				</p:panel>	
+			</shiro:hasAnyRoles>
 					
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;"

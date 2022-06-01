@@ -66,10 +66,12 @@
 				</div>
 				<div class="ui-g-8 ui-md-8 ui-lg-8">
 				    <p:fieldset id="opcoes" legend="Opções de Consulta" style="font-weight: bold;margin-top: 2px;background-color: #b7e6ba !important;">						        
-				        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 70px;padding-top: 0px;">
+				        <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; height: 100px;padding-top: 0px;">
 					        <p:commandButton value="Todos" ajax="false" action="#{crmMB.consultaContratosCRM('Todos')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Novo Lead" ajax="false" action="#{crmMB.consultaContratosCRM('NovoLead')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Ag Análise" ajax="false" action="#{crmMB.consultaContratosCRM('AgAnalise')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Em Análise" ajax="false" action="#{crmMB.consultaContratosCRM('EmAnalise')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
@@ -77,9 +79,13 @@
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Análise Reprovada" ajax="false" action="#{crmMB.consultaContratosCRM('AnaliseReprovada')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
-							<p:commandButton value="Ag. Pagto. Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPagtoBoleto')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:commandButton value="Análise Aprovada" ajax="false" action="#{crmMB.consultaContratosCRM('AgPagtoBoleto')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. PAJU e Laudo" ajax="false" action="#{crmMB.consultaContratosCRM('AgPAJULaudo')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Análise Comercial" ajax="false" action="#{crmMB.consultaContratosCRM('analiseComercial')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Comentário Jurídico" ajax="false" action="#{crmMB.consultaContratosCRM('comentarioJuridicoEsteira')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Pré-Comite" ajax="false" action="#{crmMB.consultaContratosCRM('PreComite')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
@@ -92,12 +98,10 @@
 							<p:commandButton value="Ag. Assinatura" ajax="false" action="#{crmMB.consultaContratosCRM('AgAssinatura')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px;  "/>
 							<p:spacer width="6"></p:spacer>
 							<p:commandButton value="Ag. Registro" ajax="false" action="#{crmMB.consultaContratosCRM('AgRegistro')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-							<shiro:hasAnyRoles name="ROOT">
-								<p:spacer width="6"></p:spacer>
-								<p:commandButton value="Baixado" ajax="false" action="#{crmMB.consultaContratosCRM('Baixado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-								<p:spacer width="6"></p:spacer>
-								<p:commandButton value="Reprovado" ajax="false" action="#{crmMB.consultaContratosCRM('Reprovado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
-							</shiro:hasAnyRoles>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Baixado" ajax="false" action="#{crmMB.consultaContratosCRM('Baixado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
+							<p:spacer width="6"></p:spacer>
+							<p:commandButton value="Reprovado" ajax="false" action="#{crmMB.consultaContratosCRM('Reprovado')}" update="ConsultaContratos" style="padding: 4px; margin-top: 4px; "/>
 				       	</div>					       	
   					</p:fieldset>					
 				</div>
@@ -170,10 +174,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                </p:commandButton>			
-			                 <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
-			                	<f:setPropertyActionListener target="#{impressoesPDFMB.objetoContratoCobranca}" value="#{contratos}" />
-			                </p:commandButton>
-			                 <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
+			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
@@ -181,6 +182,13 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
+			                
+			               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
+				                and contratos.statusLead == 'Completo' 
+				                and contratos.inicioAnalise == true
+								and contratos.cadastroAprovadoValor == 'Aprovado'}"
+							action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" />
+							
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 
@@ -191,7 +199,17 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-			                </p:commandButton>		             	
+			                </p:commandButton>	
+			                
+			                <p:commandButton action="#{contratoCobrancaMB.enviaEmailAtualizacaoPreContratoNovo}" ajax="false" icon="ui-icon-trash" value="Enviar email" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+			                </p:commandButton>
+			                	             	
 		                </shiro:hasAnyRoles>
 		                <!-- 
 		                <p:spacer height="10"/>

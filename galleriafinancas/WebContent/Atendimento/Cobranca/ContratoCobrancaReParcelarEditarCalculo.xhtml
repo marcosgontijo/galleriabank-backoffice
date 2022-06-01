@@ -98,8 +98,10 @@
 					onkeydown="FormataValor(this, 13, event, 2);" required="true"
 					converter="bigDecimalConverter">
 				</p:inputText>
-
-
+							
+					<p:outputLabel value="Incluir Taxa Admin: "/>
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">								
+					</p:selectBooleanCheckbox>							
 
 			</h:panelGrid>
 		</h:panelGroup>
