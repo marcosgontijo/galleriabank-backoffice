@@ -1,10 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,94 +8,27 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.xml.ws.Holder;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
-import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
-import org.primefaces.util.CalendarUtils;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
+import org.primefaces.event.SelectEvent;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
-import com.webnowbr.siscoat.cobranca.db.model.FaturaIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.OperacaoContratoIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.SaldoIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.SaqueIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.SubContaIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.UniProof;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
-import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.BcMsgRetorno;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDaOperacao;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoVencimento;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoModalidade;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
-import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 @ManagedBean(name = "kobanaMB")
 @SessionScoped
@@ -170,12 +99,98 @@ public class KobanaMB {
 	 * @return
 	 */
 
+	private Date dtInicioConsulta;
+	private Date dtFimConsulta;
+	
+	private Date dataHoje;
+	
+	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
+	
+	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
+	
+	
+	public String clearFieldsParcelasBoleto() {
+		
+		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		this.dtInicioConsulta = gerarDataHoje();
+		this.dtFimConsulta = gerarDataHoje();
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaBoletosKobana.xhtml";
+	}
+	
+	public void consultarParcelasBoleto() {
+		
+		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+
+		this.listContratoCobrancaDetalhes = cDao.getParcelasPorVencimento(this.dtInicioConsulta, this.dtFimConsulta);
+		
+		this.dataHoje = gerarDataHoje();
+	}
+	
+	public boolean validateParcelaValorZero(ContratoCobrancaDetalhes parcela) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean retorno = false;
+		
+		if (parcela.getVlrParcela().compareTo(BigDecimal.ZERO) == 0) {
+			retorno = true;
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[Kobana - Geração Boleto] Há parcela(s) selecionada(s) com o valor igual a R$ 0,00!!!", ""));
+		}
+		
+		return retorno;
+	}
+	
+	public void gerarBoletoSimples(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (!validateParcelaValorZero(parcela)) {
+			geraBoletoKobana(contrato, parcela);
+		}
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"[Kobana - Geração Boleto] Boleto da parcela " + parcela.getContrato().getNumeroContrato() + " / " + parcela.getNumeroParcela() + " gerado com sucesso!!!",""));
+	}
+	
+	public void gerarBoletosLote() {		
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (this.selectedParcelas.size() == 0) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Geração Boleto] Nenhum boleto foi selecionado para geração!!!",""));
+		} else {
+			// valida se tem alguma parcela selecionada com valor zerado
+			boolean validaParcelaValorZerado = false;
+			for (ContratoCobrancaDetalhes parcela : this.selectedParcelas) {
+				if (validateParcelaValorZero(parcela)) {
+					validaParcelaValorZerado = true;
+					break;
+				}
+			}
+			
+			// se não tem parcelas zeradas
+			if (!validaParcelaValorZerado) {
+				for (ContratoCobrancaDetalhes parcela : this.selectedParcelas) {
+					geraBoletoKobana(parcela.getContrato(), parcela);
+				}
+				
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"[Kobana - Geração Boleto] Boleto(s) gerado(s) com sucesso!!!",""));
+			}
+		}
+	}
+	
 	public void geraBoletoKobana(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://app.kobana.com.br/v1/bank_billets");
+			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
 
 			JSONObject jsonObj = getJSONBoletoKobana(contrato, parcela);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -190,12 +205,17 @@ public class KobanaMB {
 			myURLConnection.setRequestProperty("User-Agent", "webnowbr@gmail.com");
 		     
 			myURLConnection.setDoOutput(true);
-			myURLConnection.getOutputStream().write(postDataBytes);
+			//myURLConnection.getOutputStream().write(postDataBytes);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = jsonObj.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);			
+			}
 	
 			JSONObject myResponse = null;
-			myResponse = getJSONSucesso(myURLConnection.getInputStream());
-			
 			int status = myURLConnection.getResponseCode();
+			
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());			
 			
 			String urlBoleto = "";
 			
@@ -209,9 +229,6 @@ public class KobanaMB {
 				ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
 				parcela.setUrlBoletoKonana(urlBoleto);
 				parcelaDao.merge(parcela);
-				
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"[Kobana - Geração Boleto] Boleto Gerado com Sucesso!", ""));
 			} else {
 				if (status == 401) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -261,7 +278,19 @@ public class KobanaMB {
 		//double fine_value = 15;
 				
 		JSONObject jsonBoleto = new JSONObject();
-	     
+	 
+	 	if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+	 		jsonBoleto.put("bank_billet_account_id", 8557);
+	 	}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("bank_billet_account_id", 8555);
+	 	}
+
+		if (contrato.getEmpresa().equals("CRI 1")) {
+			jsonBoleto.put("bank_billet_account_id", 8558);
+		}
+
 	    /*
 	    Número do Contrato
 	     */
@@ -269,8 +298,8 @@ public class KobanaMB {
 		/*
 		Instruções
 		 */
-	    jsonBoleto.put("first_instruction", "Instrução 1");
-		jsonBoleto.put("second_instruction", "Instrução 2");
+	    //jsonBoleto.put("first_instruction", "");
+		//jsonBoleto.put("second_instruction", "");
 		/*
 		valor boleto
 		 */
@@ -290,14 +319,46 @@ public class KobanaMB {
 	    	jsonBoleto.put("customer_cnpj_cpf", cliente.getCpf());
 	    }
 	    		
-		jsonBoleto.put("customer_state", getUFEstado(cliente.getEstado()));
-		jsonBoleto.put("customer_city_name", cliente.getCidade());
-		jsonBoleto.put("customer_zipcode", cliente.getCep());
-		jsonBoleto.put("customer_address", cliente.getEndereco());
+	    if (cliente.getEstado() == null || cliente.getEstado().equals("")) {
+	    	jsonBoleto.put("customer_state", "SP");
+	    } else {
+	    	jsonBoleto.put("customer_state", cliente.getEstado());
+	    }
+	    
+	    if (cliente.getCidade() == null || cliente.getCidade().equals("")) {
+	    	jsonBoleto.put("customer_city_name", "Cidade");
+	    } else {
+	    	jsonBoleto.put("customer_city_name", cliente.getCidade());
+	    }
+		
+	    if (cliente.getCep() == null || cliente.getCep().equals("")) {
+	    	jsonBoleto.put("customer_zipcode", "13091-611");
+	    } else {
+	    	jsonBoleto.put("customer_zipcode", cliente.getCep());
+	    }
+		
+	    if (cliente.getEndereco() == null || cliente.getEndereco().equals("")) {
+	    	jsonBoleto.put("customer_address", "Endereço");
+	    } else {
+	    	jsonBoleto.put("customer_address", cliente.getEndereco());
+	    }
+	
 		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
-		jsonBoleto.put("customer_address_number", "2022-05-25");
-		jsonBoleto.put("customer_email", cliente.getEmail());
-		jsonBoleto.put("customer_neighborhood", cliente.getBairro());
+
+		jsonBoleto.put("customer_address_number", "00");
+		
+		if (cliente.getEmail() == null || cliente.getEmail().equals("")) {
+			jsonBoleto.put("customer_email", "contato@gmail.com");
+		} else {
+			jsonBoleto.put("customer_email", cliente.getEmail());
+		}
+		
+		if (cliente.getBairro() == null || cliente.getBairro().equals("")) {
+			jsonBoleto.put("customer_neighborhood", "Bairro");
+		} else {
+			jsonBoleto.put("customer_neighborhood", cliente.getBairro());
+		}
+		
 		/*
 		Enviar este boleto por email para cliente e empresa?
 		 */
@@ -341,6 +402,40 @@ public class KobanaMB {
 		
 		return jsonBoleto;
 	}	
+	
+	public void validateParcelaSelected(SelectEvent event) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDetalhes parcela = (ContratoCobrancaDetalhes) event.getObject();
+		
+		if (parcela.getQtdParcelasVencidas() > 0) {
+			this.selectedParcelas.remove(parcela);
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[Kobana - Geração Boleto] Não é possível gerar boleto de contratos com parcelas vencidas!", ""));
+		}		
+	}
+	
+	public void validateTodasParcelasSelected() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		for (ContratoCobrancaDetalhes parcelas : this.selectedParcelas) {
+			if (parcelas.getQtdParcelasVencidas() > 0) {
+				this.selectedParcelas.clear();
+				break;
+			}
+		}
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				"[Kobana - Geração Boleto] Não é possível gerar boleto de contratos com parcelas vencidas!", ""));	
+	}
+
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 
 	public String getDataFormatada(Date data) {		
 		TimeZone zone = TimeZone.getDefault();
@@ -396,4 +491,35 @@ public class KobanaMB {
 		return null;
 	}
 
+	public Date getDtInicioConsulta() {
+		return dtInicioConsulta;
+	}
+
+	public void setDtInicioConsulta(Date dtInicioConsulta) {
+		this.dtInicioConsulta = dtInicioConsulta;
+	}
+
+	public Date getDtFimConsulta() {
+		return dtFimConsulta;
+	}
+
+	public void setDtFimConsulta(Date dtFimConsulta) {
+		this.dtFimConsulta = dtFimConsulta;
+	}
+
+	public List<ContratoCobrancaDetalhes> getListContratoCobrancaDetalhes() {
+		return listContratoCobrancaDetalhes;
+	}
+
+	public void setListContratoCobrancaDetalhes(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes) {
+		this.listContratoCobrancaDetalhes = listContratoCobrancaDetalhes;
+	}
+
+	public List<ContratoCobrancaDetalhes> getSelectedParcelas() {
+		return selectedParcelas;
+	}
+
+	public void setSelectedParcelas(List<ContratoCobrancaDetalhes> selectedParcelas) {
+		this.selectedParcelas = selectedParcelas;
+	}
 }

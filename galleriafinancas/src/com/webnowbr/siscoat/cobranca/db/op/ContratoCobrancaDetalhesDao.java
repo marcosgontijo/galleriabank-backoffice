@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -170,5 +173,81 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 			}
 		});
 	}	
+
+	private static final String QUERY_PARCELAS_POR_VENCIMENTO = "select cd.id, cc.id from cobranca.contratocobrancadetalhes cd " + 
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cd.id " + 
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " +
+			"where cd.datavencimento >= ? ::timestamp " + 
+			"and cd.datavencimento <= ? ::timestamp ";
 	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobrancaDetalhes> getParcelasPorVencimento(final Date dtInicioConsulta, final Date dtFimConsulta) {
+		return (List<ContratoCobrancaDetalhes>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobrancaDetalhes> objects = new ArrayList<ContratoCobrancaDetalhes>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+
+				java.sql.Date dtInicioConsultaSQL = new java.sql.Date(dtInicioConsulta.getTime());
+				java.sql.Date dtFimConsultaSQL = new java.sql.Date(dtFimConsulta.getTime());
+
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_PARCELAS_POR_VENCIMENTO);
+
+					ps.setDate(1, dtInicioConsultaSQL);
+					ps.setDate(2, dtFimConsultaSQL);
+					
+					rs = ps.executeQuery();
+
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+					while (rs.next()) {
+						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(1));
+						contratoCobrancaDetalhes.setContrato(contratoCobrancaDao.findById(rs.getLong(2)));
+						
+						contratoCobrancaDetalhes.setQtdParcelasVencidas(getParcelasVencidas(contratoCobrancaDetalhes.getContrato()));
+						
+						objects.add(contratoCobrancaDetalhes);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}	
+	
+	public int getParcelasVencidas(ContratoCobranca contrato) {
+		int parcelasVencidas = 0;
+		Date dataHoje = gerarDataHoje();
+		
+		for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
+			// verifica parcelas vencidas, se maior que 1 não mostra contrato
+			if (parcela.getDataVencimento().before(dataHoje) && !parcela.isParcelaPaga()) {
+				parcelasVencidas = parcelasVencidas + 1;
+				
+				if (parcelasVencidas > 1) {
+					break;
+				}
+			}
+		}
+		
+		return parcelasVencidas;
+	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 }
