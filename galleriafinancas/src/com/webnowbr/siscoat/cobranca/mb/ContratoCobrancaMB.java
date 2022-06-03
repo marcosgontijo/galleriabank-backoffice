@@ -3068,7 +3068,7 @@ public class ContratoCobrancaMB {
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
 					return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
 				}
-				if (this.tituloTelaConsultaPreStatus.equals("Análise Aprovada")) {
+				if (this.tituloTelaConsultaPreStatus.equals("Análise Pré-Aprovada")) {
 					if(usuarioLogado.isComiteConsultar()) {
 						return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
 					}
@@ -3160,10 +3160,11 @@ public class ContratoCobrancaMB {
 							rAssistente = rDao.findById((long) 359);
 
 							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"ag_comentarios_juridico", 
+							"contrato_pre_aprovado", 
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
-							"", "");
+							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
 				}
@@ -3187,6 +3188,7 @@ public class ContratoCobrancaMB {
 					"contrato_recebido_laudo_paju",
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					
 					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
 						// Bia (assistente Gislaine)
 						ResponsavelDao rDao = new ResponsavelDao();
@@ -3194,7 +3196,7 @@ public class ContratoCobrancaMB {
 						rAssistente = rDao.findById((long) 359);
 
 						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"ag_comentarios_juridico", 
+						"contrato_recebido_laudo_paju", 
 						this.objetoContratoCobranca.getPagador().getNome(),
 						this.objetoContratoCobranca.getNumeroContrato(),
 						"", "");
@@ -3251,7 +3253,7 @@ public class ContratoCobrancaMB {
 						rAssistente = rDao.findById((long) 359);
 
 						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"ag_comentarios_juridico", 
+						"comentado_juridico_interno", 
 						this.objetoContratoCobranca.getPagador().getNome(),
 						this.objetoContratoCobranca.getNumeroContrato(),
 						"", "");
@@ -6750,7 +6752,7 @@ public class ContratoCobrancaMB {
 		usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 		
 		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")
-				 || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Aprovada")) {
+				 || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Pré-Aprovada")) {
 			if(usuarioLogado.isComiteConsultar()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			} else {
@@ -6978,7 +6980,7 @@ public class ContratoCobrancaMB {
 					} else if(this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite()) {
 						this.tituloTelaConsultaPreStatus = "Pré-Comite";
 					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
-						this.tituloTelaConsultaPreStatus = "Análise Aprovada";
+						this.tituloTelaConsultaPreStatus = "Análise Pré-Aprovada";
 					}
 	
 					return clearFieldsEditarPendentesAnalistas();
@@ -9898,7 +9900,7 @@ public class ContratoCobrancaMB {
 			this.tituloTelaConsultaPreStatus = "Análise Pendente";
 		}
 		if (status.equals("Análise Aprovada")) {
-			this.tituloTelaConsultaPreStatus = "Análise Aprovada";
+			this.tituloTelaConsultaPreStatus = "Análise Pré-Aprovada";
 		}
 		if (status.equals("Pedir Pré-Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Pedir Pré-Laudo";
