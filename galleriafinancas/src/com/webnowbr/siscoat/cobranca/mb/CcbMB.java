@@ -1883,7 +1883,7 @@ public class CcbMB {
 			
 			geraParagrafoBulletList(document, paragraph, run, numID2,
 					"Emissão da Certidão Negativa de Débitos – CND Municipal atualizada, em que não"
-					+ " conste débitos de Importo Predial e Territorial Urbano – IPTU.",
+					+ " conste débitos de Imposto Predial e Territorial Urbano – IPTU.",
 					false);
 			
 			geraParagrafoBulletList(document, paragraph, run, numID2,
@@ -4693,6 +4693,10 @@ public class CcbMB {
 					+ " prevalecerá ainda que a tolerância ou a não aplicação das cominações ocorra repetidas vezes,"
 					+ " consecutiva ou alternadamente. ", true, false);
 			
+			geraParagrafoComposto(document, paragraph, run, run2, "7.2 ", "A ocorrência de uma ou mais hipóteses referidas"
+					+ " acima não implicará novação ou modificação de quaisquer disposições	desta Alienação Fiduciária,"
+					+ " as quais permanecerão íntegras e em pleno vigor, como se nenhum favor houvesse ocorrido.", true, false);
+						
 			geraParagrafoComposto(document, paragraph, run, run2, "7.3 ", "As obrigações constituídas por "
 					+ "esta Alienação Fiduciária são extensivas e obrigatórias aos cessionários,"
 					+ " promissários-cessionários, herdeiros e sucessores a qualquer título"
@@ -5575,6 +5579,247 @@ public class CcbMB {
 			return null;
 	}
 	
+	public StreamedContent geraCartaSplitDinamica() throws IOException{
+		try {
+			XWPFDocument document = new XWPFDocument();	
+
+			XWPFRun run;
+			XWPFParagraph paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("São Paulo/SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+							+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
+							+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			XWPFRun run2 = paragraph.createRun();
+			XWPFRun run3 = paragraph.createRun();
+			XWPFRun run4 = paragraph.createRun();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("À");
+			run.setFontSize(11);
+			run.setBold(false);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getLogradouroEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getEndereco())) {
+							this.objetoCcb.setLogradouroEmitente(participante.getPessoa().getEndereco());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getNumeroEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getNumero())) {
+							this.objetoCcb.setNumeroEmitente(participante.getPessoa().getNumero());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getComplementoEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getComplemento())) {
+							this.objetoCcb.setComplementoEmitente(participante.getPessoa().getComplemento());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCidadeEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCidade())) {
+							this.objetoCcb.setCidadeEmitente(participante.getPessoa().getCidade());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getUfEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getEstado())) {
+							this.objetoCcb.setUfEmitente(participante.getPessoa().getEstado());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCepEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCep())) {
+							this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
+						}
+					}						
+				}
+			}
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("BMP Money Plus Sociedade de Crédito Direto S.A.");
+			run.setFontSize(11);
+			run.setBold(true);
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("Autorizamos a efetivação de transferência, através da TED, no valor de ");
+			run.setFontSize(11);
+			run.setBold(false);
+			BigDecimal valorCartaSplit = this.objetoCcb.getValorLiquidoCredito().add(this.objetoCcb.getValorDespesas());
+			valorPorExtenso.setNumber(valorCartaSplit);
+			run2 = paragraph.createRun();
+			run2.setText(valorCartaSplit + "(" + valorPorExtenso.toString() + ")," );
+			run2.setFontSize(11);
+			run2.setBold(true);
+			run = paragraph.createRun();
+			run.setText("conforme dados abaixo, crédito oriundo da CCB n° " + this.objetoCcb.getNumeroCcb() + ", datada de " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+					+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
+					+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
+			run.setFontSize(10);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(100);
+			run = paragraph.createRun();
+			run.setText("Contas a serem creditadas");
+			run.setFontSize(11);
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("Nome: Galleria Correspondente Bancário Eireli");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run.setText("CPF/CNPJ: 34.787.885/0001-32");
+			run.addCarriageReturn();
+			run.setText("Banco: ");
+			run2 = paragraph.createRun();
+			run2.setText("Banco do Brasil");
+			run2.setFontSize(11);
+			run2.setBold(true);
+			run.addCarriageReturn();
+			run.setText("Agência: 1515-6");
+			run.addCarriageReturn();
+			run.setText("C/C: 131094-1");
+			run.addCarriageReturn();
+			run.setText("Valor: ");
+			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
+			run2 = paragraph.createRun();
+			run2.setText(this.objetoCcb.getValorDespesas() + "(" + valorPorExtenso.toString() + ")" );
+			run2.setFontSize(11);
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(100);
+			run = paragraph.createRun();
+			run.setText("Contas a serem creditadas (conta cliente no contrato Money)");
+			run.setFontSize(11);
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.SINGLE);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("Nome: " + this.objetoCcb.getNomeEmitente());
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run.setText("CPF/CNPJ: " + this.objetoCcb.getCpfEmitente());
+			run.addCarriageReturn();
+			run.setText("Banco: ");
+			run2 = paragraph.createRun();
+			run2.setText(this.objetoCcb.getNomeBanco() + "");
+			run2.setFontSize(11);
+			run2.setBold(true);
+			run.addCarriageReturn();
+			run.setText("Agência: " + this.objetoCcb.getAgencia());
+			run.addCarriageReturn();
+			run.setText("C/C: " + this.objetoCcb.getContaCorrente());
+			run.addCarriageReturn();
+			run.setText("Valor: ");
+			valorPorExtenso.setNumber(this.objetoCcb.getValorLiquidoCredito());
+			run2 = paragraph.createRun();
+			run2.setText(this.objetoCcb.getValorLiquidoCredito() + "(" + valorPorExtenso.toString() + ")" );
+			run2.setFontSize(11);
+			run2.setBold(true);
+			run3 = paragraph.createRun();
+			run3.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCB "
+					+ this.objetoCcb.getNumeroCcb() + " da matricula " 
+					+ this.objetoCcb.getNumeroImovel()  + " do " 
+					+ this.objetoCcb.getCartorioImovel() + " RI de " 
+					+ this.objetoCcb.getCidadeImovel()  + " - " 
+					+ this.objetoCcb.getUfImovel() );
+			run3.setFontSize(11);
+			run3.setColor("ff0000");
+			run3.setBold(true);		
+			run3.addCarriageReturn();
+			run3.addCarriageReturn();			
+			run3.addCarriageReturn();			
+			run3.addCarriageReturn();			
+			run3.addCarriageReturn();			
+			run3.addCarriageReturn();			
+			run3.addCarriageReturn();
+		
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			run = paragraph.createRun();
+			run.setText("_____________________________________________________________________________");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run = paragraph.createRun();
+			run.setText("NOME/RAZÃO SOCIAL: " + this.objetoCcb.getNomeEmitente());
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run = paragraph.createRun();
+			run.setText("CPF/CNPJ: " + this.objetoCcb.getCpfEmitente());
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			run = paragraph.createRun();
+			run.setText("(EMITENTE)");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			gerador.open(String.format("Galleria Bank - Carta Split %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			
+			criarCcbNosistema();
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+
+		return null;
+}
+	
 	public void criarParagrafo(XWPFDocument document, XWPFParagraph paragraph, ParagraphAlignment alinhamento ){
 		paragraph = document.createParagraph();
 		paragraph.setAlignment(alinhamento);
@@ -5840,6 +6085,9 @@ public class CcbMB {
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NCnova")){
 	    		clearDocumentosNovos();
 	    		return geraNCDinamica();
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CartaSplit")){
+	    		clearDocumentosNovos();
+	    		return geraCartaSplitDinamica();
 	    	} else {
 	    		
 	    	}
