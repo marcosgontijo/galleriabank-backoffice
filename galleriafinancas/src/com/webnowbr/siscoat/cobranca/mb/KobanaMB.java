@@ -170,12 +170,83 @@ public class KobanaMB {
 	 * @return
 	 */
 
+	private Date dtInicioConsulta;
+	private Date dtFimConsulta;
+	
+	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
+	
+	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
+	
+	
+	public String clearFieldsParcelasBoleto() {
+		
+		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		this.dtInicioConsulta = gerarDataHoje();
+		this.dtFimConsulta = gerarDataHoje();
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaBoletosKobana.xhtml";
+	}
+	
+	public void consultarParcelasBoleto() {
+		
+		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+
+		this.listContratoCobrancaDetalhes = cDao.getParcelasPorVencimento(this.dtInicioConsulta, this.dtFimConsulta);
+	}
+	
+	public void gerarBoletoSimples(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		geraBoletoKobana(contrato, parcela);
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Boleto da parcela " + parcela.getContrato().getNumeroContrato() + " / " + parcela.getNumeroParcela() + " gerado com sucesso!!!",""));
+	}
+	
+	public void gerarBoletosLote() {		
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (this.selectedParcelas.size() == 0) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Nenhum boleto foi selecionado para geração!!!",""));
+		} else {
+			for (ContratoCobrancaDetalhes parcela : this.selectedParcelas) {
+				System.out.println("Parcela" + parcela.getNumeroParcela() );
+			}
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Boleto(s) gerado(s) com sucesso!!!",""));
+		}
+	}
+	
 	public void geraBoletoKobana(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://app.kobana.com.br/v1/bank_billets");
+			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");
+			
+/*
+ * 
+  	8558	True Securitizadora S.A.	Itaú 109 CC: 53683-2	2		
+		CRI 1
+		
+	8557	Galleria Finanças Securitizadora S.A.	Bradesco 09 CC: 41501-4	1002
+		SEC
+		
+	8555	Galleria Home Equity FIDC	Itaú 109 CC: 25161-5 Padrão	965
+		FIDC
+		
+		
+		bank_billet_account_id
+		ID da Carteira de Cobrança. Se não informado, usará a carteira padrão.
+ */
+			
 
 			JSONObject jsonObj = getJSONBoletoKobana(contrato, parcela);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -183,7 +254,7 @@ public class KobanaMB {
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 			myURLConnection.setUseCaches(false);
 			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept", "*/*");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
@@ -269,8 +340,8 @@ public class KobanaMB {
 		/*
 		Instruções
 		 */
-	    jsonBoleto.put("first_instruction", "Instrução 1");
-		jsonBoleto.put("second_instruction", "Instrução 2");
+	    jsonBoleto.put("first_instruction", "");
+		jsonBoleto.put("second_instruction", "");
 		/*
 		valor boleto
 		 */
@@ -290,14 +361,50 @@ public class KobanaMB {
 	    	jsonBoleto.put("customer_cnpj_cpf", cliente.getCpf());
 	    }
 	    		
-		jsonBoleto.put("customer_state", getUFEstado(cliente.getEstado()));
-		jsonBoleto.put("customer_city_name", cliente.getCidade());
-		jsonBoleto.put("customer_zipcode", cliente.getCep());
-		jsonBoleto.put("customer_address", cliente.getEndereco());
+	    if (cliente.getEstado() == null || cliente.getEstado().equals("")) {
+	    	jsonBoleto.put("customer_state", "Estado");
+	    } else {
+	    	jsonBoleto.put("customer_state", cliente.getEstado());
+	    }
+	    
+	    if (cliente.getCidade() == null || cliente.getCidade().equals("")) {
+	    	jsonBoleto.put("customer_city_name", "Cidade");
+	    } else {
+	    	jsonBoleto.put("customer_city_name", cliente.getCidade());
+	    }
+		
+	    if (cliente.getCep() == null || cliente.getCep().equals("")) {
+	    	jsonBoleto.put("customer_zipcode", "CEP");
+	    } else {
+	    	jsonBoleto.put("customer_zipcode", cliente.getCep());
+	    }
+		
+	    if (cliente.getEndereco() == null || cliente.getEndereco().equals("")) {
+	    	jsonBoleto.put("customer_address", "Endereço");
+	    } else {
+	    	jsonBoleto.put("customer_address", cliente.getEndereco());
+	    }
+	
 		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
-		jsonBoleto.put("customer_address_number", "2022-05-25");
-		jsonBoleto.put("customer_email", cliente.getEmail());
-		jsonBoleto.put("customer_neighborhood", cliente.getBairro());
+
+		if (cliente.getEndereco() == null || cliente.getEndereco().equals("")) {
+			jsonBoleto.put("customer_address_number", "00");
+		} else {
+			jsonBoleto.put("customer_address_number", "00");
+		}
+		
+		if (cliente.getEmail() == null || cliente.getEmail().equals("")) {
+			jsonBoleto.put("customer_email", "E-mail");
+		} else {
+			jsonBoleto.put("customer_email", cliente.getEmail());
+		}
+		
+		if (cliente.getBairro() == null || cliente.getBairro().equals("")) {
+			jsonBoleto.put("customer_neighborhood", "Bairro");
+		} else {
+			jsonBoleto.put("customer_neighborhood", cliente.getBairro());
+		}
+		
 		/*
 		Enviar este boleto por email para cliente e empresa?
 		 */
@@ -341,6 +448,14 @@ public class KobanaMB {
 		
 		return jsonBoleto;
 	}	
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 
 	public String getDataFormatada(Date data) {		
 		TimeZone zone = TimeZone.getDefault();
@@ -396,4 +511,35 @@ public class KobanaMB {
 		return null;
 	}
 
+	public Date getDtInicioConsulta() {
+		return dtInicioConsulta;
+	}
+
+	public void setDtInicioConsulta(Date dtInicioConsulta) {
+		this.dtInicioConsulta = dtInicioConsulta;
+	}
+
+	public Date getDtFimConsulta() {
+		return dtFimConsulta;
+	}
+
+	public void setDtFimConsulta(Date dtFimConsulta) {
+		this.dtFimConsulta = dtFimConsulta;
+	}
+
+	public List<ContratoCobrancaDetalhes> getListContratoCobrancaDetalhes() {
+		return listContratoCobrancaDetalhes;
+	}
+
+	public void setListContratoCobrancaDetalhes(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes) {
+		this.listContratoCobrancaDetalhes = listContratoCobrancaDetalhes;
+	}
+
+	public List<ContratoCobrancaDetalhes> getSelectedParcelas() {
+		return selectedParcelas;
+	}
+
+	public void setSelectedParcelas(List<ContratoCobrancaDetalhes> selectedParcelas) {
+		this.selectedParcelas = selectedParcelas;
+	}
 }

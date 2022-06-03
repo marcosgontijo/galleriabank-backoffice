@@ -82,6 +82,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	 */
 	private long idContrato;
 	
+	private ContratoCobranca contrato;
+	
 	public ContratoCobrancaDetalhes(){
 		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
 		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
@@ -580,5 +582,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	public void setTaxaAdm(BigDecimal taxaAdm) {
 		this.taxaAdm = taxaAdm;
+	}
+
+	public ContratoCobranca getContrato() {
+		return contrato;
+	}
+
+	public void setContrato(ContratoCobranca contrato) {
+		this.contrato = contrato;
 	}
 }

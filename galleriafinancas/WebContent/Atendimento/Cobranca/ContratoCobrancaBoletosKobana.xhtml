@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaFinanceiro" header="Contratos/Parcelas - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{kobanaMB.dtInicioConsulta}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{kobanaMB.dtFimConsulta}" required="true"
+						label="Data Fim" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField" />
+				</h:panelGrid>
+				<p:commandButton value="Consultar"
+					action="#{kobanaMB.consultarParcelasBoleto}"
+					image="ui-icon ui-icon-check"
+					update=":form:dtContratos :form:ConsultaFinanceiroResultados"
+					onclick="start();" oncomplete="stop();"
+					style="TEXT-DECORATION: bold;" />					
+			</p:panel>
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+			<p:panel id="ConsultaFinanceiroResultados"
+				header="Contratos/Parcelas - Resultados" style="margin-bottom:10px;">
+				<p:dataTable id="dtContratos" var="parcela"
+					value="#{kobanaMB.listContratoCobrancaDetalhes}"
+					rowStyleClass= "#{(contratos.contratoCobranca.status eq 'Pendente') ? 'linhaAzul' : '' } "
+					selection="#{kobanaMB.selectedParcelas}" rowKey="#{parcela.id}"
+					emptyMessage="" sortBy="#{contratos.dataVencimento}">
+					<f:facet name="header">
+						<p:commandButton value="Gerar Boleto" ajax="false"
+							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
+							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"/>							
+					</f:facet>
+					<p:column selectionMode="multiple" style="width:16px;text-align:center" update=":form:"/>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Contrato" filterBy="#{parcela.contrato.numeroContrato}"
+						filterMatchMode="contains" sortBy="#{parcela.contrato.numeroContrato}">
+						<h:outputText value="#{parcela.contrato.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Data Contrato" sortBy="#{parcela.contrato.dataContrato}">
+						<h:outputText value="#{parcela.contrato.dataContrato}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Responsável" filterBy="#{parcela.contrato.nomeResponsavel}"
+						filterMatchMode="contains" sortBy="#{parcela.contrato.nomeResponsavel}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText
+							value="#{parcela.contrato.responsavel.nome}" />
+					</p:column>
+					<p:column style="text-align: center;width: 200px;"
+						headerText="Pagador" filterBy="#{parcela.contrato.nomePagador}"
+						filterMatchMode="contains" sortBy="#{parcela.contrato.nomePagador}"
+						styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{parcela.contrato.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Parcela" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{parcela.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Vencimento"
+						sortBy="#{parcela.dataVencimento}">
+						<h:outputText value="#{parcela.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{parcela.vlrParcela}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Link Boleto" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{parcela.urlBoletoKonana}" />
+					</p:column>
+					<p:column style="text-align: center;width: 30px;">
+						<p:commandButton ajax="false"
+							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletoSimples(parcela.contrato, parcela)}"
+							update="mensagens" title="Gerar Boleto"/>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
+							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
+							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"/>	
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

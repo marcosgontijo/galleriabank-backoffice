@@ -170,5 +170,52 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 			}
 		});
 	}	
+
+	private static final String QUERY_PARCELAS_POR_VENCIMENTO = "select cd.id, cc.id from cobranca.contratocobrancadetalhes cd " + 
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cd.id " + 
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " +
+			"where cd.datavencimento >= ? ::timestamp " + 
+			"and cd.datavencimento <= ? ::timestamp ";
 	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobrancaDetalhes> getParcelasPorVencimento(final Date dtInicioConsulta, final Date dtFimConsulta) {
+		return (List<ContratoCobrancaDetalhes>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobrancaDetalhes> objects = new ArrayList<ContratoCobrancaDetalhes>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+
+				java.sql.Date dtInicioConsultaSQL = new java.sql.Date(dtInicioConsulta.getTime());
+				java.sql.Date dtFimConsultaSQL = new java.sql.Date(dtFimConsulta.getTime());
+
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_PARCELAS_POR_VENCIMENTO);
+
+					ps.setDate(1, dtInicioConsultaSQL);
+					ps.setDate(2, dtFimConsultaSQL);
+					
+					rs = ps.executeQuery();
+
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+					while (rs.next()) {
+						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(1));
+						contratoCobrancaDetalhes.setContrato(contratoCobrancaDao.findById(rs.getLong(2)));
+						objects.add(contratoCobrancaDetalhes);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}		
 }
