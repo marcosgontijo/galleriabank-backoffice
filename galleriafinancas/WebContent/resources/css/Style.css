@@ -30,6 +30,17 @@
 		    background-color: #91ef9f;  
 		}
 		
+		.botaoBoletoKobana {
+			background-color: #1ea8ff;  
+			border: 1px solid #168bd5;  
+			padding: 3px;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			border-radius: 5px;
+			color: #fff !important;
+			text-decoration: none;
+		}
+		
 		.ui-datatable .ui-datatable-data .linhaAzul td{
 		    background-color:  #25bbf7;  
 		}

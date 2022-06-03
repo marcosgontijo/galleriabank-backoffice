@@ -11,6 +11,7 @@
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:messages id="mensagens" showDetail="true" />
+			<p:growl id="growl" showDetail="true" sticky="true" />  
 			<p:panel id="ConsultaFinanceiro" header="Contratos/Parcelas - Consultar"
 				style="margin-bottom:10px;">		
 				<h:panelGrid columns="2">					
@@ -31,7 +32,7 @@
 					action="#{kobanaMB.consultarParcelasBoleto}"
 					image="ui-icon ui-icon-check"
 					update=":form:dtContratos :form:ConsultaFinanceiroResultados"
-					onclick="start();" oncomplete="stop();"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
 					style="TEXT-DECORATION: bold;" />					
 			</p:panel>
 			<script type="text/javascript">
@@ -47,15 +48,19 @@
 				header="Contratos/Parcelas - Resultados" style="margin-bottom:10px;">
 				<p:dataTable id="dtContratos" var="parcela"
 					value="#{kobanaMB.listContratoCobrancaDetalhes}"
-					rowStyleClass= "#{(contratos.contratoCobranca.status eq 'Pendente') ? 'linhaAzul' : '' } "
+					rowStyleClass= "#{parcela.qtdParcelasVencidas gt 0 ? 'parcelaparcial' : null} "
 					selection="#{kobanaMB.selectedParcelas}" rowKey="#{parcela.id}"
 					emptyMessage="" sortBy="#{contratos.dataVencimento}">
 					<f:facet name="header">
-						<p:commandButton value="Gerar Boleto" ajax="false"
+						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
 							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
-							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"/>							
+							update=":form:dtContratos :form:mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"
+							disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>	
 					</f:facet>
-					<p:column selectionMode="multiple" style="width:16px;text-align:center" update=":form:"/>
+					<p:ajax event="rowSelectCheckbox" update=":form:ConsultaFinanceiroResultados :form:growl" process="@this" listener="#{kobanaMB.validateParcelaSelected}"/>
+					<p:ajax event="rowUnselectCheckbox" update=":form:ConsultaFinanceiroResultados :form:growl" process="@this"/>
+					<p:ajax event="toggleSelect" update=":form:ConsultaFinanceiroResultados :form:growl" process="@this" listener="#{kobanaMB.validateTodasParcelasSelected}"/>
+					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{parcela.contrato.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{parcela.contrato.numeroContrato}">
@@ -69,13 +74,6 @@
 						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
-						headerText="Responsável" filterBy="#{parcela.contrato.nomeResponsavel}"
-						filterMatchMode="contains" sortBy="#{parcela.contrato.nomeResponsavel}"
-						styleClass="colunaHiddenRelFinanceiro">
-						<h:outputText
-							value="#{parcela.contrato.responsavel.nome}" />
-					</p:column>
-					<p:column style="text-align: center;width: 200px;"
 						headerText="Pagador" filterBy="#{parcela.contrato.nomePagador}"
 						filterMatchMode="contains" sortBy="#{parcela.contrato.nomePagador}"
 						styleClass="colunaHiddenRelFinanceiro">
@@ -84,6 +82,10 @@
 					<p:column style="text-align: center;width: 50px;"
 						headerText="Parcela" styleClass="colunaHiddenRelFinanceiro">
 						<h:outputText value="#{parcela.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 50px;"
+						headerText="Atraso" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{parcela.qtdParcelasVencidas}" />
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Vencimento"
@@ -99,9 +101,11 @@
 						<h:outputText value="#{parcela.vlrParcela}"
 							converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;width: 50px;"
+					<p:column style="text-align: center;width: 130px;"
 						headerText="Link Boleto" styleClass="colunaHiddenRelFinanceiro">
-						<h:outputText value="#{parcela.urlBoletoKonana}" />
+						<ui:fragment rendered="#{parcela.urlBoletoKonana ne null}">
+							<h:outputLink value="#{parcela.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcela.urlBoletoKonana}</h:outputLink>
+						</ui:fragment>
 					</p:column>
 					<p:column style="text-align: center;width: 30px;">
 						<p:commandButton ajax="false"
@@ -111,7 +115,8 @@
 					<f:facet name="footer">
 						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
 							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
-							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"/>	
+							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"
+							disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>
 					</f:facet>
 				</p:dataTable>
 			</p:panel>

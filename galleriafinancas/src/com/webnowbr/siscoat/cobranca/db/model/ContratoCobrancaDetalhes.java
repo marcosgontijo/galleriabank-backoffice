@@ -84,6 +84,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	private ContratoCobranca contrato;
 	
+	private int qtdParcelasVencidas;
+	
 	public ContratoCobrancaDetalhes(){
 		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
 		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
@@ -590,5 +592,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setContrato(ContratoCobranca contrato) {
 		this.contrato = contrato;
+	}
+
+	public int getQtdParcelasVencidas() {
+		return qtdParcelasVencidas;
+	}
+
+	public void setQtdParcelasVencidas(int qtdParcelasVencidas) {
+		this.qtdParcelasVencidas = qtdParcelasVencidas;
 	}
 }
