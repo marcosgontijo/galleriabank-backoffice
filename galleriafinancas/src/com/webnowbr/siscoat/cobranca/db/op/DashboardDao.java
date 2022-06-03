@@ -1152,4 +1152,74 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			}
 		});
 	}	
+	
+	private static final String QUERY_CONTRATOS_REPROVADO = " select "
+			+ "	numerocontrato, "
+			+ "	imv.cidade, "
+			+ "	imv.cep, "
+			+ "	imv.estado, "
+			+ "	datacontrato, "
+			+ "	motivoReprovaLead, "
+			+ "	motivoReprovaSelectItem, "
+			+ "	quantoprecisa, "
+			+ "	valoraprovadocomite, "
+			+ "	valorccb, "
+			+ "	pare.nome "
+			+ " from "
+			+ "	cobranca.contratocobranca cc  "
+			+ " inner join cobranca.imovelcobranca imv on "
+			+ "	imv.id = cc.imovel  "
+			+ " inner join cobranca.pagadorrecebedor pare on "
+			+ "	pare.id = cc.pagador  "
+			+ " where "
+			+ "	analisereprovada = true "
+			+ "	or CadastroAprovadoValor = 'Reprovado' "
+			+ "	or statusLead = 'Reprovado' "
+			+ "	or status = 'Reprovado' "
+			+ "order by "
+			+ "	cc.id desc";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratosReprovados() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_REPROVADO);
+					rs = ps.executeQuery();					
+
+					while (rs.next()) {
+						ContratoCobranca contrato = new ContratoCobranca();
+						
+						contrato.setNumeroContrato(rs.getString("numerocontrato"));
+						contrato.setImovel(new ImovelCobranca());
+						contrato.getImovel().setCidade(rs.getString("cidade"));
+						contrato.getImovel().setCep(rs.getString("cep"));
+						contrato.getImovel().setEstado(rs.getString("estado"));
+						contrato.setPagador(new PagadorRecebedor());
+						contrato.getPagador().setNome(rs.getString("nome"));
+						contrato.setDataContrato(rs.getTimestamp("datacontrato"));
+						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoprecisa"));
+						contrato.setValorAprovadoComite(rs.getBigDecimal("valorAprovadoComite"));
+						contrato.setValorCCB(rs.getBigDecimal("valorccb"));
+						contrato.setMotivoReprovaLead(rs.getString("motivoReprovaLead"));
+						contrato.setMotivoReprovaSelectItem(rs.getString("motivoReprovaSelectItem"));
+
+						objects.add(contrato);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
 }

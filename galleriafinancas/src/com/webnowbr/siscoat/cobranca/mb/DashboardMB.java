@@ -579,6 +579,85 @@ public class DashboardMB {
 		return null;
     }
     
+    public StreamedContent gerarCSVContratosReprovados() throws IOException {
+    	XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+		
+		XSSFSheet sheet = wb.getSheetAt(0);
+		DashboardDao dDao = new DashboardDao();
+		List<ContratoCobranca> contratos = dDao.getContratosReprovados();
+		
+		XSSFRow linha = sheet.getRow(0);
+		if(linha == null) {
+			sheet.createRow(0);
+			linha = sheet.getRow(0);
+		}
+		
+		gravaCelula(0, "Numero Contrato", linha);
+		gravaCelula(1, "Cliente", linha);
+		gravaCelula(2, "Valor", linha);
+		gravaCelula(3, "Motivo Reprova", linha);
+		gravaCelula(4, "Cidade", linha);
+		gravaCelula(5, "Estado", linha);
+		gravaCelula(6, "CEP", linha);
+		
+		int iLinha = 1;
+		for (int iContrato = 0 ; iContrato < contratos.size(); iContrato++) {
+			ContratoCobranca contrato = contratos.get(iContrato);
+						
+			linha = sheet.getRow(iLinha);
+			if(linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+
+			Locale locale = new Locale("pt", "BR");  
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT-3"));
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(contrato.getDataContrato());
+			cal.add(Calendar.HOUR, -3);
+			Date oneHourBack = cal.getTime();
+			String dataStr = sdf.format(oneHourBack.getTime());
+			
+			String qualidadeLead = "";
+			
+			gravaCelula(0, contrato.getNumeroContrato(), linha);
+			gravaCelula(1, contrato.getPagador().getNome(), linha);
+			gravaCelula(2, CommonsUtil.formataValorMonetario(contrato.getQuantoPrecisa(),"R$ "), linha);
+			
+			if(!CommonsUtil.semValor(contrato.getMotivoReprovaLead())) {
+				gravaCelula(3, contrato.getMotivoReprovaLead(), linha);
+			} else if(!CommonsUtil.semValor(contrato.getMotivoReprovaSelectItem())) {
+				gravaCelula(3, contrato.getMotivoReprovaSelectItem(), linha);
+			} else {
+				gravaCelula(3, "", linha);
+			}
+
+			gravaCelula(4, contrato.getImovel().getCidade(), linha);
+			gravaCelula(5, contrato.getImovel().getEstado(), linha);
+			gravaCelula(6, contrato.getImovel().getCep(), linha);
+			
+			iLinha++;
+		}
+		
+		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+		//escrever tudo o que foi feito no arquivo
+		
+		wb.write(fileOut);
+
+		//fecha a escrita de dados nessa planilha
+		wb.close();
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		
+		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+    }
+    
     
 	public PieChartModel getPieOrigemLead() {
 		return pieOrigemLead;
