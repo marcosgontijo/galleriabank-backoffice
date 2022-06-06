@@ -1637,6 +1637,12 @@ public class CcbMB {
 							+ " o montante de " + CommonsUtil.formataValorMonetario(this.objetoCcb.getMontanteDFI(), "R$ ") + " ("
 							+ valorPorExtenso.toString() + "), conforme ANEXO I.",
 					true, false);
+			
+			geraParagrafoComposto(document, paragraph, run, run2,
+					"2.7.3. Tarifa mensal de administração do contrato: ","Será cobrado"
+							+ " mensalmente o valor de R$ 25,00 (vinte e cinco reais)"
+							+ " a título de tarifa para administração do contrato.",
+					true, false);
 
 			geraParagrafoComposto(document, paragraph, run, run2, "2.8. ",
 					"A atualização pela variação mensal do Índice Nacional"
@@ -5587,7 +5593,7 @@ public class CcbMB {
 			XWPFParagraph paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.BOTH);
 			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingAfter(100);
 			run = paragraph.createRun();
 			run.setText("São Paulo/SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
 							+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
@@ -5613,36 +5619,16 @@ public class CcbMB {
 					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
 						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
-					if(CommonsUtil.semValor(this.objetoCcb.getLogradouroEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getEndereco())) {
-							this.objetoCcb.setLogradouroEmitente(participante.getPessoa().getEndereco());
+					if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
 						}
 					}
-					if(CommonsUtil.semValor(this.objetoCcb.getNumeroEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getNumero())) {
-							this.objetoCcb.setNumeroEmitente(participante.getPessoa().getNumero());
+					if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCnpj())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
-					if(CommonsUtil.semValor(this.objetoCcb.getComplementoEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getComplemento())) {
-							this.objetoCcb.setComplementoEmitente(participante.getPessoa().getComplemento());
-						}
-					}
-					if(CommonsUtil.semValor(this.objetoCcb.getCidadeEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getCidade())) {
-							this.objetoCcb.setCidadeEmitente(participante.getPessoa().getCidade());
-						}
-					}
-					if(CommonsUtil.semValor(this.objetoCcb.getUfEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getEstado())) {
-							this.objetoCcb.setUfEmitente(participante.getPessoa().getEstado());
-						}
-					}
-					if(CommonsUtil.semValor(this.objetoCcb.getCepEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getCep())) {
-							this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
-						}
-					}						
 				}
 			}
 			
@@ -5665,17 +5651,17 @@ public class CcbMB {
 			run.setText("Autorizamos a efetivação de transferência, através da TED, no valor de ");
 			run.setFontSize(11);
 			run.setBold(false);
-			BigDecimal valorCartaSplit = this.objetoCcb.getValorLiquidoCredito().add(this.objetoCcb.getValorDespesas());
+			BigDecimal valorCartaSplit =   this.objetoCcb.getValorLiquidoCredito().add(this.objetoCcb.getValorDespesas());
 			valorPorExtenso.setNumber(valorCartaSplit);
 			run2 = paragraph.createRun();
-			run2.setText(valorCartaSplit + "(" + valorPorExtenso.toString() + ")," );
+			run2.setText(CommonsUtil.formataValorMonetario(valorCartaSplit, "R$ ") + " (" + valorPorExtenso.toString() + ")," );
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run = paragraph.createRun();
-			run.setText("conforme dados abaixo, crédito oriundo da CCB n° " + this.objetoCcb.getNumeroCcb() + ", datada de " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+			run.setText(" conforme dados abaixo, crédito oriundo da CCB n° " + this.objetoCcb.getNumeroCcb() + ", datada de " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
 					+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
 					+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
-			run.setFontSize(10);
+			run.setFontSize(11);
 			run.setBold(false);
 			run.addCarriageReturn();
 			run.addCarriageReturn();
@@ -5706,7 +5692,8 @@ public class CcbMB {
 			run2.setText("Banco do Brasil");
 			run2.setFontSize(11);
 			run2.setBold(true);
-			run.addCarriageReturn();
+			run2.addCarriageReturn();
+			run = paragraph.createRun();
 			run.setText("Agência: 1515-6");
 			run.addCarriageReturn();
 			run.setText("C/C: 131094-1");
@@ -5714,7 +5701,7 @@ public class CcbMB {
 			run.setText("Valor: ");
 			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 			run2 = paragraph.createRun();
-			run2.setText(this.objetoCcb.getValorDespesas() + "(" + valorPorExtenso.toString() + ")" );
+			run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run2.addCarriageReturn();
@@ -5745,7 +5732,8 @@ public class CcbMB {
 			run2.setText(this.objetoCcb.getNomeBanco() + "");
 			run2.setFontSize(11);
 			run2.setBold(true);
-			run.addCarriageReturn();
+			run2.addCarriageReturn();
+			run = paragraph.createRun();
 			run.setText("Agência: " + this.objetoCcb.getAgencia());
 			run.addCarriageReturn();
 			run.setText("C/C: " + this.objetoCcb.getContaCorrente());
@@ -5753,7 +5741,7 @@ public class CcbMB {
 			run.setText("Valor: ");
 			valorPorExtenso.setNumber(this.objetoCcb.getValorLiquidoCredito());
 			run2 = paragraph.createRun();
-			run2.setText(this.objetoCcb.getValorLiquidoCredito() + "(" + valorPorExtenso.toString() + ")" );
+			run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorLiquidoCredito(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run3 = paragraph.createRun();
@@ -5819,6 +5807,120 @@ public class CcbMB {
 
 		return null;
 }
+	
+	public StreamedContent geraAnexoII() throws IOException {
+		try {
+			CcbDao ccbDao = new CcbDao();
+			XWPFDocument document = new XWPFDocument();
+			XWPFHeaderFooterPolicy headerFooterPolicy = document.getHeaderFooterPolicy();
+			if (headerFooterPolicy == null)
+				headerFooterPolicy = document.createHeaderFooterPolicy();
+
+			XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			XWPFParagraph paragraphHeader = header.createParagraph();
+			paragraphHeader.setAlignment(ParagraphAlignment.LEFT);
+			XWPFRun runHeader = paragraphHeader.createRun();
+			runHeader.addPicture(getClass().getResourceAsStream("/resource/BMP MoneyPlus.png"), 6, "BMP MoneyPlus",
+					Units.toEMU(130), Units.toEMU(72));
+
+			XWPFRun run;
+
+			XWPFParagraph paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(100);
+			
+			run = paragraph.createRun();
+			run.setText("ANEXO II");
+			run.setFontSize(11);
+			run.setBold(true);
+			XWPFRun run2 = paragraph.createRun();
+			XWPFRun run3 = paragraph.createRun();
+			XWPFRun run4 = paragraph.createRun();
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			
+			run.addCarriageReturn();
+			run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº " + this.objetoCcb.getNumeroCcb());
+			run.setFontSize(11);
+			run.setBold(true);
+			run.addCarriageReturn();
+			run.setText("DESPESAS ACESSÓRIAS (DEVIDAS A TERCEIROS)");
+			run.setFontSize(11);
+			run.setBold(true);
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			
+			run = paragraph.createRun();
+			run.setText("Para todos os fins e efeitos de direito, conforme previsto na ");
+			run.setFontSize(11);
+			run.setBold(false);
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(11);
+			run2.setText("cláusula 2.1.3 da Cédula de Crédito Bancário n° " + this.objetoCcb.getNumeroCcb() 
+				+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setText(" (CCB), autorizo o pagamento das despesas acessórias e dos "
+					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de ");
+			run.setFontSize(11);
+			run.setBold(false);			
+
+			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas()); 
+			run2 = paragraph.createRun();
+			run2.setFontSize(11);
+			run2.setText(" "+ CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ") + " ("+ valorPorExtenso.toString() +"), ");
+			run2.setBold(true);
+			
+			run = paragraph.createRun();
+			run.setText("por meio do crédito oriundo da CCB. O montante total necessário para o pagamento"
+					+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
+					+ " da Galleria Correspondente Bancário Eireli, CNPJ 34.787.885/0001-32, Banco do Brasil"
+					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP Money "
+					+ "Plus, será a responsável por efetuar todos os pagamentos devidamente especificados na"
+					+ " tabela abaixo:");
+			run.setFontSize(11);
+			run.setBold(false);	
+			
+			
+
+			/*
+			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
+			 * p.getRuns(); if (runs != null) { for (XWPFRun r : runs) { String text =
+			 * r.getText(0); adicionarEnter(text, r); } } }
+			 */
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+
+			criarCcbNosistema();
+			
+		
+		} catch (JDBCException jdbce) {
+		    jdbce.getSQLException().getNextException().printStackTrace();
+		} catch (Throwable e) {
+			e.getCause().printStackTrace();
+		} 
+
+		return null;
+	}
 	
 	public void criarParagrafo(XWPFDocument document, XWPFParagraph paragraph, ParagraphAlignment alinhamento ){
 		paragraph = document.createParagraph();
@@ -6088,9 +6190,14 @@ public class CcbMB {
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CartaSplit")){
 	    		clearDocumentosNovos();
 	    		return geraCartaSplitDinamica();
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AnexoII")){
+	    		clearDocumentosNovos();
+	    		return geraAnexoII();
 	    	} else {
 	    		
 	    	}
+	    	
+	    	
 	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
