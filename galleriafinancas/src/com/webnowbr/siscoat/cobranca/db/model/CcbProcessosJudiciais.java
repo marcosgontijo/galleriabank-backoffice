@@ -16,6 +16,10 @@ public class CcbProcessosJudiciais implements Serializable{
 	public CcbProcessosJudiciais(BigDecimal valor) {
 		this.valor = valor;
 	}
+	
+	public CcbProcessosJudiciais() {
+		
+	}
 
 	
 	public BigDecimal getValor() {
