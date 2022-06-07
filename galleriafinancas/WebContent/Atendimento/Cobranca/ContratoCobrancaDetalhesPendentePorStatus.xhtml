@@ -135,13 +135,11 @@
 										</p:selectOneRadio>
 										<p:spacer width="10px"></p:spacer>
 
-										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
+										<p:outputLabel styleClass="labelBold">Pedir Laudo e Parecer Jurídico</p:outputLabel>
 										<p:spacer></p:spacer>
 										<p:selectOneRadio id="pagtoLaudoConfirmada"
 											unselectable="false"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
 											<f:selectItem itemLabel="Não" itemValue="false" />
 											<f:selectItem itemLabel="Sim" itemValue="true" />
 										</p:selectOneRadio>

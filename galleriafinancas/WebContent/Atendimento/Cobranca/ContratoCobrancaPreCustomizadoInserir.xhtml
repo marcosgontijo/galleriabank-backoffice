@@ -73,12 +73,11 @@
 									        </p:selectOneRadio>
 									        <p:outputLabel for="statusLeadTratamento" value="Status " styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
 											<p:inputText id="statusLeadTratamento" value="#{contratoCobrancaMB.objetoContratoCobranca.observacaolead}" label="Status Lead em Tratamento" onblur="" style="width:250px;"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}"/>
-											<p:outputLabel for="motivoReprova" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
+			 								<p:outputLabel for="motivoReprova" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
 											<p:selectOneMenu id="motivoReprova" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaLead}" label="Tipo" style="width:250px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">
 												<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
 												<f:selectItem itemLabel="Imóvel Ruim" itemValue="Imóvel Ruim" />
-									            <f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />
-									            <f:selectItem itemLabel="Cliente desistiu" itemValue="Cliente desistiu" />
+									            <f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />			
 									            <f:selectItem itemLabel="Operação Duplicada" itemValue="Operação Duplicada" />
 									            <f:selectItem itemLabel="Dados Inconsistentes" itemValue="Dados Inconsistentes" />
 									            <f:selectItem itemLabel="Cliente fora do perfil" itemValue="Cliente fora do perfil" />
