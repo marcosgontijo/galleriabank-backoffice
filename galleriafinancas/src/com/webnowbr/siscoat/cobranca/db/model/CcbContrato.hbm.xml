@@ -225,6 +225,44 @@
 			<column name="terceiroGarantidor" />
 		</property>
 		
+		<property name="custasCartorariasValor" type="big_decimal">
+			<column name="custasCartorariasValor" />
+		</property>
+		<property name="certidaoDeCasamentoValor" type="big_decimal">
+			<column name="certidaoDeCasamentoValor" />
+		</property>
+		<property name="laudoDeAvaliacaoValor" type="big_decimal">
+			<column name="laudoDeAvaliacaoValor" />
+		</property>
+		<property name="intermediacaoValor" type="big_decimal">
+			<column name="intermediacaoValor" />
+		</property>
+		<property name="intermediacaoBanco" type="java.lang.String">
+			<column name="intermediacaoBanco" />
+		</property> 
+		<property name="intermediacaoAgencia" type="java.lang.String">
+			<column name="intermediacaoAgencia" />
+		</property>
+		<property name="intermediacaoCC" type="java.lang.String">
+			<column name="intermediacaoCC" />
+		</property> 
+		<property name="intermediacaoCNPJ" type="java.lang.String">
+			<column name="intermediacaoCNPJ" />
+		</property> 
+		<property name="intermediacaoNome" type="java.lang.String">
+			<column name="intermediacaoNome" />
+		</property> 
+		<property name="intermediacaoPix" type="java.lang.String">
+			<column name="intermediacaoPix" />
+		</property> 
+		<property name="iptuEmAtrasoValor" type="big_decimal">
+			<column name="iptuEmAtrasoValor" />
+		</property>
+		
+		<property name="condominioEmAtrasoValor" type="big_decimal">
+			<column name="condominioEmAtrasoValor" />
+		</property>
+		
 		<many-to-one name="objetoContratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
@@ -237,6 +275,14 @@
 			<list-index></list-index>
 			<many-to-many column="idccbparticipante"
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
+		</list>
+		
+		<list name="processosJucidiais"
+			table="ccbcontrato_processosjucidiais_join" cascade="all" lazy="false">
+			<key column="idccbcontrato" />
+			<list-index></list-index>
+			<many-to-many column="idprocesso"
+				class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
 		</list>
 		        
     </class>

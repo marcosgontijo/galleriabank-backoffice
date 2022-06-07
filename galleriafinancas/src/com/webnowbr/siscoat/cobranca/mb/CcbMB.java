@@ -53,6 +53,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLevelText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumFmt;
@@ -65,16 +66,19 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STNumberFormat;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
+import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
@@ -272,6 +276,17 @@ public class CcbMB {
     private boolean fiducianteGerado = false;
     private boolean devedorGerado = false;
     private boolean modeloAntigo = false;
+    
+    private boolean temCustasCartorarias = false;
+    private boolean temCertidaoDeCasamento = false;
+    private boolean temLaudoDeAvaliacao = false;
+    private boolean temIntermediacao = false;
+    private boolean temProcessosJucidiais = false;
+    private boolean temIptuEmAtraso = false;
+    private boolean temCondominioEmAtraso = false;
+    
+    private BigDecimal valorProcesso = BigDecimal.ZERO;
+    
     
     private CcbContrato objetoCcb = new CcbContrato();
     
@@ -552,6 +567,47 @@ public class CcbMB {
 		c.setTime(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
 		c.add(Calendar.MONTH, parcelas);
 		this.objetoCcb.setVencimentoUltimaParcelaPagamento(c.getTime());
+	}
+	
+	public void addValorProcesso() {
+		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso));
+		calcularValorDespesa();
+	}
+	
+	public void removeValor(CcbProcessosJudiciais processo) {
+		this.objetoCcb.getProcessosJucidiais().remove(processo);
+		calcularValorDespesa();
+	}
+	
+	public void calcularValorDespesa() {
+		BigDecimal total =  BigDecimal.ZERO;
+		
+		if(isTemCustasCartorarias()) {
+			total = total.add(this.objetoCcb.getCustasCartorariasValor());
+		}
+		if(isTemCertidaoDeCasamento()) {
+			total = total.add(this.objetoCcb.getCertidaoDeCasamentoValor());
+		}
+		if(isTemLaudoDeAvaliacao()) {
+			total = total.add(this.objetoCcb.getLaudoDeAvaliacaoValor());
+		}
+		if(isTemIntermediacao()) {
+			total = total.add(this.objetoCcb.getIntermediacaoValor());
+		}
+		if(isTemIptuEmAtraso()) {
+			total = total.add(this.objetoCcb.getIptuEmAtrasoValor());
+		}
+		if(isTemCondominioEmAtraso()) {
+			total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
+		}
+		
+		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
+			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+				total = total.add(processo.getValor());
+			}
+		}
+		
+		this.objetoCcb.setValorDespesas(total);
 	}
 
 	public List<String> completeTextNomes(){
@@ -5831,6 +5887,26 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(100);
 			
+			String documento = "";
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+							documento = "CPF: ";
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+							documento = "CNPJ: ";
+						}
+					}
+				}
+			}
+			
 			run = paragraph.createRun();
 			run.setText("ANEXO II");
 			run.setFontSize(11);
@@ -5856,7 +5932,7 @@ public class CcbMB {
 			paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.BOTH);
 			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
+			paragraph.setSpacingAfter(200);
 			
 			run = paragraph.createRun();
 			run.setText("Para todos os fins e efeitos de direito, conforme previsto na ");
@@ -5871,9 +5947,11 @@ public class CcbMB {
 			
 			run = paragraph.createRun();
 			run.setText(" (CCB), autorizo o pagamento das despesas acessórias e dos "
-					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de ");
+					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de");
 			run.setFontSize(11);
 			run.setBold(false);			
+			
+			calcularValorDespesa();
 
 			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas()); 
 			run2 = paragraph.createRun();
@@ -5891,8 +5969,316 @@ public class CcbMB {
 			run.setFontSize(11);
 			run.setBold(false);	
 			
-			
+			XWPFTable table = document.createTable();
+			table.setWidth((int) (6.1 * 1440));
+			table.getCTTbl().getTblPr().getTblW().unsetType();
+			setTableAlign(table, ParagraphAlignment.CENTER);
 
+			table.getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf(6000));
+			table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			
+			// create first row
+			XWPFTableRow tableRow = table.getRow(0);
+
+			tableRow.getCell(0).setParagraph(paragraph);
+			tableRow.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow.getCell(0).setColor("8880F4");
+			//tableRow.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(3000) ));
+			run = tableRow.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setColor("ffffff");
+			run.setText("Descrição da despesa ou do Compromisso Diverso");
+			
+			tableRow.addNewTableCell();
+			tableRow.addNewTableCell();
+
+			tableRow.getCell(1).setParagraph(paragraph);
+			tableRow.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			tableRow.getCell(1).setColor("8880F4");
+			run = tableRow.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setText("Forma de Pagamento");
+			run.setColor("ffffff");	
+			
+			tableRow.getCell(2).setParagraph(paragraph);
+			tableRow.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			tableRow.getCell(2).setColor("8880F4");
+			tableRow.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			run = tableRow.getCell(2).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setColor("ffffff");
+			run.setText("Valor");
+			
+			if(this.temCustasCartorarias) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Custas Cartorárias");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCustasCartorariasValor(), "R$ "));
+			}
+			
+			if(this.temCertidaoDeCasamento) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Certidão de Casamento");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCertidaoDeCasamentoValor(), "R$ "));
+			}
+			
+			if(this.temLaudoDeAvaliacao) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Laudo De Avaliação");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getLaudoDeAvaliacaoValor(), "R$ "));
+			}
+			
+			if(this.temIntermediacao) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Intermediação");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Ted no "+ this.objetoCcb.getIntermediacaoBanco() +" AG: "+ this.objetoCcb.getIntermediacaoAgencia()
+					+" C/C: "+ this.objetoCcb.getContaCorrente() +" Chave Pix: "+ this.objetoCcb.getIntermediacaoPix()
+					+ this.objetoCcb.getIntermediacaoNome() +" CNPJ: "+ this.objetoCcb.getIntermediacaoCNPJ() );
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIntermediacaoValor(), "R$ "));
+			}
+			
+			if (this.temProcessosJucidiais) {
+				for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+					XWPFTableRow tableRow1 = table.createRow();
+					tableRow1.getCell(0).setParagraph(paragraph);
+					tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+
+					run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+					run.setFontSize(12);
+					run.setColor("000000");
+					run.setText("Processo");
+
+					tableRow1.getCell(1).setParagraph(paragraph);
+					tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+					tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+					run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+					run.setFontSize(12);
+					run.setText("Boleto");
+					run.setColor("000000");
+
+					tableRow1.getCell(2).setParagraph(paragraph);
+					tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+					tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+					run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+					run.setFontSize(12);
+					run.setColor("000000");
+					run.setText(CommonsUtil.formataValorMonetario(processo.getValor()));
+				}
+			}
+			
+			if(this.temIptuEmAtraso) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("IPTU em Atraso");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIptuEmAtrasoValor(), "R$ "));
+			}
+			
+			if(this.temCondominioEmAtraso) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Condomínio em Atraso");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCondominioEmAtrasoValor(), "R$ "));
+			}
+			
+			XWPFTableRow tableRow1 = table.createRow();		
+
+			tableRow1.getCell(1).setParagraph(paragraph);
+			tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));		
+			tableRow1.getCell(1).setColor("8880F4");
+
+			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setText("Total");
+			run.setColor("ffffff");	
+			
+			tableRow1.getCell(2).setParagraph(paragraph);
+			tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			tableRow1.getCell(2).setColor("8880F4");
+
+			run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setColor("ffffff");
+			run.setBold(true);
+			run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ "));
+			
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			
+			run = paragraph.createRun();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			
+			run.setText("_____________________________________________________________________________");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("" + this.objetoCcb.getNomeEmitente());
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			run2.setText(documento + this.objetoCcb.getCpfEmitente());
+			
+			
 			/*
 			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
 			 * p.getRuns(); if (runs != null) { for (XWPFRun r : runs) { String text =
@@ -5906,7 +6292,7 @@ public class CcbMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 
-			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+			gerador.open(String.format("Galleria Bank - AnexoII %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
@@ -5920,6 +6306,13 @@ public class CcbMB {
 		} 
 
 		return null;
+	}
+	
+	public void setTableAlign(XWPFTable table,ParagraphAlignment align) {
+	    CTTblPr tblPr = table.getCTTbl().getTblPr();
+	    CTJc jc = (tblPr.isSetJc() ? tblPr.getJc() : tblPr.addNewJc());
+	    STJc.Enum en = STJc.Enum.forInt(align.getValue());
+	    jc.setVal(en);
 	}
 	
 	public void criarParagrafo(XWPFDocument document, XWPFParagraph paragraph, ParagraphAlignment alinhamento ){
@@ -6353,6 +6746,39 @@ public class CcbMB {
 		this.terceiroGSelecionado = new PagadorRecebedor();
 		this.avalistaSelecionado = new PagadorRecebedor();
 	}
+	
+	public void clearDespesas() {
+		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
+			setTemCustasCartorarias(true);
+		} else {
+			setTemCustasCartorarias(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getCertidaoDeCasamentoValor())) {
+			setTemCertidaoDeCasamento(true);
+		} else {
+			setTemCertidaoDeCasamento(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getLaudoDeAvaliacaoValor())) {
+			setTemLaudoDeAvaliacao(true);
+		} else {
+			setTemLaudoDeAvaliacao(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getIntermediacaoValor())) {
+			setTemIntermediacao(true);
+		} else {
+			setTemIntermediacao(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getIptuEmAtrasoValor())) {
+			setTemIptuEmAtraso(true);
+		} else {
+			setTemIptuEmAtraso(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor())) {
+			setTemCondominioEmAtraso(true);
+		} else {
+			setTemCondominioEmAtraso(false);
+		}
+	}
 
 	public void calculaValorLiquidoCredito() {
 		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getCustoEmissao() != null && this.objetoCcb.getValorIOF() != null && this.objetoCcb.getValorDespesas() != null)
@@ -6388,12 +6814,14 @@ public class CcbMB {
 	public String clearFieldsEditarCcb() {
 		loadLovs();	
 		clearPagadorRecebedor();
+		clearDespesas();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
 	public String clearFieldsInserirCcb() {
 		ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
 		loadLovs();	
+		clearDespesas();
 		this.objetoCcb = new CcbContrato();
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
 		this.participanteSelecionado = new CcbParticipantes();
@@ -7842,5 +8270,71 @@ public class CcbMB {
 	
 	public void setListaContratosConsultar(List<ContratoCobranca> listaContratosConsultar) {
 		this.listaContratosConsultar = listaContratosConsultar;
+	}
+
+	public boolean isTemCustasCartorarias() {
+		return temCustasCartorarias;
+	}
+
+	public void setTemCustasCartorarias(boolean temCustasCartorarias) {
+		this.temCustasCartorarias = temCustasCartorarias;
+	}
+
+	public boolean isTemCertidaoDeCasamento() {
+		return temCertidaoDeCasamento;
+	}
+
+	public void setTemCertidaoDeCasamento(boolean temCertidaoDeCasamento) {
+		this.temCertidaoDeCasamento = temCertidaoDeCasamento;
+	}
+
+	public boolean isTemLaudoDeAvaliacao() {
+		return temLaudoDeAvaliacao;
+	}
+
+	public void setTemLaudoDeAvaliacao(boolean temLaudoDeAvaliacao) {
+		this.temLaudoDeAvaliacao = temLaudoDeAvaliacao;
+	}
+
+	public boolean isTemIntermediacao() {
+		return temIntermediacao;
+	}
+
+	public void setTemIntermediacao(boolean temIntermediacao) {
+		this.temIntermediacao = temIntermediacao;
+	}
+
+	public boolean isTemProcessosJucidiais() {
+		return temProcessosJucidiais;
+	}
+
+	public void setTemProcessosJucidiais(boolean temProcessosJucidiais) {
+		this.temProcessosJucidiais = temProcessosJucidiais;
+	}
+
+	public boolean isTemIptuEmAtraso() {
+		return temIptuEmAtraso;
+	}
+
+	public void setTemIptuEmAtraso(boolean temIptuEmAtraso) {
+		this.temIptuEmAtraso = temIptuEmAtraso;
+	}
+
+	public boolean isTemCondominioEmAtraso() {
+		return temCondominioEmAtraso;
+	}
+
+	public void setTemCondominioEmAtraso(boolean temCondominioEmAtraso) {
+		this.temCondominioEmAtraso = temCondominioEmAtraso;
+	}
+
+	public BigDecimal getValorProcesso() {
+		return valorProcesso;
+	}
+
+	public void setValorProcesso(BigDecimal valorProcesso) {
+		this.valorProcesso = valorProcesso;
 	}	
+	
+	
 }

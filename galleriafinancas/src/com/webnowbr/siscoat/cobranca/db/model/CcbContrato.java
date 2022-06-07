@@ -94,14 +94,30 @@ public class CcbContrato implements Serializable{
     
     private boolean terceiroGarantidor = false;
     
+    private BigDecimal custasCartorariasValor = BigDecimal.ZERO;
+    private BigDecimal certidaoDeCasamentoValor = BigDecimal.ZERO;
+    private BigDecimal laudoDeAvaliacaoValor = BigDecimal.ZERO;
+    
+    private BigDecimal intermediacaoValor = BigDecimal.ZERO; // - (Banco, Agência, C/C, CNPJ, nome completo e PIX)
+    private String intermediacaoBanco; 
+    private String intermediacaoAgencia; 
+    private String intermediacaoCC; 
+    private String intermediacaoCNPJ; 
+    private String intermediacaoNome; 
+    private String intermediacaoPix; 
+    
+    private List<CcbProcessosJudiciais> processosJucidiais; // (++)
+    private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
+    private BigDecimal condominioEmAtrasoValor = BigDecimal.ZERO;
+    
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
     private ContratoCobranca objetoContratoCobranca;
     
     public CcbContrato() {
     	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
+    	this.processosJucidiais = new ArrayList<CcbProcessosJudiciais>(); 
     }
-    
 
 	public String getNomeEmitente() {
 		return nomeEmitente;
@@ -613,5 +629,132 @@ public class CcbContrato implements Serializable{
 
 	public void setNumeroOperacao(String numeroOperacao) {
 		this.numeroOperacao = numeroOperacao;
+	}
+
+
+	public BigDecimal getCustasCartorariasValor() {
+		return custasCartorariasValor;
+	}
+
+
+	public void setCustasCartorariasValor(BigDecimal custasCartorariasValor) {
+		this.custasCartorariasValor = custasCartorariasValor;
+	}
+
+
+	public BigDecimal getCertidaoDeCasamentoValor() {
+		return certidaoDeCasamentoValor;
+	}
+
+
+	public void setCertidaoDeCasamentoValor(BigDecimal certidaoDeCasamentoValor) {
+		this.certidaoDeCasamentoValor = certidaoDeCasamentoValor;
+	}
+
+
+	public BigDecimal getLaudoDeAvaliacaoValor() {
+		return laudoDeAvaliacaoValor;
+	}
+
+
+	public void setLaudoDeAvaliacaoValor(BigDecimal laudoDeAvaliacaoValor) {
+		this.laudoDeAvaliacaoValor = laudoDeAvaliacaoValor;
+	}
+
+
+	public BigDecimal getIntermediacaoValor() {
+		return intermediacaoValor;
+	}
+
+
+	public void setIntermediacaoValor(BigDecimal intermediacaoValor) {
+		this.intermediacaoValor = intermediacaoValor;
+	}
+
+
+	public String getIntermediacaoBanco() {
+		return intermediacaoBanco;
+	}
+
+
+	public void setIntermediacaoBanco(String intermediacaoBanco) {
+		this.intermediacaoBanco = intermediacaoBanco;
+	}
+
+
+	public String getIntermediacaoAgencia() {
+		return intermediacaoAgencia;
+	}
+
+
+	public void setIntermediacaoAgencia(String intermediacaoAgencia) {
+		this.intermediacaoAgencia = intermediacaoAgencia;
+	}
+
+
+	public String getIntermediacaoCC() {
+		return intermediacaoCC;
+	}
+
+
+	public void setIntermediacaoCC(String intermediacaoCC) {
+		this.intermediacaoCC = intermediacaoCC;
+	}
+
+
+	public String getIntermediacaoCNPJ() {
+		return intermediacaoCNPJ;
+	}
+
+
+	public void setIntermediacaoCNPJ(String intermediacaoCNPJ) {
+		this.intermediacaoCNPJ = intermediacaoCNPJ;
+	}
+
+
+	public String getIntermediacaoNome() {
+		return intermediacaoNome;
+	}
+
+
+	public void setIntermediacaoNome(String intermediacaoNome) {
+		this.intermediacaoNome = intermediacaoNome;
+	}
+
+	public String getIntermediacaoPix() {
+		return intermediacaoPix;
+	}
+
+	public void setIntermediacaoPix(String intermediacaoPix) {
+		this.intermediacaoPix = intermediacaoPix;
+	}
+
+	public List<CcbProcessosJudiciais> getProcessosJucidiais() {
+		return processosJucidiais;
+	}
+
+	public void setProcessosJucidiais(List<CcbProcessosJudiciais> processosJucidiais) {
+		this.processosJucidiais = processosJucidiais;
+	}
+
+	public BigDecimal getIptuEmAtrasoValor() {
+		return iptuEmAtrasoValor;
+	}
+
+
+	public void setIptuEmAtrasoValor(BigDecimal iptuEmAtrasoValor) {
+		this.iptuEmAtrasoValor = iptuEmAtrasoValor;
+	}
+
+
+	public BigDecimal getCondominioEmAtrasoValor() {
+		return condominioEmAtrasoValor;
+	}
+
+
+	public void setCondominioEmAtrasoValor(BigDecimal condominioEmAtrasoValor) {
+		this.condominioEmAtrasoValor = condominioEmAtrasoValor;
 	}    
+	
+	
 }

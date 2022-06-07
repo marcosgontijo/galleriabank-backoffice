@@ -18,6 +18,8 @@
                  rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{ccb.numeroOperacao}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{ccbMB.clearFieldsInserirCcb}"/>
+						<p:commandButton ajax="false" action="#{cciMB.geraCciAquisicao}" icon="ui-icon ui-icon-print" value="Fazer Download" />
+						<p:commandButton ajax="false" action="#{cciMB.main}" icon="ui-icon ui-icon-print" value="Teste" />
 			        </f:facet>
 			         <p:column style="text-align: center;" headerText="Numero CCB" filterBy="#{ccb.numeroCcb}" filterMatchMode="contains" sortBy="#{ccb.numeroCcb}">
 			            <h:outputText value="#{ccb.numeroCcb}" />
