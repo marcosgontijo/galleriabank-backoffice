@@ -32,6 +32,7 @@ public class SimulacaoDetalheVO {
 		this.valorParcela = BigDecimal.ZERO;
 		this.seguroDFI = BigDecimal.ZERO;
 		this.seguroMIP = BigDecimal.ZERO;
+		this.txAdm = BigDecimal.ZERO;
 		this.saldoDevedorInicial = saldoDevedorInicial;
 	}
 
