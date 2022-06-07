@@ -571,10 +571,43 @@ public class CcbMB {
 	
 	public void addValorProcesso() {
 		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso));
+		calcularValorDespesa();
 	}
 	
 	public void removeValor(CcbProcessosJudiciais processo) {
 		this.objetoCcb.getProcessosJucidiais().remove(processo);
+		calcularValorDespesa();
+	}
+	
+	public void calcularValorDespesa() {
+		BigDecimal total =  BigDecimal.ZERO;
+		
+		if(isTemCustasCartorarias()) {
+			total = total.add(this.objetoCcb.getCustasCartorariasValor());
+		}
+		if(isTemCertidaoDeCasamento()) {
+			total = total.add(this.objetoCcb.getCertidaoDeCasamentoValor());
+		}
+		if(isTemLaudoDeAvaliacao()) {
+			total = total.add(this.objetoCcb.getLaudoDeAvaliacaoValor());
+		}
+		if(isTemIntermediacao()) {
+			total = total.add(this.objetoCcb.getIntermediacaoValor());
+		}
+		if(isTemIptuEmAtraso()) {
+			total = total.add(this.objetoCcb.getIptuEmAtrasoValor());
+		}
+		if(isTemCondominioEmAtraso()) {
+			total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
+		}
+		
+		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
+			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+				total = total.add(processo.getValor());
+			}
+		}
+		
+		this.objetoCcb.setValorDespesas(total);
 	}
 
 	public List<String> completeTextNomes(){
@@ -5854,6 +5887,26 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(100);
 			
+			String documento = "";
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+							documento = "CPF: ";
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+							documento = "CNPJ: ";
+						}
+					}
+				}
+			}
+			
 			run = paragraph.createRun();
 			run.setText("ANEXO II");
 			run.setFontSize(11);
@@ -5861,21 +5914,6 @@ public class CcbMB {
 			XWPFRun run2 = paragraph.createRun();
 			XWPFRun run3 = paragraph.createRun();
 			XWPFRun run4 = paragraph.createRun();
-			
-			BigDecimal total =  this.objetoCcb.getCustasCartorariasValor()
-					.add(this.objetoCcb.getCertidaoDeCasamentoValor())
-					.add(this.objetoCcb.getLaudoDeAvaliacaoValor())
-					.add(this.objetoCcb.getIntermediacaoValor())
-					.add(this.objetoCcb.getIptuEmAtrasoValor())
-					.add(this.objetoCcb.getCondominioEmAtrasoValor());
-			
-			if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
-				for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-					total.add(processo.getValor());
-				}
-			}
-			
-			this.objetoCcb.setValorDespesas(total);
 			
 			paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.CENTER);
@@ -5912,6 +5950,8 @@ public class CcbMB {
 					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de");
 			run.setFontSize(11);
 			run.setBold(false);			
+			
+			calcularValorDespesa();
 
 			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas()); 
 			run2 = paragraph.createRun();
@@ -6212,7 +6252,32 @@ public class CcbMB {
 			run.setColor("ffffff");
 			run.setBold(true);
 			run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ "));
-
+			
+			
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			
+			run = paragraph.createRun();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			
+			run.setText("_____________________________________________________________________________");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+			
+			run2 = paragraph.createRun();
+			run2.setFontSize(12);
+			run2.setText("" + this.objetoCcb.getNomeEmitente());
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			run2.setText(documento + this.objetoCcb.getCpfEmitente());
+			
 			
 			/*
 			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
@@ -6681,6 +6746,39 @@ public class CcbMB {
 		this.terceiroGSelecionado = new PagadorRecebedor();
 		this.avalistaSelecionado = new PagadorRecebedor();
 	}
+	
+	public void clearDespesas() {
+		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
+			setTemCustasCartorarias(true);
+		} else {
+			setTemCustasCartorarias(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getCertidaoDeCasamentoValor())) {
+			setTemCertidaoDeCasamento(true);
+		} else {
+			setTemCertidaoDeCasamento(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getLaudoDeAvaliacaoValor())) {
+			setTemLaudoDeAvaliacao(true);
+		} else {
+			setTemLaudoDeAvaliacao(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getIntermediacaoValor())) {
+			setTemIntermediacao(true);
+		} else {
+			setTemIntermediacao(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getIptuEmAtrasoValor())) {
+			setTemIptuEmAtraso(true);
+		} else {
+			setTemIptuEmAtraso(false);
+		}
+		if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor())) {
+			setTemCondominioEmAtraso(true);
+		} else {
+			setTemCondominioEmAtraso(false);
+		}
+	}
 
 	public void calculaValorLiquidoCredito() {
 		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getCustoEmissao() != null && this.objetoCcb.getValorIOF() != null && this.objetoCcb.getValorDespesas() != null)
@@ -6716,12 +6814,14 @@ public class CcbMB {
 	public String clearFieldsEditarCcb() {
 		loadLovs();	
 		clearPagadorRecebedor();
+		clearDespesas();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
 	public String clearFieldsInserirCcb() {
 		ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
 		loadLovs();	
+		clearDespesas();
 		this.objetoCcb = new CcbContrato();
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
 		this.participanteSelecionado = new CcbParticipantes();

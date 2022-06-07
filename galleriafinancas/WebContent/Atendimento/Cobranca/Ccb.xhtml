@@ -1553,7 +1553,7 @@
 										unselectable="false" value="#{ccbMB.temCustasCartorarias}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="custasCartorariasValor" event="valueChange" />
+										<p:ajax update="custasCartorariasValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1561,11 +1561,11 @@
 									<p:outputLabel rendered="#{ccbMB.temCustasCartorarias}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temCustasCartorarias}"
+									<p:inputText rendered="#{ccbMB.temCustasCartorarias}"
 										value="#{ccbMB.objetoCcb.custasCartorariasValor}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temCustasCartorarias}"></p:spacer>
 								</h:panelGroup>
 								
@@ -1577,7 +1577,7 @@
 										unselectable="false" value="#{ccbMB.temCertidaoDeCasamento}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="certidaoDeCasamentoValor" event="valueChange" />
+										<p:ajax update="certidaoDeCasamentoValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1585,11 +1585,11 @@
 									<p:outputLabel rendered="#{ccbMB.temCertidaoDeCasamento}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temCertidaoDeCasamento}"
+									<p:inputText rendered="#{ccbMB.temCertidaoDeCasamento}"
 										value="#{ccbMB.objetoCcb.certidaoDeCasamentoValor}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temCertidaoDeCasamento}"></p:spacer>
 								</h:panelGroup>
 								
@@ -1601,7 +1601,7 @@
 										unselectable="false" value="#{ccbMB.temLaudoDeAvaliacao}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="laudoDeAvaliacaoValor" event="valueChange" />
+										<p:ajax update="laudoDeAvaliacaoValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1609,11 +1609,11 @@
 									<p:outputLabel rendered="#{ccbMB.temLaudoDeAvaliacao}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temLaudoDeAvaliacao}"
+									<p:inputText rendered="#{ccbMB.temLaudoDeAvaliacao}"
 										value="#{ccbMB.objetoCcb.laudoDeAvaliacaoValor}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temLaudoDeAvaliacao}"></p:spacer>
 								</h:panelGroup>
 
@@ -1625,7 +1625,7 @@
 										value="#{ccbMB.temIntermediacao}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="intermediacaoValor" event="valueChange" />
+										<p:ajax update="intermediacaoValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1634,10 +1634,10 @@
 										<h:panelGroup>
 											<p:outputLabel value="Valor: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
-											<p:inputNumber value="#{ccbMB.objetoCcb.intermediacaoValor}"
+											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoValor}"
 												label="Contrato" onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this, 13, event, 2);"
-												converter="bigDecimalConverter" />
+												converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -1675,7 +1675,7 @@
 										value="#{ccbMB.temIptuEmAtraso}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="iptuEmAtrasoValor" event="valueChange" />
+										<p:ajax update="iptuEmAtrasoValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1683,11 +1683,11 @@
 									<p:outputLabel rendered="#{ccbMB.temIptuEmAtraso}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temIptuEmAtraso}"
+									<p:inputText rendered="#{ccbMB.temIptuEmAtraso}"
 										value="#{ccbMB.objetoCcb.iptuEmAtrasoValor}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temIptuEmAtraso}"></p:spacer>
 								</h:panelGroup>
 								
@@ -1699,7 +1699,7 @@
 										unselectable="false" value="#{ccbMB.temCondominioEmAtraso}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="condominioEmAtrasoValor" event="valueChange" />
+										<p:ajax update="condominioEmAtrasoValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 								</h:panelGrid>
 
@@ -1707,11 +1707,11 @@
 									<p:outputLabel rendered="#{ccbMB.temCondominioEmAtraso}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temCondominioEmAtraso}"
+									<p:inputText rendered="#{ccbMB.temCondominioEmAtraso}"
 										value="#{ccbMB.objetoCcb.condominioEmAtrasoValor}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temCondominioEmAtraso}"></p:spacer>
 								</h:panelGroup>
 
@@ -1723,7 +1723,7 @@
 										unselectable="false" value="#{ccbMB.temProcessosJucidiais}">
 										<f:selectItem itemLabel="Não" itemValue="false" />
 										<f:selectItem itemLabel="Sim" itemValue="true" />
-										<p:ajax update="processosJucidiaisValor" event="valueChange" />
+										<p:ajax update="processosJucidiaisValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
 									</p:selectOneRadio>
 									<p:dataView var="processos"
 										value="#{ccbMB.objetoCcb.processosJucidiais}"
@@ -1737,7 +1737,7 @@
 											<p:spacer width="10px"/>
 											<p:commandButton ajax="false" icon="ui-icon-trash"
 												action="#{ccbMB.removeValor(processos)}"
-												update="processosJucidiaisValorView" />
+												update="processosJucidiaisValorView valorDespesas" />
 										</p:dataViewListItem>
 									</p:dataView>
 								</h:panelGrid>
@@ -1746,15 +1746,15 @@
 									<p:outputLabel rendered="#{ccbMB.temProcessosJucidiais}"
 										value="Valor: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputNumber rendered="#{ccbMB.temProcessosJucidiais}"
+									<p:inputText rendered="#{ccbMB.temProcessosJucidiais}"
 										value="#{ccbMB.valorProcesso}"
 										label="Contrato" onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" />
+										converter="bigDecimalConverter" /> 
 									<p:commandButton value="Inserir valor" ajax="false"
 										icon="ui-icon-check" rendered="#{ccbMB.temProcessosJucidiais}"
 										action="#{ccbMB.addValorProcesso}"
-										update="processosJucidiaisValorView">
+										update="processosJucidiaisValorView, valorDespesas">
 									
 									</p:commandButton>
 									<p:spacer width="50px"
@@ -2210,7 +2210,7 @@
 					</p:panel>
 
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download" />
+						icon="ui-icon ui-icon-print" value="Fazer Download"  update="valorDespesas, pagadoresAntigos" />
 						
 					<p:spacer height="10" />
 					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsInserirCcb}"
