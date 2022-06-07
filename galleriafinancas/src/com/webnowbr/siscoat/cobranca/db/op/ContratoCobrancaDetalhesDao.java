@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -214,8 +215,12 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 						contratoCobrancaDetalhes.setContrato(contratoCobrancaDao.findById(rs.getLong(2)));
 						
 						contratoCobrancaDetalhes.setQtdParcelasVencidas(getParcelasVencidas(contratoCobrancaDetalhes.getContrato()));
+						 
+						// remove parcelas carencia
+						if (contratoCobrancaDetalhes.getVlrParcela().compareTo(BigDecimal.ZERO) > 0) {
+							objects.add(contratoCobrancaDetalhes);
+						}
 						
-						objects.add(contratoCobrancaDetalhes);
 					}
 
 				} finally {

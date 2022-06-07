@@ -129,7 +129,7 @@ public class KobanaMB {
 		this.dataHoje = gerarDataHoje();
 	}
 	
-	public boolean validateParcelaValorZero(ContratoCobrancaDetalhes parcela) {
+	public boolean validateParcelaGeracaoBoletoKobana(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		boolean retorno = false;
 		
@@ -140,19 +140,31 @@ public class KobanaMB {
 					"[Kobana - Geração Boleto] Há parcela(s) selecionada(s) com o valor igual a R$ 0,00!!!", ""));
 		}
 		
+		if (!contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.") && !contrato.getEmpresa().equals("FIDC GALLERIA")
+				&& !contrato.getEmpresa().equals("CRI 1")) {
+			retorno = true;
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"[Kobana - Geração Boleto] A empresa vinculada ao contrato não tem permissão para geração de boletos Kobana!!!", ""));
+		}
+		
 		return retorno;
 	}
 	
 	public void gerarBoletoSimples(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
-		if (!validateParcelaValorZero(parcela)) {
+		if (!validateParcelaGeracaoBoletoKobana(contrato, parcela)) {
 			geraBoletoKobana(contrato, parcela);
-		}
-		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"[Kobana - Geração Boleto] Boleto da parcela " + parcela.getContrato().getNumeroContrato() + " / " + parcela.getNumeroParcela() + " gerado com sucesso!!!",""));
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"[Kobana - Geração Boleto] Boleto da parcela " + parcela.getContrato().getNumeroContrato() + " / " + parcela.getNumeroParcela() + " gerado com sucesso!!!",""));
+		} else {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Geração Boleto] Não foi possível gerar o boleto da parcela por algum problema de validação!!!",""));
+		}		
 	}
 	
 	public void gerarBoletosLote() {		
@@ -166,7 +178,7 @@ public class KobanaMB {
 			// valida se tem alguma parcela selecionada com valor zerado
 			boolean validaParcelaValorZerado = false;
 			for (ContratoCobrancaDetalhes parcela : this.selectedParcelas) {
-				if (validateParcelaValorZero(parcela)) {
+				if (validateParcelaGeracaoBoletoKobana(parcela.getContrato(), parcela)) {
 					validaParcelaValorZerado = true;
 					break;
 				}
