@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -131,8 +132,15 @@ public class TakeBlipMB {
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setRequestProperty("Authorization", "Key Z2FsbGVyaWE6dzZ5ZzBwSTNMSnhqMHhuNmNtRlA=");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setDoOutput(true);
-			myURLConnection.getOutputStream().write(postDataBytes);
+			//myURLConnection.getOutputStream().write(postDataBytes);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);			
+			}
 
 			/**
 			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
@@ -158,6 +166,61 @@ public class TakeBlipMB {
 		}
 	}
 	
+	public void sendWhatsAppNotificaResponsavel(Responsavel responsavel, String nomeTemplateMensagem, String frase1, String frase2) {
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
+		//jsonWhatsApp.put("to", "5519991653911@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+		JSONArray jsonWhatsAppParameters = new JSONArray();
+		JSONObject jsonWhatsAppParameter = new JSONObject();
+				
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", responsavel.getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", frase1);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", frase2);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+										
+		jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", nomeTemplateMensagem);		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
+	
 	public void sendWhatsAppMessage(Responsavel responsavel, String nomeTemplateMensagem, String nomeDoCliente, String numeroDoContrato, String taxaJuros, String prazo) {
 		JSONObject jsonWhatsApp = new JSONObject();
 		jsonWhatsApp.put("id", generateUUID());
@@ -178,13 +241,13 @@ public class TakeBlipMB {
 				// Nome do notificado
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
+				jsonWhatsAppParameter.put("text", responsavel.getNome());
 				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				
 				// Nome do cliente
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
-				jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
+				jsonWhatsAppParameter.put("text", nomeDoCliente);
 				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				
 				// Número do pedido
@@ -212,7 +275,7 @@ public class TakeBlipMB {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
+					jsonWhatsAppParameter.put("text", responsavel.getNome());
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Número do pedido
@@ -227,7 +290,7 @@ public class TakeBlipMB {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
+					jsonWhatsAppParameter.put("text", responsavel.getNome());
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 
 					// Número do pedido
@@ -239,19 +302,19 @@ public class TakeBlipMB {
 					// Nome do cliente
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
+					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				} else {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(responsavel.getNome()));
+					jsonWhatsAppParameter.put("text", responsavel.getNome());
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Nome do cliente
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
-					jsonWhatsAppParameter.put("text", CommonsUtil.removeAcentos(nomeDoCliente));
+					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 					
 					// Número do pedido

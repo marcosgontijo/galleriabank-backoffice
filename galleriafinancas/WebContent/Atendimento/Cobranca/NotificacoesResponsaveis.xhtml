@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />			
+			<p:panel id="NotificaResponsaveis" header="Notifica Responsáveis - WhatsApp"
+				style="margin-bottom:10px;">
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="EnviaParaTodosResponsaveis" value="Todos Responsáveis: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="EnviaParaTodosResponsaveis"
+						value="#{notificacoesMB.enviaParaTodosResponsaveis}" required="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax update=":form:panelResponsavel" event="valueChange" listener="#{notificacoesMB.changeEnviaParaTodosResponsaveis}"/>
+					</p:selectOneRadio>
+					
+					<p:outputLabel for="frase1" value="Frase 1: "
+						styleClass="labelBold" />
+					<p:inputTextarea rows="10" cols="50" id="frase1"
+						value="#{notificacoesMB.frase1}"
+						label="Frase 1" onblur="" style="width:300px;" />
+						
+					<p:outputLabel for="frase2" value="Frase 2: "
+						styleClass="labelBold" />
+					<p:inputTextarea rows="10" cols="50" id="frase2"
+						value="#{notificacoesMB.frase2}"
+						label="Frase 2" onblur="" style="width:300px;" />
+				</h:panelGrid>
+				
+				<h:panelGroup id="panelResponsavel"  >
+					<p:panel header="Responsável"
+						style="margin-bottom:10px;margin-top:20px !important;" rendered="#{!notificacoesMB.enviaParaTodosResponsaveis}">
+						<h:panelGrid columns="3">
+							<p:outputLabel for="Responsavel" value="Responsável: "
+								styleClass="labelBold" />
+							<p:inputText id="Responsavel"
+								value="#{notificacoesMB.nomeResponsavel}" label="Responsável"
+								required="true" readonly="TRUE"
+								style="FONT-SIZE: 10pt;width:300px;"/>
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin" />
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
+				<p:commandButton value="Enviar Notificação"
+					action="#{notificacoesMB.enviaNotificacao}"
+					image="ui-icon ui-icon-check"
+					update="mensagens"
+					style="TEXT-DECORATION: bold; margin-top: 15px;" />
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Responsáveis" widgetVar="responsavelDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formResponsaveis">
+				<p:dataTable id="responsavelDialogdlg" var="responsavelDialogdlg"
+					value="#{notificacoesMB.listResponsaveis}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{notificacoesMB.selectedResponsavel}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{responsavelDialogdlg.id}" sortBy="#{responsavelDialogdlg.nome}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.cnpj}"
+						filterBy="#{responsavelDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.cpf}"
+						filterBy="#{responsavelDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.nome}"
+						filterBy="#{responsavelDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{notificacoesMB.populateSelectedResponsavel}"
+							image="ui-icon ui-icon-check" update=":form:Responsavel"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{notificacoesMB.clearResponsavel}"
+							image="ui-icon ui-icon-trash"
+							update=":form:Responsavel responsavelDialogdlg"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('responsavelDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
