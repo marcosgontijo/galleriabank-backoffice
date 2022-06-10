@@ -7192,4 +7192,47 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS =  " select "
+			+ "	c.id "
+			+ " FROM "
+			+ "	cobranca.contratocobranca c "
+			+ " WHERE "
+			+ "	status != 'Aprovado' "
+			+ "	AND status != 'Baixado' "
+			+ "	AND status != 'Desistência Cliente' "
+			+ "	AND analiseReprovada = FALSE "
+			+ "	AND c.statusLead = 'Completo' "
+			+ "	and (DATE_PART('day', '2022-06-09'::timestamp - c.dataultimaatualizacao) > 30 "
+			+ "	or dataultimaatualizacao is null)";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> ConsultaContratosASeremBaixados() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS);
+	
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						ContratoCobranca contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong("id"));
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 }

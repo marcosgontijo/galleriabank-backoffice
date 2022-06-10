@@ -608,6 +608,9 @@ public class ContratoCobranca implements Serializable {
 	private String trabalhistaRessalva;
 	private String chequeDevolvidoRessalva;
 	
+	private String contatoAgendamendoLaudoAvaliacao;
+
+	
 	public ContratoCobranca() {
 		super();
 		this.pagador = new PagadorRecebedor();
@@ -5004,5 +5007,10 @@ public class ContratoCobranca implements Serializable {
 	public void setTemTxAdm(boolean temTxAdm) {
 		this.temTxAdm = temTxAdm;
 	}
-	
+	public String getContatoAgendamendoLaudoAvaliacao() {
+		return contatoAgendamendoLaudoAvaliacao;
+	}
+	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
+		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
+	}
 }

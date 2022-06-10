@@ -1615,6 +1615,12 @@
 		<property name="temTxAdm" type="boolean">
 			<column name="temTxAdm" />
 		</property>	
+		
+		
+		<property name="contatoAgendamendoLaudoAvaliacao" type="java.lang.String">
+			<column name="contatoAgendamendoLaudoAvaliacao" />
+		</property>	
+		
 			
 	
 	

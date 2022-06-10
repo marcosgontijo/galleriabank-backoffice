@@ -119,49 +119,55 @@
 							</shiro:hasAnyRoles>
 							
 							<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}">
-									<h:panelGrid columns="2"
-										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-									-moz-border-radius: 5px;
-									border-radius: 5px; padding: 10px;">
-										<p:outputLabel styleClass="labelBold" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
-										>LAUDO+PAJU será com pagamento <br/> Antecipado ou No final?</p:outputLabel>
-										<p:spacer></p:spacer>
+								<h:panelGrid columns="1">
+									<ui:fragment
+										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}">
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
+											>LAUDO+PAJU será com pagamento <br/> Antecipado ou No final?</p:outputLabel>
+											<p:spacer></p:spacer>		
+						
+											<p:commandButton value="Antecipado" ajax="false"											
+												action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+												style="TEXT-DECORATION: bold; "
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+												<f:setPropertyActionListener
+													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" value="true" />
+											</p:commandButton>
 											
-										
-											
-										<p:commandButton value="Antecipado" ajax="false"											
-											action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
-											style="TEXT-DECORATION: bold; "
-											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
-											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" value="true" />
-										</p:commandButton>
-										
-										<p:commandButton value="No final" ajax="false"										
-											action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
-											style="TEXT-DECORATION: bold;"
-											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
-											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}" value="true" />
-										</p:commandButton>
-											
-										<p:spacer width="10px"></p:spacer>
-
-										<p:outputLabel styleClass="labelBold" 
-										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
-										<p:spacer></p:spacer>
-										<p:selectOneRadio id="pagtoLaudoConfirmada"
-											unselectable="false" 
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
-											<f:selectItem itemLabel="Não" itemValue="false" />
-											<f:selectItem itemLabel="Sim" itemValue="true" />
-										</p:selectOneRadio>
-
-									</h:panelGrid>
-								</ui:fragment>
+											<p:commandButton value="No final" ajax="false"										
+												action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+												style="TEXT-DECORATION: bold;"
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+												<f:setPropertyActionListener
+													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}" value="true" />
+											</p:commandButton>
+												
+											<p:spacer width="10px"></p:spacer>
+	
+											<p:outputLabel styleClass="labelBold" 
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
+											<p:spacer></p:spacer>
+											<p:selectOneRadio id="pagtoLaudoConfirmada"
+												unselectable="false" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
+												<f:selectItem itemLabel="Não" itemValue="false" />
+												<f:selectItem itemLabel="Sim" itemValue="true" />
+											</p:selectOneRadio>
+	
+										</h:panelGrid>
+									</ui:fragment>
+									<p:outputLabel value="Contato de Agendamendo de Laudo de Avaliacao: " styleClass="labelBold"
+										style="font-weight: bold;" />
+									<p:inputText
+										value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
+										styleClass="labelBold"
+										style="width:250px;font-weight: bold; font-size: 18px !important;" />
+								</h:panelGrid>
 							</shiro:hasAnyRoles>
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -840,6 +846,11 @@
 								update=":form:BoletoPanel :form:BoletoPAJULaudo"
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2"
+							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo != 'Apartamento' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Casa' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Sala Comercial'}">
+							<p:outputLabel value="Geração de Boleto invalida para esse tipo de imóvel " styleClass="labelBold" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

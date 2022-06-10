@@ -94,8 +94,8 @@
 										<f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />
 										<f:selectItem itemLabel="Operação Duplicada" itemValue="Operação Duplicada" />
 									    <f:selectItem itemLabel="Dados Inconsistentes" itemValue="Dados Inconsistentes" />	
-										<f:selectItem itemLabel="Cliente fora do perfil"itemValue="Cliente fora do perfil" />
-										<f:selectItem itemLabel="Imóvel fora do perfil"itemValue="Imóvel fora do perfil" />
+										<f:selectItem itemLabel="Cliente fora do perfil" itemValue="Cliente fora do perfil" />
+										<f:selectItem itemLabel="Imóvel fora do perfil" itemValue="Imóvel fora do perfil" />
 										<p:ajax event="change" update="Status" />
 									</p:selectOneMenu>
 								</h:panelGrid>
@@ -835,6 +835,11 @@
 								update=":form:BoletoPanel :form:BoletoPAJULaudo"
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2"
+							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo != 'Apartamento' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Casa' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Sala Comercial'}">
+							<p:outputLabel value="Geração de Boleto invalida para esse tipo de imóvel " styleClass="labelBold" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
