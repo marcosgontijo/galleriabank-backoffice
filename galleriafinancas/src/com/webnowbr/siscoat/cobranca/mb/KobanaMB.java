@@ -11,6 +11,8 @@ import java.net.HttpURLConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,8 +25,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.event.SelectEvent;
+
+import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
@@ -108,7 +115,176 @@ public class KobanaMB {
 	
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
 	
+	private List<BoletoKobana> listBoletosKobana;
 	
+	private String filtroStatus;
+	private String filtroData;
+	
+	public String clearFieldsConsultarBoleto() {
+		
+		this.listBoletosKobana = new ArrayList<BoletoKobana>();
+		this.dtInicioConsulta = gerarDataHoje();
+		this.dtFimConsulta = gerarDataHoje();
+		
+		this.filtroStatus = "Todos";
+		this.filtroData = "Todos";
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultaBoletosKobana.xhtml";
+	}
+	
+	public void consultarBoletosKobana() {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+			
+			String urlKobana = "https://api.kobana.com.br/v1/bank_billets";
+			boolean temFiltro = false;
+			
+			// filtro Status
+			if (!this.filtroStatus.equals("Todos")) {
+				urlKobana = urlKobana + "?status=" + this.filtroStatus;
+				
+				temFiltro = true;
+			} 
+			
+			// filtro Data
+			if (temFiltro) {
+				urlKobana = urlKobana + "&";
+			} else {
+				urlKobana = urlKobana + "?";
+			}
+			
+			if (!this.filtroData.equals("Todos")) {
+				
+				Locale locale = new Locale("pt", "BR");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
+				
+				String dataInicio = sdf.format(this.dtInicioConsulta.getTime());;
+				String dataFim = sdf.format(this.dtFimConsulta.getTime());;
+				
+				if (this.filtroData.equals("Vencimento")) {
+					urlKobana = urlKobana + "expire_from=" + dataInicio + "&expire_to=" + dataFim;
+				} 
+				
+				if (this.filtroData.equals("Pagamento")) {
+					urlKobana = urlKobana + "paid_from=" + dataInicio + "&paid_to=" + dataFim;
+				}
+				
+				if (this.filtroData.equals("Registro")) {
+					urlKobana = urlKobana + "created_from=" + dataInicio + "&created_to=" + dataFim;
+				}
+			} 
+
+			URL myURL = new URL(urlKobana);			
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-type", "Application/JSON");
+			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+	
+			int status = myURLConnection.getResponseCode();
+			
+			String result = IOUtils.toString(myURLConnection.getInputStream(), StandardCharsets.UTF_8.name());
+			
+			JSONArray myResponse = new JSONArray(result);		
+			
+			if (status == 200) {
+				this.listBoletosKobana = new ArrayList<BoletoKobana>();
+				
+				for (int i = 0; i < myResponse.length(); i++) {
+					BoletoKobana boleto = new BoletoKobana();
+					JSONObject objetoBoleto = myResponse.getJSONObject(i);
+				
+					boleto.setId(objetoBoleto.getLong("id"));
+					boleto.setExpireAt(processStringToDate(objetoBoleto.getString("expire_at")));
+										
+					if (!objetoBoleto.isNull("paid_at")) {
+						boleto.setPaidAt(processStringToDate(objetoBoleto.getString("paid_at")));
+					}
+					
+					boleto.setCreatedAt(processStringToDate(objetoBoleto.getString("created_at")));
+					
+					if (objetoBoleto.getString("status").equals("paid")) {
+						boleto.setStatus("Pago");
+					} else if (objetoBoleto.getString("status").equals("opened")) {
+						boleto.setStatus("Registrado");
+					} else if (objetoBoleto.getString("status").equals("canceled")) {
+						boleto.setStatus("Cancelado");
+					} else if (objetoBoleto.getString("status").equals("overdue")) {
+						boleto.setStatus("Vencido");
+					} else {
+						boleto.setStatus(objetoBoleto.getString("status"));
+					}					
+					
+					boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
+					boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
+					boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
+					boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+					boleto.setUrlBoleto(objetoBoleto.getString("url"));
+					boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
+					
+					this.listBoletosKobana.add(boleto);
+				}				
+			} else {
+				if (status == 401) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de autenticação. Token inválido!", ""));
+				}
+				if (status == 403) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
+				}	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Consulta Boletos] Erro não conhecido!", ""));
+			}
+						
+			myURLConnection.disconnect();
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Date processStringToDate(String dateStr) {
+		Date dataConvertida = null;
+		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd"); 
+		
+		try {
+			dataConvertida = formato.parse(dateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return dataConvertida;
+	}	
+	
+	/*
+	 * 
+	 * 
+	 * 	
+	"expire_at": "2022-06-09",
+    "paid_at": "2022-06-07",
+    "status": "paid",
+    "customer_person_name": "Lucas Ardel Florencio Pinto",
+    "customer_cnpj_cpf": "227.918.008-16",
+    "customer_email": "lucas.dbsound2016@gmail.com",
+    "paid_amount": 7969,
+    "url": "https://bole.to/2/ayzpwod",
+    "beneficiary_name": "True Securitizadora S.A.",
+    "created_at": "2022-06-06T12:46:35-03:00",
+    
+	 */
+	
+	
+		
 	public String clearFieldsParcelasBoleto() {
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
@@ -533,5 +709,37 @@ public class KobanaMB {
 
 	public void setSelectedParcelas(List<ContratoCobrancaDetalhes> selectedParcelas) {
 		this.selectedParcelas = selectedParcelas;
+	}
+
+	public Date getDataHoje() {
+		return dataHoje;
+	}
+
+	public void setDataHoje(Date dataHoje) {
+		this.dataHoje = dataHoje;
+	}
+
+	public List<BoletoKobana> getListBoletosKobana() {
+		return listBoletosKobana;
+	}
+
+	public void setListBoletosKobana(List<BoletoKobana> listBoletosKobana) {
+		this.listBoletosKobana = listBoletosKobana;
+	}
+
+	public String getFiltroStatus() {
+		return filtroStatus;
+	}
+
+	public void setFiltroStatus(String filtroStatus) {
+		this.filtroStatus = filtroStatus;
+	}
+
+	public String getFiltroData() {
+		return filtroData;
+	}
+
+	public void setFiltroData(String filtroData) {
+		this.filtroData = filtroData;
 	}
 }

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />			
+			<p:panel id="ConsultaBoletosKobana" header="Consulta Boletos Kobana"
+				style="margin-bottom:10px;">
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="FiltroStatus" value="Status: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="FiltroStatus"
+						value="#{kobanaMB.filtroStatus}" required="true">
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+						<f:selectItem itemLabel="Pagos" itemValue="paid" />
+						<f:selectItem itemLabel="Registrados" itemValue="opened" />
+						<f:selectItem itemLabel="Cancelados" itemValue="canceled" />
+					</p:selectOneRadio>
+					
+					<p:outputLabel for="FiltroData" value="Data: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="FiltroData"
+						value="#{kobanaMB.filtroData}" required="true">
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+						<f:selectItem itemLabel="Registro" itemValue="Registro" />
+						<f:selectItem itemLabel="Vencimento" itemValue="Vencimento" />
+						<f:selectItem itemLabel="Pagamento" itemValue="Pagamento" />
+						<p:ajax update=":form:panelDatas" event="change" />
+					</p:selectOneRadio>
+				</h:panelGrid>
+				
+				<h:panelGroup id="panelDatas">
+					<p:panel header="Período Consulta"
+						style="margin-bottom:10px;margin-top:20px !important;" rendered="#{kobanaMB.filtroData ne 'Todos'}">
+						<h:panelGrid columns="2">									
+							<p:outputLabel for="dataInicio" value="Data Inicio: "
+								styleClass="labelBold" style="margin-right: 59px;" />
+							<p:calendar id="dataInicio"
+								value="#{kobanaMB.dtInicioConsulta}"
+								required="true" label="Data Inicio" size="100"
+								pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+							<p:outputLabel for="dataFim" value="Data Fim "
+								styleClass="labelBold" style="margin-right: 59px;"/>
+							<p:calendar id="dataFim"
+								value="#{kobanaMB.dtFimConsulta}" required="true"
+								label="Data Fim" size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField"/>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
+				<p:commandButton value="Consultar Boletos"
+					action="#{kobanaMB.consultarBoletosKobana}"
+					image="ui-icon ui-icon-check"
+					update="mensagens ConsultaBoletosKobanaResultado"
+					style="TEXT-DECORATION: bold; margin-top: 15px;" />
+			</p:panel>
+			<p:panel id="ConsultaBoletosKobanaResultado" header="Consulta Boletos Kobana - Resultados"
+				style="margin-bottom:10px;">
+				<p:dataTable id="dtBoletosKobana" var="boleto" 
+					value="#{kobanaMB.listBoletosKobana}"
+					emptyMessage="" sortBy="#{boleto.createdAt}"
+					rowStyleClass="#{boleto.status eq 'Pago' ? 'parcelaPaga' : null}"
+					sortOrder="descending">
+					
+					<p:column style="text-align: center;"
+						headerText="Registro" sortBy="#{boleto.createdAt}">
+						<h:outputText value="#{boleto.createdAt}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Vencimento" sortBy="#{boleto.expireAt}">
+						<h:outputText value="#{boleto.expireAt}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Pagamento" sortBy="#{boleto.paidAt}">
+						<h:outputText value="#{boleto.paidAt}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>					
+					<p:column style="text-align: center;"
+						headerText="Status" filterMatchMode="contains"
+						sortBy="#{boleto.status}">
+						<h:outputText value="#{boleto.status}" />
+					</p:column>	
+					<p:column style="text-align: center;"
+						headerText="Cedente" filterMatchMode="contains"
+						sortBy="#{boleto.beneficiaryName}">
+						<h:outputText value="#{boleto.beneficiaryName}" />
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Cliente" filterMatchMode="contains"
+						sortBy="#{boleto.customerPersonName}">
+						<h:outputText value="#{boleto.customerPersonName}" />
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="CPF/CNPJ" filterMatchMode="contains"
+						sortBy="#{boleto.customerPersonCNPJCPF}">
+						<h:outputText value="#{boleto.customerPersonCNPJCPF}" />
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Cliente E-mail" filterMatchMode="contains"
+						sortBy="#{boleto.customerEmail}">
+						<h:outputText value="#{boleto.customerEmail}" />
+					</p:column>					
+					<p:column style="text-align: center;"
+						headerText="Valor Pago (R$)">
+						<h:outputText value="#{boleto.paidAmount}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 130px;"
+						headerText="Link Boleto" styleClass="colunaHiddenRelFinanceiro">
+						<ui:fragment rendered="#{boleto.urlBoleto ne null}">
+							<h:outputLink value="#{boleto.urlBoleto}" target="_blank" styleClass="botaoBoletoKobana">#{boleto.urlBoleto}</h:outputLink>
+						</ui:fragment>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
