@@ -3020,8 +3020,8 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
 					this.objetoAnaliseComite = new AnaliseComite();
 					
-						this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
-						this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+					this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
+					this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
 
 					if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
@@ -6027,6 +6027,36 @@ public class ContratoCobrancaMB {
 						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
+		
+	}
+	
+	public void baixarPreContratoAutomatico() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosASeremBaixados();
+		
+		for (ContratoCobranca contratos : this.contratosPendentes) {	
+			
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			
+			if (contratos.getDataUltimaAtualizacao() != null) {
+				if (getDifferenceDays(contratos.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
+					if (!contratos.isContratoResgatadoBaixar()) {
+						baixarPreContrato();
+					} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 30) {
+						baixarPreContrato();
+					}
+				}
+			} else {
+				baixarPreContrato();
+			}
+		}
 	}
 	
 
@@ -6050,7 +6080,6 @@ public class ContratoCobrancaMB {
 		
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -6070,7 +6099,6 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(true);
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -9735,6 +9763,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPendentes() {
+		this.baixarPreContratoAutomatico();
+
 	//	if (this.preContratoCustom) {
 
 		//	crmmb = new CRMMB();
@@ -9765,6 +9795,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			this.contratosPendentes = populaStatus(this.contratosPendentes);
+			
 
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
 		//}
@@ -10243,6 +10274,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
+		this.baixarPreContratoAutomatico();
+		
 		this.tituloTelaConsultaPreStatus = status;
 		
 		clearMensagensWhatsApp();
@@ -10350,36 +10383,9 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-
-			else if (status.equals("Aguardando Análise")) {
-				if (contratos.getDataContrato() != null) {
-					if (getDifferenceDays(contratos.getDataContrato(), auxDataHoje) > 45) {
-						if (!contratos.isContratoResgatadoBaixar()) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						}
-					}
-				}
-			}
-
-			else if (status.equals("Ag. Pagto. Laudo")) {
-				if (contratos.getCadastroAprovadoData() != null) {
-					if (getDifferenceDays(contratos.getCadastroAprovadoData(), auxDataHoje) > 15) {
-						if (!contratos.isContratoResgatadoBaixar()) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 14) {
-							this.objetoContratoCobranca = contratos;
-							baixarPreContrato();
-						}
-
-					}
-				}
-			}
 		}
+		
+		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}

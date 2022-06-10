@@ -946,12 +946,12 @@
 								onkeydown="FormataValor(this, 13, event, 2);"
 								converter="bigDecimalConverter"
 								style="FONT-SIZE: 10pt;width:100px;" />
-								
+
 							<p:outputLabel value="Calcular Restante: " styleClass="labelBold" />
 							<p:commandButton
 								action="#{contratoCobrancaMB.calcularValorLaudoPaju}"
 								value="Calcular Restante" update="valorLaudoPajuFaltante" />
-								
+
 							<p:outputLabel for="valorLaudoPajuFaltante"
 								value="Valor Faltante: " styleClass="labelBold" />
 							<p:inputText id="valorLaudoPajuFaltante"
@@ -960,6 +960,14 @@
 								onkeydown="FormataValor(this, 13, event, 2);"
 								converter="bigDecimalConverter"
 								style="FONT-SIZE: 10pt;width:100px;" />
+
+							<p:outputLabel
+								value="Contato de Agendamendo de Laudo de Avaliacao: "
+								styleClass="labelBold" style="font-weight: bold;" />
+							<p:inputText
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
+								styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;" />
 
 						</h:panelGrid>
 					</p:panel>

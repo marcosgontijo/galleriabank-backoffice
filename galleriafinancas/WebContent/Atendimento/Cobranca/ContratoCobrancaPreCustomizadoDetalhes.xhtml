@@ -94,8 +94,8 @@
 										<f:selectItem itemLabel="Cliente não atendeu" itemValue="Cliente não atendeu" />
 										<f:selectItem itemLabel="Operação Duplicada" itemValue="Operação Duplicada" />
 									    <f:selectItem itemLabel="Dados Inconsistentes" itemValue="Dados Inconsistentes" />	
-										<f:selectItem itemLabel="Cliente fora do perfil"itemValue="Cliente fora do perfil" />
-										<f:selectItem itemLabel="Imóvel fora do perfil"itemValue="Imóvel fora do perfil" />
+										<f:selectItem itemLabel="Cliente fora do perfil" itemValue="Cliente fora do perfil" />
+										<f:selectItem itemLabel="Imóvel fora do perfil" itemValue="Imóvel fora do perfil" />
 										<p:ajax event="change" update="Status" />
 									</p:selectOneMenu>
 								</h:panelGrid>
@@ -836,6 +836,11 @@
 								ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU" rendered="#{contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju == null || contratoCobrancaMB.objetoContratoCobranca.iuguLaudoPaju eq ''}">
 							</p:commandButton>
 						</h:panelGrid>
+						
+						<h:panelGrid columns="2"
+							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo != 'Apartamento' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Casa' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Sala Comercial'}">
+							<p:outputLabel value="Geração de Boleto invalida para esse tipo de imóvel " styleClass="labelBold" />
+						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 				
@@ -973,31 +978,76 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}"
 						header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">
+						
+							<h:panelGrid columns="2">
 							
-							<p:outputLabel for="valorPreLaudo"
-								value="Valor Pré Laudo: " styleClass="labelBold" />
-							<p:outputLabel id="valorPreLaudo"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);"
-								converter="bigDecimalConverter"
-								style="FONT-SIZE: 10pt;width:300px;"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
+								<p:outputLabel for="valorPreLaudo"
+									value="Valor Pré Laudo: " styleClass="labelBold" />
+								<p:outputLabel id="valorPreLaudo"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />
 							
-							<p:outputLabel for="valorMercadoImovel"
-								value="Valor de mercado do imóvel: " styleClass="labelBold" />
-							<p:outputLabel id="valorMercadoImovel"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
-								converter="bigDecimalConverter"
-								style="FONT-SIZE: 10pt;width:300px;" />
+								<p:outputLabel for="valorMercadoImovel"
+									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+								<p:outputLabel id="valorMercadoImovel"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />
+	
+								<p:outputLabel for="valorVendaForcadaImovel"
+									value="Valor de venda forçada do imóvel: "
+									styleClass="labelBold" />
+								<p:outputLabel id="valorVendaForcadaImovel"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />
+							</h:panelGrid>
+						
+							<h:panelGrid columns="2">
+								<p:outputLabel for="NumeroMatriculaLaudoPaju" value="Numero Matrícula: " />
+								<p:outputLabel id="NumeroMatriculaLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
+									label="NumeroMatricula" onblur="" style="width:400px;" />
 
-							<p:outputLabel for="valorVendaForcadaImovel"
-								value="Valor de venda forçada do imóvel: "
-								styleClass="labelBold" />
-							<p:outputLabel id="valorVendaForcadaImovel"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
-								converter="bigDecimalConverter"
-								style="FONT-SIZE: 10pt;width:300px;" />
+								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
+								<p:outputLabel id="EnderecoImovelLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
+									label="Endereço" onblur="" style="width:400px;" />
+
+								<p:outputLabel for="linkGMapsImovelLaudoPaju" value="Link Google Maps: " />
+								<p:outputLabel id="linkGMapsImovelLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+									label="Link Google Maps" style="width:400px;" />
+
+								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
+								<p:outputLabel id="TipoLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+									label="Tipo" style="width:410px;"/>
+
+								<p:outputLabel for="AreaTotalLaudoPaju"
+									value="Área Total / Terreno (metros):  " />
+								<p:outputLabel id="AreaTotalLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
+									style="width:150px;" />
+
+								<p:outputLabel for="AreaConstruidaLaudoPaju"
+									value="Área Útil / Construída (metros): " />
+								<p:outputLabel id="AreaConstruidaLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
+									style="width:150px;" />
+
+							</h:panelGrid>
+						
 						</h:panelGrid>
 						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
 							<h:panelGrid columns="2"
