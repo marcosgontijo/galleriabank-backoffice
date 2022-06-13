@@ -3171,6 +3171,37 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
+			if (!this.objetoContratoCobranca.getValorPreLaudo().equals(statusContrato.getValorPreLaudo())) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				// envia para o gerente do responsável
+				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+					"pre_laudo_inserido",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					this.objetoContratoCobranca.getPagador().getNome(), "", "");
+					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+						// Bia (assistente Gislaine)
+						ResponsavelDao rDao = new ResponsavelDao();
+						Responsavel rAssistente = new Responsavel();
+						rAssistente = rDao.findById((long) 359);
+
+						takeBlipMB.sendWhatsAppMessage(rAssistente,
+						"pre_laudo_inserido", 
+						this.objetoContratoCobranca.getNumeroContrato(),
+						this.objetoContratoCobranca.getPagador().getNome(),
+						"", "");
+					}
+				} else {
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"pre_laudo_inserido",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					this.objetoContratoCobranca.getPagador().getNome(), "", "");
+				}
+			}
+		}
+		
 		// Mensagem PAJU E LAUDO RECEBIDO
 		if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
 				this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
@@ -10871,6 +10902,7 @@ public class ContratoCobrancaMB {
 					simuladorMB.setCarencia(BigInteger.valueOf(contratos.getMesesCarencia()));
 					simuladorMB.setNaoCalcularMIP(contratos.isTemSeguroMIP());
 					simuladorMB.setNaoCalcularDFI(contratos.isTemSeguroMIP());
+					simuladorMB.setNaoCalcularTxAdm(contratos.isTemTxAdm());
 					simuladorMB.setMostrarIPCA(true);
 					simuladorMB.setTipoCalculoFinal('B');
 					simuladorMB.setValidar(false);

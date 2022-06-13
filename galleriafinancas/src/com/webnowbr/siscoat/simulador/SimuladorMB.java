@@ -53,6 +53,7 @@ public class SimuladorMB {
 	private BigInteger carencia;
 	private boolean naoCalcularDFI;
     private boolean naoCalcularMIP;
+    private boolean naoCalcularTxAdm;
     private char tipoCalculoFinal;
     private boolean mostrarIPCA;
     private boolean validar;
@@ -157,6 +158,7 @@ public class SimuladorMB {
 		simulador.setTipoCalculo(tipoCalculo);
 		simulador.setNaoCalcularDFI(this.naoCalcularDFI);
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
+		simulador.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
 		simulador.calcular();
 		
 		simulador.setValorCreditoLiberado(simulador.getValorCredito().subtract(simulador.getIOFTotal()).subtract(simulador.getCustoEmissaoValor()));
@@ -185,6 +187,7 @@ public class SimuladorMB {
 			simuladorLiquido.setTipoCalculo(tipoCalculo);
 			simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
 			simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
+			simuladorLiquido.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
 			simuladorLiquido.calcular();
 
 			if (this.valorCredito.add(simuladorLiquido.getIOFTotal())
@@ -471,6 +474,15 @@ public class SimuladorMB {
 	public void setValidar(boolean validar) {
 		this.validar = validar;
 	}
+
+	public boolean isNaoCalcularTxAdm() {
+		return naoCalcularTxAdm;
+	}
+
+	public void setNaoCalcularTxAdm(boolean naoCalcularTxAdm) {
+		this.naoCalcularTxAdm = naoCalcularTxAdm;
+	}
+	
 }
 
 

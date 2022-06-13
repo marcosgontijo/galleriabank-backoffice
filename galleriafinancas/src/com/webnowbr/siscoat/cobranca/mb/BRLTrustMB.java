@@ -335,6 +335,7 @@ public class BRLTrustMB {
 					simuladorMB.setCarencia(BigInteger.valueOf(contratos.getMesesCarencia()));
 					simuladorMB.setNaoCalcularMIP(contratos.isTemSeguroMIP());
 					simuladorMB.setNaoCalcularDFI(contratos.isTemSeguroMIP());
+					simuladorMB.setNaoCalcularTxAdm(contratos.isTemTxAdm());
 					simuladorMB.setMostrarIPCA(true);
 					simuladorMB.setTipoCalculoFinal('B');
 					simuladorMB.setValidar(false);
@@ -1943,6 +1944,7 @@ public class BRLTrustMB {
 				!(this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()));
 		simulador.setNaoCalcularMIP(
 				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
+		simulador.setNaoCalcularTxAdm(!this.objetoContratoCobranca.isTemTxAdm());
 
 		simulador.calcular();
 		return simulador;
