@@ -129,6 +129,7 @@ public class IpcaJobCalcular {
 
 					simulador.setNaoCalcularDFI(!(contratoCobranca.isTemSeguroDFI() && contratoCobranca.isTemSeguro()));
 					simulador.setNaoCalcularMIP(!(contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro()));
+					simulador.setNaoCalcularTxAdm(!(contratoCobranca.isTemTxAdm()));
 
 					simulador.calcular();
 

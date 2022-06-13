@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class ContratoCobrancaStatus implements Serializable {
 
@@ -19,6 +20,7 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean documentosComite;
 	private boolean aprovadoComite;
 	private String contratoPreAprovado;
+	private BigDecimal valorPreLaudo;
 	
 	public ContratoCobrancaStatus() {
 		
@@ -95,5 +97,11 @@ public class ContratoCobrancaStatus implements Serializable {
 	}
 	public void setAprovadoComite(boolean aprovadoComite) {
 		this.aprovadoComite = aprovadoComite;
+	}
+	public BigDecimal getValorPreLaudo() {
+		return valorPreLaudo;
+	}
+	public void setValorPreLaudo(BigDecimal valorPreLaudo) {
+		this.valorPreLaudo = valorPreLaudo;
 	}
 }
