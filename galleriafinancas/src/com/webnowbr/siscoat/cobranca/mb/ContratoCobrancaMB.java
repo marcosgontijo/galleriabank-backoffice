@@ -2858,7 +2858,9 @@ public class ContratoCobrancaMB {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
+		
+		this.updateResponsavel = "";
+		
 		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
@@ -3571,12 +3573,13 @@ public class ContratoCobrancaMB {
 
 		if (this.objetoContratoCobranca.getStatusLead() != null) {
 			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
-				Responsavel responsavel = getResponsavelUsuarioLogado();
-				this.objetoContratoCobranca.setLeadCompleto(false);
-				if (responsavel != null) {
-					this.objetoContratoCobranca.setResponsavel(responsavel);
+				if (CommonsUtil.mesmoValor(this.codigoResponsavel, "lead")) {
+					Responsavel responsavel = getResponsavelUsuarioLogado();
+					this.objetoContratoCobranca.setLeadCompleto(false);
+					if (responsavel != null) {
+						this.objetoContratoCobranca.setResponsavel(responsavel);
+					}
 				}
-				
 			} 
 		} else {
 			this.objetoContratoCobranca.setStatusLead("Completo");
@@ -4364,6 +4367,7 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * INICIO - Métodos utilizados pelas LoVs
 	 ***********************************************************/
+		
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
@@ -4374,6 +4378,7 @@ public class ContratoCobrancaMB {
 
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		this.listResponsaveis = responsavelDao.findAll();
+		this.listResponsavel = responsavelDao.findAll();
 	}
 
 	public final void populateSelectedGrupoFavorecido() {
@@ -4639,6 +4644,7 @@ public class ContratoCobrancaMB {
 	public final void populateSelectedResponsavel() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();
+		this.codigoResponsavel = this.selectedResponsavel.getCodigo();
 	}
 
 	public void clearResponsavel() {
@@ -6981,6 +6987,7 @@ public class ContratoCobrancaMB {
 		this.contratos = new ArrayList<ContratoCobranca>();
 		
 		this.tituloPainel = "Editar";
+		this.updateResponsavel = ":form:Codigo1 :form:Codigo2 :form:NomeResp";
 
 		files = new ArrayList<FileUploaded>();
 		files = listaArquivos();
@@ -10401,11 +10408,10 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-
-		for (ContratoCobranca contratos : this.contratosPendentes) {			
-			contratos = getContratoById(contratos.getId());
-
-			if (status.equals("Análise Reprovada")) {
+	
+		if (status.equals("Análise Reprovada")) {
+			for (ContratoCobranca contratos : this.contratosPendentes) {
+				contratos = getContratoById(contratos.getId());
 				if (contratos.getAnaliseReprovadaData() != null && contratos.isAnaliseReprovada()) {
 					if (getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
 						if (this.objetoContratoCobranca != null) {

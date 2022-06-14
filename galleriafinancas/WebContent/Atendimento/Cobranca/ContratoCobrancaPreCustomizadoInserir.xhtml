@@ -650,7 +650,11 @@
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: " styleClass="labelBold" rendered="#{contratoCobrancaMB.updateMode}"/>
 						<h:panelGroup>
 							<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
-							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}"/>																																  								
+							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}"/>		
+							<p:spacer width="10px"></p:spacer>
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />																														  								
 						</h:panelGroup>																																  								
 					</h:panelGrid>
 					<p:outputLabel id="gerenteContaLabel" value="Gerente da Conta?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}"/>
@@ -2060,6 +2064,11 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
-		</ui:include>					 		
+		</ui:include>
+		
+		<ui:include src="../../Dialog/DialogResponsavel.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
+			<ui:param name="titulo" value="Gerente Responsável"></ui:param>
+		</ui:include>			 		
 	</ui:define>
 </ui:composition>
