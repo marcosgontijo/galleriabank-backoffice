@@ -107,7 +107,7 @@
 								    
 								    <p:menuitem id="analiseComercialStep" value="Análise Comercial"/>
 								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>
-								    
+							   
 								    <p:menuitem id="preComiteStep" value="Pré-Comitê"/>
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
 								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
@@ -136,6 +136,8 @@
 												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" value="true" />
+												<f:setPropertyActionListener
+													target="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}" value="Antecipado" />
 											</p:commandButton>
 											
 											<p:commandButton value="No final" ajax="false"										
@@ -144,6 +146,8 @@
 												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}" value="true" />
+												<f:setPropertyActionListener
+													target="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}" value="No final" />
 											</p:commandButton>
 												
 											<p:spacer width="10px"></p:spacer>

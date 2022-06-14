@@ -114,21 +114,23 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							debenturesCompleta.setDataDebentures(db.getDataDebentures());
 							debenturesCompleta.setRecebedor(db.getRecebedor());
-							debenturesCompleta.setValorDebenture(BigDecimal.valueOf(db.getQtdeDebentures() * 1000).setScale(2, BigDecimal.ROUND_UP));
-							debenturesCompleta.setPrazo(c.getQtdeParcelas());
+							//debenturesCompleta.setValorDebenture(BigDecimal.valueOf(db.getQtdeDebentures() * 1000).setScale(2, BigDecimal.ROUND_UP));
+							//debenturesCompleta.setPrazo(c.getQtdeParcelas());
 							
 							debenturesCompleta.setContrato(c);
 							
 							if (c.getRecebedor() != null) {
 								if (c.getRecebedor().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
+									debenturesCompleta.setParcelaMensal(
+											c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensalBaixa());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
 									
-									if (c.getVlrFinalRecebedor1() != null) {
-										if (c.getVlrFinalRecebedor1().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor1());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor1().get(
+													c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -156,12 +158,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor2().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor2());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor2());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor2());
 									
-									if (c.getVlrFinalRecebedor2() != null) {
-										if (c.getVlrFinalRecebedor2().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor2());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor2().get(
+													c.getListContratoCobrancaParcelasInvestidor2().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -189,12 +191,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor3().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor3());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor3());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor3());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor3());
 									
-									if (c.getVlrFinalRecebedor3() != null) {
-										if (c.getVlrFinalRecebedor3().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor3());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor3().get(
+													c.getListContratoCobrancaParcelasInvestidor3().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -222,12 +224,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor4().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor4());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor4());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor4());
 									
-									if (c.getVlrFinalRecebedor4() != null) {
-										if (c.getVlrFinalRecebedor4().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor4());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor4().get(
+													c.getListContratoCobrancaParcelasInvestidor4().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -255,12 +257,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor5().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor5());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor5());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor5());
 									
-									if (c.getVlrFinalRecebedor5() != null) {
-										if (c.getVlrFinalRecebedor5().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor5());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor5().get(
+													c.getListContratoCobrancaParcelasInvestidor5().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -288,12 +290,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor6().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor6());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor6());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor6());
 									
-									if (c.getVlrFinalRecebedor6() != null) {
-										if (c.getVlrFinalRecebedor6().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor6());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor6().get(
+													c.getListContratoCobrancaParcelasInvestidor6().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -321,12 +323,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor7().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor7());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor7());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor7());
 									
-									if (c.getVlrFinalRecebedor7() != null) {
-										if (c.getVlrFinalRecebedor7().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor7());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor7().get(
+													c.getListContratoCobrancaParcelasInvestidor7().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -354,12 +356,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor8().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor8());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor8());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor8());
 									
-									if (c.getVlrFinalRecebedor8() != null) {
-										if (c.getVlrFinalRecebedor8().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor8());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor8().get(
+													c.getListContratoCobrancaParcelasInvestidor8().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -387,12 +389,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor9().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor9());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor9());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor9());
 									
-									if (c.getVlrFinalRecebedor9() != null) {
-										if (c.getVlrFinalRecebedor9().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor9());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor9().get(
+													c.getListContratoCobrancaParcelasInvestidor9().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -420,12 +422,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor10().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor10());
 									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor10());
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor10());
 									
-									if (c.getVlrFinalRecebedor10() != null) {
-										if (c.getVlrFinalRecebedor10().compareTo(BigDecimal.ZERO) == 1) {
-											debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor10());
-										}
-									}
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor10().get(
+													c.getListContratoCobrancaParcelasInvestidor10().size() - 1).getParcelaMensalBaixa());
 									
 									if (c.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
 										debenturesCompleta.setDataUltimaParcela(
@@ -448,20 +450,23 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									}	
 								}
 							}
-						} else {		
+						} else {	
 							// se pagador for galleria
 							debenturesCompleta.setDataDebentures(c.getDataInicio());
-							debenturesCompleta.setPrazo(c.getQtdeParcelas());
 							
 							if (c.getRecebedor() != null) {
 								debenturesCompleta.setContrato(c);
-								
 								debenturesCompleta.setRecebedor(c.getRecebedor());
-								debenturesCompleta.setValorDebenture(c.getValorCCB());
-								debenturesCompleta.setParcelaFinal(c.getVlrFinalRecebedor1());
-								
 								debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
-								debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
+								//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
+								debenturesCompleta.setParcelaMensal(
+										c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensalBaixa());
+								debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+								debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+								
+								debenturesCompleta.setParcelaFinal(
+										c.getListContratoCobrancaParcelasInvestidor1().get(
+												c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getParcelaMensalBaixa());
 								
 								if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
 									debenturesCompleta.setDataUltimaParcela(
@@ -482,9 +487,9 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								} else {
 									debenturesCompleta.setQuitado("Não");
 								}								
-							}
+								
+							}							
 						}
-
 						objects.add(debenturesCompleta);
 					}
 

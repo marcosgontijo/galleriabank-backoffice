@@ -7204,11 +7204,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	AND status != 'Desistência Cliente' "
 			+ "	AND analiseReprovada = FALSE "
 			+ "	AND c.statusLead = 'Completo' "
-			+ "	and (DATE_PART('day', '2022-06-09'::timestamp - c.dataultimaatualizacao) > 30 "
+			+ "	and (DATE_PART('day', ? ::timestamp - c.dataultimaatualizacao) > 30 "
 			+ "	or dataultimaatualizacao is null)";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> ConsultaContratosASeremBaixados() {
+	public List<ContratoCobranca> ConsultaContratosASeremBaixados(final Date dataInicio) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -7220,7 +7220,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS);
-	
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					ps.setDate(1, dtRelInicioSQL);
+					
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						ContratoCobranca contratoCobranca = new ContratoCobranca();

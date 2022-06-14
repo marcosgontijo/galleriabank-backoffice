@@ -1596,10 +1596,7 @@
 		<property name="pedidoPreLaudoUsuario" type="java.lang.String">
 			<column name="pedidoPreLaudoUsuario" />
 		</property>
-
-
-
-	
+		
 		<property name="pedidoLaudoPajuComercialData" type="java.util.Date">
 			<column name="pedidoLaudoPajuComercialData" />
 		</property>
@@ -1616,9 +1613,12 @@
 			<column name="temTxAdm" />
 		</property>	
 		
-		
 		<property name="contatoAgendamendoLaudoAvaliacao" type="java.lang.String">
 			<column name="contatoAgendamendoLaudoAvaliacao" />
+		</property>	
+		
+		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">
+			<column name="formaDePagamentoLaudoPAJU" />
 		</property>	
 		
 			

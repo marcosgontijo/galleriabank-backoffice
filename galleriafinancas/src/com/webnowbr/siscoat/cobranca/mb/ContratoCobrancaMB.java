@@ -6070,12 +6070,13 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
-		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosASeremBaixados();
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosASeremBaixados(auxDataHoje);
 		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
-			
+			System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+
 			if (contratos.getDataUltimaAtualizacao() != null) {
 				if (getDifferenceDays(contratos.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
 					if (!contratos.isContratoResgatadoBaixar()) {

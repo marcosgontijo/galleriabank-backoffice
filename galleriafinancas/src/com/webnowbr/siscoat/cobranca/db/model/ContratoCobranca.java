@@ -609,6 +609,8 @@ public class ContratoCobranca implements Serializable {
 	private String chequeDevolvidoRessalva;
 	
 	private String contatoAgendamendoLaudoAvaliacao;
+	private String formaDePagamentoLaudoPAJU;
+
 
 	
 	public ContratoCobranca() {
@@ -5013,4 +5015,11 @@ public class ContratoCobranca implements Serializable {
 	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
 		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
 	}
+	public String getFormaDePagamentoLaudoPAJU() {
+		return formaDePagamentoLaudoPAJU;
+	}
+	public void setFormaDePagamentoLaudoPAJU(String formaDePagamentoLaudoPAJU) {
+		this.formaDePagamentoLaudoPAJU = formaDePagamentoLaudoPAJU;
+	}
+	
 }
