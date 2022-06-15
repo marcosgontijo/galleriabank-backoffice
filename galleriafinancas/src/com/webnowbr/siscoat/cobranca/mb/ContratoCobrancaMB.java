@@ -8309,16 +8309,33 @@ public class ContratoCobrancaMB {
 					ccd.setParcelaVencendo(true);
 				}
 				
+				BigDecimal valorParcela = BigDecimal.ZERO;
+				
 				if (ccd.isParcelaPaga()) {
 					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
-					this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
+					if(!CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+						this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
+					}
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
 					}
-					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+					
+					if(!CommonsUtil.semValor(ccd.getVlrJurosParcela())){
+						valorParcela = valorParcela.add(ccd.getVlrJurosParcela());
+					}
+					
+					if(!CommonsUtil.semValor(ccd.getVlrAmortizacaoParcela())){
+						valorParcela = valorParcela.add(ccd.getVlrAmortizacaoParcela());
+					}
+					
+					if(!CommonsUtil.semValor(ccd.getVlrParcela()) && CommonsUtil.semValor(valorParcela)){
+						valorParcela = valorParcela.add(ccd.getVlrParcela());
+					}
+					
+					this.totalAVencer = this.totalAVencer.add(valorParcela);
 				}  else {
-					this.totalAVencer = this.totalAVencer.add(ccd.getVlrJurosParcela().add(ccd.getVlrAmortizacaoParcela()));
+					this.totalAVencer = this.totalAVencer.add(valorParcela);
 				}
 				
 				if(CommonsUtil.mesmoValor(ccd.getDataVencimento().getMonth(), dataAtual.getMonth()) && CommonsUtil.mesmoValor(ccd.getDataVencimento().getYear(), dataAtual.getYear()) && !CommonsUtil.semValor(contrato.getValorImovel())) {
@@ -8373,6 +8390,10 @@ public class ContratoCobrancaMB {
 				if (ltvMin.compareTo(ltv) == 1){
 					ltvMin = ltv;
 				}
+			}
+			
+			if(CommonsUtil.semValor(valorUltimaPareclaPaga)) {
+				valorUltimaPareclaPaga = BigDecimal.ZERO;
 			}
 			
 			if(this.qtdDeparcelasVencidas == 1) {

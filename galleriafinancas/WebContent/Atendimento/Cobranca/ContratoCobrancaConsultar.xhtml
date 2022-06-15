@@ -551,6 +551,230 @@
 							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
+					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'GALLERIA FINANÇAS SECURITIZADORA S.A.'}"
+						header="Dados da Consulta Securitizadora">
+						<f:facet name="header">
+							<p:commandButton value="Consultar Securitizadora"
+								action="#{contratoCobrancaMB.consultaDadosSecuritizadora()}"
+								update="panelSecuritizadora ina30Form ina60Form ina90Form formGrafico prazoMinForm"/>
+							<shiro:hasAnyRoles name="ROOT">
+								<p:commandButton value="Mostrar Grafico" action="#{contratoCobrancaMB.createStackedGroupBarModel}" update="formGrafico"
+									oncomplete="PF('graficoFidc').show();" />
+								<p:commandButton value="Gerar Excel" ajax="false" update="mensagens" action="#{contratoCobrancaMB.geraRelatorioSecuritizadora()}" />
+							</shiro:hasAnyRoles>
+						</f:facet>
+						<h:panelGrid columns="2" id="panelSecuritizadora" style="">
+							<p:outputLabel for="TotalContratosSecuritizadora" value="Total de Contratos: "
+								styleClass="labelBold" />
+							<p:outputLabel id="TotalContratosSecuritizadora"
+								value="#{contratoCobrancaMB.totalContratosConsultar}"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="CarteiraSecuritizadora" value="Volume Carteira:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="CarteiraSecuritizadora"
+									value="#{contratoCobrancaMB.volumeCarteira}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="totalAVencerSecuritizadora" value="Total a Vencer:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="totalAVencerSecuritizadora"
+									value="#{contratoCobrancaMB.totalAVencer}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem180Securitizadora" value="Até 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem180Securitizadora"
+									value="#{contratoCobrancaMB.porcentagem180}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem240Securitizadora" value="Acima 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem240Securitizadora"
+									value="#{contratoCobrancaMB.porcentagem240}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="inadimplencia30Securitizadora"
+								value="1 parcela em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia30Securitizadora">
+								<p:commandLink onclick="PF('ina30Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia30Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="inadimplencia60Securitizadora"
+								value="2 parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia60Securitizadora">
+								<p:commandLink onclick="PF('ina60Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia60Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel for="inadimplencia90Securitizadora"
+								value="3 ou + parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia90Securitizadora">
+								<p:commandLink onclick="PF('ina90Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia90Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="prazoMaxSecuritizadora" value="Prazo Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMaxSecuritizadora"
+									value="#{contratoCobrancaMB.prazoMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoMinSecuritizadora" value="Prazo Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:commandLink onclick="PF('prazoMinDialog').show()">
+									<p:outputLabel id="prazoMinSecuritizadora"
+										value="#{contratoCobrancaMB.prazoMin}" styleClass="labelBold"
+										converter="bigDecimalConverter" />
+									<p:outputLabel value=" Meses " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="prazoMedioSecuritizadora" value="Prazo Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMedioSecuritizadora"
+									value="#{contratoCobrancaMB.prazoMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxIPCASecuritizadora" value="Taxa Máxima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxIPCASecuritizadora"
+									value="#{contratoCobrancaMB.taxaMaxIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinIPCASecuritizadora" value="Taxa Minima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinIPCASecuritizadora"
+									value="#{contratoCobrancaMB.taxaMinIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaIPCASecuritizadora" value="Taxa Média Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaIPCASecuritizadora"
+									value="#{contratoCobrancaMB.taxaMediaIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxSecuritizadora" value="Taxa Máxima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxSecuritizadora"
+									value="#{contratoCobrancaMB.taxaMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinSecuritizadora" value="Taxa Minima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinSecuritizadora"
+									value="#{contratoCobrancaMB.taxaMin}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaSecuritizadora" value="Taxa Média Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaSecuritizadora"
+									value="#{contratoCobrancaMB.taxaMedia}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="ltvMaxSecuritizadora" value="LTV Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMaxSecuritizadora" value="#{contratoCobrancaMB.ltvMax}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMinSecuritizadora" value="LTV Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMinSecuritizadora" value="#{contratoCobrancaMB.ltvMin}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMedioSecuritizadora" value="LVT Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMedioSecuritizadora"
+									value="#{contratoCobrancaMB.ltvMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
 				</h:panelGrid>
 
 				<h:panelGrid columns="3">

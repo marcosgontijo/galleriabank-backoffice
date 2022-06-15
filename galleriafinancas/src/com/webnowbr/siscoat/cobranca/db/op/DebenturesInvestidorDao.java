@@ -15,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DebenturesInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.*;
 
 public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, Long> {
@@ -123,10 +124,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if (c.getRecebedor().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
 									//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
-									debenturesCompleta.setParcelaMensal(
-											c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensalBaixa());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+									
+									if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor1())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor1().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor1().get(
@@ -141,6 +150,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
+										
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -157,9 +172,19 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor2() != null) {
 								if (c.getRecebedor2().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor2());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor2());
 									debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor2());
+									
+									if(!CommonsUtil.semValor(c.getVlrInvestidor2())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor2());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor2())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor2().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor2());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor2().get(
@@ -174,6 +199,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor2()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -190,9 +220,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor3() != null) {
 								if (c.getRecebedor3().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor3());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor3());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor3());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor3());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor3())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor3());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor3());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor3())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor3().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor3());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor3().get(
@@ -207,6 +246,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor3()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -223,9 +267,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor4() != null) {
 								if (c.getRecebedor4().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor4());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor4());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor4());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor4())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor4());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor4());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor4())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor4().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor4());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor4().get(
@@ -240,6 +293,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor4()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -256,9 +314,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor5() != null) {
 								if (c.getRecebedor5().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor5());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor5());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor5());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor5())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor5());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor5());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor5())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor5().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor5());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor5().get(
@@ -273,6 +340,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor5()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -289,9 +361,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor6() != null) {
 								if (c.getRecebedor6().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor6());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor6());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor6());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor6())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor6());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor6());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor6())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor6().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor6());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor6().get(
@@ -306,6 +387,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor6()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -322,9 +408,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor7() != null) {
 								if (c.getRecebedor7().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor7());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor7());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor7());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor7())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor7());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor7());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor7())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor7().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor7());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor7().get(
@@ -339,6 +434,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor7()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -355,9 +455,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor8() != null) {
 								if (c.getRecebedor8().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor8());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor8());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor8());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor8())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor8());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor8());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor8())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor8().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor8());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor8().get(
@@ -372,6 +481,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor8()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -388,9 +502,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor9() != null) {
 								if (c.getRecebedor9().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor9());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor9());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor9());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor9())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor9());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor9());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor9())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor9().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor9());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor9().get(
@@ -405,6 +528,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor9()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -421,9 +549,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							if (c.getRecebedor10() != null) {
 								if (c.getRecebedor10().getId() == debenturesCompleta.getRecebedor().getId()) {
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor10());
-									debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());
-									debenturesCompleta.setValorDebenture(c.getVlrInvestidor10());
-									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor10());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor10())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor10());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor10());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor10())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor10().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor10());
+									}
 									
 									debenturesCompleta.setParcelaFinal(
 											c.getListContratoCobrancaParcelasInvestidor10().get(
@@ -438,6 +575,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									// Verifica se estão quitadas todas as parcelas
 									boolean quitado = true;								
 									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor10()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
 										if (!parcelas.isBaixado()) {
 											quitado = false;
 											break;
@@ -459,10 +601,19 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								debenturesCompleta.setRecebedor(c.getRecebedor());
 								debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
 								//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
-								debenturesCompleta.setParcelaMensal(
-										c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensalBaixa());
-								debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
-								debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+								
+								if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+								} else {
+									debenturesCompleta.setValorDebenture(c.getVlrRecebedor());
+								}
+								
+								// ADICIONAR ISSO
+								if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor1())) {
+									debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor1().size());
+								} else {
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+								}
 								
 								debenturesCompleta.setParcelaFinal(
 										c.getListContratoCobrancaParcelasInvestidor1().get(
@@ -477,6 +628,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								// Verifica se estão quitadas todas as parcelas
 								boolean quitado = true;								
 								for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
+									if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+										debenturesCompleta.setParcelaMensal(
+												parcelas.getParcelaMensalBaixa());
+									}
+									
 									if (!parcelas.isBaixado()) {
 										quitado = false;
 										break;
