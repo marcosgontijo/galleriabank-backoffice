@@ -1143,6 +1143,16 @@ public class InvestidorMB {
 	public BigDecimal getTotalLiquidoTodosInvestidoresSA() {
 		BigDecimal totalLiquido = BigDecimal.ZERO;
 
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
+			totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
+		}
+		
+		return totalLiquido;
+	}
+	
+	public BigDecimal getTotalLiquidoTodosInvestidoresSAOld() {
+		BigDecimal totalLiquido = BigDecimal.ZERO;
+
 		if (this.parcelasInvestidorSA != null) {
 			for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
 				if (parcelas.getInvestidor().getId() != 14 && parcelas.getInvestidor().getId() != 15

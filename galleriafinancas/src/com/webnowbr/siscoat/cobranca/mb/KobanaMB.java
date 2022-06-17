@@ -226,6 +226,14 @@ public class KobanaMB {
 					boleto.setUrlBoleto(objetoBoleto.getString("url"));
 					boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
 					
+					if (!objetoBoleto.isNull("document_number")) {
+						boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
+					}
+					
+					if (!objetoBoleto.isNull("description")) {
+						boleto.setDescription(objetoBoleto.getString("description"));
+					}
+					
 					this.listBoletosKobana.add(boleto);
 				}				
 			} else {
@@ -483,6 +491,11 @@ public class KobanaMB {
 	    Número do Contrato
 	     */
 	    jsonBoleto.put("document_number", contrato.getNumeroContrato());
+	    
+	    /*
+	    Descrição
+	     */
+	    jsonBoleto.put("description", contrato.getNumeroContrato() + "/" + parcela.getNumeroParcela());
 		/*
 		Instruções
 		 */

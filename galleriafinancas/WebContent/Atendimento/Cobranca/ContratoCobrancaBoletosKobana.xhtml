@@ -48,7 +48,7 @@
 				header="Contratos/Parcelas - Resultados" style="margin-bottom:10px;">
 				<p:dataTable id="dtContratos" var="parcela"
 					value="#{kobanaMB.listContratoCobrancaDetalhes}"
-					rowStyleClass= "#{parcela.qtdParcelasVencidas gt 0 ? 'parcelaparcial' : (parcela.contrato.status ne 'Aprovado' ? 'linhaAzul' : null)} "
+					rowStyleClass= "#{parcela.qtdParcelasVencidas gt 0 ? 'parcelaparcial' : (parcela.contrato.status ne 'Aprovado' ? 'linhaAzul' : (parcela.parcelaPaga eq true ? 'parcelaPaga' : null))} "
 					selection="#{kobanaMB.selectedParcelas}" rowKey="#{parcela.id}"
 					emptyMessage="" sortBy="#{contratos.dataVencimento}">
 					<f:facet name="header">

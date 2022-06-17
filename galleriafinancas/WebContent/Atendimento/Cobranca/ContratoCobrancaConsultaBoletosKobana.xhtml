@@ -103,6 +103,11 @@
 						<h:outputText value="#{boleto.beneficiaryName}" />
 					</p:column>
 					<p:column style="text-align: center;"
+						headerText="Contrato" filterMatchMode="contains"
+						sortBy="#{boleto.documentNumber}">
+						<h:outputText value="#{boleto.documentNumber}" />
+					</p:column>
+					<p:column style="text-align: center;"
 						headerText="Cliente" filterMatchMode="contains"
 						sortBy="#{boleto.customerPersonName}">
 						<h:outputText value="#{boleto.customerPersonName}" />

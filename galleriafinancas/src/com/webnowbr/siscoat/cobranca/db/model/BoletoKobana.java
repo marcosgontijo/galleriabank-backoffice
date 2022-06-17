@@ -21,6 +21,8 @@ public class BoletoKobana implements Serializable {
 	private BigDecimal paidAmount;
 	private String urlBoleto;
 	private String beneficiaryName;
+	private String documentNumber;
+	private String description;
 	
 	public long getId() {
 		return id;
@@ -87,5 +89,17 @@ public class BoletoKobana implements Serializable {
 	}
 	public void setBeneficiaryName(String beneficiaryName) {
 		this.beneficiaryName = beneficiaryName;
+	}
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
