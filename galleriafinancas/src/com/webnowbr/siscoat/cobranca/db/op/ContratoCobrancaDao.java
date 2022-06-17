@@ -7204,6 +7204,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	AND status != 'Desistência Cliente' "
 			+ "	AND analiseReprovada = FALSE "
 			+ "	AND c.statusLead = 'Completo' "
+			+ " and agassinatura = true "
 			+ "	and (DATE_PART('day', ? ::timestamp - c.dataultimaatualizacao) > 30 "
 			+ "	or dataultimaatualizacao is null)";
 	

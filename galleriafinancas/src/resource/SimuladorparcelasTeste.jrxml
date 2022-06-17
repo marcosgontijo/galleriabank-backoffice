@@ -133,7 +133,7 @@
 				<text><![CDATA[Seguro DFI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="443" y="0" width="102" height="20" forecolor="#FFFFFF" backcolor="#76A44A" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
+				<reportElement mode="Opaque" x="460" y="0" width="85" height="20" forecolor="#FFFFFF" backcolor="#76A44A" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -167,7 +167,7 @@
 				<text><![CDATA[Saldo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="387" y="0" width="56" height="20" forecolor="#FFFFFF" backcolor="#76A44A" uuid="689e5dba-122d-414b-8a09-8735dc20f420">
+				<reportElement mode="Opaque" x="387" y="0" width="73" height="20" forecolor="#FFFFFF" backcolor="#76A44A" uuid="689e5dba-122d-414b-8a09-8735dc20f420">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="0">
@@ -177,7 +177,7 @@
 					<bottomPen lineWidth="1.5" lineStyle="Solid" lineColor="#4C7032"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Taxa ADM]]></text>

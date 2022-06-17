@@ -156,7 +156,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -165,7 +168,15 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										debenturesCompleta.setQuitado("Sim");
 									} else {
 										debenturesCompleta.setQuitado("Não");
-									}								
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -204,7 +215,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -214,6 +228,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -251,7 +273,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -261,6 +286,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -298,7 +331,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -308,6 +344,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -345,7 +389,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -355,6 +402,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -392,7 +447,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -402,6 +460,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -439,7 +505,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -448,7 +517,15 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										debenturesCompleta.setQuitado("Sim");
 									} else {
 										debenturesCompleta.setQuitado("Não");
-									}	
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -486,7 +563,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -496,6 +576,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -533,7 +621,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -543,6 +634,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 							
@@ -580,7 +679,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 													parcelas.getParcelaMensalBaixa());
 										}
 										
-										if (!parcelas.isBaixado()) {
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
 											quitado = false;
 											break;
 										}
@@ -590,6 +692,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									} else {
 										debenturesCompleta.setQuitado("Não");
 									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
 								}
 							}
 						} else {	
@@ -604,8 +714,10 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								
 								if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
 									debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
-								} else {
+								} else if(!CommonsUtil.semValor(c.getVlrRecebedor())) {
 									debenturesCompleta.setValorDebenture(c.getVlrRecebedor());
+								} else if(!CommonsUtil.semValor(c.getValorCCB())) {
+									debenturesCompleta.setValorDebenture(c.getValorCCB());
 								}
 								
 								// ADICIONAR ISSO
@@ -628,12 +740,16 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								// Verifica se estão quitadas todas as parcelas
 								boolean quitado = true;								
 								for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
+									
 									if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
 										debenturesCompleta.setParcelaMensal(
 												parcelas.getParcelaMensalBaixa());
 									}
 									
-									if (!parcelas.isBaixado()) {
+									if(parcelas.isBaixado()) {
+										debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+										debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+									} else {
 										quitado = false;
 										break;
 									}
@@ -642,7 +758,15 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									debenturesCompleta.setQuitado("Sim");
 								} else {
 									debenturesCompleta.setQuitado("Não");
-								}								
+								}					
+								
+								if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+									debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+								}
+								
+								if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+									debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+								}
 								
 							}							
 						}

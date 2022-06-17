@@ -154,7 +154,7 @@ public class VisaoGeralDao extends HibernateDao <VisaoGeralVO,Long> {
 		
 		VisaoGeralGrupo visaoGeralGrupo = new VisaoGeralGrupo();
 		visaoGeralGrupo.setDetalhe(new ArrayList<VisaoGeralGrupoDetalhe>(0));
-		visaoGeralGrupo.setTipo("Op Pré-Aprovadas");
+		visaoGeralGrupo.setTipo("Pedido Paju");
 		visaoGeralGrupo.setCodigo(3);
 
 		Connection connection = null;
@@ -209,7 +209,7 @@ public class VisaoGeralDao extends HibernateDao <VisaoGeralVO,Long> {
 		
 		VisaoGeralGrupo visaoGeralGrupo = new VisaoGeralGrupo();
 		visaoGeralGrupo.setDetalhe(new ArrayList<VisaoGeralGrupoDetalhe>(0));
-		visaoGeralGrupo.setTipo("Op Pré-Aprovadas");
+		visaoGeralGrupo.setTipo("Pedido Laudo");
 		visaoGeralGrupo.setCodigo(3);
 
 		Connection connection = null;
@@ -249,9 +249,6 @@ public class VisaoGeralDao extends HibernateDao <VisaoGeralVO,Long> {
 		return visaoGeralGrupo;
 	}
 
-	
-	
-	
 	private static final String QUERY_GET_VG_ASSINADOS = " select " 
 			+ " coco.id idContratoCobranca, "
 			+ " coco.numeroContrato, "

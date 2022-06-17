@@ -40,6 +40,9 @@ public class DebenturesInvestidor implements Serializable {
 	private BigDecimal parcelaFinal;
 	private Date dataUltimaParcela;
 	
+	private BigDecimal valorUltimaParcelaPaga;
+	private Date dataUltimaParcelaPaga;
+	
 	public DebenturesInvestidor(){
 	}
 
@@ -193,5 +196,21 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setQuitado(String quitado) {
 		this.quitado = quitado;
+	}
+
+	public BigDecimal getValorUltimaParcelaPaga() {
+		return valorUltimaParcelaPaga;
+	}
+
+	public void setValorUltimaParcelaPaga(BigDecimal valorUltimaParcelaPaga) {
+		this.valorUltimaParcelaPaga = valorUltimaParcelaPaga;
+	}
+
+	public Date getDataUltimaParcelaPaga() {
+		return dataUltimaParcelaPaga;
+	}
+
+	public void setDataUltimaParcelaPaga(Date dataUltimaParcelaPaga) {
+		this.dataUltimaParcelaPaga = dataUltimaParcelaPaga;
 	}
 }

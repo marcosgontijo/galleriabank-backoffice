@@ -93,6 +93,7 @@ import com.webnowbr.siscoat.cobranca.vo.ContratoCobrancaResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.DashboardInvestidorResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.Util;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -3100,6 +3101,14 @@ public class InvestidorMB {
 		cell = row.createCell(9);
 		cell.setCellValue("Quitado");
 		cell.setCellStyle(cell_style);
+		
+		cell = row.createCell(10);
+		cell.setCellValue("Data ultima Pacela Paga");
+		cell.setCellStyle(cell_style);
+		
+		cell = row.createCell(11);
+		cell.setCellValue("Valor ultima Parcela Paga");
+		cell.setCellStyle(cell_style);
 
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
@@ -3210,6 +3219,23 @@ public class InvestidorMB {
 			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQuitado());
+			
+			// Data Ultima Parcela paga
+			cell = row.createCell(10);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataUltimaParcelaPaga());
+			
+			// Valor Ultima Parcela paga
+			cell = row.createCell(11);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorUltimaParcelaPaga() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorUltimaParcelaPaga()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
