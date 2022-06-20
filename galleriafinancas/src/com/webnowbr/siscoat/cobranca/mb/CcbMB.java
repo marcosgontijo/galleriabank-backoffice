@@ -395,7 +395,7 @@ public class CcbMB {
 	public void concluirParticipante() {
 		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
 		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
-		
+
 		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
 		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
@@ -430,7 +430,17 @@ public class CcbMB {
 	}
 	
 	public void concluirSocio() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
 		this.getParticipanteSelecionado().getSocios().add(socioSelecionado); 
+		criarPagadorRecebedorNoSistema(this.socioSelecionado.getPessoa());
+		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
+		
+		if(ccbPartDao.findByFilter("pessoa", this.socioSelecionado.getPessoa()).size() > 0){
+			this.socioSelecionado.setId(ccbPartDao.findByFilter("pessoa", this.socioSelecionado.getPessoa()).get(0).getId());
+			ccbDao.merge(this.socioSelecionado);
+		} else {
+			ccbDao.create(this.socioSelecionado);
+		}
 		this.socioSelecionado = new CcbParticipantes();
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSocio = false;

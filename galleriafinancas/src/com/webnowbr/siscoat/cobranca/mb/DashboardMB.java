@@ -69,16 +69,22 @@ public class DashboardMB {
 	private List<Responsavel> listResponsavelZerado;
 	
 	int totalContratosCadastrados;
-	int totalContratosPreAprovados;
-	int totalContratosBoletosPagos;
-	int totalContratosCcbsEmitidas;
-	int totalContratosRegistrados;
-	
 	BigDecimal totalValorContratosCadastrados;
+	
+	int totalContratosPreAprovados;
 	BigDecimal totalValorContratosPreAprovados;
+	
+	int totalContratosBoletosPagos;
 	BigDecimal totalValorBoletosPagos;
+	
+	int totalContratosCcbsEmitidas;
 	BigDecimal totalValorCcbsEmitidas;
+	
+	int totalContratosRegistrados;
 	BigDecimal totalValorContratosRegistrados;
+	
+	int totalContratosComite;
+	BigDecimal totalValorContratosComite;
 	
 	private List<ContratoCobranca> listaContratosConsulta;
 	 
@@ -153,16 +159,23 @@ public class DashboardMB {
 
 	public void calculaSoma() {
 		this.totalContratosCadastrados = 0;
-		this.totalContratosPreAprovados = 0;
-		this.totalContratosBoletosPagos = 0;
-		this.totalContratosCcbsEmitidas = 0;
-		this.totalContratosRegistrados = 0;
-		
 		this.totalValorContratosCadastrados = BigDecimal.ZERO;
+		
+		this.totalContratosPreAprovados = 0;
 		this.totalValorContratosPreAprovados = BigDecimal.ZERO;
+
+		this.totalContratosBoletosPagos = 0;
 		this.totalValorBoletosPagos = BigDecimal.ZERO;
+
+		this.totalContratosCcbsEmitidas = 0;
 		this.totalValorCcbsEmitidas = BigDecimal.ZERO;
+
+		this.totalContratosRegistrados = 0;
 		this.totalValorContratosRegistrados = BigDecimal.ZERO;
+
+		this.totalContratosComite = 0;
+		this.totalValorContratosComite = BigDecimal.ZERO;
+		
 		
 		for (Dashboard dash : this.getDashContratos()) {
 			
@@ -181,6 +194,9 @@ public class DashboardMB {
 			if (!CommonsUtil.semValor(dash.getContratosRegistrados())) {
 				this.totalContratosRegistrados = totalContratosRegistrados + dash.getContratosRegistrados();
 			}
+			if (!CommonsUtil.semValor(dash.getContratosComite())) {
+				this.totalContratosComite = totalContratosComite + dash.getContratosComite();
+			}
 			
 			if (!CommonsUtil.semValor(dash.getValorContratosCadastrados())) {
 				this.totalValorContratosCadastrados = totalValorContratosCadastrados.add(dash.getValorContratosCadastrados());
@@ -196,6 +212,9 @@ public class DashboardMB {
 			}
 			if (!CommonsUtil.semValor(dash.getValorContratosRegistrados())) {
 				this.totalValorContratosRegistrados = totalValorContratosRegistrados.add(dash.getValorContratosRegistrados());
+			}
+			if (!CommonsUtil.semValor(dash.getValorContratosComite())) {
+				this.totalValorContratosComite = totalValorContratosComite.add(dash.getValorContratosComite());
 			}
 		}
 	}
@@ -843,5 +862,19 @@ public class DashboardMB {
 		this.consultarGerente = consultarGerente;
 	}
 
-	
+	public int getTotalContratosComite() {
+		return totalContratosComite;
+	}
+
+	public void setTotalContratosComite(int totalContratosComite) {
+		this.totalContratosComite = totalContratosComite;
+	}
+
+	public BigDecimal getTotalValorContratosComite() {
+		return totalValorContratosComite;
+	}
+
+	public void setTotalValorContratosComite(BigDecimal totalValorContratosComite) {
+		this.totalValorContratosComite = totalValorContratosComite;
+	}
 }

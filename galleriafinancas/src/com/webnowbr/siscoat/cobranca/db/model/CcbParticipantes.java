@@ -1,7 +1,9 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CcbParticipantes implements Serializable{
@@ -23,13 +25,13 @@ public class CcbParticipantes implements Serializable{
 	private String tipoEmpresa;
 	private String municipioEmpresa;
 	private String salaEmpresa;
-	private Set<CcbParticipantes> socios;
+	private List<CcbParticipantes> socios;
 	
 	
 	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();
 		this.nacionalidade = "brasileiro";
-		this.socios	= new HashSet<>();
+		this.socios	= new ArrayList<CcbParticipantes>();
 		this.fiduciante = false;
 		this.feminino = false;
 		this.empresa = false;
@@ -90,10 +92,10 @@ public class CcbParticipantes implements Serializable{
 	public void setTipoParticipante(String tipoParticipante) {
 		this.tipoParticipante = tipoParticipante;
 	}
-	public Set<CcbParticipantes> getSocios() {
+	public List<CcbParticipantes> getSocios() {
 		return socios;
 	}
-	public void setSocios(Set<CcbParticipantes> socios) {
+	public void setSocios(List<CcbParticipantes> socios) {
 		this.socios = socios;
 	}
 	public String getTipoOriginal() {

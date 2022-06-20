@@ -50,14 +50,16 @@
 			lazy="false">
 			<column name="pessoa" />
 		</many-to-one>
+		
+		<list name="socios"
+			table="CcbEmpresa_CcbSocios_Join" cascade="all" lazy="false">
+			<key column="idccbempresa" />
+			<list-index></list-index>
+			<many-to-many column="idccbsocios"
+				class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
+		</list>
 		    
-		<set name="socios" table="CcbParticipantes" cascade="all-delete-orphan"
-                 lazy="false" fetch="select">
-            <key>
-                <column name="id" />
-            </key>
-            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
-        </set>   
+		
 	 <!-- -->
         
     </class>

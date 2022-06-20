@@ -1277,9 +1277,13 @@
 
 											<p:outputLabel for="tipoPJ" value="Tipo na CCB: "
 												styleClass="labelBold" />
-											<p:inputText id="tipoPJ"
-												value="#{ccbMB.participanteSelecionado.tipoParticipante}"
-												required="false" style="FONT-SIZE: 10pt;" />
+											<p:selectOneMenu id="tipoPJ"
+												value="#{ccbMB.participanteSelecionado.tipoParticipante}">
+												<f:selectItem itemValue="EMITENTE" itemLabel="EMITENTE" />
+												<f:selectItem itemValue="INTERVENIENTE ANUENTE" itemLabel="INTERVENIENTE ANUENTE" />
+												<f:selectItem itemValue="TERCEIRO GARANTIDOR" itemLabel="TERCEIRO GARANTIDOR" />
+												<f:selectItem itemValue="AVALISTA" itemLabel="AVALISTA" />
+											</p:selectOneMenu>
 
 											<p:outputLabel for="tipoEmpresa" value="Tipo: "
 												styleClass="labelBold"

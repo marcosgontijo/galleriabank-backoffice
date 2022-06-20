@@ -896,7 +896,10 @@
 				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' || contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial'}"> 
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
+							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
+							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial' 
+							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de condomínio' }"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
@@ -2445,11 +2448,12 @@
 							<f:selectItem itemValue="Casa" itemLabel="Casa" />
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
+							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio" />
 							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-							<f:selectItem itemValue="Rural" itemLabel="Rural" />
+							<f:selectItem itemValue="Rural" itemLabel="Rural" />		
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />

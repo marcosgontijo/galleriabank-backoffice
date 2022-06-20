@@ -83,8 +83,7 @@
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Total cadastrados">
-						
+					<p:column style="text-align: center;" headerText="Total cadastrados">	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm" >
 							<f:setPropertyActionListener
@@ -92,45 +91,56 @@
 								value="#{dashContratos.listaCadastrados}" />
 							<p:outputLabel
 								value="#{dashContratos.contratosCadastrados}"/>
-						</p:commandLink>
-						
+						</p:commandLink>		
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>
+					
 					<p:column style="text-align: center;" headerText="Total preaprovado">
-	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaPreAprovados}" />
 							<h:outputText value="#{dashContratos.contratosPreAprovados}" />
-						</p:commandLink>
-												
+						</p:commandLink>						
 					</p:column>
 					<p:column style="text-align: center;" headerText=" Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="Pedido Laudo e Paju">
-						
+					
+					<p:column style="text-align: center;" headerText="Pedido Laudo e Paju">				
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaBoletosPagos}" />
 							<h:outputText value="#{dashContratos.contratosBoletosPagos}" />
-						</p:commandLink>						
-						
+						</p:commandLink>										
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorBoletosPagos}" converter="bigDecimalConverter" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="CCBs Emitidas">
+										
+					<p:column style="text-align: center;" headerText="Comitê">
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm">
+							<f:setPropertyActionListener
+								target="#{dashboardMB.listaContratosConsulta}"
+								value="#{dashContratos.listaComite}" />
+							<h:outputText value="#{dashContratos.contratosComite}" />
+						</p:commandLink>					
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosComite}" converter="bigDecimalConverter" />
+					</p:column>
 					
+					<p:column style="text-align: center;" headerText="CCBs Emitidas">	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm">
 							<f:setPropertyActionListener
@@ -138,27 +148,26 @@
 								value="#{dashContratos.listaCcbsEmitidas}" />
 							<h:outputText value="#{dashContratos.contratosCcbsEmitidas}" />
 						</p:commandLink>					
-						
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorCcbsEmitidas}" converter="bigDecimalConverter" />
 					</p:column>
+					
 					<p:column style="text-align: center;" headerText="CCBs Pagas">
-
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaRegistrados}" />
 							<h:outputText value="#{dashContratos.contratosRegistrados}"/>
-						</p:commandLink>
-						
+						</p:commandLink>						
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosRegistrados}" converter="bigDecimalConverter" />
 					</p:column>
+					
 					<f:facet name="footer">
 						<h:panelGroup style="display:block;">
 							<h:panelGrid columns="3">
@@ -183,6 +192,15 @@
 									<h:outputText value="#{dashboardMB.totalValorBoletosPagos}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
+								
+								<h:outputText value="Comitê: " />
+								<h:outputText value="#{dashboardMB.totalContratosComite}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorContratosComite}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								
 								<h:outputText value="CCBs Emitidas: " />
 								<h:outputText value="#{dashboardMB.totalContratosCcbsEmitidas}" />
 								<h:panelGroup>

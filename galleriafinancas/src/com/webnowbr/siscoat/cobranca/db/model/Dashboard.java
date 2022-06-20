@@ -27,22 +27,29 @@ public class Dashboard implements Serializable {
 	
 	
 	private int contratosCadastrados;
-	private int contratosPreAprovados;
-	private int contratosBoletosPagos;
-	private int contratosCcbsEmitidas;
-	private int contratosRegistrados;
-	
 	private BigDecimal valorContratosCadastrados;
-	private BigDecimal valorContratosPreAprovados;
-	private BigDecimal valorBoletosPagos;
-	private BigDecimal valorCcbsEmitidas;
-	private BigDecimal valorContratosRegistrados;
-	
 	private List<ContratoCobranca> listaCadastrados;
+	
+	private int contratosPreAprovados;
+	private BigDecimal valorContratosPreAprovados;
 	private List<ContratoCobranca> listaPreAprovados;
+	
+	private int contratosBoletosPagos;
+	private BigDecimal valorBoletosPagos;
 	private List<ContratoCobranca> listaBoletosPagos;
+	
+	private int contratosCcbsEmitidas;
+	private BigDecimal valorCcbsEmitidas;
 	private List<ContratoCobranca> listaCcbsEmitidas;
+	
+	private int contratosRegistrados;
+	private BigDecimal valorContratosRegistrados;
 	private List<ContratoCobranca> listaRegistrados;
+	
+	private int contratosComite;
+	private BigDecimal valorContratosComite;
+	private List<ContratoCobranca> listaComite;
+	
 	
 	private int totalAprovados;
 	private int totalReprovados;
@@ -323,5 +330,29 @@ public class Dashboard implements Serializable {
 
 	public void setListaRegistrados(List<ContratoCobranca> listaRegistrados) {
 		this.listaRegistrados = listaRegistrados;
+	}
+
+	public int getContratosComite() {
+		return contratosComite;
+	}
+
+	public void setContratosComite(int contratosComite) {
+		this.contratosComite = contratosComite;
+	}
+
+	public BigDecimal getValorContratosComite() {
+		return valorContratosComite;
+	}
+
+	public void setValorContratosComite(BigDecimal valorContratosComite) {
+		this.valorContratosComite = valorContratosComite;
+	}
+
+	public List<ContratoCobranca> getListaComite() {
+		return listaComite;
+	}
+
+	public void setListaComite(List<ContratoCobranca> listaComite) {
+		this.listaComite = listaComite;
 	}	
 }
