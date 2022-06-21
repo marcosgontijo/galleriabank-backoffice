@@ -345,6 +345,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean pagtoLaudoConfirmada;
 	private String pagtoLaudoConfirmadaUsuario;
 	
+	private Date pedidoLaudoData;
+	private boolean pedidoLaudo;
+	private String pedidoLaudoUsuario;
+	
 	private Date pedidoLaudoPajuComercialData;
 	private boolean pedidoLaudoPajuComercial;
 	private String pedidoLaudoPajuComercialUsuario;
@@ -762,6 +766,7 @@ public class ContratoCobranca implements Serializable {
 		this.bancoDocumentosSecundarioCheckList = false;
 		this.telefoneEmailDocumentosSecundarioCheckList = false;
 		this.temTxAdm = false;
+		this.pedidoLaudo = false;
 	}
 	
 	private void reordenaListagemDetalhes() {
@@ -5021,5 +5026,30 @@ public class ContratoCobranca implements Serializable {
 	public void setFormaDePagamentoLaudoPAJU(String formaDePagamentoLaudoPAJU) {
 		this.formaDePagamentoLaudoPAJU = formaDePagamentoLaudoPAJU;
 	}
+
+	public Date getPedidoLaudoData() {
+		return pedidoLaudoData;
+	}
+
+	public void setPedidoLaudoData(Date pedidoLaudoData) {
+		this.pedidoLaudoData = pedidoLaudoData;
+	}
+
+	public boolean isPedidoLaudo() {
+		return pedidoLaudo;
+	}
+
+	public void setPedidoLaudo(boolean pedidoLaudo) {
+		this.pedidoLaudo = pedidoLaudo;
+	}
+
+	public String getPedidoLaudoUsuario() {
+		return pedidoLaudoUsuario;
+	}
+
+	public void setPedidoLaudoUsuario(String pedidoLaudoUsuario) {
+		this.pedidoLaudoUsuario = pedidoLaudoUsuario;
+	}
+	
 	
 }
