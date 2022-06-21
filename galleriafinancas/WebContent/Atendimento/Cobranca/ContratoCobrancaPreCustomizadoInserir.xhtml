@@ -655,9 +655,7 @@
 							<h:outputText id="NomeResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}" label="Nome do Responsável" style="width:150px;" rendered="#{contratoCobrancaMB.updateMode}"/>
 							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}"/>		
 							<p:spacer width="10px"></p:spacer>
-							<p:commandButton id="botaoResponsavel" type="button"
-								onclick="PF('responsavelDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"  />																														  								
+																																	  								
 						</h:panelGroup>																																  								
 					</h:panelGrid>
 					<p:outputLabel id="gerenteContaLabel" value="Gerente da Conta?" style="cursor:pointer" styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}"/>

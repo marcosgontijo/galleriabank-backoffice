@@ -2717,8 +2717,10 @@ public class ContratoCobrancaMB {
 										"Contrato Cobrança: Pré-Contrato adicionado com sucesso! (Contrato: "
 												+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 										""));
+						
+						CRMMB crmMb = new CRMMB();
 
-						return geraConsultaContratosPendentes();
+						return crmMb.clearFieldsDetalhado();
 					} else {
 						return "";
 					}
