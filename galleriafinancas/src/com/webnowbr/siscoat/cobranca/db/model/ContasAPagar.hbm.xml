@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.ContasAPagar"
+		table="CONTASAPAGAR">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<property name="dataVencimento" type="java.util.Date">
+			<column name="dataVencimento" />
+		</property>	
+		<property name="valor" type="big_decimal">
+			<column name="valor" />
+		</property>
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>		
+		<many-to-one name="contaContabil"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContaContabil"
+			lazy="false">
+			<column name="contaContabil" />
+		</many-to-one>		
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao" />
+		</property>				
+		<property name="contaPaga" type="boolean">
+			<column name="contaPaga" />
+		</property>		
+		<property name="dataPagamento" type="java.util.Date">
+			<column name="dataPagamento" />
+		</property>
+		<property name="valorPagamento" type="big_decimal">
+			<column name="valorPagamento" />
+		</property>
+		<property name="recorrente" type="boolean">
+			<column name="recorrente" />
+		</property>		
+	</class>
+</hibernate-mapping>

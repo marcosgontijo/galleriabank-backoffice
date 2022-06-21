@@ -20,6 +20,7 @@
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaParcelasInvestidor.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobranca.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContasPagar.hbm.xml"/>
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContasAPagar.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/TransferenciasObservacoesIUGU.hbm.xml"/>
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/FilaInvestidores.hbm.xml"/> 	
  		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DebenturesInvestidor.hbm.xml"/>

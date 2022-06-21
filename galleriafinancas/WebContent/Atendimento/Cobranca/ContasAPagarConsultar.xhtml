@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form style="margin-bottom:10px;">
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaContasPagar" header="Contas a Pagar - Consultar"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Vencimento Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{contasAPagarMB.relDataContratoInicio}"
+						label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Vencimento Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{contasAPagarMB.relDataContratoFim}" 
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+					<p:outputLabel for="TipoDespesa" value="Tipo Despesa: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoDespesa"
+								value="#{contasAPagarMB.tipoDespesa}">
+						<f:selectItem itemLabel="Contrato" itemValue="C" />
+						<f:selectItem itemLabel="Empresa" itemValue="E" />
+					</p:selectOneRadio>						
+				</h:panelGrid>
+				
+				<p:commandButton value="Consultar" ajax="false"
+					icon="ui-icon-plus" action="#{contasAPagarMB.clearFieldsConsultar}">
+					<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+						value="false" />
+					<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+						value="false" />
+				</p:commandButton>
+			</p:panel>
+			<p:panel id="ConsultaContasPagarResultados" header="Contas a Pagar - Resultados" style="margin-bottom:10px;">		    		    				
+				<p:dataTable id="dtContasPagar" var="contasPagar"
+					value="#{contasAPagarMB.contasPagar}" paginator="true" rows="40"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					sortBy="#{contasPagar.dataVencimento}" sortOrder="descending"
+					reflow="true">
+					<f:facet name="header">
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{contasAPagarMB.clearFieldsInsert}">
+							<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+					</f:facet>
+					<p:column style="text-align: center;"
+						headerText="Data Vencimento "
+						sortBy="#{contasPagar.dataVencimento}">
+						<h:outputText value="#{contasPagar.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;" headerText="Descrição"
+						filterBy="#{contasPagar.descricao}" filterMatchMode="contains"
+						sortBy="#{contasPagar.descricao}">
+						<h:outputText value="#{contasPagar.descricao}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{contasPagar.valor}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Contrato" rendered="#{contasAPagarMB.tipoDespesa == 'C'}">
+						<h:outputText
+							value="#{contasPagar.contrato.numeroContrato} - #{contasPagar.contrato.pagador.nome}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="Devedor" rendered="#{contasAPagarMB.tipoDespesa == 'E'}">
+						<h:outputText
+							value="#{contasPagar.pagadorRecebedor.nome}" />
+					</p:column>
+					<p:column styleClass="colunaResponsiva">
+						<p:commandButton action="#{contasAPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-pencil" title="Editar">
+							<f:setPropertyActionListener
+								target="#{contasAPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+								value="true" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{contasAPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-arrowthickstop-1-s"
+							title="Baixar Conta">
+							<f:setPropertyActionListener
+								target="#{contasAPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+								value="true" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{contasAPagarMB.clearFieldsEditar}"
+							ajax="false" icon="ui-icon-trash" title="Excluir">
+							<f:setPropertyActionListener
+								target="#{contasAPagarMB.objetoContasPagar}"
+								value="#{contasPagar}" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+								value="true" />
+						</p:commandButton>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{contasAPagarMB.clearFieldsInsert}">
+							<f:setPropertyActionListener target="#{contasAPagarMB.updateMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasAPagarMB.deleteMode}"
+								value="false" />
+						</p:commandButton>
+					</f:facet>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

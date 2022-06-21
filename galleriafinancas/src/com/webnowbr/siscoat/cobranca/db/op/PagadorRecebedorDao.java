@@ -86,6 +86,38 @@ public class PagadorRecebedorDao extends HibernateDao <PagadorRecebedor,Long> {
 		});	
 	}
 	
+	private static final String QUERY_PAGADORRECEBEDOR =  "select id from cobranca.pagadorrecebedor ";
+	
+	@SuppressWarnings("unchecked")
+	public List<PagadorRecebedor> getPagadoresRecebedores() {
+		return (List<PagadorRecebedor>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<PagadorRecebedor> listPagadorRecebedor = new ArrayList<PagadorRecebedor>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_PAGADORRECEBEDOR);
+
+					rs = ps.executeQuery();
+
+					if (rs.next()) {
+						listPagadorRecebedor.add(findById(rs.getLong(1)));										
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return listPagadorRecebedor;
+			}
+		});	
+	}
+	
 	private static final String QUERY_SUBCONTAS_IUGU =  "select id from cobranca.pagadorrecebedor " + 
 			"where iuguaccountid != '' ";
 	

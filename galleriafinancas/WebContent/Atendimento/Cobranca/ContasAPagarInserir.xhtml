@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="contasPagar" header="Contas a Pagar"
+				style="margin-bottom:20px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="pagadorRecebedor" value="Recebedor: "
+						styleClass="labelBold" />
+					<h:panelGrid columns="2" id="pagadorPanel">
+						<p:inputText id="pagadorRecebedor"
+							value="#{contasAPagarMB.objetoContasPagar.pagadorRecebedor.nome}"
+							label="Recebedor" style="width:210px;" disabled="true" />
+
+						<p:commandButton ajax="true" 
+							action="#{contasAPagarMB.pesquisaPagador}"							
+							icon="ui-icon ui-icon-circle-zoomin"  process="@this" 
+							oncomplete="PF('pagadorRecebedorDialog').show();"
+							update="formReceborPagador">
+						</p:commandButton>										
+					</h:panelGrid>
+					
+					<p:outputLabel for="contaContabil" value="Conta Contábil: "
+						styleClass="labelBold" />
+					<h:panelGrid columns="2">
+						<p:inputText id="contaContabil"
+							value="#{contasAPagarMB.objetoContasPagar.contaContabil.nome}"
+							label="Conta Contábil" style="width:210px;" disabled="true" />
+
+						<p:commandButton id="botaoContaContabil" type="button"
+							onclick="PF('contaContabilDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin" />
+					</h:panelGrid>
+
+					<p:outputLabel for="dataVencimento" value="Data Vencimento: "
+						rendered="#{contasAPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						styleClass="labelBold" />
+					<p:calendar id="dataVencimento"
+						value="#{contasAPagarMB.objetoContasPagar.dataVencimento}"
+						rendered="#{contasAPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField" disabled="#{contasAPagarMB.deleteMode}">
+						<p:ajax event="dateSelect" update="dataPagamento"
+							listener="#{contasAPagarMB.settarDataPagamento()}" />
+					</p:calendar>
+					
+					<p:outputLabel for="valor" value="Valor (R$): "
+						styleClass="labelBold" />
+					<p:inputText id="valor"
+						value="#{contasAPagarMB.objetoContasPagar.valor}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						disabled="#{contasAPagarMB.deleteMode}" >
+						<p:ajax event="blur"
+							listener="#{contasAPagarMB.settarValorPagamento()}" />
+					</p:inputText>
+					
+					<p:outputLabel for="descricao" value="Descrição: "
+						styleClass="labelBold" />
+					<p:inputText id="descricao"
+						value="#{contasAPagarMB.objetoContasPagar.descricao}"
+						disabled="#{contasAPagarMB.deleteMode}" />
+				</h:panelGrid>
+			</p:panel>
+			<p:commandButton value="Salvar Conta" ajax="false"
+				icon="ui-icon-print" action="#{contasAPagarMB.salvarConta}"
+				rendered="#{!contasAPagarMB.deleteMode}" />
+			<p:spacer height="10" rendered="#{!contasAPagarMB.deleteMode}" />
+			<p:commandButton value="Baixar Conta" ajax="false"
+				icon="ui-icon-arrowthickstop-1-s"
+				action="#{contasAPagarMB.baixarConta}"
+				rendered="#{!contasAPagarMB.deleteMode}" />
+			<p:commandButton value="Excluir Conta" ajax="false"
+				icon="ui-icon-print" action="#{contasAPagarMB.excluirConta}"
+				rendered="#{contasAPagarMB.deleteMode}" />
+			<p:spacer height="10" />
+			<p:commandButton value="Cancelar" ajax="false" immediate="true"
+				icon="ui-icon-cancel" action="#{contasAPagarMB.clearFields}"
+				style="TEXT-DECORATION: bold; " />
+		</h:form>
+		<p:dialog header="Contratos" widgetVar="contratoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formContratos">
+				<p:dataTable id="contratoDialogdlg" var="contratoDialogdlg"
+					value="#{contasAPagarMB.listContratos}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5, 10, 15"
+					selection="#{contasAPagarMB.selectedContratoLov}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{contratoDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.numeroContrato}"
+						filterBy="#{contratoDialogdlg.numeroContrato}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Contrato" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.numeroContrato}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{contratoDialogdlg.pagador.nome}"
+						filterBy="#{contratoDialogdlg.pagador.nome}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Pagador" />
+						</f:facet>
+						<h:outputText value="#{contratoDialogdlg.pagador.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contasAPagarMB.populateSelectedContrato}"
+							image="ui-icon ui-icon-check" update=":form:contasPagar"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contasAPagarMB.clearContrato}"
+							image="ui-icon ui-icon-trash"
+							update=":form:contasPagar contratoDialogdlg"
+							oncomplete="PF('contratoDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('contratoDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+			<ui:param name="mbean" value="#{contasAPagarMB}"></ui:param>
+			<ui:param name="titulo" value="Recebedor"></ui:param>
+		</ui:include>
+		
+		<ui:include src="../../Dialog/DialogContaContabil.xhtml">
+			<ui:param name="mbean" value="#{contasAPagarMB}"></ui:param>
+		</ui:include>
+	</ui:define>
+</ui:composition>
