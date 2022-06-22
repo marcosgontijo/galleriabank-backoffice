@@ -21,7 +21,11 @@
 								<p:menuitem value="Contas a Pagar"
 									action="#{contasPagarMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />								
+									styleClass="itemMenu" />
+								<p:menuitem value="Contas a Pagar - NEW"
+									action="#{contasAPagarMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
 							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas Pagas"

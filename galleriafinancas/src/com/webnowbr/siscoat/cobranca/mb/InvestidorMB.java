@@ -3268,7 +3268,9 @@ public class InvestidorMB {
 		 * 
 		 * this.valorItem = new BigDecimal("30000.00");
 		 */
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -3898,7 +3900,9 @@ public class InvestidorMB {
 	}
 
 	public void gerarOperacoesIndividualizadoPDF() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -4412,7 +4416,9 @@ public class InvestidorMB {
 	}
 
 	public void gerarTitulosQuitadosPDF() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -4446,7 +4452,7 @@ public class InvestidorMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getDefault();
+			TimeZone zone = TimeZone.getDefault();						
 			Locale locale = new Locale("pt", "BR");
 			Calendar date = Calendar.getInstance(zone, locale);
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MM/yyyy", locale);
@@ -5124,7 +5130,9 @@ public class InvestidorMB {
 	}
 
 	public void geraBS() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -6146,7 +6154,9 @@ public class InvestidorMB {
 	}
 
 	public void geraAnexo1() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -6626,7 +6636,9 @@ public class InvestidorMB {
 	}
 
 	public void geraTermoSecuritizacao() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -7284,7 +7296,9 @@ public class InvestidorMB {
 	}
 
 	public void geraDebenture() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -7661,7 +7675,9 @@ public class InvestidorMB {
 	}
 
 	public void geraPDFValorLiquidoInvestidores() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -8460,7 +8476,9 @@ public class InvestidorMB {
 	}
 
 	public void geraPDFValorLiquidoInvestidoresEnvelope() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -8906,7 +8924,9 @@ public class InvestidorMB {
 	}
 
 	public void geraPDFIRRetidoInvestidores() {
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat();
+		df.applyPattern("#,##0.00");
+		Locale.setDefault(new Locale("pt", "BR"));
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
