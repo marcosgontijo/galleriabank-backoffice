@@ -1621,7 +1621,20 @@
 			<column name="formaDePagamentoLaudoPAJU" />
 		</property>	
 		
+		
+		
+		
+		<property name="pedidoLaudoData" type="java.util.Date">
+			<column name="pedidoLaudoData" />
+		</property>
+		
+		<property name="pedidoLaudo" type="boolean">
+			<column name="pedidoLaudo" />
+		</property>	
 			
+		<property name="pedidoLaudoUsuario" type="java.lang.String">
+			<column name="pedidoLaudoUsuario" />
+		</property>	
 	
 	
 	</class>

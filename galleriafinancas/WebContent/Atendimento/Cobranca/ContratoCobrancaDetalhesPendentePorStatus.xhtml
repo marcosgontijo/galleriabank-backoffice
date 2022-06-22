@@ -128,12 +128,17 @@
 										border-radius: 5px; padding: 10px;">
 											<p:outputLabel styleClass="labelBold" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
 											>LAUDO+PAJU será com pagamento <br/> Antecipado ou No final?</p:outputLabel>
-											<p:spacer></p:spacer>		
+											<p:spacer  rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"></p:spacer>		
+											
+											<p:spacer width="10px"></p:spacer>
+											<p:spacer width="10px"></p:spacer>
 						
 											<p:commandButton value="Antecipado" ajax="false"											
 												action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
 												style="TEXT-DECORATION: bold; "
-												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial and 
+												(contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ''
+												 or contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq null)}">
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" value="true" />
 												<f:setPropertyActionListener
@@ -143,14 +148,24 @@
 											<p:commandButton value="No final" ajax="false"										
 												action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
 												style="TEXT-DECORATION: bold;"
-												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}">
+												rendered="#{!contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial and 
+												(contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ''
+												 or contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq null)}">
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}" value="true" />
 												<f:setPropertyActionListener
 													target="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}" value="No final" />
 											</p:commandButton>
-												
+											
 											<p:spacer width="10px"></p:spacer>
+											<p:spacer width="10px"></p:spacer>
+											
+											<p:outputLabel styleClass="labelBold" rendered="#{!(contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ''
+												 or contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq null)}">Forma de Pagamento: </p:outputLabel>
+											<p:outputLabel styleClass="labelBold" rendered="#{!(contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ''
+												 or contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq null)}"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"/>
+																							
 	
 											<p:outputLabel styleClass="labelBold" 
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
@@ -166,10 +181,10 @@
 										</h:panelGrid>
 									</ui:fragment>
 									<p:outputLabel value="Contato de Agendamendo de Laudo de Avaliacao: " styleClass="labelBold"
-										style="font-weight: bold;" />
+										style="font-weight: bold;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo and contratoCobrancaMB.indexStepsStatusContrato == 2}" />
 									<p:inputText
 										value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
-										styleClass="labelBold"
+										styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo and contratoCobrancaMB.indexStepsStatusContrato == 2}"
 										style="width:250px;font-weight: bold; font-size: 18px !important;" />
 								</h:panelGrid>
 							</shiro:hasAnyRoles>

@@ -593,27 +593,34 @@ public class CcbMB {
 		BigDecimal total =  BigDecimal.ZERO;
 		
 		if(isTemCustasCartorarias()) {
-			total = total.add(this.objetoCcb.getCustasCartorariasValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor()))
+				total = total.add(this.objetoCcb.getCustasCartorariasValor());
 		}
 		if(isTemCertidaoDeCasamento()) {
-			total = total.add(this.objetoCcb.getCertidaoDeCasamentoValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getCertidaoDeCasamentoValor()))
+				total = total.add(this.objetoCcb.getCertidaoDeCasamentoValor());
 		}
 		if(isTemLaudoDeAvaliacao()) {
-			total = total.add(this.objetoCcb.getLaudoDeAvaliacaoValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getLaudoDeAvaliacaoValor()))
+				total = total.add(this.objetoCcb.getLaudoDeAvaliacaoValor());
 		}
 		if(isTemIntermediacao()) {
-			total = total.add(this.objetoCcb.getIntermediacaoValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getIntermediacaoValor()))
+				total = total.add(this.objetoCcb.getIntermediacaoValor());
 		}
 		if(isTemIptuEmAtraso()) {
-			total = total.add(this.objetoCcb.getIptuEmAtrasoValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getIptuEmAtrasoValor()))
+				total = total.add(this.objetoCcb.getIptuEmAtrasoValor());
 		}
 		if(isTemCondominioEmAtraso()) {
-			total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
+			if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor()))
+				total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
 		}
 		
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-				total = total.add(processo.getValor());
+				if(!CommonsUtil.semValor(processo.getValor()))
+					total = total.add(processo.getValor());
 			}
 		}
 		
@@ -6125,7 +6132,7 @@ public class CcbMB {
 				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 				run.setFontSize(12);
 				run.setColor("000000");
-				run.setText("Intermediação");
+				run.setText("Transferência");
 
 				tableRow1.getCell(1).setParagraph(paragraph);
 				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);

@@ -2717,8 +2717,10 @@ public class ContratoCobrancaMB {
 										"Contrato Cobrança: Pré-Contrato adicionado com sucesso! (Contrato: "
 												+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 										""));
+						
+						CRMMB crmMb = new CRMMB();
 
-						return geraConsultaContratosPendentes();
+						return crmMb.clearFieldsDetalhado();
 					} else {
 						return "";
 					}
@@ -3740,6 +3742,19 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setPedidoLaudoPajuComercialData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoLaudoPajuComercialData());
 				this.objetoContratoCobranca.setPedidoLaudoPajuComercialUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isPedidoLaudo()) {
+			this.objetoContratoCobranca.setPedidoLaudoData(null);
+			this.objetoContratoCobranca.setPedidoLaudoUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPedidoLaudoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPedidoLaudoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPedidoLaudoData());
+				this.objetoContratoCobranca.setPedidoLaudoUsuario(getNomeUsuarioLogado());
 			}
 		}
 
@@ -10177,8 +10192,13 @@ public class ContratoCobrancaMB {
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPedidoPreLaudoComercial() && c.isPedidoPreLaudo() && c.isPedidoLaudoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
-						c.setStatus("Pedir LaudoPAJU");
+							&& c.isPedidoLaudoPajuComercial() && !c.isPedidoLaudo()) {
+						c.setStatus("Pedir Laudo");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPedidoLaudoPajuComercial() && c.isPedidoLaudo() && !c.isPagtoLaudoConfirmada()) {
+						c.setStatus("Pedir PAJU");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -10399,8 +10419,11 @@ public class ContratoCobrancaMB {
 		if (status.equals("Pedir Pré-Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Pedir Pré-Laudo";
 		}
-		if (status.equals("Pedir LaudoPAJU")) {
-			this.tituloTelaConsultaPreStatus = "Pedir LaudoPAJU";
+		if (status.equals("Pedir Laudo")) {
+			this.tituloTelaConsultaPreStatus = "Pedir Laudo";
+		}
+		if (status.equals("Pedir PAJU")) {
+			this.tituloTelaConsultaPreStatus = "Pedir PAJU";
 		}
 		if (status.equals("Ag. Pagto. Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Pagto. Laudo";
