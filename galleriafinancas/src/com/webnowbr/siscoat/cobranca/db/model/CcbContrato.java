@@ -109,6 +109,7 @@ public class CcbContrato implements Serializable{
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private BigDecimal condominioEmAtrasoValor = BigDecimal.ZERO;
+    private BigDecimal iqValor = BigDecimal.ZERO;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -754,6 +755,14 @@ public class CcbContrato implements Serializable{
 
 	public void setCondominioEmAtrasoValor(BigDecimal condominioEmAtrasoValor) {
 		this.condominioEmAtrasoValor = condominioEmAtrasoValor;
+	}
+
+	public BigDecimal getIqValor() {
+		return iqValor;
+	}
+
+	public void setIqValor(BigDecimal iqValor) {
+		this.iqValor = iqValor;
 	}    
 	
 	

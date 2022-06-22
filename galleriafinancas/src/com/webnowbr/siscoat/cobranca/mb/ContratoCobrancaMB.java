@@ -14364,10 +14364,20 @@ public class ContratoCobrancaMB {
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}
 		contrato.setTaxaAprovada(maiorTaxaAprovada);
-		contrato.setPrazoMaxAprovado(menorPrazoAprovado);
-		contrato.setValorAprovadoComite(menorValorAprovado);
 		contrato.setTipoValorComite(menorValorAprovadoTipo);
 		contrato.setComentarioComite(comentarioComiteFinal);
+
+		if(CommonsUtil.mesmoValor(menorPrazoAprovado, BigInteger.valueOf(999999999))) {
+			contrato.setPrazoMaxAprovado(BigInteger.ZERO);
+		} else {
+			contrato.setPrazoMaxAprovado(menorPrazoAprovado);
+		}
+		
+		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(999999999))) {
+			contrato.setValorAprovadoComite(BigDecimal.ZERO);
+		} else {
+			contrato.setValorAprovadoComite(menorValorAprovado);
+		}
 	}
 	
 	public void concluirComentarioComite(ContratoCobranca contrato) {

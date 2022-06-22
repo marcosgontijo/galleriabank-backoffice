@@ -284,6 +284,10 @@
 			<many-to-many column="idprocesso"
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
 		</list>
+		
+		<property name="iqValor" type="big_decimal">
+			<column name="iqValor" />
+		</property>
 		        
     </class>
 </hibernate-mapping>

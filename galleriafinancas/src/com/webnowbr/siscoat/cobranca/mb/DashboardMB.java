@@ -7,11 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -85,6 +87,18 @@ public class DashboardMB {
 	
 	int totalContratosComite;
 	BigDecimal totalValorContratosComite;
+	
+	BigDecimal menorTaxaPreAprovada;
+	BigDecimal maiorTaxaPreAprovada;
+	BigDecimal mediaTaxaPreAprovada;
+	
+	BigDecimal menorTaxaAprovadaComite;
+	BigDecimal maiorTaxaAprovadaComite;
+	BigDecimal mediaTaxaAprovadaComite;
+	
+	BigDecimal menorTaxaCcb;
+	BigDecimal maiorTaxaCcb;
+	BigDecimal mediaTaxaCcb;
 	
 	private List<ContratoCobranca> listaContratosConsulta;
 	 
@@ -176,6 +190,10 @@ public class DashboardMB {
 		this.totalContratosComite = 0;
 		this.totalValorContratosComite = BigDecimal.ZERO;
 		
+		DashboardDao dDao = new DashboardDao();
+		List<BigDecimal> taxasPreAprovado = new ArrayList<BigDecimal>();	
+		List<BigDecimal> taxasAprovadaComite = new ArrayList<BigDecimal>();	
+		List<BigDecimal> taxasCcb = new ArrayList<BigDecimal>();	
 		
 		for (Dashboard dash : this.getDashContratos()) {
 			
@@ -197,7 +215,6 @@ public class DashboardMB {
 			if (!CommonsUtil.semValor(dash.getContratosComite())) {
 				this.totalContratosComite = totalContratosComite + dash.getContratosComite();
 			}
-			
 			if (!CommonsUtil.semValor(dash.getValorContratosCadastrados())) {
 				this.totalValorContratosCadastrados = totalValorContratosCadastrados.add(dash.getValorContratosCadastrados());
 			}
@@ -216,6 +233,47 @@ public class DashboardMB {
 			if (!CommonsUtil.semValor(dash.getValorContratosComite())) {
 				this.totalValorContratosComite = totalValorContratosComite.add(dash.getValorContratosComite());
 			}
+			
+			List<BigDecimal> taxasContratoPreAprovado = dDao.getTaxasPreAprovadaDashboard(dash.getListaPreAprovados());		
+			if (!CommonsUtil.semValor(taxasContratoPreAprovado)) {
+				taxasPreAprovado.addAll(taxasContratoPreAprovado); 
+			}
+			
+			List<BigDecimal> taxasContratoAprovadaComite = dDao.getTaxasAprovadaComiteDashboard(dash.getListaComite());		
+			if (!CommonsUtil.semValor(taxasContratoAprovadaComite)) {
+				taxasAprovadaComite.addAll(taxasContratoAprovadaComite); 
+			}
+			
+			List<BigDecimal> taxasContratoCcb = dDao.getTaxasCcb(dash.getListaCcbsEmitidas());		
+			if (!CommonsUtil.semValor(taxasContratoCcb)) {
+				taxasCcb.addAll(taxasContratoCcb); 
+			}
+		}
+		
+		menorTaxaPreAprovada = Collections.min(taxasPreAprovado);
+		maiorTaxaPreAprovada = Collections.max(taxasPreAprovado);
+		mediaTaxaPreAprovada = CalcularMedia(taxasPreAprovado);
+		
+		menorTaxaAprovadaComite = Collections.min(taxasAprovadaComite);
+		maiorTaxaAprovadaComite = Collections.max(taxasAprovadaComite);
+		mediaTaxaAprovadaComite = CalcularMedia(taxasAprovadaComite);
+		
+		menorTaxaCcb = Collections.min(taxasCcb);
+		maiorTaxaCcb = Collections.max(taxasCcb);
+		mediaTaxaCcb = CalcularMedia(taxasCcb);
+	}
+	
+	private BigDecimal CalcularMedia(List<BigDecimal> lista) {
+		BigDecimal soma = BigDecimal.ZERO;
+		for (BigDecimal valor : lista) {
+			soma = soma.add(valor);
+		}
+		if(!CommonsUtil.semValor(lista.size())) {
+			BigDecimal media = soma.divide(BigDecimal.valueOf(lista.size()), MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
 		}
 	}
 	
@@ -876,5 +934,77 @@ public class DashboardMB {
 
 	public void setTotalValorContratosComite(BigDecimal totalValorContratosComite) {
 		this.totalValorContratosComite = totalValorContratosComite;
+	}
+
+	public BigDecimal getMenorTaxaPreAprovada() {
+		return menorTaxaPreAprovada;
+	}
+
+	public void setMenorTaxaPreAprovada(BigDecimal menorTaxaPreAprovada) {
+		this.menorTaxaPreAprovada = menorTaxaPreAprovada;
+	}
+
+	public BigDecimal getMaiorTaxaPreAprovada() {
+		return maiorTaxaPreAprovada;
+	}
+
+	public void setMaiorTaxaPreAprovada(BigDecimal maiorTaxaPreAprovada) {
+		this.maiorTaxaPreAprovada = maiorTaxaPreAprovada;
+	}
+
+	public BigDecimal getMediaTaxaPreAprovada() {
+		return mediaTaxaPreAprovada;
+	}
+
+	public void setMediaTaxaPreAprovada(BigDecimal mediaTaxaPreAprovada) {
+		this.mediaTaxaPreAprovada = mediaTaxaPreAprovada;
+	}
+
+	public BigDecimal getMenorTaxaAprovadaComite() {
+		return menorTaxaAprovadaComite;
+	}
+
+	public void setMenorTaxaAprovadaComite(BigDecimal menorTaxaAprovadaComite) {
+		this.menorTaxaAprovadaComite = menorTaxaAprovadaComite;
+	}
+
+	public BigDecimal getMaiorTaxaAprovadaComite() {
+		return maiorTaxaAprovadaComite;
+	}
+
+	public void setMaiorTaxaAprovadaComite(BigDecimal maiorTaxaAprovadaComite) {
+		this.maiorTaxaAprovadaComite = maiorTaxaAprovadaComite;
+	}
+
+	public BigDecimal getMediaTaxaAprovadaComite() {
+		return mediaTaxaAprovadaComite;
+	}
+
+	public void setMediaTaxaAprovadaComite(BigDecimal mediaTaxaAprovadaComite) {
+		this.mediaTaxaAprovadaComite = mediaTaxaAprovadaComite;
+	}
+
+	public BigDecimal getMenorTaxaCcb() {
+		return menorTaxaCcb;
+	}
+
+	public void setMenorTaxaCcb(BigDecimal menorTaxaCcb) {
+		this.menorTaxaCcb = menorTaxaCcb;
+	}
+
+	public BigDecimal getMaiorTaxaCcb() {
+		return maiorTaxaCcb;
+	}
+
+	public void setMaiorTaxaCcb(BigDecimal maiorTaxaCcb) {
+		this.maiorTaxaCcb = maiorTaxaCcb;
+	}
+
+	public BigDecimal getMediaTaxaCcb() {
+		return mediaTaxaCcb;
+	}
+
+	public void setMediaTaxaCcb(BigDecimal mediaTaxaCcb) {
+		this.mediaTaxaCcb = mediaTaxaCcb;
 	}
 }
