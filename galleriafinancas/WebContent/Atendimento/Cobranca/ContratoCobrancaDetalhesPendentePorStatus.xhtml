@@ -171,7 +171,7 @@
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">Pedir Laudo e Parecer Jurídico</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectOneRadio id="pagtoLaudoConfirmada"
-												unselectable="false" 
+												unselectable="false" disabled="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
 												<f:selectItem itemLabel="Não" itemValue="false" />
@@ -591,8 +591,8 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
 									label="Status" style="width:100px;">
 									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="sim" itemLabel="Sim" />
-									<f:selectItem itemValue="nao" itemLabel="Não" />
+									<f:selectItem itemValue="Sim" itemLabel="Sim" />
+									<f:selectItem itemValue="Nao" itemLabel="Não" />
 									<p:ajax update="comentarioPreComitePanel" event="change" />
 								</p:selectOneMenu>
 

@@ -2118,8 +2118,135 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "	IDGERENTE asc ";
 	
 	
+	private static final String QUERY_TAXAS_DASHBOARD =  " select taxapreaprovada, taxaaprovada, txjurosparcelas "
+			+ "	from cobranca.contratocobranca c ";
 	
+	@SuppressWarnings("unchecked")
+	public List<BigDecimal> getTaxasPreAprovadaDashboard(List<ContratoCobranca> listaContratos) {
+		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				String query = QUERY_TAXAS_DASHBOARD;
+				String queryContratos = " where taxapreaprovada != '0' and (";
+				if (!CommonsUtil.semValor(listaContratos)) {
+					boolean iniciado = false;
+					for( ContratoCobranca contrato : listaContratos) {
+						if(!iniciado) {
+							queryContratos = queryContratos + " numerocontrato =  '" + contrato.getNumeroContrato() +"' ";
+							iniciado = true;
+						} else {
+							queryContratos = queryContratos + " or numerocontrato =  '" + contrato.getNumeroContrato() +"'";
+						}					
+					}
+				} else {
+					queryContratos = queryContratos + " numerocontrato =  '00000' ";
+				}
+				queryContratos = queryContratos + ")";
+				query = query + queryContratos;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();					
+					while (rs.next()) {
+						objects.add(rs.getBigDecimal("taxapreaprovada"));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
 	
+	@SuppressWarnings("unchecked")
+	public List<BigDecimal> getTaxasAprovadaComiteDashboard(List<ContratoCobranca> listaContratos) {
+		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				String query = QUERY_TAXAS_DASHBOARD;
+				String queryContratos = " where taxaaprovada != '0' and (";
+				if (!CommonsUtil.semValor(listaContratos)) {
+					boolean iniciado = false;
+					for( ContratoCobranca contrato : listaContratos) {
+						if(!iniciado) {
+							queryContratos = queryContratos + " numerocontrato =  '" + contrato.getNumeroContrato() +"' ";
+							iniciado = true;
+						} else {
+							queryContratos = queryContratos + " or numerocontrato =  '" + contrato.getNumeroContrato() +"'";
+						}					
+					}
+				} else {
+					queryContratos = queryContratos + " numerocontrato =  '00000' ";
+				}
+				queryContratos = queryContratos + ")";
+				query = query + queryContratos;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();					
+					while (rs.next()) {
+						objects.add(rs.getBigDecimal("taxaaprovada"));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BigDecimal> getTaxasCcb(List<ContratoCobranca> listaContratos) {
+		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				String query = QUERY_TAXAS_DASHBOARD;
+				String queryContratos = " where txjurosparcelas != '0' and (";
+				if (!CommonsUtil.semValor(listaContratos)) {
+					boolean iniciado = false;
+					for( ContratoCobranca contrato : listaContratos) {
+						if(!iniciado) {
+							queryContratos = queryContratos + " numerocontrato =  '" + contrato.getNumeroContrato() +"' ";
+							iniciado = true;
+						} else {
+							queryContratos = queryContratos + " or numerocontrato =  '" + contrato.getNumeroContrato() +"'";
+						}					
+					}
+				} else {
+					queryContratos = queryContratos + " numerocontrato =  '00000' ";
+				}
+				queryContratos = queryContratos + ")";
+				query = query + queryContratos;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();					
+					while (rs.next()) {
+						objects.add(rs.getBigDecimal("txjurosparcelas"));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+
 	private static final String QUERY_CONTRATOS_LEAD =  " select numerocontrato, imv.cidade, imv.cep, imv.estado, datacontrato, motivoReprovaLead, motivoReprovaSelectItem, quantoprecisa, valoraprovadocomite, valorccb, urllead, statuslead, status, inicioanalise, cadastroaprovadovalor, PagtoLaudoConfirmada, LaudoRecebido, PajurFavoravel, AprovadoComite, AgAssinatura from cobranca.contratocobranca cc "
 			+ " inner join cobranca.imovelcobranca imv on imv.id = cc.imovel "
 			+ " inner join cobranca.pagadorrecebedor pare on pare.id = cc.pagador "

@@ -284,6 +284,7 @@ public class CcbMB {
     private boolean temProcessosJucidiais = false;
     private boolean temIptuEmAtraso = false;
     private boolean temCondominioEmAtraso = false;
+    private boolean temIq = false;
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
@@ -6246,6 +6247,36 @@ public class CcbMB {
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCondominioEmAtrasoValor(), "R$ "));
 			}
 			
+			if(this.temIq) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("IQ");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIqValor(), "R$ "));
+			}
+			
 			XWPFTableRow tableRow1 = table.createRow();		
 
 			tableRow1.getCell(1).setParagraph(paragraph);
@@ -8351,6 +8382,14 @@ public class CcbMB {
 
 	public void setValorProcesso(BigDecimal valorProcesso) {
 		this.valorProcesso = valorProcesso;
+	}
+
+	public boolean isTemIq() {
+		return temIq;
+	}
+
+	public void setTemI(boolean temIq) {
+		this.temIq = temIq;
 	}	
 	
 	

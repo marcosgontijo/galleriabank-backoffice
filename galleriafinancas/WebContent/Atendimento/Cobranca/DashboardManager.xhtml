@@ -170,7 +170,14 @@
 					
 					<f:facet name="footer">
 						<h:panelGroup style="display:block;">
-							<h:panelGrid columns="3">
+							<h:panelGrid columns="6">
+								<h:outputText value="Menu " />
+								<h:outputText value="Quantidade" />
+								<h:outputText value="Valor"/>
+								<h:outputText value="Taxa Mínima"/>
+								<h:outputText value="Taxa Máxima"/>
+								<h:outputText value="Taxa Média"/>
+						
 								<h:outputText value="Total Cadastrados: " />
 								<h:outputText value="#{dashboardMB.totalContratosCadastrados}" />
 								<h:panelGroup>
@@ -178,13 +185,34 @@
 									<h:outputText value="#{dashboardMB.totalValorContratosCadastrados}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								
 								<h:outputText value="Total Pré-Aprovados: " />
 								<h:outputText value="#{dashboardMB.totalContratosPreAprovados}" />
 								<h:panelGroup>
 									<h:outputText value="R$ " />
 									<h:outputText value="#{dashboardMB.totalValorContratosPreAprovados}"
 										converter="bigDecimalConverter" />
+								</h:panelGroup>	
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMB.menorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
 								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.maiorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.mediaTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+
+								
 								<h:outputText value="Pedido Laudo e Paju: " />
 								<h:outputText value="#{dashboardMB.totalContratosBoletosPagos}" />
 								<h:panelGroup>
@@ -192,6 +220,9 @@
 									<h:outputText value="#{dashboardMB.totalValorBoletosPagos}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
 								
 								<h:outputText value="Comitê: " />
 								<h:outputText value="#{dashboardMB.totalContratosComite}" />
@@ -199,6 +230,21 @@
 									<h:outputText value="R$ " />
 									<h:outputText value="#{dashboardMB.totalValorContratosComite}"
 										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMB.menorTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.maiorTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.mediaTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
 								</h:panelGroup>
 								
 								<h:outputText value="CCBs Emitidas: " />
@@ -208,6 +254,22 @@
 									<h:outputText value="#{dashboardMB.totalValorCcbsEmitidas}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMB.menorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.maiorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.mediaTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
 								<h:outputText value="CCBs Pagas: " />
 								<h:outputText value="#{dashboardMB.totalContratosRegistrados}" />
 								<h:panelGroup>
@@ -215,6 +277,10 @@
 									<h:outputText value="#{dashboardMB.totalValorContratosRegistrados}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								
 							</h:panelGrid>
 						</h:panelGroup>
 					</f:facet>

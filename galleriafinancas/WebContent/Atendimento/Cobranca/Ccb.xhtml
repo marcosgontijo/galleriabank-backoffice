@@ -1717,6 +1717,30 @@
 										onkeydown="FormataValor(this, 13, event, 2);"
 										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temCondominioEmAtraso}"></p:spacer>
+								</h:panelGroup>	
+								
+								<h:panelGrid columns="1">
+									<p:outputLabel for="iqValor"
+										value="IQ: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneRadio id="temIq"
+										unselectable="false" value="#{ccbMB.temIq}">
+										<f:selectItem itemLabel="Não" itemValue="false" />
+										<f:selectItem itemLabel="Sim" itemValue="true" />
+										<p:ajax update="iqValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
+									</p:selectOneRadio>
+								</h:panelGrid>
+
+								<h:panelGroup id="iqValor">
+									<p:outputLabel rendered="#{ccbMB.temIq}"
+										value="Valor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText rendered="#{ccbMB.temIq}"
+										value="#{ccbMB.objetoCcb.iqValor}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);"
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
+									<p:spacer width="50px" rendered="#{!ccbMB.temIq}"></p:spacer>
 								</h:panelGroup>
 
 								<h:panelGrid columns="1" id="processosJucidiaisValorView">
