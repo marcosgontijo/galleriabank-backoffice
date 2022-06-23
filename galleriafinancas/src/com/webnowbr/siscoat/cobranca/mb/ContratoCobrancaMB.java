@@ -3996,6 +3996,62 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Ag. Comite");
 	}
+	
+	public String voltarContratoParaAnalisePreAprovada() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
+		this.objetoContratoCobranca.setPedidoPreLaudo(false);
+		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
+		this.objetoContratoCobranca.setPedidoLaudo(false);
+		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Análise Aprovada");
+	}
+	
+	public String voltarContratoParaPagamentoNoFinal() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPedidoPreLaudoComercial(true);
+		this.objetoContratoCobranca.setPedidoPreLaudo(false);
+		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
+		this.objetoContratoCobranca.setPedidoLaudo(false);
+		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
+		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("No Final");
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Análise Aprovada");
+	}
+	
+	public String voltarContratoParaPagamentoAntecipado() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
+		this.objetoContratoCobranca.setPedidoPreLaudo(false);
+		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(true);
+		this.objetoContratoCobranca.setPedidoLaudo(false);
+		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
+		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("Antecipado");
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Análise Aprovada");
+	}
 
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
 		ResponsavelDao rDao = new ResponsavelDao();
@@ -10183,7 +10239,7 @@ public class ContratoCobrancaMB {
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& !c.isPagtoLaudoConfirmada()) {
-						c.setStatus("Análise Aprovada");
+						c.setStatus("Análise Pré-Aprovada");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -10200,9 +10256,19 @@ public class ContratoCobrancaMB {
 							&& c.isPedidoLaudoPajuComercial() && c.isPedidoLaudo() && !c.isPagtoLaudoConfirmada()) {
 						c.setStatus("Pedir PAJU");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && !c.isPajurFavoravel()) {
+						c.setStatus("Ag. PAJU");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && !c.isLaudoRecebido()) {
+						c.setStatus("Ag. Laudo");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+							&& c.isPagtoLaudoConfirmada() && !c.isLaudoRecebido() && !c.isPajurFavoravel()) {
 						c.setStatus("Ag. PAJU e Laudo");
 					}
 
@@ -10430,6 +10496,12 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Ag. PAJU e Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Ag. PAJU e Laudo";
+		}
+		if (status.equals("Ag. PAJU")) {
+			this.tituloTelaConsultaPreStatus = "Ag. PAJU";
+		}
+		if (status.equals("Ag. Laudo")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Laudo";
 		}
 		if (status.equals("Análise Comercial")) {
 			this.tituloTelaConsultaPreStatus = "Análise Comercial";

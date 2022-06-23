@@ -5549,6 +5549,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						//
 						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
 					}
+					
 					if (tipoConsulta.equals("Lead")) {
 						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' and c.statusLead != 'Arquivado' "; 
 					}
@@ -5597,6 +5598,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false) ";
 					} 
 					
+					if (tipoConsulta.equals("Ag. PAJU")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = false ";
+					} 
+					
+					if (tipoConsulta.equals("Ag. Laudo")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = false";
+					} 
+					
 					if (tipoConsulta.equals("Análise Comercial")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = false ";
@@ -5636,6 +5647,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = true";
 					}
+					
 					if (tipoConsulta.equals("Ag. Registro")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true and documentosComite = true and aprovadoComite = true and ccbPronta = true  and agAssinatura = false and agRegistro = true";

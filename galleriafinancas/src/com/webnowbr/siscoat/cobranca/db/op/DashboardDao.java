@@ -2329,7 +2329,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "	or StatusContrato = 'Reprovado' "
 			+ "	or statusLead = 'Reprovado' "
 			+ "	or status = 'Reprovado' "
-			+ "order by "
+			+ " order by "
 			+ "	cc.id desc";
 	
 	@SuppressWarnings("unchecked")

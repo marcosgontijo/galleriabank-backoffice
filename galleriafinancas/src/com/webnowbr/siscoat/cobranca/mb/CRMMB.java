@@ -936,7 +936,7 @@ public class CRMMB {
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& !c.isPagtoLaudoConfirmada()) {
-						c.setStatus("Análise Aprovada");
+						c.setStatus("Análise Pré-Aprovada");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
