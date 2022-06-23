@@ -598,14 +598,14 @@
 
 								<p:outputLabel for="dividaValor" value="Valor da dívida: "
 									styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}" />
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}" />
 
 								<p:inputText id="dividaValor"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'sim'}">
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}">
 									<p:ajax process="@this" partialSubmit="true" />
 								</p:inputText>
 
