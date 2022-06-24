@@ -4003,6 +4003,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
 		this.objetoContratoCobranca.setPedidoPreLaudo(false);
 		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
+		this.objetoContratoCobranca.setPedidoPajuComercial(false);
 		this.objetoContratoCobranca.setPedidoLaudo(false);
 		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
 		updateCheckList();
@@ -4023,7 +4024,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
 		this.objetoContratoCobranca.setPedidoLaudo(false);
 		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
-		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("No Final");
+		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("No final");
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
@@ -6963,7 +6964,7 @@ public class ContratoCobrancaMB {
 			else if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
 				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						!this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
+						(!this.objetoContratoCobranca.isPagtoLaudoConfirmada() || !this.objetoContratoCobranca.isPedidoLaudo())){
 					this.indexStepsStatusContrato = 2;
 				}
 				
@@ -8182,9 +8183,7 @@ public class ContratoCobrancaMB {
 		
 		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
 		
-		int qtdContratosSemIPCA = 0;
-		int qtdContratosComIPCA = 0;
-		
+		BigDecimal somaPeso = BigDecimal.ZERO;
 		BigDecimal ltv = BigDecimal.ZERO;
 			
 
@@ -8224,7 +8223,14 @@ public class ContratoCobrancaMB {
 			} else {
 				contratosGraficoFidc.add(contrato);
 				
-				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
+				if(!CommonsUtil.semValor(contrato.getValorCCB())) {
+					BigDecimal peso = BigDecimal.ZERO;
+					BigDecimal valor = BigDecimal.ZERO;
+					peso = contrato.getValorCCB().divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+					somaPeso = somaPeso.add(peso);
+					valor = BigDecimal.valueOf(prazoContrato * peso.doubleValue());
+					prazoMedio = prazoMedio.add(valor);
+				}
 				ltvMedio = ltvMedio.add(ltv);
 				
 				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
@@ -8246,8 +8252,6 @@ public class ContratoCobrancaMB {
 					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMinIPCA = contrato.getTxJurosParcelas();
 					}
-					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
-					qtdContratosComIPCA++;
 				} else {
 					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
 						taxaMax = contrato.getTxJurosParcelas();
@@ -8255,8 +8259,6 @@ public class ContratoCobrancaMB {
 					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMin = contrato.getTxJurosParcelas();
 					}
-					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
-					qtdContratosSemIPCA++;
 				}
 				
 				if (ltvMax.compareTo(ltv) == -1){
@@ -8288,17 +8290,16 @@ public class ContratoCobrancaMB {
 		}
 		
 		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
-		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
-		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.taxaMedia = CalcularMediaCcbSemIPCA(contratos);
+		this.taxaMediaIPCA = CalcularMediaCcbComIPCA(contratos);
 		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
 		
 		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
 		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
 		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
 		
+		this.prazoMedio = this.prazoMedio.divide(somaPeso, MathContext.DECIMAL128);
 		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMedio = this.ltvMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMax = this.ltvMax.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMin = this.ltvMin.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -8399,9 +8400,7 @@ public class ContratoCobrancaMB {
 		
 		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
 		
-		int qtdContratosSemIPCA = 0;
-		int qtdContratosComIPCA = 0;
-		
+		BigDecimal somaPeso = BigDecimal.ZERO;
 		BigDecimal ltv = BigDecimal.ZERO;
 			
 
@@ -8458,7 +8457,15 @@ public class ContratoCobrancaMB {
 			} else {
 				contratosGraficoFidc.add(contrato);
 				
-				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
+				if(!CommonsUtil.semValor(contrato.getValorCCB())) {
+					BigDecimal peso = BigDecimal.ZERO;
+					BigDecimal valor = BigDecimal.ZERO;
+					peso = contrato.getValorCCB().divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+					somaPeso = somaPeso.add(peso);
+					valor = BigDecimal.valueOf(prazoContrato * peso.doubleValue());
+					prazoMedio = prazoMedio.add(valor);
+				}
+				
 				ltvMedio = ltvMedio.add(ltv);
 				
 				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
@@ -8480,8 +8487,6 @@ public class ContratoCobrancaMB {
 					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMinIPCA = contrato.getTxJurosParcelas();
 					}
-					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
-					qtdContratosComIPCA++;
 				} else {
 					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
 						taxaMax = contrato.getTxJurosParcelas();
@@ -8489,8 +8494,6 @@ public class ContratoCobrancaMB {
 					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMin = contrato.getTxJurosParcelas();
 					}
-					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
-					qtdContratosSemIPCA++;
 				}
 				
 				if (ltvMax.compareTo(ltv) == -1){
@@ -8526,14 +8529,15 @@ public class ContratoCobrancaMB {
 		}
 		
 		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
-		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
-		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.taxaMedia = CalcularMediaCcbSemIPCA(contratos);
+		this.taxaMediaIPCA = CalcularMediaCcbComIPCA(contratos);
 		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
 		
 		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
 		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
 		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
 		
+		this.prazoMedio = this.prazoMedio.divide(somaPeso, MathContext.DECIMAL128);
 		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -8636,10 +8640,8 @@ public class ContratoCobrancaMB {
 		this.totalContratosConsultar = this.contratos.size();
 		
 		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
-		
-		int qtdContratosSemIPCA = 0;
-		int qtdContratosComIPCA = 0;
-		
+
+		BigDecimal somaPeso = BigDecimal.ZERO;
 		BigDecimal ltv = BigDecimal.ZERO;
 			
 
@@ -8678,8 +8680,15 @@ public class ContratoCobrancaMB {
 				this.valorUltimaPareclaPaga = BigDecimal.ZERO;
 			} else {
 				contratosGraficoFidc.add(contrato);
+				if(!CommonsUtil.semValor(contrato.getValorCCB())) {
+					BigDecimal peso = BigDecimal.ZERO;
+					BigDecimal valor = BigDecimal.ZERO;
+					peso = contrato.getValorCCB().divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+					somaPeso = somaPeso.add(peso);
+					valor = BigDecimal.valueOf(prazoContrato * peso.doubleValue());
+					prazoMedio = prazoMedio.add(valor);
+				}
 				
-				prazoMedio = prazoMedio.add(BigDecimal.valueOf(prazoContrato));
 				ltvMedio = ltvMedio.add(ltv);
 				
 				if (prazoMax.compareTo(BigDecimal.valueOf(prazoContrato)) == -1){
@@ -8700,18 +8709,14 @@ public class ContratoCobrancaMB {
 					}
 					if (taxaMinIPCA.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMinIPCA = contrato.getTxJurosParcelas();
-					}
-					taxaMediaIPCA = taxaMediaIPCA.add(contrato.getTxJurosParcelas());
-					qtdContratosComIPCA++;
+					}					
 				} else {
 					if (taxaMax.compareTo(contrato.getTxJurosParcelas()) == -1){
 						taxaMax = contrato.getTxJurosParcelas();
 					}
 					if (taxaMin.compareTo(contrato.getTxJurosParcelas()) == 1){
 						taxaMin = contrato.getTxJurosParcelas();
-					}
-					taxaMedia = taxaMedia.add(contrato.getTxJurosParcelas());
-					qtdContratosSemIPCA++;
+					}					
 				}
 				
 				if (ltvMax.compareTo(ltv) == -1){
@@ -8743,17 +8748,16 @@ public class ContratoCobrancaMB {
 		}
 		
 		this.prazoMedio = prazoMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
-		this.taxaMedia = taxaMedia.divide(BigDecimal.valueOf(qtdContratosSemIPCA),  MathContext.DECIMAL128);
-		this.taxaMediaIPCA = taxaMediaIPCA.divide(BigDecimal.valueOf(qtdContratosComIPCA),  MathContext.DECIMAL128);
+		this.taxaMedia = CalcularMediaCcbSemIPCA(contratos);
+		this.taxaMediaIPCA = CalcularMediaCcbComIPCA(contratos);
 		this.ltvMedio = ltvMedio.divide(BigDecimal.valueOf(totalContratosConsultar),  MathContext.DECIMAL128);
 		
 		this.ltvMedio = this.ltvMedio.multiply(BigDecimal.valueOf(100));
 		this.ltvMax = this.ltvMax.multiply(BigDecimal.valueOf(100));
 		this.ltvMin = this.ltvMin.multiply(BigDecimal.valueOf(100));
 		
+		this.prazoMedio = this.prazoMedio.divide(somaPeso, MathContext.DECIMAL128);
 		this.prazoMedio = this.prazoMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.taxaMedia = this.taxaMedia.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.taxaMediaIPCA = this.taxaMediaIPCA.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMedio = this.ltvMedio.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMax = this.ltvMax.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.ltvMin = this.ltvMin.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -9364,7 +9368,87 @@ public class ContratoCobrancaMB {
         stackedGroupBarModel.setData(data);
     }
 	
-
+	private BigDecimal CalcularMediaCcbSemIPCA(Collection<ContratoCobranca> lista) {		
+		BigDecimal soma = BigDecimal.ZERO;
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			if(coco.isCorrigidoIPCA()) {
+				continue;
+			}
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTxJurosParcelas();
+			BigDecimal valorContrato = coco.getValorCCB();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
+		}
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
+	
+	private BigDecimal CalcularMediaCcbComIPCA(Collection<ContratoCobranca> lista) {		
+		BigDecimal soma = BigDecimal.ZERO;
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			if(!coco.isCorrigidoIPCA()) {
+				continue;
+			}
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTxJurosParcelas();
+			BigDecimal valorContrato = coco.getValorCCB();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
+		}
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
+	
+	private BigDecimal CalcularPrazoMedio(Collection<ContratoCobranca> lista) {		
+		BigDecimal soma = BigDecimal.ZERO;
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			if(coco.isCorrigidoIPCA()) {
+				continue;
+			}
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTxJurosParcelas();
+			BigDecimal valorContrato = coco.getValorCCB();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
+		}
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
+	
 	public void geraConsultaPreContratosBaixados() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
@@ -10237,8 +10321,7 @@ public class ContratoCobrancaMB {
 						c.setStatus("Análise Pendente");
 					}
 
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& !c.isPagtoLaudoConfirmada()) {
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
 						c.setStatus("Análise Pré-Aprovada");
 					}
 
@@ -10247,33 +10330,52 @@ public class ContratoCobrancaMB {
 						c.setStatus("Pedir Pré-Laudo");
 					}
 					
+					String status = "";
+					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPedidoLaudoPajuComercial() && !c.isPedidoLaudo()) {
 						c.setStatus("Pedir Laudo");
+						status = status + "Pedir Laudo";
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPedidoLaudoPajuComercial() && c.isPedidoLaudo() && !c.isPagtoLaudoConfirmada()) {
+							&& c.isPedidoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
 						c.setStatus("Pedir PAJU");
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Pedir PAJU";
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && !c.isPajurFavoravel()) {
 						c.setStatus("Ag. PAJU");
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Ag. PAJU";
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && !c.isLaudoRecebido()) {
+							&& c.isPedidoLaudo() && !c.isLaudoRecebido()) {
 						c.setStatus("Ag. Laudo");
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Ag. Laudo";
+					}
+					
+					if(!CommonsUtil.semValor(status)) {
+						c.setStatus(status);
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && !c.isLaudoRecebido() && !c.isPajurFavoravel()) {
+							&& c.isPagtoLaudoConfirmada() && c.isPedidoLaudo() && !c.isLaudoRecebido() && !c.isPajurFavoravel()) {
 						c.setStatus("Ag. PAJU e Laudo");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-							&& c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
+							&& c.isLaudoRecebido() &&  c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
 						c.setStatus("Análise Comercial");
 					}
 					

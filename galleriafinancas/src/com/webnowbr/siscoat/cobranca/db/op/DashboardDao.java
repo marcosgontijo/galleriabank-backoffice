@@ -2118,17 +2118,17 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "	IDGERENTE asc ";
 	
 	
-	private static final String QUERY_TAXAS_DASHBOARD =  " select taxapreaprovada, taxaaprovada, txjurosparcelas "
+	private static final String QUERY_TAXAS_DASHBOARD =  " select taxapreaprovada, taxaaprovada, txjurosparcelas, valoraprovadocomite , quantoprecisa , valorccb "
 			+ "	from cobranca.contratocobranca c ";
 	
 	@SuppressWarnings("unchecked")
-	public List<BigDecimal> getTaxasPreAprovadaDashboard(List<ContratoCobranca> listaContratos) {
-		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobranca> getTaxasPreAprovadaDashboard(List<ContratoCobranca> listaContratos) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();	
 				String query = QUERY_TAXAS_DASHBOARD;
-				String queryContratos = " where taxapreaprovada != '0' and (";
+				String queryContratos = " where taxapreaprovada != '0' and taxapreaprovada is not null and (";
 				if (!CommonsUtil.semValor(listaContratos)) {
 					boolean iniciado = false;
 					for( ContratoCobranca contrato : listaContratos) {
@@ -2152,7 +2152,10 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();					
 					while (rs.next()) {
-						objects.add(rs.getBigDecimal("taxapreaprovada"));
+						ContratoCobranca coco = new ContratoCobranca();
+						coco.setTaxaPreAprovada(rs.getBigDecimal("taxapreaprovada"));
+						coco.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
+						objects.add(coco);
 					}
 
 				} finally {
@@ -2164,13 +2167,13 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<BigDecimal> getTaxasAprovadaComiteDashboard(List<ContratoCobranca> listaContratos) {
-		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobranca> getTaxasAprovadaComiteDashboard(List<ContratoCobranca> listaContratos) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();	
 				String query = QUERY_TAXAS_DASHBOARD;
-				String queryContratos = " where taxaaprovada != '0' and (";
+				String queryContratos = " where taxaaprovada != '0' and taxaaprovada is not null and (";
 				if (!CommonsUtil.semValor(listaContratos)) {
 					boolean iniciado = false;
 					for( ContratoCobranca contrato : listaContratos) {
@@ -2194,7 +2197,10 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();					
 					while (rs.next()) {
-						objects.add(rs.getBigDecimal("taxaaprovada"));
+						ContratoCobranca coco = new ContratoCobranca();
+						coco.setTaxaAprovada(rs.getBigDecimal("taxaaprovada"));
+						coco.setValorAprovadoComite(rs.getBigDecimal("ValorAprovadoComite"));
+						objects.add(coco);
 					}
 
 				} finally {
@@ -2206,13 +2212,13 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<BigDecimal> getTaxasCcb(List<ContratoCobranca> listaContratos) {
-		return (List<BigDecimal>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobranca> getTaxasCcb(List<ContratoCobranca> listaContratos) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<BigDecimal> objects = new ArrayList<BigDecimal>();	
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();	
 				String query = QUERY_TAXAS_DASHBOARD;
-				String queryContratos = " where txjurosparcelas != '0' and (";
+				String queryContratos = " where txjurosparcelas != '0' and txjurosparcelas is not null and (";
 				if (!CommonsUtil.semValor(listaContratos)) {
 					boolean iniciado = false;
 					for( ContratoCobranca contrato : listaContratos) {
@@ -2236,7 +2242,10 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();					
 					while (rs.next()) {
-						objects.add(rs.getBigDecimal("txjurosparcelas"));
+						ContratoCobranca coco = new ContratoCobranca();
+						coco.setTxJurosParcelas(rs.getBigDecimal("txjurosparcelas"));
+						coco.setValorCCB(rs.getBigDecimal("valorccb"));
+						objects.add(coco);
 					}
 
 				} finally {
