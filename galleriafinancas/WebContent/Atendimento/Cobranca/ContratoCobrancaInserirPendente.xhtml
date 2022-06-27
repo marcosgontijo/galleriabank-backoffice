@@ -1276,6 +1276,15 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
 								styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;" />
+								
+							<p:outputLabel for="formaDePagamentoLaudoPAJU" styleClass="labelBold" value="Forma de Pagamento"/>
+							<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
+								label="Tipo">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="No final" itemLabel="No final" />
+								<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
+							</p:selectOneMenu>
 							
 						</h:panelGrid>
 					</p:panel>
