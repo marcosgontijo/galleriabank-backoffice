@@ -3122,392 +3122,119 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void notificaStatusWhatsApp(long idContrato) {
-		
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		ContratoCobrancaStatus statusContrato = cDao.consultaStatusContratos(idContrato);
-		
-		// 1 - Verifica se teve alteração de status
-		// 2 - Se sim, e o valor for true envia mensagem
-		
-		// Mensagem CONTRATO PRE APROVADO
-		if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
-				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
-						this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
-					// if (this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
-					// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+		FacesContext context = FacesContext.getCurrentInstance();
+		try {
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			ContratoCobrancaStatus statusContrato = cDao.consultaStatusContratos(idContrato);
+			
+			// 1 - Verifica se teve alteração de status
+			// 2 - Se sim, e o valor for true envia mensagem
+			
+			// Mensagem CONTRATO PRE APROVADO
+			if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
+				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+					if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+							this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
+							this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
+						// if (this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
+						// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
+						TakeBlipMB takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						// }
+						
+						// envia para o gerente do responsável
+						if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+							takeBlipMB = new TakeBlipMB();
+							takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
 							"contrato_pre_aprovado", 
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-					// }
-					
+							if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+								// Bia (assistente Gislaine)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 359);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+								// Jaque (assistente Luis)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 689);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							}
+						}
+					}
+				}
+			}
+			
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
+				if (!this.objetoContratoCobranca.getValorPreLaudo().equals(statusContrato.getValorPreLaudo())) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					// envia para o gerente do responsável
 					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"contrato_pre_aprovado", 
-						this.objetoContratoCobranca.getPagador().getNome(),
+						"pre_laudo_inserido",
 						this.objetoContratoCobranca.getNumeroContrato(),
-						this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
-						this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						this.objetoContratoCobranca.getPagador().getNome(), "", "");
 						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
 							// Bia (assistente Gislaine)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
 							rAssistente = rDao.findById((long) 359);
-
+	
 							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_pre_aprovado", 
-							this.objetoContratoCobranca.getPagador().getNome(),
+							"pre_laudo_inserido", 
 							this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
-							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							this.objetoContratoCobranca.getPagador().getNome(),
+							"", "");
 						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
 							rAssistente = rDao.findById((long) 689);
-
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_pre_aprovado", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
-							this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-						}
-					}
-				}
-			}
-		}
-		
-		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
-			if (!this.objetoContratoCobranca.getValorPreLaudo().equals(statusContrato.getValorPreLaudo())) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				// envia para o gerente do responsável
-				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-					takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-					"pre_laudo_inserido",
-					this.objetoContratoCobranca.getNumeroContrato(),
-					this.objetoContratoCobranca.getPagador().getNome(), "", "");
-					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-						// Bia (assistente Gislaine)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 359);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"pre_laudo_inserido", 
-						this.objetoContratoCobranca.getNumeroContrato(),
-						this.objetoContratoCobranca.getPagador().getNome(),
-						"", "");
-					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-						// Jaque (assistente Luis)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 689);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"pre_laudo_inserido", 
-						this.objetoContratoCobranca.getNumeroContrato(),
-						this.objetoContratoCobranca.getPagador().getNome(),
-						"","");
-					}
-				} else {
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"pre_laudo_inserido",
-					this.objetoContratoCobranca.getNumeroContrato(),
-					this.objetoContratoCobranca.getPagador().getNome(), "", "");
-				}
-			}
-		}
-		
-		// Mensagem PAJU E LAUDO RECEBIDO
-		if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
-				this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
-			if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-				"contrato_recebido_laudo_paju",
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				
-				// envia para o gerente do responsável
-				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-					takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-					"contrato_recebido_laudo_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-					
-					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-						// Bia (assistente Gislaine)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 359);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"contrato_recebido_laudo_paju", 
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(),
-						"", "");
-					}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-						// Jaque (assistente Luis)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 689);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"contrato_recebido_laudo_paju", 
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(),
-						"","");
-					}
-				}
-			}
-		}
-		
-		// Mensagem Ag Comentario Juridico
-		if (this.objetoContratoCobranca.isAnaliseComercial() != statusContrato.isAnaliseComercial()) {
-			if (this.objetoContratoCobranca.isAnaliseComercial()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				
-				ResponsavelDao rDao = new ResponsavelDao();
-				Responsavel rJuridico1 = new Responsavel();
-				Responsavel rJuridico2 = new Responsavel();
-
-				// JP
-				rJuridico1 = rDao.findById((long) 617);
-				
-				takeBlipMB.sendWhatsAppMessage(rJuridico1,
-				"ag_comentarios_juridico", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Ale dos Paju
-				rJuridico2 = rDao.findById((long) 618);
-
-				takeBlipMB.sendWhatsAppMessage(rJuridico2,
-				"ag_comentarios_juridico", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				 
-			}			
-		}
-		
-		// Mensagem Comentado Juridico Interno
-		if (this.objetoContratoCobranca.isComentarioJuridicoEsteira() != statusContrato.isComentarioJuridicoEsteira()) {
-			if (this.objetoContratoCobranca.isComentarioJuridicoEsteira()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				// envia para o gerente do responsável
-				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-					takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-					"comentado_juridico_interno",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-						// Bia (assistente Gislaine)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 359);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"comentado_juridico_interno", 
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(),
-						"", "");
-					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-						// Jaque (assistente Luis)
-						ResponsavelDao rDao = new ResponsavelDao();
-						Responsavel rAssistente = new Responsavel();
-						rAssistente = rDao.findById((long) 689);
-
-						takeBlipMB.sendWhatsAppMessage(rAssistente,
-						"comentado_juridico_interno", 
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(),
-						"","");
-					}
-				} else {
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"comentado_juridico_interno",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
-			}
-		}
-		
-		// Mensagem Ag Validacao Documentos
-		if (this.objetoContratoCobranca.isPreAprovadoComite() != statusContrato.isPreAprovadoComite()) {
-			if (this.objetoContratoCobranca.isPreAprovadoComite()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				ResponsavelDao rDao = new ResponsavelDao();
-				Responsavel rValidaDocs1 = new Responsavel();
-				Responsavel rValidaDocs2 = new Responsavel();
-				Responsavel rValidaDocs3 = new Responsavel();
-				
-				// Valdir
-				rValidaDocs1 = rDao.findById((long) 619);
-
-				takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-				"ag_validacao_documentos", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Thiago
-				rValidaDocs2 = rDao.findById((long) 620);
-
-				takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
-				"ag_validacao_documentos", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Tati
-				rValidaDocs3 = rDao.findById((long) 643);
-
-				takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
-				"ag_validacao_documentos", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-			}
-		}
-		
-		// Mensagem PRE APROVADO COMITE
-		if (this.objetoContratoCobranca.isDocumentosComite() != statusContrato.isDocumentosComite()) {
-			if (this.objetoContratoCobranca.isDocumentosComite()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				
-				ResponsavelDao rDao = new ResponsavelDao();
-				Responsavel rComite1 = new Responsavel();
-				Responsavel rComite2 = new Responsavel();
-				Responsavel rComite3 = new Responsavel();
-				
-				// Fabricio
-				rComite1 = rDao.findById((long) 4);
-				
-				takeBlipMB.sendWhatsAppMessage(rComite1,
-				"contrato_comite","",
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// João
-				rComite2 = rDao.findById((long) 380);
-
-				takeBlipMB.sendWhatsAppMessage(rComite2,
-				"contrato_comite","",
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Sandro
-				rComite3 = rDao.findById((long) 2);
-				
-				takeBlipMB.sendWhatsAppMessage(rComite3,
-				"contrato_comite","",
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-			}			
-		}
-		
-		// Mensagem Aprovado Comite Ag Ccb
-		if (this.objetoContratoCobranca.isAprovadoComite() != statusContrato.isAprovadoComite()) {
-			if (this.objetoContratoCobranca.isAprovadoComite()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				ResponsavelDao rDao = new ResponsavelDao();
-				Responsavel rCcb1 = new Responsavel();
-				Responsavel rCcb2 = new Responsavel();
-				Responsavel rCcb3 = new Responsavel();
-				Responsavel rCcb4 = new Responsavel();
-				Responsavel rCcb5 = new Responsavel();
-				Responsavel rCcb6 = new Responsavel();
-				
-				// Amanda
-				rCcb1 = rDao.findById((long) 621);
-				takeBlipMB.sendWhatsAppMessage(rCcb1,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-						
-				// Anna Flavia
-				rCcb2 = rDao.findById((long) 622);
-				takeBlipMB.sendWhatsAppMessage(rCcb2,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Flavia
-				rCcb3 = rDao.findById((long) 623);
-				takeBlipMB.sendWhatsAppMessage(rCcb3,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Juliana
-				rCcb4 = rDao.findById((long) 624);
-				takeBlipMB.sendWhatsAppMessage(rCcb4,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Luana
-				rCcb5 = rDao.findById((long) 625);
-				takeBlipMB.sendWhatsAppMessage(rCcb5,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-				
-				// Mauricio
-				rCcb6 = rDao.findById((long) 626);
-				takeBlipMB.sendWhatsAppMessage(rCcb6,
-				"aprovado_comite_ag_ccb", 
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(),
-				"", "");
-			}
-		}
-		
-		// Mensagem AG ASSINATURA
-		if (this.objetoContratoCobranca.isCcbPronta() != statusContrato.isCcbPronta()) {
-			if (this.objetoContratoCobranca.isCcbPronta()) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-				"contrato_pronto_para_assinatura_operacao",
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				
-				// envia para o gerente do responsável
-				if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-					takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-					"contrato_pronto_para_assinatura_operacao",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
-			}
-		}
 	
-		// Mensagem ASSINADO / AG REGISTRO
-		if (this.objetoContratoCobranca.isAgAssinatura() != statusContrato.isAgAssinatura()) {
-			if (!this.objetoContratoCobranca.isAgAssinatura()) {
-				if (statusContrato.isAgRegistro()) {
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"pre_laudo_inserido", 
+							this.objetoContratoCobranca.getNumeroContrato(),
+							this.objetoContratoCobranca.getPagador().getNome(),
+							"","");
+						}
+					} else {
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"pre_laudo_inserido",
+						this.objetoContratoCobranca.getNumeroContrato(),
+						this.objetoContratoCobranca.getPagador().getNome(), "", "");
+					}
+				}
+			}
+			
+			// Mensagem PAJU E LAUDO RECEBIDO
+			if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
+					this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
+				if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_dado_entrada_cartorio",
+					"contrato_recebido_laudo_paju",
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					
@@ -3515,12 +3242,291 @@ public class ContratoCobrancaMB {
 					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"contrato_dado_entrada_cartorio",
+						"contrato_recebido_laudo_paju",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"contrato_recebido_laudo_paju", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+							// Jaque (assistente Luis)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 689);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"contrato_recebido_laudo_paju", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"","");
+						}
+					}
+				}
+			}
+			
+			// Mensagem Ag Comentario Juridico
+			if (this.objetoContratoCobranca.isAnaliseComercial() != statusContrato.isAnaliseComercial()) {
+				if (this.objetoContratoCobranca.isAnaliseComercial()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rJuridico1 = new Responsavel();
+					Responsavel rJuridico2 = new Responsavel();
+	
+					// JP
+					rJuridico1 = rDao.findById((long) 617);
+					
+					takeBlipMB.sendWhatsAppMessage(rJuridico1,
+					"ag_comentarios_juridico", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Ale dos Paju
+					rJuridico2 = rDao.findById((long) 618);
+	
+					takeBlipMB.sendWhatsAppMessage(rJuridico2,
+					"ag_comentarios_juridico", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					 
+				}			
+			}
+			
+			// Mensagem Comentado Juridico Interno
+			if (this.objetoContratoCobranca.isComentarioJuridicoEsteira() != statusContrato.isComentarioJuridicoEsteira()) {
+				if (this.objetoContratoCobranca.isComentarioJuridicoEsteira()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					// envia para o gerente do responsável
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"comentado_juridico_interno",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"comentado_juridico_interno", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+							// Jaque (assistente Luis)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 689);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"comentado_juridico_interno", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"","");
+						}
+					} else {
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"comentado_juridico_interno",
 						this.objetoContratoCobranca.getPagador().getNome(),
 						this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
-				}				
+				}
 			}
+			
+			// Mensagem Ag Validacao Documentos
+			if (this.objetoContratoCobranca.isPreAprovadoComite() != statusContrato.isPreAprovadoComite()) {
+				if (this.objetoContratoCobranca.isPreAprovadoComite()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Tati
+					rValidaDocs3 = rDao.findById((long) 643);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+				}
+			}
+			
+			// Mensagem PRE APROVADO COMITE
+			if (this.objetoContratoCobranca.isDocumentosComite() != statusContrato.isDocumentosComite()) {
+				if (this.objetoContratoCobranca.isDocumentosComite()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rComite1 = new Responsavel();
+					Responsavel rComite2 = new Responsavel();
+					Responsavel rComite3 = new Responsavel();
+					
+					// Fabricio
+					rComite1 = rDao.findById((long) 4);
+					
+					takeBlipMB.sendWhatsAppMessage(rComite1,
+					"contrato_comite","",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// João
+					rComite2 = rDao.findById((long) 380);
+	
+					takeBlipMB.sendWhatsAppMessage(rComite2,
+					"contrato_comite","",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Sandro
+					rComite3 = rDao.findById((long) 2);
+					
+					takeBlipMB.sendWhatsAppMessage(rComite3,
+					"contrato_comite","",
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+				}			
+			}
+			
+			// Mensagem Aprovado Comite Ag Ccb
+			if (this.objetoContratoCobranca.isAprovadoComite() != statusContrato.isAprovadoComite()) {
+				if (this.objetoContratoCobranca.isAprovadoComite()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rCcb1 = new Responsavel();
+					Responsavel rCcb2 = new Responsavel();
+					Responsavel rCcb3 = new Responsavel();
+					Responsavel rCcb4 = new Responsavel();
+					Responsavel rCcb5 = new Responsavel();
+					Responsavel rCcb6 = new Responsavel();
+					
+					// Amanda
+					rCcb1 = rDao.findById((long) 621);
+					takeBlipMB.sendWhatsAppMessage(rCcb1,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+							
+					// Anna Flavia
+					rCcb2 = rDao.findById((long) 622);
+					takeBlipMB.sendWhatsAppMessage(rCcb2,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Flavia
+					rCcb3 = rDao.findById((long) 623);
+					takeBlipMB.sendWhatsAppMessage(rCcb3,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Juliana
+					rCcb4 = rDao.findById((long) 624);
+					takeBlipMB.sendWhatsAppMessage(rCcb4,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Luana
+					rCcb5 = rDao.findById((long) 625);
+					takeBlipMB.sendWhatsAppMessage(rCcb5,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Mauricio
+					rCcb6 = rDao.findById((long) 626);
+					takeBlipMB.sendWhatsAppMessage(rCcb6,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+				}
+			}
+			
+			// Mensagem AG ASSINATURA
+			if (this.objetoContratoCobranca.isCcbPronta() != statusContrato.isCcbPronta()) {
+				if (this.objetoContratoCobranca.isCcbPronta()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"contrato_pronto_para_assinatura_operacao",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					
+					// envia para o gerente do responsável
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"contrato_pronto_para_assinatura_operacao",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					}
+				}
+			}
+		
+			// Mensagem ASSINADO / AG REGISTRO
+			if (this.objetoContratoCobranca.isAgAssinatura() != statusContrato.isAgAssinatura()) {
+				if (!this.objetoContratoCobranca.isAgAssinatura()) {
+					if (statusContrato.isAgRegistro()) {
+						TakeBlipMB takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"contrato_dado_entrada_cartorio",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+						// envia para o gerente do responsável
+						if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+							takeBlipMB = new TakeBlipMB();
+							takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+							"contrato_dado_entrada_cartorio",
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						}
+					}				
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "WhatsApp: " + e, ""));
 		}
 	}
 	
@@ -3637,6 +3643,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setLeadCompleto(true);
 			if (this.objetoContratoCobranca.getLeadCompletoData() == null) {
 				this.objetoContratoCobranca.setLeadCompletoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getLeadCompletoData());
 				this.objetoContratoCobranca.setLeadCompletoUsuario(getNomeUsuarioLogado());
 			}
 		}
@@ -4483,7 +4490,7 @@ public class ContratoCobrancaMB {
 	 ***********************************************************/
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();
+		this.listPagadores = pagadorRecebedorDao.findAll();
 		this.listRecebedores = this.listPagadores;
 
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
@@ -6192,7 +6199,7 @@ public class ContratoCobrancaMB {
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
-			System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
 
 			if (contratos.getDataUltimaAtualizacao() != null) {
 				if (getDifferenceDays(contratos.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
@@ -6203,7 +6210,11 @@ public class ContratoCobrancaMB {
 					}
 				}
 			} else {
-				baixarPreContrato();
+				if (!contratos.isContratoResgatadoBaixar()) {
+					baixarPreContrato();
+				} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 30) {
+					baixarPreContrato();
+				}
 			}
 		}
 	}
