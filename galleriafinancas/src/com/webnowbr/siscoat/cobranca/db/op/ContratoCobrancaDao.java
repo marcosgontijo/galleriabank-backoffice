@@ -7,10 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.engine.JoinSequence.Join;
 import org.jboss.resteasy.util.CommitHeaderOutputStream;
@@ -7231,7 +7235,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS =  " select "
-			+ "	c.id "
+			+ "	c.id, ContratoResgatadoBaixar, ContratoResgatadoData"
 			+ " FROM "
 			+ "	cobranca.contratocobranca c "
 			+ " WHERE "
@@ -7254,6 +7258,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
+				TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				Calendar dataHoje = Calendar.getInstance(zone, locale);
+				Date auxDataHoje = dataHoje.getTime();
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS);
@@ -7264,8 +7272,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						ContratoCobranca contratoCobranca = new ContratoCobranca();
-						contratoCobranca.setId(rs.getLong("id"));
-						objects.add(contratoCobranca);												
+						Date data = rs.getDate("ContratoResgatadoData");
+						boolean baixar = true;
+						if (rs.getBoolean("ContratoResgatadoBaixar")) {
+							if (getDifferenceDays(data, auxDataHoje) <= 30) {
+								baixar = false;
+							}
+						}
+						
+						if(baixar) {
+							contratoCobranca.setId(rs.getLong("id"));
+							objects.add(contratoCobranca);	
+						}										
 					}
 	
 				} finally {
@@ -7275,5 +7293,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
+	
+	public static long getDifferenceDays(Date d1, Date d2) {
+	    long diff = d2.getTime() - d1.getTime();
+	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	    return diff;
+	}
 	
 }

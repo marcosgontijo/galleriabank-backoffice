@@ -93,6 +93,10 @@ public class DashboardMB {
 	BigDecimal maiorTaxaPreAprovada;
 	BigDecimal mediaTaxaPreAprovada;
 	
+	BigDecimal menorTaxaPajuLado;
+	BigDecimal maiorTaxaPajuLado;
+	BigDecimal mediaTaxaPajuLado;
+	
 	BigDecimal menorTaxaAprovadaComite;
 	BigDecimal maiorTaxaAprovadaComite;
 	BigDecimal mediaTaxaAprovadaComite;
@@ -100,6 +104,10 @@ public class DashboardMB {
 	BigDecimal menorTaxaCcb;
 	BigDecimal maiorTaxaCcb;
 	BigDecimal mediaTaxaCcb;
+	
+	BigDecimal menorTaxaRegistro;
+	BigDecimal maiorTaxaRegistro;
+	BigDecimal mediaTaxaRegistro;
 	
 	private List<ContratoCobranca> listaContratosConsulta;
 	 
@@ -193,8 +201,10 @@ public class DashboardMB {
 		
 		DashboardDao dDao = new DashboardDao();
 		List<ContratoCobranca> taxasPreAprovado = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasPajuLaudo = new ArrayList<ContratoCobranca>();	
 		List<ContratoCobranca> taxasAprovadaComite = new ArrayList<ContratoCobranca>();	
 		List<ContratoCobranca> taxasCcb = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasRegistro = new ArrayList<ContratoCobranca>();
 		
 		for (Dashboard dash : this.getDashContratos()) {
 			
@@ -240,6 +250,11 @@ public class DashboardMB {
 				taxasPreAprovado.addAll(taxasContratoPreAprovado); 
 			}
 			
+			List<ContratoCobranca> taxasContratoPajuLaudo = dDao.getTaxasPreAprovadaDashboard(dash.getListaBoletosPagos());		
+			if (!CommonsUtil.semValor(taxasContratoPajuLaudo)) {
+				taxasPajuLaudo.addAll(taxasContratoPajuLaudo); 
+			}
+			
 			List<ContratoCobranca> taxasContratoAprovadaComite = dDao.getTaxasAprovadaComiteDashboard(dash.getListaComite());		
 			if (!CommonsUtil.semValor(taxasContratoAprovadaComite)) {
 				taxasAprovadaComite.addAll(taxasContratoAprovadaComite); 
@@ -249,11 +264,20 @@ public class DashboardMB {
 			if (!CommonsUtil.semValor(taxasContratoCcb)) {
 				taxasCcb.addAll(taxasContratoCcb); 
 			}
+			
+			List<ContratoCobranca> taxasContratoRegistro = dDao.getTaxasCcb(dash.getListaRegistrados());	
+			if (!CommonsUtil.semValor(taxasContratoRegistro)) {
+				taxasRegistro.addAll(taxasContratoRegistro); 
+			}
 		}
 
 		menorTaxaPreAprovada = CalcularMinimoPreAprovado(taxasPreAprovado);
 		maiorTaxaPreAprovada = CalcularMaximoPreAprovado(taxasPreAprovado);
 		mediaTaxaPreAprovada = CalcularMediaPreAprovado(taxasPreAprovado);
+		
+		menorTaxaPajuLado = CalcularMinimoPreAprovado(taxasPajuLaudo);
+		maiorTaxaPajuLado = CalcularMaximoPreAprovado(taxasPajuLaudo);
+		mediaTaxaPajuLado = CalcularMediaPreAprovado(taxasPajuLaudo);
 		
 		menorTaxaAprovadaComite = CalcularMinimoComite(taxasAprovadaComite);
 		maiorTaxaAprovadaComite = CalcularMaximoComite(taxasAprovadaComite);
@@ -262,6 +286,10 @@ public class DashboardMB {
 		menorTaxaCcb = CalcularMinimoCcb(taxasCcb);
 		maiorTaxaCcb = CalcularMaximoCcb(taxasCcb);
 		mediaTaxaCcb = CalcularMediaCcb(taxasCcb);
+		
+		menorTaxaRegistro = CalcularMinimoCcb(taxasRegistro);
+		maiorTaxaRegistro = CalcularMaximoCcb(taxasRegistro);
+		mediaTaxaRegistro = CalcularMediaCcb(taxasRegistro);
 	}
 	
 	private BigDecimal CalcularMediaPreAprovado(List<ContratoCobranca> lista) {
@@ -1163,5 +1191,53 @@ public class DashboardMB {
 
 	public void setMediaTaxaCcb(BigDecimal mediaTaxaCcb) {
 		this.mediaTaxaCcb = mediaTaxaCcb;
+	}
+
+	public BigDecimal getMenorTaxaPajuLado() {
+		return menorTaxaPajuLado;
+	}
+
+	public void setMenorTaxaPajuLado(BigDecimal menorTaxaPajuLado) {
+		this.menorTaxaPajuLado = menorTaxaPajuLado;
+	}
+
+	public BigDecimal getMaiorTaxaPajuLado() {
+		return maiorTaxaPajuLado;
+	}
+
+	public void setMaiorTaxaPajuLado(BigDecimal maiorTaxaPajuLado) {
+		this.maiorTaxaPajuLado = maiorTaxaPajuLado;
+	}
+
+	public BigDecimal getMediaTaxaPajuLado() {
+		return mediaTaxaPajuLado;
+	}
+
+	public void setMediaTaxaPajuLado(BigDecimal mediaTaxaPajuLado) {
+		this.mediaTaxaPajuLado = mediaTaxaPajuLado;
+	}
+
+	public BigDecimal getMenorTaxaRegistro() {
+		return menorTaxaRegistro;
+	}
+
+	public void setMenorTaxaRegistro(BigDecimal menorTaxaRegistro) {
+		this.menorTaxaRegistro = menorTaxaRegistro;
+	}
+
+	public BigDecimal getMaiorTaxaRegistro() {
+		return maiorTaxaRegistro;
+	}
+
+	public void setMaiorTaxaRegistro(BigDecimal maiorTaxaRegistro) {
+		this.maiorTaxaRegistro = maiorTaxaRegistro;
+	}
+
+	public BigDecimal getMediaTaxaRegistro() {
+		return mediaTaxaRegistro;
+	}
+
+	public void setMediaTaxaRegistro(BigDecimal mediaTaxaRegistro) {
+		this.mediaTaxaRegistro = mediaTaxaRegistro;
 	}
 }

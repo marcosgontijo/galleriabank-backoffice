@@ -99,22 +99,22 @@
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="Total preaprovado">
-						<p:commandLink onclick="PF('listaContratos').show()"
-							update="contratosForm">
+						<p:commandLink onclick="PF('listaContratosAprovados').show()"
+							update="contratosFormAprovados">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaPreAprovados}" />
 							<h:outputText value="#{dashContratos.contratosPreAprovados}" />
 						</p:commandLink>						
 					</p:column>
-					<p:column style="text-align: center;" headerText=" Valor Total">
+					<p:column style="text-align: center;" headerText="Valor Total">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="Pedido Laudo e Paju">				
-						<p:commandLink onclick="PF('listaContratos').show()"
-							update="contratosForm">
+						<p:commandLink onclick="PF('listaContratosAprovados').show()"
+							update="contratosFormAprovados">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaBoletosPagos}" />
@@ -127,8 +127,8 @@
 					</p:column>
 										
 					<p:column style="text-align: center;" headerText="Comitê">
-						<p:commandLink onclick="PF('listaContratos').show()"
-							update="contratosForm">
+						<p:commandLink onclick="PF('listaContratosComite').show()"
+							update="contratosFormComite">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaComite}" />
@@ -141,8 +141,8 @@
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="CCBs Emitidas">	
-						<p:commandLink onclick="PF('listaContratos').show()"
-							update="contratosForm">
+						<p:commandLink onclick="PF('listaContratosCcb').show()"
+							update="contratosFormCcb">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaCcbsEmitidas}" />
@@ -155,8 +155,8 @@
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="CCBs Pagas">
-						<p:commandLink onclick="PF('listaContratos').show()"
-							update="contratosForm">
+						<p:commandLink onclick="PF('listaContratosCcb').show()"
+							update="contratosFormCcb">
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
 								value="#{dashContratos.listaRegistrados}" />
@@ -220,9 +220,22 @@
 									<h:outputText value="#{dashboardMB.totalValorBoletosPagos}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
-								<h:outputText value=""/>
-								<h:outputText value=""/>
-								<h:outputText value=""/>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMB.menorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.maiorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.mediaTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
 								
 								<h:outputText value="Comitê: " />
 								<h:outputText value="#{dashboardMB.totalContratosComite}" />
@@ -270,6 +283,7 @@
 									<h:outputText value="%" />
 								</h:panelGroup>
 								
+								
 								<h:outputText value="CCBs Pagas: " />
 								<h:outputText value="#{dashboardMB.totalContratosRegistrados}" />
 								<h:panelGroup>
@@ -277,9 +291,21 @@
 									<h:outputText value="#{dashboardMB.totalValorContratosRegistrados}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
-								<h:outputText value=""/>
-								<h:outputText value=""/>
-								<h:outputText value=""/>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMB.menorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.maiorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMB.mediaTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
 								
 							</h:panelGrid>
 						</h:panelGroup>
@@ -322,23 +348,21 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-	
+
 		<p:dialog header="Lista de contratos" overflow="auto"
 			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
 			width="800" minWidth="800">
-			<h:form id="contratosForm" >
+			<h:form id="contratosForm">
 				<p:dataTable var="contratos" rows="10" paginator="true"
 					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 					value="#{dashboardMB.listaContratosConsulta}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-
-					<p:column style="text-align: center"  headerText="Numero Contrato"
+					<p:column style="text-align: center" headerText="Numero Contrato"
 						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
 						<p:outputLabel value="#{contratos.numeroContrato}"
 							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
 					</p:column>
-					
-					<p:column style="text-align: center"  headerText="Pagador"
+					<p:column style="text-align: center" headerText="Pagador"
 						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
 						<p:outputLabel value="#{contratos.pagador.nome}"
 							style="FONT-SIZE: 10pt;width:100px;" />
@@ -346,6 +370,113 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-		
+
+		<p:dialog header="Lista de contratos Pré-Arovados" overflow="auto"
+			widgetVar="listaContratosAprovados" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormAprovados">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMB.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa Pré-Aprovada"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.taxaPreAprovada}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center"
+						headerText="Valor Pré-Aprovada "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.quantoPrecisa}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos Comitê" overflow="auto"
+			widgetVar="listaContratosComite" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormComite">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMB.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa Comite"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.taxaAprovada}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Valor Comite "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.valorAprovadoComite}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos CCB" overflow="auto"
+			widgetVar="listaContratosCcb" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormCcb">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMB.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa CCB"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.txJurosParcelas}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Valor CCB "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.valorCCB}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

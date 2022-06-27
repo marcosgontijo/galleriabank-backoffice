@@ -638,7 +638,6 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 							listaCadastrados = Arrays.asList(rs.getString("numerosCadastrados").split(Pattern.quote("#$&!")));
 							dashboard.setListaCadastrados(new ArrayList<ContratoCobranca>());
 							
-							
 							for(String cadastro : listaCadastrados) {
 								List<String> contrato = new ArrayList<String>();
 								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
@@ -649,7 +648,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								coco.getPagador().setNome(contrato.get(1));
 								
 								dashboard.getListaCadastrados().add(coco);
-							}
+							}				
+							dashboard.setListaCadastrados(getTaxasDashboard(dashboard.getListaCadastrados()));
 						}
 						
 						List<String> listaPreAprovados = new ArrayList<String>();
@@ -668,6 +668,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaPreAprovados().add(coco);
 							}
+							
+							dashboard.setListaPreAprovados(getTaxasDashboard(dashboard.getListaPreAprovados()));
 						}
 						
 						List<String> listaBoletosPagos = new ArrayList<String>();
@@ -686,6 +688,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaBoletosPagos().add(coco);
 							}
+							dashboard.setListaBoletosPagos(getTaxasDashboard(dashboard.getListaBoletosPagos()));
 						}
 						
 						List<String> listaCcbsEmitidas = new ArrayList<String>();
@@ -704,6 +707,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaCcbsEmitidas().add(coco);
 							}
+							
+							dashboard.setListaCcbsEmitidas(getTaxasDashboard(dashboard.getListaCcbsEmitidas()));
 						}
 						
 						List<String> listaRegistrados = new ArrayList<String>();
@@ -722,6 +727,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaRegistrados().add(coco);
 							}
+							dashboard.setListaRegistrados(getTaxasDashboard(dashboard.getListaRegistrados()));
 						}
 						
 						List<String> listaComite = new ArrayList<String>();
@@ -740,6 +746,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaComite().add(coco);
 							}
+							dashboard.setListaComite(getTaxasDashboard(dashboard.getListaComite()));
 						}
 
 						objects.add(dashboard);
@@ -1404,6 +1411,8 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaCadastrados().add(coco);
 							}
+							
+							dashboard.setListaCadastrados(getTaxasDashboard(dashboard.getListaCadastrados()));
 						}
 						
 						List<String> listaPreAprovados = new ArrayList<String>();
@@ -1422,6 +1431,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaPreAprovados().add(coco);
 							}
+							dashboard.setListaPreAprovados(getTaxasDashboard(dashboard.getListaPreAprovados()));
 						}
 						
 						List<String> listaBoletosPagos = new ArrayList<String>();
@@ -1440,6 +1450,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaBoletosPagos().add(coco);
 							}
+							dashboard.setListaBoletosPagos(getTaxasDashboard(dashboard.getListaBoletosPagos()));
 						}
 						
 						List<String> listaCcbsEmitidas = new ArrayList<String>();
@@ -1458,6 +1469,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaCcbsEmitidas().add(coco);
 							}
+							dashboard.setListaCcbsEmitidas(getTaxasDashboard(dashboard.getListaCcbsEmitidas()));
 						}
 						
 						List<String> listaRegistrados = new ArrayList<String>();
@@ -1476,6 +1488,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaRegistrados().add(coco);
 							}
+							dashboard.setListaRegistrados(getTaxasDashboard(dashboard.getListaRegistrados()));
 						}
 						
 						List<String> listaComite = new ArrayList<String>();
@@ -1494,6 +1507,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								
 								dashboard.getListaComite().add(coco);
 							}
+							dashboard.setListaComite(getTaxasDashboard(dashboard.getListaComite()));
 						}
 
 						objects.add(dashboard);
@@ -1506,7 +1520,6 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			}
 		});
 	}
-	
 	
 	private static final String QUERY_DASH_CONTRATOS_APENAS_GERENTE =  " select "
 			+ "	IDGERENTE, "
@@ -1811,8 +1824,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "	NOMEGerente "
 			+ " order by "
 			+ "	IDGERENTE asc";
-	
-	
+		
 	private static final String QUERY_DASH_CONTRATOS_APENAS_GERENTE_POR_STATUS =  " select "
 			+ "	IDGERENTE, "
 			+ "	NOMEGerente, "
@@ -2117,9 +2129,77 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " order by "
 			+ "	IDGERENTE asc ";
 	
+	private static final String QUERY_TAXAS_DASHBOARD =  " select taxapreaprovada, taxaaprovada, txjurosparcelas, valoraprovadocomite , quantoprecisa , valorccb, p.nome, c.numerocontrato"
+			+ "	from cobranca.contratocobranca c"
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "	p.id = c.pagador ";
 	
-	private static final String QUERY_TAXAS_DASHBOARD =  " select taxapreaprovada, taxaaprovada, txjurosparcelas, valoraprovadocomite , quantoprecisa , valorccb "
-			+ "	from cobranca.contratocobranca c ";
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getTaxasDashboard(List<ContratoCobranca> listaContratos) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();	
+				String query = QUERY_TAXAS_DASHBOARD;
+				String queryContratos = " where 1 = 1 and (";
+				if (!CommonsUtil.semValor(listaContratos)) {
+					boolean iniciado = false;
+					for( ContratoCobranca contrato : listaContratos) {
+						if(!iniciado) {
+							queryContratos = queryContratos + " numerocontrato =  '" + contrato.getNumeroContrato() +"' ";
+							iniciado = true;
+						} else {
+							queryContratos = queryContratos + " or numerocontrato =  '" + contrato.getNumeroContrato() +"'";
+						}					
+					}
+				} else {
+					queryContratos = queryContratos + " numerocontrato =  '00000' ";
+				}
+				queryContratos = queryContratos + ")";
+				query = query + queryContratos;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();					
+					while (rs.next()) {
+						ContratoCobranca coco = new ContratoCobranca();
+						
+						coco.setPagador(new PagadorRecebedor());
+						coco.setNumeroContrato(rs.getString("numerocontrato"));
+						coco.getPagador().setNome(rs.getString("nome"));
+						
+						if(!CommonsUtil.semValor(rs.getBigDecimal("taxapreaprovada"))) {
+							coco.setTaxaPreAprovada(rs.getBigDecimal("taxapreaprovada"));
+						}
+						if(!CommonsUtil.semValor(rs.getBigDecimal("quantoPrecisa"))) {
+							coco.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
+						}
+						if(!CommonsUtil.semValor(rs.getBigDecimal("taxaaprovada"))) {
+							coco.setTaxaAprovada(rs.getBigDecimal("taxaaprovada"));
+						}	
+						if(!CommonsUtil.semValor(rs.getBigDecimal("valoraprovadocomite"))) {
+							coco.setValorAprovadoComite(rs.getBigDecimal("valoraprovadocomite"));
+						}
+						if(!CommonsUtil.semValor(rs.getBigDecimal("txjurosparcelas"))) {
+							coco.setTxJurosParcelas(rs.getBigDecimal("txjurosparcelas"));
+						}	
+						if(!CommonsUtil.semValor(rs.getBigDecimal("valorccb"))) {
+							coco.setValorCCB(rs.getBigDecimal("valorccb"));
+						}
+						
+						objects.add(coco);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> getTaxasPreAprovadaDashboard(List<ContratoCobranca> listaContratos) {

@@ -6201,18 +6201,18 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
 			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
 
-			if (contratos.getDataUltimaAtualizacao() != null) {
-				if (getDifferenceDays(contratos.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
-					if (!contratos.isContratoResgatadoBaixar()) {
+			if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
+				if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
+					if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 						baixarPreContrato();
-					} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 30) {
+					} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
 						baixarPreContrato();
 					}
 				}
 			} else {
-				if (!contratos.isContratoResgatadoBaixar()) {
+				if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 					baixarPreContrato();
-				} else if (getDifferenceDays(contratos.getContratoResgatadoData(), auxDataHoje) > 30) {
+				} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
 					baixarPreContrato();
 				}
 			}
@@ -6939,8 +6939,7 @@ public class ContratoCobrancaMB {
 		UserDao u = new UserDao();
 		usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 		
-		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")
-				 || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Pré-Aprovada")) {
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")) {
 			if(usuarioLogado.isComiteConsultar()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			} else {
