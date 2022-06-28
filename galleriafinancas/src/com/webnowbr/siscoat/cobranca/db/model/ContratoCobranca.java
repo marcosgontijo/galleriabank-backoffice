@@ -353,6 +353,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean pedidoLaudoPajuComercial;
 	private String pedidoLaudoPajuComercialUsuario;
 	
+	private Date pedidoPajuComercialData;
+	private boolean pedidoPajuComercial;
+	private String pedidoPajuComercialUsuario;
+	
 	private Date laudoRecebidoData;
 	private boolean laudoRecebido;
 	private String laudoRecebidoUsuario;
@@ -5049,6 +5053,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setPedidoLaudoUsuario(String pedidoLaudoUsuario) {
 		this.pedidoLaudoUsuario = pedidoLaudoUsuario;
+	}
+
+	public Date getPedidoPajuComercialData() {
+		return pedidoPajuComercialData;
+	}
+
+	public void setPedidoPajuComercialData(Date pedidoPajuComercialData) {
+		this.pedidoPajuComercialData = pedidoPajuComercialData;
+	}
+
+	public boolean isPedidoPajuComercial() {
+		return pedidoPajuComercial;
+	}
+
+	public void setPedidoPajuComercial(boolean pedidoPajuComercial) {
+		this.pedidoPajuComercial = pedidoPajuComercial;
+	}
+
+	public String getPedidoPajuComercialUsuario() {
+		return pedidoPajuComercialUsuario;
+	}
+
+	public void setPedidoPajuComercialUsuario(String pedidoPajuComercialUsuario) {
+		this.pedidoPajuComercialUsuario = pedidoPajuComercialUsuario;
 	}
 	
 	

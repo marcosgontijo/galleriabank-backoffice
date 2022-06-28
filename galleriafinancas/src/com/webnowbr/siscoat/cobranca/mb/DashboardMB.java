@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -92,6 +93,10 @@ public class DashboardMB {
 	BigDecimal maiorTaxaPreAprovada;
 	BigDecimal mediaTaxaPreAprovada;
 	
+	BigDecimal menorTaxaPajuLado;
+	BigDecimal maiorTaxaPajuLado;
+	BigDecimal mediaTaxaPajuLado;
+	
 	BigDecimal menorTaxaAprovadaComite;
 	BigDecimal maiorTaxaAprovadaComite;
 	BigDecimal mediaTaxaAprovadaComite;
@@ -99,6 +104,10 @@ public class DashboardMB {
 	BigDecimal menorTaxaCcb;
 	BigDecimal maiorTaxaCcb;
 	BigDecimal mediaTaxaCcb;
+	
+	BigDecimal menorTaxaRegistro;
+	BigDecimal maiorTaxaRegistro;
+	BigDecimal mediaTaxaRegistro;
 	
 	private List<ContratoCobranca> listaContratosConsulta;
 	 
@@ -191,9 +200,11 @@ public class DashboardMB {
 		this.totalValorContratosComite = BigDecimal.ZERO;
 		
 		DashboardDao dDao = new DashboardDao();
-		List<BigDecimal> taxasPreAprovado = new ArrayList<BigDecimal>();	
-		List<BigDecimal> taxasAprovadaComite = new ArrayList<BigDecimal>();	
-		List<BigDecimal> taxasCcb = new ArrayList<BigDecimal>();	
+		List<ContratoCobranca> taxasPreAprovado = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasPajuLaudo = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasAprovadaComite = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasCcb = new ArrayList<ContratoCobranca>();	
+		List<ContratoCobranca> taxasRegistro = new ArrayList<ContratoCobranca>();
 		
 		for (Dashboard dash : this.getDashContratos()) {
 			
@@ -234,48 +245,220 @@ public class DashboardMB {
 				this.totalValorContratosComite = totalValorContratosComite.add(dash.getValorContratosComite());
 			}
 			
-			List<BigDecimal> taxasContratoPreAprovado = dDao.getTaxasPreAprovadaDashboard(dash.getListaPreAprovados());		
+			List<ContratoCobranca> taxasContratoPreAprovado = dDao.getTaxasPreAprovadaDashboard(dash.getListaPreAprovados());		
 			if (!CommonsUtil.semValor(taxasContratoPreAprovado)) {
 				taxasPreAprovado.addAll(taxasContratoPreAprovado); 
 			}
 			
-			List<BigDecimal> taxasContratoAprovadaComite = dDao.getTaxasAprovadaComiteDashboard(dash.getListaComite());		
+			List<ContratoCobranca> taxasContratoPajuLaudo = dDao.getTaxasPreAprovadaDashboard(dash.getListaBoletosPagos());		
+			if (!CommonsUtil.semValor(taxasContratoPajuLaudo)) {
+				taxasPajuLaudo.addAll(taxasContratoPajuLaudo); 
+			}
+			
+			List<ContratoCobranca> taxasContratoAprovadaComite = dDao.getTaxasAprovadaComiteDashboard(dash.getListaComite());		
 			if (!CommonsUtil.semValor(taxasContratoAprovadaComite)) {
 				taxasAprovadaComite.addAll(taxasContratoAprovadaComite); 
 			}
 			
-			List<BigDecimal> taxasContratoCcb = dDao.getTaxasCcb(dash.getListaCcbsEmitidas());		
+			List<ContratoCobranca> taxasContratoCcb = dDao.getTaxasCcb(dash.getListaCcbsEmitidas());		
 			if (!CommonsUtil.semValor(taxasContratoCcb)) {
 				taxasCcb.addAll(taxasContratoCcb); 
 			}
+			
+			List<ContratoCobranca> taxasContratoRegistro = dDao.getTaxasCcb(dash.getListaRegistrados());	
+			if (!CommonsUtil.semValor(taxasContratoRegistro)) {
+				taxasRegistro.addAll(taxasContratoRegistro); 
+			}
 		}
+
+		menorTaxaPreAprovada = CalcularMinimoPreAprovado(taxasPreAprovado);
+		maiorTaxaPreAprovada = CalcularMaximoPreAprovado(taxasPreAprovado);
+		mediaTaxaPreAprovada = CalcularMediaPreAprovado(taxasPreAprovado);
 		
-		menorTaxaPreAprovada = Collections.min(taxasPreAprovado);
-		maiorTaxaPreAprovada = Collections.max(taxasPreAprovado);
-		mediaTaxaPreAprovada = CalcularMedia(taxasPreAprovado);
+		menorTaxaPajuLado = CalcularMinimoPreAprovado(taxasPajuLaudo);
+		maiorTaxaPajuLado = CalcularMaximoPreAprovado(taxasPajuLaudo);
+		mediaTaxaPajuLado = CalcularMediaPreAprovado(taxasPajuLaudo);
 		
-		menorTaxaAprovadaComite = Collections.min(taxasAprovadaComite);
-		maiorTaxaAprovadaComite = Collections.max(taxasAprovadaComite);
-		mediaTaxaAprovadaComite = CalcularMedia(taxasAprovadaComite);
+		menorTaxaAprovadaComite = CalcularMinimoComite(taxasAprovadaComite);
+		maiorTaxaAprovadaComite = CalcularMaximoComite(taxasAprovadaComite);
+		mediaTaxaAprovadaComite = CalcularMediaComite(taxasAprovadaComite);
+
+		menorTaxaCcb = CalcularMinimoCcb(taxasCcb);
+		maiorTaxaCcb = CalcularMaximoCcb(taxasCcb);
+		mediaTaxaCcb = CalcularMediaCcb(taxasCcb);
 		
-		menorTaxaCcb = Collections.min(taxasCcb);
-		maiorTaxaCcb = Collections.max(taxasCcb);
-		mediaTaxaCcb = CalcularMedia(taxasCcb);
+		menorTaxaRegistro = CalcularMinimoCcb(taxasRegistro);
+		maiorTaxaRegistro = CalcularMaximoCcb(taxasRegistro);
+		mediaTaxaRegistro = CalcularMediaCcb(taxasRegistro);
 	}
 	
-	private BigDecimal CalcularMedia(List<BigDecimal> lista) {
+	private BigDecimal CalcularMediaPreAprovado(List<ContratoCobranca> lista) {
 		BigDecimal soma = BigDecimal.ZERO;
-		for (BigDecimal valor : lista) {
-			soma = soma.add(valor);
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTaxaPreAprovada();
+			BigDecimal valorContrato = coco.getQuantoPrecisa();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
 		}
-		if(!CommonsUtil.semValor(lista.size())) {
-			BigDecimal media = soma.divide(BigDecimal.valueOf(lista.size()), MathContext.DECIMAL128);
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}	
+	private BigDecimal CalcularMediaComite(List<ContratoCobranca> lista) {
+		BigDecimal soma = BigDecimal.ZERO;
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTaxaAprovada();
+			BigDecimal valorContrato = coco.getValorAprovadoComite();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
+		}
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
 			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
 			return media;
 		} else {
 			return BigDecimal.ZERO;
 		}
 	}
+	private BigDecimal CalcularMediaCcb(List<ContratoCobranca> lista) {		
+		BigDecimal soma = BigDecimal.ZERO;
+		BigDecimal somaPeso = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal peso = BigDecimal.ZERO;
+			BigDecimal valor = BigDecimal.ZERO;
+			BigDecimal taxa = coco.getTxJurosParcelas();
+			BigDecimal valorContrato = coco.getValorCCB();
+			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
+				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
+				somaPeso = somaPeso.add(peso);
+				valor = taxa.multiply(peso);
+				soma = soma.add(valor);
+			}
+		}
+		if(!CommonsUtil.semValor(somaPeso)) {
+			BigDecimal media = soma.divide(somaPeso, MathContext.DECIMAL128);
+			media = media.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return media;
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
+
+	private BigDecimal CalcularMinimoPreAprovado(List<ContratoCobranca> lista) {
+		BigDecimal min = BigDecimal.valueOf(9999);
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.ZERO;
+			if(!CommonsUtil.semValor(coco.getTaxaPreAprovada())) {
+				tx = coco.getTaxaPreAprovada();
+			}
+			if(min.compareTo(tx) > 0) {
+				if(!CommonsUtil.semValor(tx)) {
+					min = tx;
+				}
+			}
+		}
+		if(CommonsUtil.mesmoValor(min, BigDecimal.valueOf(9999))) {
+			return BigDecimal.ZERO;
+		} else {
+			return min;
+		}
+	}
+	private BigDecimal CalcularMinimoComite(List<ContratoCobranca> lista) {
+		BigDecimal min = BigDecimal.valueOf(9999);
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.valueOf(9999);
+			if(!CommonsUtil.semValor(coco.getTaxaAprovada())) {
+				tx = coco.getTaxaAprovada();
+			}
+			if(min.compareTo(tx) > 0) {
+				min = tx;
+			}
+		}
+		if(CommonsUtil.mesmoValor(min, BigDecimal.valueOf(9999))) {
+			return BigDecimal.ZERO;
+		} else {
+			return min;
+		}
+	}	
+	private BigDecimal CalcularMinimoCcb(List<ContratoCobranca> lista) {
+		BigDecimal min = BigDecimal.valueOf(9999);
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.valueOf(9999);
+			if(!CommonsUtil.semValor(coco.getTxJurosParcelas())) {
+				tx = coco.getTxJurosParcelas();
+			}
+			if(min.compareTo(tx) > 0) {
+				min = tx;
+			}
+		}
+		if(CommonsUtil.mesmoValor(min, BigDecimal.valueOf(9999))) {
+			return BigDecimal.ZERO;
+		} else {
+			return min;
+		}
+	}
+	
+	
+	private BigDecimal CalcularMaximoPreAprovado(List<ContratoCobranca> lista) {
+		BigDecimal max = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.ZERO;
+			if(!CommonsUtil.semValor(coco.getTaxaPreAprovada())) {
+				tx = coco.getTaxaPreAprovada();
+			}
+			if(max.compareTo(tx) < 0) {
+				max = tx;
+			}
+		}
+		return max;
+	}
+	private BigDecimal CalcularMaximoComite(List<ContratoCobranca> lista) {
+		BigDecimal max = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.ZERO;
+			if(!CommonsUtil.semValor(coco.getTaxaAprovada())) {
+				tx = coco.getTaxaAprovada();
+			}
+			if(max.compareTo(tx) < 0) {
+				max = tx;
+			}
+		}
+		return max;
+	}	
+	private BigDecimal CalcularMaximoCcb(List<ContratoCobranca> lista) {
+		BigDecimal max = BigDecimal.ZERO;
+		for (ContratoCobranca coco : lista) {
+			BigDecimal tx = BigDecimal.ZERO;
+			if(!CommonsUtil.semValor(coco.getTxJurosParcelas())) {
+				tx = coco.getTxJurosParcelas();
+			}
+			if(max.compareTo(tx) < 0) {
+				max = tx;
+			}
+		}
+		return max;
+	}
+	
+	
+	
 	
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
@@ -288,6 +471,7 @@ public class DashboardMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
+	
 	
 	private void formataCelula(Cell celula, XSSFWorkbook wb) {
 		 CellStyle cellStyle = wb.createCellStyle();
@@ -522,6 +706,7 @@ public class DashboardMB {
 	}
 */
     
+   
     public StreamedContent gerarCSVleads() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 		
@@ -656,6 +841,7 @@ public class DashboardMB {
 		return null;
     }
     
+    
     public StreamedContent gerarCSVContratosReprovados() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 		
@@ -734,7 +920,6 @@ public class DashboardMB {
 
 		return null;
     }
-    
     
 	public PieChartModel getPieOrigemLead() {
 		return pieOrigemLead;
@@ -1006,5 +1191,53 @@ public class DashboardMB {
 
 	public void setMediaTaxaCcb(BigDecimal mediaTaxaCcb) {
 		this.mediaTaxaCcb = mediaTaxaCcb;
+	}
+
+	public BigDecimal getMenorTaxaPajuLado() {
+		return menorTaxaPajuLado;
+	}
+
+	public void setMenorTaxaPajuLado(BigDecimal menorTaxaPajuLado) {
+		this.menorTaxaPajuLado = menorTaxaPajuLado;
+	}
+
+	public BigDecimal getMaiorTaxaPajuLado() {
+		return maiorTaxaPajuLado;
+	}
+
+	public void setMaiorTaxaPajuLado(BigDecimal maiorTaxaPajuLado) {
+		this.maiorTaxaPajuLado = maiorTaxaPajuLado;
+	}
+
+	public BigDecimal getMediaTaxaPajuLado() {
+		return mediaTaxaPajuLado;
+	}
+
+	public void setMediaTaxaPajuLado(BigDecimal mediaTaxaPajuLado) {
+		this.mediaTaxaPajuLado = mediaTaxaPajuLado;
+	}
+
+	public BigDecimal getMenorTaxaRegistro() {
+		return menorTaxaRegistro;
+	}
+
+	public void setMenorTaxaRegistro(BigDecimal menorTaxaRegistro) {
+		this.menorTaxaRegistro = menorTaxaRegistro;
+	}
+
+	public BigDecimal getMaiorTaxaRegistro() {
+		return maiorTaxaRegistro;
+	}
+
+	public void setMaiorTaxaRegistro(BigDecimal maiorTaxaRegistro) {
+		this.maiorTaxaRegistro = maiorTaxaRegistro;
+	}
+
+	public BigDecimal getMediaTaxaRegistro() {
+		return mediaTaxaRegistro;
+	}
+
+	public void setMediaTaxaRegistro(BigDecimal mediaTaxaRegistro) {
+		this.mediaTaxaRegistro = mediaTaxaRegistro;
 	}
 }

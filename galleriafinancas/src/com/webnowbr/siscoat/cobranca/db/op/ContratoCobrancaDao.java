@@ -7,10 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.engine.JoinSequence.Join;
 import org.jboss.resteasy.util.CommitHeaderOutputStream;
@@ -5213,7 +5217,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira,"
-							+ " status, pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial ";
+							+ " status, pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial ";
 						
 					query = query + " order by id desc";
 					
@@ -5256,6 +5260,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean("pedidoLaudoPajuComercial"));
 						contratoCobranca.setPedidoPreLaudo(rs.getBoolean("pedidoPreLaudo"));
 						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean("pedidoPreLaudoComercial"));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean("pedidoPajuComercial"));
 						
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
@@ -5277,7 +5282,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
-			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial  "
+			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial   "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -5315,7 +5320,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status,"
-							+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial  ";
+							+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial , pedidoPajuComercial   ";
 						
 					query = query + " order by id desc";
 					
@@ -5352,6 +5357,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAprovadoComite(rs.getBoolean("AprovadoComite"));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean("analisereprovada"));
 						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean("comentarioJuridicoEsteira"));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean("pedidoPajuComercial"));
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
@@ -5519,7 +5525,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
-			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial " + 
+			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial  " + 
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -5568,12 +5574,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = false ";
+								+ " and cadastroAprovadoValor = 'Aprovado' and (pagtoLaudoConfirmada = false or pedidoLaudo = false) ";
 					}
 					
 					if (tipoConsulta.equals("Análise Aprovada")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = false ";
+								+ " and cadastroAprovadoValor = 'Aprovado' and (pagtoLaudoConfirmada = false or pedidoLaudo = false) ";
 					}
 					
 					if (tipoConsulta.equals("Pedir Pré-Laudo")) {
@@ -5588,9 +5594,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (tipoConsulta.equals("Pedir PAJU")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true "
 								+ " and cadastroAprovadoValor = 'Aprovado'  "
-								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = true and pagtoLaudoConfirmada = false ";
+								+ " and pedidoPajuComercial = true and pagtoLaudoConfirmada = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. PAJU e Laudo")) {
@@ -5605,7 +5611,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if (tipoConsulta.equals("Ag. Laudo")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = false";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pedidoLaudo = true and laudoRecebido = false";
 					} 
 					
 					if (tipoConsulta.equals("Análise Comercial")) {
@@ -5750,6 +5756,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(30));
 						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(31));
 						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
 
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
@@ -7228,7 +7235,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}	
 	
 	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS =  " select "
-			+ "	c.id "
+			+ "	c.id, ContratoResgatadoBaixar, ContratoResgatadoData"
 			+ " FROM "
 			+ "	cobranca.contratocobranca c "
 			+ " WHERE "
@@ -7251,6 +7258,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
+				TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				Calendar dataHoje = Calendar.getInstance(zone, locale);
+				Date auxDataHoje = dataHoje.getTime();
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS);
@@ -7261,8 +7272,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						ContratoCobranca contratoCobranca = new ContratoCobranca();
-						contratoCobranca.setId(rs.getLong("id"));
-						objects.add(contratoCobranca);												
+						Date data = rs.getDate("ContratoResgatadoData");
+						boolean baixar = true;
+						if (rs.getBoolean("ContratoResgatadoBaixar")) {
+							if (getDifferenceDays(data, auxDataHoje) <= 30) {
+								baixar = false;
+							}
+						}
+						
+						if(baixar) {
+							contratoCobranca.setId(rs.getLong("id"));
+							objects.add(contratoCobranca);	
+						}										
 					}
 	
 				} finally {
@@ -7272,5 +7293,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
+	
+	public static long getDifferenceDays(Date d1, Date d2) {
+	    long diff = d2.getTime() - d1.getTime();
+	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	    return diff;
+	}
 	
 }
