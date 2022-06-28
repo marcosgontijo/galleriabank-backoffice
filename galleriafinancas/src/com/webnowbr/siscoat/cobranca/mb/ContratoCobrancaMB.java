@@ -3015,8 +3015,8 @@ public class ContratoCobrancaMB {
 					geraContratoCobrancaDetalhes(contratoCobrancaDao);
 				}
 				
-				if (!CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
-						|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), "")) {
+				if (!(CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
+						|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), ""))) {
 					this.objetoAnaliseComite.setDataComite(gerarDataHoje());
 					this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
 					this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
@@ -3979,6 +3979,10 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setDocumentosComite(false);
+		this.objetoAnaliseComite.setDataComite(gerarDataHoje());
+		this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
+		this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
+		this.objetoAnaliseComite = new AnaliseComite();		
 		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);

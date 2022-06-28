@@ -71,9 +71,21 @@
             <column name="idadeCompra"/>
         </property>   
         
-         <property name="nomeProprietario" type="java.lang.String">
+        <property name="nomeProprietario" type="java.lang.String">
             <column name="nomeProprietario"/>
         </property>  
-
+        
+        <property name="comprovanteMatriculaCheckList" type="boolean">
+			<column name="comprovanteMatriculaCheckList" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="comprovanteFotosImovelCheckList" type="boolean">
+			<column name="comprovanteFotosImovelCheckList" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="comprovanteIptuImovelCheckList" type="boolean">
+			<column name="comprovanteIptuImovelCheckList" not-null="true" default="false"/>
+		</property>	
+		
     </class>
 </hibernate-mapping>
