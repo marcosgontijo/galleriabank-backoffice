@@ -265,7 +265,7 @@
 								<shiro:hasAnyRoles name="PRECOBRANCA">
 									<p:selectBooleanButton id="pedidoPreLaudoComercialView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
-										onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:80px" disabled="true">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
@@ -273,7 +273,7 @@
 								<shiro:hasAnyRoles name="ROOT">
 									<p:selectBooleanButton id="pedidoPreLaudoComercial"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
-										onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=80px">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
@@ -453,7 +453,7 @@
 								<shiro:hasAnyRoles name="PRECOBRANCA">
 									<p:selectBooleanButton id="pagtoLaudoConfirmadaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-										onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:80px" disabled="true">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
@@ -461,7 +461,7 @@
 								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
 									<p:selectBooleanButton id="pagtoLaudoConfirmada"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-										onLabel="Pago" offLabel="Não Pago" onIcon="ui-icon-check"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:=80px">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
