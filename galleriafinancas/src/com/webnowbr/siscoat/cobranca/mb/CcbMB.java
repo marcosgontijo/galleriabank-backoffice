@@ -8507,9 +8507,8 @@ public class CcbMB {
 		return temIq;
 	}
 
-	public void setTemI(boolean temIq) {
+	public void setTemIq(boolean temIq) {
 		this.temIq = temIq;
-	}	
-	
+	}
 	
 }

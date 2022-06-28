@@ -2992,9 +2992,10 @@
 								<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
 									styleClass="labelBold" />
 								<h:panelGroup>
-									<p:inputText id="SeguradorNome"
+									<p:outputLabel id="SeguradorNome"
 										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
 										required="false" style="FONT-SIZE: 10pt;width:300px;" />
+									<p:spacer height="10" />
 									<p:commandButton
 										action="#{contratoCobrancaMB.pesquisaSegurado}"
 										icon="ui-icon ui-icon-circle-zoomin"
