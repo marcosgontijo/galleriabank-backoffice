@@ -145,17 +145,11 @@
 												<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 											</p:selectOneMenu>
 											
-											<p:outputLabel for="pedirLaudo"
-												value="Pedir Laudo" />
-											<p:selectBooleanCheckbox id="pedirLaudo"
+											<p:outputLabel for="pedirLaudoPaju"
+												value="Pedir Laudo + Paju" />
+											<p:selectBooleanCheckbox id="pedirLaudoPaju"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
-												disabled="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
-												
-											<p:outputLabel for="pedirPaju"
-												value="Pedir PAJU" />
-											<p:selectBooleanCheckbox id="pedirPaju"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}" 
-												disabled="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"/>																
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>													
 	
 										</h:panelGrid>
 									</ui:fragment>

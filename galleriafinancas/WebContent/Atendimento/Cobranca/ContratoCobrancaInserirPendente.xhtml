@@ -367,43 +367,45 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</h:panelGrid>
-							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-									-moz-border-radius: 5px;
-									border-radius: 5px; padding: 10px;">
-								<p:outputLabel styleClass="labelBold">Pedido PAJU Comercial</p:outputLabel>
-								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
-									<p:selectBooleanButton id="pedidoPajuComercialView"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
-										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT">
-									<p:selectBooleanButton id="pedidoPajuComercial"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
-										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:=60px">
-										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<p:spacer height="7"></p:spacer>
-								<p:spacer height="7"></p:spacer>
-								<p:spacer height="7"></p:spacer>
-								<p:outputLabel>Atualizado por: </p:outputLabel>
-								<p:spacer height="7"></p:spacer>
-								<h:outputText id="pedidoPajuComercialUsuario"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialUsuario}"
-									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-								<h:outputText id="pedidoPajuComercialData"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialData}"
-									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-									<f:convertDateTime locale="pt_BR" />
-									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</h:panelGrid>
+							<shiro:hasAnyRoles name="ROOT"> 
+								<h:panelGrid columns="2"
+									style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+									<p:outputLabel styleClass="labelBold">Pedido PAJU Comercial</p:outputLabel>
+									<p:spacer></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">
+										<p:selectBooleanButton id="pedidoPajuComercialView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+											<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT">
+										<p:selectBooleanButton id="pedidoPajuComercial"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px">
+											<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="pedidoPajuComercialUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+									<h:outputText id="pedidoPajuComercialData"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialData}"
+										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</h:panelGrid> 
+							</shiro:hasAnyRoles>
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -633,7 +635,7 @@
 						
 						<h:panelGrid columns="5" style="margin-top: 20px;">
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
@@ -770,7 +772,7 @@
 						
 						<h:panelGrid columns="4" style="margin-top:20px; margin-bottom: 20px;">
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
@@ -807,7 +809,7 @@
 								</h:outputText>
 							</h:panelGrid>
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
@@ -841,7 +843,7 @@
 								</h:outputText>
 							</h:panelGrid>
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>

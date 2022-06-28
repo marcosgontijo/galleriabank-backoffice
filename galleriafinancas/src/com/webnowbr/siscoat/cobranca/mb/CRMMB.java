@@ -494,10 +494,10 @@ public class CRMMB {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Ag. Pagto. Laudo");
+					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada");
 				} else {
 					if (usuarioLogado.getCodigoResponsavel() != null) {
-						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Ag. Pagto. Laudo"); 	 
+						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Aprovada"); 	 
 					}
 				}
 			} 

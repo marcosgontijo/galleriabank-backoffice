@@ -3186,7 +3186,8 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
+			//Mensagem de pré-Laudo
+			/*if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
 				if (!this.objetoContratoCobranca.getValorPreLaudo().equals(statusContrato.getValorPreLaudo())) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					// envia para o gerente do responsável
@@ -3226,7 +3227,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.getPagador().getNome(), "", "");
 					}
 				}
-			}
+			}*/
 			
 			// Mensagem PAJU E LAUDO RECEBIDO
 			if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
@@ -6939,7 +6940,9 @@ public class ContratoCobrancaMB {
 		UserDao u = new UserDao();
 		usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 		
-		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") || CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")) {
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite") 
+				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")
+				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Pré-Aprovada")) {
 			if(usuarioLogado.isComiteConsultar()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			} else {
@@ -7166,7 +7169,7 @@ public class ContratoCobrancaMB {
 						this.tituloTelaConsultaPreStatus = "Análise Comercial";
 					} else if(this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite()) {
 						this.tituloTelaConsultaPreStatus = "Pré-Comite";
-					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPagtoLaudoConfirmada()) {
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPedidoLaudoPajuComercial()) {
 						this.tituloTelaConsultaPreStatus = "Análise Pré-Aprovada";
 					}
 	
@@ -10336,7 +10339,7 @@ public class ContratoCobrancaMB {
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPedidoPreLaudoComercial() && !c.isPedidoPreLaudo()) {
+							&& c.isPedidoPreLaudoComercial()) {
 						c.setStatus("Pedir Pré-Laudo");
 					}
 					
@@ -10349,7 +10352,7 @@ public class ContratoCobrancaMB {
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPedidoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
+							&& c.isPedidoLaudoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
 						c.setStatus("Pedir PAJU");
 						if(!CommonsUtil.semValor(status)) {
 							status = status + " | ";

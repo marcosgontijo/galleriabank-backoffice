@@ -5572,20 +5572,20 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true and cadastroAprovadoValor = 'Pendente' ";
 					}
 					
-					if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
+					/*if (tipoConsulta.equals("Ag. Pagto. Laudo")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and (pagtoLaudoConfirmada = false or pedidoLaudo = false) ";
-					}
+					}*/
 					
 					if (tipoConsulta.equals("Análise Aprovada")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and (pagtoLaudoConfirmada = false or pedidoLaudo = false) ";
 					}
 					
-					if (tipoConsulta.equals("Pedir Pré-Laudo")) {
+					/*if (tipoConsulta.equals("Pedir Pré-Laudo")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pedidoPreLaudoComercial = true and pedidoPreLaudo = false ";
-					}
+					}*/
 					
 					if (tipoConsulta.equals("Pedir Laudo")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
@@ -5596,12 +5596,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Pedir PAJU")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true "
 								+ " and cadastroAprovadoValor = 'Aprovado'  "
-								+ " and pedidoPajuComercial = true and pagtoLaudoConfirmada = false ";
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. PAJU e Laudo")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and (laudoRecebido = false or pajurFavoravel = false) ";
+								+ " and cadastroAprovadoValor = 'Aprovado' and pedidoLaudoPajuComercial = true and (laudoRecebido = false or pajurFavoravel = false) ";
 					} 
 					
 					if (tipoConsulta.equals("Ag. PAJU")) {
