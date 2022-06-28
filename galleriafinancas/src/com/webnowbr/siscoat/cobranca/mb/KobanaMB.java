@@ -563,7 +563,7 @@ public class KobanaMB {
 		/*
 		Enviar este boleto por email para cliente e empresa?
 		 */
-		jsonBoleto.put("customer_ignore_email", true);
+		jsonBoleto.put("customer_ignore_email", false);
 		jsonBoleto.put("ignore_email", false);			
 		
 		/*Tipo de juros/mora:

@@ -106,7 +106,7 @@ public class PagadorRecebedorDao extends HibernateDao <PagadorRecebedor,Long> {
 
 					rs = ps.executeQuery();
 
-					if (rs.next()) {
+					while (rs.next()) {
 						listPagadorRecebedor.add(findById(rs.getLong(1)));										
 					}
 	

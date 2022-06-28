@@ -4482,7 +4482,7 @@ public class ContratoCobrancaMB {
 	 ***********************************************************/
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();
+		this.listPagadores = pagadorRecebedorDao.findAll();
 		this.listRecebedores = this.listPagadores;
 
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
