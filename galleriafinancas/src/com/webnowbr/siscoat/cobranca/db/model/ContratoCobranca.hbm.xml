@@ -1568,9 +1568,7 @@
 		<property name="comentarioJuridicoEsteiraUsuario" type="java.lang.String">
 			<column name="comentarioJuridicoEsteiraUsuario" />
 		</property>
-		
-		
-	
+
 		<property name="pedidoPreLaudoComercialData" type="java.util.Date">
 			<column name="pedidoPreLaudoComercialData" />
 		</property>
@@ -1582,9 +1580,7 @@
 		<property name="pedidoPreLaudoComercialUsuario" type="java.lang.String">
 			<column name="pedidoPreLaudoComercialUsuario" />
 		</property>
-	
-	
-	
+
 		<property name="pedidoPreLaudoData" type="java.util.Date">
 			<column name="pedidoPreLaudoData" />
 		</property>
@@ -1644,6 +1640,20 @@
 		<property name="pedidoPajuComercialUsuario" type="java.lang.String">
 			<column name="pedidoPajuComercialUsuario" />
 		</property>	
+		
+		
+		<property name="pendenciaLaudoPajuData" type="java.util.Date">
+			<column name="pendenciaLaudoPajuData" />
+		</property>
+		
+		<property name="pendenciaLaudoPaju" type="boolean">
+			<column name="pendenciaLaudoPaju" not-null="true" default="false" />
+		</property>	
+
+		<property name="pendenciaLaudoPajuUsuario" type="java.lang.String">
+			<column name="pendenciaLaudoPajuUsuario" />
+		</property>	
+		
 
 	</class>
 </hibernate-mapping>

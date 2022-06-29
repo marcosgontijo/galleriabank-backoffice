@@ -3805,6 +3805,19 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+		if (!this.objetoContratoCobranca.isPendenciaLaudoPaju()) {
+			this.objetoContratoCobranca.setPendenciaLaudoPajuData(null);
+			this.objetoContratoCobranca.setPendenciaLaudoPajuUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getPendenciaLaudoPajuData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPendenciaLaudoPajuData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPendenciaLaudoPajuData());
+				this.objetoContratoCobranca.setPendenciaLaudoPajuUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
 		if (!this.objetoContratoCobranca.isAnaliseComercial()) {
 			this.objetoContratoCobranca.setAnaliseComercialData(null);
 			this.objetoContratoCobranca.setAnaliseComercialUsuario(null);
@@ -4066,6 +4079,23 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
 
+	public String enviarLeadParaComercial() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		ResponsavelDao rDao = new ResponsavelDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setResponsavel(rDao.findById(selectedResponsavel.getId()));
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		clearSelectedLovs();
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
+	}
+	
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
 		ResponsavelDao rDao = new ResponsavelDao();
 		Responsavel responsavel = new Responsavel();
@@ -10390,6 +10420,11 @@ public class ContratoCobrancaMB {
 							&& c.isPagtoLaudoConfirmada() && c.isPedidoLaudo() && !c.isLaudoRecebido() && !c.isPajurFavoravel()) {
 						c.setStatus("Ag. PAJU e Laudo");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPendenciaLaudoPaju()
+							&& (!c.isLaudoRecebido() || !c.isPajurFavoravel()) ) {
+						c.setStatus("Laudo + Paju Pendente");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() &&  c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
@@ -10609,6 +10644,9 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Pedir PAJU")) {
 			this.tituloTelaConsultaPreStatus = "Pedir PAJU";
+		}
+		if (status.equals("Laudo Paju Pendente")) {
+			this.tituloTelaConsultaPreStatus = "Laudo + Paju Pendente";
 		}
 		if (status.equals("Ag. Pagto. Laudo")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Pagto. Laudo";

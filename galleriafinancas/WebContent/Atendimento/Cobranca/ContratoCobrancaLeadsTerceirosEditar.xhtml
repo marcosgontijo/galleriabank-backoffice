@@ -551,7 +551,7 @@
 
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 				<p:panel header="Check-List - Informações Adicionais"
-					style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
+					style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 					<p:panel id="AnaliseReprovadaPanel" style="border: none">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 							<p:outputLabel for="motivoReprovaSelectItem"  value="Motivo Reprovação: " styleClass="labelBold" />

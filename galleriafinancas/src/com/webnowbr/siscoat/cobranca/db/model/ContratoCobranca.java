@@ -364,6 +364,10 @@ public class ContratoCobranca implements Serializable {
 	private Date pajurFavoravelData;
 	private boolean pajurFavoravel;
 	private String pajurFavoravelUsuario;
+	
+	private Date pendenciaLaudoPajuData;
+	private boolean pendenciaLaudoPaju;
+	private String pendenciaLaudoPajuUsuario;
 
 	private Date analiseComercialData;
 	private boolean analiseComercial;
@@ -771,6 +775,7 @@ public class ContratoCobranca implements Serializable {
 		this.telefoneEmailDocumentosSecundarioCheckList = false;
 		this.temTxAdm = false;
 		this.pedidoLaudo = false;
+		this.pendenciaLaudoPaju = false;
 	}
 	
 	private void reordenaListagemDetalhes() {
@@ -4097,31 +4102,21 @@ public class ContratoCobranca implements Serializable {
 		return cobrarComissaoCliente;
 	}
 
-
-
 	public void setCobrarComissaoCliente(String cobrarComissaoCliente) {
 		this.cobrarComissaoCliente = cobrarComissaoCliente;
 	}
-
-
 
 	public BigDecimal getComissaoClientePorcentagem() {
 		return comissaoClientePorcentagem;
 	}
 
-
-
 	public void setComissaoClientePorcentagem(BigDecimal comissaoClientePorcentagem) {
 		this.comissaoClientePorcentagem = comissaoClientePorcentagem;
 	}
 
-
-
 	public BigDecimal getComissaoClienteValorFixo() {
 		return comissaoClienteValorFixo;
 	}
-
-
 
 	public void setComissaoClienteValorFixo(BigDecimal comissaoClienteValorFixo) {
 		this.comissaoClienteValorFixo = comissaoClienteValorFixo;
@@ -5077,6 +5072,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setPedidoPajuComercialUsuario(String pedidoPajuComercialUsuario) {
 		this.pedidoPajuComercialUsuario = pedidoPajuComercialUsuario;
+	}
+
+	public Date getPendenciaLaudoPajuData() {
+		return pendenciaLaudoPajuData;
+	}
+
+	public void setPendenciaLaudoPajuData(Date pendenciaLaudoPajuData) {
+		this.pendenciaLaudoPajuData = pendenciaLaudoPajuData;
+	}
+
+	public boolean isPendenciaLaudoPaju() {
+		return pendenciaLaudoPaju;
+	}
+
+	public void setPendenciaLaudoPaju(boolean pendenciaLaudoPaju) {
+		this.pendenciaLaudoPaju = pendenciaLaudoPaju;
+	}
+
+	public String getPendenciaLaudoPajuUsuario() {
+		return pendenciaLaudoPajuUsuario;
+	}
+
+	public void setPendenciaLaudoPajuUsuario(String pendenciaLaudoPajuUsuario) {
+		this.pendenciaLaudoPajuUsuario = pendenciaLaudoPajuUsuario;
 	}
 	
 	

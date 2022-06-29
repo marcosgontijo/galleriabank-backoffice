@@ -147,6 +147,15 @@
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
 										</shiro:hasAnyRoles>
+										
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}" 
+											onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
+										</shiro:hasAnyRoles>	
+										
 									</h:panelGrid>		
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -1232,7 +1241,7 @@
 				
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
-						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">		
+						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
