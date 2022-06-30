@@ -1577,7 +1577,7 @@
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
@@ -2992,9 +2992,10 @@
 								<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
 									styleClass="labelBold" />
 								<h:panelGroup>
-									<p:inputText id="SeguradorNome"
+									<p:outputLabel id="SeguradorNome"
 										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
 										required="false" style="FONT-SIZE: 10pt;width:300px;" />
+									<p:spacer height="10" />
 									<p:commandButton
 										action="#{contratoCobrancaMB.pesquisaSegurado}"
 										icon="ui-icon ui-icon-circle-zoomin"
@@ -3446,6 +3447,26 @@
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.taxaCheckListCoobrigadoCasado}" />
 								</h:panelGrid>
 							</h:panelGroup>
+						</h:panelGrid>
+					</h:panelGroup>
+			
+					<h:panelGroup id="CheckListDocumentosImovel">
+						<h:panelGrid columns="2">
+							<h:outputText value="Documentos do Imovél" styleClass="labelBold" />
+							<p:spacer></p:spacer>
+							<p:spacer width="10x"></p:spacer>
+							<p:spacer></p:spacer>
+							<h:outputText value="Tem Matrícula do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox 
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteMatriculaCheckList}" />
+
+							<h:outputText value="Tem Fotos do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteFotosImovelCheckList}" />
+
+							<h:outputText value="Tem IPTU do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteIptuImovelCheckList}" />
 						</h:panelGrid>
 					</h:panelGroup>
 				</h:panelGrid>

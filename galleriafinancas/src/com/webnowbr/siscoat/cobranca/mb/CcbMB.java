@@ -6973,7 +6973,7 @@ public class CcbMB {
 	
 	public String clearFieldsConsultarCcb() {
 		CcbDao ccbDao = new CcbDao();
-		listaCcbs = ccbDao.findAll();
+		listaCcbs = ccbDao.ConsultaCCBs();
 		
 		return "/Atendimento/Cobranca/CcbConsultar.xhtml";
 	}
@@ -6982,6 +6982,8 @@ public class CcbMB {
 		loadLovs();	
 		clearPagadorRecebedor();
 		clearDespesas();
+		CcbDao ccbDao = new CcbDao();
+		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -8507,9 +8509,8 @@ public class CcbMB {
 		return temIq;
 	}
 
-	public void setTemI(boolean temIq) {
+	public void setTemIq(boolean temIq) {
 		this.temIq = temIq;
-	}	
-	
+	}
 	
 }

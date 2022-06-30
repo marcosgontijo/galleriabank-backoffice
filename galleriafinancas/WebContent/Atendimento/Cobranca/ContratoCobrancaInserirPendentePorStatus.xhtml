@@ -141,12 +141,21 @@
 										</shiro:hasAnyRoles>	
 										
 										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}">PAJU Pedido: </p:outputLabel>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">PAJU Pedido: </p:outputLabel>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" 
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"/>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
 										</shiro:hasAnyRoles>
+										
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}" 
+											onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
+										</shiro:hasAnyRoles>	
+										
 									</h:panelGrid>		
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -299,21 +308,7 @@
 										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 									</p:commandButton>	
 									
-									<!-- -->							
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 2}">
-										<h:panelGrid columns="2"
-											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Voltar Contrato</p:outputLabel>
-											<p:spacer></p:spacer>
-											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-												<p:commandButton value="Voltar Contrato"
-													onclick="PF('voltarPreAprovado').show();" />
-											</shiro:hasAnyRoles>
-										</h:panelGrid>
-									</ui:fragment>
-									
+									<!-- -->										
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 10}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
@@ -1246,7 +1241,7 @@
 				
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
-						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">		
+						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
@@ -2667,9 +2662,10 @@
 								<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
 									styleClass="labelBold" />
 								<h:panelGroup>
-									<p:inputText id="SeguradorNome"
+									<p:outputLabel id="SeguradorNome"
 										value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
 										required="false" style="FONT-SIZE: 10pt;width:300px;" />
+									<p:spacer height="10" />
 									<p:commandButton
 										action="#{contratoCobrancaMB.pesquisaSegurado}"
 										icon="ui-icon ui-icon-circle-zoomin"
@@ -3194,7 +3190,29 @@
 							</h:panelGroup>
 						</h:panelGrid>
 					</h:panelGroup>
+					
+					<h:panelGroup id="CheckListDocumentosImovel">
+						<h:panelGrid columns="2">
+							<h:outputText value="Documentos do Imovél" styleClass="labelBold" />
+							<p:spacer></p:spacer>
+							<p:spacer width="10x"></p:spacer>
+							<p:spacer></p:spacer>
+							<h:outputText value="Tem Matrícula do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox 
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteMatriculaCheckList}" />
+
+							<h:outputText value="Tem Fotos do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteFotosImovelCheckList}" />
+
+							<h:outputText value="Tem IPTU do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteIptuImovelCheckList}" />
+						</h:panelGrid>
+					</h:panelGroup>
 				</h:panelGrid>
+				
+				
 
 
 				<p:dataView var="socio" id="CheckListDocumentosSocios"

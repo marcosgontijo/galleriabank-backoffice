@@ -1069,7 +1069,7 @@
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada == true}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
 							<h:panelGroup>
 								<p:outputLabel for="dataVistoria" value="Data Vistoria Imóvel: "
@@ -2163,6 +2163,26 @@
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.taxaCheckListCoobrigadoCasado}" />
 								</h:panelGrid>
 							</h:panelGroup>
+						</h:panelGrid>
+					</h:panelGroup>
+				
+					<h:panelGroup id="CheckListDocumentosImovel">
+						<h:panelGrid columns="2">
+							<h:outputText value="Documentos do Imovél" styleClass="labelBold" />
+							<p:spacer></p:spacer>
+							<p:spacer width="10x"></p:spacer>
+							<p:spacer></p:spacer>
+							<h:outputText value="Tem Matrícula do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteMatriculaCheckList}" />
+
+							<h:outputText value="Tem Fotos do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteFotosImovelCheckList}" />
+
+							<h:outputText value="Tem IPTU do Imóvel? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox disabled="true"
+								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteIptuImovelCheckList}" />
 						</h:panelGrid>
 					</h:panelGroup>
 				</h:panelGrid>

@@ -38,12 +38,17 @@ public class ImovelCobranca implements Serializable {
 	private Date dataCompra;
 	private String idadeCompra;
 	private String nomeProprietario;
-			
+	private boolean comprovanteMatriculaCheckList;
+	private boolean comprovanteFotosImovelCheckList;
+	private boolean comprovanteIptuImovelCheckList;
+	
 	public ImovelCobranca(){
+		resetarBololean();
 	}
 	
 	public ImovelCobranca(long id, String numeroMatricula, String nome, String endereco, String bairro, String complemento,
 						 String cidade, String estado, String telResidencial, String observacao, String cep){
+		resetarBololean();
 		this.id = id;
 		this.numeroMatricula = numeroMatricula;
 		this.nome = nome;
@@ -68,6 +73,12 @@ public class ImovelCobranca implements Serializable {
 		idadeLong = idadeLong / 30;
 		idadeLong = idadeLong / 12;
 	    this.setIdadeCompra(CommonsUtil.stringValue(idadeLong));
+	}
+	
+	public void resetarBololean() {
+		this.comprovanteMatriculaCheckList = false;
+		this.comprovanteFotosImovelCheckList = false;
+		this.comprovanteIptuImovelCheckList = false;
 	}
 	
 	/**
@@ -358,7 +369,28 @@ public class ImovelCobranca implements Serializable {
 	public void setNomeProprietario(String nomeProprietario) {
 		this.nomeProprietario = nomeProprietario;
 	}
-	
-	
-	
+
+	public boolean isComprovanteMatriculaCheckList() {
+		return comprovanteMatriculaCheckList;
+	}
+
+	public void setComprovanteMatriculaCheckList(boolean comprovanteMatriculaCheckList) {
+		this.comprovanteMatriculaCheckList = comprovanteMatriculaCheckList;
+	}
+
+	public boolean isComprovanteFotosImovelCheckList() {
+		return comprovanteFotosImovelCheckList;
+	}
+
+	public void setComprovanteFotosImovelCheckList(boolean comprovanteFotosImovelCheckList) {
+		this.comprovanteFotosImovelCheckList = comprovanteFotosImovelCheckList;
+	}
+
+	public boolean isComprovanteIptuImovelCheckList() {
+		return comprovanteIptuImovelCheckList;
+	}
+
+	public void setComprovanteIptuImovelCheckList(boolean comprovanteIptuImovelCheckList) {
+		this.comprovanteIptuImovelCheckList = comprovanteIptuImovelCheckList;
+	}
 }
