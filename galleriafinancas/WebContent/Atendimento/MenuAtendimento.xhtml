@@ -26,6 +26,10 @@
 									action="#{contasAPagarMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+								<p:menuitem value="Teste IPCA V2"
+									action="#{simulacaoIPCACalculoV2.calcularIPVAv2}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
 							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas Pagas"
