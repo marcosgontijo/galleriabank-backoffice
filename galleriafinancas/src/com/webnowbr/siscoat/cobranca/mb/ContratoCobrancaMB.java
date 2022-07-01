@@ -3029,7 +3029,14 @@ public class ContratoCobrancaMB {
 						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
 								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
-								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
+								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQuantoPrecisa(), BigInteger.valueOf(300000)) 
+										&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE)) {
+									this.objetoContratoCobranca.setAprovadoComite(true);
+									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+								}
+								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2)) 
+										|| ((this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(300000)) <= 0 ) 
+												&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE))) {
 									this.objetoContratoCobranca.setAprovadoComite(true);
 									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 								}
@@ -3185,49 +3192,6 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-			
-			//Mensagem de pré-Laudo
-			/*if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorPreLaudo())) {
-				if (!this.objetoContratoCobranca.getValorPreLaudo().equals(statusContrato.getValorPreLaudo())) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-						takeBlipMB = new TakeBlipMB();
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"pre_laudo_inserido",
-						this.objetoContratoCobranca.getNumeroContrato(),
-						this.objetoContratoCobranca.getPagador().getNome(), "", "");
-						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-							// Bia (assistente Gislaine)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 359);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"pre_laudo_inserido", 
-							this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getPagador().getNome(),
-							"", "");
-						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-							// Jaque (assistente Luis)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 689);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"pre_laudo_inserido", 
-							this.objetoContratoCobranca.getNumeroContrato(),
-							this.objetoContratoCobranca.getPagador().getNome(),
-							"","");
-						}
-					} else {
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-						"pre_laudo_inserido",
-						this.objetoContratoCobranca.getNumeroContrato(),
-						this.objetoContratoCobranca.getPagador().getNome(), "", "");
-					}
-				}
-			}*/
 			
 			// Mensagem PAJU E LAUDO RECEBIDO
 			if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
@@ -3622,7 +3586,7 @@ public class ContratoCobrancaMB {
 	 * @return
 	 */
 	public void updateCheckList() {
-
+		
 		if (this.objetoContratoCobranca.getStatusLead() != null) {
 			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
 				Responsavel responsavel = getResponsavelUsuarioLogado();
@@ -3630,8 +3594,12 @@ public class ContratoCobrancaMB {
 				if (responsavel != null) {
 					this.objetoContratoCobranca.setResponsavel(responsavel);
 				}
-				
-			} 
+			} else if(this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
+				this.objetoContratoCobranca.setLeadCompleto(false);
+				if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")){
+					this.objetoContratoCobranca.setStatusLead("Em Tratamento");
+				}
+			}
 		} else {
 			this.objetoContratoCobranca.setStatusLead("Completo");
 		}
@@ -4078,22 +4046,34 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
+	
+	public void clearEnviarLeadParaComercial() {
+		ResponsavelDao rdao = new ResponsavelDao();
+		clearResponsavel();
+		listResponsavel = rdao.getResponsaveisLead();
+	}
 
 	public String enviarLeadParaComercial() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		ResponsavelDao rDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setResponsavel(rDao.findById(selectedResponsavel.getId()));
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-		clearSelectedLovs();
-		
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
-								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
+		if(CommonsUtil.semValor(selectedResponsavel)) {
+			if (context != null) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Comercial não encontrado",""));
+			}
+			return null;
+		} else {
+			this.objetoContratoCobranca.setResponsavel(rDao.findById(selectedResponsavel.getId()));
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			clearResponsavel();
+			this.updateResponsavel = "";
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,"Lead editado com sucesso! (Contrato: "
+							+ this.objetoContratoCobranca.getNumeroContrato() + ")!",""));
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
+		}
 	}
 	
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {

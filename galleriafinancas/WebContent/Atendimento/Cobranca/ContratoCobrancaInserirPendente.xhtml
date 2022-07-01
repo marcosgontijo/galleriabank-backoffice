@@ -386,7 +386,7 @@
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT">
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
 									<p:selectBooleanButton id="pedidoLaudoPajuComercial"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"

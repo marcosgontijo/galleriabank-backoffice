@@ -101,9 +101,88 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
+		                <shiro:hasAnyRoles name="ROOT"> 
+							<p:commandButton oncomplete="PF('enviarLeadComercial').show();" action="#{contratoCobrancaMB.clearEnviarLeadParaComercial}" update="fromEnviarLeadComercial" ajax="true" value="Enviar Lead" title="Enviar" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+							</p:commandButton>		                   	
+		                </shiro:hasAnyRoles>
 		            </p:column>		        	        
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		
+		<p:dialog header="Enviar Lead para Comercial" widgetVar="enviarLeadComercial"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600" >
+			<h:form id="fromEnviarLeadComercial">
+				<div align="center">
+					<h:panelGrid columns="4" style="margin-top:50px"> 
+						<h:outputText value="Nome do Comercial:" styleClass="labelBold"  
+							style="width:250px;font-weight:bold;font-size: 18px;" />						
+							<h:outputText id="nomeResponsavel" value="#{contratoCobrancaMB.nomeResponsavel}"  
+								style="width:250px;font-size: 18px;" />
+							<p:spacer width="5px" />
+							<p:commandButton id="botaoResponsavel" 
+								onclick="PF('responsavelDialog').show();" update="formResponsavel"
+								image="ui-icon ui-icon-circle-zoomin"  />						
+					</h:panelGrid>
+					<h:panelGrid columns="3" style="margin-top:50px"> 
+						<p:commandButton value="Cancelar" 
+							onclick="PF('enviarLeadComercial').close();"/>
+						<p:spacer width="20" />
+						<p:commandButton value="Enviar" ajax="false" icon="ui-icon-check" 
+							action="#{contratoCobrancaMB.enviarLeadParaComercial}" style="TEXT-DECORATION: bold;">							   
+						</p:commandButton>
+					</h:panelGrid>
+				</div>				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Selecione Comercial" widgetVar="responsavelDialog"
+		resizable="false" style="FONT-SIZE: 10pt;" width="600" >
+			<h:form id="formResponsavel">
+				<p:dataTable id="responsavelDialogdlg" var="responsavelDialogdlg"
+					value="#{contratoCobrancaMB.listResponsavel}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedResponsavel}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{responsavelDialogdlg.id}">
+					
+					
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.codigo}"
+						filterBy="#{responsavelDialogdlg.codigo}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Código" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.codigo}" />
+					</p:column>
+	
+					<p:column style="text-align: center;"
+						sortBy="#{responsavelDialogdlg.nome}"
+						filterBy="#{responsavelDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{responsavelDialogdlg.nome}" />
+					</p:column>
+	
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedResponsavel}"
+							image="ui-icon ui-icon-check" update=":fromEnviarLeadComercial:nomeResponsavel"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearResponsavel}"
+							image="ui-icon ui-icon-trash"
+							update=":form responsavelDialogdlg"
+							oncomplete="PF('responsavelDialog').hide();" />
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('responsavelDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>		
 	</ui:define>
 </ui:composition>	        
