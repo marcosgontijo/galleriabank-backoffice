@@ -86,7 +86,7 @@ public class PagadorRecebedorDao extends HibernateDao <PagadorRecebedor,Long> {
 		});	
 	}
 	
-	private static final String QUERY_PAGADORRECEBEDOR =  "select id from cobranca.pagadorrecebedor ";
+	private static final String QUERY_PAGADORRECEBEDOR =  "select id, nome, cpf, cnpj from cobranca.pagadorrecebedor order by id";
 	
 	@SuppressWarnings("unchecked")
 	public List<PagadorRecebedor> getPagadoresRecebedores() {
@@ -106,8 +106,16 @@ public class PagadorRecebedorDao extends HibernateDao <PagadorRecebedor,Long> {
 
 					rs = ps.executeQuery();
 
+					PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+					
 					while (rs.next()) {
-						listPagadorRecebedor.add(findById(rs.getLong(1)));										
+						pagadorRecebedor = new PagadorRecebedor();
+						pagadorRecebedor.setId(rs.getLong(1));
+						pagadorRecebedor.setNome(rs.getString(2));
+						pagadorRecebedor.setCpf(rs.getString(3));
+						pagadorRecebedor.setCnpj(rs.getString(4));
+						
+						listPagadorRecebedor.add(pagadorRecebedor);										
 					}
 	
 				} finally {

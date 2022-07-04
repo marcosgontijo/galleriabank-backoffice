@@ -4505,7 +4505,9 @@ public class ContratoCobrancaMB {
 	 ***********************************************************/
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listPagadores = pagadorRecebedorDao.findAll();
+		// this.listPagadores = pagadorRecebedorDao.findAll();
+		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();
+				
 		this.listRecebedores = this.listPagadores;
 
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
@@ -22453,6 +22455,12 @@ public class ContratoCobrancaMB {
 		
 		this.baixarMode = baixarMode;
 	}
+	
+	public PagadorRecebedor getPagadorRecebedorObjeto(long id) {
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		
+		return pagadorRecebedorDao.findById(id);		
+	}
 
 	/**
 	 * @return the tituloPainel
@@ -22478,8 +22486,8 @@ public class ContratoCobrancaMB {
 	/**
 	 * @param selectedPagador the selectedPagador to set
 	 */
-	public void setSelectedPagador(PagadorRecebedor selectedPagador) {
-		this.selectedPagador = selectedPagador;
+	public void setSelectedPagador(PagadorRecebedor selectedPagador) {		
+		this.selectedPagador = getPagadorRecebedorObjeto(selectedPagador.getId());
 	}
 	
 	public PagadorRecebedor getSelectedPagadorGenerico() {
@@ -22487,7 +22495,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		this.selectedPagadorGenerico = selectedPagadorGenerico;
+		this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
 	}
 
 	/**
@@ -22543,7 +22551,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor the selectedRecebedor to set
 	 */
 	public void setSelectedRecebedor(PagadorRecebedor selectedRecebedor) {
-		this.selectedRecebedor = selectedRecebedor;
+		this.selectedRecebedor = getPagadorRecebedorObjeto(selectedRecebedor.getId());
 	}
 
 	/**
@@ -23480,7 +23488,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor2 the selectedRecebedor2 to set
 	 */
 	public void setSelectedRecebedor2(PagadorRecebedor selectedRecebedor2) {
-		this.selectedRecebedor2 = selectedRecebedor2;
+		this.selectedRecebedor2 =  getPagadorRecebedorObjeto(selectedRecebedor2.getId());
 	}
 
 	/**
@@ -23494,7 +23502,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor3 the selectedRecebedor3 to set
 	 */
 	public void setSelectedRecebedor3(PagadorRecebedor selectedRecebedor3) {
-		this.selectedRecebedor3 = selectedRecebedor3;
+		this.selectedRecebedor3 =  getPagadorRecebedorObjeto(selectedRecebedor3.getId());
 	}
 
 	/**
@@ -23508,7 +23516,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor4 the selectedRecebedor4 to set
 	 */
 	public void setSelectedRecebedor4(PagadorRecebedor selectedRecebedor4) {
-		this.selectedRecebedor4 = selectedRecebedor4;
+		this.selectedRecebedor4 =  getPagadorRecebedorObjeto(selectedRecebedor4.getId());
 	}
 
 	/**
@@ -23522,7 +23530,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor5 the selectedRecebedor5 to set
 	 */
 	public void setSelectedRecebedor5(PagadorRecebedor selectedRecebedor5) {
-		this.selectedRecebedor5 = selectedRecebedor5;
+		this.selectedRecebedor5 =  getPagadorRecebedorObjeto(selectedRecebedor5.getId());
 	}
 
 	/**
@@ -23536,7 +23544,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor6 the selectedRecebedor6 to set
 	 */
 	public void setSelectedRecebedor6(PagadorRecebedor selectedRecebedor6) {
-		this.selectedRecebedor6 = selectedRecebedor6;
+		this.selectedRecebedor6 =  getPagadorRecebedorObjeto(selectedRecebedor6.getId());
 	}
 
 	/**
@@ -23550,7 +23558,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor7 the selectedRecebedor7 to set
 	 */
 	public void setSelectedRecebedor7(PagadorRecebedor selectedRecebedor7) {
-		this.selectedRecebedor7 = selectedRecebedor7;
+		this.selectedRecebedor7 =  getPagadorRecebedorObjeto(selectedRecebedor7.getId());
 	}
 
 	/**
@@ -23564,7 +23572,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor8 the selectedRecebedor8 to set
 	 */
 	public void setSelectedRecebedor8(PagadorRecebedor selectedRecebedor8) {
-		this.selectedRecebedor8 = selectedRecebedor8;
+		this.selectedRecebedor8 =  getPagadorRecebedorObjeto(selectedRecebedor8.getId());
 	}
 
 	/**
@@ -23578,7 +23586,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor9 the selectedRecebedor9 to set
 	 */
 	public void setSelectedRecebedor9(PagadorRecebedor selectedRecebedor9) {
-		this.selectedRecebedor9 = selectedRecebedor9;
+		this.selectedRecebedor9 =  getPagadorRecebedorObjeto(selectedRecebedor9.getId());
 	}
 
 	/**
@@ -23592,7 +23600,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedor10 the selectedRecebedor10 to set
 	 */
 	public void setSelectedRecebedor10(PagadorRecebedor selectedRecebedor10) {
-		this.selectedRecebedor10 = selectedRecebedor10;
+		this.selectedRecebedor10 =  getPagadorRecebedorObjeto(selectedRecebedor10.getId());
 	}
 
 	/**
@@ -24693,7 +24701,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedorFinal1 the selectedRecebedorFinal1 to set
 	 */
 	public void setSelectedRecebedorFinal1(PagadorRecebedor selectedRecebedorFinal1) {
-		this.selectedRecebedorFinal1 = selectedRecebedorFinal1;
+		this.selectedRecebedorFinal1 = getPagadorRecebedorObjeto(selectedRecebedorFinal1.getId());
 	}
 
 	/**
@@ -24735,7 +24743,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedorFinal2 the selectedRecebedorFinal2 to set
 	 */
 	public void setSelectedRecebedorFinal2(PagadorRecebedor selectedRecebedorFinal2) {
-		this.selectedRecebedorFinal2 = selectedRecebedorFinal2;
+		this.selectedRecebedorFinal2 = getPagadorRecebedorObjeto(selectedRecebedorFinal2.getId());
 	}
 
 	/**
@@ -24777,7 +24785,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedorFinal3 the selectedRecebedorFinal3 to set
 	 */
 	public void setSelectedRecebedorFinal3(PagadorRecebedor selectedRecebedorFinal3) {
-		this.selectedRecebedorFinal3 = selectedRecebedorFinal3;
+		this.selectedRecebedorFinal3 = getPagadorRecebedorObjeto(selectedRecebedorFinal3.getId());
 	}
 
 	/**
@@ -24819,7 +24827,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedorFinal4 the selectedRecebedorFinal4 to set
 	 */
 	public void setSelectedRecebedorFinal4(PagadorRecebedor selectedRecebedorFinal4) {
-		this.selectedRecebedorFinal4 = selectedRecebedorFinal4;
+		this.selectedRecebedorFinal4 = getPagadorRecebedorObjeto(selectedRecebedorFinal4.getId());
 	}
 
 	/**
@@ -24861,7 +24869,7 @@ public class ContratoCobrancaMB {
 	 * @param selectedRecebedorFinal5 the selectedRecebedorFinal5 to set
 	 */
 	public void setSelectedRecebedorFinal5(PagadorRecebedor selectedRecebedorFinal5) {
-		this.selectedRecebedorFinal5 = selectedRecebedorFinal5;
+		this.selectedRecebedorFinal5 = getPagadorRecebedorObjeto(selectedRecebedorFinal5.getId());
 	}
 
 	/**
@@ -25250,7 +25258,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedRecebedorFinal6(PagadorRecebedor selectedRecebedorFinal6) {
-		this.selectedRecebedorFinal6 = selectedRecebedorFinal6;
+		this.selectedRecebedorFinal6 = getPagadorRecebedorObjeto(selectedRecebedorFinal6.getId());
 	}
 
 	public String getNomeRecebedorFinal6() {
@@ -25274,7 +25282,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedRecebedorFinal7(PagadorRecebedor selectedRecebedorFinal7) {
-		this.selectedRecebedorFinal7 = selectedRecebedorFinal7;
+		this.selectedRecebedorFinal7 = getPagadorRecebedorObjeto(selectedRecebedorFinal7.getId());
 	}
 
 	public String getNomeRecebedorFinal7() {
@@ -25298,7 +25306,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedRecebedorFinal8(PagadorRecebedor selectedRecebedorFinal8) {
-		this.selectedRecebedorFinal8 = selectedRecebedorFinal8;
+		this.selectedRecebedorFinal8 = getPagadorRecebedorObjeto(selectedRecebedorFinal8.getId());
 	}
 
 	public String getNomeRecebedorFinal8() {
@@ -25322,7 +25330,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedRecebedorFinal9(PagadorRecebedor selectedRecebedorFinal9) {
-		this.selectedRecebedorFinal9 = selectedRecebedorFinal9;
+		this.selectedRecebedorFinal9 = getPagadorRecebedorObjeto(selectedRecebedorFinal9.getId());
 	}
 
 	public String getNomeRecebedorFinal9() {
@@ -25346,7 +25354,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedRecebedorFinal10(PagadorRecebedor selectedRecebedorFinal10) {
-		this.selectedRecebedorFinal10 = selectedRecebedorFinal10;
+		this.selectedRecebedorFinal10 = getPagadorRecebedorObjeto(selectedRecebedorFinal10.getId());
 	}
 
 	public String getNomeRecebedorFinal10() {
