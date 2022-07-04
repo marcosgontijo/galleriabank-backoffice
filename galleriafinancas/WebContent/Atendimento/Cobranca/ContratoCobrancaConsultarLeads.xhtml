@@ -101,7 +101,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
-		                <shiro:hasAnyRoles name="ROOT"> 
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_LEAD">
 							<p:commandButton oncomplete="PF('enviarLeadComercial').show();" action="#{contratoCobrancaMB.clearEnviarLeadParaComercial}" update="fromEnviarLeadComercial" ajax="true" value="Enviar Lead" title="Enviar" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 							</p:commandButton>		                   	
