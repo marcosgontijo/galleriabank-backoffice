@@ -129,7 +129,7 @@ public class SimulacaoIPCACalculoV2 {
 								
 								
 								
-								seguroMPI = seguroMPI.add(this.valorImovel.multiply(SiscoatConstants.SEGURO_MIP).multiply(parcela.getTaxaIPCA()));
+								seguroMPI = seguroMPI.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_MIP)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
 							}							
 						}						
 					} else {

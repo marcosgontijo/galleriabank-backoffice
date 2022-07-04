@@ -14194,7 +14194,13 @@ public class ContratoCobrancaMB {
 		simulador.setNaoCalcularDFI(true);
 		simulador.setNaoCalcularMIP(true);
 		simulador.setNaoCalcularTxAdm(true);
-		simulador.calcular();
+		
+		if (simulador.getTipoCalculo().equals("Americano") && (simulador.getQtdParcelas().subtract(simulador.getCarencia()).compareTo(BigInteger.ONE) == 0)) {
+			simulador.calcularAmericanoInvestidor();	
+		} else {
+			simulador.calcular();	
+		}
+		
 		return simulador;
 	}
 
