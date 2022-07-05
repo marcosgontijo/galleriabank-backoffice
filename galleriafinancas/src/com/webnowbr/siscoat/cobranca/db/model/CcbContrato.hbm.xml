@@ -288,6 +288,38 @@
 		<property name="iqValor" type="big_decimal">
 			<column name="iqValor" />
 		</property>
+		
+		<property name="inscricaoMunicipal" type="java.lang.String">
+			<column name="inscricaoMunicipal" />
+		</property> 
+		
+		<property name="titularConta" type="java.lang.String">
+			<column name="titularConta" />
+		</property> 
+		
+		<property name="sistemaAmortizacao" type="java.lang.String">
+			<column name="sistemaAmortizacao" />
+		</property> 
+		
+		<property name="valorDfiParcela" type="big_decimal">
+			<column name="valorDfiParcela" />
+		</property>
+		
+		<property name="valorMipParcela" type="big_decimal">
+			<column name="valorMipParcela" />
+		</property>
+		
+		<property name="prazo" type="java.lang.String">
+			<column name="prazo" />
+		</property> 
+		
+		<list name="listSegurados"
+			table="ccbcontrato_segurados_join" cascade="all" lazy="false">
+			<key column="idccbcontrato" />
+			<list-index></list-index>
+			<many-to-many column="idsegurado"
+				class="com.webnowbr.siscoat.cobranca.db.model.Segurado" />
+		</list>
 		        
     </class>
 </hibernate-mapping>
