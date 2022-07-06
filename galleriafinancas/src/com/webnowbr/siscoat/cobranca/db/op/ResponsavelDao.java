@@ -152,4 +152,46 @@ public class ResponsavelDao extends HibernateDao <Responsavel,Long> {
 			}
 		});	
 	}
+
+	private static final String QUERY_GET_RESPONSAVEL_LEAD =  " select r.id, r.nome, r.codigo, u.login "
+			+ " from infra.users u  "
+			+ " inner join cobranca.responsavel r on r.codigo = u.codigoresponsavel   "
+			+ " where UserCobrancaLead = true "
+			+ " order by id ";
+	
+	@SuppressWarnings("unchecked")
+	public List<Responsavel> getResponsaveisLead() {
+		return (List<Responsavel>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<Responsavel> lista = new ArrayList<Responsavel>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					
+					String query_QUERY_GET_GUARDA_CHUVA = QUERY_GET_RESPONSAVEL_LEAD;
+			
+					ps = connection
+							.prepareStatement(query_QUERY_GET_GUARDA_CHUVA);		
+					rs = ps.executeQuery();
+			
+
+					while (rs.next()) {
+						Responsavel r = new Responsavel();
+						r.setId(rs.getLong("id"));
+						r.setNome(rs.getString("nome"));
+						r.setCodigo(rs.getString("codigo"));
+						
+						lista.add(r);
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return lista;
+			}
+		});	
+	}
 }

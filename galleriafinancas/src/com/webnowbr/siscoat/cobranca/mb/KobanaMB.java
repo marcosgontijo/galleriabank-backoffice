@@ -563,14 +563,14 @@ public class KobanaMB {
 		/*
 		Enviar este boleto por email para cliente e empresa?
 		 */
-		jsonBoleto.put("customer_ignore_email", true);
+		jsonBoleto.put("customer_ignore_email", false);
 		jsonBoleto.put("ignore_email", false);			
 		
 		/*Tipo de juros/mora:
 		0 Inexistente (Padrão)
 		1 Para porcentagem diária
 		2 Para valor diário*/
-		jsonBoleto.put("interest_type", 1);
+		jsonBoleto.put("interest_type", 2);
 		/*
 		Tipo de Dias para juros:
 		0 Corridos
@@ -595,7 +595,8 @@ public class KobanaMB {
 		jsonBoleto.put("acceptance", "N");
 		
 	    jsonBoleto.put("days_for_interest", days_for_interest);
-		jsonBoleto.put("interest_percentage", interest_percentage);
+		//jsonBoleto.put("interest_percentage", interest_percentage);
+	    jsonBoleto.put("interest_value", parcela.getVlrParcela().multiply(BigDecimal.valueOf(0.033)));
 		//jsonBoleto.put("interest_value", interest_value);
 		jsonBoleto.put("days_for_fine", days_for_fine);
 		jsonBoleto.put("fine_percentage", fine_percentage);

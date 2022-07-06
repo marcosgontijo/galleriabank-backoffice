@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.primefaces.model.UploadedFile;
 
@@ -36,8 +37,6 @@ public class CcbContrato implements Serializable{
 	private BigDecimal valorIOF;
 	private BigDecimal valorDespesas;
 	
-	private BigDecimal valorParcela;
-	
 	private BigDecimal taxaDeJurosMes;
 	private BigDecimal taxaDeJurosAno;
 	private BigDecimal cetMes;
@@ -47,21 +46,28 @@ public class CcbContrato implements Serializable{
 	private String agencia;
 	private String numeroBanco;
 	private String nomeBanco;
+	private String titularConta;
 	
+	private String sistemaAmortizacao;
+	
+	private String prazo;
 	private String numeroParcelasPagamento;
 	private Date vencimentoPrimeiraParcelaPagamento;
 	private Date vencimentoUltimaParcelaPagamento;
 	private BigDecimal montantePagamento;
+	private BigDecimal valorParcela;
 
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
 	private Date vencimentoUltimaParcelaDFI;
 	private BigDecimal montanteDFI;
+	private BigDecimal valorDfiParcela;
 
 	private String numeroParcelasMIP;
 	private Date vencimentoPrimeiraParcelaMIP;
 	private Date vencimentoUltimaParcelaMIP;
 	private BigDecimal montanteMIP;
+	private BigDecimal valorMipParcela;
 
 	private BigDecimal tarifaAntecipada;
 	private Date dataDeEmissao;
@@ -70,6 +76,7 @@ public class CcbContrato implements Serializable{
 	private String cartorioImovel;
 	private String cidadeImovel;
 	private String ufImovel;
+	private String inscricaoMunicipal;
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -110,6 +117,8 @@ public class CcbContrato implements Serializable{
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private BigDecimal condominioEmAtrasoValor = BigDecimal.ZERO;
     private BigDecimal iqValor = BigDecimal.ZERO;
+    
+    private List<Segurado> listSegurados;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
@@ -763,7 +772,62 @@ public class CcbContrato implements Serializable{
 
 	public void setIqValor(BigDecimal iqValor) {
 		this.iqValor = iqValor;
-	}    
-	
+	}
+
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	public String getTitularConta() {
+		return titularConta;
+	}
+
+	public void setTitularConta(String titularConta) {
+		this.titularConta = titularConta;
+	}
+
+	public String getSistemaAmortizacao() {
+		return sistemaAmortizacao;
+	}
+
+	public void setSistemaAmortizacao(String sistemaAmortizacao) {
+		this.sistemaAmortizacao = sistemaAmortizacao;
+	}
+
+	public BigDecimal getValorDfiParcela() {
+		return valorDfiParcela;
+	}
+
+	public void setValorDfiParcela(BigDecimal valorDfiParcela) {
+		this.valorDfiParcela = valorDfiParcela;
+	}
+
+	public BigDecimal getValorMipParcela() {
+		return valorMipParcela;
+	}
+
+	public void setValorMipParcela(BigDecimal valorMipParcela) {
+		this.valorMipParcela = valorMipParcela;
+	}
+
+	public String getPrazo() {
+		return prazo;
+	}
+
+	public void setPrazo(String prazo) {
+		this.prazo = prazo;
+	}
+
+	public List<Segurado> getListSegurados() {
+		return listSegurados;
+	}
+
+	public void setListSegurados(List<Segurado> listSegurados) {
+		this.listSegurados = listSegurados;
+	}
 	
 }
