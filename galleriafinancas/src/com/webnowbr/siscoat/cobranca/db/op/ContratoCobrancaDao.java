@@ -28,6 +28,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
@@ -280,8 +281,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			*/
 	private static final String QUERY_ULTIMO_NUMERO_CONTRATO = "select nextval('cobranca.cobranca_seq_contrato')" ;
 	
-	private static final String QUERY_CONTRATOS_PENDENTES = " select c.id from cobranca.contratocobranca c " +
-			" inner join cobranca.responsavel res on c.responsavel = res.id ";
+	private static final String QUERY_CONTRATOS_PENDENTES = "select c.id, numeroContrato, dataContrato,  observacaolead, urlLead, quantoPrecisa,"
+			+ " pagador, p.nome nomePagador, "
+			+ " responsavel, res.nome nomeResponsavel, "
+			+ " imovel, i.nome nomeImovel, i.cidade "
+			+ " from cobranca.contratocobranca c "
+			+ " inner join cobranca.responsavel res on c.responsavel = res.id "
+			+ " inner join cobranca.imovelcobranca i on c.responsavel = i.id "
+			+ " inner join cobranca.pagadorrecebedor p on c.responsavel = p.id ";
 		
 	private static final String QUERY_CONTRATOS_QUITADOS = " select dd.id from cobranca.contratocobranca dd " +
 		"inner join cobranca.responsavel res on dd.responsavel = res.id " +
@@ -5138,9 +5145,28 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					rs = ps.executeQuery();
 					
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						ContratoCobranca contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong("id"));
+						contratoCobranca.setNumeroContrato(rs.getString("numeroContrato"));
+						contratoCobranca.setDataContrato(rs.getDate("dataContrato"));
+						contratoCobranca.setObservacaolead(rs.getString("observacaolead"));
+						contratoCobranca.setUrlLead(rs.getString("urllead"));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
+						PagadorRecebedor pagador = new PagadorRecebedor();
+						pagador.setId(rs.getLong("pagador"));
+						pagador.setNome(rs.getString("nomePagador"));				
+						Responsavel responsavel = new Responsavel();
+						responsavel.setId(rs.getLong("responsavel"));
+						responsavel.setNome(rs.getString("nomeResponsavel"));		
+						ImovelCobranca imovel = new ImovelCobranca();
+						imovel.setId(rs.getLong("imovel"));
+						imovel.setCidade(rs.getString("cidade"));
+						imovel.setNome(rs.getString("nomeImovel"));
+						contratoCobranca.setPagador(pagador);
+						contratoCobranca.setResponsavel(responsavel);
+						contratoCobranca.setImovel(imovel);
 						
 						objects.add(contratoCobranca);												
 					}

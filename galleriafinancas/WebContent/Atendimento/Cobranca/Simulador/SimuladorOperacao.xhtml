@@ -136,12 +136,26 @@
 							<p:ajax event="change" process="@form"
 								update="DemonstrativoResultados" />
 						</p:selectOneMenu>
-
-						<p:outputLabel for="identificacao" value="Nome do Cliente: "
+						
+						<p:outputLabel for="simularComIPCA" value="Simular com IPCA: "
 							styleClass="labelBold" />
-						<p:inputText id="identificacao"
-							value="#{simuladorMB.identificacao}" required="false">
-						</p:inputText>
+						<p:selectBooleanCheckbox id="simularComIPCA" 
+							value="#{simuladorMB.simularComIPCA}"  style="margin-left: 12px;">
+							<p:ajax update="ipcaSimulado ipcaSimuladoTexto" event="change" />
+						</p:selectBooleanCheckbox>
+
+						<h:panelGroup id="ipcaSimuladoTexto" >
+							<p:outputLabel for="ipcaSimulado" value="IPCA: "
+								styleClass="labelBold" rendered="#{simuladorMB.simularComIPCA}" />
+						</h:panelGroup>
+						<h:panelGrid id="ipcaSimulado" columns="2" >
+							<p:inputText rendered="#{simuladorMB.simularComIPCA}" value="#{simuladorMB.ipcaSimulado}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 3, event, 2);" required="true"
+								converter="bigDecimalConverter">
+							</p:inputText>
+							<p:outputLabel value="%" rendered="#{simuladorMB.simularComIPCA}"  styleClass="labelBold" />
+						</h:panelGrid>
 						
 					</h:panelGrid>
 				</h:panelGrid>

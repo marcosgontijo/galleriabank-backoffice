@@ -11203,6 +11203,8 @@ public class ContratoCobrancaMB {
 					simuladorMB.setMostrarIPCA(true);
 					simuladorMB.setTipoCalculoFinal('B');
 					simuladorMB.setValidar(false);
+					simuladorMB.setSimularComIPCA(false);
+					simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
 					simuladorMB.simular();
 				}
 			}

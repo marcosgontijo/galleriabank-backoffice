@@ -28,6 +28,9 @@ public class SimulacaoVO {
 	private boolean naoCalcularMIP;
 	private boolean naoCalcularTxAdm;
 	private boolean mostrarIPCA;
+	
+	private boolean simularComIPCA = false;
+	private BigDecimal ipcaSimulado = BigDecimal.ZERO;;
 
 	// valores
 	private BigDecimal valorCredito;
@@ -54,6 +57,9 @@ public class SimulacaoVO {
 	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 
 	public void calcular() {
+		if(simularComIPCA)
+			taxaJuros = taxaJuros.add(ipcaSimulado);
+		
 		if (this.tipoCalculo.equals("Price")) {
 			calcularPrice();
 		} else if (this.tipoCalculo.equals("SAC")) {
@@ -63,6 +69,9 @@ public class SimulacaoVO {
 		} else if (this.tipoCalculo.equals("Envelope")) {
 			calcularEnvelope();
 		}
+		
+		if(simularComIPCA)
+			taxaJuros = taxaJuros.subtract(ipcaSimulado);
 	}
 
 	public void calcularPrice() {
@@ -670,5 +679,23 @@ public class SimulacaoVO {
 	public void setNaoCalcularTxAdm(boolean naoCalcularTxAdm) {
 		this.naoCalcularTxAdm = naoCalcularTxAdm;
 	}
+
+	public boolean isSimularComIPCA() {
+		return simularComIPCA;
+	}
+
+	public void setSimularComIPCA(boolean simularComIPCA) {
+		this.simularComIPCA = simularComIPCA;
+	}
+
+	public BigDecimal getIpcaSimulado() {
+		return ipcaSimulado;
+	}
+
+	public void setIpcaSimulado(BigDecimal ipcaSimulado) {
+		this.ipcaSimulado = ipcaSimulado;
+	}
+	
+	
 		
 }
