@@ -25,37 +25,44 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 @Path("/documentos")
 public class UploadFileRestService {
 	
+	private static final String NO_EXIST = "NO_EXIST";
+	private static final String FALTANTE = "faltante";
+	private static final String PASTA_FALTANTE = "/faltante";
+	
 	@POST
-	@Path("/uploads/{numeroContrato}/{nomeArquivo}")
+	@Path("/uploads/{numeroContrato}/{subpasta}/{nomeArquivo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response documentoUploadNumeroContrato(byte[] documentos, @PathParam(value = "numeroContrato") String numeroContrato, 
+			@PathParam(value = "subpasta") String subpasta,
 			@PathParam(value = "nomeArquivo") String nomeArquivo) { 
 		
 		System.out.println("Executando o contrato {} "+numeroContrato+" upload do arquivo {} "+nomeArquivo+" - Inicio");
+		String pathContrato = NO_EXIST;
 				
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
 				// recupera local onde será gravado o arquivo
 				ParametrosDao pDao = new ParametrosDao();
-				String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-						.concat(numeroContrato).concat("/");
-
+				if(subpasta.equals(NO_EXIST)) {
+				   pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+							.concat(numeroContrato).concat("/");
+				}if(subpasta.equals(FALTANTE)) {
+					   pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+								.concat(numeroContrato).concat("/").concat(subpasta).concat("/");
+				}
+				
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				try {
 
 					File file = new File(pathContrato.concat(nomeArquivo));
 
-					if (!file.exists()) {
-						file.createNewFile();
-					}
 					FileOutputStream fop = new FileOutputStream(file);
 					fop.write(documentos);
 					fop.flush();
 					fop.close();
 
 				} catch (IOException e) {
-
 					e.printStackTrace();
 				}
 
@@ -87,20 +94,26 @@ public class UploadFileRestService {
 	}
 	
 	@DELETE
-	@Path("/uploads/{numeroContrato}/{nomeArquivo}")
+	@Path("/uploads/{numeroContrato}/{subpasta}/{nomeArquivo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response documentoUploadNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato, 
+	public Response documentoDeletarNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato, 
+			@PathParam(value = "subpasta") String subpasta,
 			@PathParam(value = "nomeArquivo") String nomeArquivo) throws IOException { 
 		
 		System.out.println("Deletando da pasta {} "+numeroContrato+" o arquivo {} "+nomeArquivo+" - Inicio");
-				
+		String pathContrato = NO_EXIST;
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
 				// recupera local onde será gravado o arquivo
 				ParametrosDao pDao = new ParametrosDao();
-				String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-						.concat(numeroContrato).concat("/");
-
+				if(subpasta.equals(NO_EXIST)) {
+					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+							.concat(numeroContrato).concat("/");
+				}if(subpasta.equals(FALTANTE)) {
+					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+							.concat(numeroContrato).concat("/").concat(subpasta).concat("/");
+				}
+					
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				
@@ -138,7 +151,7 @@ public class UploadFileRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response novaPastaNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato) { 
 		
-		System.out.println("Executando o comando para criar a nova pasta "+numeroContrato+" - Inicio");
+		System.out.println("Executando o comando para criar a nova pasta e subpasta "+numeroContrato+" - Inicio");
 				
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
@@ -146,7 +159,7 @@ public class UploadFileRestService {
 				ParametrosDao pDao = new ParametrosDao();
 				String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 						.concat(numeroContrato);
-
+				
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				
@@ -155,8 +168,15 @@ public class UploadFileRestService {
 					diretorio.mkdir();
 				}
 				
-				String message = "{\"retorno\": \"Pasta criada com sucesso!!! " + numeroContrato +"\"}";
-				System.out.println("Pasta criada com sucesso "+numeroContrato+" - Fim");
+				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
+				
+				File diretorioFaltante = new File(pathContratoFaltante);
+				if (!diretorioFaltante.isDirectory()) {
+					diretorioFaltante.mkdir();
+				}
+				
+				String message = "{\"retorno\": \"Pasta e Subpasta criada com sucesso!!! " + numeroContrato +"\"}";
+				System.out.println("Pasta e subpasta criada com sucesso "+numeroContrato+" - Fim");
 				
 				return Response
 						.status(Response.Status.OK)
@@ -164,7 +184,7 @@ public class UploadFileRestService {
 						.type(MediaType.APPLICATION_JSON)
 						.build();
 			} else {
-				String message = "{\"retorno\": \"Nova pasta "+numeroContrato+" não foi criada !!! \"}";
+				String message = "{\"retorno\": \"Nova pasta e subpasta "+numeroContrato+" não foi criada !!! \"}";
 				
 				return Response
 					      .status(Response.Status.BAD_REQUEST)
@@ -183,18 +203,25 @@ public class UploadFileRestService {
 	}
 	
 	@GET
-	@Path("/pastas/{numeroContrato}")
+	@Path("/pastas/{numeroContrato}/{subpasta}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response consultarPastaNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato) { 
+	public Response consultarPastaNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato, 
+			@PathParam(value = "subpasta") String subpasta) { 
 		
-		System.out.println("Executando o comando para consultar os arquivos dentro da pasta "+numeroContrato+" - Inicio");
-				
+		System.out.println("Executando o comando para consultar os arquivos dentro da pasta "
+				+numeroContrato+ " e subpasta "+subpasta+" - Inicio");
+		
+		String message = NO_EXIST;				
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
 				// recupera local onde será gravado o arquivo
 				ParametrosDao pDao = new ParametrosDao();
-				String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-						.concat(numeroContrato);
+				String pathContrato = NO_EXIST;
+				if(subpasta.equals(NO_EXIST)) {
+					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString().concat(numeroContrato);
+				}else if(subpasta.equals(FALTANTE)) {
+					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString().concat(numeroContrato).concat(PASTA_FALTANTE);
+				}
 
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
@@ -203,14 +230,16 @@ public class UploadFileRestService {
 				File arqs[] = diretorio.listFiles();
 				ListaUploadDocumentos listaDocumentos = new ListaUploadDocumentos(); 
 				listaDocumentos.setListaUploadDocumentos(new ArrayList<UploadDocumentos>());
-				if (arqs != null) {
+				if (arqs != null && arqs.length > 0) {
 					for (int i = 0; i < arqs.length; i++) {
-						File arquivo = arqs[i];
-						listaDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), pathContrato));
+						if(arqs[i].isFile() == true) {
+							File arquivo = arqs[i];
+							listaDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), pathContrato));
+						}
 					}
 				}
 				
-				System.out.println("Arquivos encontrados com sucesso "+numeroContrato+" - Fim");
+				System.out.println("Arquivos encontrados com sucesso na pasta "+numeroContrato+" - Fim");
 				
 				return Response
 						.status(Response.Status.OK)
@@ -218,7 +247,7 @@ public class UploadFileRestService {
 						.type(MediaType.APPLICATION_JSON)
 						.build();
 			} else {
-				String message = "{\"retorno\": \"\"Ocorreu um erro os arquivos não foram encontrados na pasta "+numeroContrato+".\"}";
+				message = "{\"retorno\": \"\"Ocorreu um erro os arquivos não foram encontrados na pasta "+numeroContrato+".\"}";
 				
 				return Response
 					      .status(Response.Status.BAD_REQUEST)
