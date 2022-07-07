@@ -13112,6 +13112,14 @@ public class ContratoCobrancaMB {
 				parcelasInvestidor.add(parcelaInvestidor);
 			}
 		}
+		// se é contrato com amortização somente na ultima parcela, zera capitalizacao
+		if (simulador.getTipoCalculo().equals("Americano") && (simulador.getQtdParcelas().subtract(simulador.getCarencia()).compareTo(BigInteger.ONE) == 0)) {
+			if (parcelasInvestidor.size() > 0) {
+				parcelasInvestidor.get(parcelasInvestidor.size() - 1).setCapitalizacao(BigDecimal.ZERO);
+			}
+			
+		}
+		
 		return parcelasInvestidor;
 	}
 
@@ -22486,8 +22494,12 @@ public class ContratoCobrancaMB {
 	/**
 	 * @param selectedPagador the selectedPagador to set
 	 */
-	public void setSelectedPagador(PagadorRecebedor selectedPagador) {		
-		this.selectedPagador = getPagadorRecebedorObjeto(selectedPagador.getId());
+	public void setSelectedPagador(PagadorRecebedor selectedPagador) {	
+		if (selectedPagador != null && selectedPagador.getId() > 0) {
+			this.selectedPagador = getPagadorRecebedorObjeto(selectedPagador.getId());
+		} else {
+			this.selectedPagador = selectedPagador;
+		}		
 	}
 	
 	public PagadorRecebedor getSelectedPagadorGenerico() {

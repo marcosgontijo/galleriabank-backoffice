@@ -531,8 +531,12 @@ public class SimulacaoVO {
 			parcelaCalculo.setSaldoDevedorInicial(saldo.setScale(2, RoundingMode.HALF_EVEN));
 
 			saldoDevedorAnterior = saldo;
+			
+			if (String.valueOf(parcelaCalculo.getNumeroParcela()).equals("60")) {
+				System.out.println("última parcela");
+			}
 
-			parcelas.add(parcelaCalculo);
+			parcelas.add(parcelaCalculo); 
 		}
 		
 		// Trata o cálculo dos juros e IR da última parcela (o americano normal não está correto para investidor, somente correto para contratos)
