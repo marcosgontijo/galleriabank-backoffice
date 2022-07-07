@@ -3029,13 +3029,13 @@ public class ContratoCobrancaMB {
 						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
 								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
-								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQuantoPrecisa(), BigInteger.valueOf(300000)) 
+								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQuantoPrecisa(), BigInteger.valueOf(350000)) 
 										&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE)) {
 									this.objetoContratoCobranca.setAprovadoComite(true);
 									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 								}
 								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2)) 
-										|| ((this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(300000)) <= 0 ) 
+										|| ((this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(350000)) <= 0 ) 
 												&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE))) {
 									this.objetoContratoCobranca.setAprovadoComite(true);
 									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
@@ -6399,8 +6399,7 @@ public class ContratoCobrancaMB {
 	
 		for (ContratoCobrancaDetalhes parcelas : listaParcelas) {
 			this.valorPresenteParcela = BigDecimal.ZERO;
-			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				
+			if(!parcelas.isParcelaPaga()) {	
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 				parcelas.setValorTotalPagamento(this.valorPresenteParcela);
@@ -11206,6 +11205,8 @@ public class ContratoCobrancaMB {
 					simuladorMB.setMostrarIPCA(true);
 					simuladorMB.setTipoCalculoFinal('B');
 					simuladorMB.setValidar(false);
+					simuladorMB.setSimularComIPCA(false);
+					simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
 					simuladorMB.simular();
 				}
 			}

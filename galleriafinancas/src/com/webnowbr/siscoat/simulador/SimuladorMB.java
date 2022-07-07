@@ -49,6 +49,7 @@ public class SimuladorMB {
 	private BigDecimal valorImovel;
 	private BigDecimal valorCredito;
 	private BigDecimal taxaJuros;
+	private BigDecimal ipcaSimulado = BigDecimal.ZERO;;
 	private BigInteger parcelas;
 	private BigInteger carencia;
 	private boolean naoCalcularDFI;
@@ -57,7 +58,7 @@ public class SimuladorMB {
     private char tipoCalculoFinal;
     private boolean mostrarIPCA;
     private boolean validar;
-	
+    private boolean simularComIPCA = false;
 
 	private SimulacaoVO simulacao;
 
@@ -72,9 +73,10 @@ public class SimuladorMB {
 		tipoPessoa = "PF";
 		tipoCalculo = "PRICE";
 		simulacao = null;
-		tipoCalculoFinal= 'L';
-		mostrarIPCA= true;
+		tipoCalculoFinal= 'B';
+		mostrarIPCA = true;
 		validar = true;
+		simularComIPCA = false;
 		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
@@ -141,6 +143,8 @@ public class SimuladorMB {
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
 		}
 
+	
+		
 		SimulacaoVO simulador = new SimulacaoVO();
 		simulador.setDataSimulacao(DateUtil.getDataHoje());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
@@ -149,8 +153,9 @@ public class SimuladorMB {
 		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 		simulador.setTipoPessoa(tipoPessoa);
 		// valores
-		simulador.setValorCredito(this.valorCredito);
+
 		simulador.setTaxaJuros(this.taxaJuros);
+		simulador.setValorCredito(this.valorCredito);
 		simulador.setCarencia(this.carencia);
 		simulador.setQtdParcelas(this.parcelas);
 		simulador.setValorImovel(this.valorImovel);
@@ -159,6 +164,8 @@ public class SimuladorMB {
 		simulador.setNaoCalcularDFI(this.naoCalcularDFI);
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
+		simulador.setSimularComIPCA(this.simularComIPCA);
+		simulador.setIpcaSimulado(this.ipcaSimulado);
 		simulador.calcular();
 		
 		simulador.setValorCreditoLiberado(simulador.getValorCredito().subtract(simulador.getIOFTotal()).subtract(simulador.getCustoEmissaoValor()));
@@ -188,6 +195,8 @@ public class SimuladorMB {
 			simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
 			simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
 			simuladorLiquido.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
+			simuladorLiquido.setSimularComIPCA(this.simularComIPCA);
+			simuladorLiquido.setIpcaSimulado(this.ipcaSimulado);
 			simuladorLiquido.calcular();
 
 			if (this.valorCredito.add(simuladorLiquido.getIOFTotal())
@@ -262,7 +271,9 @@ public class SimuladorMB {
 
 			JasperPrint jp = null;
 			
-			if(isNovo) {
+			if(simularComIPCA) {
+				jp = geraPDFSimulacaoComExemploIPCA();
+			} else if(isNovo) {
 				jp = geraPDFSimulacaoNOVO();
 			} else {
 				jp = geraPDFSimulacao();
@@ -314,6 +325,30 @@ public class SimuladorMB {
 
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoNovo");
 		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimuladorparcelasTeste");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
+
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", this.mostrarIPCA);
+
+		List<SimulacaoVO> list = new ArrayList<SimulacaoVO>();
+		list.add(simulacao);
+
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
+	}
+
+	// Método Criado Apenas para teste
+	public JasperPrint geraPDFSimulacaoComExemploIPCA() throws JRException, IOException {
+
+		final ReportUtil ReportUtil = new ReportUtil();
+
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("SimulacaoCreditoExemploIPCA");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("SimuladorParcelasExemploIPCA");
 		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -482,7 +517,22 @@ public class SimuladorMB {
 	public void setNaoCalcularTxAdm(boolean naoCalcularTxAdm) {
 		this.naoCalcularTxAdm = naoCalcularTxAdm;
 	}
-	
+
+	public BigDecimal getIpcaSimulado() {
+		return ipcaSimulado;
+	}
+
+	public void setIpcaSimulado(BigDecimal ipcaSimulado) {
+		this.ipcaSimulado = ipcaSimulado;
+	}
+
+	public boolean isSimularComIPCA() {
+		return simularComIPCA;
+	}
+
+	public void setSimularComIPCA(boolean simularComIPCA) {
+		this.simularComIPCA = simularComIPCA;
+	}
 }
 
 
