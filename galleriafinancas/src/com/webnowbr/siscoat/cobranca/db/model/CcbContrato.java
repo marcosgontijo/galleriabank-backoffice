@@ -127,6 +127,7 @@ public class CcbContrato implements Serializable{
     public CcbContrato() {
     	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
     	this.processosJucidiais = new ArrayList<CcbProcessosJudiciais>(); 
+    	this.listSegurados = new ArrayList<Segurado>(); 
     }
 
 	public String getNomeEmitente() {
