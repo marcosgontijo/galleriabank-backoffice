@@ -548,6 +548,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorAprovadoComite;
 	private String tipoValorComite;
 	private String comentarioComite;
+	private String processosQuitarComite;
 	
 	private BigDecimal valorLaudoPajuTotal;
 	private BigDecimal valorLaudoPajuPago;
@@ -5097,6 +5098,13 @@ public class ContratoCobranca implements Serializable {
 	public void setPendenciaLaudoPajuUsuario(String pendenciaLaudoPajuUsuario) {
 		this.pendenciaLaudoPajuUsuario = pendenciaLaudoPajuUsuario;
 	}
-	
+
+	public String getProcessosQuitarComite() {
+		return processosQuitarComite;
+	}
+
+	public void setProcessosQuitarComite(String processosQuitarComite) {
+		this.processosQuitarComite = processosQuitarComite;
+	}
 	
 }

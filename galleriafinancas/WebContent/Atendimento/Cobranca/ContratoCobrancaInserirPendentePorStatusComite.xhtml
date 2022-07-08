@@ -529,76 +529,90 @@
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="3">
+							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+								<h:panelGroup id="botaoLinkImovelComite">
+									<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+										class="linkPDF" target="_blank"
+										style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
+										link no Google Maps</b>
+									</a>
+								
+									<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
+										<p:spacer width="5px"></p:spacer>
+										<p:spacer width="5px"></p:spacer>
+										<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
+											styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="taxaAprovadaComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 3, event, 2);"
+												converter="bigDecimalConverter" />
+											<p:outputLabel value="% + IPCA a.m." />
+										</h:panelGroup>
+	
+										<p:outputLabel for="prazoMaxAprovadoComite"
+											value="Prazo Maximo Aprovado: " styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="prazoMaxAprovadoComite" showOn="button"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
+												size="100" style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
+	
+										<p:outputLabel for="valorAprovadoComiteComite"
+											value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="valorAprovadoComiteComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
+												onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 13, event, 2);"
+												converter="bigDecimalConverter"
+												style="FONT-SIZE: 10pt;width:100px;" />
+	
+											<!-- -->
+	
+											<p:selectOneMenu id="tipoValorComiteComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
+												label="Status" style="width:100px;">
+												<f:selectItem itemValue="bruto" itemLabel="Bruto" />
+												<f:selectItem itemValue="liquido" itemLabel="Líquido" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+	
+										<p:outputLabel for="comentarioComiteComite"
+											value="Comentários comitê: " styleClass="labelBold" />
+										<p:inputTextarea id="comentarioComiteComite" rows="10"
+											cols="48" maxlength="3000" onblur="" style="width:319px;"
+											counterTemplate="{0} characters remaining." autoResize="false"
+											value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
+	
+										<p:outputLabel for="votoComite" value="Voto do comitê: "
+											styleClass="labelBold" />
+										<p:selectOneRadio id="votoComite"
+											value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
+											styleClass="labelBold">
+											<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
+											<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
+											<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
+										</p:selectOneRadio>
+									</h:panelGrid>
+								</h:panelGroup>
+							</shiro:hasAnyRoles>						
+							
 							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-									<h:panelGroup id="botaoLinkImovelComite">
-										<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-											class="linkPDF" target="_blank"
-											style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
-												link no Google Maps</b></a>
-									</h:panelGroup>
-									<!-- -->
-									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="taxaAprovadaComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
-											style="FONT-SIZE: 10pt;width:60px;"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 3, event, 2);"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
-									</h:panelGroup>
-
-									<p:outputLabel for="prazoMaxAprovadoComite"
-										value="Prazo Maximo Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="prazoMaxAprovadoComite" showOn="button"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
-											size="100" style="width:60px;" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="valorAprovadoComiteComite"
-										value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="valorAprovadoComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);"
-											converter="bigDecimalConverter"
-											style="FONT-SIZE: 10pt;width:100px;" />
-
-										<!-- -->
-
-										<p:selectOneMenu id="tipoValorComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
-											label="Status" style="width:100px;">
-											<f:selectItem itemValue="bruto" itemLabel="Bruto" />
-											<f:selectItem itemValue="liquido" itemLabel="Líquido" />
-										</p:selectOneMenu>
-									</h:panelGroup>
-
-									<p:outputLabel for="comentarioComiteComite"
-										value="Comentários comitê: " styleClass="labelBold" />
-									<p:inputTextarea id="comentarioComiteComite" rows="10"
-										cols="48" maxlength="3000" onblur=""
+									<p:outputLabel for="processosQuitarComite"
+										value="Processos para Quitar: " styleClass="labelBold" />
+									<p:inputTextarea id="processosQuitarComite" rows="10"
+										cols="48" maxlength="3000" onblur="" style="width: 312px;"
 										counterTemplate="{0} characters remaining." autoResize="false"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
-
-									<p:outputLabel for="votoComite" value="Voto do comitê: "
-										styleClass="labelBold" />
-									<p:selectOneRadio id="votoComite"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
-										styleClass="labelBold">
-										<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
-										<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
-										<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
-									</p:selectOneRadio>
-
+										value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 								</shiro:hasAnyRoles>
 							</h:panelGrid>
+							
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 								paginator="false" layout="list"

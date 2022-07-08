@@ -137,25 +137,26 @@
 								update="DemonstrativoResultados" />
 						</p:selectOneMenu>
 						
-						<p:outputLabel for="simularComIPCA" value="Simular com IPCA: "
-							styleClass="labelBold" />
-						<p:selectBooleanCheckbox id="simularComIPCA" 
-							value="#{simuladorMB.simularComIPCA}"  style="margin-left: 12px;">
-							<p:ajax update="ipcaSimulado ipcaSimuladoTexto" event="change" />
-						</p:selectBooleanCheckbox>
-
-						<h:panelGroup id="ipcaSimuladoTexto" >
-							<p:outputLabel for="ipcaSimulado" value="IPCA: "
-								styleClass="labelBold" rendered="#{simuladorMB.simularComIPCA}" />
-						</h:panelGroup>
-						<h:panelGrid id="ipcaSimulado" columns="2" >
-							<p:inputText rendered="#{simuladorMB.simularComIPCA}" value="#{simuladorMB.ipcaSimulado}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 3, event, 2);" required="true"
-								converter="bigDecimalConverter">
-							</p:inputText>
-							<p:outputLabel value="%" rendered="#{simuladorMB.simularComIPCA}"  styleClass="labelBold" />
-						</h:panelGrid>
+						<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">					
+							<p:outputLabel for="simularComIPCA" value="Simular com IPCA: "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="simularComIPCA" 
+								value="#{simuladorMB.simularComIPCA}"  style="margin-left: 12px;">
+								<p:ajax update="ipcaSimulado ipcaSimuladoTexto" event="change" />
+							</p:selectBooleanCheckbox>
+							<h:panelGroup id="ipcaSimuladoTexto" >
+								<p:outputLabel for="ipcaSimulado" value="IPCA: "
+									styleClass="labelBold" rendered="#{simuladorMB.simularComIPCA}" />
+							</h:panelGroup>
+							<h:panelGrid id="ipcaSimulado" columns="2" >
+								<p:inputText rendered="#{simuladorMB.simularComIPCA}" value="#{simuladorMB.ipcaSimulado}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 3, event, 2);" required="true"
+									converter="bigDecimalConverter">
+								</p:inputText>
+								<p:outputLabel value="%" rendered="#{simuladorMB.simularComIPCA}"  styleClass="labelBold" />
+							</h:panelGrid>					
+						</shiro:hasAnyRoles>
 						
 					</h:panelGrid>
 				</h:panelGrid>

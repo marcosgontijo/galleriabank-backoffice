@@ -4205,7 +4205,6 @@ public class ContratoCobrancaMB {
 		} else {
 			cpf = con.getPagador().getCnpj();
 		}		
-		
 		BigDecimal parcelaPGTO = BigDecimal
 				.valueOf(FinanceLib.pmt(con.getTaxaPreAprovada().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
 						con.getPrazoMaxPreAprovado().intValue(), // prazo
@@ -4213,16 +4212,64 @@ public class ContratoCobrancaMB {
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
-		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
-		
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxPreAprovado().toString(), con.getQuantoPrecisa(), con.getImovel().getValoEstimado(),
-				parcelaPGTO, rendaMinima);
+				parcelaPGTO, rendaMinima, "");
 		list.add(documento);
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
+	}
+	
+	public StreamedContent downloadAprovadoComitePDF(long idContrato) throws JRException, IOException {
+		JasperPrint jp = null;
+		jp = geraPDFPAprovadoComite(idContrato);
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		ContratoCobranca con = cDao.findById(idContrato);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");	
+		gerador.open("Galleria Bank - " + con.getPagador().getNome() + ".pdf");
+		gerador.feed(jp);
+		gerador.close();		
+		return null;
+	}
+	
+	public JasperPrint geraPDFPAprovadoComite(long idContrato) throws JRException, IOException {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDF");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/timbrado aprovadoComite.png");
 		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
+		
+		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
+		ContratoCobranca con = cDao.findById(idContrato);
+		String cpf = "";	
+		if(!CommonsUtil.semValor(con.getPagador().getCpf())) {
+			cpf = con.getPagador().getCpf();
+		} else {
+			cpf = con.getPagador().getCnpj();
+		}		
+		BigDecimal parcelaPGTO = BigDecimal
+				.valueOf(FinanceLib.pmt(con.getTaxaAprovada().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
+						con.getPrazoMaxAprovado().intValue(), // prazo
+						con.getValorAprovadoComite().negate().doubleValue(), // valor credito - VP
+						Double.valueOf("0"), // VF
+						false // pagamento no inico
+				));
+		
+		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
+		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
+				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
+				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
+				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getImovel().getValoEstimado(),
+				parcelaPGTO, rendaMinima, con.getTipoValorComite());
+		list.add(documento);
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
@@ -4732,7 +4779,7 @@ public class ContratoCobrancaMB {
 		this.nomeRecebedor6 = null;
 		this.selectedRecebedor6 = new PagadorRecebedor();
 	}
-
+	
 	public final void populateSelectedRecebedor7() {
 		this.idRecebedor7 = this.selectedRecebedor7.getId();
 		this.nomeRecebedor7 = this.selectedRecebedor7.getNome();

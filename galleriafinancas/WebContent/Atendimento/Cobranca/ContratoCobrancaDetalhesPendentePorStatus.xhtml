@@ -48,7 +48,6 @@
 				<p:messages />
 
 
-
 				<h:panelGrid columns="2">
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
 						styleClass="labelBold"
@@ -712,6 +711,13 @@
 									maxlength="3000" onblur=""
 									counterTemplate="{0} characters remaining." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
+									
+								<p:outputLabel for="processosQuitarComite"
+									value="Processos para Quitar: " styleClass="labelBold" />
+								<p:outputLabel id="processosQuitarComite" rows="10"
+									cols="48" maxlength="3000" onblur="" style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>

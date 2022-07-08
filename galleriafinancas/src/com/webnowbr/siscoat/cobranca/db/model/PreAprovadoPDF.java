@@ -21,6 +21,7 @@ public class PreAprovadoPDF implements Serializable {
 	private String matricula;
 	private String uf;
 	private String prazo;
+	private String tipoValor;
 	
 	private BigDecimal valorSolicitado;
 	private BigDecimal valorGarantia;
@@ -29,7 +30,7 @@ public class PreAprovadoPDF implements Serializable {
 	
 	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
 			String cidade, String matricula, String uf, String prazo, BigDecimal valorSolicitado,
-			BigDecimal valorGarantia, BigDecimal valorParcela, BigDecimal rendaMinima) {
+			BigDecimal valorGarantia, BigDecimal valorParcela, BigDecimal rendaMinima, String tipoValor) {
 		super();
 		this.nome = nome;
 		this.data = data;
@@ -45,7 +46,11 @@ public class PreAprovadoPDF implements Serializable {
 		this.valorGarantia = valorGarantia;
 		this.valorParcela = valorParcela;
 		this.rendaMinima = rendaMinima;
+		String s1 = tipoValor.substring(0, 1).toUpperCase();
+		this.tipoValor = s1 + tipoValor.substring(1);
 	}
+	
+	
 
 	public String getNome() {
 		return nome;
@@ -130,5 +135,11 @@ public class PreAprovadoPDF implements Serializable {
 	}
 	public void setRendaMinima(BigDecimal rendaMinima) {
 		this.rendaMinima = rendaMinima;
+	}
+	public String getTipoValor() {
+		return tipoValor;
+	}
+	public void setTipoValor(String tipoValor) {
+		this.tipoValor = tipoValor;
 	}
 }
