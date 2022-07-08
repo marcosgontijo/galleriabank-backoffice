@@ -28,7 +28,10 @@
 					<h:outputText id="CNPJ" value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ" mask="99.999.999/9999-99" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/> 
 					
 					<p:outputLabel for="Codigo" value="Código do Responsável: " styleClass="labelBold" />													
-					<h:outputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo"/>   					
+					<h:outputText id="Codigo" value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo"/> 
+					
+					<p:outputLabel for="CodigoIntegracao" value="Código Integração: " styleClass="labelBold" />													
+					<h:outputText id="CodigoIntegracao" value="#{responsavelMB.objetoResponsavel.id}" label="Codigo Integração"/>   					
 																
 					<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold" rendered="#{responsavelMB.tipoPessoaIsFisica}"/>
 					<p:outputLabel for="Nome" value="Razão Social: " styleClass="labelBold" rendered="#{!responsavelMB.tipoPessoaIsFisica}"/>

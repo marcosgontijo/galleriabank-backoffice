@@ -235,6 +235,15 @@ public class UsuarioMB {
 				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "AVALIADORIMOVEL");
+			if (objetoUsuario.isUserAvaliadorImovel()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAIUGU");
 			if (objetoUsuario.isUserPreContratoIUGU()) {				
 				gAdmAux.add(gAdm.get(0));

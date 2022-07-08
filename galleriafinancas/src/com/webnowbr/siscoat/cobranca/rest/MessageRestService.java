@@ -196,6 +196,18 @@ public class MessageRestService {
 						}
 					}
 					
+					if (lead.has("origem") && lead.has("codigoResponsavel") && lead.has("codigoIntegracao")) {
+						if (!lead.isNull("origem") && !lead.isNull("codigoResponsavel") && !lead.isNull("codigoIntegracao")) {
+							if (lead.getString("origem").equals("INTEGRACAO_LEAD")) {								
+								contratoCobrancaMB.setCodigoResponsavel(lead.getString("codigoResponsavel"));
+								Responsavel responsavel = new Responsavel();
+								ResponsavelDao rDao = new ResponsavelDao();
+								responsavel = rDao.findById(lead.getLong("codigoIntegracao"));
+								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+							}
+						}
+					}
+					
 					if (lead.has("url")) {
 						if (!lead.isNull("url")) {
 							

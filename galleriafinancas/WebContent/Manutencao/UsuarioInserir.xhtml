@@ -171,6 +171,15 @@
 						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
 						style="width:60px">
 					</p:selectBooleanButton>
+					
+					<h:outputLabel for="AvaliadorImovel"
+						value="Sistema de Cobrança - Avaliador de Imóvel:" class="labelBold" />
+					<p:selectBooleanButton id="AvaliadorImovel"
+						disabled="!#{usuarioMB.objetoUsuario.userAvaliadorImovel}"
+						value="#{usuarioMB.objetoUsuario.userAvaliadorImovel}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
 
 					<h:outputLabel for="IuguPosto" value="Cobranças IUGU Postos "
 						class="labelBold" />

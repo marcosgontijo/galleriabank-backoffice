@@ -79,6 +79,9 @@
         <property name="userPreContratoAnalista" type="boolean">
             <column name="userPreContratoAnalista" />
         </property>
+        <property name="userAvaliadorImovel" type="boolean">
+            <column name="userAvaliadorImovel" />
+        </property>  
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    
