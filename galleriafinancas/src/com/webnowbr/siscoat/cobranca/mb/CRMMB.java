@@ -494,7 +494,7 @@ public class CRMMB {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada");
+					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada CRM");
 				} else {
 					if (usuarioLogado.getCodigoResponsavel() != null) {
 						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Aprovada"); 	 
