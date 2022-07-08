@@ -935,12 +935,12 @@ public class CRMMB {
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& !c.isPagtoLaudoConfirmada()) {
+							&& !c.isPedidoLaudoPajuComercial()) {
 						c.setStatus("Análise Pré-Aprovada");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+							&& c.isPedidoLaudoPajuComercial() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
 						c.setStatus("Ag. PAJU e Laudo");
 					}
 

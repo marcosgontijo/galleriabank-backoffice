@@ -49,20 +49,24 @@
 					
 			<div class="ui-g">
 				<div class="ui-g-12 ui-md-12 ui-lg-12">
-				    <p:fieldset id="informativo" legend="ATENÇÃO!!! Quais são os documentos necessários para a análise de crédito?" style="font-weight: bold;margin-top: 10px;background-color: #f7f4a9 !important;">						        
-					    <div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;padding: 10px;">
-				        	RG ou CNH
-				       	</div>	
-				    	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;padding: 10px;">
-							Comprovantes de Renda
-				       	</div>
-				       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;padding: 10px;">
-				        	Matrícula do Imóvel (não precisa estar atualizada)
-				       	</div>
-				       	<div class="ui-g-6 ui-md-6 ui-lg-6" style="text-align: center;padding: 10px;">
-							Fotos recentes do imóvel, se possível
-				       	</div>			       	
-  					</p:fieldset>					
+					<p:panel header="ATENÇÂO!!!" 
+						style="margin-bottom:10px; text-align: center; background-color: #e10000;
+					 font-weight: bold;" 
+					 styleClass="AtencaoCRMConsultar AtencaoCRMConsultarTitle AtencaoCRMConsultarTexto">
+					    <p:fieldset id="informativo" legend="Quais são os documentos necessários para a análise de crédito?" style="font-weight: bold;margin-top: 10px;background-color: #f7f4a9 !important;">						        
+						    <h:panelGrid columns="2" style="text-align: center;padding: 10px; margin: 0 auto;">
+								<p:outputLabel value="CNH (preferencialmente) ou RG" styleClass="labelBold" style="text-align: center;padding: 50px;" />
+								<p:outputLabel value="Comprovantes de renda" styleClass="labelBold" style="text-align: center;padding: 50px;"/>
+								<p:spacer width="20px"></p:spacer>
+								<p:spacer width="20px"></p:spacer>
+								<p:outputLabel value="Matrícula do imóvel" styleClass="labelBold" style="text-align: center;padding: 50px;" />
+								<p:outputLabel value="IPTU" styleClass="labelBold" style="text-align: center;padding: 50px;"/>
+								<p:spacer width="20px"></p:spacer>
+								<p:spacer width="20px"></p:spacer>
+								<p:outputLabel value="Fotos recentes do imóvel" styleClass="labelBold" style="text-align: center;padding: 50px;" />
+							</h:panelGrid>    	
+	  					</p:fieldset>	
+	  				</p:panel>				
 				</div>
 				<div class="ui-g-8 ui-md-8 ui-lg-8">
 				    <p:fieldset id="opcoes" legend="Opções de Consulta" style="font-weight: bold;margin-top: 2px;background-color: #b7e6ba !important;">						        

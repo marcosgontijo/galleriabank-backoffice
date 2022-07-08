@@ -41,6 +41,24 @@
 			text-decoration: none;
 		}
 		
+		.AtencaoCRMConsultar.ui-panel .ui-panel-titlebar {
+			background:#e10000;
+			border: none;
+		}
+		
+		.AtencaoCRMConsultarTitle.ui-panel .ui-panel-titlebar .ui-panel-title {
+			background:#e10000;
+			color:#ffffff;
+			font-weight:bold;
+			font-size: 20;
+		}
+		
+		.AtencaoCRMConsultarTexto.ui-panel .ui-panel-title {
+		    margin: 0.1em 16px 0.2em 0;
+		    border: 100px;
+		    font-size: 25px !important;
+		}
+		
 		.ui-datatable .ui-datatable-data .linhaAzul td{
 		    background-color:  #25bbf7;  
 		}
