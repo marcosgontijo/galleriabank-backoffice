@@ -2809,7 +2809,7 @@
 								<p:outputLabel for="ContaPagarDescricao" value="Descrição: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 								<p:autoComplete id="ContaPagarDescricao" dropdown="true" value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
-                        			    completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}" scrollHeight="250"/>
+                        			    forceSelection="false" completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}" scrollHeight="250"/>
 
 								<p:outputLabel for="ContaPagarValor" value="Valor: " styleClass="labelBold"/>
 								<p:inputText id="ContaPagarValor"

@@ -121,17 +121,21 @@
 								<h:panelGrid columns="1">
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}">
-										<h:panelGrid columns="2"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-											-moz-border-radius: 5px;
-											border-radius: 5px; padding: 10px;">
+										
+										<h:panelGrid columns="1"
+											style="background-color: #e4e4e4; width: 250px; -webkit-border-radius: 0;
+											-moz-border-radius: 0;
+											border-radius: 0; padding: 5px;">
 											<p:outputLabel styleClass="labelBold">
 											LAUDO+PAJU será com pagamento <br/> Antecipado ou No final?</p:outputLabel>
 											<!-- -->
-											
-											<p:spacer width="10px"></p:spacer>
-											<p:spacer width="10px"></p:spacer>
-											
+										</h:panelGrid>
+										
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 5px;">
+		
 											<p:outputLabel for="formaDePagamentoLaudoPAJU" styleClass="labelBold"> Forma de Pagamento: </p:outputLabel>
 											<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
@@ -713,11 +717,11 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}" />
 									
 								<p:outputLabel for="processosQuitarComite"
-									value="Processos para Quitar: " styleClass="labelBold" />
-								<p:outputLabel id="processosQuitarComite" rows="10"
-									cols="48" maxlength="3000" onblur="" style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
-									counterTemplate="{0} characters remaining." autoResize="false"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
+								value="Processos para Quitar: " styleClass="labelBold" />
+							<p:outputLabel id="processosQuitarComite" rows="10"
+								cols="48" maxlength="3000" onblur="" style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
