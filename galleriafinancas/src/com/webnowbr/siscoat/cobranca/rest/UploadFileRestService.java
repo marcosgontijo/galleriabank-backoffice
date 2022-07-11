@@ -164,15 +164,33 @@ public class UploadFileRestService {
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				
 				File diretorio = new File(pathContrato);
-				if (!diretorio.isDirectory()) {
-					diretorio.mkdir();
+				try {
+					if (!diretorio.isDirectory()) {
+						diretorio.mkdir();
+					}
+				}catch(Exception e) {
+					String message = "{\"retorno\": \"\"Ocorreu um erro ao tentar criar na pasta "+numeroContrato+", tente novamente.\"}";
+					return Response
+							.status(Response.Status.BAD_GATEWAY)
+							.entity(message)
+							.type(MediaType.APPLICATION_JSON)
+							.build();
 				}
 				
 				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
 				
 				File diretorioFaltante = new File(pathContratoFaltante);
-				if (!diretorioFaltante.isDirectory()) {
-					diretorioFaltante.mkdir();
+				try {
+					if (!diretorioFaltante.isDirectory()) {
+						diretorioFaltante.mkdir();
+					}
+				}catch(Exception e) {
+					String message = "{\"retorno\": \"\"Ocorreu um erro ao tentar criar na pasta "+numeroContrato+", tente novamente.\"}";
+					return Response
+							.status(Response.Status.BAD_GATEWAY)
+							.entity(message)
+							.type(MediaType.APPLICATION_JSON)
+							.build();
 				}
 				
 				String message = "{\"retorno\": \"Pasta e Subpasta criada com sucesso!!! " + numeroContrato +"\"}";
@@ -211,32 +229,49 @@ public class UploadFileRestService {
 		System.out.println("Executando o comando para consultar os arquivos dentro da pasta "
 				+numeroContrato+ " e subpasta "+subpasta+" - Inicio");
 		
-		String message = NO_EXIST;				
+		String message = NO_EXIST;
+		ListaUploadDocumentos listaDocumentos = null;
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
 				// recupera local onde será gravado o arquivo
 				ParametrosDao pDao = new ParametrosDao();
-				String pathContrato = NO_EXIST;
-				if(subpasta.equals(NO_EXIST)) {
-					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString().concat(numeroContrato);
-				}else if(subpasta.equals(FALTANTE)) {
-					pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString().concat(numeroContrato).concat(PASTA_FALTANTE);
-				}
-
-				// cria o diretório, caso não exista
-				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
+				String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString().concat(numeroContrato);
 				
-				File diretorio = new File(pathContrato);
-				File arqs[] = diretorio.listFiles();
-				ListaUploadDocumentos listaDocumentos = new ListaUploadDocumentos(); 
-				listaDocumentos.setListaUploadDocumentos(new ArrayList<UploadDocumentos>());
-				if (arqs != null && arqs.length > 0) {
-					for (int i = 0; i < arqs.length; i++) {
-						if(arqs[i].isFile() == true) {
-							File arquivo = arqs[i];
-							listaDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), pathContrato));
-						}
+				File novoDiretorio = new File(pathContrato);
+				
+				try { 
+					if (!novoDiretorio.isDirectory()) {
+						novoDiretorio.mkdir();
 					}
+				}catch(Exception e) {
+					message = "{\"retorno\": \"\"Ocorreu um erro ao tentar criar na pasta "+numeroContrato+", tente novamente.\"}";
+					return Response
+							.status(Response.Status.BAD_GATEWAY)
+							.entity(message)
+							.type(MediaType.APPLICATION_JSON)
+							.build();
+				}
+				
+				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
+				
+				File diretorioFaltante = new File(pathContratoFaltante);
+				try {
+					if (!diretorioFaltante.isDirectory()) {
+						diretorioFaltante.mkdir();
+					}
+				}catch(Exception e) {
+					message = "{\"retorno\": \"\"Ocorreu um erro ao tentar criar na pasta faltante, tente novamente.\"}";
+					return Response
+						      .status(Response.Status.BAD_GATEWAY)
+						      .entity(message)
+						      .type(MediaType.APPLICATION_JSON)
+						      .build();
+				}
+				
+				if(subpasta.equals(NO_EXIST)) {
+					listaDocumentos = listarDiretorios(pathContrato);
+				}else if(subpasta.equals(FALTANTE)) {
+					listaDocumentos = listarDiretorios(pathContratoFaltante);
 				}
 				
 				System.out.println("Arquivos encontrados com sucesso na pasta "+numeroContrato+" - Fim");
@@ -263,6 +298,25 @@ public class UploadFileRestService {
 				      .type(MediaType.APPLICATION_JSON)
 				      .build();
 		}
+	}
+
+	private ListaUploadDocumentos listarDiretorios(String pathContrato) {
+		// cria o diretório, caso não exista
+		// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
+		
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		ListaUploadDocumentos listaDocumentos = new ListaUploadDocumentos(); 
+		listaDocumentos.setListaUploadDocumentos(new ArrayList<UploadDocumentos>());
+		if (arqs != null && arqs.length > 0) {
+			for (int i = 0; i < arqs.length; i++) {
+				if(arqs[i].isFile() == true) {
+					File arquivo = arqs[i];
+					listaDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), pathContrato));
+				}
+			}
+		}
+		return listaDocumentos;
 	}
 	
 }
