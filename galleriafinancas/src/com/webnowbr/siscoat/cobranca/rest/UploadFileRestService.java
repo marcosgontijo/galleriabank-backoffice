@@ -27,7 +27,7 @@ public class UploadFileRestService {
 	
 	private static final String NO_EXIST = "NO_EXIST";
 	private static final String FALTANTE = "faltante";
-	private static final String PASTA_FALTANTE = "/faltante";
+	private static final String PASTA_FALTANTE = "\faltante";
 	
 	@POST
 	@Path("/uploads/{numeroContrato}/{subpasta}/{nomeArquivo}")
@@ -252,7 +252,7 @@ public class UploadFileRestService {
 							.build();
 				}
 				
-				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
+				String pathContratoFaltante = novoDiretorio.getAbsolutePath().concat(PASTA_FALTANTE);
 				
 				File diretorioFaltante = new File(pathContratoFaltante);
 				try {
