@@ -45,9 +45,6 @@
 	<field name="valorParcela" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[valorParcela]]></fieldDescription>
 	</field>
-	<field name="rendaMinima" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[rendaMinima]]></fieldDescription>
-	</field>
 	<field name="tipoValor" class="java.lang.String">
 		<fieldDescription><![CDATA[tipoValor]]></fieldDescription>
 	</field>

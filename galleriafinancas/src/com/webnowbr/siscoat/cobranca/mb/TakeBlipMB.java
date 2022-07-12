@@ -34,21 +34,28 @@ public class TakeBlipMB {
 	
 	// namespace
 	// 37de7635_839c_4792_92a6_5d40dc299b2a
-	
-	// contrato_dado_entrada_cartorio
+		
+	//recebimento_lead_comercial
 	/*
-	 * 
-		Olá {{1}}, tudo pronto!
+	 	Olá {{1}}, o lead {{2}} do cliente {{3}} acabou de chegar, favor entrar em contato.
+	 */
 	
-		Contrato do Cliente {{2}} do Contrato {{3}} já foi dado entrada no Cartório de Registro.
-	
-		Agora é só aguardar o registro para fazermos o pagamento 🤑
-	*/
-	
-	// contrato_pronto_para_assinatura
+	// contrato_pre_aprovado
 	/*
-	 	Olá {{1}}, estamos quase lá!
-		Contrato do Cliente {{2}} do Contrato {{3}} já está disponível para assinatura 😜
+	 	Olá {{1}}, ótima notícia! 😆
+		Cliente {{2}} do Contrato {{3}} foi pré aprovado com taxa de {{4}}% + IPCA e prazo de {{5}} meses
+	 */
+	
+	// contrato_recebido_paju
+	/*
+	 	Olá {{1}}, tudo certo?
+		Já recebemos o paju do Cliente {{2}} do Contrato {{3}}. 😉
+	 */
+	
+	// contrato_recebido_laudo
+	/*
+	 	Olá {{1}}, tudo certo?
+		Já recebemos o laudo do Cliente {{2}} do Contrato {{3}}. 😉
 	 */
 	
 	// contrato_recebido_laudo_paju
@@ -57,12 +64,6 @@ public class TakeBlipMB {
 		Já recebemos o laudo e paju do Cliente {{2}} do Contrato {{3}}, o próximo passo é o comitê 😉
 	 */
 	
-	// contrato_pre_aprovado
-	/*
-	 	Olá {{1}}, ótima notícia! 😆
-		Cliente {{2}} do Contrato {{3}} foi pré aprovado com taxa de {{4}}% + IPCA e prazo de {{5}} meses
-	 */
-
 	// ag_comentarios_juridico
 	/*
 	 	Olá {{1}}, contrato {{2}} do cliente {{3}} está aguardando seu comentário jurídico
@@ -82,6 +83,22 @@ public class TakeBlipMB {
 	/*
 	 	Olá {{1}}, contrato {{2}} do cliente {{3}} foi aprovado pelo comitê e está pronto para fazer a CCB
 	 */
+	
+	// contrato_pronto_para_assinatura
+	/*
+	 	Olá {{1}}, estamos quase lá!
+		Contrato do Cliente {{2}} do Contrato {{3}} já está disponível para assinatura 😜
+	 */
+	
+	// contrato_dado_entrada_cartorio
+	/* 
+		Olá {{1}}, tudo pronto!
+	
+		Contrato do Cliente {{2}} do Contrato {{3}} já foi dado entrada no Cartório de Registro.
+	
+		Agora é só aguardar o registro para fazermos o pagamento 🤑
+	*/
+
 	
 	/*
 	   {
@@ -111,7 +128,6 @@ public class TakeBlipMB {
 		        }
 		    }
 		}
-
 	 */
 	
 	/**
@@ -286,7 +302,8 @@ public class TakeBlipMB {
 				} else if (nomeTemplateMensagem.equals("ag_comentarios_juridico")
 						|| nomeTemplateMensagem.equals("comentado_juridico_interno")
 						|| nomeTemplateMensagem.equals("ag_validacao_documentos")
-						|| nomeTemplateMensagem.equals("aprovado_comite_ag_ccb")) {
+						|| nomeTemplateMensagem.equals("aprovado_comite_ag_ccb")
+						|| nomeTemplateMensagem.equals("recebimento_lead_comercial")) {
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");

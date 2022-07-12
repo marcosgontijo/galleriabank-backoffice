@@ -3029,14 +3029,7 @@ public class ContratoCobrancaMB {
 						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
 								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
-								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQuantoPrecisa(), BigInteger.valueOf(350000)) 
-										&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE)) {
-									this.objetoContratoCobranca.setAprovadoComite(true);
-									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
-								}
-								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2)) 
-										|| ((this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(350000)) <= 0 ) 
-												&& CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.ONE))) {
+								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 									this.objetoContratoCobranca.setAprovadoComite(true);
 									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 								}
@@ -4317,7 +4310,7 @@ public class ContratoCobrancaMB {
 				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxPreAprovado().toString(), con.getQuantoPrecisa(), con.getImovel().getValoEstimado(),
-				parcelaPGTO, rendaMinima, "");
+				parcelaPGTO, rendaMinima);
 		list.add(documento);
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
@@ -4368,7 +4361,7 @@ public class ContratoCobrancaMB {
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getImovel().getValoEstimado(),
-				parcelaPGTO, rendaMinima, con.getTipoValorComite());
+				parcelaPGTO, con.getTipoValorComite());
 		list.add(documento);
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
@@ -14712,11 +14705,20 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
 			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
-				this.objetoContratoCobranca.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValor());
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValor()));
 			} else {
 				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
 			}
-		}
+			if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
+				if(CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getValor())) {
+					this.contasPagarSelecionada.setContaPaga(true);
+				} 
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+			}
+		}	
+		
 		if(this.contasPagarSelecionada.isContaPaga() && CommonsUtil.semValor(this.contasPagarSelecionada.getDataPagamento())) {
 			this.contasPagarSelecionada.setDataPagamento(gerarDataHoje());
 		}	
@@ -14763,12 +14765,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void concluirComentarioComite(ContratoCobranca contrato) {
-		String comentarioComiteFinal = "";
-		
+		String comentarioComiteFinal = "";		
 		for (AnaliseComite comite : contrato.getListaAnaliseComite()) {
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
-		}
-		
+		}	
 		contrato.setComentarioComite(comentarioComiteFinal);
 	}
 	
@@ -14806,7 +14806,27 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void removerConta(ContasPagar conta) {
+		if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
+			this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+					.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValor()));
+		}
+		if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
+			this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+					.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValorPagamento()));
+		}
 		this.objetoContratoCobranca.getListContasPagar().remove(conta);
+	}
+	
+	public void baixarConta(ContasPagar conta) {
+		ContasPagarDao cDao = new ContasPagarDao();
+		if (conta.getValorPagamento() == null)
+			conta.setValorPagamento(conta.getValor());
+		
+		if(CommonsUtil.mesmoValor(conta.getValorPagamento(), conta.getValor())) {
+			conta.setContaPaga(true);
+			conta.setDataPagamento(gerarDataHoje());
+			cDao.merge(conta);
+		} 
 	}
 	
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {

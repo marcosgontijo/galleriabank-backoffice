@@ -2,7 +2,12 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.webnowbr.siscoat.common.BancosEnum;
 
 public class ContasPagar implements Serializable {
 
@@ -22,10 +27,28 @@ public class ContasPagar implements Serializable {
 	private String tipoDespesa;
 	private ContaContabil contaContabil;
 	
+	private String formaTransferencia;
+	private String pix;
+	private String nomeTed;
+	private String cpfTed;
+	private String bancoTed;
+	private String contaTed;
+	private String agenciaTed;
+	
 	private Responsavel responsavel;
 
 	public ContasPagar() {
 	}
+	
+	 public List<String> completeBancos(String query) {
+	    String queryLowerCase = query.toLowerCase();
+	    List<String> bancos = new ArrayList<>();
+	    for(BancosEnum banco : BancosEnum.values()) {
+	    	String bancoStr = banco.getNomeCompleto().toString();
+	    	bancos.add(bancoStr);
+	    }
+	    return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
 
 	/**
 	 * @return the id
@@ -143,5 +166,61 @@ public class ContasPagar implements Serializable {
 
 	public void setResponsavel(Responsavel responsavel) {
 		this.responsavel = responsavel;
+	}
+
+	public String getFormaTransferencia() {
+		return formaTransferencia;
+	}
+
+	public void setFormaTransferencia(String formaTransferencia) {
+		this.formaTransferencia = formaTransferencia;
+	}
+
+	public String getPix() {
+		return pix;
+	}
+
+	public void setPix(String pix) {
+		this.pix = pix;
+	}
+
+	public String getNomeTed() {
+		return nomeTed;
+	}
+
+	public void setNomeTed(String nomeTed) {
+		this.nomeTed = nomeTed;
+	}
+
+	public String getCpfTed() {
+		return cpfTed;
+	}
+
+	public void setCpfTed(String cpfTed) {
+		this.cpfTed = cpfTed;
+	}
+
+	public String getBancoTed() {
+		return bancoTed;
+	}
+
+	public void setBancoTed(String bancoTed) {
+		this.bancoTed = bancoTed;
+	}
+
+	public String getContaTed() {
+		return contaTed;
+	}
+
+	public void setContaTed(String contaTed) {
+		this.contaTed = contaTed;
+	}
+
+	public String getAgenciaTed() {
+		return agenciaTed;
+	}
+
+	public void setAgenciaTed(String agenciaTed) {
+		this.agenciaTed = agenciaTed;
 	}
 }

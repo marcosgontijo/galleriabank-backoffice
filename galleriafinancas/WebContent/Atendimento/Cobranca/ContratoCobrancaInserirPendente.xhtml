@@ -1000,7 +1000,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+				
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
@@ -3199,10 +3199,65 @@
 									value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
 									label="Data" size="100" pattern="dd/MM/yyyy"
 									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
+									styleClass="labelBold" />
+								<p:inputText id="ContaPagarValorPago"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="ContaPagarDataPagamento"
+									value="Data Pagamento: " styleClass="labelBold" />
+								<p:calendar id="ContaPagarDataPagamento"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu id="formaTransferencia"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="TED" itemLabel="TED" />
+									<f:selectItem itemValue="Pix" itemLabel="Pix" />
+									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									<p:ajax event="change" 
+										update="tedGrid pixGrid" />
+								</p:selectOneMenu>
 
-								<p:spacer height="10" />
-								<p:spacer height="10" />
 							</h:panelGrid>
+							<h:panelGroup id="tedGrid" >
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
+									<p:outputLabel for="nomeTed" value="Nome: " />
+									<p:inputText id="nomeTed" value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" />								
+									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
+									<p:inputText id="cpfTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" />		
+									<p:outputLabel value="Banco: " for="bancoTed" />
+									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
+										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta" 
+										style="width:100px;"
+										scrollHeight="250" />														
+									<p:outputLabel for="contaTed" value="Conta: " />
+									<p:inputText id="contaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" />									
+									<p:outputLabel for="agenciaTed" value="Agência: " />
+									<p:inputText id="agenciaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" />							
+								</h:panelGrid>
+							</h:panelGroup>	
+							<h:panelGroup id="pixGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel for="pix" value="Pix: " />
+									<p:inputText id="pix" value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+							
 							<p:commandButton value="Concluir" ajax="true"
 								action="#{contratoCobrancaMB.concluirConta()}"
 								update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
@@ -3220,7 +3275,6 @@
 								<p:outputLabel value="|" />
 								<p:spacer height="5" />
 
-
 								<p:outputLabel value="Valor: " styleClass="labelBold" />
 								<p:outputLabel value="#{contas.valor}"
 									converter="bigDecimalConverter" styleClass="labelBold"
@@ -3231,6 +3285,24 @@
 
 								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
 								<h:outputText value="#{contas.dataVencimento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+								
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.valorPagamento}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
+								<h:outputText value="#{contas.dataPagamento}"
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
@@ -4047,7 +4119,7 @@
 		</p:dialog>	
 	<!-- /////////////////////////////////////////////////////////////// -->
 	
-			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
+		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
 			</ui:include>
