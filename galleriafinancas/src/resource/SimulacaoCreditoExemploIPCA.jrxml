@@ -312,17 +312,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{ltv}) + "%"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="197" y="161" width="160" height="12" forecolor="#002A3C" backcolor="#002A3C" uuid="4d4372eb-3413-4ef7-8ab2-8e302dd283da">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<text><![CDATA[]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="197" y="161" width="160" height="12" forecolor="#FFFFFF" backcolor="#002A3C" uuid="112ea7bb-e16b-4ea9-b33b-da83baec909d">
+				<reportElement mode="Opaque" x="197" y="161" width="160" height="12" forecolor="#FFFFFF" backcolor="#002A3C" uuid="112ea7bb-e16b-4ea9-b33b-da83baec909d">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">

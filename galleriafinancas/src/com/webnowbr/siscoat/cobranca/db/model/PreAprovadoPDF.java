@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class PreAprovadoPDF implements Serializable {
 
 	/**
@@ -21,6 +23,7 @@ public class PreAprovadoPDF implements Serializable {
 	private String matricula;
 	private String uf;
 	private String prazo;
+	private String tipoValor;
 	
 	private BigDecimal valorSolicitado;
 	private BigDecimal valorGarantia;
@@ -46,6 +49,32 @@ public class PreAprovadoPDF implements Serializable {
 		this.valorParcela = valorParcela;
 		this.rendaMinima = rendaMinima;
 	}
+	
+	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
+			String cidade, String matricula, String uf, String prazo, BigDecimal valorSolicitado,
+			BigDecimal valorGarantia, BigDecimal valorParcela, String tipoValor) {
+		super();
+		this.nome = nome;
+		this.data = data;
+		this.numeroOp = numeroOp;
+		this.cpf = cpf;
+		this.taxa = taxa;
+		this.observacao = observacao;
+		this.cidade = cidade;
+		this.matricula = matricula;
+		this.uf = uf;
+		this.prazo = prazo;
+		this.valorSolicitado = valorSolicitado;
+		this.valorGarantia = valorGarantia;
+		this.valorParcela = valorParcela;
+		String s1 = tipoValor.substring(0, 1).toUpperCase();
+		this.tipoValor = s1 + tipoValor.substring(1);
+		if(CommonsUtil.semValor(this.observacao)) {
+			this.observacao = "";
+		}
+	}
+	
+	
 
 	public String getNome() {
 		return nome;
@@ -130,5 +159,11 @@ public class PreAprovadoPDF implements Serializable {
 	}
 	public void setRendaMinima(BigDecimal rendaMinima) {
 		this.rendaMinima = rendaMinima;
+	}
+	public String getTipoValor() {
+		return tipoValor;
+	}
+	public void setTipoValor(String tipoValor) {
+		this.tipoValor = tipoValor;
 	}
 }

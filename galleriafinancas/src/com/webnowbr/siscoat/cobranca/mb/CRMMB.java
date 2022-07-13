@@ -494,7 +494,7 @@ public class CRMMB {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada");
+					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada CRM");
 				} else {
 					if (usuarioLogado.getCodigoResponsavel() != null) {
 						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Aprovada"); 	 
@@ -935,12 +935,12 @@ public class CRMMB {
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& !c.isPagtoLaudoConfirmada()) {
+							&& !c.isPedidoLaudoPajuComercial()) {
 						c.setStatus("Análise Pré-Aprovada");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+							&& c.isPedidoLaudoPajuComercial() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
 						c.setStatus("Ag. PAJU e Laudo");
 					}
 

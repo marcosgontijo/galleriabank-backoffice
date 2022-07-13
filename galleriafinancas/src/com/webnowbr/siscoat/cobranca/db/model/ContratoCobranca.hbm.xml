@@ -1657,5 +1657,8 @@
 		<property name="avaliacaoLaudo" type="java.lang.String">
 			<column name="avaliacaoLaudo" />
 		</property>	
+		<property name="processosQuitarComite" type="text">
+			<column name="processosQuitarComite" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -529,76 +529,90 @@
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="3">
+							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+								<h:panelGroup id="botaoLinkImovelComite">
+									<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+										class="linkPDF" target="_blank"
+										style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
+										link no Google Maps</b>
+									</a>
+								
+									<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
+										<p:spacer width="5px"></p:spacer>
+										<p:spacer width="5px"></p:spacer>
+										<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
+											styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="taxaAprovadaComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 3, event, 2);"
+												converter="bigDecimalConverter" />
+											<p:outputLabel value="% + IPCA a.m." />
+										</h:panelGroup>
+	
+										<p:outputLabel for="prazoMaxAprovadoComite"
+											value="Prazo Maximo Aprovado: " styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="prazoMaxAprovadoComite" showOn="button"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
+												size="100" style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
+	
+										<p:outputLabel for="valorAprovadoComiteComite"
+											value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+										<h:panelGroup>
+											<p:inputText id="valorAprovadoComiteComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
+												onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 13, event, 2);"
+												converter="bigDecimalConverter"
+												style="FONT-SIZE: 10pt;width:100px;" />
+	
+											<!-- -->
+	
+											<p:selectOneMenu id="tipoValorComiteComite"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
+												label="Status" style="width:100px;">
+												<f:selectItem itemValue="bruto" itemLabel="Bruto" />
+												<f:selectItem itemValue="liquido" itemLabel="Líquido" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+	
+										<p:outputLabel for="comentarioComiteComite"
+											value="Comentários comitê: " styleClass="labelBold" />
+										<p:inputTextarea id="comentarioComiteComite" rows="10"
+											cols="48" maxlength="3000" onblur="" style="width:319px;"
+											counterTemplate="{0} characters remaining." autoResize="false"
+											value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
+	
+										<p:outputLabel for="votoComite" value="Voto do comitê: "
+											styleClass="labelBold" />
+										<p:selectOneRadio id="votoComite"
+											value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
+											styleClass="labelBold">
+											<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
+											<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
+											<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
+										</p:selectOneRadio>
+									</h:panelGrid>
+								</h:panelGroup>
+							</shiro:hasAnyRoles>						
+							
 							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-									<h:panelGroup id="botaoLinkImovelComite">
-										<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-											class="linkPDF" target="_blank"
-											style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
-												link no Google Maps</b></a>
-									</h:panelGroup>
-									<!-- -->
-									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="taxaAprovadaComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
-											style="FONT-SIZE: 10pt;width:60px;"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 3, event, 2);"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
-									</h:panelGroup>
-
-									<p:outputLabel for="prazoMaxAprovadoComite"
-										value="Prazo Maximo Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="prazoMaxAprovadoComite" showOn="button"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
-											size="100" style="width:60px;" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="valorAprovadoComiteComite"
-										value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="valorAprovadoComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);"
-											converter="bigDecimalConverter"
-											style="FONT-SIZE: 10pt;width:100px;" />
-
-										<!-- -->
-
-										<p:selectOneMenu id="tipoValorComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
-											label="Status" style="width:100px;">
-											<f:selectItem itemValue="bruto" itemLabel="Bruto" />
-											<f:selectItem itemValue="liquido" itemLabel="Líquido" />
-										</p:selectOneMenu>
-									</h:panelGroup>
-
-									<p:outputLabel for="comentarioComiteComite"
-										value="Comentários comitê: " styleClass="labelBold" />
-									<p:inputTextarea id="comentarioComiteComite" rows="10"
-										cols="48" maxlength="3000" onblur=""
+									<p:outputLabel for="processosQuitarComite"
+										value="Processos para Quitar: " styleClass="labelBold" />
+									<p:inputTextarea id="processosQuitarComite" rows="10"
+										cols="48" maxlength="3000" onblur="" style="width: 312px;"
 										counterTemplate="{0} characters remaining." autoResize="false"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
-
-									<p:outputLabel for="votoComite" value="Voto do comitê: "
-										styleClass="labelBold" />
-									<p:selectOneRadio id="votoComite"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
-										styleClass="labelBold">
-										<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
-										<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
-										<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
-									</p:selectOneRadio>
-
+										value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
 								</shiro:hasAnyRoles>
 							</h:panelGrid>
+							
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 								paginator="false" layout="list"
@@ -3100,25 +3114,27 @@
 				</h:panelGroup>
 
 				<h:panelGroup id="ContasPagarPanel">
-					<p:panel header="Contas a Pagar" style="margin-bottom:10px;" 
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"> 
-						
+					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+
 						<f:facet name="header"> Contas a Pagar 
 							<p:outputLabel value="" />
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
-								<p:selectBooleanButton value="#{contratoCobrancaMB.addContasPagar}"
-									onLabel="Adicionar Conta" offLabel="Adicionar Conta"  onIcon="ui-icon-plus" offIcon="ui-icon-plus">
+								<p:selectBooleanButton
+									value="#{contratoCobrancaMB.addContasPagar}"
+									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
+									onIcon="ui-icon-plus" offIcon="ui-icon-plus">
 									<p:ajax update=":form:ContasPagarPanel" event="change" />
 								</p:selectBooleanButton>
 							</shiro:hasAnyRoles>
 						</f:facet>
-						
-						<p:outputLabel for="ContaPagarValorTotal" value="Valor Total (R$): "
-									styleClass="labelBold" />
+
+						<p:outputLabel for="ContaPagarValorTotal"
+							value="Valor Total (R$): " styleClass="labelBold" />
 						<p:outputLabel id="ContaPagarValorTotal" styleClass="labelBold"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
-									converter="bigDecimalConverter" />			
-						
+							value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
+							converter="bigDecimalConverter" />
+
 						<h:panelGroup id="adicionarContasPagar"
 							rendered="#{contratoCobrancaMB.addContasPagar}">
 							<h:panelGrid columns="2">
@@ -3128,34 +3144,93 @@
 								<p:outputLabel value="Adicionar Conta a Pagar"
 									styleClass="labelBold" />
 								<!-- espaço em branco para formação dos elementos na tela -->
-									
-								<p:outputLabel for="ContaPagarDescricao" value="Descrição: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-								<p:autoComplete id="ContaPagarDescricao" dropdown="true" value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
-                        			    completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}" scrollHeight="250"/>
 
-								<p:outputLabel for="ContaPagarValor" value="Valor: " styleClass="labelBold"/>
+								<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:autoComplete id="ContaPagarDescricao" dropdown="true"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
+									completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}"
+									scrollHeight="250" />
+
+								<p:outputLabel for="ContaPagarValor" value="Valor: "
+									styleClass="labelBold" />
 								<p:inputText id="ContaPagarValor"
 									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="false"
 									converter="bigDecimalConverter" />
-									
+
 								<p:outputLabel for="ContaPagarDataVencimento"
-										value="Data Vencimento: " styleClass="labelBold" />
+									value="Data Vencimento: " styleClass="labelBold" />
 								<p:calendar id="ContaPagarDataVencimento"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
-										label="Data" size="100" pattern="dd/MM/yyyy"
-										styleClass="dateTimeField" />
-																				
-								<p:spacer height="10" />
-								<p:spacer height="10" />		
+									value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
+									styleClass="labelBold" />
+								<p:inputText id="ContaPagarValorPago"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="ContaPagarDataPagamento"
+									value="Data Pagamento: " styleClass="labelBold" />
+								<p:calendar id="ContaPagarDataPagamento"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu id="formaTransferencia"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="TED" itemLabel="TED" />
+									<f:selectItem itemValue="Pix" itemLabel="Pix" />
+									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									<p:ajax event="change" 
+										update="tedGrid pixGrid" />
+								</p:selectOneMenu>
+
 							</h:panelGrid>
+							<h:panelGroup id="tedGrid" >
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
+									<p:outputLabel for="nomeTed" value="Nome: " />
+									<p:inputText id="nomeTed" value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" />								
+									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
+									<p:inputText id="cpfTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" />		
+									<p:outputLabel value="Banco: " for="bancoTed" />
+									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
+										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta" 
+										style="width:100px;"
+										scrollHeight="250" />														
+									<p:outputLabel for="contaTed" value="Conta: " />
+									<p:inputText id="contaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" />									
+									<p:outputLabel for="agenciaTed" value="Agência: " />
+									<p:inputText id="agenciaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" />							
+								</h:panelGrid>
+							</h:panelGroup>	
+							<h:panelGroup id="pixGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel for="pix" value="Pix: " />
+									<p:inputText id="pix" value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+							
 							<p:commandButton value="Concluir" ajax="true"
 								action="#{contratoCobrancaMB.concluirConta()}"
 								update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
 						</h:panelGroup>
-						
+
 						<p:dataView var="contas"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
 							paginator="false" layout="list"
@@ -3167,7 +3242,6 @@
 								<p:spacer height="5" />
 								<p:outputLabel value="|" />
 								<p:spacer height="5" />
-
 
 								<p:outputLabel value="Valor: " styleClass="labelBold" />
 								<p:outputLabel value="#{contas.valor}"
@@ -3182,15 +3256,33 @@
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
+								
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.valorPagamento}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
+								<h:outputText value="#{contas.dataPagamento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
 								<p:spacer height="10" />
 								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
-								<p:commandButton value="Editar" icon="ui-icon-pencil"
-									action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
-									update=":form:ContasPagarPanel" />
-								<p:spacer height="10" />
-								<p:commandButton value="Remover" icon="ui-icon-trash"
-									action="#{contratoCobrancaMB.removerConta(contas)}" ajax="true"
-									update=":form:ContasPagarPanel" />
+									<p:commandButton value="Editar" icon="ui-icon-pencil"
+										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
+										update=":form:ContasPagarPanel" />
+									<p:spacer height="10" />
+									<p:commandButton value="Remover" icon="ui-icon-trash"
+										action="#{contratoCobrancaMB.removerConta(contas)}"
+										ajax="true" update=":form:ContasPagarPanel" />
 								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>

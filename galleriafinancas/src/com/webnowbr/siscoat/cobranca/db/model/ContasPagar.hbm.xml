@@ -64,6 +64,34 @@
 			lazy="false">
 			<column name="responsavel" />
 		</many-to-one>   
+		
+		<property name="formaTransferencia" type="java.lang.String">
+			<column name="formaTransferencia" />
+		</property>		
+		
+		<property name="pix" type="java.lang.String">
+			<column name="pix" />
+		</property>		
+		
+		<property name="nomeTed" type="java.lang.String">
+			<column name="nomeTed" />
+		</property>	
+		
+		<property name="cpfTed" type="java.lang.String">
+			<column name="cpfTed" />
+		</property>	
+		
+		<property name="bancoTed" type="java.lang.String">
+			<column name="bancoTed" />
+		</property>	
+		
+		<property name="contaTed" type="java.lang.String">
+			<column name="contaTed" />
+		</property>	
+		
+		<property name="agenciaTed" type="java.lang.String">
+			<column name="agenciaTed" />
+		</property>	
 
 	</class>
 </hibernate-mapping>

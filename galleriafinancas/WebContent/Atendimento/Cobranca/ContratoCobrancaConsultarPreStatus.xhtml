@@ -153,11 +153,19 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
 			                
-			                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
+			               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 				                and contratos.statusLead == 'Completo' 
 				                and contratos.inicioAnalise == true
-								and contratos.cadastroAprovadoValor == 'Aprovado'}"
+								and contratos.cadastroAprovadoValor == 'Aprovado'
+								and contratos.aprovadoComite == false}"
 							action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" />
+							
+							<p:commandButton value="PDF Aprovado" ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
+				                and contratos.statusLead == 'Completo' 
+				                and contratos.inicioAnalise == true
+								and contratos.cadastroAprovadoValor == 'Aprovado'
+								and contratos.aprovadoComite == true}"
+							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
 
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
