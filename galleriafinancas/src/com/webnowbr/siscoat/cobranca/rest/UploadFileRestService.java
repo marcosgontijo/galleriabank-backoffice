@@ -55,7 +55,7 @@ public class UploadFileRestService {
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				try {
 
-					File file = new File("C:/Desenvolvimento".concat(pathContrato).concat(nomeArquivo));
+					File file = new File(pathContrato.concat(nomeArquivo));
 
 					FileOutputStream fop = new FileOutputStream(file);
 					fop.write(documentos);
@@ -163,7 +163,7 @@ public class UploadFileRestService {
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				
-				File diretorio = new File("C:/Desenvolvimento".concat(pathContrato));
+				File diretorio = new File(pathContrato);
 				try {
 					if (!diretorio.isDirectory()) {
 						diretorio.mkdir();
@@ -179,7 +179,7 @@ public class UploadFileRestService {
 				
 				String pathContratoFaltante = diretorio.getAbsolutePath().concat(PASTA_FALTANTE);
 				
-				File diretorioFaltante = new File("C:/Desenvolvimento".concat(pathContratoFaltante));
+				File diretorioFaltante = new File(pathContratoFaltante);
 				try {
 					if (!diretorioFaltante.isDirectory()) {
 						diretorioFaltante.mkdir();
