@@ -10237,7 +10237,7 @@ public class ContratoCobrancaMB {
 	public void geraRelFinanceiroBaixadoCRI1() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
+		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI1(
 				this.relDataContratoInicio, this.relDataContratoFim);
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
