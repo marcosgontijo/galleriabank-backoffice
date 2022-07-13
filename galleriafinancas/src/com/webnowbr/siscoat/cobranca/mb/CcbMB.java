@@ -295,7 +295,6 @@ public class CcbMB {
     
 	private boolean addSegurador;
 	private Segurado seguradoSelecionado;
-	String tipoPesquisaPagadorRecebedor = "";
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
@@ -321,7 +320,6 @@ public class CcbMB {
 	
 	public void concluirSegurado() {
 		this.tituloPagadorRecebedorDialog = "";
-		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
 		this.seguradoSelecionado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
 		this.objetoCcb.getListSegurados().add(this.seguradoSelecionado);
@@ -331,8 +329,8 @@ public class CcbMB {
 	}
 	
 	public void pesquisaSegurado() {
+		this.tipoPesquisa = "Segurado";
 		this.tituloPagadorRecebedorDialog = "Segurados";
-		this.tipoPesquisaPagadorRecebedor = "Segurado";
 		this.updatePagadorRecebedor = " :form:SeguradoresPanel ";
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
@@ -1081,7 +1079,7 @@ public class CcbMB {
 			}
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} 
-		else if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
+		else if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisa)) {
 			this.seguradoSelecionado.setPessoa(this.selectedPagadorGenerico);
 		}
 	}

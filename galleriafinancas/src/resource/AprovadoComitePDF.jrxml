@@ -59,7 +59,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( (byte[]) $P{IMAGEMFUNDO} )]]></imageExpression>
+				<imageExpression><![CDATA["C:/Users/Usuario/Pictures/timbrado aprovadoComite.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="35" y="180" width="86" height="20" forecolor="#FFFFFF" uuid="66234736-ba99-4ec8-840e-cf66a3d6a4b7"/>
@@ -82,7 +82,7 @@
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{data})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="238" y="500" width="140" height="20" forecolor="#92D050" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
+				<reportElement x="233" y="500" width="152" height="20" forecolor="#92D050" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>

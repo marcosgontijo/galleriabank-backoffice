@@ -4360,7 +4360,7 @@ public class ContratoCobrancaMB {
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
-				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getImovel().getValoEstimado(),
+				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
 				parcelaPGTO, con.getTipoValorComite());
 		list.add(documento);
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
