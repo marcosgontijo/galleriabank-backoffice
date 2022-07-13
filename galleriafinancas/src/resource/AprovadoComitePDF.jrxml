@@ -59,7 +59,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA["C:/Users/Usuario/Pictures/timbrado aprovadoComite.png"]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( (byte[]) $P{IMAGEMFUNDO} )]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="35" y="180" width="86" height="20" forecolor="#FFFFFF" uuid="66234736-ba99-4ec8-840e-cf66a3d6a4b7"/>

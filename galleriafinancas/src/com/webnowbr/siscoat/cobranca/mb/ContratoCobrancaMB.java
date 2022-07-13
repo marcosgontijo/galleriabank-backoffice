@@ -10637,8 +10637,14 @@ public class ContratoCobrancaMB {
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPedidoLaudoPajuComercial() && !c.isPedidoLaudo()) {
-						c.setStatus("Pedir Laudo");
-						status = status + "Pedir Laudo";
+						if(!CommonsUtil.semValor(c.getAvaliacaoLaudo()) && CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Compass")) {
+							c.setStatus("Pedir Laudo Compass");
+							status = status + "Pedir Laudo Compass";
+						} else {
+							c.setStatus("Pedir Laudo");
+							status = status + "Pedir Laudo";
+						}
+						
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")

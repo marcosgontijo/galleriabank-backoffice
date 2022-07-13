@@ -5243,7 +5243,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira,"
-							+ " status, pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju ";
+							+ " status, pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo ";
 						
 					query = query + " order by id desc";
 					
@@ -5288,6 +5288,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean("pedidoPreLaudoComercial"));
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean("pedidoPajuComercial"));
 						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean("pendenciaLaudoPaju"));
+						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
 						
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
@@ -5309,7 +5310,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
-			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju   "
+			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo   "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -5347,7 +5348,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status,"
-							+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial , pedidoPajuComercial, pendenciaLaudoPaju   ";
+							+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial , pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo   ";
 						
 					query = query + " order by id desc";
 					
@@ -5385,6 +5386,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean("analisereprovada"));
 						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean("comentarioJuridicoEsteira"));
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean("pedidoPajuComercial"));
+						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
 						contratoCobranca.setStatus(rs.getString("status"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
@@ -5622,7 +5624,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
-								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false ";
+								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false"
+								+ " and (avaliacaoLaudo is  null or( avaliacaoLaudo is not null and avaliacaoLaudo not like 'Compass')) ";
 					}
 					
 					if (tipoConsulta.equals("Avaliação de Imóvel")) {
