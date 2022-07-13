@@ -117,7 +117,7 @@ public class UploadFileRestService {
 				// cria o diretório, caso não exista
 				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 				
-		        Files.delete(Paths.get("C:/Desenvolvimento".concat(pathContrato).concat(nomeArquivo)));
+		        Files.delete(Paths.get(pathContrato.concat(nomeArquivo)));
 
 				String message = "{\"retorno\": \"Deletado com sucesso Nome do Arquivo {} " + nomeArquivo +"\"}";
 				System.out.println("Deletado com sucesso Nome do Arquivo {} "+nomeArquivo+" - Fim");
