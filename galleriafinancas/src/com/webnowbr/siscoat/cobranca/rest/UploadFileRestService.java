@@ -27,7 +27,7 @@ public class UploadFileRestService {
 	
 	private static final String NO_EXIST = "NO_EXIST";
 	private static final String FALTANTE = "faltante";
-	private static final String PASTA_FALTANTE = "\faltante";
+	private static final String PASTA_FALTANTE = "/faltante";
 	
 	@POST
 	@Path("/uploads/{numeroContrato}/{subpasta}/{nomeArquivo}")
@@ -177,7 +177,7 @@ public class UploadFileRestService {
 							.build();
 				}
 				
-				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
+				String pathContratoFaltante = diretorio.getAbsolutePath().concat(PASTA_FALTANTE);
 				
 				File diretorioFaltante = new File(pathContratoFaltante);
 				try {
@@ -230,7 +230,9 @@ public class UploadFileRestService {
 				+numeroContrato+ " e subpasta "+subpasta+" - Inicio");
 		
 		String message = NO_EXIST;
-		ListaUploadDocumentos listaDocumentos = null;
+		ListaUploadDocumentos listaUploadDocumentos = new ListaUploadDocumentos();
+		listaUploadDocumentos.setListaUploadDocumentos(new ArrayList<UploadDocumentos>());
+		
 		try {
 			if (StringUtils.isNotBlank(numeroContrato)) {
 				// recupera local onde será gravado o arquivo
@@ -252,7 +254,7 @@ public class UploadFileRestService {
 							.build();
 				}
 				
-				String pathContratoFaltante = novoDiretorio.getAbsolutePath().concat(PASTA_FALTANTE);
+				String pathContratoFaltante = pathContrato.concat(PASTA_FALTANTE);
 				
 				File diretorioFaltante = new File(pathContratoFaltante);
 				try {
@@ -269,16 +271,16 @@ public class UploadFileRestService {
 				}
 				
 				if(subpasta.equals(NO_EXIST)) {
-					listaDocumentos = listarDiretorios(pathContrato);
+					listaUploadDocumentos = listarDiretorios(pathContrato, listaUploadDocumentos);
 				}else if(subpasta.equals(FALTANTE)) {
-					listaDocumentos = listarDiretorios(pathContratoFaltante);
+					listaUploadDocumentos = listarDiretorios(pathContratoFaltante, listaUploadDocumentos);
 				}
 				
 				System.out.println("Arquivos encontrados com sucesso na pasta "+numeroContrato+" - Fim");
 				
 				return Response
 						.status(Response.Status.OK)
-						.entity(ListaUploadDocumentos.converterFromListJson(listaDocumentos))
+						.entity(ListaUploadDocumentos.converterFromListJson(listaUploadDocumentos))
 						.type(MediaType.APPLICATION_JSON)
 						.build();
 			} else {
@@ -300,23 +302,22 @@ public class UploadFileRestService {
 		}
 	}
 
-	private ListaUploadDocumentos listarDiretorios(String pathContrato) {
+	private ListaUploadDocumentos listarDiretorios(String diretorioContrato, ListaUploadDocumentos listaUploadDocumentos) {
 		// cria o diretório, caso não exista
 		// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 		
-		File diretorio = new File(pathContrato);
+		File diretorio = new File(diretorioContrato);
 		File arqs[] = diretorio.listFiles();
-		ListaUploadDocumentos listaDocumentos = new ListaUploadDocumentos(); 
-		listaDocumentos.setListaUploadDocumentos(new ArrayList<UploadDocumentos>());
 		if (arqs != null && arqs.length > 0) {
 			for (int i = 0; i < arqs.length; i++) {
 				if(arqs[i].isFile() == true) {
+					System.out.println(arqs[i]);
 					File arquivo = arqs[i];
-					listaDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), pathContrato));
+					listaUploadDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), diretorioContrato));
 				}
 			}
 		}
-		return listaDocumentos;
+		return listaUploadDocumentos;
 	}
 	
 }

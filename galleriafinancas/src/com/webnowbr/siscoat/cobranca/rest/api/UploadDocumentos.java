@@ -50,7 +50,7 @@ public class UploadDocumentos implements Serializable {
 	}
 	
 	public String toString() {
-		return "UploadArquivos [name=" + name + ", path=" + path + "]";
+		return "uploadDocumentos [name=" + name + ", path=" + path + "]";
 	}
 
 	@Override
@@ -84,8 +84,8 @@ public class UploadDocumentos implements Serializable {
 		return true;
 	}
 
-	public static String converterFromListJson(Collection<UploadDocumentos> uploadArquivos) {
+	public static String converterFromListJson(Collection<UploadDocumentos> uploadDocumentos) {
 		Gson gson = new Gson();
-		return gson.toJson(uploadArquivos);
+		return gson.toJson(uploadDocumentos);
 	}
 }

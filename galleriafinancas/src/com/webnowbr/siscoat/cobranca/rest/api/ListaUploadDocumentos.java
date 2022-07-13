@@ -8,6 +8,14 @@ import com.google.gson.Gson;
 public class ListaUploadDocumentos {
 	
 	Collection<UploadDocumentos> listaUploadDocumentos = new ArrayList<UploadDocumentos>();
+	
+	/**
+	 * 
+	 */
+	public ListaUploadDocumentos() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @return the listaUploadDocumentos
