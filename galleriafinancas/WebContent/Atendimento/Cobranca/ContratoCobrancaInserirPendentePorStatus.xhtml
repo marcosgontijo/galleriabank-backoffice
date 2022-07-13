@@ -131,14 +131,24 @@
 											<f:selectItem itemValue="No final" itemLabel="No final" />
 											<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 										</p:selectOneMenu>			
-																				
+															
+										<p:outputLabel styleClass="labelBold">Avaliação Laudo: </p:outputLabel>
+										<p:selectOneMenu id="avaliacaoLaudo"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
+											label="Tipo">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItem itemValue="Compass" itemLabel="Compass" />
+											<f:selectItem itemValue="Galache" itemLabel="Galache" />
+											<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
+										</p:selectOneMenu>	
+															
 										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Laudo Pedido: </p:outputLabel>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}">Laudo Pedido: </p:outputLabel>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}" 
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
-										</shiro:hasAnyRoles>	
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}"/>
+										</shiro:hasAnyRoles>											
 										
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">PAJU Pedido: </p:outputLabel>

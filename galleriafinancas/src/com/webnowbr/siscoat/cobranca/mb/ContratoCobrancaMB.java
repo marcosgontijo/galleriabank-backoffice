@@ -199,6 +199,8 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAppPreAprovado = false;
 	private boolean controleWhatsAppComite = false;
 	
+	private boolean controleWhatsAlteracaoAvaliadorLaudo = false;
+	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -2959,6 +2961,110 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public String atualizaContratoAvaliacaoImovel() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		try {				
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			return clearFieldsAvaliacaoCompass();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			return "";
+		}
+	}
+	
+	public void changeAvaliadorLaudo() {
+		this.controleWhatsAlteracaoAvaliadorLaudo = true;
+	}
+	
+	public void notificaCompassWhatsApp() {
+		Responsavel responsavel = new Responsavel();
+		ResponsavelDao rDao = new ResponsavelDao();
+		
+		responsavel = rDao.findById((long) 774);		
+		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"avaliacao_laudo", 
+				"Compass",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+	}
+	
+	/******
+	 * método para envio de emails
+	 */
+	public void notificaCompassEmail() {
+		Locale locale = new Locale("pt", "BR");
+		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+		Date dataHoje = gerarDataHoje();
+
+		String mensagemHtmlTeste = "<html> " +
+		   "<head> " +
+		      "<meta charset='UTF-8'> " +
+		      "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' /> " +
+		      "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'> " +
+		   "</head> " +
+		   "<body> " +
+		      "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style=' :#f9f7f7'> " +
+		      "<div class='adM'> </div> " +
+		      "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'> " +
+		      "<div class='adM'> </div> " +
+		      "<div align='center'> " +
+		      "<div class='adM'> </div> " +
+		      "<table width='100%' border='0' cellspacing='0' cellpadding='0'> " +
+		         "<tbody> " +
+		            "<tr> " +
+		               "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td> " +
+		            "</tr> " +
+		         "</tbody> " +
+		      "</table> " +
+		      "<br> " +
+		      "<table> " +
+		      "<tbody> " +
+		         "<tr> " +
+		            "<td width='20'> </td> " +
+		            "<td> " +
+		               "<table> " +
+		                  "<tbody> " +
+		                     "<tr> " +
+		                        "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá " +
+		                          " <span style='font-weight:bold'>Compass</span>,  " +
+		                        "</td> " +
+		                     "</tr> " +
+		                     "<tr> " +
+		                     "   <td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> a operação <b>" + this.objetoContratoCobranca.getNumeroContrato() + "</b> do cliente " + this.objetoContratoCobranca.getPagador().getNome() + " já está disponível para fazer o laudo. </td> " +
+		                    " </tr> " +
+		                "  </tbody> " +
+		              " </table> " +
+		            "</td> " +
+		       " </tr> " +
+		   " </tbody> " +
+		  " </body> " +
+		"</html> ";
+		
+		try {
+			ResponsavelDao rDao = new ResponsavelDao();
+			EnviaEmail eec = new EnviaEmail();
+			eec.enviarEmailHtmlResponsavelAdms("solicitacoes.galleria@gmail.com",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para fazer o laudo",
+					mensagemHtmlTeste);
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}	
 	
 	public String editPreContratoPorStatus() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
@@ -2969,6 +3075,12 @@ public class ContratoCobrancaMB {
 			
 			// envia WhatsApp
 			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+
+			// notifica a Compass caso for setado contrato para eles
+			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
+				notificaCompassWhatsApp();
+				notificaCompassEmail();
+			}
 
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
@@ -6912,6 +7024,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.controleWhatsAlteracaoAvaliadorLaudo = false;
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -6974,6 +7087,19 @@ public class ContratoCobrancaMB {
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
+	}
+	
+	public String clearFieldsEditarAvaliacaoImovel() {
+		clearMensagensWhatsApp();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		
+		this.tituloPainel = "Editar";
+
+		files = new ArrayList<FileUploaded>();
+		files = listaArquivos();
+	
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
 	
 	public void getIndexStepContrato() {
@@ -10713,11 +10839,23 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-		}
-		
-		
+		}		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+	}
+	
+	public String clearFieldsAvaliacaoCompass() {
+		
+		clearMensagensWhatsApp();
+		
+		this.tituloTelaConsultaPreStatus = "Avaliação de Imóvel";
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Avaliação de Imóvel");
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovel.xhtml";
 	}
 	
 	public void processaResponsaveisGeraNumeroWhatsApp() {

@@ -57,20 +57,22 @@
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
-							<p:menuitem value="Simulador"
-								action="#{simuladorMB.clearFields}"
-								ajax="false" icon="ui-icon ui-icon-newwin"
-								styleClass="itemMenu" />
-						</p:submenu>	
-						<p:submenu label="Consultas" styleClass="titulosMenu">
-							<shiro:hasAnyRoles name="ROOT">								
-								<p:menuitem value="Consulta PF por CPF"
-									action="#{consultaPF.clearConsultaPF}"
+							<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA">
+								<p:menuitem value="Simulador"
+									action="#{simuladorMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
-						</p:submenu>					
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
+						</p:submenu>	
+						<shiro:hasAnyRoles name="ROOT">	
+							<p:submenu label="Consultas" styleClass="titulosMenu">													
+								<p:menuitem value="Consulta PF por CPF"
+									action="#{consultaPF.clearConsultaPF}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />							
+							</p:submenu>					
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, AVALIADORIMOVEL">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -149,6 +151,14 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pedir PAJU')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, AVALIADORIMOVEL">
+									<p:menuitem value="03.3 - Avaliação Compass"
+										action="#{contratoCobrancaMB.clearFieldsAvaliacaoCompass}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="03.5 - Laudo + Paju Pendente"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Laudo Paju Pendente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
