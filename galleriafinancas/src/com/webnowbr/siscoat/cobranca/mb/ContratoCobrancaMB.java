@@ -3078,8 +3078,8 @@ public class ContratoCobrancaMB {
 
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				//notificaCompassWhatsApp();
-				//notificaCompassEmail();
+				notificaCompassWhatsApp();
+				notificaCompassEmail();
 			}
 
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
