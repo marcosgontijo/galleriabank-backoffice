@@ -3078,8 +3078,8 @@ public class ContratoCobrancaMB {
 
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				notificaCompassWhatsApp();
-				notificaCompassEmail();
+				//notificaCompassWhatsApp();
+				//notificaCompassEmail();
 			}
 
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
@@ -7245,8 +7245,8 @@ public class ContratoCobrancaMB {
 		
 		this.tituloPainel = "Editar";
 
-		files = new ArrayList<FileUploaded>();
-		files = listaArquivos();
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
 	
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}

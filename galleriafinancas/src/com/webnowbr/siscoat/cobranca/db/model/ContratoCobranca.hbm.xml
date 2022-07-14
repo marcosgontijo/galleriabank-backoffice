@@ -1657,6 +1657,11 @@
 		<property name="avaliacaoLaudo" type="java.lang.String">
 			<column name="avaliacaoLaudo" />
 		</property>	
+		
+		<property name="avaliacaoLaudoObservacao" type="text">
+			<column name="avaliacaoLaudoObservacao" />
+		</property>	
+		
 		<property name="processosQuitarComite" type="text">
 			<column name="processosQuitarComite" />
 		</property>

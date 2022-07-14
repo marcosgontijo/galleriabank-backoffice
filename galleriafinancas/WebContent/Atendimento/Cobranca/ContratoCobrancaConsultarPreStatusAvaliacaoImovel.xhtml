@@ -44,21 +44,7 @@
                 	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
-						<p:outputLabel value="#{contratos.dataContrato}" >
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}" />
-						</p:outputLabel>
-			        </p:column>
 
-			        <p:column style="text-align: center;width: 90px"
-						headerText="Comercial" 
-						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
-						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false" />
-					</p:column>
-			        
-			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
-			            <h:outputText value="#{contratos.nomeResponsavel}" />
-			        </p:column>	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	    
@@ -86,6 +72,10 @@
 						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
 					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Observação" filterBy="#{contratos.avaliacaoLaudoObservacao}" filterMatchMode="contains" sortBy="#{contratos.avaliacaoLaudoObservacao}">
+			            <h:outputText value="#{contratos.avaliacaoLaudoObservacao}" />
+			        </p:column>
 					
 					<p:column style="text-align: center;width: 100px"
 						headerText="Analista" 

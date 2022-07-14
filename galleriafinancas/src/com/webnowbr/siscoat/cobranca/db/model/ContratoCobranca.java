@@ -625,6 +625,7 @@ public class ContratoCobranca implements Serializable {
 	private String formaDePagamentoLaudoPAJU;
 
 	private String avaliacaoLaudo;
+	private String avaliacaoLaudoObservacao;
 	
 	public ContratoCobranca() {
 		super();
@@ -5113,5 +5114,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setProcessosQuitarComite(String processosQuitarComite) {
 		this.processosQuitarComite = processosQuitarComite;
+	}
+
+	public String getAvaliacaoLaudoObservacao() {
+		return avaliacaoLaudoObservacao;
+	}
+
+	public void setAvaliacaoLaudoObservacao(String avaliacaoLaudoObservacao) {
+		this.avaliacaoLaudoObservacao = avaliacaoLaudoObservacao;
 	}
 }
