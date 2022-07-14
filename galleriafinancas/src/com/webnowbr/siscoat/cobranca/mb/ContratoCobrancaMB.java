@@ -15081,11 +15081,18 @@ public class ContratoCobrancaMB {
 	
 	private BigDecimal calcularValorTotalContasPagar() {
 		BigDecimal valorTotalContasPagarNovo = BigDecimal.ZERO;
-		for (ContasPagar conta : this.objetoContratoCobranca.getListContasPagar())
+		for (ContasPagar conta : this.objetoContratoCobranca.getListContasPagar()) {
 			if(!CommonsUtil.semValor(conta.getValor())) {
 				valorTotalContasPagarNovo = valorTotalContasPagarNovo.add(conta.getValor());
-		}
-		
+			}
+			
+			if(!CommonsUtil.semValor(conta.getValorPagamento())) {
+				if(CommonsUtil.mesmoValor(conta.getValorPagamento(), conta.getValor())) {
+					conta.setContaPaga(true);
+				} 
+				valorTotalContasPagarNovo = valorTotalContasPagarNovo.subtract(conta.getValorPagamento());
+			}
+		}		
 		return valorTotalContasPagarNovo;
 	}
 	

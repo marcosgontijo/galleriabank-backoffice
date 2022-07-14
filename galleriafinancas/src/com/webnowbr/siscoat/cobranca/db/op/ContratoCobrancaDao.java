@@ -5809,6 +5809,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
 						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
 						
+						if (tipoConsulta.equals("Pedir Laudo")) {
+							System.out.println("Pedir Laudo:" + contratoCobranca.getNumeroContrato());
+						}
+						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
 						
