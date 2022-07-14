@@ -7245,8 +7245,8 @@ public class ContratoCobrancaMB {
 		
 		this.tituloPainel = "Editar";
 
-		files = new ArrayList<FileUploaded>();
-		files = listaArquivos();
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
 	
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
