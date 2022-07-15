@@ -287,8 +287,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " imovel, i.nome nomeImovel, i.cidade "
 			+ " from cobranca.contratocobranca c "
 			+ " inner join cobranca.responsavel res on c.responsavel = res.id "
-			+ " inner join cobranca.imovelcobranca i on c.responsavel = i.id "
-			+ " inner join cobranca.pagadorrecebedor p on c.responsavel = p.id ";
+			+ " inner join cobranca.imovelcobranca i on c.imovel = i.id "
+			+ " inner join cobranca.pagadorrecebedor p on c.pagador = p.id ";
 		
 	private static final String QUERY_CONTRATOS_QUITADOS = " select dd.id from cobranca.contratocobranca dd " +
 		"inner join cobranca.responsavel res on dd.responsavel = res.id " +
