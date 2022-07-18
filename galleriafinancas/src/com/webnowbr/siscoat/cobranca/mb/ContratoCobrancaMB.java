@@ -4048,8 +4048,8 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
 				Responsavel responsavel = getResponsavelUsuarioLogado();
 				this.objetoContratoCobranca.setLeadCompleto(false);
-				if (responsavel != null) {
-					this.objetoContratoCobranca.setResponsavel(responsavel);
+				if (responsavel != null && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")) {					
+					this.objetoContratoCobranca.setResponsavel(responsavel);				
 				}
 			} else if(this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 				this.objetoContratoCobranca.setLeadCompleto(false);
@@ -7727,7 +7727,7 @@ public class ContratoCobrancaMB {
 		} else {
 			if( (this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite())
 					|| ((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial())
-					|| (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPagtoLaudoConfirmada() )) {
+					|| (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPedidoLaudoPajuComercial() )) {
 				User usuarioLogado = new User();
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
