@@ -200,6 +200,7 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAppComite = false;
 	
 	private boolean controleWhatsAlteracaoAvaliadorLaudo = false;
+	private boolean controleWhatsAlteracaoGeracaoPAJU = false;
 	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -2987,6 +2988,10 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAlteracaoAvaliadorLaudo = true;
 	}
 	
+	public void changeGeracaoPAJU() {
+		this.controleWhatsAlteracaoGeracaoPAJU = true;
+	}
+	
 	public void notificaCompassWhatsApp() {
 		Responsavel responsavel = new Responsavel();
 		ResponsavelDao rDao = new ResponsavelDao();
@@ -2994,6 +2999,55 @@ public class ContratoCobrancaMB {
 		responsavel = rDao.findById((long) 774);		
 		
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"avaliacao_laudo", 
+				"Compass",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+	}
+	
+	public void notificaPAJUWhatsApp() {
+		Responsavel responsavel = new Responsavel();
+		ResponsavelDao rDao = new ResponsavelDao();
+		
+		// "Anderson Trindade Cavalcanti Porto"
+		responsavel = rDao.findById((long) 787);		
+		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"avaliacao_laudo", 
+				"Compass",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Edson Rodrigues Bravin Junior"
+		responsavel = rDao.findById((long) 788);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"avaliacao_laudo", 
+				"Compass",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Thainá Monteiro Alves Costa"
+		responsavel = rDao.findById((long) 789);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"avaliacao_laudo", 
+				"Compass",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Jair Tadeu da Silva Junior"
+		responsavel = rDao.findById((long) 790);		
+		
+		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"avaliacao_laudo", 
 				"Compass",
@@ -3066,6 +3120,76 @@ public class ContratoCobrancaMB {
 		}
 	}	
 	
+	public void notificaPAJUEmail() {
+		Locale locale = new Locale("pt", "BR");
+		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+		Date dataHoje = gerarDataHoje();
+
+		String mensagemHtmlTeste = "<html> " +
+		   "<head> " +
+		      "<meta charset='UTF-8'> " +
+		      "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' /> " +
+		      "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'> " +
+		   "</head> " +
+		   "<body> " +
+		      "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style=' :#f9f7f7'> " +
+		      "<div class='adM'> </div> " +
+		      "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'> " +
+		      "<div class='adM'> </div> " +
+		      "<div align='center'> " +
+		      "<div class='adM'> </div> " +
+		      "<table width='100%' border='0' cellspacing='0' cellpadding='0'> " +
+		         "<tbody> " +
+		            "<tr> " +
+		               "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td> " +
+		            "</tr> " +
+		         "</tbody> " +
+		      "</table> " +
+		      "<br> " +
+		      "<table> " +
+		      "<tbody> " +
+		         "<tr> " +
+		            "<td width='20'> </td> " +
+		            "<td> " +
+		               "<table> " +
+		                  "<tbody> " +
+		                     "<tr> " +
+		                        "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá " +
+		                          " <span style='font-weight:bold'>Compass</span>,  " +
+		                        "</td> " +
+		                     "</tr> " +
+		                     "<tr> " +
+		                     "   <td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> a operação <b>" + this.objetoContratoCobranca.getNumeroContrato() + "</b> do cliente " + this.objetoContratoCobranca.getPagador().getNome() + " já está disponível para geração do PAJU. </td> " +
+		                    " </tr> " +
+		                "  </tbody> " +
+		              " </table> " +
+		            "</td> " +
+		       " </tr> " +
+		   " </tbody> " +
+		  " </body> " +
+		"</html> ";
+		
+		try {
+			ResponsavelDao rDao = new ResponsavelDao();
+			EnviaEmail eec = new EnviaEmail();
+			eec.enviarEmailHtmlResponsavelAdms("anderson.trindade@galache.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("edson.bravin@galache.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("thaina.monteiro@galache.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("jair.tadeu@galache.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}	
+	
 	public String editPreContratoPorStatus() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -3081,7 +3205,13 @@ public class ContratoCobrancaMB {
 				notificaCompassWhatsApp();
 				notificaCompassEmail();
 			}
-
+			
+			// notifica a Compass caso for setado contrato para eles
+			if (this.controleWhatsAlteracaoGeracaoPAJU) {
+				notificaPAJUWhatsApp();
+				notificaPAJUEmail();
+			}
+			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
@@ -7174,7 +7304,8 @@ public class ContratoCobrancaMB {
 		this.addSocio = false;
 		this.addPagador = false;
 		this.controleWhatsAlteracaoAvaliadorLaudo = false;
-
+		this.controleWhatsAlteracaoGeracaoPAJU = false;
+		
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
@@ -7249,6 +7380,19 @@ public class ContratoCobrancaMB {
 		filesInterno = listaArquivosInterno();
 	
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
+	}
+	
+	public String clearFieldsEditarGeracaoLaudo() {
+		clearMensagensWhatsApp();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		
+		this.tituloPainel = "Editar";
+
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+	
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoLaudo.xhtml";
 	}
 	
 	public void getIndexStepContrato() {
@@ -11011,6 +11155,20 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Avaliação de Imóvel");
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovel.xhtml";
+	}
+	
+	public String clearFieldsGeracaoLaudo() {
+		
+		clearMensagensWhatsApp();
+		
+		this.tituloTelaConsultaPreStatus = "Geração do Laudo";
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do Laudo");
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoLaudo.xhtml";
 	}
 	
 	public void processaResponsaveisGeraNumeroWhatsApp() {
@@ -26519,5 +26677,7 @@ public class ContratoCobrancaMB {
 	public void setContratoPrazoMin(Collection<ContratoCobranca> contratoPrazoMin) {
 		this.contratoPrazoMin = contratoPrazoMin;
 	}
+	
+	
 	
 }

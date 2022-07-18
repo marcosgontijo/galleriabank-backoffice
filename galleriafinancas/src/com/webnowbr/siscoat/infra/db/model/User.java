@@ -59,7 +59,8 @@ public final class User implements Serializable {
     private boolean assistFinanceiro;
     
     private boolean userAvaliadorImovel;
-    
+    private boolean userLaudo;
+        
     private String codigoResponsavel;    
 
     private Date ultimoAcesso;
@@ -480,5 +481,13 @@ public final class User implements Serializable {
 
 	public void setUserAvaliadorImovel(boolean userAvaliadorImovel) {
 		this.userAvaliadorImovel = userAvaliadorImovel;
+	}
+
+	public boolean isUserLaudo() {
+		return userLaudo;
+	}
+
+	public void setUserLaudo(boolean userLaudo) {
+		this.userLaudo = userLaudo;
 	}
 }

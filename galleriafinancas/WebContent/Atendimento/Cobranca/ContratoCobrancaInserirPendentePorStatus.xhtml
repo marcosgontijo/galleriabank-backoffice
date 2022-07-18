@@ -153,9 +153,11 @@
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">PAJU Pedido: </p:outputLabel>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" 
+											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.prePedidoLaudo}" 
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
+											<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeGeracaoPAJU}"/>
+											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>
 										
 										<p:outputLabel styleClass="labelBold"

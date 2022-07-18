@@ -1624,6 +1624,10 @@
 		<property name="pedidoLaudo" type="boolean">
 			<column name="pedidoLaudo" />
 		</property>	
+		
+		<property name="prePedidoLaudo" type="boolean">
+			<column name="prePedidoLaudo" />
+		</property>	
 
 		<property name="pedidoLaudoUsuario" type="java.lang.String">
 			<column name="pedidoLaudoUsuario" />
@@ -1665,5 +1669,9 @@
 		<property name="processosQuitarComite" type="text">
 			<column name="processosQuitarComite" />
 		</property>
+		
+		<property name="geracaoLaudoObservacao" type="text">
+			<column name="geracaoLaudoObservacao" />
+		</property>	
 	</class>
 </hibernate-mapping>

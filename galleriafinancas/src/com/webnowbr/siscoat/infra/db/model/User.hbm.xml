@@ -82,6 +82,9 @@
         <property name="userAvaliadorImovel" type="boolean">
             <column name="userAvaliadorImovel" />
         </property>  
+        <property name="userLaudo" type="boolean">
+            <column name="userLaudo" />
+        </property>  
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    

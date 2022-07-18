@@ -210,42 +210,49 @@ public class MessageRestService {
 					
 					if (lead.has("url")) {
 						if (!lead.isNull("url")) {
+							boolean urlRecebida = false;
 							
 							if (lead.getString("url").contains("refinanciamento-de-imovel")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Refinanciamento de Imóvel");
+								urlRecebida = true;								
 							}
 							
 							if (lead.getString("url").contains("emprestimo-para-negativados")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Empréstimo para negativados");
+								urlRecebida = true;
 							}
 							
 							if (lead.getString("url").contains("emprestimo-online")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Empréstimo online");
+								urlRecebida = true;
 							}
 							
 							if (lead.getString("url").contains("emprestimo-home-equity")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Empréstimo Home Equity");
+								urlRecebida = true;
 							}
 							
 							if (lead.getString("url").contains("emprestimo-com-terreno-em-garantia")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Empréstimo com terreno em garantia");
+								urlRecebida = true;
 							}
 							
 							if (lead.getString("url").contains("emprestimo-online-yt")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Empréstimo online YT");
+								urlRecebida = true;
 							}
 							
 							if (lead.getString("url").contains("simulador-online")) {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead("Simulador online");
+								urlRecebida = true;
 							}
 							
-							if (contratoCobrancaMB.getObjetoContratoCobranca().getUrlLead() != null) {
-								if (contratoCobrancaMB.getObjetoContratoCobranca().getUrlLead().equals("")) {
-									contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("url"));
-								}
+							if (!urlRecebida) {
+								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("url"));
 							}							
 						}						
 					}
+					
 					if (lead.has("posted_url")) {
 						if (!lead.isNull("posted_url")) {
 							contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("posted_url"));
