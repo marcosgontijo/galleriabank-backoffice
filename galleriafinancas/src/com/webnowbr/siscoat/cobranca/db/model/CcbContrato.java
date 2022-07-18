@@ -77,6 +77,7 @@ public class CcbContrato implements Serializable{
 	private String cidadeImovel;
 	private String ufImovel;
 	private String inscricaoMunicipal;
+	private String numeroRegistroMatricula; 
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -829,6 +830,14 @@ public class CcbContrato implements Serializable{
 
 	public void setListSegurados(List<Segurado> listSegurados) {
 		this.listSegurados = listSegurados;
+	}
+
+	public String getNumeroRegistroMatricula() {
+		return numeroRegistroMatricula;
+	}
+
+	public void setNumeroRegistroMatricula(String numeroRegistroMatricula) {
+		this.numeroRegistroMatricula = numeroRegistroMatricula;
 	}
 	
 }

@@ -1248,6 +1248,14 @@ public class CcbMB {
 		return text;
 	}
 	
+	public String trocaValoresXWPFCci(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
+		if (text != null && text.contains(valorEscrito)) {
+				text = text.replace(valorEscrito, CommonsUtil.formataValorMonetarioCci(valorSobrescrever, moeda));
+			r.setText(text, 0);
+		}
+		return text;
+	}
+	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever) {
 		if (text != null && text.contains(valorEscrito)) {
 			if(CommonsUtil.mesmoValor(valorEscrito, "tarifaAntecipada")) {
@@ -1262,9 +1270,14 @@ public class CcbMB {
 
 	public String trocaValoresDinheiroExtensoXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever) {
 		if (text != null && text.contains("Extenso" + valorEscrito)) {
-			valorPorExtenso.setNumber(valorSobrescrever);
-			text = text.replace("Extenso" + valorEscrito , valorPorExtenso.toString());
-			r.setText(text, 0);
+			if(CommonsUtil.semValor(valorSobrescrever)) {
+				text = text.replace("Extenso" + valorEscrito , "Zero reais");
+				r.setText(text, 0);
+			} else {
+				valorPorExtenso.setNumber(valorSobrescrever);
+				text = text.replace("Extenso" + valorEscrito , valorPorExtenso.toString());
+				r.setText(text, 0);	
+			}	
 		}
 		return text;
 	}
@@ -6967,11 +6980,11 @@ public class CcbMB {
 						for (XWPFParagraph p : cell.getParagraphs()) {
 							for (XWPFRun r : p.getRuns()) {
 								String text = r.getText(0);		 
-								text = trocaValoresXWPF(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
-								text = trocaValoresXWPF(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
-								text = trocaValoresXWPF(text, r, "custoEmissao", this.objetoCcb.getCustoEmissao(), "R$ ");
-								text = trocaValoresXWPF(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
-								text = trocaValoresXWPF(text, r, "valorDespesas", this.objetoCcb.getValorDespesas(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "custoEmissao", this.objetoCcb.getCustoEmissao(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorDespesas", this.objetoCcb.getValorDespesas(), "R$ ");
 								
 								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
@@ -6986,21 +6999,23 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "cetMes", this.objetoCcb.getCetMes());
 								text = trocaValoresXWPF(text, r, "cetAno", this.objetoCcb.getCetAno());
 								
-								text = trocaValoresXWPF(text, r, "totalPrimeiraParcela", totalPrimeiraParcela, "R$ ");
+								text = trocaValoresXWPFCci(text, r, "totalPrimeiraParcela", totalPrimeiraParcela, "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "TotalPrimeiraParcela", totalPrimeiraParcela);	
-								text = trocaValoresXWPF(text, r, "valorMipParcela", this.objetoCcb.getValorMipParcela(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorMipParcela", this.objetoCcb.getValorMipParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorMipParcela", this.objetoCcb.getValorMipParcela());			
-								text = trocaValoresXWPF(text, r, "valorDfiParcela", this.objetoCcb.getValorDfiParcela(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorDfiParcela", this.objetoCcb.getValorDfiParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDfiParcela", this.objetoCcb.getValorDfiParcela());
-								text = trocaValoresXWPF(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());									
+								
+								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
 								
 								text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
 								text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
 								text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
 								text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
 								text = trocaValoresXWPF(text, r, "inscricaoMunicipal", this.objetoCcb.getInscricaoMunicipal());
-								text = trocaValoresXWPF(text, r, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
+								text = trocaValoresXWPFCci(text, r, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.objetoCcb.getVendaLeilao());	
 								
 								text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());

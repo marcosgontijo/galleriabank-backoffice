@@ -287,8 +287,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " imovel, i.nome nomeImovel, i.cidade "
 			+ " from cobranca.contratocobranca c "
 			+ " inner join cobranca.responsavel res on c.responsavel = res.id "
-			+ " inner join cobranca.imovelcobranca i on c.responsavel = i.id "
-			+ " inner join cobranca.pagadorrecebedor p on c.responsavel = p.id ";
+			+ " inner join cobranca.imovelcobranca i on c.imovel = i.id "
+			+ " inner join cobranca.pagadorrecebedor p on c.pagador = p.id ";
 		
 	private static final String QUERY_CONTRATOS_QUITADOS = " select dd.id from cobranca.contratocobranca dd " +
 		"inner join cobranca.responsavel res on dd.responsavel = res.id " +
@@ -5624,7 +5624,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
-								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false and (c.avaliacaoLaudo is null or c.avaliacaoLaudo = 'Galache') ";
+								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false"
+								+ " and (avaliacaoLaudo is  null or (avaliacaoLaudo is not null and avaliacaoLaudo not like 'Compass')) ";
 					}
 					
 					if (tipoConsulta.equals("Avaliação de Imóvel")) {
@@ -5814,6 +5815,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
 						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
+						
+						if (tipoConsulta.equals("Pedir Laudo")) {
+							System.out.println("Pedir Laudo:" + contratoCobranca.getNumeroContrato());
+						}
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 

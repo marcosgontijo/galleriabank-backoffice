@@ -313,6 +313,10 @@
 			<column name="prazo" />
 		</property> 
 		
+		<property name="numeroRegistroMatricula" type="java.lang.String">
+			<column name="numeroRegistroMatricula" />
+		</property> 
+		
 		<list name="listSegurados"
 			table="ccbcontrato_segurados_join" cascade="all" lazy="false">
 			<key column="idccbcontrato" />
