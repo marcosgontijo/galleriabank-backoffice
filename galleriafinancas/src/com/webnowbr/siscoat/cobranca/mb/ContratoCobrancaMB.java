@@ -3011,13 +3011,74 @@ public class ContratoCobrancaMB {
 		Responsavel responsavel = new Responsavel();
 		ResponsavelDao rDao = new ResponsavelDao();
 		
+		// "Adelaide Cristina Grilo Fornari"
+		responsavel = rDao.findById((long) 793);		
+		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"geracao_paju", 
+				"Neves e Maggioni",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Pâmela Montesanti Demuci"
+		responsavel = rDao.findById((long) 795);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"geracao_paju", 
+				"Neves e Maggioni",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Luciana Melara Alves Sant'Ana"
+		responsavel = rDao.findById((long) 796);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"geracao_paju", 
+				"Neves e Maggioni",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "João Paulo Gomes Massaro"
+		responsavel = rDao.findById((long) 797);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"geracao_paju", 
+				"Neves e Maggioni",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+		
+		// "Maria Clara Pazin Costa"
+		responsavel = rDao.findById((long) 798);		
+		
+		takeBlipMB = new TakeBlipMB();
+		takeBlipMB.sendWhatsAppMessage(responsavel,
+				"geracao_paju", 
+				"Neves e Maggioni",
+				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getPagador().getNome(),
+				"");
+	
+	}
+	
+	public void notificaGalacheWhatsApp() {
+		Responsavel responsavel = new Responsavel();
+		ResponsavelDao rDao = new ResponsavelDao();
+		
 		// "Anderson Trindade Cavalcanti Porto"
 		responsavel = rDao.findById((long) 787);		
 		
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"avaliacao_laudo", 
-				"Compass",
+				"Galache",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
@@ -3028,7 +3089,7 @@ public class ContratoCobrancaMB {
 		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"avaliacao_laudo", 
-				"Compass",
+				"Galache",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
@@ -3039,7 +3100,7 @@ public class ContratoCobrancaMB {
 		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"avaliacao_laudo", 
-				"Compass",
+				"Galache",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
@@ -3050,7 +3111,7 @@ public class ContratoCobrancaMB {
 		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"avaliacao_laudo", 
-				"Compass",
+				"Galache",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
@@ -3172,6 +3233,79 @@ public class ContratoCobrancaMB {
 		try {
 			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
+			eec.enviarEmailHtmlResponsavelAdms("a.fornari@nevesemaggioni.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("m.pazin@nevesemaggioni.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("p.demuci@nevesemaggioni.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("l.melara@nevesemaggioni.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+			eec.enviarEmailHtmlResponsavelAdms("j.massaro@nevesemaggioni.com.br",
+					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+					mensagemHtmlTeste);
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}	
+	
+	public void notificaGalacheEmail() {
+		Locale locale = new Locale("pt", "BR");
+		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+		Date dataHoje = gerarDataHoje();
+
+		String mensagemHtmlTeste = "<html> " +
+		   "<head> " +
+		      "<meta charset='UTF-8'> " +
+		      "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' /> " +
+		      "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'> " +
+		   "</head> " +
+		   "<body> " +
+		      "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style=' :#f9f7f7'> " +
+		      "<div class='adM'> </div> " +
+		      "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'> " +
+		      "<div class='adM'> </div> " +
+		      "<div align='center'> " +
+		      "<div class='adM'> </div> " +
+		      "<table width='100%' border='0' cellspacing='0' cellpadding='0'> " +
+		         "<tbody> " +
+		            "<tr> " +
+		               "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td> " +
+		            "</tr> " +
+		         "</tbody> " +
+		      "</table> " +
+		      "<br> " +
+		      "<table> " +
+		      "<tbody> " +
+		         "<tr> " +
+		            "<td width='20'> </td> " +
+		            "<td> " +
+		               "<table> " +
+		                  "<tbody> " +
+		                     "<tr> " +
+		                        "<td style='font-family:Arial,sans-serif;color:#bb7e17;font-size:20px'>Olá " +
+		                          " <span style='font-weight:bold'>Compass</span>,  " +
+		                        "</td> " +
+		                     "</tr> " +
+		                     "<tr> " +
+		                     "   <td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> a operação <b>" + this.objetoContratoCobranca.getNumeroContrato() + "</b> do cliente " + this.objetoContratoCobranca.getPagador().getNome() + " já está disponível para fazer o laudo. </td> " +
+		                    " </tr> " +
+		                "  </tbody> " +
+		              " </table> " +
+		            "</td> " +
+		       " </tr> " +
+		   " </tbody> " +
+		  " </body> " +
+		"</html> ";
+		
+		try {
+			ResponsavelDao rDao = new ResponsavelDao();
+			EnviaEmail eec = new EnviaEmail();
 			eec.enviarEmailHtmlResponsavelAdms("anderson.trindade@galache.com.br",
 					"[siscoat] Operação " + this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 					mensagemHtmlTeste);
@@ -3188,7 +3322,7 @@ public class ContratoCobrancaMB {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-	}	
+	}
 	
 	public String editPreContratoPorStatus() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();

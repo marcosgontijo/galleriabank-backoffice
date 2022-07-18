@@ -1000,6 +1000,20 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
 								styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;" />
+							
+							<p:outputLabel for="avaliacaoLaudoObservacao"
+									value="Observação Avaliação: " styleClass="labelBold" />
+							<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5"
+									cols="84" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+										
+							<p:outputLabel for="geracaoLaudo"
+								value="Observação PAJU: " styleClass="labelBold" />
+							<p:inputTextarea id="geracaoLaudo" rows="5"
+								cols="84" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.geracaoLaudoObservacao}" />	
 
 						</h:panelGrid>
 					</p:panel>

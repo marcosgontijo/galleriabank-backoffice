@@ -643,9 +643,7 @@ public class KobanaMB {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd", locale);
-		
-		String dataFormatada = sdf.format(data);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
 		
 		return dataFormatada;
 	}
