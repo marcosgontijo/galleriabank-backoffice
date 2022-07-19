@@ -5820,7 +5820,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
 						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
 						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
-			
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 

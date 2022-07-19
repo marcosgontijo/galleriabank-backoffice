@@ -420,8 +420,8 @@ public class CcbMB {
 		this.tituloPagadorRecebedorDialog = "Participante";
 		this.tipoPesquisa = "Participante";
 		this.updatePagadorRecebedor = ":form:ParticipantesPanel :form:Dados";
-		this.participanteSelecionado = new CcbParticipantes();
-		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+		//this.participanteSelecionado = new CcbParticipantes();
+		//this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	public void concluirParticipante() {
@@ -453,12 +453,17 @@ public class CcbMB {
 		this.objetoCcb.getListaParticipantes().remove(participante);
 	}
 	
+	public void clearParticipante() {
+		this.participanteSelecionado = new CcbParticipantes();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
 	public void pesquisaSocio() {
 		this.tituloPagadorRecebedorDialog = "Socio";
 		this.tipoPesquisa = "Socio";
 		this.updatePagadorRecebedor = ":form:SociosPanel ";
-		this.socioSelecionado = new CcbParticipantes();
-		this.socioSelecionado.setPessoa(new PagadorRecebedor());
+		//this.socioSelecionado = new CcbParticipantes();
+		//this.socioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	public void concluirSocio() {
@@ -487,6 +492,11 @@ public class CcbMB {
 	
 	public void removerSocio(CcbParticipantes socio) {
 		this.getParticipanteSelecionado().getSocios().remove(socio);
+	}
+	
+	public void clearSocio() {
+		this.socioSelecionado = new CcbParticipantes();
+		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
 	public void pesquisaContratoCobranca() {
@@ -1064,7 +1074,6 @@ public class CcbMB {
 				}
 				this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
 			}
-			
 			//pegar participante na base de dados
 		} 
 		else if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Socio")) {
@@ -7195,9 +7204,6 @@ public class CcbMB {
 		    } else {
 	    		
 	    	}
-	    	
-	    	
-	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -7440,6 +7446,8 @@ public class CcbMB {
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+		//this.socioSelecionado = new CcbParticipantes();
+		//this.socioSelecionado.setPessoa(new PagadorRecebedor());
 		this.intervenienteSelecionado = new PagadorRecebedor();
 		this.emitenteSelecionado = new PagadorRecebedor();
 		this.selectedPagador = new PagadorRecebedor();

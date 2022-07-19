@@ -1031,7 +1031,8 @@
 										<p:selectBooleanButton value="#{ccbMB.addParticipante}"
 											onLabel="Adicionar Participante"
 											offLabel="Adicionar Participante">
-											<p:ajax update=":form:ParticipantesPanel" event="change" />
+											<p:ajax update=":form:ParticipantesPanel"
+											listener="#{ccbMB.clearParticipante}" event="change" />
 										</p:selectBooleanButton>
 									</f:facet>
 
@@ -1363,7 +1364,8 @@
 														value="" />
 													<p:selectBooleanButton value="#{ccbMB.addSocio}"
 														onLabel="Adicionar Socio" offLabel="Adicionar Socio">
-														<p:ajax update=":form:SociosPanel" event="change" />
+														<p:ajax update=":form:SociosPanel" event="change" 
+														listener="#{ccbMB.clearSocio}" />
 													</p:selectBooleanButton>
 												</f:facet>
 
