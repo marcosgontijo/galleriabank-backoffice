@@ -2984,6 +2984,28 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public String atualizaContratoGeracaoPAJU() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		try {				
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			return clearFieldsGeracaoPAJU();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			return "";
+		}
+	}
+	
 	public void changeAvaliadorLaudo() {
 		this.controleWhatsAlteracaoAvaliadorLaudo = true;
 	}
@@ -3345,6 +3367,8 @@ public class ContratoCobrancaMB {
 				notificaPAJUWhatsApp();
 				notificaPAJUEmail();
 			}
+			
+			this.codigoResponsavel = "11180";
 			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
@@ -7516,7 +7540,7 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
 	
-	public String clearFieldsEditarGeracaoLaudo() {
+	public String clearFieldsEditarGeracaoPAJU() {
 		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -7526,7 +7550,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
 	
-		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoLaudo.xhtml";
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoPAJU.xhtml";
 	}
 	
 	public void getIndexStepContrato() {
@@ -11291,18 +11315,18 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovel.xhtml";
 	}
 	
-	public String clearFieldsGeracaoLaudo() {
+	public String clearFieldsGeracaoPAJU() {
 		
 		clearMensagensWhatsApp();
 		
-		this.tituloTelaConsultaPreStatus = "Geração do Laudo";
+		this.tituloTelaConsultaPreStatus = "Geração do PAJU";
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do Laudo");
 		
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoLaudo.xhtml";
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoPAJU.xhtml";
 	}
 	
 	public void processaResponsaveisGeraNumeroWhatsApp() {

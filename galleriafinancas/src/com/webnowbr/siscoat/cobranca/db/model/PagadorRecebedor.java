@@ -221,6 +221,8 @@ public class PagadorRecebedor implements Serializable {
 	private User usuario;
 	
 	private BigDecimal saldoInvestidor;
+	
+	private String whatsAppNumero;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -1966,5 +1968,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setCodigoMoneyPlus(String codigoMoneyPlus) {
 		this.codigoMoneyPlus = codigoMoneyPlus;
+	}
+
+	public String getWhatsAppNumero() {
+		return whatsAppNumero;
+	}
+
+	public void setWhatsAppNumero(String whatsAppNumero) {
+		this.whatsAppNumero = whatsAppNumero;
 	}
 }

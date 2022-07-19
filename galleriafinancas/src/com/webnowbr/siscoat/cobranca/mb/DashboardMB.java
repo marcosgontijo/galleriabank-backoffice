@@ -641,8 +641,14 @@ public class DashboardMB {
         values.add(dashboard.getEmprestimoOnline());
         values.add(dashboard.getEmprestimoOnlineYT());
         values.add(dashboard.getEmprestimoParaNegativados());
-        values.add( dashboard.getRefinanciamentoDeImovel());
-        values.add(dashboard.getSimuladorOnline());
+        values.add(dashboard.getRefinanciamentoDeImovel());
+        values.add(dashboard.getCreditocasa());
+        values.add(dashboard.getEmprestimocomgarantiadeimovel());
+        values.add(dashboard.getEmprestimoimobiliario());
+        values.add(dashboard.getCreditoimobiliario());
+        values.add(dashboard.getGarantiadeimovel());
+        values.add(dashboard.getHomeequity());
+        
         dataSet.setData(values);
         
         List<String> bgColors = new ArrayList<String>();
@@ -653,6 +659,15 @@ public class DashboardMB {
         bgColors.add("rgb(225, 189, 81)");
         bgColors.add("rgb(225, 112, 81)");
         bgColors.add("rgb(225, 81, 169)");
+        
+        bgColors.add("rgb(59, 107 26)");
+        bgColors.add("rgb(46, 88, 19)");
+        bgColors.add("rgb(76, 155, 172)");
+        bgColors.add("rgb(91, 76, 172)");
+        bgColors.add("rgb(172, 91, 76)");
+        bgColors.add("rgb(172, 130, 76)");
+        
+        
         dataSet.setBackgroundColor(bgColors);
         
         data.addChartDataSet(dataSet);
@@ -664,6 +679,12 @@ public class DashboardMB {
         labels.add("Empréstimo para negativados");
         labels.add("Refinanciamento de Imóvel");
         labels.add("Simulador online");
+        labels.add("Crédito Casa");
+        labels.add("Empréstimo com Garantia de Imóvel");
+        labels.add("Empréstimo Imobiliário");
+        labels.add("Crédito Imobiliário");
+        labels.add("Garantia de Imóvel");
+        labels.add("Home Equity");
         data.setLabels(labels);
 
         //pieModel1.set("Não definidos", dashboard.getOutrasOrigens());

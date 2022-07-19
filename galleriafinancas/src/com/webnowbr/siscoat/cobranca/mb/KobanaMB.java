@@ -645,6 +645,8 @@ public class KobanaMB {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
 		
+		String dataFormatada = sdf.format(data);
+		
 		return dataFormatada;
 	}
 	

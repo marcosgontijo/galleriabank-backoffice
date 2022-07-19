@@ -177,6 +177,11 @@ public class PagadorRecebedorMB {
 			if (!this.objetoPagadorRecebedor.getSite().contains("http") && !this.objetoPagadorRecebedor.getSite().contains("HTTP")) {
 				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 			}
+			
+			if (this.objetoPagadorRecebedor.getWhatsAppNumero() == null || this.objetoPagadorRecebedor.getWhatsAppNumero().equals("")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
+			}
 			/*			
 			if (this.objetoPagadorRecebedor.getCpf() != null) {
 				if (pagadorRecebedorDao.findByFilter("cpf", this.objetoPagadorRecebedor.getCpf()).size() > 0) {

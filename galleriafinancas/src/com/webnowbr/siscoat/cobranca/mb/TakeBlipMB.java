@@ -17,8 +17,10 @@ import javax.faces.context.FacesContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -366,6 +368,142 @@ public class TakeBlipMB {
 		senderWhatsAppMessage(jsonWhatsApp);
 	}
 	
+	public void sendWhatsAppMessagePagadorRecebedor(PagadorRecebedor pessoa, String nomeTemplateMensagem, String nomeDoCliente, String numeroDoContrato, String taxaJuros, String prazo) {
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURLPagadorRecebedor(pessoa));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+			JSONArray jsonWhatsAppParameters = new JSONArray();
+			JSONObject jsonWhatsAppParameter = new JSONObject();
+			//contrato_pre_aprovado
+			if (nomeTemplateMensagem.equals("contrato_pre_aprovado")) {
+				// Nome do notificado
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", pessoa.getNome());
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				
+				// Nome do cliente
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", nomeDoCliente);
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				
+				// Número do pedido
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", numeroDoContrato);
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				
+				// Taxa ( 15,05 )
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", taxaJuros);
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				
+				// Prazo
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", prazo);
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+			} else {
+				//contrato_dado_entrada_cartorio
+				//contrato_pronto_para_assinatura
+				//contrato_recebido_laudo_paju
+				if (nomeTemplateMensagem.equals("contrato_comite")) {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", pessoa.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				} else if (nomeTemplateMensagem.equals("ag_comentarios_juridico")
+						|| nomeTemplateMensagem.equals("comentado_juridico_interno")
+						|| nomeTemplateMensagem.equals("ag_validacao_documentos")
+						|| nomeTemplateMensagem.equals("aprovado_comite_ag_ccb")
+						|| nomeTemplateMensagem.equals("recebimento_lead_comercial")) {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", pessoa.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Nome do cliente
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", nomeDoCliente);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				} else {
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", pessoa.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Nome do cliente
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", nomeDoCliente);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+					
+					// Número do pedido
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", numeroDoContrato);
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				}
+			}
+			
+			if (nomeTemplateMensagem.equals("recebimento_lead")) {
+				// Nome do cliente
+				jsonWhatsAppParameter = new JSONObject();
+				jsonWhatsAppParameter.put("type", "text");
+				jsonWhatsAppParameter.put("text", pessoa.getNome());
+				jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+			}
+										
+			jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", nomeTemplateMensagem);		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
 	/**
 	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
 	 */
@@ -452,6 +590,89 @@ public class TakeBlipMB {
 	/**
 	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
 	 */
+	public String getWhatsAppURLPagadorRecebedor(PagadorRecebedor pessoa) {
+		FacesContext context = FacesContext.getCurrentInstance();
+	
+		boolean existeWhatsAppNumber = true;
+		String whatsAppNumber = "";
+		
+		if (pessoa.getWhatsAppNumero() != null) {
+			if (!pessoa.getWhatsAppNumero().equals("")) {				
+				whatsAppNumber = pessoa.getWhatsAppNumero();
+			} else {
+				existeWhatsAppNumber = false;
+			}
+		} else {
+			existeWhatsAppNumber = false;
+		}
+		
+		if (!existeWhatsAppNumber) {
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			
+			try {		
+				int HTTP_COD_SUCESSO = 200;
+	
+				URL myURL = new URL("https://http.msging.net/commands");	
+				
+				JSONObject jsonWhatsAppURL = new JSONObject();			
+				jsonWhatsAppURL.put("id", generateUUID());
+				jsonWhatsAppURL.put("to", "postmaster@wa.gw.msging.net");
+				jsonWhatsAppURL.put("method", "get");
+				jsonWhatsAppURL.put("uri", "lime://wa.gw.msging.net/accounts/+" + formatTelefoneWhatsApp(pessoa.getTelCelular()));
+	
+				byte[] postDataBytes = jsonWhatsAppURL.toString().getBytes();
+	
+				HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestMethod("POST");
+				myURLConnection.setRequestProperty("Authorization", "Key Z2FsbGVyaWE6dzZ5ZzBwSTNMSnhqMHhuNmNtRlA=");
+				myURLConnection.setRequestProperty("Content-Type", "application/json");
+				myURLConnection.setDoOutput(true);
+				myURLConnection.getOutputStream().write(postDataBytes);
+	
+				/**
+				 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+				 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+				 * https://api.iugu.com/v1/withdraw_requests/id"
+				 */
+				if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_INFO,
+									"Take Blip: Falha ao buscar URL do responsável no WhatsApp (Cod: " + myURLConnection.getResponseCode() + " / Celular: " + pessoa.getTelCelular() + ")",
+					""));
+				} else {				
+					// Seta o ID da fatura na Parcela do Siscoat
+					JSONObject retornoWhatsAPP = null;
+	
+					retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
+					
+					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+					
+					whatsAppNumber = resource.getString("alternativeAccount");
+					
+					pessoa.setWhatsAppNumero(whatsAppNumber);
+					
+					pDao.merge(pessoa);
+					
+					System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
+				}
+	
+				myURLConnection.disconnect();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return whatsAppNumber;
+	}
+	
+	/**
+	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
+	 */
 	public String getWhatsAppURLNovoResponsavel(Responsavel responsavel) {
 		FacesContext context = FacesContext.getCurrentInstance();
 	
@@ -499,6 +720,70 @@ public class TakeBlipMB {
 				whatsAppNumber = resource.getString("alternativeAccount");
 				
 				System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + responsavel.getNome());
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return whatsAppNumber;
+	}
+	
+	/**
+	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
+	 */
+	public String getWhatsAppURLNovoPagadorRecebedor(PagadorRecebedor pessoa) {
+		FacesContext context = FacesContext.getCurrentInstance();
+	
+		String whatsAppNumber = "";
+
+		try {		
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://http.msging.net/commands");	
+			
+			JSONObject jsonWhatsAppURL = new JSONObject();			
+			jsonWhatsAppURL.put("id", generateUUID());
+			jsonWhatsAppURL.put("to", "postmaster@wa.gw.msging.net");
+			jsonWhatsAppURL.put("method", "get");
+			jsonWhatsAppURL.put("uri", "lime://wa.gw.msging.net/accounts/+" + formatTelefoneWhatsApp(pessoa.getTelCelular()));
+
+			byte[] postDataBytes = jsonWhatsAppURL.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Authorization", "Key Z2FsbGVyaWE6dzZ5ZzBwSTNMSnhqMHhuNmNtRlA=");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			/**
+			 * TODO SALVAR NO BANCO O ID DE TODAS AS TRANSFERENCIAS
+			 * USAR ESTE ID PARA BUSCAR O STATUS DA TRANSFERENCIA
+			 * https://api.iugu.com/v1/withdraw_requests/id"
+			 */
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO,
+								"Take Blip: Falha ao buscar URL do responsável no WhatsApp (Cod: " + myURLConnection.getResponseCode() + " / Celular: " + pessoa.getTelCelular() + ")",
+				""));
+			} else {				
+				// Seta o ID da fatura na Parcela do Siscoat
+				JSONObject retornoWhatsAPP = null;
+
+				retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
+				
+				JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+				
+				whatsAppNumber = resource.getString("alternativeAccount");
+				
+				System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
 			}
 
 			myURLConnection.disconnect();

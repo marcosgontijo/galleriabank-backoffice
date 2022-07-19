@@ -1673,5 +1673,8 @@
 		<property name="geracaoLaudoObservacao" type="text">
 			<column name="geracaoLaudoObservacao" />
 		</property>	
+		<property name="iniciouGeracaoLaudo" type="boolean">
+			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
+		</property>	
 	</class>
 </hibernate-mapping>

@@ -543,6 +543,9 @@
 		<property name="idadeConjuge" type="java.lang.String">
 			<column name="idadeConjuge" />
 		</property>	
-      	                                        
+		
+		<property name="whatsAppNumero" type="java.lang.String">
+			<column name="whatsAppNumero" />
+		</property>	                        
     </class>
 </hibernate-mapping>

@@ -5554,7 +5554,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
-			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju " + 
+			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
+		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -5780,7 +5781,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
-						
+
 						contratoCobranca.setId(rs.getLong(1));
 						contratoCobranca.setNumeroContrato(rs.getString(2));
 						contratoCobranca.setDataContrato(rs.getTimestamp(3));
@@ -5815,10 +5816,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
 						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
-						
-						if (tipoConsulta.equals("Pedir Laudo")) {
-							System.out.println("Pedir Laudo:" + contratoCobranca.getNumeroContrato());
-						}
+						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(35));
+						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
+						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
+						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+			
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
@@ -6651,30 +6653,26 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		return demonstrativosResultadosGrupoDetalhe;
 	}
 	
-	private static final String QUERY_ORIGEM_LEADS = "select  " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Refinanciamento de Imóvel') refinamento,  " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Empréstimo para negativados') emprestimonegativados, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Empréstimo online') emprestimoonline, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Empréstimo Home Equity') emprestimoequity, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Empréstimo com terreno em garantia') emprestimoterreno, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Empréstimo online YT') emprestimoonlineyt, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead = 'Simulador online') simuladoronline, " 
-			 + " (select count(id) from cobranca.contratocobranca " 
-			 + " where urllead != 'Refinanciamento de Imóvel' and " 
-			 + " urllead != 'Empréstimo para negativados' and " 
-			 + " urllead != 'Empréstimo online' and " 
-			 + " urllead != 'Empréstimo Home Equity' and " 
-			 + " urllead != 'Empréstimo com terreno em garantia' and " 
-			 + " urllead != 'Empréstimo online YT' and " 
-			 + " urllead != 'Simulador online') outros " ;
-	
+	private static final String QUERY_ORIGEM_LEADS = 
+					" select "  
+					+ " (select count(id) from cobranca.contratocobranca   " 
+					+ " where urllead = 'Refinanciamento de Imóvel') refinamento,    " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Empréstimo para negativados') emprestimonegativados,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Empréstimo online') emprestimoonline,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Empréstimo Home Equity') emprestimoequity,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Empréstimo com terreno em garantia') emprestimoterreno,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Empréstimo online YT') emprestimoonlineyt,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead = 'Simulador online') simuladoronline,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%creditocasa%') creditocasa,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%emprestimoimobiliario%') emprestimoimobiliario,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%creditoimobiliario%') creditoimobiliario,  "  
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%garantiadeimovel%') garantiadeimovel," 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%homeequity%') homeequity,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead like '%emprestimocomgarantiadeimovel%') emprestimocomgarantiadeimovel,   " 
+					+ " (select count(id) from cobranca.contratocobranca  where urllead != 'Refinanciamento de Imóvel' and  urllead != 'Empréstimo para negativados' and   " 
+					+ "  urllead != 'Empréstimo online' and  urllead != 'Empréstimo Home Equity' and  urllead != 'Empréstimo com terreno em garantia'  " 
+					+ "  and  urllead != 'Empréstimo online YT' and  urllead != 'Simulador online' and  urllead != '%creditocasa%' and  urllead != '%emprestimoimobiliario%' " 
+					+ "  and  urllead != '%creditoimobiliario%' and  urllead != '%garantiadeimovel%' and  urllead != '%homeequity%' and  urllead != '%emprestimocomgarantiadeimovel%') outros  ";
 
 	@SuppressWarnings("unchecked")
 	public Dashboard getOrigemLeads()
@@ -6703,6 +6701,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				dashboard.setEmprestimoOnlineYT(rs.getInt("emprestimoonlineyt"));					
 				dashboard.setSimuladorOnline(rs.getInt("simuladoronline"));
 				dashboard.setOutrasOrigens(rs.getInt("outros"));
+				dashboard.setCreditocasa(rs.getInt("creditocasa"));
+				dashboard.setEmprestimoimobiliario(rs.getInt("emprestimoimobiliario"));
+				dashboard.setCreditoimobiliario(rs.getInt("creditoimobiliario"));
+				dashboard.setGarantiadeimovel(rs.getInt("garantiadeimovel"));
+				dashboard.setHomeequity(rs.getInt("homeequity"));
+				dashboard.setEmprestimocomgarantiadeimovel(rs.getInt("emprestimocomgarantiadeimovel"));
+				
+				
+				
 			}
 			
 		} catch (SQLException e) {

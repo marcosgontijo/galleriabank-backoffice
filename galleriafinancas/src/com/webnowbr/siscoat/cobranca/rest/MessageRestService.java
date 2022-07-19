@@ -29,6 +29,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
+import com.webnowbr.siscoat.cobranca.mb.TakeBlipMB;
 
 @Path("/services")
 public class MessageRestService {
@@ -152,6 +153,8 @@ public class MessageRestService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			boolean leadGalleria = true;
 
 			if (username.equals("webnowbr") && password.equals("!SisCoAt@2021*")) {
 				try {
@@ -179,6 +182,7 @@ public class MessageRestService {
 								ResponsavelDao rDao = new ResponsavelDao();
 								responsavel = rDao.findById((long) 429);
 								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+								leadGalleria = false;
 							}
 						}
 					}
@@ -192,6 +196,7 @@ public class MessageRestService {
 								ResponsavelDao rDao = new ResponsavelDao();
 								responsavel = rDao.findById((long) 568);
 								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+								leadGalleria = false;
 							}
 						}
 					}
@@ -204,6 +209,7 @@ public class MessageRestService {
 								ResponsavelDao rDao = new ResponsavelDao();
 								responsavel = rDao.findById(lead.getLong("codigoIntegracao"));
 								contratoCobrancaMB.getObjetoContratoCobranca().setResponsavel(responsavel);
+								leadGalleria = false;
 							}
 						}
 					}
@@ -251,7 +257,7 @@ public class MessageRestService {
 								contratoCobrancaMB.getObjetoContratoCobranca().setUrlLead(lead.getString("url"));
 							}							
 						}						
-					}
+					}						
 					
 					if (lead.has("posted_url")) {
 						if (!lead.isNull("posted_url")) {
@@ -300,6 +306,17 @@ public class MessageRestService {
 						}					
 					
 						contratoCobrancaMB.getObjetoImovelCobranca().setTipo(tipoImovel);
+					}
+					
+					
+					if (!leadGalleria) {
+						TakeBlipMB takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessagePagadorRecebedor(contratoCobrancaMB.getObjetoPagadorRecebedor(),
+								"recebimento_lead", 
+								"",
+								"",
+								"",
+								"");
 					}
 	
 					// salva LEAD

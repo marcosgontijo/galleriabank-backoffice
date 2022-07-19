@@ -17,6 +17,13 @@ public class Dashboard implements Serializable {
 	private int simuladorOnline;
 	private int outrasOrigens;
 	
+	private int creditocasa;
+	private int emprestimoimobiliario;
+	private int creditoimobiliario;
+	private int garantiadeimovel;
+	private int homeequity;
+	private int emprestimocomgarantiadeimovel;
+	
 	private int novoLead;
 	private int leadEmTratamento;
 	
@@ -354,5 +361,53 @@ public class Dashboard implements Serializable {
 
 	public void setListaComite(List<ContratoCobranca> listaComite) {
 		this.listaComite = listaComite;
+	}
+
+	public int getCreditocasa() {
+		return creditocasa;
+	}
+
+	public void setCreditocasa(int creditocasa) {
+		this.creditocasa = creditocasa;
+	}
+
+	public int getEmprestimoimobiliario() {
+		return emprestimoimobiliario;
+	}
+
+	public void setEmprestimoimobiliario(int emprestimoimobiliario) {
+		this.emprestimoimobiliario = emprestimoimobiliario;
+	}
+
+	public int getCreditoimobiliario() {
+		return creditoimobiliario;
+	}
+
+	public void setCreditoimobiliario(int creditoimobiliario) {
+		this.creditoimobiliario = creditoimobiliario;
+	}
+
+	public int getGarantiadeimovel() {
+		return garantiadeimovel;
+	}
+
+	public void setGarantiadeimovel(int garantiadeimovel) {
+		this.garantiadeimovel = garantiadeimovel;
+	}
+
+	public int getHomeequity() {
+		return homeequity;
+	}
+
+	public void setHomeequity(int homeequity) {
+		this.homeequity = homeequity;
+	}
+
+	public int getEmprestimocomgarantiadeimovel() {
+		return emprestimocomgarantiadeimovel;
+	}
+
+	public void setEmprestimocomgarantiadeimovel(int emprestimocomgarantiadeimovel) {
+		this.emprestimocomgarantiadeimovel = emprestimocomgarantiadeimovel;
 	}	
 }
