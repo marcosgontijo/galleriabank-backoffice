@@ -76,12 +76,12 @@
 					
 					<p:column style="text-align: center;width: 100px" headerText="Data Vistoria Imóvel" filterBy="#{contratos.dataPrevistaVistoria}" filterMatchMode="contains" sortBy="#{contratos.dataPrevistaVistoria}">
 			           <p:outputLabel value="#{contratos.dataPrevistaVistoria}" >			            	
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" timeZone="GMT-3" />
 						</p:outputLabel>
 			        </p:column>
 					
 					<p:column style="text-align: center;" headerText="Observação" filterBy="#{contratos.avaliacaoLaudoObservacao}" filterMatchMode="contains" sortBy="#{contratos.avaliacaoLaudoObservacao}">
-			            <h:outputText value="#{contratos.avaliacaoLaudoObservacao}" />
+			            <h:outputText value="#{contratos.avaliacaoLaudoObservacao}" style="FONT-SIZE: 10pt; white-space: pre-wrap;" />
 			        </p:column>
 					
 					<p:column style="text-align: center;width: 100px"

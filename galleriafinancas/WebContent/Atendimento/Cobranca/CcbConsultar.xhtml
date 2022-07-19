@@ -12,14 +12,14 @@
 		<h:form style="margin-bottom:10px;">				
 			<p:messages id="mensagens" showDetail="true"/>							
 			<p:panel id="ConsultaCcb" header="CCBs - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtCcb" var="ccb" value="#{ccbMB.listaCcbs}" paginator="true" rows="20" lazy="true"
+   		         <p:dataTable id="dtCcb" var="ccb" value="#{ccbMB.listaCcbs}" paginator="true" rows="20" 
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{ccb.numeroOperacao}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{ccbMB.clearFieldsInserirCcb}"/>
 			        </f:facet>
-			         <p:column style="text-align: center;" headerText="Numero CCB" filterBy="#{ccb.numeroCcb}" filterMatchMode="contains" sortBy="#{ccb.numeroCcb}">
+			        <p:column style="text-align: center;" headerText="Numero CCB" filterBy="#{ccb.numeroCcb}" filterMatchMode="contains" sortBy="#{ccb.numeroCcb}">
 			            <h:outputText value="#{ccb.numeroCcb}" />
 			        </p:column>			        
 			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{ccb.numeroOperacao}" filterMatchMode="contains" sortBy="#{ccb.numeroOperacao}">
