@@ -3368,7 +3368,7 @@ public class ContratoCobrancaMB {
 				notificaPAJUEmail();
 			}
 			
-			this.codigoResponsavel = "11180";
+			//this.codigoResponsavel = "11180";
 			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
