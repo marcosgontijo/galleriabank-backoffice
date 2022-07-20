@@ -931,7 +931,7 @@ public class CRMMB {
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
-						c.setStatus("Análise Pendente");
+						c.setStatus("Análise Com Pendência");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
