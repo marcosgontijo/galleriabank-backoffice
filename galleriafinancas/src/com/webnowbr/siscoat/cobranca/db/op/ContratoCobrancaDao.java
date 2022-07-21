@@ -2526,93 +2526,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI12 =  	
-			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento, " + 
-			" cdbp.baixagalleria, cdbp.datapagamentogalleria, cdbp.vlrRecebidoGalleria  " + 
-			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
-			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
-			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
-			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
-			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
-			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
-			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
-			" where  cc.empresa = 'CRI 1' " +
-			"	and " +
-			"	( (cdbp.dataPagamento >= ? ::timestamp " +
-			"		and cdbp.dataPagamento <= ? ::timestamp) " +
-			"	   or " +
-			"	  (cdbp.baixagalleria  " +
-			"		and cdbp.datapagamentogalleria >= ? ::timestamp " +
-			"		and cdbp.datapagamentogalleria <= ? ::timestamp) ) "  +
-			" order by cc.numerocontrato, cd.numeroparcela ";
-	
-	@SuppressWarnings("unchecked")
-	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalCRI12(final Date dtRelInicio, final Date dtRelFim) {
-		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
-			@Override
-			public Object run() throws Exception {
-				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
-	
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI12;
-
-				try {
-					connection = getConnection();
-						
-					ps = connection
-							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
-					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
-	
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);		
-					ps.setDate(3, dtRelInicioSQL);
-					ps.setDate(4, dtRelFimSQL);	
-	
-					rs = ps.executeQuery();
-					
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
-		
-					while (rs.next()) { 
-						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
-						
-						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
-						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
-						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
-						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
-						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
-						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
-						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
-						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
-						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
-						
-						if(rs.getBoolean("baixagalleria")) { //rs.getBoolean(12)
-							relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate("datapagamentogalleria")); //rs.getDate(13)
-							relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal("vlrRecebidoGalleria")); //rs.getBigDecimal(14)
-						}
-						
-						
-						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
-						} else {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
-						}
-												
-						objects.add(relatorioFinanceiroCobrancaAux);								
-					}
-				} finally {
-					closeResources(connection, ps, rs);					
-				}
-				return objects;
-			}
-		});	
-	}
-	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC =  	
 			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento " + 
 			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
@@ -2670,97 +2583,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
 						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
-						
-						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
-						} else {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
-						}
-												
-						objects.add(relatorioFinanceiroCobrancaAux);								
-					}
-				} finally {
-					closeResources(connection, ps, rs);					
-				}
-				return objects;
-			}
-		});	
-	}
-	
-	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC2 =  	
-			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento,"
-			+ " cdbp.baixagalleria, cdbp.datapagamentogalleria, cdbp.vlrRecebidoGalleria  " + 
-			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
-			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
-			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
-			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
-			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
-			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
-			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
-			"where  " +
-			" cc.empresa = 'FIDC GALLERIA' " +
-			"	and " +
-			"	( (cdbp.dataPagamento >= ? ::timestamp " +
-			"		and cdbp.dataPagamento <= ? ::timestamp) " +
-			"	   or " +
-			"	  (cdbp.baixagalleria  " +
-			"		and cdbp.datapagamentogalleria >= ? ::timestamp " +
-			"		and cdbp.datapagamentogalleria <= ? ::timestamp) ) "  +
-			" order by cc.numerocontrato, cd.numeroparcela ";
-	
-	@SuppressWarnings("unchecked")
-	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalFIDC2(final Date dtRelInicio, final Date dtRelFim) {
-		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
-			@Override
-			public Object run() throws Exception {
-				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
-	
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_FIDC2;
-
-				try {
-					connection = getConnection();
-						
-					ps = connection
-							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
-					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
-	
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);		
-					ps.setDate(3, dtRelInicioSQL);
-					ps.setDate(4, dtRelFimSQL);	
-	
-					rs = ps.executeQuery();
-					
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
-		
-					while (rs.next()) { 
-						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
-						
-						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
-						
-						if(CommonsUtil.mesmoValor(relatorioFinanceiroCobrancaAux.getNumeroContrato(), "01330")) {
-							String sadasd = "" ;
-						}
-						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
-						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
-						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
-						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
-						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
-						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
-						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
-						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
-						
-						if(rs.getBoolean("baixagalleria")) { //12
-							relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate("datapagamentogalleria")); //13
-							relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal("vlrRecebidoGalleria")); //14
-						}
 						
 						if (!rs.getString(8).equals("")) {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
@@ -3253,20 +3075,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_BRL_CONTRATO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA, "
-			+ " cdp.baixagalleria, cdp.datapagamentogalleria, cdp.vlrRecebidoGalleria  "
+	private static final String QUERY_CONSULTA_BRL_CONTRATO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA  "
 			+ " from cobranca.contratocobrancadetalhes cd "
 			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
 			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
 			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
-			+ " where and cc.cedenteBRLCessao = ? "
-			+ " and "
-			+ "	( (cdp.dataPagamento >= ? ::timestamp "
-			+ "	and cdp.dataPagamento <= ? ::timestamp) "
-			+ "	or (cdp.baixagalleria "
-			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
-			+ "		and cdp.datapagamentogalleria >= ? ::timestamp))	";	
+			+ " where cdp.dataPagamento >= ? ::timestamp "
+			+ " and cdp.dataPagamento <= ? ::timestamp "
+			+ " and cc.cedenteBRLCessao = ? ";	
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {
@@ -3290,11 +3107,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);			
 	
-					ps.setString(1, cedenteCessao);
-					ps.setDate(2, dtRelInicioSQL);
-					ps.setDate(3, dtRelFimSQL);
-					ps.setDate(4, dtRelInicioSQL);
-					ps.setDate(5, dtRelFimSQL);
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					ps.setString(3, cedenteCessao);
 					
 					rs = ps.executeQuery();
 					
@@ -3318,11 +3133,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobrancaBRLLiquidacao.setId(rs.getLong(9));
 						contratoCobrancaBRLLiquidacao.setVlrJurosSemIPCA(rs.getBigDecimal(10));
 						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoSemIPCA(rs.getBigDecimal(11));
-						if(rs.getBoolean("baixagalleria")) { //12
-							contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate("datapagamentogalleria")); //13
-							contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal("vlrRecebidoGalleria")); //14
-						}
-						
 
 						objects.add(contratoCobrancaBRLLiquidacao);
 					}
