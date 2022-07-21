@@ -685,7 +685,7 @@ public class ContratoCobrancaMB {
     private Collection<ContratoCobranca> listaContratos = new ArrayList<ContratoCobranca>();
  	private List<Responsavel> listResponsavel;
 
-	
+ 	private boolean financeiroGalleria = false;
 	
 	private Boolean addPagadorPreContrato;
 	
@@ -5759,6 +5759,17 @@ public class ContratoCobrancaMB {
 				auxDataVencimentoStr = sdf.format(ccd.getDataVencimento());
 				auxDataVencimento = ccd.getDataVencimento();
 			}
+			
+			if(ccd.isParcelaPaga() == false && ccd.getListContratoCobrancaDetalhesParcial().size() >= 0) {
+				for(ContratoCobrancaDetalhesParcial ccdp : ccd.getListContratoCobrancaDetalhesParcial() ) {
+					if(!ccdp.isBaixaGalleria()) {
+						ccd.setPagoParcial(true);
+						break;
+					}
+				}
+			} else {
+				ccd.setPagoParcial(false);
+			}
 
 			try {
 				auxDataVencimento = sdf.parse(auxDataVencimentoStr);
@@ -5819,8 +5830,12 @@ public class ContratoCobrancaMB {
 				somaBaixas = ccd.getVlrParcela();
 			} else {
 				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+					if(!CommonsUtil.semValor(cBaixas.getDataPagamento())) {
+						ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+					}
+					if(!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
+						somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+					}
 				}
 			}
 
@@ -10523,9 +10538,14 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroBaixadoFIDC() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		
-		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
-				this.relDataContratoInicio, this.relDataContratoFim);
+			
+		if(this.financeiroGalleria) {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC2(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		} else {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalFIDC(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		}
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
 
@@ -10539,8 +10559,13 @@ public class ContratoCobrancaMB {
 	public void geraRelFinanceiroBaixadoCRI1() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI1(
-				this.relDataContratoInicio, this.relDataContratoFim);
+		if(this.financeiroGalleria) {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI12(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		} else {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI1(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		}	
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
 
@@ -15899,10 +15924,57 @@ public class ContratoCobrancaMB {
 		return c.getTime();
 	}
 
+	public void baixarParcelaParcialGalleria() {
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar dataPagamento = Calendar.getInstance(zone, locale);
+		dataPagamento.setTime(this.rowEditNewDate);
+
+		//if (this.selectedRecebedor != null) {
+		//	if (this.selectedRecebedor.getId() > 0) {
+		//		contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+		//	}
+		//}
+
+		//if (this.observacao != null) {
+		//	contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
+		//}
+		
+		ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+		
+		if (this.vlrRecebido.intValue() != 0) {
+			
+			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+			contratoCobrancaDetalhesParcial.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+			
+			contratoCobrancaDetalhesParcial.setBaixaGalleria(true);
+			contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
+			contratoCobrancaDetalhesParcial.setVlrRecebidoGalleria(this.vlrRecebido);
+
+			bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+
+			// compoem o valor da parcela de acordo com o historico de baixas
+			BigDecimal valorParcelaAtual = BigDecimal.ZERO;
+			this.vlrRecebido = BigDecimal.ZERO;
+		} 
+		
+		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
+	}
+	
 	/* BAIXA PARCIAL */
 	public void baixarParcelaParcial() {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-
+		
+		List<ContratoCobrancaDetalhesParcial> listaBaixaGalleria = new ArrayList<ContratoCobrancaDetalhesParcial>();
+		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
+			if(cBaixas.isBaixaGalleria()) {
+				listaBaixaGalleria.add(cBaixas);
+			}
+		}
+		bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().removeAll(listaBaixaGalleria);
+		
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
@@ -15918,7 +15990,7 @@ public class ContratoCobrancaMB {
 
 		Calendar dataPagamento = Calendar.getInstance(zone, locale);
 		dataPagamento.setTime(this.rowEditNewDate);
-
+		
 		Calendar dataPagamentoHoras = Calendar.getInstance(zone, locale);
 
 		this.bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(this.vlrParcelaAtualizadaNew);
@@ -16133,6 +16205,17 @@ public class ContratoCobrancaMB {
 			}
 
 			ccd.setValorTotalPagamento(somaBaixas);
+			
+			if(ccd.isParcelaPaga() == false && ccd.getListContratoCobrancaDetalhesParcial().size() >= 0) {
+				for(ContratoCobrancaDetalhesParcial ccdp : ccd.getListContratoCobrancaDetalhesParcial() ) {
+					if(!ccdp.isBaixaGalleria()) {
+						ccd.setPagoParcial(true);
+						break;
+					}
+				}
+			} else {
+				ccd.setPagoParcial(false);
+			}
 		}
 
 		/*
@@ -26841,6 +26924,14 @@ public class ContratoCobrancaMB {
 
 	public void setContratoPrazoMin(Collection<ContratoCobranca> contratoPrazoMin) {
 		this.contratoPrazoMin = contratoPrazoMin;
+	}
+
+	public boolean isFinanceiroGalleria() {
+		return financeiroGalleria;
+	}
+
+	public void setFinanceiroGalleria(boolean financeiroGalleria) {
+		this.financeiroGalleria = financeiroGalleria;
 	}
 	
 	
