@@ -1624,10 +1624,6 @@
 		<property name="pedidoLaudo" type="boolean">
 			<column name="pedidoLaudo" />
 		</property>	
-		
-		<property name="prePedidoLaudo" type="boolean">
-			<column name="prePedidoLaudo" />
-		</property>	
 
 		<property name="pedidoLaudoUsuario" type="java.lang.String">
 			<column name="pedidoLaudoUsuario" />
@@ -1675,6 +1671,9 @@
 		</property>	
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
+		</property>	
+		<property name="analistaGeracaoPAJU" type="java.lang.String">
+			<column name="analistaGeracaoPAJU"/>
 		</property>	
 	</class>
 </hibernate-mapping>

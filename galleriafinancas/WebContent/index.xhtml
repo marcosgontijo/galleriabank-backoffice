@@ -8,7 +8,7 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <h:head>
-        <title>Galleria Finanças</title>          
+        <title>Galleria Bank</title>          
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
@@ -203,21 +203,19 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO">
-									<p:menuitem value="03.4 - Geração PAJU"
-										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
 									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="03.5 - Laudo + Paju Pendente"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Laudo Paju Pendente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="04 - Ag. PAJU"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO">
+										<p:menuitem value="04 - Ag. PAJU"
+											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
+											ajax="false" icon="ui-icon ui-icon-newwin"
+											styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

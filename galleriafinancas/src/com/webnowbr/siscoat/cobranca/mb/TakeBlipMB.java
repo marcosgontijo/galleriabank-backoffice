@@ -386,6 +386,8 @@ public class TakeBlipMB {
 			//contrato_pre_aprovado
 			if (nomeTemplateMensagem.equals("contrato_pre_aprovado")) {
 				// Nome do notificado
+				jsonWhatsAppParameters = new JSONArray();
+				
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
 				jsonWhatsAppParameter.put("text", pessoa.getNome());
@@ -419,6 +421,8 @@ public class TakeBlipMB {
 				//contrato_pronto_para_assinatura
 				//contrato_recebido_laudo_paju
 				if (nomeTemplateMensagem.equals("contrato_comite")) {
+					jsonWhatsAppParameters = new JSONArray();
+					
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
@@ -435,6 +439,9 @@ public class TakeBlipMB {
 						|| nomeTemplateMensagem.equals("ag_validacao_documentos")
 						|| nomeTemplateMensagem.equals("aprovado_comite_ag_ccb")
 						|| nomeTemplateMensagem.equals("recebimento_lead_comercial")) {
+					
+					jsonWhatsAppParameters = new JSONArray();
+					
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
@@ -453,6 +460,8 @@ public class TakeBlipMB {
 					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				} else {
+					jsonWhatsAppParameters = new JSONArray();
+					
 					// Nome do notificado
 					jsonWhatsAppParameter = new JSONObject();
 					jsonWhatsAppParameter.put("type", "text");
@@ -473,7 +482,9 @@ public class TakeBlipMB {
 				}
 			}
 			
-			if (nomeTemplateMensagem.equals("recebimento_lead")) {
+			if (nomeTemplateMensagem.equals("recebimento_lead_galleria")) {
+				jsonWhatsAppParameters = new JSONArray();
+				
 				// Nome do cliente
 				jsonWhatsAppParameter = new JSONObject();
 				jsonWhatsAppParameter.put("type", "text");
