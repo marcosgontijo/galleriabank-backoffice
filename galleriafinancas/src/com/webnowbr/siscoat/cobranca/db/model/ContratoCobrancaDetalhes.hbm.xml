@@ -139,8 +139,5 @@
        <property name="statusBoletoKonana" type="java.lang.String">
             <column name="statusBoletoKonana"/>
        </property>      		
-      
-       
-       
 	</class>
 </hibernate-mapping>

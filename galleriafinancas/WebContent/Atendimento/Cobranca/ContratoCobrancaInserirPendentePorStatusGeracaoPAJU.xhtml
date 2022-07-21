@@ -77,7 +77,7 @@
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="StatusGeracaoLaudo" style="border: none">
 							<h:panelGrid columns="3">
-								<p:outputLabel styleClass="labelBold">Geração PAJU Inciada? </p:outputLabel>									
+								<p:outputLabel styleClass="labelBold">Geração PAJU Iniciada? </p:outputLabel>									
 											<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
 											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
 								<p:commandButton value="Atualizar Status" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
@@ -94,7 +94,7 @@
 							</h:panelGrid>
 							<h:panelGrid columns="3">
 								<p:outputLabel styleClass="labelBold">PAJU Gerado: </p:outputLabel>									
-											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" 
+											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" 
 											onLabel="Gerado" offLabel="Não Gerado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
 								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	

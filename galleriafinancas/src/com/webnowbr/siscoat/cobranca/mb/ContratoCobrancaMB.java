@@ -3368,8 +3368,6 @@ public class ContratoCobrancaMB {
 				notificaPAJUEmail();
 			}
 			
-			//this.codigoResponsavel = "11180";
-			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
@@ -5746,8 +5744,7 @@ public class ContratoCobrancaMB {
 
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
-		
-	
+
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			// se já houve baixa parcial, utiliza a data de vencimento atualizada
 			// senão utiliza a data de vencimento antiga
@@ -11350,7 +11347,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do Laudo");
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU");
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoPAJU.xhtml";
 	}
@@ -16152,8 +16149,6 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 		
-		
-		
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			
@@ -16201,8 +16196,6 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
-			
-			
 
 			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
@@ -25181,7 +25174,7 @@ public class ContratoCobrancaMB {
 			// Recupera ZIP gerado para fazer download
 			FileInputStream stream = new FileInputStream(
 					pathContrato + "Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
-			downloadAllFiles = new DefaultStreamedContent(stream, pathContrato,
+			downloadAllFilesInterno = new DefaultStreamedContent(stream, pathContrato,
 					"Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
 
 		} catch (Exception e) {

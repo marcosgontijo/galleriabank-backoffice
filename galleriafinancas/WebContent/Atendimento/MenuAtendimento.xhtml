@@ -158,21 +158,19 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO">
-									<p:menuitem value="03.4 - Geração PAJU"
-										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
 									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="03.5 - Laudo + Paju Pendente"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Laudo Paju Pendente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="04 - Ag. PAJU"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. PAJU')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO">
+										<p:menuitem value="04 - Ag. PAJU"
+											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
+											ajax="false" icon="ui-icon ui-icon-newwin"
+											styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -334,6 +332,7 @@
 									<p:menuitem value="Financeiro Baixado FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
+<<<<<<< HEAD
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
@@ -343,18 +342,13 @@
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
+=======
+										styleClass="itemMenu" />
+>>>>>>> refs/remotes/origin/master
 									<p:menuitem value="Financeiro Baixado CRI 1"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" >
-										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
-									<p:menuitem value="Financeiro Baixado CRI 1 - GALLERIA"
-										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
-										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" >
-										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
+										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Recebedores"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
