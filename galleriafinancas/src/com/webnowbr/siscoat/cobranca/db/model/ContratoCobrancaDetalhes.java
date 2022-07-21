@@ -77,6 +77,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private String urlBoletoKonana;
 	private String statusBoletoKonana;
 	
+	private boolean pagoParcial = false;
+	
 	
 	
 	/**
@@ -602,6 +604,14 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setQtdParcelasVencidas(int qtdParcelasVencidas) {
 		this.qtdParcelasVencidas = qtdParcelasVencidas;
+	}
+
+	public boolean isPagoParcial() {
+		return pagoParcial;
+	}
+
+	public void setPagoParcial(boolean pagoParcial) {
+		this.pagoParcial = pagoParcial;
 	}
 
 	

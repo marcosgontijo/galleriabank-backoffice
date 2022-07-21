@@ -1998,7 +1998,7 @@
 						value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
 						emptyMessage="" sortBy="#{contratos.numeroParcela}"
 						sortOrder="ascending"
-						rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+						rowStyleClass="#{(parcelas.pagoParcial eq true) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 						rowKey="#{parcelas.id}">
 

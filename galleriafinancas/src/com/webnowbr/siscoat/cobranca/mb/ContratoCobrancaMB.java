@@ -5746,7 +5746,8 @@ public class ContratoCobrancaMB {
 
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
-
+		
+	
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			// se já houve baixa parcial, utiliza a data de vencimento atualizada
 			// senão utiliza a data de vencimento antiga
@@ -5758,6 +5759,17 @@ public class ContratoCobrancaMB {
 			} else {
 				auxDataVencimentoStr = sdf.format(ccd.getDataVencimento());
 				auxDataVencimento = ccd.getDataVencimento();
+			}
+			
+			if(ccd.isParcelaPaga() == false && ccd.getListContratoCobrancaDetalhesParcial().size() >= 0) {
+				for(ContratoCobrancaDetalhesParcial ccdp : ccd.getListContratoCobrancaDetalhesParcial() ) {
+					if(!ccdp.isBaixaGalleria()) {
+						ccd.setPagoParcial(true);
+						break;
+					}
+				}
+			} else {
+				ccd.setPagoParcial(false);
 			}
 
 			try {
@@ -15949,7 +15961,7 @@ public class ContratoCobrancaMB {
 			this.vlrRecebido = BigDecimal.ZERO;
 		} 
 		
-		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
+		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);		
 	}
 	
 	/* BAIXA PARCIAL */
@@ -16140,6 +16152,8 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 		
+		
+		
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			
@@ -16187,6 +16201,8 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
+			
+			
 
 			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
@@ -16194,6 +16210,17 @@ public class ContratoCobrancaMB {
 			}
 
 			ccd.setValorTotalPagamento(somaBaixas);
+			
+			if(ccd.isParcelaPaga() == false && ccd.getListContratoCobrancaDetalhesParcial().size() >= 0) {
+				for(ContratoCobrancaDetalhesParcial ccdp : ccd.getListContratoCobrancaDetalhesParcial() ) {
+					if(!ccdp.isBaixaGalleria()) {
+						ccd.setPagoParcial(true);
+						break;
+					}
+				}
+			} else {
+				ccd.setPagoParcial(false);
+			}
 		}
 
 		/*

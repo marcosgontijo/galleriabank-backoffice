@@ -3260,7 +3260,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
 			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
-			+ " where and cc.cedenteBRLCessao = ? "
+			+ " where cc.cedenteBRLCessao = ? "
 			+ " and "
 			+ "	( (cdp.dataPagamento >= ? ::timestamp "
 			+ "	and cdp.dataPagamento <= ? ::timestamp) "
