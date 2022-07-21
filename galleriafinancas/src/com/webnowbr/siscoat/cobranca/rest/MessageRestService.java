@@ -309,10 +309,10 @@ public class MessageRestService {
 					}
 					
 					
-					if (!leadGalleria) {
+					if (leadGalleria) {
 						TakeBlipMB takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessagePagadorRecebedor(contratoCobrancaMB.getObjetoPagadorRecebedor(),
-								"recebimento_lead", 
+								"recebimento_lead_galleria", 
 								"",
 								"",
 								"",

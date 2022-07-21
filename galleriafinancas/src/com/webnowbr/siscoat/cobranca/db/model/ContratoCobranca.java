@@ -349,8 +349,6 @@ public class ContratoCobranca implements Serializable {
 	private boolean pedidoLaudo;
 	private String pedidoLaudoUsuario;
 	
-	private boolean prePedidoLaudo;
-	
 	private Date pedidoLaudoPajuComercialData;
 	private boolean pedidoLaudoPajuComercial;
 	private String pedidoLaudoPajuComercialUsuario;
@@ -630,6 +628,8 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoLaudoObservacao;
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
+	
+	private String analistaGeracaoPAJU;	
 	
 	public ContratoCobranca() {
 		super();
@@ -5128,14 +5128,6 @@ public class ContratoCobranca implements Serializable {
 		this.avaliacaoLaudoObservacao = avaliacaoLaudoObservacao;
 	}
 
-	public boolean isPrePedidoLaudo() {
-		return prePedidoLaudo;
-	}
-
-	public void setPrePedidoLaudo(boolean prePedidoLaudo) {
-		this.prePedidoLaudo = prePedidoLaudo;
-	}
-
 	public String getGeracaoLaudoObservacao() {
 		return geracaoLaudoObservacao;
 	}
@@ -5150,5 +5142,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIniciouGeracaoLaudo(boolean iniciouGeracaoLaudo) {
 		this.iniciouGeracaoLaudo = iniciouGeracaoLaudo;
+	}
+
+	public String getAnalistaGeracaoPAJU() {
+		return analistaGeracaoPAJU;
+	}
+
+	public void setAnalistaGeracaoPAJU(String analistaGeracaoPAJU) {
+		this.analistaGeracaoPAJU = analistaGeracaoPAJU;
 	}
 }
