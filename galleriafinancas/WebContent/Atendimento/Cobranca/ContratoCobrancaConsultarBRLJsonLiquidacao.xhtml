@@ -80,21 +80,23 @@
 			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
 				<p:dataTable id="dtContratos" var="parcelaBaixa"
 					value="#{brlTrustMB.parcelasLiquidacao}"
-					selection="#{brlTrustMB.parcelaLiquidacao}"
+					selection="#{brlTrustMB.selectedJsonLiquidacao}" rowKey="#{parcelaBaixa.id}"
 					emptyMessage="">
 					<f:facet name="header">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Geral" title="Gerar JSON Liquidação Geral"/>
 					</f:facet>
+					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>    
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Contrato" filterBy="#{parcelaBaixa.contrato.numeroContrato}"
 						filterMatchMode="contains" sortBy="#{parcelaBaixa.contrato.numeroContrato}">
 						<h:outputText value="#{parcelaBaixa.contrato.numeroContrato}" />
-					</p:column>   
-					<p:column style="text-align: center;width: 100px;"
-						headerText="Número Parcela" filterBy="#{parcelaBaixa.numeroParcela}"
-						filterMatchMode="contains" sortBy="#{parcelaBaixa.numeroParcela}">
-						<h:outputText value="#{parcelaBaixa.numeroParcela}" />
-					</p:column>           
+					</p:column>    
+					<p:column style="text-align: center;width: 70px;"
+						filterBy="#{parcelaBaixa.numeroParcela}"
+						filterMatchMode="contains"
+						headerText="CCB/Parcela" styleClass="colunaHiddenRelFinanceiro">
+						<h:outputText value="#{parcelaBaixa.contrato.numeroContratoSeguro}-#{parcelaBaixa.numeroParcela}" />
+					</p:column>        
 					<p:column style="text-align: center;width: 70px;"
 							headerText="Data Vencimento"
 							sortBy="#{parcelaBaixa.dataVencimento}">
@@ -143,7 +145,8 @@
 		            </p:column>	
 		            <f:facet name="footer">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Geral" title="Gerar JSON Liquidação Geral"/>  			        		
-					</f:facet>	        			           			 		
+					</f:facet>	   
+					        	
 				</p:dataTable>
 			</p:panel>
 		</h:form>
