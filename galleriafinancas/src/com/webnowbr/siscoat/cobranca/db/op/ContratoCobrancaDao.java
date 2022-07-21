@@ -3123,7 +3123,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						contratoCobrancaBRLLiquidacao.setContrato(contratoCobranca);
 						
-						contratoCobrancaBRLLiquidacao.setNumeroParcela(rs.getString(2));
+						//contratoCobrancaBRLLiquidacao.setNumeroParcela(rs.getString(2));
+						
+						String parcela = rs.getString(2);
+						if (parcela.length() == 1) {
+							parcela = "00" + parcela;
+						} else if (parcela.length() == 2) {
+							parcela = "0" + parcela;
+						} else {
+							parcela = parcela;
+						}
+						contratoCobrancaBRLLiquidacao.setNumeroParcela(parcela);
 						contratoCobrancaBRLLiquidacao.setVlrJurosParcela(rs.getBigDecimal(3));
 						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoParcela(rs.getBigDecimal(4));
 						contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate(5));

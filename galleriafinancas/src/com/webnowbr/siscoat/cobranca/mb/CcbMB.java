@@ -96,6 +96,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -6979,9 +6980,9 @@ public class CcbMB {
 				iParticipante++;
 			}
 			
-			
+			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela().add(this.objetoCcb.getValorDfiParcela()).add(this.objetoCcb.getValorParcela());		
+			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela().add(this.objetoCcb.getValorDfiParcela()).add(this.objetoCcb.getValorParcela()).add(taxaAdm);		
 					
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {

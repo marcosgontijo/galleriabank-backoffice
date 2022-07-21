@@ -81,6 +81,7 @@ public class BRLTrustMB {
 	List<ContratoCobranca> contratos = new ArrayList<ContratoCobranca>();
 	private List<ContratoCobranca> selectedContratos = new ArrayList<ContratoCobranca>();
 	private List<ContratoCobranca> selectedContratosXLS = new ArrayList<ContratoCobranca>();
+	private List<ContratoCobrancaBRLLiquidacao> selectedJsonLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
 	
 	private String numContrato;
@@ -159,6 +160,7 @@ public class BRLTrustMB {
 		this.cedenteCessao = "";		
 		this.contratos = new ArrayList<ContratoCobranca>();
 		this.dataAquisicao = new Date();
+		this.selectedJsonLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 		
 		this.dataBaixaInicial = gerarDataOntem();
 		this.dataBaixaFinal = gerarDataOntem();
@@ -1771,7 +1773,11 @@ public class BRLTrustMB {
 		
 		JSONArray jsonRecebiveis = new JSONArray();
 		
-		for (ContratoCobrancaBRLLiquidacao parcela : this.parcelasLiquidacao) {
+		if(this.selectedJsonLiquidacao.size() == 0) {
+			this.selectedJsonLiquidacao = parcelasLiquidacao;
+		}
+		
+		for (ContratoCobrancaBRLLiquidacao parcela : this.selectedJsonLiquidacao) {
 			JSONObject jsonRecebivel = new JSONObject();
 			
 			String numeroParcela = "";
@@ -2580,4 +2586,14 @@ public class BRLTrustMB {
 	public void setTaxaDesconto(BigDecimal taxaDesconto) {
 		this.taxaDesconto = taxaDesconto;
 	}
+
+	public List<ContratoCobrancaBRLLiquidacao> getSelectedJsonLiquidacao() {
+		return selectedJsonLiquidacao;
+	}
+
+	public void setSelectedJsonLiquidacao(List<ContratoCobrancaBRLLiquidacao> selectedJsonLiquidacao) {
+		this.selectedJsonLiquidacao = selectedJsonLiquidacao;
+	}
+	
+	
 }
