@@ -77,6 +77,8 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private String urlBoletoKonana;
 	private String statusBoletoKonana;
 	
+	
+	
 	/**
 	 * Não persistido
 	 */
@@ -601,4 +603,6 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	public void setQtdParcelasVencidas(int qtdParcelasVencidas) {
 		this.qtdParcelasVencidas = qtdParcelasVencidas;
 	}
+
+	
 }
