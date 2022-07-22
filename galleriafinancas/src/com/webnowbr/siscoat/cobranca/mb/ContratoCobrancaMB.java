@@ -4755,6 +4755,15 @@ public class ContratoCobrancaMB {
 				));
 		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
+		
+		BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
+		BigDecimal valorSeguroDFI = con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
+		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
+		parcelaPGTO = parcelaPGTO.add(txAdm);
+		
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
