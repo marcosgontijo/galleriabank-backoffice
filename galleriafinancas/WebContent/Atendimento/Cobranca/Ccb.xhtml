@@ -1856,7 +1856,10 @@
 									value="Porcentagem do segurado: " styleClass="labelBold" />
 								<p:inputText id="SeguradorPorcentagem"
 									value="#{ccbMB.seguradoSelecionado.porcentagemSegurador}"
-									required="flase" style="FONT-SIZE: 10pt;width:300px;" />
+									style="FONT-SIZE: 10pt;width:300px;" 
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" 
+									converter="bigDecimalConverter"/>
 								<p:spacer height="10" />
 
 								<p:commandButton value="Adicionar" ajax="true"

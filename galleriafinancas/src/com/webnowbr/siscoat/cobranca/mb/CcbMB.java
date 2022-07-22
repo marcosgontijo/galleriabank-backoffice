@@ -330,6 +330,8 @@ public class CcbMB {
 	}
 	
 	public void pesquisaSegurado() {
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listPagadores = pagadorRecebedorDao.findAll();		
 		this.tipoPesquisa = "Segurado";
 		this.tituloPagadorRecebedorDialog = "Segurados";
 		this.updatePagadorRecebedor = " :form:SeguradoresPanel ";
