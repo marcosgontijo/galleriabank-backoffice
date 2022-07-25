@@ -38,5 +38,15 @@
        <property name="saldoAPagar" type="big_decimal">
            <column name="SALDOAPAGAR" />
        </property>                                
+       
+       <property name="vlrRecebidoGalleria" type="big_decimal">
+			<column name="vlrRecebidoGalleria" />
+		</property>	
+		<property name="baixaGalleria" type="boolean">
+			<column name="baixaGalleria" not-null="true" default="false"/>
+		</property>	
+		<property name="dataPagamentoGalleria" type="java.util.Date">
+			<column name="dataPagamentoGalleria" />
+		</property>
     </class>
 </hibernate-mapping>

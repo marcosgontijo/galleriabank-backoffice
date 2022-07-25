@@ -1998,7 +1998,7 @@
 						value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
 						emptyMessage="" sortBy="#{contratos.numeroParcela}"
 						sortOrder="ascending"
-						rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+						rowStyleClass="#{(parcelas.pagoParcial eq true) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 						rowKey="#{parcelas.id}">
 
@@ -2009,6 +2009,22 @@
 								<p:commandButton onclick="PF('baixaParcialDialog').show();"
 									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcial" style="height: 25px;width: 30px;"
+									rendered="#{!parcelas.parcelaPaga}">
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+										value="#{parcelas}" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.txZero}" value="true" />
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.vlrRecebido}"
+										value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+								</p:commandButton>
+								<p:commandButton onclick="PF('baixaParcialGalleriaDialog').show();"
+									value="Baixar Galleria"
+									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
+									update=":formBaixaParcialGalleria" 
 									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
@@ -2478,6 +2494,86 @@
 				</div>
 			</h:form>
 		</p:dialog>
+		
+		<p:dialog header="Baixa Parcial Galleria" widgetVar="baixaParcialGalleriaDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
+			height="650" width="500">
+			<h:form id="formBaixaParcialGalleria">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContratoGalleria" value="Número do Contrato:"
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroContratoGalleria"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="numeroParcelaGalleria" value="Número da Parcela: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroParcelaGalleria"
+						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
+						label="Número da Parcela:"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="taxaGalleria" value="Método de Cálculo:" />
+					<p:selectOneRadio id="taxaGalleria" value="#{contratoCobrancaMB.txZero}">
+						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
+						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
+						<p:ajax update="dataPagamentoGalleria valorAtGalleria" event="valueChange"
+							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
+					</p:selectOneRadio>
+					<p:outputLabel for="dataPagamentoGalleria" value="Data do Pagamento: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataPagamentoGalleria"
+						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField">
+						<p:ajax event="dateSelect" update="ValoresAtualizadosGalleria"
+							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
+					</p:calendar>
+				</h:panelGrid>
+				<p:panel id="ValoresAtualizadosGalleria" header="Valores Atualizados Galleria"
+					style="margin-top:20px;margin-bottom:20px;">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="saldoParcelaGalleria" value="Valor da Parcela:"
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="saldoParcelaGalleria"
+							value="#{contratoCobrancaMB.vlrParcelaNew}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+						<p:outputLabel value="Saldo Atualizado: " styleClass="labelBold"
+							style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:outputText id="valorAtGalleria"
+							value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}"
+							style="font-weight: bold; font-size: 18px;"
+							converter="bigDecimalConverter" />
+						<p:outputLabel for="valorRecebidoGalleria" value="Valor Recebido: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorRecebidoGalleria"
+							value="#{contratoCobrancaMB.vlrRecebido}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+				</p:panel>
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelaParcialGalleria}" ajax="false"
+							icon="ui-icon-transferthick-e-w" value="Baixar"
+							update=":form:DetalheParcelas" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcialDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+		
 		<p:dialog header="Recibo de Pagamento"
 			widgetVar="ReciboPagamentoDialog" resizable="false"
 			style="FONT-SIZE: 10pt;" width="500">
@@ -2862,7 +2958,7 @@
 				</div>
 			</h:form>
 		</p:dialog>
-		
+
 		<p:dialog header="Quitar Contrato"
 			widgetVar="quitarContratoDialog" resizable="true"
 			style="FONT-SIZE: 10pt;" responsive="true" height="480px" width="770px">

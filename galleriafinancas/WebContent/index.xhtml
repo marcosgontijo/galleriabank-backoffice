@@ -383,11 +383,27 @@
 									<p:menuitem value="Financeiro Baixado FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
+									<p:menuitem value="Financeiro Baixado FIDC Galleria"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
 									<p:menuitem value="Financeiro Baixado CRI 1"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
+									<p:menuitem value="Financeiro Baixado CRI 1 - GALLERIA"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
 									<p:menuitem value="Financeiro Recebedores"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
 										ajax="false" icon="ui-icon ui-icon-calculator"

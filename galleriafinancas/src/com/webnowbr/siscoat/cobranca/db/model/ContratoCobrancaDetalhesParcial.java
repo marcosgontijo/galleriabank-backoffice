@@ -28,6 +28,10 @@ public class ContratoCobrancaDetalhesParcial implements Serializable {
 	private BigDecimal vlrParcelaAtualizado;
 	private BigDecimal saldoAPagar;
 	
+	private BigDecimal vlrRecebidoGalleria;
+	private Date dataPagamentoGalleria;
+	private boolean baixaGalleria;
+	
 	public ContratoCobrancaDetalhesParcial(){
 	}
 
@@ -183,5 +187,29 @@ public class ContratoCobrancaDetalhesParcial implements Serializable {
 	 */
 	public void setSaldoAPagar(BigDecimal saldoAPagar) {
 		this.saldoAPagar = saldoAPagar;
+	}
+
+	public BigDecimal getVlrRecebidoGalleria() {
+		return vlrRecebidoGalleria;
+	}
+
+	public void setVlrRecebidoGalleria(BigDecimal vlrRecebidoGalleria) {
+		this.vlrRecebidoGalleria = vlrRecebidoGalleria;
+	}
+
+	public Date getDataPagamentoGalleria() {
+		return dataPagamentoGalleria;
+	}
+
+	public void setDataPagamentoGalleria(Date dataPagamentoGalleria) {
+		this.dataPagamentoGalleria = dataPagamentoGalleria;
+	}
+
+	public boolean isBaixaGalleria() {
+		return baixaGalleria;
+	}
+
+	public void setBaixaGalleria(boolean baixaGalleria) {
+		this.baixaGalleria = baixaGalleria;
 	}
 }
