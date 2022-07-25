@@ -200,7 +200,10 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAppComite = false;
 	
 	private boolean controleWhatsAlteracaoAvaliadorLaudo = false;
+	private boolean controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 	private boolean controleWhatsAlteracaoGeracaoPAJU = false;
+	
+	private long idAnalistaGeracaoPAJU = 0;
 	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -2984,6 +2987,28 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public String atualizaContratoAvaliacaoImovelGalache() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		try {				
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			return clearFieldsAvaliacaoGalache();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			return "";
+		}
+	}
+	
 	public String atualizaContratoGeracaoPAJU() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -3007,7 +3032,13 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void changeAvaliadorLaudo() {
-		this.controleWhatsAlteracaoAvaliadorLaudo = true;
+		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
+			controleWhatsAlteracaoAvaliadorLaudoGalache = true;
+		}
+		
+		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
+			this.controleWhatsAlteracaoAvaliadorLaudo = true;
+		}
 	}
 	
 	public void changeGeracaoPAJU() {
@@ -3034,6 +3065,7 @@ public class ContratoCobrancaMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		
 		// "Adelaide Cristina Grilo Fornari"
+		/*
 		responsavel = rDao.findById((long) 793);		
 		
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -3043,8 +3075,10 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
+				*/
 		
 		// "Pâmela Montesanti Demuci"
+		/*
 		responsavel = rDao.findById((long) 795);		
 		
 		takeBlipMB = new TakeBlipMB();
@@ -3054,8 +3088,10 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
+				*/
 		
 		// "Luciana Melara Alves Sant'Ana"
+		/*
 		responsavel = rDao.findById((long) 796);		
 		
 		takeBlipMB = new TakeBlipMB();
@@ -3065,11 +3101,12 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
+				*/
 		
 		// "João Paulo Gomes Massaro"
 		responsavel = rDao.findById((long) 797);		
 		
-		takeBlipMB = new TakeBlipMB();
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"geracao_paju", 
 				"Neves e Maggioni",
@@ -3078,6 +3115,7 @@ public class ContratoCobrancaMB {
 				"");
 		
 		// "Maria Clara Pazin Costa"
+		/*
 		responsavel = rDao.findById((long) 798);		
 		
 		takeBlipMB = new TakeBlipMB();
@@ -3087,6 +3125,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
+				*/
 	
 	}
 	
@@ -3362,10 +3401,18 @@ public class ContratoCobrancaMB {
 				notificaCompassEmail();
 			}
 			
+			if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
+				notificaGalacheWhatsApp();
+				notificaGalacheEmail();
+			}
+			
 			// notifica a Compass caso for setado contrato para eles
-			if (this.controleWhatsAlteracaoGeracaoPAJU) {
+			if (this.controleWhatsAlteracaoGeracaoPAJU) {				
+				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
 				notificaPAJUWhatsApp();
 				notificaPAJUEmail();
+			} else {
+				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
 			}
 			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
@@ -3413,29 +3460,31 @@ public class ContratoCobrancaMB {
 					geraContratoCobrancaDetalhes(contratoCobrancaDao);
 				}
 				
-				if (!(CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
-						|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), ""))) {
-					this.objetoAnaliseComite.setDataComite(gerarDataHoje());
-					this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
-					this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
-					this.objetoAnaliseComite = new AnaliseComite();
-					
-					this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
-					this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
-
-					if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
-						for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
-							if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
-								this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
-								if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
-									this.objetoContratoCobranca.setAprovadoComite(true);
-									notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
-								}
-							} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
-								this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
-							} 
-						}
-					} 
+				if (this.objetoAnaliseComite != null) {
+					if (!(CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
+							|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), ""))) {
+						this.objetoAnaliseComite.setDataComite(gerarDataHoje());
+						this.objetoAnaliseComite.setUsuarioComite(getNomeUsuarioLogado());
+						this.objetoContratoCobranca.getListaAnaliseComite().add(this.objetoAnaliseComite);
+						this.objetoAnaliseComite = new AnaliseComite();
+						
+						this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
+						this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+	
+						if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+							for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
+								if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
+									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
+									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
+										this.objetoContratoCobranca.setAprovadoComite(true);
+										notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+									}
+								} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
+									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+								} 
+							}
+						} 
+					}
 				}
 
 				updateCheckList();
@@ -3455,6 +3504,10 @@ public class ContratoCobrancaMB {
 				User usuarioLogado = new User();
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+				
+				if (this.tituloTelaConsultaPreStatus.equals("Geração de PAJU")) {
+					return clearFieldsGeracaoPAJU(); 
+				}
 
 				if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
 					return geraConsultaContratosPorStatus("Aguardando Análise");
@@ -7460,6 +7513,7 @@ public class ContratoCobrancaMB {
 		this.addSocio = false;
 		this.addPagador = false;
 		this.controleWhatsAlteracaoAvaliadorLaudo = false;
+		this.controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 		this.controleWhatsAlteracaoGeracaoPAJU = false;
 		
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -7538,7 +7592,7 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
 	
-	public String clearFieldsEditarGeracaoPAJU() {
+	public String clearFieldsEditarAvaliacaoImovelGalache() {
 		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -7548,6 +7602,32 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
 	
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovelGalache.xhtml";
+	}
+	
+	public String clearFieldsEditarGeracaoPAJU() {
+		clearMensagensWhatsApp();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel =  this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		
+		if (this.objetoContratoCobranca.getAnalistaGeracaoPAJU() != null) {
+			this.idAnalistaGeracaoPAJU = this.objetoContratoCobranca.getAnalistaGeracaoPAJU().getId();
+		} else {
+			this.idAnalistaGeracaoPAJU = 0;
+		}
+		
+		this.tituloPainel = "Editar";
+
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+		
+		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
+			
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoPAJU.xhtml";
 	}
 	
@@ -11311,6 +11391,20 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Avaliação de Imóvel");
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovel.xhtml";
+	}
+	
+	public String clearFieldsAvaliacaoGalache() {
+		
+		clearMensagensWhatsApp();
+		
+		this.tituloTelaConsultaPreStatus = "Avaliação de Imóvel - Galache";
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Avaliação de Imóvel - Galache");
+		
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovelGalache.xhtml";
 	}
 	
 	public String clearFieldsGeracaoPAJU() {
@@ -26840,7 +26934,12 @@ public class ContratoCobrancaMB {
 	public void setContratoPrazoMin(Collection<ContratoCobranca> contratoPrazoMin) {
 		this.contratoPrazoMin = contratoPrazoMin;
 	}
-	
-	
-	
+
+	public long getIdAnalistaGeracaoPAJU() {
+		return idAnalistaGeracaoPAJU;
+	}
+
+	public void setIdAnalistaGeracaoPAJU(long idAnalistaGeracaoPAJU) {
+		this.idAnalistaGeracaoPAJU = idAnalistaGeracaoPAJU;
+	}
 }

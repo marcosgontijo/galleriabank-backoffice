@@ -5565,7 +5565,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
-		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo " +
+		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -5644,6 +5644,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false and avaliacaoLaudo = 'Compass' ";
+					}
+					
+					if (tipoConsulta.equals("Avaliação de Imóvel - Galache")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false and avaliacaoLaudo = 'Galache' ";
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU")) {
@@ -5830,6 +5837,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
 						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
 						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+						
+						ResponsavelDao rDao = new ResponsavelDao();
+						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(39)));
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 

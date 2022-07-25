@@ -139,15 +139,16 @@
 											<f:selectItem itemValue="" itemLabel="" />
 											<f:selectItem itemValue="Compass" itemLabel="Compass" />
 											<f:selectItem itemValue="Galache" itemLabel="Galache" />
+											<f:selectItem itemValue="Outro" itemLabel="Outro" />
 											<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
 										</p:selectOneMenu>	
 															
 										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}">Laudo Pedido: </p:outputLabel>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}">Laudo Pedido: </p:outputLabel>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}" 
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}"/>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}"/>
 										</shiro:hasAnyRoles>											
 										
 										<p:outputLabel styleClass="labelBold"

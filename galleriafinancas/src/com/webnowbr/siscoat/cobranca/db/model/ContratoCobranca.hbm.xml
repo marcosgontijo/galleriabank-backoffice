@@ -1672,8 +1672,10 @@
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
 		</property>	
-		<property name="analistaGeracaoPAJU" type="java.lang.String">
-			<column name="analistaGeracaoPAJU"/>
-		</property>	
+		<many-to-one name="analistaGeracaoPAJU"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="analistaGeracaoPAJU" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

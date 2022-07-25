@@ -117,7 +117,7 @@
 									styleClass="itemMenu" />							
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, AVALIADORIMOVEL, LAUDO">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, AVALIADORIMOVEL, LAUDO, USER_GALACHE">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -200,6 +200,12 @@
 									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, AVALIADORIMOVEL">
 									<p:menuitem value="03.3 - Avaliação Compass"
 										action="#{contratoCobrancaMB.clearFieldsAvaliacaoCompass}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, USER_GALACHE">
+									<p:menuitem value="03.3 - Avaliação Galache"
+										action="#{contratoCobrancaMB.clearFieldsAvaliacaoGalache}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									</shiro:hasAnyRoles>

@@ -284,6 +284,8 @@ public class MessageRestService {
 					contratoCobrancaMB.getObjetoImovelCobranca().setCidade(lead.getString("cidade"));
 					contratoCobrancaMB.getObjetoImovelCobranca().setEstado(lead.getString("estado"));
 					
+					System.out.println("HERMES- LEAD VALOR IMOVEL: " + lead.getString("valor_imovel"));
+					
 					String valorImovel = lead.getString("valor_imovel").replace(".", "").replace(",", ".");
 					
 					if (valorImovel != null && valorImovel.equals("")) {

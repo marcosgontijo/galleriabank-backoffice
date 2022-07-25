@@ -181,11 +181,20 @@
 						style="width:60px">
 					</p:selectBooleanButton>
 					
-					<h:outputLabel for="GeracaoLaudo"
-						value="Sistema de Cobrança - Geração de PAJU:" class="labelBold" />
-					<p:selectBooleanButton id="GeracaoLaudo"
+					<h:outputLabel for="Galache"
+						value="Sistema de Cobrança - Avaliador Galache:" class="labelBold" />
+					<p:selectBooleanButton id="Galache"
 						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userLaudo}" onLabel="Sim"
+						value="#{usuarioMB.objetoUsuario.userGalache}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
+					
+					<h:outputLabel for="AgenteEspelhamento"
+						value="Sistema de Cobrança - Agente Espelhamento:" class="labelBold" />
+					<p:selectBooleanButton id="AgenteEspelhamento"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userAgenteEspelhamento}" onLabel="Sim"
 						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
 						style="width:60px">
 					</p:selectBooleanButton>
