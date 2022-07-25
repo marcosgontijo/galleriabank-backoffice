@@ -283,12 +283,10 @@ public class MessageRestService {
 					contratoCobrancaMB.getObjetoImovelCobranca().setBairro("");
 					contratoCobrancaMB.getObjetoImovelCobranca().setCidade(lead.getString("cidade"));
 					contratoCobrancaMB.getObjetoImovelCobranca().setEstado(lead.getString("estado"));
-					
-					System.out.println("HERMES- LEAD VALOR IMOVEL: " + lead.getString("valor_imovel"));
-					
+
 					String valorImovel = lead.getString("valor_imovel").replace(".", "").replace(",", ".");
 					
-					if (valorImovel != null && valorImovel.equals("")) {
+					if (valorImovel != null && !valorImovel.equals("")) {
 						contratoCobrancaMB.getObjetoImovelCobranca().setValoEstimado(new BigDecimal(valorImovel));
 					}
 					
@@ -395,6 +393,7 @@ public class MessageRestService {
 		}
 	}
 	
+	/*
 	@POST
 	@Path("/uniproof/lot/management")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -681,4 +680,5 @@ public class MessageRestService {
 				      .build();
 		}
 	}
+	*/
 }
