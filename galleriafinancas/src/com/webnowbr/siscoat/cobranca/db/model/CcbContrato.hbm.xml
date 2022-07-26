@@ -324,6 +324,35 @@
 			<many-to-many column="idsegurado"
 				class="com.webnowbr.siscoat.cobranca.db.model.Segurado" />
 		</list>
+		
+		<property name="custasInseridaContrato" type="boolean">
+			<column name="custasInseridaContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="certidaoInseridaContrato" type="boolean">
+			<column name="certidaoInseridaContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="laudoInseridoContrato" type="boolean">
+			<column name="laudoInseridoContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="intermediacaoInseridoContrato" type="boolean">
+			<column name="intermediacaoInseridoContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="iptuInseridoContrato" type="boolean">
+			<column name="iptuInseridoContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="condominioInseridoContrato" type="boolean">
+			<column name="condominioInseridoContrato" not-null="true" default="false" />
+		</property>	
+		
+		<property name="iqInseridoContrato" type="boolean">
+			<column name="iqInseridoContrato" not-null="true" default="false" />
+		</property>	
+		
 		        
     </class>
 </hibernate-mapping>

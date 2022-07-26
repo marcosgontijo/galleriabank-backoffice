@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:shiro="http://shiro.apache.org/tags"
+			    template="../MenuAtendimento.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">		
+		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	
+		 	<script src=".#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
+			<script>
+		        function validatePhone() {
+		
+		            var masks = ['(00) 00000-0000', '(00) 0000-00009'],
+		                maskBehavior = function(val, e, field, options) {
+		                    return val.length > 14 ? masks[0] : masks[1];
+		                };
+		
+		            $('.phone').mask(maskBehavior, {onKeyPress:
+		                        function(val, e, field, options) {
+		                            field.mask(maskBehavior(val, e, field, options), options);
+		                        }
+		            });
+		        }
+		        $(document).ready(function() {
+		            validatePhone();
+		        }
+		        );
+			</script>
+			
+			<h:outputStylesheet >
+			.labelSeguros{
+				width: 128px;
+			}
+			.ValorSeguros{
+				width: 100px;
+			}
+			</h:outputStylesheet>
+				
+			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				<p:focus /> 
+				<p:messages/>
+				
+				<h:panelGrid columns="2">	
+					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+					<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"  autocomplete="no" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>								
+					<p:outputLabel for="dataContrato" value="Data do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+					<h:outputText id="dataContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.dataContrato}"  autocomplete="no" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+				          <f:convertDateTime locale="pt_BR"  />
+				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+				    </h:outputText>																				
+				</h:panelGrid>
+				
+				<shiro:hasAnyRoles name="ROOT">				
+					<h:panelGrid columns="2">	
+						<p:outputLabel for="contratoRestritoAdm" value="Restrito ao Administrador: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;margin-top: 50px;"/>
+						<p:selectBooleanCheckbox id="contratoRestritoAdm" value="#{contratoCobrancaMB.objetoContratoCobranca.contratoRestritoAdm}" style="margin-left: 12px;"/>
+						<p:spacer width="10"/>					
+					</h:panelGrid>				
+				</shiro:hasAnyRoles>
+				
+				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
+					<p:panel id="Status" header="Check-List" style="margin-bottom:20px;">	
+							
+					 	<ui:fragment rendered="#{!contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
+					 		<h:panelGrid columns="14">	
+								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
+								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
+								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
+								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
+								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>								    
+								    <p:menuitem id="analiseComercialStep" value="Análise Comercial"/>
+								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>							    
+								    <p:menuitem id="preComiteStep" value="Pré-Comitê"/>
+								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
+								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
+								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
+								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
+								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
+								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
+								</p:steps>
+			
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 12}">
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">	
+										<p:outputLabel styleClass="labelBold">Operação Paga</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="operacaoPaga" value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+										</shiro:hasAnyRoles>											    						    
+									</h:panelGrid>
+								</ui:fragment>	
+									
+								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 110px;" >
+										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+									</p:commandButton>		
+								</h:panelGrid>														
+							</h:panelGrid>
+						</ui:fragment>	
+						
+						<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentcadastroAprovadoStep" for="cadastroAprovadoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentpagtoLaudoConfirmadaStep" for="pagtoLaudoConfirmadaStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentlaudoRecebidoStep" for="laudoRecebidoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentAnaliseComercial" for="analiseComercialStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			  <p:tooltip id="toolTipContentPreAprovadoComiteStep" for="preComiteStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentaprovadoComiteStep" for="aprovadoComiteStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentdocumentosCompletosStep" for="documentosCompletosStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			
+						 <p:tooltip id="toolTipContentccbProntaStep" for="ccbProntaStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentagAssinaturaStep" for="agAssinaturaStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>
+			   			 
+			   			 <p:tooltip id="toolTipContentagRegistroStep" for="agRegistroStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR"  />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			 </p:tooltip>																
+					</p:panel>
+				</shiro:hasAnyRoles>
+				
+				<h:panelGroup id="Observacao">
+					<p:panel header="Observação" style="margin-bottom:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="observacaoPagamento"
+								value="Observação de Registro: " styleClass="labelBold" />
+							<h:inputTextarea id="observacaoPagamento"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoPagamento}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;">
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="MoneyPlus">
+					<p:panel header="Money Plus" style="margin-bottom:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="valorCCB" value="Valor da CCB: "
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								styleClass="labelBold" />
+							<p:inputText id="valorCCB" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCCB}"
+								onkeypress="return isNumberKey(event);"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
+				<h:panelGroup id="ContasPagarPanel">
+					<p:panel header="Dispesas" style="margin-bottom:10px;">
+						<f:facet name="header"> Despesas 
+							<p:outputLabel value="" />
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:selectBooleanButton
+									value="#{contratoCobrancaMB.addContasPagar}"
+									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
+									onIcon="ui-icon-plus" offIcon="ui-icon-plus">
+									<p:ajax update=":form:ContasPagarPanel" event="change" />
+								</p:selectBooleanButton>
+							</shiro:hasAnyRoles>
+						</f:facet>
+						
+						<h:panelGrid columns="2">
+							<p:outputLabel for="ContaPagarValorTotal"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Valor Total (R$): " styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorTotal" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
+								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="nomeBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioContaPagar}" />
+
+							<p:outputLabel for="cpfCnpjBancarioContaPagar" value="CPF/CNPJ: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="cpfCnpjBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioContaPagar}" />
+
+							<p:outputLabel for="bancoBancarioContaPagar" value="Banco: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="bancoBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioContaPagar}" />
+
+							<p:outputLabel for="agenciaBancarioContaPagar" value="Agência: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="agenciaBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioContaPagar}" />
+
+							<p:outputLabel for="contaBancarioContaPagar" value="C/C: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="contaBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioContaPagar}" />
+						</h:panelGrid>
+
+						<h:panelGroup id="adicionarContasPagar"
+							rendered="#{contratoCobrancaMB.addContasPagar}">
+							<h:panelGrid columns="2">
+								<p:spacer height="10" />
+								<p:spacer height="10" />
+
+								<p:outputLabel value="Adicionar Conta a Pagar"
+									styleClass="labelBold" />
+								<!-- espaço em branco para formação dos elementos na tela -->
+
+								<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:autoComplete id="ContaPagarDescricao" dropdown="true"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
+									completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}"
+									scrollHeight="250" />
+
+								<p:outputLabel for="ContaPagarValor" value="Valor: "
+									styleClass="labelBold" />
+								<p:inputText id="ContaPagarValor"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />
+
+								<p:outputLabel for="ContaPagarDataVencimento"
+									value="Data Vencimento: " styleClass="labelBold" />
+								<p:calendar id="ContaPagarDataVencimento"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
+									styleClass="labelBold" />
+								<p:inputText id="ContaPagarValorPago"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="false"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="ContaPagarDataPagamento"
+									value="Data Pagamento: " styleClass="labelBold" />
+								<p:calendar id="ContaPagarDataPagamento"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField" />
+									
+								<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu id="formaTransferencia"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="TED" itemLabel="TED" />
+									<f:selectItem itemValue="Pix" itemLabel="Pix" />
+									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									<p:ajax event="change" 
+										update="tedGrid pixGrid" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+							<h:panelGroup id="tedGrid" >
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
+									<p:outputLabel for="nomeTed" value="Nome: " />
+									<p:inputText id="nomeTed" value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" />								
+									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
+									<p:inputText id="cpfTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" />		
+									<p:outputLabel value="Banco: " for="bancoTed" />
+									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
+										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta" 
+										style="width:100px;"
+										scrollHeight="250" />														
+									<p:outputLabel for="contaTed" value="Conta: " />
+									<p:inputText id="contaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" />									
+									<p:outputLabel for="agenciaTed" value="Agência: " />
+									<p:inputText id="agenciaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" />							
+								</h:panelGrid>
+							</h:panelGroup>	
+							<h:panelGroup id="pixGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel for="pix" value="Pix: " />
+									<p:inputText id="pix" value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+							
+							<p:commandButton value="Concluir" ajax="true"
+								action="#{contratoCobrancaMB.concluirConta()}"
+								update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
+						</h:panelGroup>
+
+						<p:dataView var="contas"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
+							paginator="false" layout="list"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="Descrição: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.descricao}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Valor: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.valor}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
+								<h:outputText value="#{contas.dataVencimento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+								
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+								<p:outputLabel value="#{contas.valorPagamento}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
+								<h:outputText value="#{contas.dataPagamento}"
+									styleClass="labelBold">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+								<p:spacer height="10" />
+								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+									<p:commandButton value="Editar" icon="ui-icon-pencil"
+										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
+										update=":form:ContasPagarPanel" />
+									<p:spacer height="10" />
+									<p:commandButton value="Remover" icon="ui-icon-trash"
+										action="#{contratoCobrancaMB.removerConta(contas)}"
+										ajax="true" update=":form:ContasPagarPanel" />
+								</shiro:hasAnyRoles>
+							</p:dataViewListItem>
+						</p:dataView>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="Cliente">
+					<p:panel header="Cliente" style="margin-bottom:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="valorCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Valor da Carta Split: " styleClass="labelBold" />
+							<p:inputText id="valorCartaSplit"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplit}"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="nomeBancarioCartaSplit" value="Nome:" 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="nomeBancarioCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioCartaSplit}" />
+
+							<p:outputLabel for="cpfCnpjBancarioCartaSplit" value="CPF/CNPJ: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="cpfCnpjBancarioCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioCartaSplit}" />
+
+							<p:outputLabel for="bancoBancarioCartaSplit" value="Banco: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="bancoBancarioCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioCartaSplit}" />
+
+							<p:outputLabel for="agenciaBancarioCartaSplit" value="Agência: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="agenciaBancarioCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioCartaSplit}" />
+
+							<p:outputLabel for="contaBancarioCartaSplit" value="C/C: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="contaBancarioCartaSplit"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCartaSplit}" />
+
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
+			</p:panel>
+	
+			<div align="center">
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
+					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+				</p:commandButton>		 						
+				<p:spacer height="10" />
+				<shiro:hasAnyRoles name="ROOT"> 
+					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deletePreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.deleteMode}">
+						<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+					</p:commandButton>
+					<p:spacer height="10" />		 	
+				</shiro:hasAnyRoles>					
+					<p:commandButton value="Baixar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.baixarPreContrato()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.baixarMode}">
+						<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />	
+					</p:commandButton>	
+					<p:spacer height="10" />
+				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
+			</div>			
+		
+		</h:form>		 		
+	</ui:define>
+</ui:composition>

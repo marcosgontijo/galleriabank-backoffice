@@ -1675,5 +1675,66 @@
 		<property name="analistaGeracaoPAJU" type="java.lang.String">
 			<column name="analistaGeracaoPAJU"/>
 		</property>	
+	
+		<property name="operacaoPagaData" type="java.util.Date">
+			<column name="operacaoPagaData" />
+		</property>
+		
+		<property name="operacaoPaga" type="boolean">
+			<column name="operacaoPaga" not-null="true" default="false"/>
+		</property>	
+
+		<property name="operacaoPagaUsuario" type="java.lang.String">
+			<column name="operacaoPagaUsuario" />
+		</property>	
+		
+		<property name="valorCartaSplit" type="big_decimal">
+			<column name="valorCartaSplit" />
+		</property>
+		
+		<property name="nomeBancarioCartaSplit" type="java.lang.String">
+			<column name="nomeBancarioCartaSplit" />
+		</property>	
+		
+		<property name="cpfCnpjBancarioCartaSplit" type="java.lang.String">
+			<column name="cpfCnpjBancarioCartaSplit" />
+		</property>	
+		
+		<property name="bancoBancarioCartaSplit" type="java.lang.String">
+			<column name="bancoBancarioCartaSplit" />
+		</property>	
+		
+		<property name="agenciaBancarioCartaSplit" type="java.lang.String">
+			<column name="agenciaBancarioCartaSplit" />
+		</property>	
+		
+		<property name="contaBancarioCartaSplit" type="java.lang.String">
+			<column name="contaBancarioCartaSplit" />
+		</property>		
+		
+		<property name="nomeBancarioContaPagar" type="java.lang.String">
+			<column name="nomeBancarioContaPagar" />
+		</property>	
+		
+		<property name="cpfCnpjBancarioContaPagar" type="java.lang.String">
+			<column name="cpfCnpjBancarioContaPagar" />
+		</property>	
+		
+		<property name="bancoBancarioContaPagar" type="java.lang.String">
+			<column name="bancoBancarioContaPagar" />
+		</property>	
+		
+		<property name="agenciaBancarioContaPagar" type="java.lang.String">
+			<column name="agenciaBancarioContaPagar" />
+		</property>	
+		
+		<property name="contaBancarioContaPagar" type="java.lang.String">
+			<column name="contaBancarioContaPagar" />
+		</property>	
+		
+		<property name="observacaoPagamento" type="text">
+			<column name="observacaoPagamento" />
+		</property>
+
 	</class>
 </hibernate-mapping>
