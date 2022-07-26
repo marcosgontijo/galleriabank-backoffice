@@ -212,6 +212,7 @@
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}"/>
 								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+									<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}" />	
 								</p:commandButton>
 							</h:panelGrid>	
 						</p:panel>
