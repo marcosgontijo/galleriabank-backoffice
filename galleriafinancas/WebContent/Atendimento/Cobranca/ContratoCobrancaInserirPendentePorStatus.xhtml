@@ -2774,8 +2774,7 @@
 								styleClass="labelBold" />
 							<p:inputText id="mesesCarencia"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}"
-								required="true" style="width: 30px;">
-							</p:inputText>
+								required="true" style="width: 30px;"/>
 
 							<p:outputLabel value="Gerar Boleto das Parcelas "
 								styleClass="labelBold" />
@@ -2799,6 +2798,17 @@
 										value="#{contratoCobrancaMB.simuladorParcelas}"></ui:param>
 								</ui:include>
 							</p:dialog>
+							
+							<p:outputLabel for="observacaoPagamento"
+								value="Comentário Para Pagamento: " styleClass="labelBold" />
+							<h:inputTextarea id="observacaoPagamento"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoPagamento}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;">
+								<p:ajax process="@this" partialSubmit="true" />
+							</h:inputTextarea>
+							
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

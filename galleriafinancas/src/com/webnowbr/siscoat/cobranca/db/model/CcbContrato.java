@@ -103,10 +103,14 @@ public class CcbContrato implements Serializable{
     private boolean terceiroGarantidor = false;
     
     private BigDecimal custasCartorariasValor = BigDecimal.ZERO;
+    private boolean custasInseridaContrato;
     private BigDecimal certidaoDeCasamentoValor = BigDecimal.ZERO;
+    private boolean certidaoInseridaContrato;
     private BigDecimal laudoDeAvaliacaoValor = BigDecimal.ZERO;
+    private boolean laudoInseridoContrato;
     
     private BigDecimal intermediacaoValor = BigDecimal.ZERO; // - (Banco, Agência, C/C, CNPJ, nome completo e PIX)
+    private boolean intermediacaoInseridoContrato;
     private String intermediacaoBanco; 
     private String intermediacaoAgencia; 
     private String intermediacaoCC; 
@@ -116,8 +120,11 @@ public class CcbContrato implements Serializable{
     
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
+    private boolean iptuInseridoContrato;
     private BigDecimal condominioEmAtrasoValor = BigDecimal.ZERO;
+    private boolean condominioInseridoContrato;
     private BigDecimal iqValor = BigDecimal.ZERO;
+    private boolean iqInseridoContrato;
     
     private List<Segurado> listSegurados;
     
@@ -838,6 +845,62 @@ public class CcbContrato implements Serializable{
 
 	public void setNumeroRegistroMatricula(String numeroRegistroMatricula) {
 		this.numeroRegistroMatricula = numeroRegistroMatricula;
+	}
+
+	public boolean isCustasInseridaContrato() {
+		return custasInseridaContrato;
+	}
+
+	public void setCustasInseridaContrato(boolean custasInseridaContrato) {
+		this.custasInseridaContrato = custasInseridaContrato;
+	}
+
+	public boolean isCertidaoInseridaContrato() {
+		return certidaoInseridaContrato;
+	}
+
+	public void setCertidaoInseridaContrato(boolean certidaoInseridaContrato) {
+		this.certidaoInseridaContrato = certidaoInseridaContrato;
+	}
+
+	public boolean isLaudoInseridoContrato() {
+		return laudoInseridoContrato;
+	}
+
+	public void setLaudoInseridoContrato(boolean laudoInseridoContrato) {
+		this.laudoInseridoContrato = laudoInseridoContrato;
+	}
+
+	public boolean isIntermediacaoInseridoContrato() {
+		return intermediacaoInseridoContrato;
+	}
+
+	public void setIntermediacaoInseridoContrato(boolean intermediacaoInseridoContrato) {
+		this.intermediacaoInseridoContrato = intermediacaoInseridoContrato;
+	}
+
+	public boolean isIptuInseridoContrato() {
+		return iptuInseridoContrato;
+	}
+
+	public void setIptuInseridoContrato(boolean iptuInseridoContrato) {
+		this.iptuInseridoContrato = iptuInseridoContrato;
+	}
+
+	public boolean isCondominioInseridoContrato() {
+		return condominioInseridoContrato;
+	}
+
+	public void setCondominioInseridoContrato(boolean condominioInseridoContrato) {
+		this.condominioInseridoContrato = condominioInseridoContrato;
+	}
+
+	public boolean isIqInseridoContrato() {
+		return iqInseridoContrato;
+	}
+
+	public void setIqInseridoContrato(boolean iqInseridoContrato) {
+		this.iqInseridoContrato = iqInseridoContrato;
 	}
 	
 }

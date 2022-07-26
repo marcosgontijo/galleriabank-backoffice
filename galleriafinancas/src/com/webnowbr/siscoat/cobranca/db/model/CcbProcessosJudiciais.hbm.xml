@@ -13,6 +13,10 @@
     	<property name="valor" type="big_decimal">
 			<column name="valor" />
 		</property>
+		
+		<property name="processoInseridoContrato" type="boolean">
+			<column name="processoInseridoContrato" not-null="true" default="false" />
+		</property>	
         
     </class>
 </hibernate-mapping>

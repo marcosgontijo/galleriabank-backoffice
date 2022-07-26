@@ -6085,6 +6085,87 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> geraConsultaContratosAgPagoOp() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					String query = QUERY_CONTRATOS_CRM;
+					
+					query = query + "where status = 'Aprovado' and c.operacaoPaga = false" ;				
+					query = query + " order by id desc";				
+					connection = getConnection();
+					ps = connection.prepareStatement(query);	
+					rs = ps.executeQuery();				
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					List<String> idsContratoCobranca = new ArrayList<String>(0);
+					
+					while (rs.next()) {
+						
+						contratoCobranca = new ContratoCobranca();
+
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						contratoCobranca.setDataContrato(rs.getTimestamp(3));
+						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
+						contratoCobranca.setStatusLead(rs.getString(7));
+						contratoCobranca.setNomePagador(rs.getString(8));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
+						contratoCobranca.setCcbPronta(rs.getBoolean(16));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
+						contratoCobranca.setAgRegistro(rs.getBoolean(18));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
+						contratoCobranca.setDocumentosComite(rs.getBoolean(20));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(21));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(22)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
+						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
+						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
+						contratoCobranca.setStatus(rs.getString(28));	
+						contratoCobranca.setPedidoLaudo(rs.getBoolean(29));
+						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(30));
+						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(31));
+						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
+						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
+						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(35));
+						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
+						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
+						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+						
+						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
+
+						
+						//contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+					rs.close();
+
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosCRMBaixadoReprovado(final String codResponsavel, final List<Responsavel> listResponsavel, final String tipoConsulta) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override

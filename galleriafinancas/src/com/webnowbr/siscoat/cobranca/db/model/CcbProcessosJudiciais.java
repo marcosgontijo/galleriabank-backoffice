@@ -12,6 +12,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private long id;
 	
 	private BigDecimal valor = BigDecimal.ZERO;
+	private boolean processoInseridoContrato;
 	
 	public CcbProcessosJudiciais(BigDecimal valor) {
 		this.valor = valor;
@@ -20,7 +21,6 @@ public class CcbProcessosJudiciais implements Serializable{
 	public CcbProcessosJudiciais() {
 		
 	}
-
 	
 	public BigDecimal getValor() {
 		return valor;
@@ -36,4 +36,13 @@ public class CcbProcessosJudiciais implements Serializable{
 	public void setId(long id) {
 		this.id = id;
 	}
+
+	public boolean isProcessoInseridoContrato() {
+		return processoInseridoContrato;
+	}
+
+	public void setProcessoInseridoContrato(boolean processoInseridoContrato) {
+		this.processoInseridoContrato = processoInseridoContrato;
+	}
+	
 }

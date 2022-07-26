@@ -401,6 +401,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean preAprovadoComite;
 	private String preAprovadoComiteUsuario;
 	
+	private Date operacaoPagaData;
+	private boolean operacaoPaga;
+	private String operacaoPagaUsuario;
+	
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
 	private String aprovadoComiteUsuario;
@@ -583,6 +587,20 @@ public class ContratoCobranca implements Serializable {
 	private String finalidadeRecurso;
 	
 	private BigDecimal contaPagarValorTotal;
+	private String nomeBancarioContaPagar;
+	private String cpfCnpjBancarioContaPagar;
+	private String bancoBancarioContaPagar;
+	private String agenciaBancarioContaPagar;
+	private String contaBancarioContaPagar;
+	
+	private BigDecimal valorCartaSplit;
+	private String nomeBancarioCartaSplit;
+	private String cpfCnpjBancarioCartaSplit;
+	private String bancoBancarioCartaSplit;
+	private String agenciaBancarioCartaSplit;
+	private String contaBancarioCartaSplit;
+	
+	private String observacaoPagamento;
 	
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
@@ -5150,5 +5168,125 @@ public class ContratoCobranca implements Serializable {
 
 	public void setAnalistaGeracaoPAJU(Responsavel analistaGeracaoPAJU) {
 		this.analistaGeracaoPAJU = analistaGeracaoPAJU;
+	}
+
+	public Date getOperacaoPagaData() {
+		return operacaoPagaData;
+	}
+
+	public void setOperacaoPagaData(Date operacaoPagaData) {
+		this.operacaoPagaData = operacaoPagaData;
+	}
+
+	public boolean isOperacaoPaga() {
+		return operacaoPaga;
+	}
+
+	public void setOperacaoPaga(boolean operacaoPaga) {
+		this.operacaoPaga = operacaoPaga;
+	}
+
+	public String getOperacaoPagaUsuario() {
+		return operacaoPagaUsuario;
+	}
+
+	public void setOperacaoPagaUsuario(String operacaoPagaUsuario) {
+		this.operacaoPagaUsuario = operacaoPagaUsuario;
+	}
+
+	public BigDecimal getValorCartaSplit() {
+		return valorCartaSplit;
+	}
+
+	public void setValorCartaSplit(BigDecimal valorCartaSplit) {
+		this.valorCartaSplit = valorCartaSplit;
+	}
+
+	public String getNomeBancarioCartaSplit() {
+		return nomeBancarioCartaSplit;
+	}
+
+	public void setNomeBancarioCartaSplit(String nomeBancarioCartaSplit) {
+		this.nomeBancarioCartaSplit = nomeBancarioCartaSplit;
+	}
+
+	public String getCpfCnpjBancarioCartaSplit() {
+		return cpfCnpjBancarioCartaSplit;
+	}
+
+	public void setCpfCnpjBancarioCartaSplit(String cpfCnpjBancarioCartaSplit) {
+		this.cpfCnpjBancarioCartaSplit = cpfCnpjBancarioCartaSplit;
+	}
+
+	public String getBancoBancarioCartaSplit() {
+		return bancoBancarioCartaSplit;
+	}
+
+	public void setBancoBancarioCartaSplit(String bancoBancarioCartaSplit) {
+		this.bancoBancarioCartaSplit = bancoBancarioCartaSplit;
+	}
+
+	public String getAgenciaBancarioCartaSplit() {
+		return agenciaBancarioCartaSplit;
+	}
+
+	public void setAgenciaBancarioCartaSplit(String agenciaBancarioCartaSplit) {
+		this.agenciaBancarioCartaSplit = agenciaBancarioCartaSplit;
+	}
+
+	public String getContaBancarioCartaSplit() {
+		return contaBancarioCartaSplit;
+	}
+
+	public void setContaBancarioCartaSplit(String contaBancarioCartaSplit) {
+		this.contaBancarioCartaSplit = contaBancarioCartaSplit;
+	}
+
+	public String getNomeBancarioContaPagar() {
+		return nomeBancarioContaPagar;
+	}
+
+	public void setNomeBancarioContaPagar(String nomeBancarioContaPagar) {
+		this.nomeBancarioContaPagar = nomeBancarioContaPagar;
+	}
+
+	public String getCpfCnpjBancarioContaPagar() {
+		return cpfCnpjBancarioContaPagar;
+	}
+
+	public void setCpfCnpjBancarioContaPagar(String cpfCnpjBancarioContaPagar) {
+		this.cpfCnpjBancarioContaPagar = cpfCnpjBancarioContaPagar;
+	}
+
+	public String getBancoBancarioContaPagar() {
+		return bancoBancarioContaPagar;
+	}
+
+	public void setBancoBancarioContaPagar(String bancoBancarioContaPagar) {
+		this.bancoBancarioContaPagar = bancoBancarioContaPagar;
+	}
+
+	public String getAgenciaBancarioContaPagar() {
+		return agenciaBancarioContaPagar;
+	}
+
+	public void setAgenciaBancarioContaPagar(String agenciaBancarioContaPagar) {
+		this.agenciaBancarioContaPagar = agenciaBancarioContaPagar;
+	}
+
+	public String getContaBancarioContaPagar() {
+		return contaBancarioContaPagar;
+	}
+
+	public void setContaBancarioContaPagar(String contaBancarioContaPagar) {
+		this.contaBancarioContaPagar = contaBancarioContaPagar;
+	}
+
+	public String getObservacaoPagamento() {
+		return observacaoPagamento;
+	}
+
+	public void setObservacaoPagamento(String observacaoPagamento) {
+		this.observacaoPagamento = observacaoPagamento;
 	}
 }

@@ -3619,7 +3619,11 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(),
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
 								// Jaque (assistente Luis)
 								ResponsavelDao rDao = new ResponsavelDao();
 								Responsavel rAssistente = new Responsavel();
@@ -3665,7 +3669,11 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
-						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3709,7 +3717,11 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
-						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3822,7 +3834,11 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
-						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3994,7 +4010,34 @@ public class ContratoCobrancaMB {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
 						"contrato_pronto_para_assinatura_operacao",
 						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");					
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"contrato_pronto_para_assinatura_operacao", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+							// Jaque (assistente Luis)
+							ResponsavelDao rDao = new ResponsavelDao();
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 689);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"contrato_pronto_para_assinatura_operacao", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"","");
+						}
 					}
 				}
 			}
@@ -4016,6 +4059,34 @@ public class ContratoCobrancaMB {
 							"contrato_dado_entrada_cartorio",
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
+							
+							if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+								// Bia (assistente Gislaine)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 359);
+		
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_dado_entrada_cartorio", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								"", "");
+							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+								// Jaque (assistente Luis)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 689);
+		
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_dado_entrada_cartorio", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								"","");
+							}
 						}
 					}				
 				}
@@ -4431,6 +4502,17 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgRegistroUsuario(getNomeUsuarioLogado());
 			
 				this.objetoContratoCobranca.setStatusContrato("Aprovado");				
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isOperacaoPaga()) {
+			this.objetoContratoCobranca.setOperacaoPagaData(null);
+			this.objetoContratoCobranca.setOperacaoPagaUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getOperacaoPagaData() == null) {
+				this.objetoContratoCobranca.setOperacaoPagaData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getOperacaoPagaData());
+				this.objetoContratoCobranca.setOperacaoPagaUsuario(getNomeUsuarioLogado());			
 			}
 		}
 		
@@ -7598,6 +7680,8 @@ public class ContratoCobrancaMB {
 			}
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus,"Ag. Comite")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus,"Ag. Pagamento Op.")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";  
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
@@ -7658,9 +7742,12 @@ public class ContratoCobrancaMB {
 	public void getIndexStepContrato() {
 		this.indexStepsStatusContrato = 0;
 		
-		if (!this.objetoContratoCobranca.isInicioAnalise()) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado") &&
+				!this.objetoContratoCobranca.isOperacaoPaga()) {
+			this.indexStepsStatusContrato = 12;
+		} else if (!this.objetoContratoCobranca.isInicioAnalise() ) {
 			this.indexStepsStatusContrato = 0;
-		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
+		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) { 
 			this.indexStepsStatusContrato = 1;
 		} else {			
 			if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() &&
@@ -7777,7 +7864,9 @@ public class ContratoCobrancaMB {
 						!this.objetoContratoCobranca.isAgAssinatura() &&
 						this.objetoContratoCobranca.isAgRegistro()) {
 					this.indexStepsStatusContrato = 11;
-				}
+					
+				} 
+
 			}
 			
 			//coloca todos no status a frente
@@ -11410,6 +11499,17 @@ public class ContratoCobrancaMB {
 			}
 		}		
 
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+	}
+	
+	public String consultaAgPagamentoOp() {
+		this.tituloTelaConsultaPreStatus = "Ag. Pagamento Op.";
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp();
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
 	
