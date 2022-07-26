@@ -132,6 +132,12 @@
 			<list-index></list-index>
 			<many-to-many column="idResponsavel"
 				class="com.webnowbr.siscoat.cobranca.db.model.Responsavel" />
-		</list>            		                              		      
+		</list>    
+		<property name="userGalache" type="boolean">
+			<column name="userGalache" not-null="true" default="false" />
+		</property>		 		
+		<property name="userAgenteEspelhamento" type="boolean">
+			<column name="userAgenteEspelhamento" not-null="true" default="false" />
+		</property>	                             		      
     </class>
 </hibernate-mapping>

@@ -72,8 +72,8 @@
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Imóvel" filterBy="#{contratos.imovel.nome}" filterMatchMode="contains" sortBy="#{contratos.imovel.nome}">
-			            <h:outputText value="#{contratos.imovel.nome}" />
+			        <p:column style="text-align: center;" headerText="Tel. Pagador" filterBy="#{contratos.pagador.telCelular}" filterMatchMode="contains" sortBy="#{contratos.pagador.telCelular}">
+			            <h:outputText value="#{contratos.pagador.telCelular}" />
 			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.imovel.cidade}" filterMatchMode="contains" sortBy="#{contratos.imovel.cidade}">
 			            <h:outputText value="#{contratos.imovel.cidade}" />

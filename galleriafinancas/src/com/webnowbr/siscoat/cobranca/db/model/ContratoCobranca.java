@@ -647,7 +647,7 @@ public class ContratoCobranca implements Serializable {
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
 	
-	private String analistaGeracaoPAJU;	
+	private Responsavel analistaGeracaoPAJU;	
 	
 	public ContratoCobranca() {
 		super();
@@ -5162,11 +5162,11 @@ public class ContratoCobranca implements Serializable {
 		this.iniciouGeracaoLaudo = iniciouGeracaoLaudo;
 	}
 
-	public String getAnalistaGeracaoPAJU() {
+	public Responsavel getAnalistaGeracaoPAJU() {
 		return analistaGeracaoPAJU;
 	}
 
-	public void setAnalistaGeracaoPAJU(String analistaGeracaoPAJU) {
+	public void setAnalistaGeracaoPAJU(Responsavel analistaGeracaoPAJU) {
 		this.analistaGeracaoPAJU = analistaGeracaoPAJU;
 	}
 

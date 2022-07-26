@@ -60,6 +60,8 @@ public final class User implements Serializable {
     
     private boolean userAvaliadorImovel;
     private boolean userLaudo;
+    private boolean userGalache;
+    private boolean userAgenteEspelhamento;
         
     private String codigoResponsavel;    
 
@@ -489,5 +491,21 @@ public final class User implements Serializable {
 
 	public void setUserLaudo(boolean userLaudo) {
 		this.userLaudo = userLaudo;
+	}
+
+	public boolean isUserAgenteEspelhamento() {
+		return userAgenteEspelhamento;
+	}
+
+	public void setUserAgenteEspelhamento(boolean userAgenteEspelhamento) {
+		this.userAgenteEspelhamento = userAgenteEspelhamento;
+	}
+
+	public boolean isUserGalache() {
+		return userGalache;
+	}
+
+	public void setUserGalache(boolean userGalache) {
+		this.userGalache = userGalache;
 	}
 }

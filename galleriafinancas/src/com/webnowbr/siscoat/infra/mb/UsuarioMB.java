@@ -253,6 +253,24 @@ public class UsuarioMB {
 				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "USER_GALACHE");
+			if (objetoUsuario.isUserGalache()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "AGENTE_ESPELHAMENTO");
+			if (objetoUsuario.isUserAgenteEspelhamento()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAIUGU");
 			if (objetoUsuario.isUserPreContratoIUGU()) {				
 				gAdmAux.add(gAdm.get(0));
