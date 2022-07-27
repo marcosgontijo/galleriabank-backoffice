@@ -2326,6 +2326,8 @@
 				</p:dataView>
 			</p:panel>
 			
+			<p:messages id="msgArquivo"/>
+			
 			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
 				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >											
 					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
@@ -2381,7 +2383,7 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor != 'Aprovado'}">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
-	                          update="ArquivosSalvos" />								
+	                          update="ArquivosSalvos msgArquivo" />								
 						</h:panelGrid>  
 					</p:panel>	
 					

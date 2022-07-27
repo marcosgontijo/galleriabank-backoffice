@@ -1416,6 +1416,7 @@ public class ContratoCobrancaMB {
 		// INICIO - Tratamento para Pré-Contrato
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -1489,6 +1490,7 @@ public class ContratoCobrancaMB {
 		// INICIO - Tratamento para Pré-Contrato
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -1533,7 +1535,6 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
-		
 		
 
 		this.qtdeParcelas = null;
@@ -4197,10 +4198,17 @@ public class ContratoCobrancaMB {
 				if (responsavel != null && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")) {					
 					this.objetoContratoCobranca.setResponsavel(responsavel);				
 				}
+				if(this.objetoContratoCobranca.getLeadEmTratamentoData() == null) {
+					this.objetoContratoCobranca.setLeadEmTratamentoData(gerarDataHoje());
+				}
 			} else if(this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 				this.objetoContratoCobranca.setLeadCompleto(false);
 				if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")){
 					this.objetoContratoCobranca.setStatusLead("Em Tratamento");
+				}
+			} else if(this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) {
+				if(this.objetoContratoCobranca.getLeadReprovadoData() == null) {
+					this.objetoContratoCobranca.setLeadReprovadoData(gerarDataHoje());
 				}
 			}
 		} else {
@@ -5573,6 +5581,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 
 		loadLovs();
 
@@ -5636,6 +5645,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 
 		loadLovs();
 
@@ -8134,32 +8144,6 @@ public class ContratoCobrancaMB {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 
 		this.contratoGerado = true;
-	}
-	
-	public String clearFieldsDocumentoWord() {
-		return "/Atendimento/Cobranca/DocumentoWord.xhtml";
-	}
-	
-	public void geraDocumentoWord() {
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
-
-		/* Se filtro somente por numero do contrato */
-		if (this.numContrato.length() == 4) {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela("0" + this.numContrato);
-		} else {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(this.numContrato);
-		}
-		
-		RelatorioFinanceiroCobranca rfc =  new RelatorioFinanceiroCobranca();
-
-		this.objetoContratoCobranca.setDataContrato(rfc.getDataContrato());
-		
-		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
-
-		if (this.relObjetoContratoCobranca.size() == 0) {
-			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
-		}
 	}
 
 	public String clearFieldsEditarReParcelar() {
@@ -25046,6 +25030,7 @@ public class ContratoCobrancaMB {
 	 * @throws IOException
 	 */
 	public void handleFileUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25058,22 +25043,27 @@ public class ContratoCobrancaMB {
 		}
 
 		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
+		if(event.getFile().getFileName().endsWith(".zip")) {	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+			
+			// atualiza lista de arquivos contidos no diretório
+			files = listaArquivos();
 		}
-
-		// atualiza lista de arquivos contidos no diretório
-		files = listaArquivos();
 	}
 	
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25085,23 +25075,28 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+	
+			// atualiza lista de arquivos contidos no diretório
+			filesInterno = listaArquivosInterno();
 		}
-
-		// atualiza lista de arquivos contidos no diretório
-		filesInterno = listaArquivosInterno();
 	}
 	
 	public void handleFileFaltanteUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25113,23 +25108,28 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
-		}
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
 
-		// atualiza lista de arquivos contidos no diretório
-		filesFaltante = listaArquivosFaltante();
+			// atualiza lista de arquivos contidos no diretório
+			filesFaltante = listaArquivosFaltante();
+		}
 	}
 	
 	public void handleFileJuridicoUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25141,20 +25141,24 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
-		}
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
 
-		// atualiza lista de arquivos contidos no diretório
-		filesJuridico = listaArquivosJuridico();
+			// atualiza lista de arquivos contidos no diretório
+			filesJuridico = listaArquivosJuridico();
+		}
 	}
 
 	/**

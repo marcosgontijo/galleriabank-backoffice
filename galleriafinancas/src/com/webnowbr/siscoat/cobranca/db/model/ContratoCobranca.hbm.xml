@@ -1737,6 +1737,18 @@
 		<property name="observacaoPagamento" type="text">
 			<column name="observacaoPagamento" />
 		</property>
+		
+		<property name="leadReprovadoData" type="java.util.Date">
+			<column name="leadReprovadoData" />
+		</property>
+		
+		<property name="leadEmTratamentoData" type="java.util.Date">
+			<column name="leadEmTratamentoData" />
+		</property>
+		
+		<property name="dataCadastro" type="java.util.Date">
+			<column name="dataCadastro" />
+		</property>
 
 	</class>
 </hibernate-mapping>
