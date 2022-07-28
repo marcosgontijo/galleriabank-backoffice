@@ -484,43 +484,6 @@
 								</h:outputText>
 							</h:panelGrid>
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
-									-moz-border-radius: 5px;
-									border-radius: 5px; padding: 10px;">
-								<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
-								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
-									<p:selectBooleanButton id="pajuGeradoView"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
-										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:80px" disabled="true">
-										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-									<p:selectBooleanButton id="pajuGerado"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:=80px">
-										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<p:spacer height="7"></p:spacer>
-								<p:spacer height="7"></p:spacer>
-								<p:spacer height="7"></p:spacer>
-								<p:outputLabel>Atualizado por: </p:outputLabel>
-								<p:spacer height="7"></p:spacer>
-								<h:outputText id="pajuGeradoUsuario"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelUsuario}"
-									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-								<h:outputText id="pajuGeradoData"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelData}"
-									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-									<f:convertDateTime locale="pt_BR" />
-									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</h:panelGrid>							
-							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
@@ -601,7 +564,7 @@
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
-								<p:outputLabel styleClass="labelBold">Parecer Jurídico Recebido</p:outputLabel>
+								<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
 								<p:spacer></p:spacer>
 								<shiro:hasAnyRoles name="PRECOBRANCA">
 									<p:selectBooleanButton id="pajurFavoravelView"

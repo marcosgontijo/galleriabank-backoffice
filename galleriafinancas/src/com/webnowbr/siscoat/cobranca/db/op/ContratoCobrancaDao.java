@@ -5826,7 +5826,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = false"
-								+ " and (avaliacaoLaudo is  null or (avaliacaoLaudo is not null and avaliacaoLaudo not like 'Compass')) ";
+								+ " and (avaliacaoLaudo is null or (avaliacaoLaudo is not null and avaliacaoLaudo not like 'Compass' and avaliacaoLaudo not like 'Galache')) ";
 					}
 					
 					if (tipoConsulta.equals("Avaliação de Imóvel")) {

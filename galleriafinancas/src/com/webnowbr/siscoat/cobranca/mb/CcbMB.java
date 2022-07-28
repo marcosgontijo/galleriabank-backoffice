@@ -5477,7 +5477,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText("REF.: Contrato de CCB nº " + this.objetoCcb.getNumeroCcb());
+				run.setText("REF.: Contrato de CCI nº " + this.objetoCcb.getNumeroCcb());
 				run.setFontSize(10);
 				run.setBold(true);
 				run.addCarriageReturn();
@@ -5502,7 +5502,7 @@ public class CcbMB {
 						+ " o GALLERIA FINANÇAS SECURITIZADORA S.A., inscrito no CNPJ/MF "
 						+ "sob nº 34.425.347/0001-06, adquiriu da BMP MONEY PLUS SOCIEDADE "
 						+ "DE CRÉDITO DIRETO S.A. os direitos de crédito, decorrentes da(s) "
-						+ "Cédula(s) de Crédito Bancário (“CCB”) em referência, celebrado por"
+						+ "Cédula(s) de Crédito Imobiliário (“CCI”) em referência, celebrado por"
 						+ " V. Sa(s), dos vencimentos a partir de ");
 				run.setFontSize(10);
 				run.setBold(false);
@@ -5549,7 +5549,7 @@ public class CcbMB {
 				run.setText("Assim, em face da operação contratada, fica(m) V. "
 						+ "Sa(s) notificadas que a partir de "+ this.objetoCcb.getDataDeEmissao().getDate() +" de "+
 						CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() +" de "+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) +","
-						+ " (inclusive), o pagamento das parcelas referentes a(s) CCB ");
+						+ " (inclusive), o pagamento das parcelas referentes a(s) CCI ");
 				run.setFontSize(10);
 				run.setBold(false);
 								
@@ -7195,9 +7195,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
 								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());								
-								text = trocaValoresXWPF(text, r, "nomeTestemunha", this.objetoCcb.getNomeTestemunha2());
-								text = trocaValoresXWPF(text, r, "cpfTestemunha", this.objetoCcb.getCpfTestemunha2());
-								text = trocaValoresXWPF(text, r, "rgTestemunha", this.objetoCcb.getRgTestemunha2());
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {
