@@ -54,7 +54,7 @@
 						
 			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
 			           <p:outputLabel value="#{contratos.dataUltimaAtualizacao}" >			            	
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT" />
 						</p:outputLabel>
 			        </p:column>
 
