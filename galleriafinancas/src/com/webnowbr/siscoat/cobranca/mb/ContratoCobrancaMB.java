@@ -11232,7 +11232,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-		}		
+		}
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
