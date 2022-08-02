@@ -3049,6 +3049,10 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAlteracaoGeracaoPAJU = true;
 	}
 	
+	public void changeLaudoRecebido() {
+		this.objetoContratoCobranca.setLaudoRecebido(!this.objetoContratoCobranca.isPedidoLaudo());
+	}
+	
 	public void notificaCompassWhatsApp() {
 		Responsavel responsavel = new Responsavel();
 		ResponsavelDao rDao = new ResponsavelDao();
