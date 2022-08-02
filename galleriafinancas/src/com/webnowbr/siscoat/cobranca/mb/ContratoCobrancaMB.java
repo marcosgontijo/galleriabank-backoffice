@@ -3401,24 +3401,24 @@ public class ContratoCobrancaMB {
 		try {				
 			
 			// envia WhatsApp
-			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+			//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				notificaCompassWhatsApp();
-				notificaCompassEmail();
+				//notificaCompassWhatsApp();
+				//notificaCompassEmail();
 			}
 			
 			if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
-				notificaGalacheWhatsApp();
-				notificaGalacheEmail();
+				//notificaGalacheWhatsApp();
+				//notificaGalacheEmail();
 			}
 			
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoGeracaoPAJU) {				
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-				notificaPAJUWhatsApp();
-				notificaPAJUEmail();
+				//notificaPAJUWhatsApp();
+				//notificaPAJUEmail();
 			} else {
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
 			}
@@ -3485,7 +3485,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 										this.objetoContratoCobranca.setAprovadoComite(true);
-										notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+										//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 									}
 								} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
@@ -3502,7 +3502,7 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				enviaEmailAtualizacaoPreContrato();	
+				//enviaEmailAtualizacaoPreContrato();	
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3694,6 +3694,38 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Iris
+					rValidaDocs3 = rDao.findById((long) 643);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
