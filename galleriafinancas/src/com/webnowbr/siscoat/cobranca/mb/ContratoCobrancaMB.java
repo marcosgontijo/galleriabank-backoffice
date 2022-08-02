@@ -3695,6 +3695,48 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					//rValidaDocs3 = rDao.findById((long) 643);
+					
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					//"contrato_recebido_paju", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
@@ -3743,6 +3785,48 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					//rValidaDocs3 = rDao.findById((long) 643);
+					
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					//"contrato_recebido_laudo", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}	
 			
