@@ -85,17 +85,20 @@
 								</p:commandButton>
 							</h:panelGrid>	
 							<h:panelGrid columns="2">
-							<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
-							<p:selectOneMenu id="AnalistaGeracaoPAJU"
-								value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
-								label="Estado" style="width:550px;" >
-								<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
-								<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
-								<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
-								<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
-								<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
-								<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
-							</p:selectOneMenu>
+								<!--
+								<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
+								<p:selectOneMenu id="AnalistaGeracaoPAJU"
+									value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
+									label="Estado" style="width:550px;" >
+									<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
+									<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
+									<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
+									<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
+									<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
+									<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
+								</p:selectOneMenu>
+								 -->				
+								<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
 								<p:outputLabel for="geracaoLaudo"
 									value="Observação PAJU: " styleClass="labelBold" />
 								<p:inputTextarea id="geracaoLaudo" rows="5"

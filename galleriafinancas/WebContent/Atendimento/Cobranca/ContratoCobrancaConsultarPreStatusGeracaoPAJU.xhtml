@@ -72,10 +72,6 @@
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Observação" filterBy="#{contratos.geracaoLaudoObservacao}" filterMatchMode="contains" sortBy="#{contratos.geracaoLaudoObservacao}">
-			            <h:outputText value="#{contratos.geracaoLaudoObservacao}" />
-			        </p:column>
-			        
 			        <p:column style="text-align: center;" headerText="Iniciou geração?" sortBy="#{contratos.iniciouGeracaoLaudo}">
 			            <ui:fragment rendered="#{contratos.iniciouGeracaoLaudo}">
 							<h:outputText value="Sim" />
@@ -85,10 +81,6 @@
 						</ui:fragment>
 			        </p:column>
 			        
-			        <p:column style="text-align: center;" headerText="Analista PAJU" filterBy="#{contratos.analistaGeracaoPAJU.nome}" filterMatchMode="contains" sortBy="#{contratos.analistaGeracaoPAJU.nome}">
-			            <h:outputText value="#{contratos.analistaGeracaoPAJU.nome}" />
-			        </p:column>	
-
 					<p:column style="text-align: center;width: 100px"
 						headerText="Analista" 
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pendente'}">

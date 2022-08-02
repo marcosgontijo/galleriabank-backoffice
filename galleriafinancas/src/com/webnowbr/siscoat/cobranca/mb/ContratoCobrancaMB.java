@@ -3051,6 +3051,7 @@ public class ContratoCobrancaMB {
 	
 	public void changeLaudoRecebido() {
 		this.objetoContratoCobranca.setLaudoRecebido(!this.objetoContratoCobranca.isPedidoLaudo());
+													 //contrario pois o metodo é chamado antes de efetivar a mudança no botao
 	}
 	
 	public void notificaCompassWhatsApp() {
@@ -3401,24 +3402,24 @@ public class ContratoCobrancaMB {
 		try {				
 			
 			// envia WhatsApp
-			//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				//notificaCompassWhatsApp();
-				//notificaCompassEmail();
+				notificaCompassWhatsApp();
+				notificaCompassEmail();
 			}
 			
 			if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
-				//notificaGalacheWhatsApp();
-				//notificaGalacheEmail();
+				notificaGalacheWhatsApp();
+				notificaGalacheEmail();
 			}
 			
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoGeracaoPAJU) {				
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-				//notificaPAJUWhatsApp();
-				//notificaPAJUEmail();
+				notificaPAJUWhatsApp();
+				notificaPAJUEmail();
 			} else {
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
 			}
@@ -3485,7 +3486,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 										this.objetoContratoCobranca.setAprovadoComite(true);
-										//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+										notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 									}
 								} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
@@ -3502,7 +3503,7 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				//enviaEmailAtualizacaoPreContrato();	
+				enviaEmailAtualizacaoPreContrato();	
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3694,38 +3695,6 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
-					
-					ResponsavelDao rDao = new ResponsavelDao();
-					Responsavel rValidaDocs1 = new Responsavel();
-					Responsavel rValidaDocs2 = new Responsavel();
-					Responsavel rValidaDocs3 = new Responsavel();
-					
-					// Valdir
-					rValidaDocs1 = rDao.findById((long) 619);
-	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
-					
-					// Thiago
-					rValidaDocs2 = rDao.findById((long) 620);
-	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
-					
-					// Iris
-					rValidaDocs3 = rDao.findById((long) 643);
-	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
 				}
 			}
 			
@@ -3775,52 +3744,7 @@ public class ContratoCobrancaMB {
 						}
 					}
 				}
-			}
-			
-			// Mensagem PAJU E LAUDO RECEBIDO
-			/*if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
-					this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
-				if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_recebido_laudo_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-					
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-						takeBlipMB = new TakeBlipMB();
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"contrato_recebido_laudo_paju",
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						
-						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-							// Bia (assistente Gislaine)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 359);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"", "");
-						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-							// Jaque (assistente Luis)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 689);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"","");
-						}
-					}
-				}
-			}*/
+			}	
 			
 			// Mensagem Ag Comentario Juridico
 			if (this.objetoContratoCobranca.isAnaliseComercial() != statusContrato.isAnaliseComercial()) {
