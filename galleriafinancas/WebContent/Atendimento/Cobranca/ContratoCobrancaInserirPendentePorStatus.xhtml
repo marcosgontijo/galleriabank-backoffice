@@ -2497,12 +2497,29 @@
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
-						<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;"/>  							
+						<h:panelGroup>
+							<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;"/>  		
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorIptu" value="Valor IPTU: " />
+							<p:inputText id="valorIptu"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorIptu}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>					
 						
 						<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " />
-						<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+						<h:panelGroup>
+							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorCondominio" value="Valor Condomínio: " />
+							<p:inputText id="valorCondominio"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorCondominio}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>
 						
-
 						<p:outputLabel for="valorEstimado"
 							value="Qual o valor estimado do imóvel? " />
 						<p:inputText id="valorEstimado"

@@ -3721,13 +3721,12 @@ public class ContratoCobrancaMB {
 					"", "");
 
 					// Iris
-					//rValidaDocs3 = rDao.findById((long) 643);
-					
-					//takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
-					//"contrato_recebido_paju", 
-					//this.objetoContratoCobranca.getPagador().getNome(),
-					//this.objetoContratoCobranca.getNumeroContrato(),
-					//"", "");
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 
  					// Tatiane
 					rValidaDocs4 = rDao.findById((long) 643);
@@ -3811,13 +3810,12 @@ public class ContratoCobrancaMB {
 					"", "");
 
 					// Iris
-					//rValidaDocs3 = rDao.findById((long) 643);
-					
-					//takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
-					//"contrato_recebido_laudo", 
-					//this.objetoContratoCobranca.getPagador().getNome(),
-					//this.objetoContratoCobranca.getNumeroContrato(),
-					//"", "");
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 
  					// Tatiane
 					rValidaDocs4 = rDao.findById((long) 643);
@@ -5739,7 +5737,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
 		this.objetoContratoCobranca.setStatus("Aprovado");		
-		
+		this.objetoContratoCobranca.setOperacaoPaga(true);	
 		this.objetoContratoCobranca.setStatusLead("Completo");
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
@@ -6709,6 +6707,11 @@ public class ContratoCobrancaMB {
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
 			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+			
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+				this.objetoContratoCobranca.setStatusLead("Arquivado");
+				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			}
 
 			if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
 				if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
