@@ -33,6 +33,10 @@
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectBooleanCheckbox value="#{dashboardMB.consultarGerente}"/>
 					
+					<p:outputLabel value="Consultar Leads: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectBooleanCheckbox value="#{dashboardMB.consultaLead}"/>
+					
 					<p:outputLabel value="Consultar Responsaveis Zerados: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<h:panelGroup>
@@ -71,16 +75,22 @@
 					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
 					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
 					reflow="true">
-					<p:column style="text-align: center;" headerText="Responsável"
+					<p:column style="text-align: center;" headerText="Responsável" rendered="#{!dashboardMB.consultaLead}"
 						filterBy="#{dashContratos.nomeResponsavel}" filterMatchMode="contains"
 						sortBy="#{dashContratos.nomeResponsavel}">
 						<h:outputText value="#{dashContratos.nomeResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Gerente"
+					<p:column style="text-align: center;" headerText="Gerente" rendered="#{!dashboardMB.consultaLead}"
 						filterBy="#{dashContratos.gerenteResponsavel}" filterMatchMode="contains"
 						sortBy="#{dashContratos.gerenteResponsavel}">
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMB.consultaLead}"
+						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"
+						sortBy="#{dashContratos.origemLead}">
+						<h:outputText value="#{dashContratos.origemLead}" />
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="Total cadastrados">	
@@ -97,7 +107,38 @@
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>
+
+	
+					<p:column style="text-align: center;" headerText="Total Em Tratamento"  rendered="#{dashboardMB.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMB.listaContratosConsulta}"
+								value="#{dashContratos.listaCadastrados}" />
+							<p:outputLabel
+								value="#{dashContratos.contratosCadastrados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+					</p:column>
 					
+					<p:column style="text-align: center;" headerText="Total Reprovado" rendered="#{dashboardMB.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMB.listaContratosConsulta}"
+								value="#{dashContratos.listaCadastrados}" />
+							<p:outputLabel
+								value="#{dashContratos.contratosCadastrados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}"> 
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+					</p:column>
+
 					<p:column style="text-align: center;" headerText="Total preaprovado">
 						<p:commandLink onclick="PF('listaContratosAprovados').show()"
 							update="contratosFormAprovados">
@@ -188,7 +229,29 @@
 								<h:outputText value=""/>
 								<h:outputText value=""/>
 								<h:outputText value=""/>
+						
+								<h:outputText value="Total Leads Em Tratamento: " rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="#{dashboardMB.totalLeadsEmTratamento}" rendered="#{dashboardMB.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMB.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalLeadsEmTratamento}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
 								
+								<h:outputText value="Total Leads Reprovados: "  rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="#{dashboardMB.totalLeadsReprovados}"  rendered="#{dashboardMB.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMB.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalLeadsReprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+
 								<h:outputText value="Total Pré-Aprovados: " />
 								<h:outputText value="#{dashboardMB.totalContratosPreAprovados}" />
 								<h:panelGroup>
