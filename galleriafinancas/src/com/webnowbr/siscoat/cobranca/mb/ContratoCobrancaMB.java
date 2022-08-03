@@ -3038,9 +3038,11 @@ public class ContratoCobrancaMB {
 	public void changeAvaliadorLaudo() {
 		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
 			controleWhatsAlteracaoAvaliadorLaudoGalache = true;
+			this.controleWhatsAlteracaoAvaliadorLaudo = false;
 		}
 		
 		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
+			controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 			this.controleWhatsAlteracaoAvaliadorLaudo = true;
 		}
 	}
@@ -10887,6 +10889,10 @@ public class ContratoCobrancaMB {
 
 					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
 						c.setStatus("Ag. Análise");
+					}
+					
+					if (c.getStatusLead().equals("Arquivado")) {
+						c.setStatus("Lead Arquivado");
 					}
 
 				} else {
