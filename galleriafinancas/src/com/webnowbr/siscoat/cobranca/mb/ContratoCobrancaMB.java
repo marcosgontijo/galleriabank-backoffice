@@ -802,6 +802,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 
 		this.hasBaixaParcial = false;
 
@@ -1453,6 +1454,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -1527,6 +1529,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -2570,9 +2573,9 @@ public class ContratoCobrancaMB {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
 				}
 
-				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !",
+							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !",
 							""));
 
 					return "";
@@ -2826,9 +2829,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !", ""));
 				
 				return "";
 			}
@@ -2909,9 +2912,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !", ""));
 				
 				return "";
 			}
@@ -3047,6 +3050,11 @@ public class ContratoCobrancaMB {
 	
 	public void changeGeracaoPAJU() {
 		this.controleWhatsAlteracaoGeracaoPAJU = true;
+	}
+	
+	public void changeLaudoRecebido() {
+		this.objetoContratoCobranca.setLaudoRecebido(!this.objetoContratoCobranca.isPedidoLaudo());
+													 //contrario pois o metodo é chamado antes de efetivar a mudança no botao
 	}
 	
 	public void notificaCompassWhatsApp() {
@@ -3690,6 +3698,47 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
@@ -3738,53 +3787,49 @@ public class ContratoCobrancaMB {
 							"","");
 						}
 					}
-				}
-			}
-			
-			// Mensagem PAJU E LAUDO RECEBIDO
-			/*if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
-					this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
-				if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_recebido_laudo_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-						takeBlipMB = new TakeBlipMB();
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"contrato_recebido_laudo_paju",
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						
-						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-							// Bia (assistente Gislaine)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 359);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"", "");
-						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-							// Jaque (assistente Luis)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 689);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"","");
-						}
-					}
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
-			}*/
+			}	
 			
 			// Mensagem Ag Comentario Juridico
 			if (this.objetoContratoCobranca.isAnaliseComercial() != statusContrato.isAnaliseComercial()) {
@@ -4568,7 +4613,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setCcbPronta(false);
 		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
-				comite.setVotoAnaliseComite("Reprovado");
+				comite.setVotoAnaliseComite("");
 			}
 		}
 		updateCheckList();
@@ -5597,6 +5642,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
@@ -5662,7 +5708,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
-		
+		filesComite = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
 
@@ -5694,7 +5740,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
 		this.objetoContratoCobranca.setStatus("Aprovado");		
-		
+		this.objetoContratoCobranca.setOperacaoPaga(true);	
 		this.objetoContratoCobranca.setStatusLead("Completo");
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
@@ -5825,10 +5871,12 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 		filesInterno = listaArquivosInterno();
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = listaArquivosComite();
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
@@ -5876,7 +5924,9 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
-
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
+		
 		this.reciboGerado = false;
 		this.fileRecibo = null;
 		this.pathRecibo = null;
@@ -6341,285 +6391,7 @@ public class ContratoCobrancaMB {
 		return null;
     }
 	
-	public void viewFileInterno(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void viewFile(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
-	public void viewFileFaltante(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void viewFileJuridico(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public void loadListRecebedores() {
 		cedentesIugu = new ArrayList<PagadorRecebedor>();
@@ -6747,6 +6519,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		this.reciboGerado = false;
 		this.fileRecibo = null;
@@ -6936,6 +6710,11 @@ public class ContratoCobrancaMB {
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
 			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+			
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+				this.objetoContratoCobranca.setStatusLead("Arquivado");
+				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			}
 
 			if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
 				if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
@@ -7483,6 +7262,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -7535,6 +7316,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 		
@@ -7606,6 +7389,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -7916,6 +7701,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -7992,6 +7779,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8080,6 +7869,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8178,6 +7969,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8264,6 +8057,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -11487,7 +11282,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-		}		
+		}
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
@@ -25087,10 +24882,12 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesInterno = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesJuridico = new ArrayList<FileUploaded>();
-
+	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
+	
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 
 	StreamedContent downloadAllFilesInterno;
 
@@ -25231,6 +25028,39 @@ public class ContratoCobrancaMB {
 			filesJuridico = listaArquivosJuridico();
 		}
 	}
+	
+	public void handleFileComiteUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+
+		// cria o diretório, caso não exista
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			// atualiza lista de arquivos contidos no diretório
+			filesComite = listaArquivosComite();
+		}
+	}
 
 	/**
 	 * deleta o arquivo selecionado na tela
@@ -25270,6 +25100,15 @@ public class ContratoCobrancaMB {
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 	}
+	
+	public void deleteFileComite() {
+		for (FileUploaded f : deletefilesComite) {
+			f.getFile().delete();
+		}
+
+		deletefilesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
+	}
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
@@ -25295,6 +25134,12 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public void deleteFilesComite(Collection<FileUploaded> lista) {
+		for (FileUploaded f : lista) {
+			f.getFile().delete();
+		}
+	}
+	
 	/***
 	 * Lista ois arquivos contidos no diretório
 	 * 
@@ -25315,7 +25160,10 @@ public class ContratoCobrancaMB {
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
 				
-				if(!arquivo.getName().contains("interno") && !arquivo.getName().contains("faltante") && !arquivo.getName().contains("juridico")) {
+				if(!arquivo.getName().contains("interno") 
+						&& !arquivo.getName().contains("faltante") 
+						&& !arquivo.getName().contains("juridico") 
+						&& !arquivo.getName().contains("comite")) {
 					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 				}
 			}
@@ -25382,12 +25230,379 @@ public class ContratoCobrancaMB {
 		}
 		return lista;
 	}
+	
+	public Collection<FileUploaded> listaArquivosComite() {
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
 
-	/**
-	 * Método para fazer download de todos os arquivos do diretório do contrato
-	 * 
-	 * @return
-	 */
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public void viewFile(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileInterno(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileFaltante(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileJuridico(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void viewFileComite(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//removido zippar arquivos
+	/*
 	public StreamedContent getDownloadAllFiles() {
 		try {
 			// recupera path do contrato
@@ -25461,9 +25676,8 @@ public class ContratoCobrancaMB {
 
 		return this.downloadAllFilesInterno;
 	}
+	*/
 	
-	
-
 	/***
 	 * Faz download de um único arquivo - linha do DataTable
 	 * 
@@ -25484,13 +25698,8 @@ public class ContratoCobrancaMB {
 		return this.downloadFile;
 	}
 
-	/***
-	 * Exemplo de Zip de um Diretório inteiro
-	 * 
-	 * @param srcFolder
-	 * @param destZipFile
-	 * @throws Exception
-	 */
+	//removido zippar arquivos
+	/*
 	static public void zipFolder(String srcFolder, String destZipFile) throws Exception {
 		ZipOutputStream zip = null;
 		FileOutputStream fileWriter = null;
@@ -25503,14 +25712,7 @@ public class ContratoCobrancaMB {
 		zip.close();
 	}
 
-	/***
-	 * Exemplo de adicionar arquivos a um zip existente
-	 * 
-	 * @param path
-	 * @param srcFile
-	 * @param zip
-	 * @throws Exception
-	 */
+	
 	static private void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws Exception {
 
 		File folder = new File(srcFile);
@@ -25527,14 +25729,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	/**
-	 * Exemplo de adicionar uam pasta a um zip existente
-	 * 
-	 * @param path
-	 * @param srcFolder
-	 * @param zip
-	 * @throws Exception
-	 */
+	
 	static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws Exception {
 		File folder = new File(srcFolder);
 
@@ -25546,7 +25741,8 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
-
+	*/
+	
 	/**
 	 * @return the files
 	 */
@@ -27216,4 +27412,21 @@ public class ContratoCobrancaMB {
 	public void setFinanceiroGalleria(boolean financeiroGalleria) {
 		this.financeiroGalleria = financeiroGalleria;
 	}
+
+	public Collection<FileUploaded> getFilesComite() {
+		return filesComite;
+	}
+
+	public void setFilesComite(Collection<FileUploaded> filesComite) {
+		this.filesComite = filesComite;
+	}
+
+	public List<FileUploaded> getDeletefilesComite() {
+		return deletefilesComite;
+	}
+
+	public void setDeletefilesComite(List<FileUploaded> deletefilesComite) {
+		this.deletefilesComite = deletefilesComite;
+	}
+
 }

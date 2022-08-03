@@ -5908,17 +5908,20 @@ public class CcbMB {
 			run.addCarriageReturn();
 			
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca)) {
+				this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+				
+				this.objetoContratoCobranca.setValorCartaSplit(this.objetoCcb.getValorLiquidoCredito());
+				this.objetoContratoCobranca.setNomeBancarioCartaSplit(this.objetoCcb.getNomeEmitente());
+				this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoCcb.getCpfEmitente());
+				this.objetoContratoCobranca.setBancoBancarioCartaSplit(this.objetoCcb.getNomeBanco());
+				this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(this.objetoCcb.getAgencia());
+				this.objetoContratoCobranca.setContaBancarioCartaSplit(this.objetoCcb.getContaCorrente());		
+				
+				cDao.merge(this.objetoContratoCobranca);
+				this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);	
+			}
 			
-			this.objetoContratoCobranca.setValorCartaSplit(this.objetoCcb.getValorLiquidoCredito());
-			this.objetoContratoCobranca.setNomeBancarioCartaSplit(this.objetoCcb.getNomeEmitente());
-			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoCcb.getCpfEmitente());
-			this.objetoContratoCobranca.setBancoBancarioCartaSplit(this.objetoCcb.getNomeBanco());
-			this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(this.objetoCcb.getAgencia());
-			this.objetoContratoCobranca.setContaBancarioCartaSplit(this.objetoCcb.getContaCorrente());		
-			
-			cDao.merge(this.objetoContratoCobranca);
-			this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);	
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
@@ -6095,8 +6098,10 @@ public class CcbMB {
 			run.setText("Valor");
 			
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
-			this.objetoPagadorRecebedor = objetoContratoCobranca.getPagador();
+			if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+				this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+				this.objetoPagadorRecebedor = objetoContratoCobranca.getPagador();
+			}
 			
 			if(this.temCustasCartorarias) {
 				XWPFTableRow tableRow1 = table.createRow();
@@ -6126,18 +6131,20 @@ public class CcbMB {
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCustasCartorariasValor(), "R$ "));
 				
 				if(!this.objetoCcb.isCustasInseridaContrato()) {
-					ContasPagar custasCartorarias = new ContasPagar();				
-					custasCartorarias.setDescricao("Cartório");
-					custasCartorarias.setValor(this.objetoCcb.getCustasCartorariasValor());
-					custasCartorarias.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					custasCartorarias.setContrato(this.objetoContratoCobranca);
-					custasCartorarias.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					custasCartorarias.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					custasCartorarias.setTipoDespesa("C");
-					custasCartorarias.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(custasCartorarias);
-					this.objetoCcb.setCustasInseridaContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar custasCartorarias = new ContasPagar();				
+						custasCartorarias.setDescricao("Cartório");
+						custasCartorarias.setValor(this.objetoCcb.getCustasCartorariasValor());
+						custasCartorarias.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						custasCartorarias.setContrato(this.objetoContratoCobranca);
+						custasCartorarias.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						custasCartorarias.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						custasCartorarias.setTipoDespesa("C");
+						custasCartorarias.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(custasCartorarias);
+						this.objetoCcb.setCustasInseridaContrato(true);
+					}
 				}
 				
 				
@@ -6172,18 +6179,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCertidaoDeCasamentoValor(), "R$ "));
 				if(!this.objetoCcb.isCertidaoInseridaContrato()) {
-					ContasPagar certidaoDeCasamento = new ContasPagar();				
-					certidaoDeCasamento.setDescricao("Certidão de Casamento");
-					certidaoDeCasamento.setValor(this.objetoCcb.getCertidaoDeCasamentoValor());
-					certidaoDeCasamento.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					certidaoDeCasamento.setContrato(this.objetoContratoCobranca);
-					certidaoDeCasamento.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					certidaoDeCasamento.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					certidaoDeCasamento.setTipoDespesa("C");
-					certidaoDeCasamento.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(certidaoDeCasamento);
-					this.objetoCcb.setCertidaoInseridaContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar certidaoDeCasamento = new ContasPagar();				
+						certidaoDeCasamento.setDescricao("Certidão de Casamento");
+						certidaoDeCasamento.setValor(this.objetoCcb.getCertidaoDeCasamentoValor());
+						certidaoDeCasamento.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						certidaoDeCasamento.setContrato(this.objetoContratoCobranca);
+						certidaoDeCasamento.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						certidaoDeCasamento.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						certidaoDeCasamento.setTipoDespesa("C");
+						certidaoDeCasamento.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(certidaoDeCasamento);
+						this.objetoCcb.setCertidaoInseridaContrato(true);
+					}
 				}
 			}
 			
@@ -6216,18 +6225,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getLaudoDeAvaliacaoValor(), "R$ "));
 				if(!this.objetoCcb.isLaudoInseridoContrato()) {
-					ContasPagar laudoDeAvaliacao = new ContasPagar();				
-					laudoDeAvaliacao.setDescricao("Laudo De Avaliação");
-					laudoDeAvaliacao.setValor(this.objetoCcb.getLaudoDeAvaliacaoValor());
-					laudoDeAvaliacao.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					laudoDeAvaliacao.setContrato(this.objetoContratoCobranca);
-					laudoDeAvaliacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					laudoDeAvaliacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					laudoDeAvaliacao.setTipoDespesa("C");
-					laudoDeAvaliacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(laudoDeAvaliacao);
-					this.objetoCcb.setLaudoInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar laudoDeAvaliacao = new ContasPagar();				
+						laudoDeAvaliacao.setDescricao("Laudo De Avaliação");
+						laudoDeAvaliacao.setValor(this.objetoCcb.getLaudoDeAvaliacaoValor());
+						laudoDeAvaliacao.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						laudoDeAvaliacao.setContrato(this.objetoContratoCobranca);
+						laudoDeAvaliacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						laudoDeAvaliacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						laudoDeAvaliacao.setTipoDespesa("C");
+						laudoDeAvaliacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(laudoDeAvaliacao);
+						this.objetoCcb.setLaudoInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6262,30 +6273,32 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIntermediacaoValor(), "R$ "));
 				if(!this.objetoCcb.isIntermediacaoInseridoContrato()) {
-					ContasPagar intermediacao = new ContasPagar();				
-					intermediacao.setDescricao("Transferência");
-					intermediacao.setValor(this.objetoCcb.getIntermediacaoValor());
-					intermediacao.setFormaTransferencia("TED");
-					intermediacao.setBancoTed(this.objetoCcb.getIntermediacaoBanco());
-					intermediacao.setAgenciaTed(this.objetoCcb.getIntermediacaoAgencia());
-					intermediacao.setContaTed(this.objetoCcb.getContaCorrente());
-					intermediacao.setNomeTed(this.objetoCcb.getIntermediacaoNome());
-					intermediacao.setCpfTed(this.objetoCcb.getIntermediacaoCNPJ());	
-					
-					this.objetoContratoCobranca.setNomeBancarioContaPagar(this.objetoCcb.getIntermediacaoNome());
-					this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(this.objetoCcb.getIntermediacaoCNPJ());
-					this.objetoContratoCobranca.setBancoBancarioContaPagar(this.objetoCcb.getIntermediacaoBanco());
-					this.objetoContratoCobranca.setAgenciaBancarioContaPagar(this.objetoCcb.getIntermediacaoAgencia());
-					this.objetoContratoCobranca.setContaBancarioContaPagar(this.objetoCcb.getContaCorrente());		
-					
-					/////////////////////////////////////////////////////////////////////////////////////
-					intermediacao.setContrato(this.objetoContratoCobranca);
-					intermediacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					intermediacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					intermediacao.setTipoDespesa("C");
-					intermediacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(intermediacao);
-					this.objetoCcb.setIntermediacaoInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar intermediacao = new ContasPagar();				
+						intermediacao.setDescricao("Transferência");
+						intermediacao.setValor(this.objetoCcb.getIntermediacaoValor());
+						intermediacao.setFormaTransferencia("TED");
+						intermediacao.setBancoTed(this.objetoCcb.getIntermediacaoBanco());
+						intermediacao.setAgenciaTed(this.objetoCcb.getIntermediacaoAgencia());
+						intermediacao.setContaTed(this.objetoCcb.getContaCorrente());
+						intermediacao.setNomeTed(this.objetoCcb.getIntermediacaoNome());
+						intermediacao.setCpfTed(this.objetoCcb.getIntermediacaoCNPJ());	
+						
+						this.objetoContratoCobranca.setNomeBancarioContaPagar(this.objetoCcb.getIntermediacaoNome());
+						this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(this.objetoCcb.getIntermediacaoCNPJ());
+						this.objetoContratoCobranca.setBancoBancarioContaPagar(this.objetoCcb.getIntermediacaoBanco());
+						this.objetoContratoCobranca.setAgenciaBancarioContaPagar(this.objetoCcb.getIntermediacaoAgencia());
+						this.objetoContratoCobranca.setContaBancarioContaPagar(this.objetoCcb.getContaCorrente());		
+						
+						/////////////////////////////////////////////////////////////////////////////////////
+						intermediacao.setContrato(this.objetoContratoCobranca);
+						intermediacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						intermediacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						intermediacao.setTipoDespesa("C");
+						intermediacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(intermediacao);
+						this.objetoCcb.setIntermediacaoInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6318,17 +6331,19 @@ public class CcbMB {
 					run.setColor("000000");
 					run.setText(CommonsUtil.formataValorMonetario(processo.getValor()));
 					if(!processo.isProcessoInseridoContrato()) {
-						ContasPagar contaProcesso = new ContasPagar();				
-						contaProcesso.setDescricao("Processo");
-						contaProcesso.setValor(processo.getValor());
-						contaProcesso.setFormaTransferencia("Boleto");
-						/////////////////////////////////////////////////////////////////////////////////////
-						contaProcesso.setContrato(this.objetoContratoCobranca);
-						contaProcesso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-						contaProcesso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-						contaProcesso.setTipoDespesa("C");
-						contaProcesso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-						processo.setProcessoInseridoContrato(true);
+						if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+							ContasPagar contaProcesso = new ContasPagar();				
+							contaProcesso.setDescricao("Processo");
+							contaProcesso.setValor(processo.getValor());
+							contaProcesso.setFormaTransferencia("Boleto");
+							/////////////////////////////////////////////////////////////////////////////////////
+							contaProcesso.setContrato(this.objetoContratoCobranca);
+							contaProcesso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+							contaProcesso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+							contaProcesso.setTipoDespesa("C");
+							contaProcesso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+							processo.setProcessoInseridoContrato(true);
+						}
 					}
 				}
 			}
@@ -6362,18 +6377,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIptuEmAtrasoValor(), "R$ "));
 				if(!this.objetoCcb.isIptuInseridoContrato()) {
-					ContasPagar iptuAtraso = new ContasPagar();				
-					iptuAtraso.setDescricao("IPTU");
-					iptuAtraso.setValor(this.objetoCcb.getIptuEmAtrasoValor());
-					iptuAtraso.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					iptuAtraso.setContrato(this.objetoContratoCobranca);
-					iptuAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					iptuAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					iptuAtraso.setTipoDespesa("C");
-					iptuAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(iptuAtraso);
-					this.objetoCcb.setIptuInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar iptuAtraso = new ContasPagar();				
+						iptuAtraso.setDescricao("IPTU");
+						iptuAtraso.setValor(this.objetoCcb.getIptuEmAtrasoValor());
+						iptuAtraso.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						iptuAtraso.setContrato(this.objetoContratoCobranca);
+						iptuAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						iptuAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						iptuAtraso.setTipoDespesa("C");
+						iptuAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(iptuAtraso);
+						this.objetoCcb.setIptuInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6406,18 +6423,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCondominioEmAtrasoValor(), "R$ "));
 				if(!this.objetoCcb.isCondominioInseridoContrato()) {
-					ContasPagar comdominioEmAtraso = new ContasPagar();				
-					comdominioEmAtraso.setDescricao("Condomínio");
-					comdominioEmAtraso.setValor(this.objetoCcb.getCondominioEmAtrasoValor());
-					comdominioEmAtraso.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					comdominioEmAtraso.setContrato(this.objetoContratoCobranca);
-					comdominioEmAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					comdominioEmAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					comdominioEmAtraso.setTipoDespesa("C");
-					comdominioEmAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(comdominioEmAtraso);
-					this.objetoCcb.setCondominioInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar comdominioEmAtraso = new ContasPagar();				
+						comdominioEmAtraso.setDescricao("Condomínio");
+						comdominioEmAtraso.setValor(this.objetoCcb.getCondominioEmAtrasoValor());
+						comdominioEmAtraso.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						comdominioEmAtraso.setContrato(this.objetoContratoCobranca);
+						comdominioEmAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						comdominioEmAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						comdominioEmAtraso.setTipoDespesa("C");
+						comdominioEmAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(comdominioEmAtraso);
+						this.objetoCcb.setCondominioInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6450,18 +6469,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIqValor(), "R$ "));
 				if(!this.objetoCcb.isIqInseridoContrato()) {
-					ContasPagar iq = new ContasPagar();				
-					iq.setDescricao("IQ");
-					iq.setValor(this.objetoCcb.getIqValor());
-					iq.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					iq.setContrato(this.objetoContratoCobranca);
-					iq.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					iq.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					iq.setTipoDespesa("C");
-					iq.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(iq);
-					this.objetoCcb.setIqInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar iq = new ContasPagar();				
+						iq.setDescricao("IQ");
+						iq.setValor(this.objetoCcb.getIqValor());
+						iq.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						iq.setContrato(this.objetoContratoCobranca);
+						iq.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						iq.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						iq.setTipoDespesa("C");
+						iq.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(iq);
+						this.objetoCcb.setIqInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6514,10 +6535,11 @@ public class CcbMB {
 			run2.addCarriageReturn();
 			run2.setText(documento + this.objetoCcb.getCpfEmitente());
 			
-			objetoContratoCobranca.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
-			
-			cDao.merge(this.objetoContratoCobranca);
-			this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);		
+			if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+				objetoContratoCobranca.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
+				cDao.merge(this.objetoContratoCobranca);
+				this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);		
+			}
 			
 			/*
 			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
@@ -7418,7 +7440,7 @@ public class CcbMB {
 	    } catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e,
+							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
 							""));
 	    }
 	    

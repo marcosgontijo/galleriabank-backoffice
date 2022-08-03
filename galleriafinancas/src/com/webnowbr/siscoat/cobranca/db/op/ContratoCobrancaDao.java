@@ -7592,19 +7592,30 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS =  " select "
-			+ "	c.id, ContratoResgatadoBaixar, ContratoResgatadoData"
-			+ " FROM "
+	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS = "select "
+			+ "	c.id, "
+			+ "	ContratoResgatadoBaixar, "
+			+ "	ContratoResgatadoData, "
+			+ "	statuslead , "
+			+ "	status "
+			+ "from "
 			+ "	cobranca.contratocobranca c "
-			+ " WHERE "
-			+ "	status != 'Aprovado' "
-			+ "	AND status != 'Baixado' "
-			+ "	AND status != 'Desistência Cliente' "
-			+ "	AND analiseReprovada = FALSE "
-			+ "	AND c.statusLead = 'Completo' "
-			+ " and agassinatura = true "
+			+ "where "
+			+ "	((status != 'Aprovado' "
+			+ "		and status != 'Baixado' "
+			+ "		and status != 'Desistência Cliente' "
+			+ "		and analiseReprovada = false "
+			+ "		and c.statusLead = 'Completo' "
+			+ "		and agassinatura = true "
+			+ "		and ( DATE_PART( 'day', ? ::timestamp - c.ContratoResgatadoData ) > 30 "
+			+ "			or ContratoResgatadoData is null)) "
+			+ "	or ( c.statusLead = 'Em Tratamento' "
+			+ "		and status != 'Aprovado' "
+			+ "		and status != 'Reprovado' "
+			+ "		and status != 'Baixado' "
+			+ "		and status != 'Desistência Cliente')) "
 			+ "	and (DATE_PART('day', ? ::timestamp - c.dataultimaatualizacao) > 30 "
-			+ "	or dataultimaatualizacao is null)";
+			+ "		or dataultimaatualizacao is null)";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> ConsultaContratosASeremBaixados(final Date dataInicio) {
@@ -7626,6 +7637,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
 					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelInicioSQL);
 					
 					rs = ps.executeQuery();
 					while (rs.next()) {
