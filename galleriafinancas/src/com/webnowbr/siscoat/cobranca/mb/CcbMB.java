@@ -664,6 +664,10 @@ public class CcbMB {
 			if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor()))
 				total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
 		}
+		if(isTemIq()) {
+			if(!CommonsUtil.semValor(this.objetoCcb.getIqValor()))
+				total = total.add(this.objetoCcb.getIqValor());
+		}
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
 				if(!CommonsUtil.semValor(processo.getValor()))
@@ -6560,7 +6564,6 @@ public class CcbMB {
 
 			criarCcbNosistema();
 			
-		
 		} catch (JDBCException jdbce) {
 		    jdbce.getSQLException().getNextException().printStackTrace();
 		} catch (Throwable e) {

@@ -3706,6 +3706,12 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					Responsavel rValidaDocs4 = new Responsavel();
+					
+					//teste
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"chegada_paju",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
@@ -3795,6 +3801,12 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					Responsavel rValidaDocs4 = new Responsavel();
+					
+					//teste
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"chegada_laudo",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
@@ -3919,23 +3931,22 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					
-					// Valdir
-					rValidaDocs1 = rDao.findById((long) 619);
-	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					// Valdir ()
+					//rValidaDocs1 = rDao.findById((long) 619);
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					//"ag_validacao_documentos", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
 					
-					// Thiago
-					rValidaDocs2 = rDao.findById((long) 620);
+					// Thiago (Removido a pedido da Tati)
+					//rValidaDocs2 = rDao.findById((long) 620);
 	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					//"ag_validacao_documentos", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
 					
 					// Tati
 					rValidaDocs3 = rDao.findById((long) 643);
@@ -7492,6 +7503,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		
 		this.tituloPainel = "Editar";
 
 		filesInterno = new ArrayList<FileUploaded>();
@@ -7506,6 +7521,10 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		
 		this.tituloPainel = "Editar";
+		
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -25607,8 +25626,8 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	//removido zippar arquivos
-	/*
+	//removido zippar arquivos (ou não)
+	
 	public StreamedContent getDownloadAllFiles() {
 		try {
 			// recupera path do contrato
@@ -25682,7 +25701,7 @@ public class ContratoCobrancaMB {
 
 		return this.downloadAllFilesInterno;
 	}
-	*/
+	
 	
 	/***
 	 * Faz download de um único arquivo - linha do DataTable
@@ -25704,8 +25723,8 @@ public class ContratoCobrancaMB {
 		return this.downloadFile;
 	}
 
-	//removido zippar arquivos
-	/*
+	//removido zippar arquivos (ou não)
+	
 	static public void zipFolder(String srcFolder, String destZipFile) throws Exception {
 		ZipOutputStream zip = null;
 		FileOutputStream fileWriter = null;
@@ -25747,7 +25766,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
-	*/
+	
 	
 	/**
 	 * @return the files
