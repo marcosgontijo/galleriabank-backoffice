@@ -155,6 +155,8 @@ import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
+import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
+import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
@@ -188,6 +190,7 @@ public class ContratoCobrancaMB {
 
 	private Date dataHoje;
 	
+	SimulacaoIPCACalculoV2 simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
 	
 	private String tipoContratoCobrancaFinanceiroDia;
 
@@ -14696,7 +14699,67 @@ public class ContratoCobrancaMB {
 		simulador.calcular();
 		return simulador;
 	}
+		
+	private SimulacaoVO calcularParcelasIPCAV2() {
+		
+		this.simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
+		
+		//simulacaoIPCACalculoV2.setDataInicio(DateUtil.getDataHoje());
+		simulacaoIPCACalculoV2.setDataInicio(this.objetoContratoCobranca.getDataInicio());
+		
+		simulacaoIPCACalculoV2.setPrazo(new BigInteger(this.qtdeParcelas));
 	
+		simulacaoIPCACalculoV2.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());		
+		
+		simulacaoIPCACalculoV2.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));		
+		
+		simulacaoIPCACalculoV2.setValorCredito(this.objetoContratoCobranca.getValorCCB());	
+		
+		simulacaoIPCACalculoV2.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+		
+		simulacaoIPCACalculoV2.setSeguroMIP(SiscoatConstants.SEGURO_MIP_5_DIGITOS);
+		
+		simulacaoIPCACalculoV2.setSeguroDFI(SiscoatConstants.SEGURO_DFI_6_DIGITOS);
+		
+		simulacaoIPCACalculoV2.calcularIPVAv2();
+		
+		this.simuladorParcelas = convertIPCA2toSimuladorV0();
+		
+		return this.simuladorParcelas;
+	}
+		
+	public SimulacaoVO convertIPCA2toSimuladorV0() {
+		SimulacaoVO simulacaoVO = new SimulacaoVO();
+		List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
+		SimulacaoDetalheVO parcela = new SimulacaoDetalheVO();
+		
+		for (SimulacaoIPCADadosV2 parcelasIPCAV2 : this.simulacaoIPCACalculoV2.getListSimulacaoIPCADadosV2()){
+			parcela = new SimulacaoDetalheVO();
+			
+			parcela.setNumeroParcela(parcelasIPCAV2.getNumeroParcela());
+			
+			parcela.setSaldoDevedorInicial(parcelasIPCAV2.getSaldoDevedorInicial());
+					
+			parcela.setSaldoDevedorFinal(parcelasIPCAV2.getSaldoDevedorFinal());
+			
+			parcela.setAmortizacao(parcelasIPCAV2.getAmortizacao());
+			
+			parcela.setJuros(parcelasIPCAV2.getJuros());
+			
+			parcela.setSeguroMIP(parcelasIPCAV2.getSeguroMIP());
+			
+			parcela.setSeguroDFI(parcelasIPCAV2.getSeguroDFI());
+			
+			parcela.setValorParcela(parcelasIPCAV2.getValorParcela());
+			
+			parcelas.add(parcela);
+		}
+		
+		simulacaoVO.setParcelas(parcelas);
+
+		return simulacaoVO;
+	}
+
 	private SimulacaoVO calcularInvestimento(int numeroInvestidor){
 		BigDecimal tarifaIOFDiario;
 		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
@@ -14913,7 +14976,12 @@ public class ContratoCobrancaMB {
 
 	public void mostrarParcela() {
 		try {
-			this.simuladorParcelas = calcularParcelas();
+			if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCA V2")) {
+				this.simuladorParcelas = calcularParcelasIPCAV2();
+			} else {
+				this.simuladorParcelas = calcularParcelas();
+			}
+			
 		} catch (Exception e) {
 		}
 	}

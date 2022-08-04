@@ -696,9 +696,10 @@ public class CcbMB {
 	
 	public String EmitirCcbPreContrato() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-		this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
-		this.setTipoPesquisa("Emitente"); 
-		populateSelectedPagadorRecebedor();	
+		//this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
+		//this.setTipoPesquisa("Emitente"); 
+		//populateSelectedPagadorRecebedor();	
+		clearFieldsInserirCcb();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -6217,7 +6218,7 @@ public class CcbMB {
 
 				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
 				run.setFontSize(12);
-				run.setText("Boleto");
+				run.setText("Pix: " + this.objetoCcb.getIntermediacaoPix());
 				run.setColor("000000");	
 				
 				tableRow1.getCell(2).setParagraph(paragraph);
@@ -7336,6 +7337,256 @@ public class CcbMB {
 		return null;
 	}
 	
+	public StreamedContent geraCessao() throws IOException{
+		try {
+			XWPFDocument document;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+				}
+			}
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/CESSAO.docx"));
+					
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					participante.setTipoParticipante("DEVEDOR");
+				}
+			}
+			
+			for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());	
+						text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+						text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());				
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+						
+						if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
+							int iImagem = 0;
+							for(UploadedFile imagem :  filesList) {
+								r.addBreak();
+								this.populateFiles(iImagem);
+								r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+								r.addBreak();	
+								iImagem++;
+							}
+							text = trocaValoresXWPF(text, r, "ImagemImovel", "");						
+							adicionarEnter(text, r);
+						} else if(text != null && text.contains("ImagemImovel") && filesList.size() == 0) {
+							text = trocaValoresXWPF(text, r, "ImagemImovel", "");
+						}
+						
+						text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+						text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+						
+						text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+						
+						text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes());
+						text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.objetoCcb.getTaxaDeJurosAno());
+						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());			       
+					}
+			    }
+			}	
+										
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {}
+						}
+					}
+				}
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public StreamedContent geraInstrumentoEmissaoCCI() throws IOException{
+		try {
+			XWPFDocument document;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+				}
+			}
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/Instrumento Emissão CCI BMP.docx"));
+					
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getLogradouroEmitente())) {
+						this.objetoCcb.setLogradouroEmitente(participante.getPessoa().getEndereco());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getNumeroEmitente())) {
+						this.objetoCcb.setNumeroEmitente(participante.getPessoa().getNumero());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getComplementoEmitente())) {
+						this.objetoCcb.setComplementoEmitente(participante.getPessoa().getComplemento());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCepEmitente())) {
+						this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCidadeEmitente())) {
+						this.objetoCcb.setCidadeEmitente(participante.getPessoa().getCidade());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getUfEmitente())) {
+						this.objetoCcb.setUfEmitente(participante.getPessoa().getEstado());
+					}				
+				}
+			}
+			
+			int prazoAno = CommonsUtil.intValue(this.objetoCcb.getPrazo()) / 12;
+			String prazoAnoStr = CommonsUtil.stringValue(prazoAno);
+						
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);
+					            
+					            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+								text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+					            
+								text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	
+								text = trocaValoresXWPF(text, r, "cpfEmitente", this.objetoCcb.getCpfEmitente());								
+								text = trocaValoresXWPF(text, r, "logradouroEmitente", this.objetoCcb.getLogradouroEmitente());	
+								text = trocaValoresXWPF(text, r, "numeroEmitente", this.objetoCcb.getNumeroEmitente());	
+								text = trocaValoresXWPF(text, r, "complementoEmitente", this.objetoCcb.getComplementoEmitente());								
+								text = trocaValoresXWPF(text, r, "cepEmitente", this.objetoCcb.getCepEmitente());
+								text = trocaValoresXWPF(text, r, "cidadeEmitente", this.objetoCcb.getCidadeEmitente());			
+								text = trocaValoresXWPF(text, r, "ufEmitente", this.objetoCcb.getUfEmitente());							
+									
+								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());								
+				
+								text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+								text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+								text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+								text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+								
+								text = trocaValoresXWPF(text, r, "parcelaDia", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getDate());
+								text = trocaValoresXWPF(text, r, "parcelaMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "parcelaAno", (this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "vencimentoDia", this.objetoCcb.getVencimentoUltimaParcelaPagamento().getDate());
+								text = trocaValoresXWPF(text, r, "vencimentoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoUltimaParcelaPagamento()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "vencimentoAno", (this.objetoCcb.getVencimentoUltimaParcelaPagamento().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "prazoAno", prazoAnoStr);
+								text = trocaValoresNumeroExtensoXWPF(text, r, "Prazo", prazoAnoStr);
+								
+								text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes());
+								
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());
+								
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());		
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+							}
+						}
+					}
+				}
+			}
+		    
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());								
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+					}
+			    }
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+		
+	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -7377,11 +7628,17 @@ public class CcbMB {
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AnexoII")){
 	    		clearDocumentosNovos();
 	    		return geraAnexoII();
-	    	}else if(CommonsUtil.mesmoValor(tipoDownload,"cci")) {
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CCI")) {
 		    	return geraCci();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Cessao")) {
+		    	return geraCessao();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"InstrumentoEmissaoCCI")) {
+		    	return geraInstrumentoEmissaoCCI();
 		    } else {
 	    		
 	    	}
+	    	
+	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -7445,11 +7702,10 @@ public class CcbMB {
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
 							""));
-	    }
-	    
-	    
+	    }  
 	    return null;
 	}
+	
 	
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
@@ -7594,6 +7850,7 @@ public class CcbMB {
 		return dataHoje;
 	}
 	
+
 	public String clearFieldsConsultarCcb() {
 		CcbDao ccbDao = new CcbDao();
 		listaCcbs = ccbDao.ConsultaCCBs();
@@ -7792,6 +8049,7 @@ public class CcbMB {
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 
+	
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
@@ -7823,6 +8081,7 @@ public class CcbMB {
 	
 	char[] alphabet = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
+	
 	public static String repeat(String s, int n) {
 			if (s == null) {
 				return null;

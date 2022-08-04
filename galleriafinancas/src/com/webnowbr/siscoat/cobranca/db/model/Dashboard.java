@@ -47,6 +47,10 @@ public class Dashboard implements Serializable {
 	private BigDecimal valorLeadsReprovados;
 	private List<ContratoCobranca> listaLeadsReprovados;
 	
+	private int leadsCompletos;
+	private BigDecimal valorLeadscompletos;
+	private List<ContratoCobranca> listaLeadsCompletos;
+	
 	private int contratosPreAprovados;
 	private BigDecimal valorContratosPreAprovados;
 	private List<ContratoCobranca> listaPreAprovados;
@@ -475,7 +479,29 @@ public class Dashboard implements Serializable {
 
 	public void setOrigemLead(String origemLead) {
 		this.origemLead = origemLead;
+	}
+
+	public int getLeadsCompletos() {
+		return leadsCompletos;
+	}
+
+	public void setLeadsCompletos(int leadsCompletos) {
+		this.leadsCompletos = leadsCompletos;
+	}
+
+	public BigDecimal getValorLeadscompletos() {
+		return valorLeadscompletos;
+	}
+
+	public void setValorLeadscompletos(BigDecimal valorLeadscompletos) {
+		this.valorLeadscompletos = valorLeadscompletos;
+	}
+
+	public List<ContratoCobranca> getListaLeadsCompletos() {
+		return listaLeadsCompletos;
+	}
+
+	public void setListaLeadsCompletos(List<ContratoCobranca> listaLeadsCompletos) {
+		this.listaLeadsCompletos = listaLeadsCompletos;
 	}	
-	
-	
 }

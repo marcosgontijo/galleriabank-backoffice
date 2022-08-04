@@ -42,7 +42,7 @@ public class SimulacaoIPCACalculoV2 {
 		SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
 		
 		try {
-			this.dataInicio = formataData.parse("01/08/2022");
+			this.dataInicio = formataData.parse("05/08/2021");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,7 +58,8 @@ public class SimulacaoIPCACalculoV2 {
 	}
 	
 	public void calcularIPVAv2() {
-		loadDados();
+		//loadDados();
+		this.listSimulacaoIPCADadosV2 = new ArrayList<SimulacaoIPCADadosV2>();
 		
 		SimulacaoIPCADadosV2 simulacaoIPCADadosV2 = new SimulacaoIPCADadosV2();
 		
@@ -112,35 +113,6 @@ public class SimulacaoIPCACalculoV2 {
 					// Saldo inicial é o Final da última parcela da carência
 					simulacaoIPCADadosV2.setSaldoDevedorInicial(saldoDevedorAtualizado);
 					
-					// Calcular DFI
-					BigDecimal seguroDFI = BigDecimal.ZERO;
-					
-					// Calcular MIP
-					BigDecimal seguroMPI = BigDecimal.ZERO;
-					
-					// se primeira parcela pós carencia, calcula com ipca acumulado
-					if (!primeiraParcelaPosCarencia) {
-						primeiraParcelaPosCarencia = true;
-						
-						for (SimulacaoIPCADadosV2 parcela : this.listSimulacaoIPCADadosV2) {
-							if (parcela.getNumeroParcela().compareTo(BigInteger.ZERO) == 1) {
-								seguroDFI = seguroDFI.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
-								
-								
-								
-								
-								seguroMPI = seguroMPI.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_MIP)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
-							}							
-						}						
-					} else {
-						// demais parcelas calcula com o IPCA do Mês
-						seguroDFI = seguroDFI.add(this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS).multiply(ipcaMesReferencia));
-						seguroMPI = seguroMPI.add(this.valorImovel.multiply(SiscoatConstants.SEGURO_MIP).multiply(ipcaMesReferencia));
-					}
-					
-					simulacaoIPCADadosV2.setSeguroDFI(seguroDFI);
-					simulacaoIPCADadosV2.setSeguroMIP(seguroMPI);
-
 					// Valor parcela
 					BigDecimal taxaJurosIPCA = this.taxaJuros.add(ipcaMesReferencia);
 					BigDecimal parcelaPGTOJurosIPCA = BigDecimal
@@ -151,8 +123,48 @@ public class SimulacaoIPCACalculoV2 {
 									false // pagamento no inico
 					));
 					
-					simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA.add(seguroDFI).add(seguroMPI));
+					// Calcular DFI
+					BigDecimal seguroDFI = BigDecimal.ZERO;
 					
+					// Calcular MIP
+					BigDecimal seguroMPI = BigDecimal.ZERO;
+					
+					// se primeira parcela pós carencia, calcula com ipca acumulado
+					if (!primeiraParcelaPosCarencia) {
+						primeiraParcelaPosCarencia = true;
+						
+						BigDecimal seguroDFIAcumulado = BigDecimal.ZERO;
+						BigDecimal seguroMPIAcumulado = BigDecimal.ZERO;
+						
+						// percorre todas as parcelas da carência
+						for (SimulacaoIPCADadosV2 parcela : this.listSimulacaoIPCADadosV2) {
+							// se número parcela maior que 0 soma ao seguro
+							if (parcela.getNumeroParcela().compareTo(BigInteger.ZERO) == 1) {
+								seguroDFIAcumulado = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
+								
+								seguroMPIAcumulado = seguroMPIAcumulado.add((parcela.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));								
+							}							
+						}	
+						
+						// calcula com o ipca do mês referência (parcela atual)
+						seguroDFI = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+						
+						seguroMPI = seguroMPIAcumulado.add((simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+						
+						// set parcela
+						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA.add(seguroDFI).add(seguroMPI));
+					} else {
+						// demais parcelas calcula com o IPCA do Mês
+						seguroDFI = (this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+						seguroMPI = (simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+						
+						// set parcela
+						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA);
+					}
+					
+					simulacaoIPCADadosV2.setSeguroDFI(seguroDFI);
+					simulacaoIPCADadosV2.setSeguroMIP(seguroMPI);
+
 					// ipca
 					BigDecimal parcelaPGTOJuros = BigDecimal
 							.valueOf(FinanceLib.pmt(this.taxaJuros.divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
@@ -161,7 +173,7 @@ public class SimulacaoIPCACalculoV2 {
 									Double.valueOf("0"), // VF
 									false // pagamento no inico
 					));
-					BigDecimal ipca = parcelaPGTOJurosIPCA.subtract(parcelaPGTOJuros);
+					BigDecimal ipca = simulacaoIPCADadosV2.getValorParcela().subtract(parcelaPGTOJuros);
 					ipca = ipca.subtract(seguroDFI).subtract(seguroMPI);
 					simulacaoIPCADadosV2.setIpca(ipca);
 					
@@ -184,7 +196,10 @@ public class SimulacaoIPCACalculoV2 {
 			this.listSimulacaoIPCADadosV2.add(simulacaoIPCADadosV2);			
 		}
 		
-		System.out.println(" sadgsahjgdhj ");
+		// zera saldo devedor final
+		if (this.listSimulacaoIPCADadosV2.size() > 0) {
+			this.listSimulacaoIPCADadosV2.get(this.listSimulacaoIPCADadosV2.size() -1).setSaldoDevedorFinal(BigDecimal.ZERO);
+		}
 	}
 	
 	private BigDecimal getIPCAMes(Date dataReferencia) {
@@ -285,5 +300,21 @@ public class SimulacaoIPCACalculoV2 {
 
 	public void setSeguroDFI(BigDecimal seguroDFI) {
 		this.seguroDFI = seguroDFI;
-	}	
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public List<SimulacaoIPCADadosV2> getListSimulacaoIPCADadosV2() {
+		return listSimulacaoIPCADadosV2;
+	}
+
+	public void setListSimulacaoIPCADadosV2(List<SimulacaoIPCADadosV2> listSimulacaoIPCADadosV2) {
+		this.listSimulacaoIPCADadosV2 = listSimulacaoIPCADadosV2;
+	}
 }
