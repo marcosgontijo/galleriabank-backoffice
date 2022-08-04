@@ -107,21 +107,20 @@
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>
-
 	
 					<p:column style="text-align: center;" headerText="Total Em Tratamento"  rendered="#{dashboardMB.consultaLead}">	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm" >
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
-								value="#{dashContratos.listaCadastrados}" />
+								value="#{dashContratos.listaLeadsEmTratamento}" />
 							<p:outputLabel
-								value="#{dashContratos.contratosCadastrados}"/>
+								value="#{dashContratos.leadsEmTratamento}"/>
 						</p:commandLink>		
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}">
 						<h:outputText value="R$ " />
-						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+						<h:outputText value="#{dashContratos.valorLeadsEmTratamento}" converter="bigDecimalConverter" />
 					</p:column>
 					
 					<p:column style="text-align: center;" headerText="Total Reprovado" rendered="#{dashboardMB.consultaLead}">	
@@ -129,14 +128,29 @@
 							update="contratosForm" >
 							<f:setPropertyActionListener
 								target="#{dashboardMB.listaContratosConsulta}"
-								value="#{dashContratos.listaCadastrados}" />
+								value="#{dashContratos.listaLeadsReprovados}" />
 							<p:outputLabel
-								value="#{dashContratos.contratosCadastrados}"/>
+								value="#{dashContratos.leadsReprovados}"/>
 						</p:commandLink>		
 					</p:column>
 					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}"> 
 						<h:outputText value="R$ " />
-						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+						<h:outputText value="#{dashContratos.valorLeadsReprovados}" converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Leads Completos"  rendered="#{dashboardMB.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMB.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsCompletos}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsCompletos}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadscompletos}" converter="bigDecimalConverter" />
 					</p:column>
 
 					<p:column style="text-align: center;" headerText="Total preaprovado">
@@ -234,7 +248,7 @@
 								<h:outputText value="#{dashboardMB.totalLeadsEmTratamento}" rendered="#{dashboardMB.consultaLead}"/>
 								<h:panelGroup rendered="#{dashboardMB.consultaLead}">
 									<h:outputText value="R$ " />
-									<h:outputText value="#{dashboardMB.totalLeadsEmTratamento}"
+									<h:outputText value="#{dashboardMB.totalValorLeadsEmTratamento}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
 								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
@@ -245,12 +259,24 @@
 								<h:outputText value="#{dashboardMB.totalLeadsReprovados}"  rendered="#{dashboardMB.consultaLead}"/>
 								<h:panelGroup rendered="#{dashboardMB.consultaLead}">
 									<h:outputText value="R$ " />
-									<h:outputText value="#{dashboardMB.totalLeadsReprovados}"
+									<h:outputText value="#{dashboardMB.totalValorLeadsReprovados}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
 								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
 								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
 								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+
+								<h:outputText value="Total Leads Completos: "  rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="#{dashboardMB.totalLeadsCompletos}"  rendered="#{dashboardMB.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMB.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMB.totalValorLeadsCompletos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMB.consultaLead}"/>
+								
 
 								<h:outputText value="Total Pré-Aprovados: " />
 								<h:outputText value="#{dashboardMB.totalContratosPreAprovados}" />

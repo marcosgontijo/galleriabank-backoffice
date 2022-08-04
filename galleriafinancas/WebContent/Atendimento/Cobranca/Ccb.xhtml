@@ -42,10 +42,9 @@
 								<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
 								<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
 								<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
-								<f:selectItem itemValue="cci" itemLabel="cci" />
-								<f:selectItem itemValue="CCB" itemLabel="CCB (antiga)" />
-								<f:selectItem itemValue="AF" itemLabel="AF (antiga)" />
-								<f:selectItem itemValue="NC" itemLabel="Notificacao de cessao (antiga)" />
+								<f:selectItem itemValue="CCI" itemLabel="CCI" />
+								<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
+								<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />							
 								<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel" event="valueChange"
 									listener="#{ccbMB.verificaModeloAntigo()}" />
 							</p:selectOneMenu>	
@@ -1613,14 +1612,29 @@
 								</h:panelGrid>
 
 								<h:panelGroup id="laudoDeAvaliacaoValor">
-									<p:outputLabel rendered="#{ccbMB.temLaudoDeAvaliacao}"
-										value="Valor: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText rendered="#{ccbMB.temLaudoDeAvaliacao}"
-										value="#{ccbMB.objetoCcb.laudoDeAvaliacaoValor}"
-										label="Contrato" onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
+									<h:panelGrid columns="2" rendered="#{ccbMB.temLaudoDeAvaliacao}">
+										<h:panelGroup>
+											<p:outputLabel rendered="#{ccbMB.temLaudoDeAvaliacao}"
+												value="Valor: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText rendered="#{ccbMB.temLaudoDeAvaliacao}"
+												value="#{ccbMB.objetoCcb.laudoDeAvaliacaoValor}"
+												label="Contrato" onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 13, event, 2);"
+												converter="bigDecimalConverter" > 
+												<p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> 
+											</p:inputText>		
+										</h:panelGroup>
+										
+										<h:panelGroup>
+											<p:spacer width="10px"></p:spacer>
+											<h:panelGrid columns="2">
+												<p:outputLabel value="Pix: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
+											</h:panelGrid>
+										</h:panelGroup>
+									</h:panelGrid>
 									<p:spacer width="50px" rendered="#{!ccbMB.temLaudoDeAvaliacao}"></p:spacer>
 								</h:panelGroup>
 
