@@ -3708,10 +3708,10 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					
 					//teste
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"chegada_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_paju",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
@@ -3803,10 +3803,10 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					
 					//teste
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"chegada_laudo",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_laudo",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
