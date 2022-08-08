@@ -765,50 +765,11 @@ public class ContratoCobrancaMB {
 		};
 
 		// INICIO - Tratamento para Pré-Contrato
-		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(new Date());
-		loadLovs();
-		clearSelectedLovs();
-		this.contratoGerado = false;
-		this.qtdeParcelas = null;
-		clearSelectedRecebedores();
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
-		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.socioSelecionado = new PagadorRecebedorSocio();
-		this.socioSelecionado.setPessoa(new PagadorRecebedor());
-		this.tituloPagadorRecebedorDialog = "";
-		this.addSegurador = false;
-		this.addSocio = false;
-		this.addPagador = false;
+		//Trocado por um metodo que chama as mesmas coisas que estavam anteriormente
+		clearPreContratoCustomizado();	
+		this.updateMode = false;
+		this.deleteMode = false;
 		
-		this.contasPagarSelecionada = new ContasPagar();
-		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
-		this.contasPagarSelecionada.setResponsavel(new Responsavel());
-		
-		this.addContasPagar = false;
-		this.vlrParcelaFinal = null;
-		this.vlrRepasse = null;
-		this.vlrRepasseFinal = null;
-		this.vlrRetencao = null;
-		this.vlrRetencaoFinal = null;
-		this.vlrComissao = null;
-		this.vlrComissaoFinal = null;
-		this.objetoContratoCobranca.setGeraParcelaFinal(false);
-		this.objetoContratoCobranca.setNumeroContrato(null);
-		this.codigoResponsavel = null;
-		files = new ArrayList<FileUploaded>();
-		filesInterno = new ArrayList<FileUploaded>();
-		filesFaltante = new ArrayList<FileUploaded>();
-		filesJuridico = new ArrayList<FileUploaded>();
-		filesComite = new ArrayList<FileUploaded>();
-
-		this.hasBaixaParcial = false;
-
-		this.objetoImovelCobranca = new ImovelCobranca();
-		this.objetoPagadorRecebedor = new PagadorRecebedor();
-		this.tipoPessoaIsFisica = true;
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -1432,14 +1393,17 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());	
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.tituloPagadorRecebedorDialog = "";
+		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
 		this.contasPagarSelecionada.setResponsavel(new Responsavel());
 		
+		this.addContasPagar = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1455,6 +1419,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		this.hasBaixaParcial = false;
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
