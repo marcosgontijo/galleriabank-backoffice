@@ -892,7 +892,7 @@
 									<p:outputLabel for="comentarioJuridicoComite"
 										value="Comentario Juridico: " styleClass="labelBold" />
 									<p:inputTextarea id="comentarioJuridicoComite" rows="10" cols="48"
-										counter="display" maxlength="3000" onblur=""
+										maxlength="3000" onblur=""
 										counterTemplate="{0} characters remaining." autoResize="false"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
 									<p:outputLabel for="observacaoParaComiteView"
@@ -904,6 +904,79 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
 								</h:panelGrid>
 							</h:panelGroup>
+				
+							<h:panelGrid columns="2">		
+								<p:outputLabel for="valorPreLaudo"
+									value="Valor Pré Laudo: " styleClass="labelBold" />
+								<p:inputText id="valorPreLaudo"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />							
+								<p:outputLabel for="valorMercadoImovel"
+									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+								<p:inputText id="valorMercadoImovel"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />	
+								<p:outputLabel for="valorVendaForcadaImovel"
+									value="Valor de venda forçada do imóvel: "
+									styleClass="labelBold" />
+								<p:inputText id="valorVendaForcadaImovel"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:300px;"
+									disabled="#{contratoCobrancaMB.deleteMode}" />
+							</h:panelGrid>
+						
+							<h:panelGrid columns="2">
+								<p:outputLabel for="NumeroMatriculaLaudoPaju" value="Numero Matrícula: " />
+								<p:inputText id="NumeroMatriculaLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
+									label="NumeroMatricula" onblur="" style="width:400px;" />
+								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
+								<p:inputText id="EnderecoImovelLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
+									label="Endereço" onblur="" style="width:400px;" />
+								<p:outputLabel for="linkGMapsImovelLaudoPaju" value="Link Google Maps: " />
+								<p:inputText id="linkGMapsImovelLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+									label="Link Google Maps" style="width:400px;" />
+								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
+								<p:selectOneMenu id="TipoLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+									label="Tipo" style="width:410px;">
+									<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
+									<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
+									<f:selectItem itemValue="Casa" itemLabel="Casa" />
+									<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
+									<f:selectItem itemValue="Sala Comercial"
+										itemLabel="Sala Comercial" />
+									<f:selectItem itemValue="Prédio Comercial"
+										itemLabel="Prédio Comercial" />
+									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
+									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
+									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
+									<f:selectItem itemValue="Rural" itemLabel="Rural" />
+								</p:selectOneMenu>
+								<p:outputLabel for="AreaTotalLaudoPaju"
+									value="Área Total / Terreno (metros):  " />
+								<p:inputText id="AreaTotalLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
+									style="width:150px;" />
+								<p:outputLabel for="AreaConstruidaLaudoPaju"
+									value="Área Útil / Construída (metros): " />
+								<p:inputText id="AreaConstruidaLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
+									style="width:150px;" />
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1097,106 +1170,10 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<h:panelGroup id="RecebidoPajulaudoPanel"
-					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" header="Recebido PAJU e laudo">
-						<h:panelGrid columns="2">
-						
-							<h:panelGrid columns="2">
-							
-								<p:outputLabel for="valorPreLaudo"
-									value="Valor Pré Laudo: " styleClass="labelBold" />
-								<p:inputText id="valorPreLaudo"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorPreLaudo}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-							
-								<p:outputLabel for="valorMercadoImovel"
-									value="Valor de mercado do imóvel: " styleClass="labelBold" />
-								<p:inputText id="valorMercadoImovel"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-	
-								<p:outputLabel for="valorVendaForcadaImovel"
-									value="Valor de venda forçada do imóvel: "
-									styleClass="labelBold" />
-								<p:inputText id="valorVendaForcadaImovel"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorVendaForcadaImovel}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:300px;"
-									disabled="#{contratoCobrancaMB.deleteMode}" />
-							</h:panelGrid>
-						
-							<h:panelGrid columns="2">
-								<p:outputLabel for="NumeroMatriculaLaudoPaju" value="Numero Matrícula: " />
-								<p:inputText id="NumeroMatriculaLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
-									label="NumeroMatricula" onblur="" style="width:400px;" />
-
-								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
-								<p:inputText id="EnderecoImovelLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
-									label="Endereço" onblur="" style="width:400px;" />
-
-								<p:outputLabel for="linkGMapsImovelLaudoPaju" value="Link Google Maps: " />
-								<p:inputText id="linkGMapsImovelLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-									label="Link Google Maps" style="width:400px;" />
-
-								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:selectOneMenu id="TipoLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-									label="Tipo" style="width:410px;">
-									<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-									<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
-									<f:selectItem itemValue="Casa" itemLabel="Casa" />
-									<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-									<f:selectItem itemValue="Sala Comercial"
-										itemLabel="Sala Comercial" />
-									<f:selectItem itemValue="Prédio Comercial"
-										itemLabel="Prédio Comercial" />
-									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-									<f:selectItem itemValue="Rural" itemLabel="Rural" />
-								</p:selectOneMenu>
-
-								<p:outputLabel for="AreaTotalLaudoPaju"
-									value="Área Total / Terreno (metros):  " />
-								<p:inputText id="AreaTotalLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
-									style="width:150px;" />
-
-								<p:outputLabel for="AreaConstruidaLaudoPaju"
-									value="Área Útil / Construída (metros): " />
-								<p:inputText id="AreaConstruidaLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
-									style="width:150px;" />
-
-							</h:panelGrid>
-						
-						</h:panelGrid>
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
-							<p:outputLabel for="comentarioJuridico"
-								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48"
-								counter="display" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
-							<p:outputLabel id="display" />
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
+				<!-- <h:panelGroup id="RecebidoPajulaudoPanel"
+					style="margin-bottom:20px;"> Removido da peddio de Sandro (informaçoes foram para resumo comite)-->
+					
+				
 				
 				<p:messages id="msgArquivo"/>
 				

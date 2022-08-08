@@ -59,6 +59,9 @@
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
 		</list>
 		    
+		<property name="uniaoEstavel" type="boolean">
+			<column name="uniaoEstavel" not-null="true" default="false" />
+		</property>
 		
 	 <!-- -->
         

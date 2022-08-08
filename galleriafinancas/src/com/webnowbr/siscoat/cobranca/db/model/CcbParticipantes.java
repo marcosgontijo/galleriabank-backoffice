@@ -20,7 +20,8 @@ public class CcbParticipantes implements Serializable{
 	private String nacionalidade;	
 	private boolean fiduciante;
 	private boolean feminino;
-	private boolean empresa;	
+	private boolean empresa;
+	private boolean uniaoEstavel;	
 	
 	private String tipoEmpresa;
 	private String municipioEmpresa;
@@ -109,5 +110,11 @@ public class CcbParticipantes implements Serializable{
 	}
 	public void setId(long id) {
 		this.id = id;
+	}
+	public boolean isUniaoEstavel() {
+		return uniaoEstavel;
+	}
+	public void setUniaoEstavel(boolean uniaoEstavel) {
+		this.uniaoEstavel = uniaoEstavel;
 	}
 }

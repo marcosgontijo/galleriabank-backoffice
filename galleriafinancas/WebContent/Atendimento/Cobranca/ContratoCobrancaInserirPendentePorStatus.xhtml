@@ -2836,15 +2836,13 @@
 						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
 
 						<f:facet name="header"> Contas a Pagar 
-							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+							<p:outputLabel value="" />							
 								<p:selectBooleanButton
 									value="#{contratoCobrancaMB.addContasPagar}"
 									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
 									onIcon="ui-icon-plus" offIcon="ui-icon-plus">
 									<p:ajax update=":form:ContasPagarPanel" event="change" />
 								</p:selectBooleanButton>
-							</shiro:hasAnyRoles>
 						</f:facet>
 
 						<p:outputLabel for="ContaPagarValorTotal"
@@ -2992,8 +2990,7 @@
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-								<p:spacer height="10" />
-								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:spacer height="10" />					
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
 										update=":form:ContasPagarPanel" />
@@ -3001,7 +2998,6 @@
 									<p:commandButton value="Remover" icon="ui-icon-trash"
 										action="#{contratoCobrancaMB.removerConta(contas)}"
 										ajax="true" update=":form:ContasPagarPanel" />
-								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>
 					</p:panel>

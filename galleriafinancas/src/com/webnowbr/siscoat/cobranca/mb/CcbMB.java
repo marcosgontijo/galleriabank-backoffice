@@ -301,6 +301,8 @@ public class CcbMB {
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
+    private String numeroProcesso = "";
+    
     private CcbContrato objetoCcb = new CcbContrato();
     
     private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
@@ -627,8 +629,9 @@ public class CcbMB {
 	}
 	
 	public void addValorProcesso() {
-		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso));
-		valorProcesso = BigDecimal.ZERO;
+		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso, numeroProcesso));
+		valorProcesso = BigDecimal.ZERO;	
+		numeroProcesso = "";
 		calcularValorDespesa();
 	}
 	
@@ -6316,7 +6319,7 @@ public class CcbMB {
 					run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run.setFontSize(12);
 					run.setColor("000000");
-					run.setText("Processo");
+					run.setText("Processo N° " + processo.getNumero());
 
 					tableRow1.getCell(1).setParagraph(paragraph);
 					tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -6797,6 +6800,7 @@ public class CcbMB {
 		}
 		String nacionalidade = null;
 		String estadoCivilStr;
+		String conjugeStr = "";
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
 
@@ -6815,15 +6819,13 @@ public class CcbMB {
 				estadoCivilStr = "casada";
 			} else {
 				estadoCivilStr = "casado";
-			}
+			}		
+			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
 		} else {
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
-		}
-		
-		String conjugeStr = "";
-		
-		if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
-			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			if(participante.isUniaoEstavel()) {
+				estadoCivilStr = estadoCivilStr + " convivente em união estável";
+			}
 		}
 		
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
@@ -9419,6 +9421,16 @@ public class CcbMB {
 
 	public void setSeguradoSelecionado(Segurado seguradoSelecionado) {
 		this.seguradoSelecionado = seguradoSelecionado;
+	}
+
+	
+	public String getNumeroProcesso() {
+		return numeroProcesso;
+	}
+
+
+	public void setNumeroProcesso(String numeroProcesso) {
+		this.numeroProcesso = numeroProcesso;
 	}
 	
 }
