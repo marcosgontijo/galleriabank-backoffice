@@ -4910,6 +4910,11 @@ public class ContratoCobrancaMB {
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
+		BigDecimal valorSeguroDFI = con.getImovel().getValoEstimado().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		BigDecimal valorSeguroMIP = con.getQuantoPrecisa().multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP).add(valorSeguroDFI).add(txAdm);
+		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
