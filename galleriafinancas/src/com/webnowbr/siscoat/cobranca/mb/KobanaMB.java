@@ -602,6 +602,9 @@ public class KobanaMB {
 		jsonBoleto.put("fine_percentage", fine_percentage);
 		//jsonBoleto.put("days_for_infine_valueterest", fine_value);
 		
+		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
+		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		
 		return jsonBoleto;
 	}	
 	

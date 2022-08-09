@@ -26,10 +26,6 @@
 									action="#{contasAPagarMB.clearFields}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
-								<p:menuitem value="Teste IPCA V2"
-									action="#{simulacaoIPCACalculoV2.calcularIPVAv2}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
 							</shiro:hasAnyRoles>
 							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="Contas Pagas"
@@ -290,7 +286,7 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Boletos Kobana"
@@ -344,25 +340,13 @@
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
-									<p:menuitem value="Financeiro Baixado FIDC Galleria"
-										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
-										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" >
-										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
+									</p:menuitem>									
 									<p:menuitem value="Financeiro Baixado CRI 1"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
-									<p:menuitem value="Financeiro Baixado CRI 1 - GALLERIA"
-										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
-										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" >
-										<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
-									</p:menuitem>
+									</p:menuitem>									
 									<p:menuitem value="Financeiro Recebedores"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroRecebedor}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -371,6 +355,20 @@
 										action="#{contratoCobrancaMB.clearFieldsRelAtrasoRecebedor}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />									
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, AGENTE_ESPELHAMENTO">
+									<p:menuitem value="Agente Espelhamento CRI 1"
+											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" >
+											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
+									<p:menuitem value="Agente Espelhamento FIDC"
+											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoFIDC}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" >
+											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"

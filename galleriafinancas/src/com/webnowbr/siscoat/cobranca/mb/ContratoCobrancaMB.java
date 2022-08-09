@@ -14548,8 +14548,14 @@ public class ContratoCobrancaMB {
 		  if (this.objetoContratoCobranca.getStatusLead() != null) {
 			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 				if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
-	
-					SimulacaoVO simulador = calcularParcelas();
+					
+					SimulacaoVO simulador;
+					
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {													
+						simulador = calcularParcelasIPCAV2();
+					} else {
+						simulador = calcularParcelas();
+					}
 	
 					BigDecimal saldoAnterior = BigDecimal.ZERO;
 					for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
@@ -14707,7 +14713,7 @@ public class ContratoCobrancaMB {
 		//simulacaoIPCACalculoV2.setDataInicio(DateUtil.getDataHoje());
 		simulacaoIPCACalculoV2.setDataInicio(this.objetoContratoCobranca.getDataInicio());
 		
-		simulacaoIPCACalculoV2.setPrazo(new BigInteger(this.qtdeParcelas));
+		simulacaoIPCACalculoV2.setPrazo(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
 	
 		simulacaoIPCACalculoV2.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());		
 		
@@ -14976,7 +14982,7 @@ public class ContratoCobrancaMB {
 
 	public void mostrarParcela() {
 		try {
-			if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCA V2")) {
+			if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
 				this.simuladorParcelas = calcularParcelasIPCAV2();
 			} else {
 				this.simuladorParcelas = calcularParcelas();
