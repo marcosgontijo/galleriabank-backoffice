@@ -765,50 +765,11 @@ public class ContratoCobrancaMB {
 		};
 
 		// INICIO - Tratamento para Pré-Contrato
-		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(new Date());
-		loadLovs();
-		clearSelectedLovs();
-		this.contratoGerado = false;
-		this.qtdeParcelas = null;
-		clearSelectedRecebedores();
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
-		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.socioSelecionado = new PagadorRecebedorSocio();
-		this.socioSelecionado.setPessoa(new PagadorRecebedor());
-		this.tituloPagadorRecebedorDialog = "";
-		this.addSegurador = false;
-		this.addSocio = false;
-		this.addPagador = false;
+		//Trocado por um metodo que chama as mesmas coisas que estavam anteriormente
+		clearPreContratoCustomizado();	
+		this.updateMode = false;
+		this.deleteMode = false;
 		
-		this.contasPagarSelecionada = new ContasPagar();
-		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
-		this.contasPagarSelecionada.setResponsavel(new Responsavel());
-		
-		this.addContasPagar = false;
-		this.vlrParcelaFinal = null;
-		this.vlrRepasse = null;
-		this.vlrRepasseFinal = null;
-		this.vlrRetencao = null;
-		this.vlrRetencaoFinal = null;
-		this.vlrComissao = null;
-		this.vlrComissaoFinal = null;
-		this.objetoContratoCobranca.setGeraParcelaFinal(false);
-		this.objetoContratoCobranca.setNumeroContrato(null);
-		this.codigoResponsavel = null;
-		files = new ArrayList<FileUploaded>();
-		filesInterno = new ArrayList<FileUploaded>();
-		filesFaltante = new ArrayList<FileUploaded>();
-		filesJuridico = new ArrayList<FileUploaded>();
-		filesComite = new ArrayList<FileUploaded>();
-
-		this.hasBaixaParcial = false;
-
-		this.objetoImovelCobranca = new ImovelCobranca();
-		this.objetoPagadorRecebedor = new PagadorRecebedor();
-		this.tipoPessoaIsFisica = true;
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -1432,14 +1393,17 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());	
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.tituloPagadorRecebedorDialog = "";
+		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
 		this.contasPagarSelecionada.setResponsavel(new Responsavel());
 		
+		this.addContasPagar = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1455,6 +1419,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		this.hasBaixaParcial = false;
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -3708,10 +3673,10 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					
 					//teste
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"chegada_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_paju",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
@@ -3803,10 +3768,10 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs4 = new Responsavel();
 					
 					//teste
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"chegada_laudo",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_laudo",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 					// Valdir
 					rValidaDocs1 = rDao.findById((long) 619);	
@@ -4054,6 +4019,44 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
+					
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+							// Jaque (assistente Luis)
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 689);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"","");
+						}
+					} else {
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					}
 				}
 			}
 			
@@ -4907,6 +4910,11 @@ public class ContratoCobrancaMB {
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
+		BigDecimal valorSeguroDFI = con.getImovel().getValoEstimado().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		BigDecimal valorSeguroMIP = con.getQuantoPrecisa().multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP).add(valorSeguroDFI).add(txAdm);
+		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),

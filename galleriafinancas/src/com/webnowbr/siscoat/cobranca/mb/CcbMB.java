@@ -301,6 +301,8 @@ public class CcbMB {
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
+    private String numeroProcesso = "";
+    
     private CcbContrato objetoCcb = new CcbContrato();
     
     private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
@@ -627,8 +629,9 @@ public class CcbMB {
 	}
 	
 	public void addValorProcesso() {
-		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso));
-		valorProcesso = BigDecimal.ZERO;
+		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso, numeroProcesso));
+		valorProcesso = BigDecimal.ZERO;	
+		numeroProcesso = "";
 		calcularValorDespesa();
 	}
 	
@@ -6316,7 +6319,7 @@ public class CcbMB {
 					run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run.setFontSize(12);
 					run.setColor("000000");
-					run.setText("Processo");
+					run.setText("Processo N° " + processo.getNumero());
 
 					tableRow1.getCell(1).setParagraph(paragraph);
 					tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -6797,6 +6800,7 @@ public class CcbMB {
 		}
 		String nacionalidade = null;
 		String estadoCivilStr;
+		String conjugeStr = "";
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
 
@@ -6815,15 +6819,13 @@ public class CcbMB {
 				estadoCivilStr = "casada";
 			} else {
 				estadoCivilStr = "casado";
-			}
+			}		
+			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
 		} else {
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
-		}
-		
-		String conjugeStr = "";
-		
-		if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
-			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			if(participante.isUniaoEstavel()) {
+				estadoCivilStr = estadoCivilStr + " convivente em união estável";
+			}
 		}
 		
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
@@ -7500,6 +7502,7 @@ public class CcbMB {
 			
 			int prazoAno = CommonsUtil.intValue(this.objetoCcb.getPrazo()) / 12;
 			String prazoAnoStr = CommonsUtil.stringValue(prazoAno);
+			String estado = estadoPorExtenso(this.objetoCcb.getUfImovel());
 						
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
@@ -7528,9 +7531,14 @@ public class CcbMB {
 				
 								text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
 								text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
-								text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+								text = trocaValoresXWPF(text, r, "ufImovel", estado);
+								text = trocaValoresXWPF(text, r, "estadoImovel", this.objetoCcb.getUfImovel());			
 								text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
-								
+								text = trocaValoresXWPF(text, r, "logradouroRuaImovel", this.objetoCcb.getLogradouroRuaImovel());
+								text = trocaValoresXWPF(text, r, "logradouroNumeroImovel", this.objetoCcb.getLogradouroNumeroImovel());
+								text = trocaValoresXWPF(text, r, "bairroImovel", this.objetoCcb.getBairroImovel());
+								text = trocaValoresXWPF(text, r, "cepImovel", this.objetoCcb.getCepImovel());
+
 								text = trocaValoresXWPF(text, r, "parcelaDia", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getDate());
 								text = trocaValoresXWPF(text, r, "parcelaMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento()).toLowerCase());
 								text = trocaValoresXWPF(text, r, "parcelaAno", (this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getYear() + 1900));
@@ -7724,6 +7732,70 @@ public class CcbMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
+	
+	public String estadoPorExtenso(String uf) {
+		if(!CommonsUtil.semValor(uf)) {
+			if(CommonsUtil.mesmoValor(uf, "AC")) {
+				return "Acre";
+			} else if(CommonsUtil.mesmoValor(uf, "AL")) {
+				return "Alagoas";
+			} else if(CommonsUtil.mesmoValor(uf, "AP")) {
+				return "Amapá";
+			} else if(CommonsUtil.mesmoValor(uf, "AM")) {
+				return "Amazonas";
+			} else if(CommonsUtil.mesmoValor(uf, "BA")) {
+				return "Bahia";
+			} else if(CommonsUtil.mesmoValor(uf, "CE")) {
+				return "Ceará";
+			} else if(CommonsUtil.mesmoValor(uf, "DF")) {
+				return "Distrito Federal";
+			} else if(CommonsUtil.mesmoValor(uf, "ES")) {
+				return "Espírito Santo";
+			} else if(CommonsUtil.mesmoValor(uf, "GO")) {
+				return "Goiás";
+			} else if(CommonsUtil.mesmoValor(uf, "MA")) {
+				return "Maranhão";
+			} else if(CommonsUtil.mesmoValor(uf, "MT")) {
+				return "Mato Grosso";
+			} else if(CommonsUtil.mesmoValor(uf, "MS")) {
+				return "Mato Grosso";
+			} else if(CommonsUtil.mesmoValor(uf, "MG")) {
+				return "Minas Gerais";
+			} else if(CommonsUtil.mesmoValor(uf, "PA")) {
+				return "Pará";
+			} else if(CommonsUtil.mesmoValor(uf, "PB")) {
+				return "Paraíba";
+			} else if(CommonsUtil.mesmoValor(uf, "PR")) {
+				return "Paraná";
+			} else if(CommonsUtil.mesmoValor(uf, "PE")) {
+				return "Pernambuco";
+			} else if(CommonsUtil.mesmoValor(uf, "PI")) {
+				return "Piauí";
+			} else if(CommonsUtil.mesmoValor(uf, "RJ")) {
+				return "Rio de Janeiro";
+			} else if(CommonsUtil.mesmoValor(uf, "RN")) {
+				return "Rio Grande do Norte";
+			} else if(CommonsUtil.mesmoValor(uf, "RS")) {
+				return "Rio Grande do Sul";
+			} else if(CommonsUtil.mesmoValor(uf, "RO")) {
+				return "Rondônia";
+			} else if(CommonsUtil.mesmoValor(uf, "RR")) {
+				return "Roraima";
+			} else if(CommonsUtil.mesmoValor(uf, "SC")) {
+				return "Santa Catarina";
+			} else if(CommonsUtil.mesmoValor(uf, "SP")) {
+				return "São Paulo";
+			} else if(CommonsUtil.mesmoValor(uf, "SE")) {
+				return "Sergipe";
+			} else if(CommonsUtil.mesmoValor(uf, "TO")) {
+				return "Tocantins";
+			} else {
+				return uf;
+			}
+		}
+		return "";
+	}
+
 	
 	public void verificaModeloAntigo() {
 		if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
@@ -9419,6 +9491,16 @@ public class CcbMB {
 
 	public void setSeguradoSelecionado(Segurado seguradoSelecionado) {
 		this.seguradoSelecionado = seguradoSelecionado;
+	}
+
+	
+	public String getNumeroProcesso() {
+		return numeroProcesso;
+	}
+
+
+	public void setNumeroProcesso(String numeroProcesso) {
+		this.numeroProcesso = numeroProcesso;
 	}
 	
 }
