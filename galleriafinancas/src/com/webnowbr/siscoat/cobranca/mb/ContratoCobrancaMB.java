@@ -4910,10 +4910,37 @@ public class ContratoCobrancaMB {
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
-		BigDecimal valorSeguroDFI = con.getImovel().getValoEstimado().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
-		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
-		BigDecimal valorSeguroMIP = con.getQuantoPrecisa().multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
-		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP).add(valorSeguroDFI).add(txAdm);
+		SimulacaoVO simulador = new SimulacaoVO();	
+		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		if (con.getPagador().getCpf() != null) {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PF");
+		} else {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PJ");
+		}
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setValorCredito(con.getQuantoPrecisa());
+		simulador.setTaxaJuros(con.getTaxaPreAprovada());
+		simulador.setCarencia(BigInteger.ONE);
+		simulador.setQtdParcelas(con.getPrazoMaxPreAprovado());
+		simulador.setValorImovel(con.getImovel().getValoEstimado());
+		simulador.setTipoCalculo("Price");
+		simulador.setNaoCalcularDFI(false);
+		simulador.setNaoCalcularMIP(false);
+		simulador.setNaoCalcularTxAdm(false);
+		simulador.calcular();
+		parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
+	
+		//BigDecimal valorSeguroDFI = con.getImovel().getValoEstimado().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		//BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		//BigDecimal valorSeguroMIP = con.getQuantoPrecisa().multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroMIP).add(valorSeguroDFI).add(txAdm);
 		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
@@ -4966,15 +4993,42 @@ public class ContratoCobrancaMB {
 						false // pagamento no inico
 				));
 		
-		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
+		//BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
+		//BigDecimal valorSeguroDFI = con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		//BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		//BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
+		//parcelaPGTO = parcelaPGTO.add(txAdm);
 		
-		BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
-		BigDecimal valorSeguroDFI = con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
-		BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
-		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
-		parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
-		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
-		parcelaPGTO = parcelaPGTO.add(txAdm);
+		SimulacaoVO simulador = new SimulacaoVO();	
+		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		if (con.getPagador().getCpf() != null) {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PF");
+		} else {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PJ");
+		}
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setValorCredito(con.getValorAprovadoComite());
+		simulador.setTaxaJuros(con.getTaxaAprovada());
+		simulador.setCarencia(BigInteger.ONE);
+		simulador.setQtdParcelas(con.getPrazoMaxAprovado());
+		simulador.setValorImovel(con.getValorMercadoImovel());
+		simulador.setTipoCalculo("Price");
+		simulador.setNaoCalcularDFI(false);
+		simulador.setNaoCalcularMIP(false);
+		simulador.setNaoCalcularTxAdm(false);
+		simulador.calcular();
+		
+		parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
+		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),

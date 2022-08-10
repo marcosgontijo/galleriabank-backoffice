@@ -7457,7 +7457,7 @@ public class CcbMB {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/Instrumento Emissão CCI BMP.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/Instrumento_Emissao_CCI_BMP.docx"));
 					
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
