@@ -207,13 +207,10 @@
 							<h:panelGrid columns="3">
 								<p:outputLabel styleClass="labelBold"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}">Laudo Pedido: </p:outputLabel>								
-								<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}" 
+								<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
 									onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-									and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}" 
-									valueChangeListener="#{contratoCobrancaMB.changeLaudoRecebido()}" >			
-									<p:ajax event="change" action="#{contratoCobrancaMB.changeLaudoRecebido()}"/>						
-								</p:selectBooleanButton>
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
+									and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}" />								
 								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />				
 								</p:commandButton>
