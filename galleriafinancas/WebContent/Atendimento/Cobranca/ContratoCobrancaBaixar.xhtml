@@ -2991,7 +2991,13 @@
 					<p:outputLabel id="valorPresenteTotal"
 						value="#{contratoCobrancaMB.valorPresenteTotal}"
 						converter="bigDecimalConverter" />
-					</h:panelGrid>
+				</h:panelGrid>
+				
+				<div align="center">					
+					<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print" action="#{contratoCobrancaMB.downloadPDFQuitacao}" 
+					style="margin-bottom:10px;"/>
+					
+				</div>
 					
 					<p:dataTable id="dtParcelasQuitar" var="parcelas2"
 						value="#{contratoCobrancaMB.listContratoCobrancaDetalhesQuitar}"

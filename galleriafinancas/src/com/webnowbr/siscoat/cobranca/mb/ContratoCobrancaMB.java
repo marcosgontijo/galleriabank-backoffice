@@ -125,6 +125,8 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -6997,6 +6999,8 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorPresenteTotal;
 	private BigDecimal amortizacaoPresenteTotal;
 	private String tipoAmortizacao;
+	
+	private QuitacaoPDF quitacaoPDF = new QuitacaoPDF();
 
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault(); 
@@ -7121,6 +7125,7 @@ public class ContratoCobrancaMB {
 			}
 		}		
 	}
+	
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar;
 	
 	public void clearQuitarContratoDialog() {
@@ -7131,6 +7136,7 @@ public class ContratoCobrancaMB {
 		
 		this.numeroParcelaQuitar = 0;
 		this.dataQuitacao = auxDataHoje;
+		this.quitacaoPDF = new QuitacaoPDF();
 		
 		simularQuitacaoContrato();
 	}
@@ -7139,18 +7145,38 @@ public class ContratoCobrancaMB {
 		this.valorPresenteTotal = BigDecimal.ZERO;
 		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
 		
+		String cpf = "";
+		if(!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCpf())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCpf();
+		} else if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCnpj())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCnpj();
+		}
+		quitacaoPDF = new QuitacaoPDF(this.objetoContratoCobranca.getPagador().getNome(),
+				this.dataQuitacao,
+				this.objetoContratoCobranca.getNumeroContrato(),
+				cpf);
+		
 		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
 			if(parcelas.isParcelaPaga()) {
 				continue;
 			}
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+				
+				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
+				BigDecimal desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
+						parcelas.getDataVencimento(),
+						valorParcelaPDF,
+						desconto,
+						valorPresenteParcela);
+				quitacaoPDF.getParcelas().add(parcelaPDF);
 			}
 		}
+		quitacaoPDF.setValorQuitacao(valorPresenteTotal);
 	}
 	
 	public void amortizarContratoValorPresente() {
@@ -7352,6 +7378,39 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 
+	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {	
+		if (!CommonsUtil.semValor(this.quitacaoPDF.getParcelas())) {
+			JasperPrint jp = null;
+			jp = geraPDFSimulacao();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String identificacao = quitacaoPDF.getNome();
+			if (CommonsUtil.semValor(identificacao))
+				gerador.open("Galleria Bank - Quitação.pdf");
+			else
+				gerador.open(String.format("Galleria Bank - Quitação %s.pdf", identificacao));
+			gerador.feed(jp);
+			gerador.close();
+		}
+		return null;
+	}
+	
+	public JasperPrint geraPDFSimulacao() throws JRException, IOException {
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("QuitacaoContrato");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("QuitacaoParcelas");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", true);
+		List<QuitacaoPDF> list = new ArrayList<QuitacaoPDF>();
+		list.add(quitacaoPDF);
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
+	}
+	
 	public Date getDataAmortizacao() {
 		return dataAmortizacao;
 	}
