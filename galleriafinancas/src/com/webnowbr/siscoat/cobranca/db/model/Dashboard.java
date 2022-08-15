@@ -30,12 +30,26 @@ public class Dashboard implements Serializable {
 	private Responsavel responsavel;
 	private String nomeResponsavel;
 	private String gerenteResponsavel;
+	private String origemLead;
 	private int totalNovosContratos;
+	
 	
 	
 	private int contratosCadastrados;
 	private BigDecimal valorContratosCadastrados;
 	private List<ContratoCobranca> listaCadastrados;
+	
+	private int leadsEmTratamento;
+	private BigDecimal valorLeadsEmTratamento;
+	private List<ContratoCobranca> listaLeadsEmTratamento;
+	
+	private int leadsReprovados;
+	private BigDecimal valorLeadsReprovados;
+	private List<ContratoCobranca> listaLeadsReprovados;
+	
+	private int leadsCompletos;
+	private BigDecimal valorLeadscompletos;
+	private List<ContratoCobranca> listaLeadsCompletos;
 	
 	private int contratosPreAprovados;
 	private BigDecimal valorContratosPreAprovados;
@@ -409,5 +423,85 @@ public class Dashboard implements Serializable {
 
 	public void setEmprestimocomgarantiadeimovel(int emprestimocomgarantiadeimovel) {
 		this.emprestimocomgarantiadeimovel = emprestimocomgarantiadeimovel;
+	}
+
+	public int getLeadsEmTratamento() {
+		return leadsEmTratamento;
+	}
+
+	public void setLeadsEmTratamento(int leadsEmTratamento) {
+		this.leadsEmTratamento = leadsEmTratamento;
+	}
+
+	public BigDecimal getValorLeadsEmTratamento() {
+		return valorLeadsEmTratamento;
+	}
+
+	public void setValorLeadsEmTratamento(BigDecimal valorLeadsEmTratamento) {
+		this.valorLeadsEmTratamento = valorLeadsEmTratamento;
+	}
+
+	public List<ContratoCobranca> getListaLeadsEmTratamento() {
+		return listaLeadsEmTratamento;
+	}
+
+	public void setListaLeadsEmTratamento(List<ContratoCobranca> listaLeadsEmTratamento) {
+		this.listaLeadsEmTratamento = listaLeadsEmTratamento;
+	}
+
+	public int getLeadsReprovados() {
+		return leadsReprovados;
+	}
+
+	public void setLeadsReprovados(int leadsReprovados) {
+		this.leadsReprovados = leadsReprovados;
+	}
+
+	public BigDecimal getValorLeadsReprovados() {
+		return valorLeadsReprovados;
+	}
+
+	public void setValorLeadsReprovados(BigDecimal valorLeadsReprovados) {
+		this.valorLeadsReprovados = valorLeadsReprovados;
+	}
+
+	public List<ContratoCobranca> getListaLeadsReprovados() {
+		return listaLeadsReprovados;
+	}
+
+	public void setListaLeadsReprovados(List<ContratoCobranca> listaLeadsReprovados) {
+		this.listaLeadsReprovados = listaLeadsReprovados;
+	}
+
+	public String getOrigemLead() {
+		return origemLead;
+	}
+
+	public void setOrigemLead(String origemLead) {
+		this.origemLead = origemLead;
+	}
+
+	public int getLeadsCompletos() {
+		return leadsCompletos;
+	}
+
+	public void setLeadsCompletos(int leadsCompletos) {
+		this.leadsCompletos = leadsCompletos;
+	}
+
+	public BigDecimal getValorLeadscompletos() {
+		return valorLeadscompletos;
+	}
+
+	public void setValorLeadscompletos(BigDecimal valorLeadscompletos) {
+		this.valorLeadscompletos = valorLeadscompletos;
+	}
+
+	public List<ContratoCobranca> getListaLeadsCompletos() {
+		return listaLeadsCompletos;
+	}
+
+	public void setListaLeadsCompletos(List<ContratoCobranca> listaLeadsCompletos) {
+		this.listaLeadsCompletos = listaLeadsCompletos;
 	}	
 }

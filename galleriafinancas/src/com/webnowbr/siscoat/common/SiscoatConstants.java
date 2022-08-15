@@ -14,10 +14,11 @@ public class SiscoatConstants {
 	public static final BigDecimal SEGURO_MIP = BigDecimal.valueOf(0.021); // seguro MIP: 0,021% sobre saldo devedor parcela anterior;
 	public static final BigDecimal SEGURO_DFI = BigDecimal.valueOf(0.0037); // seguro DFI: 0,0037% sobre o valor do imóvel;
 	public static final BigDecimal SEGURO_DFI_6_DIGITOS = BigDecimal.valueOf(0.000037); // seguro DFI: 0,0037% sobre o valor do imóvel;
-
-	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_LIQUIDO = BigDecimal.valueOf(3.2);
-	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO = BigDecimal.valueOf(3);
-	public static final BigDecimal CUSTO_EMISSAO_MINIMO 	 = BigDecimal.valueOf(3500);
+	public static final BigDecimal SEGURO_MIP_5_DIGITOS = BigDecimal.valueOf(0.00021); // seguro MIP: 0,021% sobre saldo devedor parcela anterior;
+	
+	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_LIQUIDO = BigDecimal.valueOf(4.1);
+	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO = BigDecimal.valueOf(4);
+	public static final BigDecimal CUSTO_EMISSAO_MINIMO = BigDecimal.valueOf(3500);
 	
 	public static final BigDecimal VALOR_FIDC = BigDecimal.valueOf(75000000);
 	public static final BigDecimal TAXA_AA_FIDC = BigDecimal.valueOf(5.8);

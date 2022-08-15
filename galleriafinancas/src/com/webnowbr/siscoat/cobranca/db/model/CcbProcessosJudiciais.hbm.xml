@@ -17,6 +17,10 @@
 		<property name="processoInseridoContrato" type="boolean">
 			<column name="processoInseridoContrato" not-null="true" default="false" />
 		</property>	
+		
+		<property name="numero" type="java.lang.String">
+			<column name="numero" />
+		</property>
         
     </class>
 </hibernate-mapping>

@@ -2497,12 +2497,29 @@
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
-						<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;"/>  							
+						<h:panelGroup>
+							<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;"/>  		
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorIptu" value="Valor IPTU: " />
+							<p:inputText id="valorIptu"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorIptu}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>					
 						
 						<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " />
-						<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+						<h:panelGroup>
+							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorCondominio" value="Valor Condomínio: " />
+							<p:inputText id="valorCondominio"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorCondominio}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>
 						
-
 						<p:outputLabel for="valorEstimado"
 							value="Qual o valor estimado do imóvel? " />
 						<p:inputText id="valorEstimado"
@@ -2744,6 +2761,7 @@
 								<f:selectItem itemValue="Price" itemLabel="Price" />
 								<f:selectItem itemValue="SAC" itemLabel="SAC" />
 								<f:selectItem itemValue="Americano" itemLabel="Americano" />
+								<f:selectItem itemValue="Price [IPCA Novo]" itemLabel="Price [IPCA Novo]" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="qtdeParcelas" value="Número de Parcelas: "
@@ -2818,15 +2836,13 @@
 						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
 
 						<f:facet name="header"> Contas a Pagar 
-							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+							<p:outputLabel value="" />							
 								<p:selectBooleanButton
 									value="#{contratoCobrancaMB.addContasPagar}"
 									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
 									onIcon="ui-icon-plus" offIcon="ui-icon-plus">
 									<p:ajax update=":form:ContasPagarPanel" event="change" />
 								</p:selectBooleanButton>
-							</shiro:hasAnyRoles>
 						</f:facet>
 
 						<p:outputLabel for="ContaPagarValorTotal"
@@ -2974,8 +2990,7 @@
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-								<p:spacer height="10" />
-								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<p:spacer height="10" />					
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
 										update=":form:ContasPagarPanel" />
@@ -2983,7 +2998,6 @@
 									<p:commandButton value="Remover" icon="ui-icon-trash"
 										action="#{contratoCobrancaMB.removerConta(contas)}"
 										ajax="true" update=":form:ContasPagarPanel" />
-								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>
 					</p:panel>
@@ -3468,12 +3482,69 @@
 				</p:dataView>
 			</p:panel>
 			
+			<p:messages id="msgArquivo"/>
+			
+			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
+				<p:panel id="UploadArquivosComite" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;" >						
+					<p:panel id="ArquivosComite" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
+						<h:panelGrid columns="1">		
+							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileComiteUpload}" mode="advanced" dragDropSupport="true"
+	                          update="ArquivosComiteSalvos msgArquivo" />								
+						</h:panelGrid>  
+					</p:panel>	
+					
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+	
+					<p:panel id="ArquivosComiteSalvos" header="Arquivo(s) Comite Salvo(s) no Contrato" style="margin-bottom:10px;">							
+						<h:panelGrid columns="1">			                      								
+							<p:dataTable id="dtFilesComite" var="filesComite" value="#{contratoCobrancaMB.filesComite}" rowKey="#{filesComite.name}" selection="#{contratoCobrancaMB.deletefilesComite}" emptyMessage="" sortBy="#{filesComite.name}" >	
+								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+								 <f:facet name="header">											 
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>
+						        </f:facet>	        
+						        <p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{filesComite.name}"
+									filterMatchMode="contains" sortBy="#{filesComite.name}">
+									<h:outputText value="#{filesComite.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileComite(filesComite.name)}"
+										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									</p:commandButton>
+								</p:column>  
+						        
+						        <p:column style="width:100px;">
+									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesComite}" />
+							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+							    	</p:commandButton>	
+					            </p:column>						        
+	
+					             <f:facet name="footer">
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>								
+						        </f:facet>             	        		               		        			        			           			 		
+							</p:dataTable>								
+						</h:panelGrid>  
+					</p:panel>
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+					</script>
+				</p:panel>	
+			</shiro:hasAnyRoles>
+			
 		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
-			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;">						
-				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
+			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;">						
+				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosInternosSalvos" />								
+                          update="ArquivosInternosSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				
@@ -3481,7 +3552,7 @@
 				    <p:graphicImage name="image/ajaxloadingbar.gif" />
 				</p:dialog>
 
-				<p:panel id="ArquivosInternosSalvos" header="Arquivo(s) Comite Salvo(s) no Contrato" style="margin-bottom:10px;">							
+				<p:panel id="ArquivosInternosSalvos" header="Arquivo(s) Interno(s) Salvo(s) no Contrato" style="margin-bottom:10px;">							
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
@@ -3494,9 +3565,7 @@
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
 								filterMatchMode="contains" sortBy="#{filesInterno.name}">
-								<h:outputText
-								
-										value="#{filesInterno.name}" />
+								<h:outputText value="#{filesInterno.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
 									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
@@ -3535,7 +3604,7 @@
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosFaltantesSalvos" />								
+                          update="ArquivosFaltantesSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				
@@ -3589,7 +3658,7 @@
 					<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
-	                          update="ArquivosJuridicoSalvos" />								
+	                          update="ArquivosJuridicoSalvos msgArquivo" />								
 						</h:panelGrid>  
 					</p:panel>	
 					
@@ -3640,12 +3709,14 @@
 					</script>
 				</p:panel>	
 			</shiro:hasAnyRoles>
+			
+			<p:messages/>
 		
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosSalvos" />								
+                          update="ArquivosSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				

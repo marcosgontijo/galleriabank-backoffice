@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SimulacaoCredito" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d6f84b1d-74a6-4d85-bda1-e1a585e9a775">
+	<subDataset name="grafico" uuid="86d4c445-b7c6-4cd1-a5a7-17279cc5efad">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="valorCredito" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[valorCredito]]></fieldDescription>
+		</field>
+		<field name="valorImovel" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[valorImovel]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="SUBREPORT_DETALHE" class="net.sf.jasperreports.engine.JasperReport">
+		<defaultValueExpression><![CDATA["SimulacaoCreditoParcelas.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMAGEMLOGO" class="java.lang.Object"/>
+	<parameter name="MOSTRARIPCA" class="java.lang.Boolean"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="parcelas" class="java.util.List">
+		<fieldDescription><![CDATA[parcelas]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="data" class="java.util.Date">
+		<fieldDescription><![CDATA[data]]></fieldDescription>
+	</field>
+	<field name="numeroOp" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroOp]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[cpf]]></fieldDescription>
+	</field>
+	<field name="valorQuitacao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorQuitacao]]></fieldDescription>
+	</field>
+	<background>
+		<band height="20" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="132" splitType="Stretch">
+			<image>
+				<reportElement x="189" y="0" width="200" height="93" uuid="ae7fc29e-d149-4f7a-b741-78e5a1dc6472"/>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( (byte[]) $P{IMAGEMLOGO} )]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="45" y="100" width="460" height="25" forecolor="#EDFFF4" backcolor="#76A44A" uuid="49ca9743-7d08-49c7-97cc-43b1bca47ee1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="17" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quitação]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="173" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="285" y="30" width="129" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="d0031bf6-0e1e-4a79-b740-777c22204b88">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="285" y="5" width="111" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="8343ac98-c985-41bd-b593-06abdef4dad3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="175" y="30" width="91" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="6e58ce9b-12f4-4081-9a46-4dc1b1bf14a1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CPF/CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="216" y="5" width="50" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="97b4c55c-368a-45f1-a36a-c705846d4fc0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="285" y="55" width="110" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="d9ae22cd-7353-4364-b99c-b000b9a79c39">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorQuitacao})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="156" y="55" width="110" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="2f160151-043f-4183-8743-498ed2387116">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Quitação:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="195" y="80" width="71" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="041016df-ccd2-4fdd-90db-584b827f2507">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Operação:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="148" y="105" width="118" height="25" forecolor="#4C7032" backcolor="rgba(255, 255, 255, 0.0)" uuid="58ec2bbe-8973-4463-8c0e-8b915d06800a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data da Simulação:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="285" y="105" width="110" height="25" uuid="3a2f0ef4-ae36-4a88-87cf-bd0bf1c6daf7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{data})]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="285" y="80" width="110" height="25" backcolor="rgba(255, 255, 255, 0.0)" uuid="8d7b5ce6-04fc-4b33-b610-8e0d1fd35cc7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroOp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<subreport>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="99be1b1a-56f4-4d04-84b3-6dc00563d2c7">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="MOSTRARIPCA">
+					<subreportParameterExpression><![CDATA[$P{MOSTRARIPCA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{parcelas})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="52" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

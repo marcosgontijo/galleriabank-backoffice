@@ -87,5 +87,13 @@
 			<column name="comprovanteIptuImovelCheckList" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="valorIptu" type="big_decimal">
+			<column name="valorIptu" />
+		</property> 
+		
+		<property name="valorCondominio" type="big_decimal">
+			<column name="valorCondominio" />
+		</property> 
+		
     </class>
 </hibernate-mapping>

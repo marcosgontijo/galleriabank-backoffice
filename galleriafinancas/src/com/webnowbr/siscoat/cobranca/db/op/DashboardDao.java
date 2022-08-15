@@ -93,7 +93,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -129,7 +129,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -165,7 +165,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -201,7 +201,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -237,7 +237,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -273,7 +273,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.aprovadoComite = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -338,7 +338,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -374,7 +374,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -410,7 +410,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
 			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
@@ -446,7 +446,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and AgAssinaturaData >= ? ::timestamp "
 			+ "		and AgAssinaturaData <= ? ::timestamp "
@@ -482,7 +482,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and agRegistroData >= ? ::timestamp "
 			+ "		and agRegistroData <= ? ::timestamp "
@@ -518,7 +518,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		r.id = c.responsavel "
 			+ "	inner join cobranca.pagadorrecebedor p on "
 			+ "		p.id = c.pagador "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.aprovadoComite = 'true' "
 			+ "		and aprovadoComiteData >= ? ::timestamp "
 			+ "		and aprovadoComiteData <= ? ::timestamp "
@@ -812,7 +812,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -852,7 +852,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -892,7 +892,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -932,7 +932,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -972,7 +972,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1012,7 +1012,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.aprovadoComite = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1081,7 +1081,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1121,7 +1121,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1161,7 +1161,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
 			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
@@ -1201,7 +1201,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and AgAssinaturaData >= ? ::timestamp "
 			+ "		and AgAssinaturaData <= ? ::timestamp "
@@ -1241,7 +1241,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and agRegistroData >= ? ::timestamp "
 			+ "		and agRegistroData <= ? ::timestamp "
@@ -1281,7 +1281,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join cobranca.responsavel r1 on "
 			+ "		r1.id = r.donoResponsavel "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AprovadoComite = 'true' "
 			+ "		and AprovadoComiteData >= ? ::timestamp "
 			+ "		and AprovadoComiteData <= ? ::timestamp "
@@ -1599,7 +1599,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1640,7 +1640,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1681,7 +1681,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1722,7 +1722,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1763,7 +1763,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1804,7 +1804,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AprovadoComite = 'true' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1903,7 +1903,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.statuslead = 'Completo' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1944,7 +1944,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.cadastroaprovadovalor = 'Aprovado' "
 			+ "		and inicioanalisedata >= ? ::timestamp "
 			+ "		and inicioanalisedata <= ? ::timestamp "
@@ -1985,7 +1985,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.pagtolaudoconfirmada = 'true' "
 			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
 			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
@@ -2026,7 +2026,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AgAssinatura = 'false' "
 			+ "		and AgAssinaturaData >= ? ::timestamp "
 			+ "		and AgAssinaturaData <= ? ::timestamp "
@@ -2067,7 +2067,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.status = 'Aprovado' "
 			+ "		and agRegistroData >= ? ::timestamp "
 			+ "		and agRegistroData <= ? ::timestamp "
@@ -2108,7 +2108,7 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ "		p.id = c.pagador "
 			+ "	left join COBRANCA.RESPONSAVEL R1 on "
 			+ "		R1.ID = R.DONORESPONSAVEL "
-			+ "	where "
+			+ "	where c.numerocontrato is not null and"
 			+ "		c.AprovadoComite = 'true' "
 			+ "		and AprovadoComiteData >= ? ::timestamp "
 			+ "		and AprovadoComiteData <= ? ::timestamp "
@@ -2455,6 +2455,1107 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						contrato.setMotivoReprovaSelectItem(rs.getString("motivoReprovaSelectItem"));
 
 						objects.add(contrato);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	
+	private static final String QUERY_DASH_CONTRATOS_LEADS = " select "
+			+ "	origemLead, "
+			+ "	sum(contratosCadastrados) contratosCadastrados, "
+			+ "	sum(valorContratosCadastrados) valorContratosCadastrados, "
+			+ "	string_agg(numerosCadastrados, '#$&!') numerosCadastrados, "
+			+ "	sum(leadsEmTratamento) leadsEmTratamento, "
+			+ "	sum(valorLeadsEmTratamento) valorLeadsEmTratamento, "
+			+ "	string_agg(numerosLeadsEmTratamento, '#$&!') numerosLeadsEmTratamento, "
+			+ "	sum(leadsReprovados) leadsReprovados, "
+			+ "	sum(valorLeadsReprovados) valorLeadsReprovados, "
+			+ "	string_agg(numerosLeadsReprovados, '#$&!') numerosLeadsReprovados, "
+			+ "	sum(leadsCompletos) leadsCompletos, "
+			+ "	sum(valorLeadsCompletos) valorLeadsCompletos, "
+			+ "	string_agg(numerosLeadsCompletos, '#$&!') numerosLeadsCompletos, "
+			+ "	sum(contratosPreAprovados) contratosPreAprovados, "
+			+ "	sum(valorContratosPreAprovados) valorContratosPreAprovados, "
+			+ "	string_agg(numerosPREAPROVADOS, '#$&!') numerosPREAPROVADOS, "
+			+ "	sum(contratosBoletosPagos) contratosBoletosPagos, "
+			+ "	sum(valorBoletosPagos) valorBoletosPagos, "
+			+ "	string_agg(numerosBOLETOSPAGOS, '#$&!') numerosBOLETOSPAGOS, "
+			+ "	sum(contratosCcbsEmitidas) contratosCcbsEmitidas, "
+			+ "	sum(valorCcbsEmitidas) valorCcbsEmitidas, "
+			+ "	string_agg(numerosCCBSEMITIDAS, '#$&!') numerosCCBSEMITIDAS, "
+			+ "	sum(contratosRegistrados) contratosRegistrados, "
+			+ "	sum(valorContratosRegistrados) valorContratosRegistrados, "
+			+ "	string_agg(numerosREGISTRADOS, '#$&!') numerosREGISTRADOS, "
+			+ "	sum(contratosComite) contratosComite, "
+			+ "	sum(valorComite) valorComite, "
+			+ "	string_agg(numerosCOMITE, '#$&!') numerosCOMITE "
+			+ " from "
+			+ "	( "
+			+ "	select   "
+			+ "		c.urllead origemLead, "
+			+ "		count(c.id) contratosCadastrados, "
+			+ "		sum(c.quantoPrecisa) valorContratosCadastrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.contratolead "
+			+ "		and c.status != 'Aprovados' "
+			+ "		and c.dataContrato >= ? ::timestamp "
+			+ "		and c.dataContrato <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados,	 "
+			+ "		count(c.id) leadsEmTratamento, "
+			+ "		sum(c.quantoPrecisa) valorLeadsEmTratamento, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados,	 "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Em Tratamento' "
+			+ "		and c.contratolead "
+			+ "		and dataContrato >= ? ::timestamp "
+			+ "		and dataContrato <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all  "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados,	 "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		count(c.id) leadsReprovados, "
+			+ "		sum(c.quantoPrecisa) valorLeadsReprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsReprovados,		 "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and dataContrato >= ? ::timestamp "
+			+ "		and dataContrato <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all  "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		count(c.id) leadsCompletos, "
+			+ "		sum(c.quantoPrecisa) valorLeadsCompletos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Completo' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		count(c.id) contratosPreAprovados, "
+			+ "		sum(c.quantoPrecisa) valorContratosPreAprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.cadastroaprovadovalor = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		count(c.id) contratosBoletosPagos, "
+			+ "		sum(c.quantoPrecisa) valorBoletosPagos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.pagtolaudoconfirmada = 'true' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		count(c.id) contratosCcbsEmitidas, "
+			+ "		sum(c.valorccb) valorCcbsEmitidas, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.AgAssinatura = 'false' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		count(c.id) contratosRegistrados, "
+			+ "		sum(c.valorccb) valorContratosRegistrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.status = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		count(c.id) contratosComite, "
+			+ "		sum(c.valorAprovadoComite) valorComite , "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.aprovadoComite = 'true' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato ) totais "
+			+ " group by "
+			+ "	origemLead ";
+	
+	private static final String QUERY_DASH_CONTRATOS_LEADS_POR_STATUS = " select "
+			+ "	origemLead, "
+			+ "	sum(contratosCadastrados) contratosCadastrados, "
+			+ "	sum(valorContratosCadastrados) valorContratosCadastrados, "
+			+ "	string_agg(numerosCadastrados, '#$&!') numerosCadastrados, "
+			+ "	sum(leadsEmTratamento) leadsEmTratamento, "
+			+ "	sum(valorLeadsEmTratamento) valorLeadsEmTratamento, "
+			+ "	string_agg(numerosLeadsEmTratamento, '#$&!') numerosLeadsEmTratamento, "
+			+ "	sum(leadsReprovados) leadsReprovados, "
+			+ "	sum(valorLeadsReprovados) valorLeadsReprovados, "
+			+ "	string_agg(numerosLeadsReprovados, '#$&!') numerosLeadsReprovados, "
+			+ "	sum(leadsCompletos) leadsCompletos, "
+			+ "	sum(valorLeadsCompletos) valorLeadsCompletos, "
+			+ "	string_agg(numerosLeadsCompletos, '#$&!') numerosLeadsCompletos, "
+			+ "	sum(contratosPreAprovados) contratosPreAprovados, "
+			+ "	sum(valorContratosPreAprovados) valorContratosPreAprovados, "
+			+ "	string_agg(numerosPREAPROVADOS, '#$&!') numerosPREAPROVADOS, "
+			+ "	sum(contratosBoletosPagos) contratosBoletosPagos, "
+			+ "	sum(valorBoletosPagos) valorBoletosPagos, "
+			+ "	string_agg(numerosBOLETOSPAGOS, '#$&!') numerosBOLETOSPAGOS, "
+			+ "	sum(contratosCcbsEmitidas) contratosCcbsEmitidas, "
+			+ "	sum(valorCcbsEmitidas) valorCcbsEmitidas, "
+			+ "	string_agg(numerosCCBSEMITIDAS, '#$&!') numerosCCBSEMITIDAS, "
+			+ "	sum(contratosRegistrados) contratosRegistrados, "
+			+ "	sum(valorContratosRegistrados) valorContratosRegistrados, "
+			+ "	string_agg(numerosREGISTRADOS, '#$&!') numerosREGISTRADOS, "
+			+ "	sum(contratosComite) contratosComite, "
+			+ "	sum(valorComite) valorComite, "
+			+ "	string_agg(numerosCOMITE, '#$&!') numerosCOMITE "
+			+ " from "
+			+ "	( "
+			+ "	select   "
+			+ "		c.urllead origemLead, "
+			+ "		count(c.id) contratosCadastrados, "
+			+ "		sum(c.quantoPrecisa) valorContratosCadastrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.contratolead "
+			+ "		and c.status != 'Aprovados' "
+			+ "		and c.dataContrato >= ? ::timestamp "
+			+ "		and c.dataContrato <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados,	 "
+			+ "		count(c.id) leadsEmTratamento, "
+			+ "		sum(c.quantoPrecisa) valorLeadsEmTratamento, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados,	 "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Em Tratamento' "
+			+ "		and c.contratolead "
+			+ "		and LeadEmTratamentoData >= ? ::timestamp "
+			+ "		and LeadEmTratamentoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all  "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados,	 "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		count(c.id) leadsReprovados, "
+			+ "		sum(c.quantoPrecisa) valorLeadsReprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsReprovados,		 "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all  "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		count(c.id) leadsCompletos, "
+			+ "		sum(c.quantoPrecisa) valorLeadsCompletos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.statuslead = 'Completo' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		count(c.id) contratosPreAprovados, "
+			+ "		sum(c.quantoPrecisa) valorContratosPreAprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.cadastroaprovadovalor = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and CadastroAprovadoData >= ? ::timestamp "
+			+ "		and CadastroAprovadoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		count(c.id) contratosBoletosPagos, "
+			+ "		sum(c.quantoPrecisa) valorBoletosPagos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.pagtolaudoconfirmada = 'true' "
+			+ "		and c.contratolead "
+			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
+			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		count(c.id) contratosCcbsEmitidas, "
+			+ "		sum(c.valorccb) valorCcbsEmitidas, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.AgAssinatura = 'false' "
+			+ "		and c.contratolead "
+			+ "		and AgAssinaturaData >= ? ::timestamp "
+			+ "		and AgAssinaturaData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		count(c.id) contratosRegistrados, "
+			+ "		sum(c.valorccb) valorContratosRegistrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.status = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and agRegistroData >= ? ::timestamp "
+			+ "		and agRegistroData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		count(c.id) contratosComite, "
+			+ "		sum(c.valorAprovadoComite) valorComite , "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	where c.numerocontrato is not null and "
+			+ "		c.aprovadoComite = 'true' "
+			+ "		and c.contratolead "
+			+ "		and aprovadoComiteData >= ? ::timestamp "
+			+ "		and aprovadoComiteData <= ? ::timestamp "
+			+ "	group by "
+			+ "		c.urllead, "
+			+ "		c.datacontrato ) totais "
+			+ " group by "
+			+ "	origemLead ";
+	
+	@SuppressWarnings("unchecked")
+	public List<Dashboard> getDashboardContratosLead(final Date dataInicio, final Date dataFim, boolean consultarPorStatus) {
+		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<Dashboard> objects = new ArrayList<Dashboard>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					if(consultarPorStatus) {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_POR_STATUS);					
+					} else {					
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS);						
+					}
+					
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);
+
+					ps.setDate(5, dtRelInicioSQL);
+					ps.setDate(6, dtRelFimSQL);
+
+					ps.setDate(7, dtRelInicioSQL);
+					ps.setDate(8, dtRelFimSQL);
+
+					ps.setDate(9, dtRelInicioSQL);
+					ps.setDate(10, dtRelFimSQL);
+					
+					ps.setDate(11, dtRelInicioSQL);
+					ps.setDate(12, dtRelFimSQL);
+					
+					ps.setDate(13, dtRelInicioSQL);
+					ps.setDate(14, dtRelFimSQL);
+
+					ps.setDate(15, dtRelInicioSQL);
+					ps.setDate(16, dtRelFimSQL);
+					
+					ps.setDate(17, dtRelInicioSQL);
+					ps.setDate(18, dtRelFimSQL);
+					
+					rs = ps.executeQuery();
+
+					Dashboard dashboard = new Dashboard();
+
+					ResponsavelDao responsavelDao = new ResponsavelDao();
+					Responsavel responsavel = new Responsavel();
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					
+					
+
+					while (rs.next()) {
+						dashboard = new Dashboard();
+						
+						dashboard.setOrigemLead(rs.getString("origemLead"));
+
+						dashboard.setContratosCadastrados(rs.getInt("contratosCadastrados"));
+						dashboard.setValorContratosCadastrados(rs.getBigDecimal("valorContratosCadastrados"));					
+							
+						dashboard.setLeadsEmTratamento(rs.getInt("leadsEmTratamento"));
+						dashboard.setValorLeadsEmTratamento(rs.getBigDecimal("valorLeadsEmTratamento"));
+						
+						dashboard.setLeadsReprovados(rs.getInt("leadsReprovados"));
+						dashboard.setValorLeadsReprovados(rs.getBigDecimal("valorLeadsReprovados"));
+						
+						dashboard.setLeadsCompletos(rs.getInt("leadsCompletos"));
+						dashboard.setValorLeadscompletos(rs.getBigDecimal("valorLeadsCompletos"));
+
+						dashboard.setContratosPreAprovados(rs.getInt("contratosPreAprovados"));
+						dashboard.setValorContratosPreAprovados(rs.getBigDecimal("valorContratosPreAprovados"));
+											
+						dashboard.setContratosBoletosPagos(rs.getInt("contratosBoletosPagos"));
+						dashboard.setValorBoletosPagos(rs.getBigDecimal("valorBoletosPagos"));
+											
+						dashboard.setContratosCcbsEmitidas(rs.getInt("contratosCcbsEmitidas"));
+						dashboard.setValorCcbsEmitidas(rs.getBigDecimal("valorCcbsEmitidas"));
+										
+						dashboard.setContratosRegistrados(rs.getInt("contratosRegistrados"));
+						dashboard.setValorContratosRegistrados(rs.getBigDecimal("valorContratosRegistrados"));
+						
+						dashboard.setContratosComite(rs.getInt("contratosComite"));
+						dashboard.setValorContratosComite(rs.getBigDecimal("valorComite"));
+						
+						//recebe os contratos
+						List<String> listaCadastrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosCadastrados"))) {
+							listaCadastrados = Arrays.asList(rs.getString("numerosCadastrados").split(Pattern.quote("#$&!")));
+							dashboard.setListaCadastrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCadastrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCadastrados().add(coco);
+							}				
+							dashboard.setListaCadastrados(getTaxasDashboard(dashboard.getListaCadastrados()));
+						}
+						
+						List<String> listaLeadsEmTratamento = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsEmTratamento"))) {
+							listaLeadsEmTratamento = Arrays.asList(rs.getString("numerosLeadsEmTratamento").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsEmTratamento(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsEmTratamento) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsEmTratamento().add(coco);
+							}				
+							dashboard.setListaLeadsEmTratamento(getTaxasDashboard(dashboard.getListaLeadsEmTratamento()));
+						}
+						
+						List<String> listaLeadsReprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsReprovados"))) {
+							listaLeadsReprovados = Arrays.asList(rs.getString("numerosLeadsReprovados").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsReprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsReprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsReprovados().add(coco);
+							}				
+							dashboard.setListaLeadsReprovados(getTaxasDashboard(dashboard.getListaLeadsReprovados()));
+						}
+						
+						List<String> listaLeadsCompletos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsCompletos"))) {
+							listaLeadsCompletos = Arrays.asList(rs.getString("numerosLeadsCompletos").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsCompletos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsCompletos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsCompletos().add(coco);
+							}				
+							dashboard.setListaLeadsCompletos(getTaxasDashboard(dashboard.getListaLeadsCompletos()));
+						}
+						
+						List<String> listaPreAprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosPREAPROVADOS"))) {
+							listaPreAprovados = Arrays.asList(rs.getString("numerosPREAPROVADOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaPreAprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaPreAprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaPreAprovados().add(coco);
+							}
+							
+							dashboard.setListaPreAprovados(getTaxasDashboard(dashboard.getListaPreAprovados()));
+						}
+						
+						List<String> listaBoletosPagos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosBOLETOSPAGOS"))) {
+							listaBoletosPagos = Arrays.asList(rs.getString("numerosBOLETOSPAGOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaBoletosPagos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaBoletosPagos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaBoletosPagos().add(coco);
+							}
+							dashboard.setListaBoletosPagos(getTaxasDashboard(dashboard.getListaBoletosPagos()));
+						}
+						
+						List<String> listaCcbsEmitidas = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosCCBSEMITIDAS"))) {
+							listaCcbsEmitidas = Arrays.asList(rs.getString("numerosCCBSEMITIDAS").split(Pattern.quote("#$&!")));
+							dashboard.setListaCcbsEmitidas(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCcbsEmitidas) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCcbsEmitidas().add(coco);
+							}
+							
+							dashboard.setListaCcbsEmitidas(getTaxasDashboard(dashboard.getListaCcbsEmitidas()));
+						}
+						
+						List<String> listaRegistrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosREGISTRADOS"))) {
+							listaRegistrados = Arrays.asList(rs.getString("numerosREGISTRADOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaRegistrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaRegistrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaRegistrados().add(coco);
+							}
+							dashboard.setListaRegistrados(getTaxasDashboard(dashboard.getListaRegistrados()));
+						}
+						
+						List<String> listaComite = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosComite"))) {
+							listaComite = Arrays.asList(rs.getString("numerosComite").split(Pattern.quote("#$&!")));
+							dashboard.setListaComite(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaComite) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaComite().add(coco);
+							}
+							dashboard.setListaComite(getTaxasDashboard(dashboard.getListaComite()));
+						}
+
+						objects.add(dashboard);
 					}
 
 				} finally {

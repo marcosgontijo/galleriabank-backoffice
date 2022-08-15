@@ -301,6 +301,8 @@ public class CcbMB {
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
+    private String numeroProcesso = "";
+    
     private CcbContrato objetoCcb = new CcbContrato();
     
     private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
@@ -627,8 +629,9 @@ public class CcbMB {
 	}
 	
 	public void addValorProcesso() {
-		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso));
-		valorProcesso = BigDecimal.ZERO;
+		this.objetoCcb.getProcessosJucidiais().add(new CcbProcessosJudiciais(valorProcesso, numeroProcesso));
+		valorProcesso = BigDecimal.ZERO;	
+		numeroProcesso = "";
 		calcularValorDespesa();
 	}
 	
@@ -664,6 +667,10 @@ public class CcbMB {
 			if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor()))
 				total = total.add(this.objetoCcb.getCondominioEmAtrasoValor());
 		}
+		if(isTemIq()) {
+			if(!CommonsUtil.semValor(this.objetoCcb.getIqValor()))
+				total = total.add(this.objetoCcb.getIqValor());
+		}
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
 				if(!CommonsUtil.semValor(processo.getValor()))
@@ -692,9 +699,10 @@ public class CcbMB {
 	
 	public String EmitirCcbPreContrato() {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-		this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
-		this.setTipoPesquisa("Emitente"); 
-		populateSelectedPagadorRecebedor();	
+		//this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
+		//this.setTipoPesquisa("Emitente"); 
+		//populateSelectedPagadorRecebedor();	
+		clearFieldsInserirCcb();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -5477,7 +5485,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
-				run.setText("REF.: Contrato de CCB nº " + this.objetoCcb.getNumeroCcb());
+				run.setText("REF.: Contrato de CCI nº " + this.objetoCcb.getNumeroCcb());
 				run.setFontSize(10);
 				run.setBold(true);
 				run.addCarriageReturn();
@@ -5502,7 +5510,7 @@ public class CcbMB {
 						+ " o GALLERIA FINANÇAS SECURITIZADORA S.A., inscrito no CNPJ/MF "
 						+ "sob nº 34.425.347/0001-06, adquiriu da BMP MONEY PLUS SOCIEDADE "
 						+ "DE CRÉDITO DIRETO S.A. os direitos de crédito, decorrentes da(s) "
-						+ "Cédula(s) de Crédito Bancário (“CCB”) em referência, celebrado por"
+						+ "Cédula(s) de Crédito Imobiliário (“CCI”) em referência, celebrado por"
 						+ " V. Sa(s), dos vencimentos a partir de ");
 				run.setFontSize(10);
 				run.setBold(false);
@@ -5549,7 +5557,7 @@ public class CcbMB {
 				run.setText("Assim, em face da operação contratada, fica(m) V. "
 						+ "Sa(s) notificadas que a partir de "+ this.objetoCcb.getDataDeEmissao().getDate() +" de "+
 						CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() +" de "+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) +","
-						+ " (inclusive), o pagamento das parcelas referentes a(s) CCB ");
+						+ " (inclusive), o pagamento das parcelas referentes a(s) CCI ");
 				run.setFontSize(10);
 				run.setBold(false);
 								
@@ -5908,17 +5916,20 @@ public class CcbMB {
 			run.addCarriageReturn();
 			
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca)) {
+				this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+				
+				this.objetoContratoCobranca.setValorCartaSplit(this.objetoCcb.getValorLiquidoCredito());
+				this.objetoContratoCobranca.setNomeBancarioCartaSplit(this.objetoCcb.getNomeEmitente());
+				this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoCcb.getCpfEmitente());
+				this.objetoContratoCobranca.setBancoBancarioCartaSplit(this.objetoCcb.getNomeBanco());
+				this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(this.objetoCcb.getAgencia());
+				this.objetoContratoCobranca.setContaBancarioCartaSplit(this.objetoCcb.getContaCorrente());		
+				
+				cDao.merge(this.objetoContratoCobranca);
+				this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);	
+			}
 			
-			this.objetoContratoCobranca.setValorCartaSplit(this.objetoCcb.getValorLiquidoCredito());
-			this.objetoContratoCobranca.setNomeBancarioCartaSplit(this.objetoCcb.getNomeEmitente());
-			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoCcb.getCpfEmitente());
-			this.objetoContratoCobranca.setBancoBancarioCartaSplit(this.objetoCcb.getNomeBanco());
-			this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(this.objetoCcb.getAgencia());
-			this.objetoContratoCobranca.setContaBancarioCartaSplit(this.objetoCcb.getContaCorrente());		
-			
-			cDao.merge(this.objetoContratoCobranca);
-			this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);	
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
@@ -6095,8 +6106,10 @@ public class CcbMB {
 			run.setText("Valor");
 			
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
-			this.objetoPagadorRecebedor = objetoContratoCobranca.getPagador();
+			if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+				this.objetoContratoCobranca = cDao.findById(this.objetoCcb.getObjetoContratoCobranca().getId());
+				this.objetoPagadorRecebedor = objetoContratoCobranca.getPagador();
+			}
 			
 			if(this.temCustasCartorarias) {
 				XWPFTableRow tableRow1 = table.createRow();
@@ -6126,18 +6139,20 @@ public class CcbMB {
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCustasCartorariasValor(), "R$ "));
 				
 				if(!this.objetoCcb.isCustasInseridaContrato()) {
-					ContasPagar custasCartorarias = new ContasPagar();				
-					custasCartorarias.setDescricao("Cartório");
-					custasCartorarias.setValor(this.objetoCcb.getCustasCartorariasValor());
-					custasCartorarias.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					custasCartorarias.setContrato(this.objetoContratoCobranca);
-					custasCartorarias.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					custasCartorarias.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					custasCartorarias.setTipoDespesa("C");
-					custasCartorarias.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(custasCartorarias);
-					this.objetoCcb.setCustasInseridaContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar custasCartorarias = new ContasPagar();				
+						custasCartorarias.setDescricao("Cartório");
+						custasCartorarias.setValor(this.objetoCcb.getCustasCartorariasValor());
+						custasCartorarias.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						custasCartorarias.setContrato(this.objetoContratoCobranca);
+						custasCartorarias.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						custasCartorarias.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						custasCartorarias.setTipoDespesa("C");
+						custasCartorarias.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(custasCartorarias);
+						this.objetoCcb.setCustasInseridaContrato(true);
+					}
 				}
 				
 				
@@ -6172,18 +6187,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCertidaoDeCasamentoValor(), "R$ "));
 				if(!this.objetoCcb.isCertidaoInseridaContrato()) {
-					ContasPagar certidaoDeCasamento = new ContasPagar();				
-					certidaoDeCasamento.setDescricao("Certidão de Casamento");
-					certidaoDeCasamento.setValor(this.objetoCcb.getCertidaoDeCasamentoValor());
-					certidaoDeCasamento.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					certidaoDeCasamento.setContrato(this.objetoContratoCobranca);
-					certidaoDeCasamento.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					certidaoDeCasamento.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					certidaoDeCasamento.setTipoDespesa("C");
-					certidaoDeCasamento.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(certidaoDeCasamento);
-					this.objetoCcb.setCertidaoInseridaContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar certidaoDeCasamento = new ContasPagar();				
+						certidaoDeCasamento.setDescricao("Certidão de Casamento");
+						certidaoDeCasamento.setValor(this.objetoCcb.getCertidaoDeCasamentoValor());
+						certidaoDeCasamento.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						certidaoDeCasamento.setContrato(this.objetoContratoCobranca);
+						certidaoDeCasamento.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						certidaoDeCasamento.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						certidaoDeCasamento.setTipoDespesa("C");
+						certidaoDeCasamento.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(certidaoDeCasamento);
+						this.objetoCcb.setCertidaoInseridaContrato(true);
+					}
 				}
 			}
 			
@@ -6204,7 +6221,7 @@ public class CcbMB {
 
 				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
 				run.setFontSize(12);
-				run.setText("Boleto");
+				run.setText("Pix: " + this.objetoCcb.getIntermediacaoPix());
 				run.setColor("000000");	
 				
 				tableRow1.getCell(2).setParagraph(paragraph);
@@ -6216,18 +6233,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getLaudoDeAvaliacaoValor(), "R$ "));
 				if(!this.objetoCcb.isLaudoInseridoContrato()) {
-					ContasPagar laudoDeAvaliacao = new ContasPagar();				
-					laudoDeAvaliacao.setDescricao("Laudo De Avaliação");
-					laudoDeAvaliacao.setValor(this.objetoCcb.getLaudoDeAvaliacaoValor());
-					laudoDeAvaliacao.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					laudoDeAvaliacao.setContrato(this.objetoContratoCobranca);
-					laudoDeAvaliacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					laudoDeAvaliacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					laudoDeAvaliacao.setTipoDespesa("C");
-					laudoDeAvaliacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(laudoDeAvaliacao);
-					this.objetoCcb.setLaudoInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar laudoDeAvaliacao = new ContasPagar();				
+						laudoDeAvaliacao.setDescricao("Laudo De Avaliação");
+						laudoDeAvaliacao.setValor(this.objetoCcb.getLaudoDeAvaliacaoValor());
+						laudoDeAvaliacao.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						laudoDeAvaliacao.setContrato(this.objetoContratoCobranca);
+						laudoDeAvaliacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						laudoDeAvaliacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						laudoDeAvaliacao.setTipoDespesa("C");
+						laudoDeAvaliacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(laudoDeAvaliacao);
+						this.objetoCcb.setLaudoInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6262,30 +6281,32 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIntermediacaoValor(), "R$ "));
 				if(!this.objetoCcb.isIntermediacaoInseridoContrato()) {
-					ContasPagar intermediacao = new ContasPagar();				
-					intermediacao.setDescricao("Transferência");
-					intermediacao.setValor(this.objetoCcb.getIntermediacaoValor());
-					intermediacao.setFormaTransferencia("TED");
-					intermediacao.setBancoTed(this.objetoCcb.getIntermediacaoBanco());
-					intermediacao.setAgenciaTed(this.objetoCcb.getIntermediacaoAgencia());
-					intermediacao.setContaTed(this.objetoCcb.getContaCorrente());
-					intermediacao.setNomeTed(this.objetoCcb.getIntermediacaoNome());
-					intermediacao.setCpfTed(this.objetoCcb.getIntermediacaoCNPJ());	
-					
-					this.objetoContratoCobranca.setNomeBancarioContaPagar(this.objetoCcb.getIntermediacaoNome());
-					this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(this.objetoCcb.getIntermediacaoCNPJ());
-					this.objetoContratoCobranca.setBancoBancarioContaPagar(this.objetoCcb.getIntermediacaoBanco());
-					this.objetoContratoCobranca.setAgenciaBancarioContaPagar(this.objetoCcb.getIntermediacaoAgencia());
-					this.objetoContratoCobranca.setContaBancarioContaPagar(this.objetoCcb.getContaCorrente());		
-					
-					/////////////////////////////////////////////////////////////////////////////////////
-					intermediacao.setContrato(this.objetoContratoCobranca);
-					intermediacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					intermediacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					intermediacao.setTipoDespesa("C");
-					intermediacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(intermediacao);
-					this.objetoCcb.setIntermediacaoInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar intermediacao = new ContasPagar();				
+						intermediacao.setDescricao("Transferência");
+						intermediacao.setValor(this.objetoCcb.getIntermediacaoValor());
+						intermediacao.setFormaTransferencia("TED");
+						intermediacao.setBancoTed(this.objetoCcb.getIntermediacaoBanco());
+						intermediacao.setAgenciaTed(this.objetoCcb.getIntermediacaoAgencia());
+						intermediacao.setContaTed(this.objetoCcb.getContaCorrente());
+						intermediacao.setNomeTed(this.objetoCcb.getIntermediacaoNome());
+						intermediacao.setCpfTed(this.objetoCcb.getIntermediacaoCNPJ());	
+						
+						this.objetoContratoCobranca.setNomeBancarioContaPagar(this.objetoCcb.getIntermediacaoNome());
+						this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(this.objetoCcb.getIntermediacaoCNPJ());
+						this.objetoContratoCobranca.setBancoBancarioContaPagar(this.objetoCcb.getIntermediacaoBanco());
+						this.objetoContratoCobranca.setAgenciaBancarioContaPagar(this.objetoCcb.getIntermediacaoAgencia());
+						this.objetoContratoCobranca.setContaBancarioContaPagar(this.objetoCcb.getContaCorrente());		
+						
+						/////////////////////////////////////////////////////////////////////////////////////
+						intermediacao.setContrato(this.objetoContratoCobranca);
+						intermediacao.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						intermediacao.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						intermediacao.setTipoDespesa("C");
+						intermediacao.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(intermediacao);
+						this.objetoCcb.setIntermediacaoInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6298,7 +6319,7 @@ public class CcbMB {
 					run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 					run.setFontSize(12);
 					run.setColor("000000");
-					run.setText("Processo");
+					run.setText("Processo N° " + processo.getNumero());
 
 					tableRow1.getCell(1).setParagraph(paragraph);
 					tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -6318,17 +6339,19 @@ public class CcbMB {
 					run.setColor("000000");
 					run.setText(CommonsUtil.formataValorMonetario(processo.getValor()));
 					if(!processo.isProcessoInseridoContrato()) {
-						ContasPagar contaProcesso = new ContasPagar();				
-						contaProcesso.setDescricao("Processo");
-						contaProcesso.setValor(processo.getValor());
-						contaProcesso.setFormaTransferencia("Boleto");
-						/////////////////////////////////////////////////////////////////////////////////////
-						contaProcesso.setContrato(this.objetoContratoCobranca);
-						contaProcesso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-						contaProcesso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-						contaProcesso.setTipoDespesa("C");
-						contaProcesso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-						processo.setProcessoInseridoContrato(true);
+						if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+							ContasPagar contaProcesso = new ContasPagar();				
+							contaProcesso.setDescricao("Processo");
+							contaProcesso.setValor(processo.getValor());
+							contaProcesso.setFormaTransferencia("Boleto");
+							/////////////////////////////////////////////////////////////////////////////////////
+							contaProcesso.setContrato(this.objetoContratoCobranca);
+							contaProcesso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+							contaProcesso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+							contaProcesso.setTipoDespesa("C");
+							contaProcesso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+							processo.setProcessoInseridoContrato(true);
+						}
 					}
 				}
 			}
@@ -6362,18 +6385,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIptuEmAtrasoValor(), "R$ "));
 				if(!this.objetoCcb.isIptuInseridoContrato()) {
-					ContasPagar iptuAtraso = new ContasPagar();				
-					iptuAtraso.setDescricao("IPTU");
-					iptuAtraso.setValor(this.objetoCcb.getIptuEmAtrasoValor());
-					iptuAtraso.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					iptuAtraso.setContrato(this.objetoContratoCobranca);
-					iptuAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					iptuAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					iptuAtraso.setTipoDespesa("C");
-					iptuAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(iptuAtraso);
-					this.objetoCcb.setIptuInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar iptuAtraso = new ContasPagar();				
+						iptuAtraso.setDescricao("IPTU");
+						iptuAtraso.setValor(this.objetoCcb.getIptuEmAtrasoValor());
+						iptuAtraso.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						iptuAtraso.setContrato(this.objetoContratoCobranca);
+						iptuAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						iptuAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						iptuAtraso.setTipoDespesa("C");
+						iptuAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(iptuAtraso);
+						this.objetoCcb.setIptuInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6406,18 +6431,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCondominioEmAtrasoValor(), "R$ "));
 				if(!this.objetoCcb.isCondominioInseridoContrato()) {
-					ContasPagar comdominioEmAtraso = new ContasPagar();				
-					comdominioEmAtraso.setDescricao("Condomínio");
-					comdominioEmAtraso.setValor(this.objetoCcb.getCondominioEmAtrasoValor());
-					comdominioEmAtraso.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					comdominioEmAtraso.setContrato(this.objetoContratoCobranca);
-					comdominioEmAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					comdominioEmAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					comdominioEmAtraso.setTipoDespesa("C");
-					comdominioEmAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(comdominioEmAtraso);
-					this.objetoCcb.setCondominioInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar comdominioEmAtraso = new ContasPagar();				
+						comdominioEmAtraso.setDescricao("Condomínio");
+						comdominioEmAtraso.setValor(this.objetoCcb.getCondominioEmAtrasoValor());
+						comdominioEmAtraso.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						comdominioEmAtraso.setContrato(this.objetoContratoCobranca);
+						comdominioEmAtraso.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						comdominioEmAtraso.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						comdominioEmAtraso.setTipoDespesa("C");
+						comdominioEmAtraso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(comdominioEmAtraso);
+						this.objetoCcb.setCondominioInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6450,18 +6477,20 @@ public class CcbMB {
 				run.setColor("000000");
 				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getIqValor(), "R$ "));
 				if(!this.objetoCcb.isIqInseridoContrato()) {
-					ContasPagar iq = new ContasPagar();				
-					iq.setDescricao("IQ");
-					iq.setValor(this.objetoCcb.getIqValor());
-					iq.setFormaTransferencia("Boleto");
-					/////////////////////////////////////////////////////////////////////////////////////
-					iq.setContrato(this.objetoContratoCobranca);
-					iq.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-					iq.setPagadorRecebedor(this.objetoPagadorRecebedor);
-					iq.setTipoDespesa("C");
-					iq.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-					this.objetoContratoCobranca.getListContasPagar().add(iq);
-					this.objetoCcb.setIqInseridoContrato(true);
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar iq = new ContasPagar();				
+						iq.setDescricao("IQ");
+						iq.setValor(this.objetoCcb.getIqValor());
+						iq.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						iq.setContrato(this.objetoContratoCobranca);
+						iq.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						iq.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						iq.setTipoDespesa("C");
+						iq.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(iq);
+						this.objetoCcb.setIqInseridoContrato(true);
+					}
 				}
 			}
 			
@@ -6514,10 +6543,11 @@ public class CcbMB {
 			run2.addCarriageReturn();
 			run2.setText(documento + this.objetoCcb.getCpfEmitente());
 			
-			objetoContratoCobranca.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
-			
-			cDao.merge(this.objetoContratoCobranca);
-			this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);		
+			if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+				objetoContratoCobranca.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
+				cDao.merge(this.objetoContratoCobranca);
+				this.objetoCcb.setObjetoContratoCobranca(objetoContratoCobranca);		
+			}
 			
 			/*
 			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
@@ -6538,7 +6568,6 @@ public class CcbMB {
 
 			criarCcbNosistema();
 			
-		
 		} catch (JDBCException jdbce) {
 		    jdbce.getSQLException().getNextException().printStackTrace();
 		} catch (Throwable e) {
@@ -6771,6 +6800,7 @@ public class CcbMB {
 		}
 		String nacionalidade = null;
 		String estadoCivilStr;
+		String conjugeStr = "";
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
 
@@ -6789,15 +6819,13 @@ public class CcbMB {
 				estadoCivilStr = "casada";
 			} else {
 				estadoCivilStr = "casado";
-			}
+			}		
+			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
 		} else {
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
-		}
-		
-		String conjugeStr = "";
-		
-		if(CommonsUtil.mesmoValor(pessoa.getEstadocivil() , "CASADO")) {
-			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			if(participante.isUniaoEstavel()) {
+				estadoCivilStr = estadoCivilStr + " convivente em união estável";
+			}
 		}
 		
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
@@ -7173,7 +7201,9 @@ public class CcbMB {
 								text = trocaValoresXWPFCci(text, r, "valorDfiParcela", this.objetoCcb.getValorDfiParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDfiParcela", this.objetoCcb.getValorDfiParcela());
 								text = trocaValoresXWPFCci(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
-								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());									
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
+								
+								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
 								
 								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
 								
@@ -7195,9 +7225,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
 								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());								
-								text = trocaValoresXWPF(text, r, "nomeTestemunha", this.objetoCcb.getNomeTestemunha2());
-								text = trocaValoresXWPF(text, r, "cpfTestemunha", this.objetoCcb.getCpfTestemunha2());
-								text = trocaValoresXWPF(text, r, "rgTestemunha", this.objetoCcb.getRgTestemunha2());
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {
@@ -7311,6 +7341,262 @@ public class CcbMB {
 		return null;
 	}
 	
+	public StreamedContent geraCessao() throws IOException{
+		try {
+			XWPFDocument document;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+				}
+			}
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/CESSAO.docx"));
+					
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					participante.setTipoParticipante("DEVEDOR");
+				}
+			}
+			
+			for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());	
+						text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+						text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());				
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+						
+						if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
+							int iImagem = 0;
+							for(UploadedFile imagem :  filesList) {
+								r.addBreak();
+								this.populateFiles(iImagem);
+								r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+								r.addBreak();	
+								iImagem++;
+							}
+							text = trocaValoresXWPF(text, r, "ImagemImovel", "");						
+							adicionarEnter(text, r);
+						} else if(text != null && text.contains("ImagemImovel") && filesList.size() == 0) {
+							text = trocaValoresXWPF(text, r, "ImagemImovel", "");
+						}
+						
+						text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+						text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+						
+						text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+						text = trocaValoresNumeroExtensoXWPF(text, r, "NumeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+						text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+						
+						text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes());
+						text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.objetoCcb.getTaxaDeJurosAno());
+						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());			       
+					}
+			    }
+			}	
+										
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {}
+						}
+					}
+				}
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public StreamedContent geraInstrumentoEmissaoCCI() throws IOException{
+		try {
+			XWPFDocument document;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+				}
+			}
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/Instrumento_Emissao_CCI_BMP.docx"));
+					
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getLogradouroEmitente())) {
+						this.objetoCcb.setLogradouroEmitente(participante.getPessoa().getEndereco());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getNumeroEmitente())) {
+						this.objetoCcb.setNumeroEmitente(participante.getPessoa().getNumero());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getComplementoEmitente())) {
+						this.objetoCcb.setComplementoEmitente(participante.getPessoa().getComplemento());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCepEmitente())) {
+						this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getCidadeEmitente())) {
+						this.objetoCcb.setCidadeEmitente(participante.getPessoa().getCidade());
+					}
+					if(CommonsUtil.semValor(this.objetoCcb.getUfEmitente())) {
+						this.objetoCcb.setUfEmitente(participante.getPessoa().getEstado());
+					}				
+				}
+			}
+			
+			int prazoAno = CommonsUtil.intValue(this.objetoCcb.getPrazo()) / 12;
+			String prazoAnoStr = CommonsUtil.stringValue(prazoAno);
+			String estado = estadoPorExtenso(this.objetoCcb.getUfImovel());
+						
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);
+					            
+					            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+								text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+					            
+								text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	
+								text = trocaValoresXWPF(text, r, "cpfEmitente", this.objetoCcb.getCpfEmitente());								
+								text = trocaValoresXWPF(text, r, "logradouroEmitente", this.objetoCcb.getLogradouroEmitente());	
+								text = trocaValoresXWPF(text, r, "numeroEmitente", this.objetoCcb.getNumeroEmitente());	
+								text = trocaValoresXWPF(text, r, "complementoEmitente", this.objetoCcb.getComplementoEmitente());								
+								text = trocaValoresXWPF(text, r, "cepEmitente", this.objetoCcb.getCepEmitente());
+								text = trocaValoresXWPF(text, r, "cidadeEmitente", this.objetoCcb.getCidadeEmitente());			
+								text = trocaValoresXWPF(text, r, "ufEmitente", this.objetoCcb.getUfEmitente());							
+									
+								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());								
+				
+								text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+								text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+								text = trocaValoresXWPF(text, r, "ufImovel", estado);
+								text = trocaValoresXWPF(text, r, "estadoImovel", this.objetoCcb.getUfImovel());			
+								text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+								text = trocaValoresXWPF(text, r, "logradouroRuaImovel", this.objetoCcb.getLogradouroRuaImovel());
+								text = trocaValoresXWPF(text, r, "logradouroNumeroImovel", this.objetoCcb.getLogradouroNumeroImovel());
+								text = trocaValoresXWPF(text, r, "bairroImovel", this.objetoCcb.getBairroImovel());
+								text = trocaValoresXWPF(text, r, "cepImovel", this.objetoCcb.getCepImovel());
+
+								text = trocaValoresXWPF(text, r, "parcelaDia", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getDate());
+								text = trocaValoresXWPF(text, r, "parcelaMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "parcelaAno", (this.objetoCcb.getVencimentoPrimeiraParcelaPagamento().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "vencimentoDia", this.objetoCcb.getVencimentoUltimaParcelaPagamento().getDate());
+								text = trocaValoresXWPF(text, r, "vencimentoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getVencimentoUltimaParcelaPagamento()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "vencimentoAno", (this.objetoCcb.getVencimentoUltimaParcelaPagamento().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "prazoAno", prazoAnoStr);
+								text = trocaValoresNumeroExtensoXWPF(text, r, "Prazo", prazoAnoStr);
+								
+								text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes());
+								
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());
+								
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());		
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+							}
+						}
+					}
+				}
+			}
+		    
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());								
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+					}
+			    }
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+		
+	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -7352,11 +7638,17 @@ public class CcbMB {
 	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AnexoII")){
 	    		clearDocumentosNovos();
 	    		return geraAnexoII();
-	    	}else if(CommonsUtil.mesmoValor(tipoDownload,"cci")) {
+	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CCI")) {
 		    	return geraCci();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Cessao")) {
+		    	return geraCessao();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"InstrumentoEmissaoCCI")) {
+		    	return geraInstrumentoEmissaoCCI();
 		    } else {
 	    		
 	    	}
+	    	
+	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -7418,13 +7710,12 @@ public class CcbMB {
 	    } catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e,
+							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
 							""));
-	    }
-	    
-	    
+	    }  
 	    return null;
 	}
+	
 	
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
@@ -7443,6 +7734,70 @@ public class CcbMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
+	
+	public String estadoPorExtenso(String uf) {
+		if(!CommonsUtil.semValor(uf)) {
+			if(CommonsUtil.mesmoValor(uf, "AC")) {
+				return "Acre";
+			} else if(CommonsUtil.mesmoValor(uf, "AL")) {
+				return "Alagoas";
+			} else if(CommonsUtil.mesmoValor(uf, "AP")) {
+				return "Amapá";
+			} else if(CommonsUtil.mesmoValor(uf, "AM")) {
+				return "Amazonas";
+			} else if(CommonsUtil.mesmoValor(uf, "BA")) {
+				return "Bahia";
+			} else if(CommonsUtil.mesmoValor(uf, "CE")) {
+				return "Ceará";
+			} else if(CommonsUtil.mesmoValor(uf, "DF")) {
+				return "Distrito Federal";
+			} else if(CommonsUtil.mesmoValor(uf, "ES")) {
+				return "Espírito Santo";
+			} else if(CommonsUtil.mesmoValor(uf, "GO")) {
+				return "Goiás";
+			} else if(CommonsUtil.mesmoValor(uf, "MA")) {
+				return "Maranhão";
+			} else if(CommonsUtil.mesmoValor(uf, "MT")) {
+				return "Mato Grosso";
+			} else if(CommonsUtil.mesmoValor(uf, "MS")) {
+				return "Mato Grosso";
+			} else if(CommonsUtil.mesmoValor(uf, "MG")) {
+				return "Minas Gerais";
+			} else if(CommonsUtil.mesmoValor(uf, "PA")) {
+				return "Pará";
+			} else if(CommonsUtil.mesmoValor(uf, "PB")) {
+				return "Paraíba";
+			} else if(CommonsUtil.mesmoValor(uf, "PR")) {
+				return "Paraná";
+			} else if(CommonsUtil.mesmoValor(uf, "PE")) {
+				return "Pernambuco";
+			} else if(CommonsUtil.mesmoValor(uf, "PI")) {
+				return "Piauí";
+			} else if(CommonsUtil.mesmoValor(uf, "RJ")) {
+				return "Rio de Janeiro";
+			} else if(CommonsUtil.mesmoValor(uf, "RN")) {
+				return "Rio Grande do Norte";
+			} else if(CommonsUtil.mesmoValor(uf, "RS")) {
+				return "Rio Grande do Sul";
+			} else if(CommonsUtil.mesmoValor(uf, "RO")) {
+				return "Rondônia";
+			} else if(CommonsUtil.mesmoValor(uf, "RR")) {
+				return "Roraima";
+			} else if(CommonsUtil.mesmoValor(uf, "SC")) {
+				return "Santa Catarina";
+			} else if(CommonsUtil.mesmoValor(uf, "SP")) {
+				return "São Paulo";
+			} else if(CommonsUtil.mesmoValor(uf, "SE")) {
+				return "Sergipe";
+			} else if(CommonsUtil.mesmoValor(uf, "TO")) {
+				return "Tocantins";
+			} else {
+				return uf;
+			}
+		}
+		return "";
+	}
+
 	
 	public void verificaModeloAntigo() {
 		if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
@@ -7569,6 +7924,7 @@ public class CcbMB {
 		return dataHoje;
 	}
 	
+
 	public String clearFieldsConsultarCcb() {
 		CcbDao ccbDao = new CcbDao();
 		listaCcbs = ccbDao.ConsultaCCBs();
@@ -7767,6 +8123,7 @@ public class CcbMB {
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 
+	
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
@@ -7798,6 +8155,7 @@ public class CcbMB {
 	
 	char[] alphabet = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
+	
 	public static String repeat(String s, int n) {
 			if (s == null) {
 				return null;
@@ -9135,6 +9493,16 @@ public class CcbMB {
 
 	public void setSeguradoSelecionado(Segurado seguradoSelecionado) {
 		this.seguradoSelecionado = seguradoSelecionado;
+	}
+
+	
+	public String getNumeroProcesso() {
+		return numeroProcesso;
+	}
+
+
+	public void setNumeroProcesso(String numeroProcesso) {
+		this.numeroProcesso = numeroProcesso;
 	}
 	
 }

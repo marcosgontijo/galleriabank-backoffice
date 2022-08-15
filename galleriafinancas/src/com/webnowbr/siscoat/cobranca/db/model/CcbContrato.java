@@ -78,6 +78,10 @@ public class CcbContrato implements Serializable{
 	private String ufImovel;
 	private String inscricaoMunicipal;
 	private String numeroRegistroMatricula; 
+	private String logradouroRuaImovel;
+	private String logradouroNumeroImovel;
+	private String bairroImovel;
+	private String cepImovel;
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -902,5 +906,36 @@ public class CcbContrato implements Serializable{
 	public void setIqInseridoContrato(boolean iqInseridoContrato) {
 		this.iqInseridoContrato = iqInseridoContrato;
 	}
-	
+
+	public String getLogradouroRuaImovel() {
+		return logradouroRuaImovel;
+	}
+
+	public void setLogradouroRuaImovel(String logradouroRuaImovel) {
+		this.logradouroRuaImovel = logradouroRuaImovel;
+	}
+
+	public String getLogradouroNumeroImovel() {
+		return logradouroNumeroImovel;
+	}
+
+	public void setLogradouroNumeroImovel(String logradouroNumeroImovel) {
+		this.logradouroNumeroImovel = logradouroNumeroImovel;
+	}
+
+	public String getBairroImovel() {
+		return bairroImovel;
+	}
+
+	public void setBairroImovel(String bairroImovel) {
+		this.bairroImovel = bairroImovel;
+	}
+
+	public String getCepImovel() {
+		return cepImovel;
+	}
+
+	public void setCepImovel(String cepImovel) {
+		this.cepImovel = cepImovel;
+	}
 }

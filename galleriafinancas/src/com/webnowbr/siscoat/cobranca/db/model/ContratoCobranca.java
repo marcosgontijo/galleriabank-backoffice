@@ -85,8 +85,10 @@ public class ContratoCobranca implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private long id;
-	private Date dataInicio;
-	private Date dataContrato;
+	private Date dataInicio; // data de inicio das parcelas
+	private Date dataContrato; // data do contrato mas muda na aprovacao
+	
+	private Date dataCadastro; //data que operacao foi inserida no sistema
 	private int diaMes;
 	private int qtdeParcelas;
 	
@@ -311,6 +313,8 @@ public class ContratoCobranca implements Serializable {
 
 	/*** usados no sistema ***/
 	private boolean contratoLead; 
+	private Date leadReprovadoData;
+	private Date leadEmTratamentoData;
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
@@ -5289,4 +5293,30 @@ public class ContratoCobranca implements Serializable {
 	public void setObservacaoPagamento(String observacaoPagamento) {
 		this.observacaoPagamento = observacaoPagamento;
 	}
+
+	public Date getLeadReprovadoData() {
+		return leadReprovadoData;
+	}
+
+	public void setLeadReprovadoData(Date leadReprovadoData) {
+		this.leadReprovadoData = leadReprovadoData;
+	}
+
+	public Date getLeadEmTratamentoData() {
+		return leadEmTratamentoData;
+	}
+
+	public void setLeadEmTratamentoData(Date leadEmTratamentoData) {
+		this.leadEmTratamentoData = leadEmTratamentoData;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+	
+	
 }

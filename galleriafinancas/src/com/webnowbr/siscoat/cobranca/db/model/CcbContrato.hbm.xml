@@ -353,6 +353,21 @@
 			<column name="iqInseridoContrato" not-null="true" default="false" />
 		</property>	
 		
+		<property name="logradouroRuaImovel" type="java.lang.String">
+			<column name="logradouroRuaImovel" />
+		</property> 
+		
+		<property name="logradouroNumeroImovel" type="java.lang.String">
+			<column name="logradouroNumeroImovel" />
+		</property> 
+		
+		<property name="bairroImovel" type="java.lang.String">
+			<column name="bairroImovel" />
+		</property> 
+		
+		<property name="cepImovel" type="java.lang.String">
+			<column name="cepImovel" />
+		</property> 
 		        
     </class>
 </hibernate-mapping>

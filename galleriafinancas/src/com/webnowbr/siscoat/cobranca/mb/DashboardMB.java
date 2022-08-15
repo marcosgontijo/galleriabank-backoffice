@@ -62,6 +62,7 @@ public class DashboardMB {
     private Date dataFim;
     private boolean consultaStatus;
     private boolean consultarResponsaveisZerados;
+    private boolean consultaLead;
     
     private List<Dashboard> dashContratos;
     
@@ -73,6 +74,15 @@ public class DashboardMB {
 	
 	int totalContratosCadastrados;
 	BigDecimal totalValorContratosCadastrados;
+	
+	int totalLeadsEmTratamento;
+	BigDecimal totalValorLeadsEmTratamento;
+	
+	int totalLeadsReprovados;
+	BigDecimal totalValorLeadsReprovados;
+	
+	int totalLeadsCompletos;
+	BigDecimal totalValorLeadsCompletos;
 	
 	int totalContratosPreAprovados;
 	BigDecimal totalValorContratosPreAprovados;
@@ -131,16 +141,44 @@ public class DashboardMB {
 	public String clearFieldsDashContratos() {
 		
 		this.totalContratosCadastrados = 0;
+		this.totalLeadsEmTratamento = 0;
+		this.totalLeadsReprovados = 0;
+		this.totalLeadsCompletos = 0;
 		this.totalContratosPreAprovados = 0;
 		this.totalContratosBoletosPagos = 0;
+		this.totalContratosComite = 0;
 		this.totalContratosCcbsEmitidas = 0;
 		this.totalContratosRegistrados = 0;
 		
 		this.totalValorContratosCadastrados = BigDecimal.ZERO;
+		this.totalValorLeadsEmTratamento = BigDecimal.ZERO;	
+		this.totalValorLeadsReprovados = BigDecimal.ZERO;
+		this.totalValorLeadsCompletos = BigDecimal.ZERO;
 		this.totalValorContratosPreAprovados = BigDecimal.ZERO;
 		this.totalValorBoletosPagos = BigDecimal.ZERO;
+		this.totalValorContratosComite = BigDecimal.ZERO;
 		this.totalValorCcbsEmitidas = BigDecimal.ZERO;
 		this.totalValorContratosRegistrados = BigDecimal.ZERO;
+			
+		this.menorTaxaPreAprovada = BigDecimal.ZERO;
+		this.maiorTaxaPreAprovada = BigDecimal.ZERO;
+		this.mediaTaxaPreAprovada = BigDecimal.ZERO;
+		
+		this.menorTaxaPajuLado = BigDecimal.ZERO;
+		this.maiorTaxaPajuLado = BigDecimal.ZERO;
+		this.mediaTaxaPajuLado = BigDecimal.ZERO;
+		
+		this.menorTaxaAprovadaComite = BigDecimal.ZERO;
+		this.maiorTaxaAprovadaComite = BigDecimal.ZERO;
+		this.mediaTaxaAprovadaComite = BigDecimal.ZERO;
+		
+		this.menorTaxaCcb = BigDecimal.ZERO;
+		this.maiorTaxaCcb = BigDecimal.ZERO;
+		this.mediaTaxaCcb = BigDecimal.ZERO;
+		
+		this.menorTaxaRegistro = BigDecimal.ZERO;
+		this.maiorTaxaRegistro = BigDecimal.ZERO;
+		this.mediaTaxaRegistro = BigDecimal.ZERO;
 		
 		this.dataInicio = null;
 		this.dataFim = null;
@@ -160,10 +198,14 @@ public class DashboardMB {
 	public void processaDashContratos() {
 		
 		DashboardDao dDao = new DashboardDao();
-		if(CommonsUtil.semValor(this.selectedResponsavel.getId())) {
-			this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus, this.consultarGerente);	
+		if(this.consultaLead) {
+			this.dashContratos = dDao.getDashboardContratosLead(this.dataInicio, this.dataFim, this.consultaStatus);	
 		} else {
-			this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
+			if(CommonsUtil.semValor(this.selectedResponsavel.getId())) {
+				this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus, this.consultarGerente);	
+			} else {
+				this.dashContratos = dDao.getDashboardContratosPorGerente(this.dataInicio, this.dataFim, this.selectedResponsavel.getId(), this.consultaStatus);
+			}
 		}
 		
 		if(consultarResponsaveisZerados) {
@@ -181,6 +223,18 @@ public class DashboardMB {
 	}
 
 	public void calculaSoma() {
+		this.totalContratosCadastrados = 0;
+		this.totalValorContratosCadastrados = BigDecimal.ZERO;
+		
+		this.totalLeadsEmTratamento = 0;
+		this.totalValorLeadsEmTratamento = BigDecimal.ZERO;
+		
+		this.totalLeadsReprovados = 0;
+		this.totalValorLeadsReprovados = BigDecimal.ZERO;
+		
+		this.totalLeadsCompletos = 0;
+		this.totalValorLeadsCompletos = BigDecimal.ZERO;
+		
 		this.totalContratosCadastrados = 0;
 		this.totalValorContratosCadastrados = BigDecimal.ZERO;
 		
@@ -211,6 +265,16 @@ public class DashboardMB {
 			if (!CommonsUtil.semValor(dash.getContratosCadastrados())) {
 				this.totalContratosCadastrados = totalContratosCadastrados + dash.getContratosCadastrados();
 			}
+			if (!CommonsUtil.semValor(dash.getLeadsEmTratamento())) {
+				this.totalLeadsEmTratamento = totalLeadsEmTratamento + dash.getLeadsEmTratamento();
+			}
+			if (!CommonsUtil.semValor(dash.getLeadsReprovados())) {
+				this.totalLeadsReprovados = totalLeadsReprovados + dash.getLeadsReprovados();
+			}
+			
+			if (!CommonsUtil.semValor(dash.getLeadsCompletos())) {
+				this.totalLeadsCompletos = totalLeadsCompletos + dash.getLeadsCompletos();
+			}
 			if (!CommonsUtil.semValor(dash.getContratosPreAprovados())) {
 				this.totalContratosPreAprovados = totalContratosPreAprovados + dash.getContratosPreAprovados();
 			}
@@ -228,6 +292,15 @@ public class DashboardMB {
 			}
 			if (!CommonsUtil.semValor(dash.getValorContratosCadastrados())) {
 				this.totalValorContratosCadastrados = totalValorContratosCadastrados.add(dash.getValorContratosCadastrados());
+			}			
+			if (!CommonsUtil.semValor(dash.getValorLeadsEmTratamento())) {
+				this.totalValorLeadsEmTratamento = totalValorLeadsEmTratamento.add(dash.getValorLeadsEmTratamento());
+			}
+			if (!CommonsUtil.semValor(dash.getValorLeadsReprovados())) {
+				this.totalValorLeadsReprovados = totalValorLeadsReprovados.add(dash.getValorLeadsReprovados());
+			}	
+			if (!CommonsUtil.semValor(dash.getValorLeadscompletos())) {
+				this.totalValorLeadsCompletos = totalValorLeadsCompletos.add(dash.getValorLeadscompletos());
 			}
 			if (!CommonsUtil.semValor(dash.getValorContratosPreAprovados())) {
 				this.totalValorContratosPreAprovados = totalValorContratosPreAprovados.add(dash.getValorContratosPreAprovados());
@@ -1261,4 +1334,61 @@ public class DashboardMB {
 	public void setMediaTaxaRegistro(BigDecimal mediaTaxaRegistro) {
 		this.mediaTaxaRegistro = mediaTaxaRegistro;
 	}
+
+	public boolean isConsultaLead() {
+		return consultaLead;
+	}
+
+	public void setConsultaLead(boolean consultaLead) {
+		this.consultaLead = consultaLead;
+	}
+
+	public int getTotalLeadsEmTratamento() {
+		return totalLeadsEmTratamento;
+	}
+
+	public void setTotalLeadsEmTratamento(int totalLeadsEmTratamento) {
+		this.totalLeadsEmTratamento = totalLeadsEmTratamento;
+	}
+
+	public BigDecimal getTotalValorLeadsEmTratamento() {
+		return totalValorLeadsEmTratamento;
+	}
+
+	public void setTotalValorLeadsEmTratamento(BigDecimal totalValorLeadsEmTratamento) {
+		this.totalValorLeadsEmTratamento = totalValorLeadsEmTratamento;
+	}
+
+	public int getTotalLeadsReprovados() {
+		return totalLeadsReprovados;
+	}
+
+	public void setTotalLeadsReprovados(int totalLeadsReprovados) {
+		this.totalLeadsReprovados = totalLeadsReprovados;
+	}
+
+	public BigDecimal getTotalValorLeadsReprovados() {
+		return totalValorLeadsReprovados;
+	}
+
+	public void setTotalValorLeadsReprovados(BigDecimal totalValorLeadsReprovados) {
+		this.totalValorLeadsReprovados = totalValorLeadsReprovados;
+	}
+
+	public int getTotalLeadsCompletos() {
+		return totalLeadsCompletos;
+	}
+
+	public void setTotalLeadsCompletos(int totalLeadsCompletos) {
+		this.totalLeadsCompletos = totalLeadsCompletos;
+	}
+
+	public BigDecimal getTotalValorLeadsCompletos() {
+		return totalValorLeadsCompletos;
+	}
+
+	public void setTotalValorLeadsCompletos(BigDecimal totalValorLeadsCompletos) {
+		this.totalValorLeadsCompletos = totalValorLeadsCompletos;
+	}
+	
 }

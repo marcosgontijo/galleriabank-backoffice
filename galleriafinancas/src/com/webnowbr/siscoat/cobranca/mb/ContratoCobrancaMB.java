@@ -125,6 +125,8 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -155,6 +157,8 @@ import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
+import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
+import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
@@ -188,6 +192,7 @@ public class ContratoCobrancaMB {
 
 	private Date dataHoje;
 	
+	SimulacaoIPCACalculoV2 simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
 	
 	private String tipoContratoCobrancaFinanceiroDia;
 
@@ -762,49 +767,11 @@ public class ContratoCobrancaMB {
 		};
 
 		// INICIO - Tratamento para Pré-Contrato
-		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(new Date());
-		loadLovs();
-		clearSelectedLovs();
-		this.contratoGerado = false;
-		this.qtdeParcelas = null;
-		clearSelectedRecebedores();
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
-		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.socioSelecionado = new PagadorRecebedorSocio();
-		this.socioSelecionado.setPessoa(new PagadorRecebedor());
-		this.tituloPagadorRecebedorDialog = "";
-		this.addSegurador = false;
-		this.addSocio = false;
-		this.addPagador = false;
+		//Trocado por um metodo que chama as mesmas coisas que estavam anteriormente
+		clearPreContratoCustomizado();	
+		this.updateMode = false;
+		this.deleteMode = false;
 		
-		this.contasPagarSelecionada = new ContasPagar();
-		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
-		this.contasPagarSelecionada.setResponsavel(new Responsavel());
-		
-		this.addContasPagar = false;
-		this.vlrParcelaFinal = null;
-		this.vlrRepasse = null;
-		this.vlrRepasseFinal = null;
-		this.vlrRetencao = null;
-		this.vlrRetencaoFinal = null;
-		this.vlrComissao = null;
-		this.vlrComissaoFinal = null;
-		this.objetoContratoCobranca.setGeraParcelaFinal(false);
-		this.objetoContratoCobranca.setNumeroContrato(null);
-		this.codigoResponsavel = null;
-		files = new ArrayList<FileUploaded>();
-		filesInterno = new ArrayList<FileUploaded>();
-		filesFaltante = new ArrayList<FileUploaded>();
-		filesJuridico = new ArrayList<FileUploaded>();
-
-		this.hasBaixaParcial = false;
-
-		this.objetoImovelCobranca = new ImovelCobranca();
-		this.objetoPagadorRecebedor = new PagadorRecebedor();
-		this.tipoPessoaIsFisica = true;
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -1416,6 +1383,7 @@ public class ContratoCobrancaMB {
 		// INICIO - Tratamento para Pré-Contrato
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -1427,14 +1395,17 @@ public class ContratoCobrancaMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());	
 		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador= false;
+		this.tituloPagadorRecebedorDialog = "";
+		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
 		this.contasPagarSelecionada.setResponsavel(new Responsavel());
 		
+		this.addContasPagar = false;
 		this.vlrParcelaFinal = null;
 		this.vlrRepasse = null;
 		this.vlrRepasseFinal = null;
@@ -1449,6 +1420,8 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
+		this.hasBaixaParcial = false;
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -1489,6 +1462,7 @@ public class ContratoCobrancaMB {
 		// INICIO - Tratamento para Pré-Contrato
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -1522,6 +1496,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -1533,7 +1508,6 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
-		
 		
 
 		this.qtdeParcelas = null;
@@ -2566,9 +2540,9 @@ public class ContratoCobrancaMB {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
 				}
 
-				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !",
+							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !",
 							""));
 
 					return "";
@@ -2822,9 +2796,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !", ""));
 				
 				return "";
 			}
@@ -2866,6 +2840,15 @@ public class ContratoCobrancaMB {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		try {
+			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			return "";
+		}
 
 		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
@@ -2905,9 +2888,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$2.000.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !", ""));
 				
 				return "";
 			}
@@ -3032,17 +3015,29 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void changeAvaliadorLaudo() {
-		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
-			controleWhatsAlteracaoAvaliadorLaudoGalache = true;
-		}
-		
-		if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-			this.controleWhatsAlteracaoAvaliadorLaudo = true;
+		if(!CommonsUtil.semValor(this.objetoContratoCobranca.getAvaliacaoLaudo())) {
+			if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
+				controleWhatsAlteracaoAvaliadorLaudoGalache = true;
+				this.controleWhatsAlteracaoAvaliadorLaudo = false;
+			}
+			
+			if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
+				controleWhatsAlteracaoAvaliadorLaudoGalache = false;
+				this.controleWhatsAlteracaoAvaliadorLaudo = true;
+			}
+			this.objetoContratoCobranca.setPedidoLaudo(true);
+		} else {
+			this.objetoContratoCobranca.setPedidoLaudo(false);
 		}
 	}
 	
 	public void changeGeracaoPAJU() {
-		this.controleWhatsAlteracaoGeracaoPAJU = true;
+		this.controleWhatsAlteracaoGeracaoPAJU = this.objetoContratoCobranca.isPagtoLaudoConfirmada();								
+	}
+	
+	public void changeLaudoRecebido() {
+		this.objetoContratoCobranca.setLaudoRecebido(!this.objetoContratoCobranca.isPedidoLaudo());
+												//contrario pois o metodo é chamado antes de efetivar a mudança no botao (n tem update)
 	}
 	
 	public void notificaCompassWhatsApp() {
@@ -3620,10 +3615,10 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 								// Jaque (assistente Luis)
 								ResponsavelDao rDao = new ResponsavelDao();
 								Responsavel rAssistente = new Responsavel();
@@ -3635,6 +3630,20 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(),
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+								
+							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+									|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+									// Thais Vieira (assistente Eric e Fabio Moron)
+									ResponsavelDao rDao = new ResponsavelDao();
+									Responsavel rAssistente = new Responsavel();
+									rAssistente = rDao.findById((long) 102);
+		
+									takeBlipMB.sendWhatsAppMessage(rAssistente,
+									"contrato_pre_aprovado", 
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							}
 						}
 					}
@@ -3669,11 +3678,11 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
-						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3684,8 +3693,68 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"","");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+								|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+								// Thais Vieira (assistente Eric e Fabio Moron)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 102);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+					
+					//teste
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_paju",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
@@ -3718,10 +3787,10 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
 						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3732,55 +3801,70 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"","");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+								|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+								// Thais Vieira (assistente Eric e Fabio Moron)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 102);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
-				}
-			}
-			
-			// Mensagem PAJU E LAUDO RECEBIDO
-			/*if (this.objetoContratoCobranca.isPajurFavoravel() != statusContrato.isPajuFavoravel() ||
-					this.objetoContratoCobranca.isLaudoRecebido() != statusContrato.isLaudoRecebido()) {
-				if (this.objetoContratoCobranca.isPajurFavoravel() && this.objetoContratoCobranca.isLaudoRecebido()) {
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"contrato_recebido_laudo_paju",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-						takeBlipMB = new TakeBlipMB();
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"contrato_recebido_laudo_paju",
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						
-						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
-							// Bia (assistente Gislaine)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 359);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"", "");
-						}  else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)) {
-							// Jaque (assistente Luis)
-							ResponsavelDao rDao = new ResponsavelDao();
-							Responsavel rAssistente = new Responsavel();
-							rAssistente = rDao.findById((long) 689);
-	
-							takeBlipMB.sendWhatsAppMessage(rAssistente,
-							"contrato_recebido_laudo_paju", 
-							this.objetoContratoCobranca.getPagador().getNome(),
-							this.objetoContratoCobranca.getNumeroContrato(),
-							"","");
-						}
-					}
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rValidaDocs1 = new Responsavel();
+					Responsavel rValidaDocs2 = new Responsavel();
+					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
+					
+					//teste
+					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					//"chegada_laudo",
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
+
+					// Valdir
+					rValidaDocs1 = rDao.findById((long) 619);	
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Thiago
+					rValidaDocs2 = rDao.findById((long) 620);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+					// Iris
+					rValidaDocs3 = rDao.findById((long) 828);					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+
+ 					// Tatiane
+					rValidaDocs4 = rDao.findById((long) 643);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
-			}*/
+			}	
 			
 			// Mensagem Ag Comentario Juridico
 			if (this.objetoContratoCobranca.isAnaliseComercial() != statusContrato.isAnaliseComercial()) {
@@ -3835,10 +3919,10 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
 						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -3849,6 +3933,19 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"","");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+								|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+								// Thais Vieira (assistente Eric e Fabio Moron)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 102);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					} else {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -3868,23 +3965,22 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					
-					// Valdir
-					rValidaDocs1 = rDao.findById((long) 619);
-	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					// Valdir ()
+					//rValidaDocs1 = rDao.findById((long) 619);
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
+					//"ag_validacao_documentos", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
 					
-					// Thiago
-					rValidaDocs2 = rDao.findById((long) 620);
+					// Thiago (Removido a pedido da Tati)
+					//rValidaDocs2 = rDao.findById((long) 620);
 	
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
-					"ag_validacao_documentos", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					//takeBlipMB.sendWhatsAppMessage(rValidaDocs2,
+					//"ag_validacao_documentos", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
 					
 					// Tati
 					rValidaDocs3 = rDao.findById((long) 643);
@@ -3938,6 +4034,7 @@ public class ContratoCobrancaMB {
 				if (this.objetoContratoCobranca.isAprovadoComite()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					ResponsavelDao rDao = new ResponsavelDao();
+					
 					Responsavel rCcb1 = new Responsavel();
 					Responsavel rCcb2 = new Responsavel();
 					Responsavel rCcb3 = new Responsavel();
@@ -3992,6 +4089,56 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
+					
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {
+							// Bia (assistente Gislaine)
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 359);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
+							// Jaque (assistente Luis)
+							Responsavel rAssistente = new Responsavel();
+							rAssistente = rDao.findById((long) 689);
+	
+							takeBlipMB.sendWhatsAppMessage(rAssistente,
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"","");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+								|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+								// Thais Vieira (assistente Eric e Fabio Moron)
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 102);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						}
+					} else {
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					}
 				}
 			}
 			
@@ -4023,10 +4170,10 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"", "");
 						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+								   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 							// Jaque (assistente Luis)
 							ResponsavelDao rDao = new ResponsavelDao();
 							Responsavel rAssistente = new Responsavel();
@@ -4037,6 +4184,19 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
 							"","");
+						} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+								|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+								// Thais Vieira (assistente Eric e Fabio Moron)
+								ResponsavelDao rDao = new ResponsavelDao();
+								Responsavel rAssistente = new Responsavel();
+								rAssistente = rDao.findById((long) 102);
+	
+								takeBlipMB.sendWhatsAppMessage(rAssistente,
+								"contrato_pre_aprovado", 
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
 				}
@@ -4072,10 +4232,10 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(),
 								"", "");
 							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
-									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
-									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
+									   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {
 								// Jaque (assistente Luis)
 								ResponsavelDao rDao = new ResponsavelDao();
 								Responsavel rAssistente = new Responsavel();
@@ -4086,6 +4246,19 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
 								"","");
+							} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 35)
+									|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 34)){
+									// Thais Vieira (assistente Eric e Fabio Moron)
+									ResponsavelDao rDao = new ResponsavelDao();
+									Responsavel rAssistente = new Responsavel();
+									rAssistente = rDao.findById((long) 102);
+		
+									takeBlipMB.sendWhatsAppMessage(rAssistente,
+									"contrato_pre_aprovado", 
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							}
 						}
 					}				
@@ -4197,10 +4370,17 @@ public class ContratoCobrancaMB {
 				if (responsavel != null && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")) {					
 					this.objetoContratoCobranca.setResponsavel(responsavel);				
 				}
+				if(this.objetoContratoCobranca.getLeadEmTratamentoData() == null) {
+					this.objetoContratoCobranca.setLeadEmTratamentoData(gerarDataHoje());
+				}
 			} else if(this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 				this.objetoContratoCobranca.setLeadCompleto(false);
 				if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")){
 					this.objetoContratoCobranca.setStatusLead("Em Tratamento");
+				}
+			} else if(this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) {
+				if(this.objetoContratoCobranca.getLeadReprovadoData() == null) {
+					this.objetoContratoCobranca.setLeadReprovadoData(gerarDataHoje());
 				}
 			}
 		} else {
@@ -4557,7 +4737,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setCcbPronta(false);
 		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
-				comite.setVotoAnaliseComite("Reprovado");
+				comite.setVotoAnaliseComite("");
 			}
 		}
 		updateCheckList();
@@ -4838,6 +5018,38 @@ public class ContratoCobrancaMB {
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
+		SimulacaoVO simulador = new SimulacaoVO();	
+		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		if (con.getPagador().getCpf() != null) {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PF");
+		} else {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PJ");
+		}
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setValorCredito(con.getQuantoPrecisa());
+		simulador.setTaxaJuros(con.getTaxaPreAprovada());
+		simulador.setCarencia(BigInteger.ONE);
+		simulador.setQtdParcelas(con.getPrazoMaxPreAprovado());
+		simulador.setValorImovel(con.getImovel().getValoEstimado());
+		simulador.setTipoCalculo("Price");
+		simulador.setNaoCalcularDFI(false);
+		simulador.setNaoCalcularMIP(false);
+		simulador.setNaoCalcularTxAdm(false);
+		simulador.calcular();
+		parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
+	
+		//BigDecimal valorSeguroDFI = con.getImovel().getValoEstimado().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		//BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		//BigDecimal valorSeguroMIP = con.getQuantoPrecisa().multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroMIP).add(valorSeguroDFI).add(txAdm);
+		
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
@@ -4889,15 +5101,42 @@ public class ContratoCobrancaMB {
 						false // pagamento no inico
 				));
 		
-		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
+		//BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
+		//BigDecimal valorSeguroDFI = con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
+		//BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
+		//BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
+		//parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
+		//parcelaPGTO = parcelaPGTO.add(txAdm);
 		
-		BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
-		BigDecimal valorSeguroDFI = con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
-		BigDecimal valorSeguroMIP = saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
-		BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
-		parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
-		parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
-		parcelaPGTO = parcelaPGTO.add(txAdm);
+		SimulacaoVO simulador = new SimulacaoVO();	
+		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		if (con.getPagador().getCpf() != null) {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PF");
+		} else {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa("PJ");
+		}
+		simulador.setDataSimulacao(DateUtil.getDataHoje());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setValorCredito(con.getValorAprovadoComite());
+		simulador.setTaxaJuros(con.getTaxaAprovada());
+		simulador.setCarencia(BigInteger.ONE);
+		simulador.setQtdParcelas(con.getPrazoMaxAprovado());
+		simulador.setValorImovel(con.getValorMercadoImovel());
+		simulador.setTipoCalculo("Price");
+		simulador.setNaoCalcularDFI(false);
+		simulador.setNaoCalcularMIP(false);
+		simulador.setNaoCalcularTxAdm(false);
+		simulador.calcular();
+		
+		parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
+		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
@@ -5573,6 +5812,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 
 		loadLovs();
 
@@ -5585,6 +5825,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 		this.files = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
@@ -5636,6 +5877,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
+		this.objetoContratoCobranca.setDataCadastro(new Date());
 
 		loadLovs();
 
@@ -5649,7 +5891,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
-		
+		filesComite = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
 
@@ -5681,7 +5923,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
 
 		this.objetoContratoCobranca.setStatus("Aprovado");		
-		
+		this.objetoContratoCobranca.setOperacaoPaga(true);	
 		this.objetoContratoCobranca.setStatusLead("Completo");
 
 		this.objetoContratoCobranca.setEmpresa("GALLERIA FINANÇAS SECURITIZADORA S.A.");
@@ -5812,10 +6054,12 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesComite = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 		filesInterno = listaArquivosInterno();
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = listaArquivosComite();
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
@@ -5863,7 +6107,9 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
-
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
+		
 		this.reciboGerado = false;
 		this.fileRecibo = null;
 		this.pathRecibo = null;
@@ -6328,285 +6574,7 @@ public class ContratoCobrancaMB {
 		return null;
     }
 	
-	public void viewFileInterno(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void viewFile(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
-	public void viewFileFaltante(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void viewFileJuridico(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public void loadListRecebedores() {
 		cedentesIugu = new ArrayList<PagadorRecebedor>();
@@ -6734,6 +6702,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		this.reciboGerado = false;
 		this.fileRecibo = null;
@@ -6923,6 +6893,11 @@ public class ContratoCobrancaMB {
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
 			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+			
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+				this.objetoContratoCobranca.setStatusLead("Arquivado");
+				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			}
 
 			if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
 				if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
@@ -7024,6 +6999,8 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorPresenteTotal;
 	private BigDecimal amortizacaoPresenteTotal;
 	private String tipoAmortizacao;
+	
+	private QuitacaoPDF quitacaoPDF = new QuitacaoPDF();
 
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault(); 
@@ -7148,6 +7125,7 @@ public class ContratoCobrancaMB {
 			}
 		}		
 	}
+	
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar;
 	
 	public void clearQuitarContratoDialog() {
@@ -7158,6 +7136,7 @@ public class ContratoCobrancaMB {
 		
 		this.numeroParcelaQuitar = 0;
 		this.dataQuitacao = auxDataHoje;
+		this.quitacaoPDF = new QuitacaoPDF();
 		
 		simularQuitacaoContrato();
 	}
@@ -7166,18 +7145,38 @@ public class ContratoCobrancaMB {
 		this.valorPresenteTotal = BigDecimal.ZERO;
 		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
 		
+		String cpf = "";
+		if(!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCpf())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCpf();
+		} else if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCnpj())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCnpj();
+		}
+		quitacaoPDF = new QuitacaoPDF(this.objetoContratoCobranca.getPagador().getNome(),
+				this.dataQuitacao,
+				this.objetoContratoCobranca.getNumeroContrato(),
+				cpf);
+		
 		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
 			if(parcelas.isParcelaPaga()) {
 				continue;
 			}
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+				
+				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
+				BigDecimal desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
+						parcelas.getDataVencimento(),
+						valorParcelaPDF,
+						desconto,
+						valorPresenteParcela);
+				quitacaoPDF.getParcelas().add(parcelaPDF);
 			}
 		}
+		quitacaoPDF.setValorQuitacao(valorPresenteTotal);
 	}
 	
 	public void amortizarContratoValorPresente() {
@@ -7379,6 +7378,39 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 
+	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {	
+		if (!CommonsUtil.semValor(this.quitacaoPDF.getParcelas())) {
+			JasperPrint jp = null;
+			jp = geraPDFSimulacao();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String identificacao = quitacaoPDF.getNome();
+			if (CommonsUtil.semValor(identificacao))
+				gerador.open("Galleria Bank - Quitação.pdf");
+			else
+				gerador.open(String.format("Galleria Bank - Quitação %s.pdf", identificacao));
+			gerador.feed(jp);
+			gerador.close();
+		}
+		return null;
+	}
+	
+	public JasperPrint geraPDFSimulacao() throws JRException, IOException {
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("QuitacaoContrato");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("QuitacaoParcelas");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", true);
+		List<QuitacaoPDF> list = new ArrayList<QuitacaoPDF>();
+		list.add(quitacaoPDF);
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
+	}
+	
 	public Date getDataAmortizacao() {
 		return dataAmortizacao;
 	}
@@ -7470,6 +7502,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -7522,6 +7556,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 		
@@ -7593,6 +7629,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -7692,6 +7730,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+		
 		this.tituloPainel = "Editar";
 
 		filesInterno = new ArrayList<FileUploaded>();
@@ -7706,6 +7748,10 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		
 		this.tituloPainel = "Editar";
+		
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -7903,6 +7949,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -7979,6 +8027,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8067,6 +8117,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8135,32 +8187,6 @@ public class ContratoCobrancaMB {
 
 		this.contratoGerado = true;
 	}
-	
-	public String clearFieldsDocumentoWord() {
-		return "/Atendimento/Cobranca/DocumentoWord.xhtml";
-	}
-	
-	public void geraDocumentoWord() {
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
-
-		/* Se filtro somente por numero do contrato */
-		if (this.numContrato.length() == 4) {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela("0" + this.numContrato);
-		} else {
-			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioRegerarParcela(this.numContrato);
-		}
-		
-		RelatorioFinanceiroCobranca rfc =  new RelatorioFinanceiroCobranca();
-
-		this.objetoContratoCobranca.setDataContrato(rfc.getDataContrato());
-		
-		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
-
-		if (this.relObjetoContratoCobranca.size() == 0) {
-			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
-		}
-	}
 
 	public String clearFieldsEditarReParcelar() {
 		this.tituloPainel = "Editar";
@@ -8191,6 +8217,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -8277,6 +8305,8 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		filesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
 
 		loadLovs();
 
@@ -11109,6 +11139,10 @@ public class ContratoCobrancaMB {
 					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
 						c.setStatus("Ag. Análise");
 					}
+					
+					if (c.getStatusLead().equals("Arquivado")) {
+						c.setStatus("Lead Arquivado");
+					}
 
 				} else {
 					c.setStatus("Não Definido");
@@ -11138,16 +11172,33 @@ public class ContratoCobrancaMB {
 					
 					String status = "";
 					
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+					if(c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPedidoLaudoPajuComercial() && !c.isPedidoLaudo()) {
+						c.setStatus("Pedir Laudo");
+						status = status + "Pedir Laudo";
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPedidoLaudo() && !c.isLaudoRecebido()) {
 						if(!CommonsUtil.semValor(c.getAvaliacaoLaudo()) && CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Compass")) {
 							c.setStatus("Pedir Laudo Compass");
+							if(!CommonsUtil.semValor(status)) {
+								status = status + " | ";
+							}
 							status = status + "Pedir Laudo Compass";
+						} else if(!CommonsUtil.semValor(c.getAvaliacaoLaudo()) && CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Galache")) {
+							c.setStatus("Pedir Laudo Galache");
+							if(!CommonsUtil.semValor(status)) {
+								status = status + " | ";
+							}
+							status = status + "Pedir Laudo Galache";
 						} else {
-							c.setStatus("Pedir Laudo");
-							status = status + "Pedir Laudo";
+							c.setStatus("Ag. Laudo");
+							if(!CommonsUtil.semValor(status)) {
+								status = status + " | ";
+							}
+							status = status + "Ag. Laudo";
 						}
-						
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -11168,22 +11219,8 @@ public class ContratoCobrancaMB {
 						status = status + "Ag. PAJU";
 					}
 					
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPedidoLaudo() && !c.isLaudoRecebido()) {
-						c.setStatus("Ag. Laudo");
-						if(!CommonsUtil.semValor(status)) {
-							status = status + " | ";
-						}
-						status = status + "Ag. Laudo";
-					}
-					
 					if(!CommonsUtil.semValor(status)) {
 						c.setStatus(status);
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && c.isPedidoLaudo() && !c.isLaudoRecebido() && !c.isPajurFavoravel()) {
-						c.setStatus("Ag. PAJU e Laudo");
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPendenciaLaudoPaju()
@@ -11497,7 +11534,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
-		}		
+		}
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
@@ -14738,8 +14775,14 @@ public class ContratoCobrancaMB {
 		  if (this.objetoContratoCobranca.getStatusLead() != null) {
 			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 				if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
-	
-					SimulacaoVO simulador = calcularParcelas();
+					
+					SimulacaoVO simulador;
+					
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {													
+						simulador = calcularParcelasIPCAV2();
+					} else {
+						simulador = calcularParcelas();
+					}
 	
 					BigDecimal saldoAnterior = BigDecimal.ZERO;
 					for (SimulacaoDetalheVO parcela : simulador.getParcelas()) {
@@ -14889,7 +14932,67 @@ public class ContratoCobrancaMB {
 		simulador.calcular();
 		return simulador;
 	}
+		
+	private SimulacaoVO calcularParcelasIPCAV2() {
+		
+		this.simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
+		
+		//simulacaoIPCACalculoV2.setDataInicio(DateUtil.getDataHoje());
+		simulacaoIPCACalculoV2.setDataInicio(this.objetoContratoCobranca.getDataInicio());
+		
+		simulacaoIPCACalculoV2.setPrazo(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
 	
+		simulacaoIPCACalculoV2.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());		
+		
+		simulacaoIPCACalculoV2.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));		
+		
+		simulacaoIPCACalculoV2.setValorCredito(this.objetoContratoCobranca.getValorCCB());	
+		
+		simulacaoIPCACalculoV2.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+		
+		simulacaoIPCACalculoV2.setSeguroMIP(SiscoatConstants.SEGURO_MIP_5_DIGITOS);
+		
+		simulacaoIPCACalculoV2.setSeguroDFI(SiscoatConstants.SEGURO_DFI_6_DIGITOS);
+		
+		simulacaoIPCACalculoV2.calcularIPVAv2();
+		
+		this.simuladorParcelas = convertIPCA2toSimuladorV0();
+		
+		return this.simuladorParcelas;
+	}
+		
+	public SimulacaoVO convertIPCA2toSimuladorV0() {
+		SimulacaoVO simulacaoVO = new SimulacaoVO();
+		List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
+		SimulacaoDetalheVO parcela = new SimulacaoDetalheVO();
+		
+		for (SimulacaoIPCADadosV2 parcelasIPCAV2 : this.simulacaoIPCACalculoV2.getListSimulacaoIPCADadosV2()){
+			parcela = new SimulacaoDetalheVO();
+			
+			parcela.setNumeroParcela(parcelasIPCAV2.getNumeroParcela());
+			
+			parcela.setSaldoDevedorInicial(parcelasIPCAV2.getSaldoDevedorInicial());
+					
+			parcela.setSaldoDevedorFinal(parcelasIPCAV2.getSaldoDevedorFinal());
+			
+			parcela.setAmortizacao(parcelasIPCAV2.getAmortizacao());
+			
+			parcela.setJuros(parcelasIPCAV2.getJuros());
+			
+			parcela.setSeguroMIP(parcelasIPCAV2.getSeguroMIP());
+			
+			parcela.setSeguroDFI(parcelasIPCAV2.getSeguroDFI());
+			
+			parcela.setValorParcela(parcelasIPCAV2.getValorParcela());
+			
+			parcelas.add(parcela);
+		}
+		
+		simulacaoVO.setParcelas(parcelas);
+
+		return simulacaoVO;
+	}
+
 	private SimulacaoVO calcularInvestimento(int numeroInvestidor){
 		BigDecimal tarifaIOFDiario;
 		BigDecimal tarifaIOFAdicional = BigDecimal.valueOf(0.38).divide(BigDecimal.valueOf(100));
@@ -15106,7 +15209,12 @@ public class ContratoCobrancaMB {
 
 	public void mostrarParcela() {
 		try {
-			this.simuladorParcelas = calcularParcelas();
+			if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+				this.simuladorParcelas = calcularParcelasIPCAV2();
+			} else {
+				this.simuladorParcelas = calcularParcelas();
+			}
+			
 		} catch (Exception e) {
 		}
 	}
@@ -25032,10 +25140,12 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesInterno = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesJuridico = new ArrayList<FileUploaded>();
-
+	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
+	
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 
 	StreamedContent downloadAllFilesInterno;
 
@@ -25046,6 +25156,7 @@ public class ContratoCobrancaMB {
 	 * @throws IOException
 	 */
 	public void handleFileUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25058,22 +25169,27 @@ public class ContratoCobrancaMB {
 		}
 
 		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
+		if(event.getFile().getFileName().endsWith(".zip")) {	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+			
+			// atualiza lista de arquivos contidos no diretório
+			files = listaArquivos();
 		}
-
-		// atualiza lista de arquivos contidos no diretório
-		files = listaArquivos();
 	}
 	
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25085,23 +25201,28 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+	
+			// atualiza lista de arquivos contidos no diretório
+			filesInterno = listaArquivosInterno();
 		}
-
-		// atualiza lista de arquivos contidos no diretório
-		filesInterno = listaArquivosInterno();
 	}
 	
 	public void handleFileFaltanteUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25113,23 +25234,28 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
-		}
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
 
-		// atualiza lista de arquivos contidos no diretório
-		filesFaltante = listaArquivosFaltante();
+			// atualiza lista de arquivos contidos no diretório
+			filesFaltante = listaArquivosFaltante();
+		}
 	}
 	
 	public void handleFileJuridicoUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -25141,20 +25267,57 @@ public class ContratoCobrancaMB {
 			diretorio.mkdir();
 		}
 
-		// cria o arquivo
-		byte[] conteudo = event.getFile().getContents();
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-			fos.write(conteudo);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			// atualiza lista de arquivos contidos no diretório
+			filesJuridico = listaArquivosJuridico();
+		}
+	}
+	
+	public void handleFileComiteUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+
+		// cria o diretório, caso não exista
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
 		}
 
-		// atualiza lista de arquivos contidos no diretório
-		filesJuridico = listaArquivosJuridico();
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			// atualiza lista de arquivos contidos no diretório
+			filesComite = listaArquivosComite();
+		}
 	}
 
 	/**
@@ -25195,6 +25358,15 @@ public class ContratoCobrancaMB {
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 	}
+	
+	public void deleteFileComite() {
+		for (FileUploaded f : deletefilesComite) {
+			f.getFile().delete();
+		}
+
+		deletefilesComite = new ArrayList<FileUploaded>();
+		filesComite = listaArquivosComite();
+	}
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
 		for (FileUploaded f : lista) {
@@ -25220,6 +25392,12 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public void deleteFilesComite(Collection<FileUploaded> lista) {
+		for (FileUploaded f : lista) {
+			f.getFile().delete();
+		}
+	}
+	
 	/***
 	 * Lista ois arquivos contidos no diretório
 	 * 
@@ -25240,7 +25418,10 @@ public class ContratoCobrancaMB {
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
 				
-				if(!arquivo.getName().contains("interno") && !arquivo.getName().contains("faltante") && !arquivo.getName().contains("juridico")) {
+				if(!arquivo.getName().contains("interno") 
+						&& !arquivo.getName().contains("faltante") 
+						&& !arquivo.getName().contains("juridico") 
+						&& !arquivo.getName().contains("comite")) {
 					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 				}
 			}
@@ -25307,12 +25488,379 @@ public class ContratoCobrancaMB {
 		}
 		return lista;
 	}
+	
+	public Collection<FileUploaded> listaArquivosComite() {
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
 
-	/**
-	 * Método para fazer download de todos os arquivos do diretório do contrato
-	 * 
-	 * @return
-	 */
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public void viewFile(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileInterno(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileFaltante(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileJuridico(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void viewFileComite(String fileName) {
+
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//removido zippar arquivos (ou não)
+	
 	public StreamedContent getDownloadAllFiles() {
 		try {
 			// recupera path do contrato
@@ -25388,7 +25936,6 @@ public class ContratoCobrancaMB {
 	}
 	
 	
-
 	/***
 	 * Faz download de um único arquivo - linha do DataTable
 	 * 
@@ -25409,13 +25956,8 @@ public class ContratoCobrancaMB {
 		return this.downloadFile;
 	}
 
-	/***
-	 * Exemplo de Zip de um Diretório inteiro
-	 * 
-	 * @param srcFolder
-	 * @param destZipFile
-	 * @throws Exception
-	 */
+	//removido zippar arquivos (ou não)
+	
 	static public void zipFolder(String srcFolder, String destZipFile) throws Exception {
 		ZipOutputStream zip = null;
 		FileOutputStream fileWriter = null;
@@ -25428,14 +25970,7 @@ public class ContratoCobrancaMB {
 		zip.close();
 	}
 
-	/***
-	 * Exemplo de adicionar arquivos a um zip existente
-	 * 
-	 * @param path
-	 * @param srcFile
-	 * @param zip
-	 * @throws Exception
-	 */
+	
 	static private void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws Exception {
 
 		File folder = new File(srcFile);
@@ -25452,14 +25987,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	/**
-	 * Exemplo de adicionar uam pasta a um zip existente
-	 * 
-	 * @param path
-	 * @param srcFolder
-	 * @param zip
-	 * @throws Exception
-	 */
+	
 	static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws Exception {
 		File folder = new File(srcFolder);
 
@@ -25471,7 +25999,8 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
-
+	
+	
 	/**
 	 * @return the files
 	 */
@@ -27141,4 +27670,21 @@ public class ContratoCobrancaMB {
 	public void setFinanceiroGalleria(boolean financeiroGalleria) {
 		this.financeiroGalleria = financeiroGalleria;
 	}
+
+	public Collection<FileUploaded> getFilesComite() {
+		return filesComite;
+	}
+
+	public void setFilesComite(Collection<FileUploaded> filesComite) {
+		this.filesComite = filesComite;
+	}
+
+	public List<FileUploaded> getDeletefilesComite() {
+		return deletefilesComite;
+	}
+
+	public void setDeletefilesComite(List<FileUploaded> deletefilesComite) {
+		this.deletefilesComite = deletefilesComite;
+	}
+
 }

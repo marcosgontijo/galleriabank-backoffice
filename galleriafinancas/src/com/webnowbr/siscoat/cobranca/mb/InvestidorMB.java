@@ -2208,11 +2208,14 @@ public class InvestidorMB {
 					
 					// se parcela paga soma o valor recebido pelo investidor
 					// soma valor a receber
-					BigDecimal valorRecebido;
+					BigDecimal valorRecebido = BigDecimal.ZERO;
 //					if (cd.getSaldoCredorAtualizado().compareTo( BigDecimal.ZERO) == 0) {
 //						valorRecebido = cd.getValorLiquido().subtract(contratoVo.getValorInvestido());						
 //					} else {
-					valorRecebido = cd.getValorLiquido().subtract(cd.getAmortizacao());
+					if(!CommonsUtil.semValor(cd.getAmortizacao())) {
+						valorRecebido = cd.getValorLiquido().subtract(cd.getAmortizacao());
+					}
+					
 //					}					
 					contratoVo.addValorRecebido(valorRecebido);
 
@@ -2232,26 +2235,27 @@ public class InvestidorMB {
 						this.extrato.add(extrato);
 					}
 
-					if (cd.getAmortizacao().compareTo(BigDecimal.ZERO) > 0) {
-						ExtratoVO extrato = new ExtratoVO();
-						extrato.setIdContratoCobranca(c.getId());
-						extrato.setNumeroContrato(c.getNumeroContrato());
-						extrato.setDataMovimento(cd.getDataBaixa());
-						extrato.setDebitoCredito('C');
-						if (cd.getSaldoCredorAtualizado().compareTo(BigDecimal.ZERO) == 0) {
-							extrato.setTipoLancamento('Q');
-						} else {
-							extrato.setTipoLancamento('A');
+					if(!CommonsUtil.semValor(cd.getAmortizacao())) {
+						if (cd.getAmortizacao().compareTo(BigDecimal.ZERO) > 0) {
+							ExtratoVO extrato = new ExtratoVO();
+							extrato.setIdContratoCobranca(c.getId());
+							extrato.setNumeroContrato(c.getNumeroContrato());
+							extrato.setDataMovimento(cd.getDataBaixa());
+							extrato.setDebitoCredito('C');
+							if (cd.getSaldoCredorAtualizado().compareTo(BigDecimal.ZERO) == 0) {
+								extrato.setTipoLancamento('Q');
+							} else {
+								extrato.setTipoLancamento('A');
+							}
+							extrato.setValor(cd.getAmortizacao());
+							if (cd.getPagador() != null) {
+								extrato.setPagador(cd.getPagador().getNome());
+							} else {
+								extrato.setPagador(cd.getInvestidor().getNome());
+							}
+							this.extrato.add(extrato);
 						}
-						extrato.setValor(cd.getAmortizacao());
-						if (cd.getPagador() != null) {
-							extrato.setPagador(cd.getPagador().getNome());
-						} else {
-							extrato.setPagador(cd.getInvestidor().getNome());
-						}
-						this.extrato.add(extrato);
 					}
-
 				}
 			}
 			if (contratoQuitato.equals("-1")) {

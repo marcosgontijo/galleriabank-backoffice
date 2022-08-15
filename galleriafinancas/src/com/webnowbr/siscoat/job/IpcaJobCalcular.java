@@ -44,6 +44,7 @@ public class IpcaJobCalcular {
 			BigDecimal saldoDevedor = BigDecimal.ZERO;
 			BigDecimal valorSeguroMIPCarencia = BigDecimal.ZERO;
 			BigDecimal valorSeguroDFI = BigDecimal.ZERO;
+			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
 
 			if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())) {
@@ -181,13 +182,15 @@ public class IpcaJobCalcular {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP().add(valorSeguroMIPCarencia));
 								detalheIpca.setSeguroDFI(valorSeguroDFI.multiply(
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
+								detalheIpca.setTaxaAdm(valorTxAdm.multiply(
+										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
 								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela().add(valorSeguroMIPCarencia)
 										.add(valorSeguroDFI.multiply(
-												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))));
+												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))).add(valorTxAdm));
 							} else {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP());
 								detalheIpca.setSeguroDFI(parcela.getSeguroDFI());
-
+								detalheIpca.setTaxaAdm(parcela.getTxAdm());
 							}
 
 							BigDecimal vlrSaldoParcela = parcela.getSaldoDevedorInicial();

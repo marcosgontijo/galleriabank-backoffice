@@ -85,17 +85,20 @@
 								</p:commandButton>
 							</h:panelGrid>	
 							<h:panelGrid columns="2">
-							<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
-							<p:selectOneMenu id="AnalistaGeracaoPAJU"
-								value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
-								label="Estado" style="width:550px;" >
-								<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
-								<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
-								<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
-								<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
-								<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
-								<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
-							</p:selectOneMenu>
+								<!--
+								<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
+								<p:selectOneMenu id="AnalistaGeracaoPAJU"
+									value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
+									label="Estado" style="width:550px;" >
+									<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
+									<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
+									<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
+									<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
+									<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
+									<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
+								</p:selectOneMenu>
+								 -->				
+								<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
 								<p:outputLabel for="geracaoLaudo"
 									value="Observação PAJU: " styleClass="labelBold" />
 								<p:inputTextarea id="geracaoLaudo" rows="5"
@@ -226,11 +229,28 @@
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
-						<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;" disabled="true"/>  							
+						<h:panelGroup>
+							<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" style="width:150px;"/>  		
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorIptu" value="Valor IPTU: " />
+							<p:inputText id="valorIptu"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorIptu}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>					
 						
 						<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " />
-						<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;" disabled="true"/>  
-						
+						<h:panelGroup>
+							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+							<p:spacer width="10px"/>
+							<p:outputLabel for="valorCondominio" value="Valor Condomínio: " />
+							<p:inputText id="valorCondominio"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorCondominio}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+						</h:panelGroup>
 
 						<p:outputLabel for="valorEstimado"
 							value="Qual o valor estimado do imóvel? " />
@@ -298,11 +318,13 @@
 				</p:panel>																																																						
 			</p:panel>
 			
+			<p:messages id="msgArquivo"/>
+			
 			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosInternosSalvos" />								
+                          update="ArquivosInternosSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				

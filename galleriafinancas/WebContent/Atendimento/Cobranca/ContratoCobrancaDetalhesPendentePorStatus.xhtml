@@ -2693,12 +2693,15 @@
 					</p:dataViewListItem>
 				</p:dataView>
 			</p:panel>
+			
+			<p:messages id="msgArquivo"/>
+			
 			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  
 				<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;">						
 					<p:panel id="ArquivosInternos" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
-	                          update="ArquivosInternosSalvos" />								
+	                          update="ArquivosInternosSalvos msgArquivo" />								
 						</h:panelGrid>  
 					</p:panel>	
 					
@@ -2757,7 +2760,7 @@
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosFaltantesSalvos" />								
+                          update="ArquivosFaltantesSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				
@@ -2855,13 +2858,13 @@
 					</script>
 				</p:panel>	
 			</shiro:hasAnyRoles>
-					
+							
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;"
 					rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor != 'Aprovado'}">								
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosSalvos" />								
+                          update="ArquivosSalvos msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
 				

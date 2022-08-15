@@ -1946,12 +1946,14 @@
 					</p:dataViewListItem>
 				</p:dataView>
 			</p:panel>
+			
+			<p:messages id="msgArquivo"/>
 
 				<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
 					<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
-	                          update="ArquivosSalvos" />								
+	                          update="ArquivosSalvos msgArquivo" />								
 						</h:panelGrid>  
 					</p:panel>	
 					

@@ -38,6 +38,8 @@ public class ImovelCobranca implements Serializable {
 	private Date dataCompra;
 	private String idadeCompra;
 	private String nomeProprietario;
+	private BigDecimal valorIptu;
+	private BigDecimal valorCondominio;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
 	private boolean comprovanteIptuImovelCheckList;
@@ -392,5 +394,21 @@ public class ImovelCobranca implements Serializable {
 
 	public void setComprovanteIptuImovelCheckList(boolean comprovanteIptuImovelCheckList) {
 		this.comprovanteIptuImovelCheckList = comprovanteIptuImovelCheckList;
+	}
+
+	public BigDecimal getValorIptu() {
+		return valorIptu;
+	}
+
+	public void setValorIptu(BigDecimal valorIptu) {
+		this.valorIptu = valorIptu;
+	}
+
+	public BigDecimal getValorCondominio() {
+		return valorCondominio;
+	}
+
+	public void setValorCondominio(BigDecimal valorCondominio) {
+		this.valorCondominio = valorCondominio;
 	}
 }
