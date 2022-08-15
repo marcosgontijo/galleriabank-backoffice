@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.rest.api;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.google.gson.Gson;
@@ -8,6 +9,7 @@ import com.google.gson.Gson;
 public class UploadDocumentos implements Serializable {
 	
 	private static final long serialVersionUID = 598953331243019772L;
+	private byte[] file;
 	private String name;
 	private String path;
 
@@ -15,12 +17,27 @@ public class UploadDocumentos implements Serializable {
 		super();
 	}
 
-	public UploadDocumentos(String name, String path) {
+	public UploadDocumentos(byte[] file, String name, String path) {
 		super();
+		this.file = file;
 		this.name = name;
 		this.path = path;
 	}
 	
+	/**
+	 * @return the file
+	 */
+	public byte[] getFile() {
+		return file;
+	}
+
+	/**
+	 * @param file the file to set
+	 */
+	public void setFile(byte[] file) {
+		this.file = file;
+	}
+
 	/**
 	 * @return the name
 	 */
@@ -57,6 +74,7 @@ public class UploadDocumentos implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + Arrays.hashCode(file);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
@@ -71,6 +89,8 @@ public class UploadDocumentos implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		UploadDocumentos other = (UploadDocumentos) obj;
+		if (!Arrays.equals(file, other.file))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;

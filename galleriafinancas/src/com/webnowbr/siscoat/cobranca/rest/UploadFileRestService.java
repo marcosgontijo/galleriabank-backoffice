@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.webnowbr.siscoat.cobranca.rest.api.ListaUploadDocumentos;
@@ -52,7 +53,7 @@ public class UploadFileRestService {
 				}
 				
 				// cria o diretório, caso não exista
-				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
+				// Teste Localhost "C:/Desenvolvimento".concat(pathContrato)
 				try {
 
 					File file = new File(pathContrato.concat(nomeArquivo));
@@ -224,7 +225,7 @@ public class UploadFileRestService {
 	@Path("/pastas/{numeroContrato}/{subpasta}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response consultarPastaNumeroContrato(@PathParam(value = "numeroContrato") String numeroContrato, 
-			@PathParam(value = "subpasta") String subpasta) { 
+			@PathParam(value = "subpasta") String subpasta) throws IOException { 
 		
 		System.out.println("Executando o comando para consultar os arquivos dentro da pasta "
 				+numeroContrato+ " e subpasta "+subpasta+" - Inicio");
@@ -302,7 +303,7 @@ public class UploadFileRestService {
 		}
 	}
 
-	private ListaUploadDocumentos listarDiretorios(String diretorioContrato, ListaUploadDocumentos listaUploadDocumentos) {
+	private ListaUploadDocumentos listarDiretorios(String diretorioContrato, ListaUploadDocumentos listaUploadDocumentos) throws IOException {
 		// cria o diretório, caso não exista
 		// Teste Localhost "C:/Desenvolvimento".concat(pathContrato));
 		
@@ -311,13 +312,17 @@ public class UploadFileRestService {
 		if (arqs != null && arqs.length > 0) {
 			for (int i = 0; i < arqs.length; i++) {
 				if(arqs[i].isFile() == true) {
-					System.out.println(arqs[i]);
 					File arquivo = arqs[i];
-					listaUploadDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(arquivo.getName(), diretorioContrato));
+					byte file[] = converterFileFromBytes(arquivo);
+					listaUploadDocumentos.getListaUploadDocumentos().add(new UploadDocumentos(file, arquivo.getName(), diretorioContrato));
 				}
 			}
 		}
 		return listaUploadDocumentos;
+	}
+
+	private byte[] converterFileFromBytes(File arquivo) throws IOException {
+		return FileUtils.readFileToByteArray(arquivo);
 	}
 	
 }
