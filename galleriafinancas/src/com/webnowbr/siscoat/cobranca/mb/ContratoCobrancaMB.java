@@ -7153,7 +7153,7 @@ public class ContratoCobrancaMB {
 		}
 		quitacaoPDF = new QuitacaoPDF(this.objetoContratoCobranca.getPagador().getNome(),
 				this.dataQuitacao,
-				this.objetoContratoCobranca.getNumeroContrato(),
+				this.objetoContratoCobranca.getNumeroContratoSeguro(),
 				cpf);
 		
 		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
