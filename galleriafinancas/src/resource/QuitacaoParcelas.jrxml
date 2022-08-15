@@ -103,7 +103,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Valor Presente Parcela]]></text>
+				<text><![CDATA[Valor Quitação]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="30" y="0" width="125" height="20" forecolor="#FFFFFF" backcolor="#76A44A" uuid="016d9548-1b42-44de-8445-73d3516a83c2">
