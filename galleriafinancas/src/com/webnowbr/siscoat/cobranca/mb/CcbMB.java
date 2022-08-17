@@ -7941,7 +7941,46 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
+		clearAnexoII();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
+	}
+	
+	public void clearAnexoII(){
+		if(!CommonsUtil.semValor(this.objetoCcb.getCertidaoDeCasamentoValor())) {
+			this.temCertidaoDeCasamento = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
+			this.temCustasCartorarias = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getCertidaoDeCasamentoValor())) {
+			this.temCertidaoDeCasamento = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getLaudoDeAvaliacaoValor())) {
+			this.temLaudoDeAvaliacao = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getIntermediacaoValor())) {
+			this.temIntermediacao = true;
+		}
+
+		if(!CommonsUtil.semValor(this.objetoCcb.getProcessosJucidiais().size())) {
+			this.temProcessosJucidiais = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getIptuEmAtrasoValor())) {
+			this.temIptuEmAtraso = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getCondominioEmAtrasoValor())) {
+			this.temCondominioEmAtraso = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getIqValor())) {
+			this.temIq = true;
+		}
 	}
 	
 	public String clearFieldsInserirCcb() {
