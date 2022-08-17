@@ -5785,7 +5785,7 @@ public class CcbMB {
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run = paragraph.createRun();
-			run.setText(" conforme dados abaixo, crédito oriundo da CCB n° " + this.objetoCcb.getNumeroCcb() + ", datada de " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+			run.setText(" conforme dados abaixo, crédito oriundo da CCI n° " + this.objetoCcb.getNumeroCcb() + ", datada de " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
 					+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
 					+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
 			run.setFontSize(11);
@@ -5863,7 +5863,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setText("Agência: " + this.objetoCcb.getAgencia());
 			run.addCarriageReturn();
-			run.setText("C/C: " + this.objetoCcb.getContaCorrente());
+			run.setText("C/C: " + this.objetoCcb.getContaCorrente() + " Pix: " + this.objetoCcb.getPixBanco());
 			run.addCarriageReturn();
 			run.setText("Valor: ");
 			valorPorExtenso.setNumber(this.objetoCcb.getValorLiquidoCredito());
@@ -5872,7 +5872,7 @@ public class CcbMB {
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run3 = paragraph.createRun();
-			run3.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCB "
+			run3.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCI "
 					+ this.objetoCcb.getNumeroCcb() + " da matricula " 
 					+ this.objetoCcb.getNumeroImovel()  + " do " 
 					+ this.objetoCcb.getCartorioImovel() + " RI de " 
@@ -6008,7 +6008,7 @@ public class CcbMB {
 			paragraph.setSpacingAfter(0);
 			
 			run.addCarriageReturn();
-			run.setText("CÉDULA DE CRÉDITO BANCÁRIO Nº " + this.objetoCcb.getNumeroCcb());
+			run.setText("CÉDULA DE CRÉDITO IMOBILIÁRIO Nº " + this.objetoCcb.getNumeroCcb());
 			run.setFontSize(11);
 			run.setBold(true);
 			run.addCarriageReturn();
@@ -6028,12 +6028,12 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(11);
-			run2.setText("cláusula 2.1.3 da Cédula de Crédito Bancário n° " + this.objetoCcb.getNumeroCcb() 
+			run2.setText("cláusula 2.1.3 da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
 				+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
 			run2.setBold(true);
 			
 			run = paragraph.createRun();
-			run.setText(" (CCB), autorizo o pagamento das despesas acessórias e dos "
+			run.setText(" (CCI), autorizo o pagamento das despesas acessórias e dos "
 					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de");
 			run.setFontSize(11);
 			run.setBold(false);			
@@ -6047,7 +6047,7 @@ public class CcbMB {
 			run2.setBold(true);
 			
 			run = paragraph.createRun();
-			run.setText("por meio do crédito oriundo da CCB. O montante total necessário para o pagamento"
+			run.setText("por meio do crédito oriundo da CCI. O montante total necessário para o pagamento"
 					+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
 					+ " da Galleria Correspondente Bancário Eireli, CNPJ 34.787.885/0001-32, Banco do Brasil"
 					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP Money "
@@ -6350,6 +6350,7 @@ public class CcbMB {
 							contaProcesso.setPagadorRecebedor(this.objetoPagadorRecebedor);
 							contaProcesso.setTipoDespesa("C");
 							contaProcesso.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+							this.objetoContratoCobranca.getListContasPagar().add(contaProcesso);
 							processo.setProcessoInseridoContrato(true);
 						}
 					}
@@ -7203,7 +7204,7 @@ public class CcbMB {
 								text = trocaValoresXWPFCci(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
 								
-								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+								text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());
 								
 								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
 								

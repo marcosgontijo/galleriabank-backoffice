@@ -47,6 +47,7 @@ public class CcbContrato implements Serializable{
 	private String numeroBanco;
 	private String nomeBanco;
 	private String titularConta;
+	private String pixBanco;
 	
 	private String sistemaAmortizacao;
 	
@@ -937,5 +938,13 @@ public class CcbContrato implements Serializable{
 
 	public void setCepImovel(String cepImovel) {
 		this.cepImovel = cepImovel;
+	}
+
+	public String getPixBanco() {
+		return pixBanco;
+	}
+
+	public void setPixBanco(String pixBanco) {
+		this.pixBanco = pixBanco;
 	}
 }
