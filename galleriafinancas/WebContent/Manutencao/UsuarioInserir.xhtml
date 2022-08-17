@@ -208,6 +208,20 @@
 						style="width:60px">
 					</p:selectBooleanButton>
 				</h:panelGrid>
+				
+				<p:panel id="PanelBlockBackoffice"
+					header="Sistema de Cobrança - Bloqueia acesso ao Backoffice"
+					style="margin-bottom:10px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputLabel for="blockBackoffice" value="Bloquear Acesso? " />
+						<p:selectBooleanButton id="blockBackoffice"
+						value="#{usuarioMB.objetoUsuario.blockBackoffice}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
+					</h:panelGrid>
+				</p:panel>
+				
 				<p:panel id="PanelResponsavel"
 					header="Sistema de Cobrança - Gerencia Pré-Contratos"
 					style="margin-bottom:10px;margin-top:20px;">

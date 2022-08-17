@@ -279,6 +279,15 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "BLOCK_BACKOFFICE");
+			if (objetoUsuario.isBlockBackoffice()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAANALISTA");
 			if (objetoUsuario.isUserPreContratoAnalista()) {				

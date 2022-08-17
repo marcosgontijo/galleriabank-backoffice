@@ -101,14 +101,28 @@ public class LoginBean {
         
         // let's login the current user so we can check against roles and
         // permissions:
-        if (!currentUser.isAuthenticated()) {
+        
+        boolean blockedBackofficeAccess = false;
+        
+        if (username != null && password != null) {
+        	UserDao userdao = new UserDao();
+            userTmp = userdao.findByFilter("login", username);
+            
+            if (userTmp.get(0).isBlockBackoffice()) {
+            	blockedBackofficeAccess = true;
+            	loggedIn = false;
+            } else {
+            	blockedBackofficeAccess = false;
+            }
+        }
+        
+        if (!currentUser.isAuthenticated() && !blockedBackofficeAccess) {
             LOG.info("Logging.....");
             if (username != null && password != null) {
                 UsernamePasswordToken token = new UsernamePasswordToken(username, password);
                 token.setRememberMe(true);
                 
-                UserDao userdao = new UserDao();
-                userTmp = userdao.findByFilter("login", username);
+                
                 TwoFactorAuth twoFactorAuth = new TwoFactorAuth();                
         		
                 try {
@@ -207,7 +221,12 @@ public class LoginBean {
                     e.printStackTrace();
                 }
          } else {
-             setMessage("Invalid credentials");
+        	  if (blockedBackofficeAccess) {
+        		  setMessage("Este usuário não tem permissão de acesso ao Backoffice!");
+        		  context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao efetuar Login: Este usuário não tem permissão de acesso ao Backoffice!", ""));
+        	  } else {
+        		  setMessage("Invalid credentials");
+        	  }
          }
     }
     

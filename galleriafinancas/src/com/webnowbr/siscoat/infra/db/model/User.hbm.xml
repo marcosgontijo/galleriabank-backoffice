@@ -138,6 +138,9 @@
 		</property>		 		
 		<property name="userAgenteEspelhamento" type="boolean">
 			<column name="userAgenteEspelhamento" not-null="true" default="false" />
-		</property>	                             		      
+		</property>	      
+		<property name="blockBackoffice" type="boolean">
+			<column name="blockBackoffice" not-null="true" default="false" />
+		</property>	                        		      
     </class>
 </hibernate-mapping>
