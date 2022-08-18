@@ -14961,6 +14961,18 @@ public class ContratoCobrancaMB {
 			
 			simulacaoIPCACalculoV2.setSeguroDFI(SiscoatConstants.SEGURO_DFI_6_DIGITOS);
 			
+			if (this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()) {
+				simulacaoIPCACalculoV2.setCalculaSeguroDFI(true);
+			} else {
+				simulacaoIPCACalculoV2.setCalculaSeguroDFI(false);
+			}
+			
+			if (this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()) {
+				simulacaoIPCACalculoV2.setCalculaSeguroMIP(true);
+			} else {
+				simulacaoIPCACalculoV2.setCalculaSeguroMIP(false);
+			}
+			
 			simulacaoIPCACalculoV2.calcularIPVAv2();
 			
 			this.simuladorParcelas = convertIPCA2toSimuladorV0();
@@ -14985,7 +14997,11 @@ public class ContratoCobrancaMB {
 					
 			parcela.setSaldoDevedorFinal(parcelasIPCAV2.getSaldoDevedorFinal());
 			
-			parcela.setAmortizacao(parcelasIPCAV2.getAmortizacao());
+			if (parcelasIPCAV2.getAmortizacao().compareTo(BigDecimal.ZERO) >= 0) {
+				parcela.setAmortizacao(parcelasIPCAV2.getAmortizacao());
+			} else {
+				parcela.setAmortizacao(BigDecimal.ZERO);
+			}
 			
 			parcela.setJuros(parcelasIPCAV2.getJuros());
 			
