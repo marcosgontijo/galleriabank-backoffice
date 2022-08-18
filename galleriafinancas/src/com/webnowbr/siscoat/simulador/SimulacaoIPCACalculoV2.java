@@ -85,12 +85,25 @@ public class SimulacaoIPCACalculoV2 {
 				simulacaoIPCADadosV2.setDataReferencia(dataParcelas.getTime());
 				simulacaoIPCADadosV2.setSaldoDevedorInicial(this.valorCredito);
 				simulacaoIPCADadosV2.setSaldoDevedorFinal(this.valorCredito);
+				
+				simulacaoIPCADadosV2.setJuros(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setAmortizacao(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setValorParcela(BigDecimal.ZERO);
+				
+				
+				simulacaoIPCADadosV2.setSeguroDFI(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setSeguroMIP(BigDecimal.ZERO);
 			} else {
 				ipcaMesReferencia = getIPCAMes(dataParcelas.getTime());
 				simulacaoIPCADadosV2.setTaxaIPCA(ipcaMesReferencia);
 				
 				// tratamos os meses de carência
-				if (numeroParcela <= this.carencia.intValue()) {								
+				if (numeroParcela <= this.carencia.intValue()) {			
+					
+					simulacaoIPCADadosV2.setValorParcela(BigDecimal.ZERO);
+					simulacaoIPCADadosV2.setSeguroDFI(BigDecimal.ZERO);
+					simulacaoIPCADadosV2.setSeguroMIP(BigDecimal.ZERO);
+										
 					// atualiza saldo incial com o IPCA do mês anterior
 					saldoDevedorAtualizado = saldoDevedorAtualizado.add(saldoDevedorAtualizado.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100))));
 
