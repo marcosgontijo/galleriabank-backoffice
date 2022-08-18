@@ -368,6 +368,10 @@
 		<property name="cepImovel" type="java.lang.String">
 			<column name="cepImovel" />
 		</property> 
+		
+		<property name="pixBanco" type="java.lang.String">
+			<column name="pixBanco" />
+		</property>
 		        
     </class>
 </hibernate-mapping>
