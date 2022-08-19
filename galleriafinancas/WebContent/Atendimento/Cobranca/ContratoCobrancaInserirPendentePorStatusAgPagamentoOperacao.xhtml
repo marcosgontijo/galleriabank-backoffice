@@ -92,6 +92,12 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="operacaoPaga" value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+										</shiro:hasAnyRoles>
+										
+										<p:outputLabel styleClass="labelBold">Pendência</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="pendenciaPagamento" value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
 										</shiro:hasAnyRoles>											    						    
 									</h:panelGrid>
 								</ui:fragment>	
@@ -494,51 +500,213 @@
 				
 				<h:panelGroup id="Cliente">
 					<p:panel header="Cliente" style="margin-bottom:10px;">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="valorCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="Valor da Carta Split: " styleClass="labelBold" />
-							<p:inputText id="valorCartaSplit"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplit}"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="true"
-								converter="bigDecimalConverter" />
-
-							<p:outputLabel for="nomeBancarioCartaSplit" value="Nome:" 
-								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-							<p:inputText id="nomeBancarioCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioCartaSplit}" />
-
-							<p:outputLabel for="cpfCnpjBancarioCartaSplit" value="CPF/CNPJ: " 
-								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-							<p:inputText id="cpfCnpjBancarioCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioCartaSplit}" />
-
-							<p:outputLabel for="bancoBancarioCartaSplit" value="Banco: " 
-								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-							<p:inputText id="bancoBancarioCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioCartaSplit}" />
-
-							<p:outputLabel for="agenciaBancarioCartaSplit" value="Agência: " 
-								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-							<p:inputText id="agenciaBancarioCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioCartaSplit}" />
-
-							<p:outputLabel for="contaBancarioCartaSplit" value="C/C: " 
-								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
-							<p:inputText id="contaBancarioCartaSplit"
-								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCartaSplit}" />
-
+						<h:panelGrid columns="3">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="valorCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="Valor da Carta Split: " styleClass="labelBold" />
+								<p:inputText id="valorCartaSplit"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplit}"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+	
+								<p:outputLabel for="nomeBancarioCartaSplit" value="Nome:" 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="nomeBancarioCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioCartaSplit}" />
+	
+								<p:outputLabel for="cpfCnpjBancarioCartaSplit" value="CPF/CNPJ: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="cpfCnpjBancarioCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioCartaSplit}" />
+	
+								<p:outputLabel for="bancoBancarioCartaSplit" value="Banco: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="bancoBancarioCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioCartaSplit}" />
+	
+								<p:outputLabel for="agenciaBancarioCartaSplit" value="Agência: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="agenciaBancarioCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioCartaSplit}" />
+	
+								<p:outputLabel for="contaBancarioCartaSplit" value="C/C: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="contaBancarioCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCartaSplit}" />
+									
+									<p:outputLabel for="pixCartaSplit" value="Pix: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="pixCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel for="valorCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="Valor da Carta Split Galleria: " styleClass="labelBold" />
+								<p:inputText id="valorCartaSplitGalleria"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplitGalleria}"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+	
+								<p:outputLabel for="nomeBancarioCartaSplitGalleria" value="Nome Galleria:" 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="nomeBancarioCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioCartaSplitGalleria}" />
+	
+								<p:outputLabel for="cpfCnpjBancarioCartaSplitGalleria" value="CPF/CNPJ Galleria: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="cpfCnpjBancarioCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioCartaSplitGalleria}" />
+	
+								<p:outputLabel for="bancoBancarioCartaSplitGalleria" value="Banco Galleria: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="bancoBancarioCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioCartaSplitGalleria}" />
+	
+								<p:outputLabel for="agenciaBancarioCartaSplitGalleria" value="Agência Galleria: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="agenciaBancarioCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioCartaSplitGalleria}" />
+	
+								<p:outputLabel for="contaBancarioCartaSplitGalleria" value="C/C Galleria: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="contaBancarioCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCartaSplitGalleria}" />
+									
+									<p:outputLabel for="pixCartaSplitGalleria" value="Pix Galleria: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="pixCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
+									</h:panelGrid>
+							<h:panelGrid columns="2">
+								<p:outputLabel for="valorCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="Valor custo emissão: " styleClass="labelBold" />
+								<p:inputText id="valorCustoEmissao"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCustoEmissao}"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+	
+								<p:outputLabel for="nomeBancarioCustoEmissao" value="Nome Tac:" 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="nomeBancarioCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeBancarioCustoEmissao}" />
+	
+								<p:outputLabel for="cpfCnpjBancarioCustoEmissao" value="CPF/CNPJ Tac: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="cpfCnpjBancarioCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioCustoEmissao}" />
+	
+								<p:outputLabel for="bancoBancarioCustoEmissao" value="Banco Tac: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="bancoBancarioCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.bancoBancarioCustoEmissao}" />
+	
+								<p:outputLabel for="agenciaBancarioCustoEmissao" value="Agência Tac: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="agenciaBancarioCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.agenciaBancarioCustoEmissao}" />
+	
+								<p:outputLabel for="contaBancarioCustoEmissao" value="C/C Tac: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="contaBancarioCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCustoEmissao}" />
+									
+									<p:outputLabel for="pixCustoEmissao" value="Pix Tac: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="pixCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
+					
 				</h:panelGroup>
+				<p:messages id="msgArquivo"/>
+				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
+			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;">						
+				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
+					<h:panelGrid columns="1">		
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosInternosSalvos msgArquivo" />								
+					</h:panelGrid>  
+				</p:panel>	
 				
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<p:panel id="ArquivosInternosSalvos" header="Arquivo(s) Interno(s) Salvo(s) no Contrato" style="margin-bottom:10px;">							
+					<h:panelGrid columns="1">			                      								
+						<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
+							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+							 <f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
+						    	</p:commandButton>								 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
+					        </f:facet>	        
+					        <p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
+								filterMatchMode="contains" sortBy="#{filesInterno.name}">
+								<h:outputText value="#{filesInterno.name}" />
+								<p:spacer height="10" />
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>  
+					        
+					        <p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesInterno}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+						    	</p:commandButton>	
+				            </p:column>						        
+
+				             <f:facet name="footer">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
+						    	</p:commandButton>					             
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>								
+					        </f:facet>             	        		               		        			        			           			 		
+						</p:dataTable>								
+					</h:panelGrid>  
+				</p:panel>
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</p:panel>	
+		</shiro:hasAnyRoles>
 			</p:panel>
 	
 			<div align="center">
