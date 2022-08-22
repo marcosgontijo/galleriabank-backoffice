@@ -3289,6 +3289,1973 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 			+ " group by "
 			+ "	origemLead ";
 	
+	private static final String QUERY_DASH_CONTRATOS_LEADS_CIDADE = " select "
+			+ "	cidade, "
+			+ "	sum(contratosCadastrados) contratosCadastrados, "
+			+ "	sum(valorContratosCadastrados) valorContratosCadastrados, "
+			+ "	string_agg(numerosCadastrados, '#$&!') numerosCadastrados, "
+			+ "	sum(leadsEmTratamento) leadsEmTratamento, "
+			+ "	sum(valorLeadsEmTratamento) valorLeadsEmTratamento, "
+			+ "	string_agg(numerosLeadsEmTratamento, '#$&!') numerosLeadsEmTratamento, "
+			+ "	sum(leadsReprovados) leadsReprovados, "
+			+ "	sum(valorLeadsReprovados) valorLeadsReprovados, "
+			+ "	string_agg(numerosLeadsReprovados, '#$&!') numerosLeadsReprovados, "
+			+ "	sum(leadsCompletos) leadsCompletos, "
+			+ "	sum(valorLeadsCompletos) valorLeadsCompletos, "
+			+ "	string_agg(numerosLeadsCompletos, '#$&!') numerosLeadsCompletos, "
+			+ "	sum(contratosPreAprovados) contratosPreAprovados, "
+			+ "	sum(valorContratosPreAprovados) valorContratosPreAprovados, "
+			+ "	string_agg(numerosPREAPROVADOS, '#$&!') numerosPREAPROVADOS, "
+			+ "	sum(contratosBoletosPagos) contratosBoletosPagos, "
+			+ "	sum(valorBoletosPagos) valorBoletosPagos, "
+			+ "	string_agg(numerosBOLETOSPAGOS, '#$&!') numerosBOLETOSPAGOS, "
+			+ "	sum(contratosCcbsEmitidas) contratosCcbsEmitidas, "
+			+ "	sum(valorCcbsEmitidas) valorCcbsEmitidas, "
+			+ "	string_agg(numerosCCBSEMITIDAS, '#$&!') numerosCCBSEMITIDAS, "
+			+ "	sum(contratosRegistrados) contratosRegistrados, "
+			+ "	sum(valorContratosRegistrados) valorContratosRegistrados, "
+			+ "	string_agg(numerosREGISTRADOS, '#$&!') numerosREGISTRADOS, "
+			+ "	sum(contratosComite) contratosComite, "
+			+ "	sum(valorComite) valorComite, "
+			+ "	string_agg(numerosCOMITE, '#$&!') numerosCOMITE "
+			+ " from "
+			+ "	( "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		count(c.id) contratosCadastrados, "
+			+ "		sum(c.quantoPrecisa) valorContratosCadastrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.contratolead "
+			+ "		and c.status != 'Aprovados' "
+			+ "		and c.dataContrato >= ? ::timestamp "
+			+ "		and c.dataContrato <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		count(c.id) leadsEmTratamento, "
+			+ "		sum(c.quantoPrecisa) valorLeadsEmTratamento, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Em Tratamento' "
+			+ "		and c.contratolead "
+			+ "		and LeadEmTratamentoData >= ? ::timestamp "
+			+ "		and LeadEmTratamentoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		count(c.id) leadsReprovados, "
+			+ "		sum(c.quantoPrecisa) valorLeadsReprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		count(c.id) leadsCompletos, "
+			+ "		sum(c.quantoPrecisa) valorLeadsCompletos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Completo' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		count(c.id) contratosPreAprovados, "
+			+ "		sum(c.quantoPrecisa) valorContratosPreAprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.cadastroaprovadovalor = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and CadastroAprovadoData >= ? ::timestamp "
+			+ "		and CadastroAprovadoData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		count(c.id) contratosBoletosPagos, "
+			+ "		sum(c.quantoPrecisa) valorBoletosPagos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.pagtolaudoconfirmada = 'true' "
+			+ "		and c.contratolead "
+			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
+			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		count(c.id) contratosCcbsEmitidas, "
+			+ "		sum(c.valorccb) valorCcbsEmitidas, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.AgAssinatura = 'false' "
+			+ "		and c.contratolead "
+			+ "		and AgAssinaturaData >= ? ::timestamp "
+			+ "		and AgAssinaturaData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		count(c.id) contratosRegistrados, "
+			+ "		sum(c.valorccb) valorContratosRegistrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.status = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and agRegistroData >= ? ::timestamp "
+			+ "		and agRegistroData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ " union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		count(c.id) contratosComite, "
+			+ "		sum(c.valorAprovadoComite) valorComite , "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.aprovadoComite = 'true' "
+			+ "		and c.contratolead "
+			+ "		and aprovadoComiteData >= ? ::timestamp "
+			+ "		and aprovadoComiteData <= ? ::timestamp "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato ) totais "
+			+ " group by "
+			+ "	cidade ";
+	
+	private static final String QUERY_DASH_CONTRATOS_LEADS_CIDADE_POR_CAMPANHA = " select "
+			+ "	cidade, "
+			+ "	sum(contratosCadastrados) contratosCadastrados, "
+			+ "	sum(valorContratosCadastrados) valorContratosCadastrados, "
+			+ "	string_agg(numerosCadastrados, '#$&!') numerosCadastrados, "
+			+ "	sum(leadsEmTratamento) leadsEmTratamento, "
+			+ "	sum(valorLeadsEmTratamento) valorLeadsEmTratamento, "
+			+ "	string_agg(numerosLeadsEmTratamento, '#$&!') numerosLeadsEmTratamento, "
+			+ "	sum(leadsReprovados) leadsReprovados, "
+			+ "	sum(valorLeadsReprovados) valorLeadsReprovados, "
+			+ "	string_agg(numerosLeadsReprovados, '#$&!') numerosLeadsReprovados, "
+			+ "	sum(leadsCompletos) leadsCompletos, "
+			+ "	sum(valorLeadsCompletos) valorLeadsCompletos, "
+			+ "	string_agg(numerosLeadsCompletos, '#$&!') numerosLeadsCompletos, "
+			+ "	sum(contratosPreAprovados) contratosPreAprovados, "
+			+ "	sum(valorContratosPreAprovados) valorContratosPreAprovados, "
+			+ "	string_agg(numerosPREAPROVADOS, '#$&!') numerosPREAPROVADOS, "
+			+ "	sum(contratosBoletosPagos) contratosBoletosPagos, "
+			+ "	sum(valorBoletosPagos) valorBoletosPagos, "
+			+ "	string_agg(numerosBOLETOSPAGOS, '#$&!') numerosBOLETOSPAGOS, "
+			+ "	sum(contratosCcbsEmitidas) contratosCcbsEmitidas, "
+			+ "	sum(valorCcbsEmitidas) valorCcbsEmitidas, "
+			+ "	string_agg(numerosCCBSEMITIDAS, '#$&!') numerosCCBSEMITIDAS, "
+			+ "	sum(contratosRegistrados) contratosRegistrados, "
+			+ "	sum(valorContratosRegistrados) valorContratosRegistrados, "
+			+ "	string_agg(numerosREGISTRADOS, '#$&!') numerosREGISTRADOS, "
+			+ "	sum(contratosComite) contratosComite, "
+			+ "	sum(valorComite) valorComite, "
+			+ "	string_agg(numerosCOMITE, '#$&!') numerosCOMITE "
+			+ "from "
+			+ "	( "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		count(c.id) contratosCadastrados, "
+			+ "		sum(c.quantoPrecisa) valorContratosCadastrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.contratolead "
+			+ "		and c.status != 'Aprovados' "
+			+ "		and c.dataContrato >= ? ::timestamp "
+			+ "		and c.dataContrato <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		count(c.id) leadsEmTratamento, "
+			+ "		sum(c.quantoPrecisa) valorLeadsEmTratamento, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Em Tratamento' "
+			+ "		and c.contratolead "
+			+ "		and LeadEmTratamentoData >= ? ::timestamp "
+			+ "		and LeadEmTratamentoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		count(c.id) leadsReprovados, "
+			+ "		sum(c.quantoPrecisa) valorLeadsReprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		count(c.id) leadsCompletos, "
+			+ "		sum(c.quantoPrecisa) valorLeadsCompletos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Completo' "
+			+ "		and c.contratolead "
+			+ "		and leadCompletoData >= ? ::timestamp "
+			+ "		and leadCompletoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		count(c.id) contratosPreAprovados, "
+			+ "		sum(c.quantoPrecisa) valorContratosPreAprovados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.cadastroaprovadovalor = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and CadastroAprovadoData >= ? ::timestamp "
+			+ "		and CadastroAprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		count(c.id) contratosBoletosPagos, "
+			+ "		sum(c.quantoPrecisa) valorBoletosPagos, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.pagtolaudoconfirmada = 'true' "
+			+ "		and c.contratolead "
+			+ "		and pagtoLaudoConfirmadaData >= ? ::timestamp "
+			+ "		and pagtoLaudoConfirmadaData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		count(c.id) contratosCcbsEmitidas, "
+			+ "		sum(c.valorccb) valorCcbsEmitidas, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.AgAssinatura = 'false' "
+			+ "		and c.contratolead "
+			+ "		and AgAssinaturaData >= ? ::timestamp "
+			+ "		and AgAssinaturaData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		count(c.id) contratosRegistrados, "
+			+ "		sum(c.valorccb) valorContratosRegistrados, "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosREGISTRADOS, "
+			+ "		0 contratosComite, "
+			+ "		0 valorComite, "
+			+ "		null numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.status = 'Aprovado' "
+			+ "		and c.contratolead "
+			+ "		and agRegistroData >= ? ::timestamp "
+			+ "		and agRegistroData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato "
+			+ "union all "
+			+ "	select "
+			+ "		i.cidade cidade, "
+			+ "		0 contratosCadastrados, "
+			+ "		0 valorContratosCadastrados, "
+			+ "		null numerosCadastrados, "
+			+ "		0 leadsEmTratamento, "
+			+ "		0 valorLeadsEmTratamento, "
+			+ "		null numerosLeadsEmTratamento, "
+			+ "		0 leadsReprovados, "
+			+ "		0 valorLeadsReprovados, "
+			+ "		null numerosLeadsReprovados, "
+			+ "		0 leadsCompletos, "
+			+ "		0 valorLeadsCompletos, "
+			+ "		null numerosLeadsCompletos, "
+			+ "		0 contratosPreAprovados, "
+			+ "		0 valorContratosPreAprovados, "
+			+ "		null numerosPREAPROVADOS, "
+			+ "		0 contratosBoletosPagos, "
+			+ "		0 valorBoletosPagos, "
+			+ "		null numerosBOLETOSPAGOS, "
+			+ "		0 contratosCcbsEmitidas, "
+			+ "		0 valorCcbsEmitidas, "
+			+ "		null numerosCCBSEMITIDAS, "
+			+ "		0 contratosRegistrados, "
+			+ "		0 valorContratosRegistrados, "
+			+ "		null numerosREGISTRADOS, "
+			+ "		count(c.id) contratosComite, "
+			+ "		sum(c.valorAprovadoComite) valorComite , "
+			+ "		STRING_AGG(CONCAT(C.NUMEROCONTRATO, '!&$', P.nome), '#$&!' ) numerosCOMITE "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.aprovadoComite = 'true' "
+			+ "		and c.contratolead "
+			+ "		and aprovadoComiteData >= ? ::timestamp "
+			+ "		and aprovadoComiteData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "	group by "
+			+ "		i.cidade, "
+			+ "		c.datacontrato ) totais "
+			+ "group by "
+			+ "	cidade ";
+	
+	private static final String QUERY_DASH_CONTRATOS_LEADS_MOTIVO_REPROVA = " select "
+			+ "	origemLead, "
+			+ "	sum(leadVazio) leadVazio, "
+			+ "	sum(valorLeadVazio) valorLeadVazio, "
+			+ "	string_agg(numerosLeadVazio, '#$&!') numerosLeadVazio, "
+			+ "	sum(leadDadosInconsistentes) leadDadosInconsistentes, "
+			+ "	sum(valorLeadDadosInconsistentes) valorLeadDadosInconsistentes, "
+			+ "	string_agg(numerosLeadDadosInconsistentes, '#$&!') numerosLeadDadosInconsistentes, "
+			+ "	sum(leadsClienteNaoAtendeu) leadsClienteNaoAtendeu, "
+			+ "	sum(valorLeadsClienteNaoAtendeu) valorLeadsClienteNaoAtendeu, "
+			+ "	string_agg(numerosLeadsClienteNaoAtendeu, '#$&!') numerosLeadsClienteNaoAtendeu, "
+			+ "	sum(leadsClientesForaPerfil) leadsClientesForaPerfil, "
+			+ "	sum(valorLeadsClientesForaPerfil) valorLeadsClientesForaPerfil, "
+			+ "	string_agg(numerosLeadsClientesForaPerfil, '#$&!') numerosLeadsClientesForaPerfil, "
+			+ "	sum(leadOperacaoDuplicada) leadOperacaoDuplicada, "
+			+ "	sum(valorLeadOperacaoDuplicada) valorLeadOperacaoDuplicada, "
+			+ "	string_agg(numerosLeadOperacaoDuplicada, '#$&!') numerosLeadOperacaoDuplicada, "
+			+ "	sum(leadClienteDesistiu) leadClienteDesistiu, "
+			+ "	sum(valorLeadClienteDesistiu) valorLeadClienteDesistiu, "
+			+ "	string_agg(numerosLeadClienteDesistiu, '#$&!') numerosLeadClienteDesistiu, "
+			+ "	sum(leadImovelRuim) leadImovelRuim, "
+			+ "	sum(valorLeadImovelRuim) valorLeadImovelRuim, "
+			+ "	string_agg(numerosLeadImovelRuim, '#$&!') numerosLeadImovelRuim, "
+			+ "	sum(leadImovelForaPerfil) leadImovelForaPerfil, "
+			+ "	sum(valorLeadImovelForaPerfil) valorLeadImovelForaPerfil, "
+			+ "	string_agg(numerosLeadImovelForaPerfil, '#$&!') numerosLeadImovelForaPerfil "
+			+ "from ( "
+			+ "	select "
+			+ "		c.urllead origemLead, "
+			+ "		count(c.id) leadVazio, "
+			+ "		sum(c.quantoprecisa) valorLeadVazio, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and ( motivoreprovalead = '' or motivoreprovalead is null) "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead  "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		count(c.id) leadDadosInconsistentes, "
+			+ "		sum(c.quantoprecisa) valorLeadDadosInconsistentes, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Dados Inconsistentes') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		count(c.id) leadsClienteNaoAtendeu, "
+			+ "		sum(c.quantoprecisa) valorLeadsClienteNaoAtendeu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente não atendeu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		count(c.id) leadsClientesForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadsClientesForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		count(c.id) leadOperacaoDuplicada, "
+			+ "		sum(c.quantoprecisa) valorLeadOperacaoDuplicada, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Operação Duplicada') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		count(c.id) leadClienteDesistiu, "
+			+ "		sum(c.quantoprecisa) valorLeadClienteDesistiu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente desistiu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		count(c.id) leadImovelRuim, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelRuim, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel Ruim') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ "union all "
+			+ "		select "
+			+ "		c.urllead origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		count(c.id) leadImovelForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by c.urllead "
+			+ ") totais  "
+			+ "group by origemLead";
+
+	private static final String QUERY_DASH_CONTRATOS_LEADS_CIDADES_MOTIVO_REPROVA = " select "
+			+ "	origemLead, "
+			+ "	sum(leadVazio) leadVazio, "
+			+ "	sum(valorLeadVazio) valorLeadVazio, "
+			+ "	string_agg(numerosLeadVazio, '#$&!') numerosLeadVazio, "
+			+ "	sum(leadDadosInconsistentes) leadDadosInconsistentes, "
+			+ "	sum(valorLeadDadosInconsistentes) valorLeadDadosInconsistentes, "
+			+ "	string_agg(numerosLeadDadosInconsistentes, '#$&!') numerosLeadDadosInconsistentes, "
+			+ "	sum(leadsClienteNaoAtendeu) leadsClienteNaoAtendeu, "
+			+ "	sum(valorLeadsClienteNaoAtendeu) valorLeadsClienteNaoAtendeu, "
+			+ "	string_agg(numerosLeadsClienteNaoAtendeu, '#$&!') numerosLeadsClienteNaoAtendeu, "
+			+ "	sum(leadsClientesForaPerfil) leadsClientesForaPerfil, "
+			+ "	sum(valorLeadsClientesForaPerfil) valorLeadsClientesForaPerfil, "
+			+ "	string_agg(numerosLeadsClientesForaPerfil, '#$&!') numerosLeadsClientesForaPerfil, "
+			+ "	sum(leadOperacaoDuplicada) leadOperacaoDuplicada, "
+			+ "	sum(valorLeadOperacaoDuplicada) valorLeadOperacaoDuplicada, "
+			+ "	string_agg(numerosLeadOperacaoDuplicada, '#$&!') numerosLeadOperacaoDuplicada, "
+			+ "	sum(leadClienteDesistiu) leadClienteDesistiu, "
+			+ "	sum(valorLeadClienteDesistiu) valorLeadClienteDesistiu, "
+			+ "	string_agg(numerosLeadClienteDesistiu, '#$&!') numerosLeadClienteDesistiu, "
+			+ "	sum(leadImovelRuim) leadImovelRuim, "
+			+ "	sum(valorLeadImovelRuim) valorLeadImovelRuim, "
+			+ "	string_agg(numerosLeadImovelRuim, '#$&!') numerosLeadImovelRuim, "
+			+ "	sum(leadImovelForaPerfil) leadImovelForaPerfil, "
+			+ "	sum(valorLeadImovelForaPerfil) valorLeadImovelForaPerfil, "
+			+ "	string_agg(numerosLeadImovelForaPerfil, '#$&!') numerosLeadImovelForaPerfil "
+			+ "from ( "
+			+ "	select "
+			+ "		i.cidade origemLead, "
+			+ "		count(c.id) leadVazio, "
+			+ "		sum(c.quantoprecisa) valorLeadVazio, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and ( motivoreprovalead = '' or motivoreprovalead is null) "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		count(c.id) leadDadosInconsistentes, "
+			+ "		sum(c.quantoprecisa) valorLeadDadosInconsistentes, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Dados Inconsistentes') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade cidade, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		count(c.id) leadsClienteNaoAtendeu, "
+			+ "		sum(c.quantoprecisa) valorLeadsClienteNaoAtendeu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente não atendeu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		count(c.id) leadsClientesForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadsClientesForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		count(c.id) leadOperacaoDuplicada, "
+			+ "		sum(c.quantoprecisa) valorLeadOperacaoDuplicada, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Operação Duplicada') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		count(c.id) leadClienteDesistiu, "
+			+ "		sum(c.quantoprecisa) valorLeadClienteDesistiu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente desistiu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		count(c.id) leadImovelRuim, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelRuim, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel Ruim') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		count(c.id) leadImovelForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		group by i.cidade "
+			+ ") totais "
+			+ "group by origemLead";
+	
+	private static final String QUERY_DASH_CONTRATOS_LEADS_CIDADES_MOTIVO_REPROVA_POR_CAMPANHA = " select "
+			+ "	origemLead, "
+			+ "	sum(leadVazio) leadVazio, "
+			+ "	sum(valorLeadVazio) valorLeadVazio, "
+			+ "	string_agg(numerosLeadVazio, '#$&!') numerosLeadVazio, "
+			+ "	sum(leadDadosInconsistentes) leadDadosInconsistentes, "
+			+ "	sum(valorLeadDadosInconsistentes) valorLeadDadosInconsistentes, "
+			+ "	string_agg(numerosLeadDadosInconsistentes, '#$&!') numerosLeadDadosInconsistentes, "
+			+ "	sum(leadsClienteNaoAtendeu) leadsClienteNaoAtendeu, "
+			+ "	sum(valorLeadsClienteNaoAtendeu) valorLeadsClienteNaoAtendeu, "
+			+ "	string_agg(numerosLeadsClienteNaoAtendeu, '#$&!') numerosLeadsClienteNaoAtendeu, "
+			+ "	sum(leadsClientesForaPerfil) leadsClientesForaPerfil, "
+			+ "	sum(valorLeadsClientesForaPerfil) valorLeadsClientesForaPerfil, "
+			+ "	string_agg(numerosLeadsClientesForaPerfil, '#$&!') numerosLeadsClientesForaPerfil, "
+			+ "	sum(leadOperacaoDuplicada) leadOperacaoDuplicada, "
+			+ "	sum(valorLeadOperacaoDuplicada) valorLeadOperacaoDuplicada, "
+			+ "	string_agg(numerosLeadOperacaoDuplicada, '#$&!') numerosLeadOperacaoDuplicada, "
+			+ "	sum(leadClienteDesistiu) leadClienteDesistiu, "
+			+ "	sum(valorLeadClienteDesistiu) valorLeadClienteDesistiu, "
+			+ "	string_agg(numerosLeadClienteDesistiu, '#$&!') numerosLeadClienteDesistiu, "
+			+ "	sum(leadImovelRuim) leadImovelRuim, "
+			+ "	sum(valorLeadImovelRuim) valorLeadImovelRuim, "
+			+ "	string_agg(numerosLeadImovelRuim, '#$&!') numerosLeadImovelRuim, "
+			+ "	sum(leadImovelForaPerfil) leadImovelForaPerfil, "
+			+ "	sum(valorLeadImovelForaPerfil) valorLeadImovelForaPerfil, "
+			+ "	string_agg(numerosLeadImovelForaPerfil, '#$&!') numerosLeadImovelForaPerfil "
+			+ "from ( "
+			+ "	select "
+			+ "		i.cidade origemLead, "
+			+ "		count(c.id) leadVazio, "
+			+ "		sum(c.quantoprecisa) valorLeadVazio, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and ( motivoreprovalead = '' or motivoreprovalead is null) "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		count(c.id) leadDadosInconsistentes, "
+			+ "		sum(c.quantoprecisa) valorLeadDadosInconsistentes, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Dados Inconsistentes') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		count(c.id) leadsClienteNaoAtendeu, "
+			+ "		sum(c.quantoprecisa) valorLeadsClienteNaoAtendeu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente não atendeu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		count(c.id) leadsClientesForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadsClientesForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		count(c.id) leadOperacaoDuplicada, "
+			+ "		sum(c.quantoprecisa) valorLeadOperacaoDuplicada, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Operação Duplicada') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		count(c.id) leadClienteDesistiu, "
+			+ "		sum(c.quantoprecisa) valorLeadClienteDesistiu, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Cliente desistiu') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		count(c.id) leadImovelRuim, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelRuim, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelRuim, "
+			+ "		0 leadImovelForaPerfil, "
+			+ "		0 valorLeadImovelForaPerfil, "
+			+ "		null numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel Ruim') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ "union all "
+			+ "		select "
+			+ "		i.cidade origemLead, "
+			+ "		0 leadVazio, "
+			+ "		0 valorLeadVazio, "
+			+ "		null numerosLeadVazio,		 "
+			+ "		0 leadDadosInconsistentes, "
+			+ "		0 valorLeadDadosInconsistentes, "
+			+ "		null numerosLeadDadosInconsistentes, "
+			+ "		0 leadsClienteNaoAtendeu, "
+			+ "		0 valorLeadsClienteNaoAtendeu, "
+			+ "		null numerosLeadsClienteNaoAtendeu, "
+			+ "		0 leadsClientesForaPerfil, "
+			+ "		0 valorLeadsClientesForaPerfil, "
+			+ "		null numerosLeadsClientesForaPerfil, "
+			+ "		0 leadOperacaoDuplicada, "
+			+ "		0 valorLeadOperacaoDuplicada, "
+			+ "		null numerosLeadOperacaoDuplicada, "
+			+ "		0 leadClienteDesistiu, "
+			+ "		0 valorLeadClienteDesistiu, "
+			+ "		null numerosLeadClienteDesistiu, "
+			+ "		0 leadImovelRuim, "
+			+ "		0 valorLeadImovelRuim, "
+			+ "		null numerosLeadImovelRuim, "
+			+ "		count(c.id) leadImovelForaPerfil, "
+			+ "		sum(c.quantoprecisa) valorLeadImovelForaPerfil, "
+			+ "		string_agg(concat(C.numerocontrato, '!&$', P.nome), '#$&!' ) numerosLeadImovelForaPerfil "
+			+ "	from "
+			+ "		cobranca.contratocobranca c "
+			+ "	inner join cobranca.pagadorrecebedor p on "
+			+ "		p.id = c.pagador "
+			+ "	inner join cobranca.imovelcobranca i on  "
+			+ "		i.id = c.imovel "
+			+ "	where "
+			+ "		c.numerocontrato is not null "
+			+ "		and c.statuslead = 'Reprovado' "
+			+ "		and c.contratolead "
+			+ "		and (motivoreprovalead = 'Imóvel fora do perfil') "
+			+ "		and LeadReprovadoData >= ? ::timestamp "
+			+ "		and LeadReprovadoData <= ? ::timestamp "
+			+ "		and c.urllead = ? "
+			+ "		group by i.cidade "
+			+ ") totais "
+			+ "group by origemLead";
+	
+	private static final String QUERY_DASH_CAMPANHAS = " select  distinct c.urllead "
+			+ "from cobranca.contratocobranca c ";
+	
 	@SuppressWarnings("unchecked")
 	public List<Dashboard> getDashboardContratosLead(final Date dataInicio, final Date dataFim, boolean consultarPorStatus) {
 		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
@@ -3342,12 +5309,6 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					rs = ps.executeQuery();
 
 					Dashboard dashboard = new Dashboard();
-
-					ResponsavelDao responsavelDao = new ResponsavelDao();
-					Responsavel responsavel = new Responsavel();
-					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-					
-					
 
 					while (rs.next()) {
 						dashboard = new Dashboard();
@@ -3558,6 +5519,631 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 						objects.add(dashboard);
 					}
 
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Dashboard> getDashboardContratosLeadCidade(final Date dataInicio, final Date dataFim, String campanha) {
+		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<Dashboard> objects = new ArrayList<Dashboard>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					connection = getConnection();
+
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					if(CommonsUtil.semValor(campanha)) {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_CIDADE);			
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+
+						ps.setDate(3, dtRelInicioSQL);
+						ps.setDate(4, dtRelFimSQL);
+
+						ps.setDate(5, dtRelInicioSQL);
+						ps.setDate(6, dtRelFimSQL);
+
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+
+						ps.setDate(9, dtRelInicioSQL);
+						ps.setDate(10, dtRelFimSQL);
+						
+						ps.setDate(11, dtRelInicioSQL);
+						ps.setDate(12, dtRelFimSQL);
+						
+						ps.setDate(13, dtRelInicioSQL);
+						ps.setDate(14, dtRelFimSQL);
+
+						ps.setDate(15, dtRelInicioSQL);
+						ps.setDate(16, dtRelFimSQL);
+						
+						ps.setDate(17, dtRelInicioSQL);
+						ps.setDate(18, dtRelFimSQL);
+					} else {					
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_CIDADE_POR_CAMPANHA);	
+						
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setString(3, campanha);
+
+						ps.setDate(4, dtRelInicioSQL);
+						ps.setDate(5, dtRelFimSQL);
+						ps.setString(6, campanha);
+
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+						ps.setString(9, campanha);
+						
+						ps.setDate(10, dtRelInicioSQL);
+						ps.setDate(11, dtRelFimSQL);
+						ps.setString(12, campanha);
+
+						ps.setDate(13, dtRelInicioSQL);
+						ps.setDate(14, dtRelFimSQL);
+						ps.setString(15, campanha);
+						
+						ps.setDate(16, dtRelInicioSQL);
+						ps.setDate(17, dtRelFimSQL);
+						ps.setString(18, campanha);
+						
+						ps.setDate(19, dtRelInicioSQL);
+						ps.setDate(20, dtRelFimSQL);
+						ps.setString(21, campanha);
+
+						ps.setDate(22, dtRelInicioSQL);
+						ps.setDate(23, dtRelFimSQL);
+						ps.setString(24, campanha);
+						
+						ps.setDate(25, dtRelInicioSQL);
+						ps.setDate(26, dtRelFimSQL);
+						ps.setString(27, campanha);
+					}
+					
+					rs = ps.executeQuery();
+
+					Dashboard dashboard = new Dashboard();
+
+					ResponsavelDao responsavelDao = new ResponsavelDao();
+					Responsavel responsavel = new Responsavel();
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					
+					
+
+					while (rs.next()) {
+						dashboard = new Dashboard();
+						
+						dashboard.setOrigemLead(rs.getString("cidade"));
+
+						dashboard.setContratosCadastrados(rs.getInt("contratosCadastrados"));
+						dashboard.setValorContratosCadastrados(rs.getBigDecimal("valorContratosCadastrados"));					
+							
+						dashboard.setLeadsEmTratamento(rs.getInt("leadsEmTratamento"));
+						dashboard.setValorLeadsEmTratamento(rs.getBigDecimal("valorLeadsEmTratamento"));
+						
+						dashboard.setLeadsReprovados(rs.getInt("leadsReprovados"));
+						dashboard.setValorLeadsReprovados(rs.getBigDecimal("valorLeadsReprovados"));
+						
+						dashboard.setLeadsCompletos(rs.getInt("leadsCompletos"));
+						dashboard.setValorLeadscompletos(rs.getBigDecimal("valorLeadsCompletos"));
+
+						dashboard.setContratosPreAprovados(rs.getInt("contratosPreAprovados"));
+						dashboard.setValorContratosPreAprovados(rs.getBigDecimal("valorContratosPreAprovados"));
+											
+						dashboard.setContratosBoletosPagos(rs.getInt("contratosBoletosPagos"));
+						dashboard.setValorBoletosPagos(rs.getBigDecimal("valorBoletosPagos"));
+											
+						dashboard.setContratosCcbsEmitidas(rs.getInt("contratosCcbsEmitidas"));
+						dashboard.setValorCcbsEmitidas(rs.getBigDecimal("valorCcbsEmitidas"));
+										
+						dashboard.setContratosRegistrados(rs.getInt("contratosRegistrados"));
+						dashboard.setValorContratosRegistrados(rs.getBigDecimal("valorContratosRegistrados"));
+						
+						dashboard.setContratosComite(rs.getInt("contratosComite"));
+						dashboard.setValorContratosComite(rs.getBigDecimal("valorComite"));
+						
+						//recebe os contratos
+						List<String> listaCadastrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosCadastrados"))) {
+							listaCadastrados = Arrays.asList(rs.getString("numerosCadastrados").split(Pattern.quote("#$&!")));
+							dashboard.setListaCadastrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCadastrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCadastrados().add(coco);
+							}				
+							dashboard.setListaCadastrados(getTaxasDashboard(dashboard.getListaCadastrados()));
+						}
+						
+						List<String> listaLeadsEmTratamento = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsEmTratamento"))) {
+							listaLeadsEmTratamento = Arrays.asList(rs.getString("numerosLeadsEmTratamento").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsEmTratamento(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsEmTratamento) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsEmTratamento().add(coco);
+							}				
+							dashboard.setListaLeadsEmTratamento(getTaxasDashboard(dashboard.getListaLeadsEmTratamento()));
+						}
+						
+						List<String> listaLeadsReprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsReprovados"))) {
+							listaLeadsReprovados = Arrays.asList(rs.getString("numerosLeadsReprovados").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsReprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsReprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsReprovados().add(coco);
+							}				
+							dashboard.setListaLeadsReprovados(getTaxasDashboard(dashboard.getListaLeadsReprovados()));
+						}
+						
+						List<String> listaLeadsCompletos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsCompletos"))) {
+							listaLeadsCompletos = Arrays.asList(rs.getString("numerosLeadsCompletos").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsCompletos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsCompletos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsCompletos().add(coco);
+							}				
+							dashboard.setListaLeadsCompletos(getTaxasDashboard(dashboard.getListaLeadsCompletos()));
+						}
+						
+						List<String> listaPreAprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosPREAPROVADOS"))) {
+							listaPreAprovados = Arrays.asList(rs.getString("numerosPREAPROVADOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaPreAprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaPreAprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaPreAprovados().add(coco);
+							}
+							
+							dashboard.setListaPreAprovados(getTaxasDashboard(dashboard.getListaPreAprovados()));
+						}
+						
+						List<String> listaBoletosPagos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosBOLETOSPAGOS"))) {
+							listaBoletosPagos = Arrays.asList(rs.getString("numerosBOLETOSPAGOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaBoletosPagos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaBoletosPagos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaBoletosPagos().add(coco);
+							}
+							dashboard.setListaBoletosPagos(getTaxasDashboard(dashboard.getListaBoletosPagos()));
+						}
+						
+						List<String> listaCcbsEmitidas = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosCCBSEMITIDAS"))) {
+							listaCcbsEmitidas = Arrays.asList(rs.getString("numerosCCBSEMITIDAS").split(Pattern.quote("#$&!")));
+							dashboard.setListaCcbsEmitidas(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCcbsEmitidas) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCcbsEmitidas().add(coco);
+							}
+							
+							dashboard.setListaCcbsEmitidas(getTaxasDashboard(dashboard.getListaCcbsEmitidas()));
+						}
+						
+						List<String> listaRegistrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosREGISTRADOS"))) {
+							listaRegistrados = Arrays.asList(rs.getString("numerosREGISTRADOS").split(Pattern.quote("#$&!")));
+							dashboard.setListaRegistrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaRegistrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaRegistrados().add(coco);
+							}
+							dashboard.setListaRegistrados(getTaxasDashboard(dashboard.getListaRegistrados()));
+						}
+						
+						List<String> listaComite = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosComite"))) {
+							listaComite = Arrays.asList(rs.getString("numerosComite").split(Pattern.quote("#$&!")));
+							dashboard.setListaComite(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaComite) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaComite().add(coco);
+							}
+							dashboard.setListaComite(getTaxasDashboard(dashboard.getListaComite()));
+						}
+
+						objects.add(dashboard);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Dashboard> getDashboardContratosLeadMotivoReprova(final Date dataInicio, final Date dataFim, String tipoPesquisa, String campanha) {
+		return (List<Dashboard>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<Dashboard> objects = new ArrayList<Dashboard>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+					
+					if(CommonsUtil.mesmoValor(tipoPesquisa, "Campanha")) {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_MOTIVO_REPROVA);							
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setDate(3, dtRelInicioSQL);
+						ps.setDate(4, dtRelFimSQL);
+						ps.setDate(5, dtRelInicioSQL);
+						ps.setDate(6, dtRelFimSQL);
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+						ps.setDate(9, dtRelInicioSQL);
+						ps.setDate(10, dtRelFimSQL);					
+						ps.setDate(11, dtRelInicioSQL);
+						ps.setDate(12, dtRelFimSQL);				
+						ps.setDate(13, dtRelInicioSQL);
+						ps.setDate(14, dtRelFimSQL);
+						ps.setDate(15, dtRelInicioSQL);
+						ps.setDate(16, dtRelFimSQL);				
+						//ps.setDate(17, dtRelInicioSQL);
+						//ps.setDate(18, dtRelFimSQL);
+					} else if(!CommonsUtil.semValor(campanha)){					
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_CIDADES_MOTIVO_REPROVA_POR_CAMPANHA);	
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setString(3, campanha);
+						ps.setDate(4, dtRelInicioSQL);
+						ps.setDate(5, dtRelFimSQL);
+						ps.setString(6, campanha);
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+						ps.setString(9, campanha);						
+						ps.setDate(10, dtRelInicioSQL);
+						ps.setDate(11, dtRelFimSQL);
+						ps.setString(12, campanha);
+						ps.setDate(13, dtRelInicioSQL);
+						ps.setDate(14, dtRelFimSQL);
+						ps.setString(15, campanha);						
+						ps.setDate(16, dtRelInicioSQL);
+						ps.setDate(17, dtRelFimSQL);
+						ps.setString(18, campanha);					
+						ps.setDate(19, dtRelInicioSQL);
+						ps.setDate(20, dtRelFimSQL);
+						ps.setString(21, campanha);
+						ps.setDate(22, dtRelInicioSQL);
+						ps.setDate(23, dtRelFimSQL);
+						ps.setString(24, campanha);					
+						//ps.setDate(25, dtRelInicioSQL);
+						//ps.setDate(26, dtRelFimSQL);
+						//ps.setString(27, campanha);
+					} else {
+						ps = connection.prepareStatement(QUERY_DASH_CONTRATOS_LEADS_CIDADES_MOTIVO_REPROVA);	
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setDate(3, dtRelInicioSQL);
+						ps.setDate(4, dtRelFimSQL);
+						ps.setDate(5, dtRelInicioSQL);
+						ps.setDate(6, dtRelFimSQL);
+						ps.setDate(7, dtRelInicioSQL);
+						ps.setDate(8, dtRelFimSQL);
+						ps.setDate(9, dtRelInicioSQL);
+						ps.setDate(10, dtRelFimSQL);					
+						ps.setDate(11, dtRelInicioSQL);
+						ps.setDate(12, dtRelFimSQL);					
+						ps.setDate(13, dtRelInicioSQL);
+						ps.setDate(14, dtRelFimSQL);
+						ps.setDate(15, dtRelInicioSQL);
+						ps.setDate(16, dtRelFimSQL);						
+						//ps.setDate(17, dtRelInicioSQL);
+						//ps.setDate(18, dtRelFimSQL);
+					}		
+					//ps.setDate(1, dtRelInicioSQL); //ps.setDate(2, dtRelFimSQL);
+					rs = ps.executeQuery();
+					Dashboard dashboard = new Dashboard();					
+					while (rs.next()) {
+						dashboard = new Dashboard();
+						
+						dashboard.setOrigemLead(rs.getString("origemLead"));
+
+						dashboard.setContratosCadastrados(rs.getInt("leadVazio"));
+						dashboard.setValorContratosCadastrados(rs.getBigDecimal("valorLeadVazio"));					
+							
+						dashboard.setLeadsEmTratamento(rs.getInt("leadDadosInconsistentes"));
+						dashboard.setValorLeadsEmTratamento(rs.getBigDecimal("valorLeadDadosInconsistentes"));
+						
+						dashboard.setLeadsReprovados(rs.getInt("leadsClienteNaoAtendeu"));
+						dashboard.setValorLeadsReprovados(rs.getBigDecimal("valorLeadsClienteNaoAtendeu"));
+						
+						dashboard.setLeadsCompletos(rs.getInt("leadsClientesForaPerfil"));
+						dashboard.setValorLeadscompletos(rs.getBigDecimal("valorLeadsClientesForaPerfil"));
+
+						dashboard.setContratosPreAprovados(rs.getInt("leadOperacaoDuplicada"));
+						dashboard.setValorContratosPreAprovados(rs.getBigDecimal("valorLeadOperacaoDuplicada"));
+											
+						dashboard.setContratosBoletosPagos(rs.getInt("leadClienteDesistiu"));
+						dashboard.setValorBoletosPagos(rs.getBigDecimal("valorLeadClienteDesistiu"));
+											
+						dashboard.setContratosCcbsEmitidas(rs.getInt("leadImovelRuim"));
+						dashboard.setValorCcbsEmitidas(rs.getBigDecimal("valorLeadImovelRuim"));
+										
+						dashboard.setContratosRegistrados(rs.getInt("leadImovelForaPerfil"));
+						dashboard.setValorContratosRegistrados(rs.getBigDecimal("valorLeadImovelForaPerfil"));
+						
+						//recebe os contratos
+						List<String> listaCadastrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadVazio"))) {
+							listaCadastrados = Arrays.asList(rs.getString("numerosLeadVazio").split(Pattern.quote("#$&!")));
+							dashboard.setListaCadastrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCadastrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCadastrados().add(coco);
+							}				
+							dashboard.setListaCadastrados(getTaxasDashboard(dashboard.getListaCadastrados()));
+						}
+						
+						List<String> listaLeadsEmTratamento = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadDadosInconsistentes"))) {
+							listaLeadsEmTratamento = Arrays.asList(rs.getString("numerosLeadDadosInconsistentes").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsEmTratamento(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsEmTratamento) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsEmTratamento().add(coco);
+							}				
+							dashboard.setListaLeadsEmTratamento(getTaxasDashboard(dashboard.getListaLeadsEmTratamento()));
+						}
+						
+						List<String> listaLeadsReprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsClienteNaoAtendeu"))) {
+							listaLeadsReprovados = Arrays.asList(rs.getString("numerosLeadsClienteNaoAtendeu").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsReprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsReprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsReprovados().add(coco);
+							}				
+							dashboard.setListaLeadsReprovados(getTaxasDashboard(dashboard.getListaLeadsReprovados()));
+						}
+						
+						List<String> listaLeadsCompletos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadsClientesForaPerfil"))) {
+							listaLeadsCompletos = Arrays.asList(rs.getString("numerosLeadsClientesForaPerfil").split(Pattern.quote("#$&!")));
+							dashboard.setListaLeadsCompletos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaLeadsCompletos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaLeadsCompletos().add(coco);
+							}				
+							dashboard.setListaLeadsCompletos(getTaxasDashboard(dashboard.getListaLeadsCompletos()));
+						}
+						
+						List<String> listaPreAprovados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadOperacaoDuplicada"))) {
+							listaPreAprovados = Arrays.asList(rs.getString("numerosLeadOperacaoDuplicada").split(Pattern.quote("#$&!")));
+							dashboard.setListaPreAprovados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaPreAprovados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaPreAprovados().add(coco);
+							}
+							
+							dashboard.setListaPreAprovados(getTaxasDashboard(dashboard.getListaPreAprovados()));
+						}
+						
+						List<String> listaBoletosPagos = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadClienteDesistiu"))) {
+							listaBoletosPagos = Arrays.asList(rs.getString("numerosLeadClienteDesistiu").split(Pattern.quote("#$&!")));
+							dashboard.setListaBoletosPagos(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaBoletosPagos) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaBoletosPagos().add(coco);
+							}
+							dashboard.setListaBoletosPagos(getTaxasDashboard(dashboard.getListaBoletosPagos()));
+						}
+						
+						List<String> listaCcbsEmitidas = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadImovelRuim"))) {
+							listaCcbsEmitidas = Arrays.asList(rs.getString("numerosLeadImovelRuim").split(Pattern.quote("#$&!")));
+							dashboard.setListaCcbsEmitidas(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaCcbsEmitidas) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaCcbsEmitidas().add(coco);
+							}
+							
+							dashboard.setListaCcbsEmitidas(getTaxasDashboard(dashboard.getListaCcbsEmitidas()));
+						}
+						
+						List<String> listaRegistrados = new ArrayList<String>();
+						if(!CommonsUtil.semValor(rs.getString("numerosLeadImovelForaPerfil"))) {
+							listaRegistrados = Arrays.asList(rs.getString("numerosLeadImovelForaPerfil").split(Pattern.quote("#$&!")));
+							dashboard.setListaRegistrados(new ArrayList<ContratoCobranca>());
+							
+							for(String cadastro : listaRegistrados) {
+								List<String> contrato = new ArrayList<String>();
+								contrato = Arrays.asList(cadastro.split(Pattern.quote("!&$")));
+								
+								ContratoCobranca coco = new ContratoCobranca();
+								coco.setPagador(new PagadorRecebedor());
+								coco.setNumeroContrato(contrato.get(0));
+								coco.getPagador().setNome(contrato.get(1));
+								
+								dashboard.getListaRegistrados().add(coco);
+							}
+							dashboard.setListaRegistrados(getTaxasDashboard(dashboard.getListaRegistrados()));
+						}
+						
+						objects.add(dashboard);
+					}
+					
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getCampanhasDashboard() {
+		return (List<String>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<String> objects = new ArrayList<String>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_DASH_CAMPANHAS);			
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						if(!CommonsUtil.semValor(rs.getString("urllead"))) {
+							objects.add(rs.getString("urllead"));
+						}
+					}
+
+					
 				} finally {
 					closeResources(connection, ps, rs);
 				}
