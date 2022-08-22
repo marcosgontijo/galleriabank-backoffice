@@ -15435,12 +15435,16 @@ public class ContratoCobrancaMB {
 	public List<String> contaPagarDescricaoLista(){
 		List<String> listaNome = new ArrayList<>();
 		listaNome.add("Cartório");
+		listaNome.add("Certidão");
+		listaNome.add("Condomínio");
+		listaNome.add("Crédito Cliente");
 		listaNome.add("Honorário");
 		listaNome.add("IPTU");
-		listaNome.add("Condomínio");
-		listaNome.add("Processo");
 		listaNome.add("IQ");
-		listaNome.add("Outros");
+		listaNome.add("ITBI");
+		listaNome.add("Laudo");
+		listaNome.add("Processo");
+		
 		return listaNome.stream().collect(Collectors.toList());
 	}
 	

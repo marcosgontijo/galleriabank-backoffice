@@ -408,6 +408,7 @@ public class ContratoCobranca implements Serializable {
 	private Date operacaoPagaData;
 	private boolean operacaoPaga;
 	private String operacaoPagaUsuario;
+	private boolean pendenciaPagamento;
 	
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
@@ -603,6 +604,23 @@ public class ContratoCobranca implements Serializable {
 	private String bancoBancarioCartaSplit;
 	private String agenciaBancarioCartaSplit;
 	private String contaBancarioCartaSplit;
+	private String pixCartaSplit;
+	
+	private BigDecimal valorCartaSplitGalleria;
+	private String nomeBancarioCartaSplitGalleria;
+	private String cpfCnpjBancarioCartaSplitGalleria;
+	private String bancoBancarioCartaSplitGalleria;
+	private String agenciaBancarioCartaSplitGalleria;
+	private String contaBancarioCartaSplitGalleria;
+	private String pixCartaSplitGalleria;
+	
+	private BigDecimal valorCustoEmissao;
+	private String nomeBancarioCustoEmissao;
+	private String cpfCnpjBancarioCustoEmissao;
+	private String bancoBancarioCustoEmissao;
+	private String agenciaBancarioCustoEmissao;
+	private String contaBancarioCustoEmissao;
+	private String pixCustoEmissao;
 	
 	private String observacaoPagamento;
 	
@@ -5316,6 +5334,134 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDataCadastro(Date dataCadastro) {
 		this.dataCadastro = dataCadastro;
+	}
+
+	public String getPixCartaSplit() {
+		return pixCartaSplit;
+	}
+
+	public void setPixCartaSplit(String pixCartaSplit) {
+		this.pixCartaSplit = pixCartaSplit;
+	}
+
+	public BigDecimal getValorCartaSplitGalleria() {
+		return valorCartaSplitGalleria;
+	}
+
+	public void setValorCartaSplitGalleria(BigDecimal valorCartaSplitGalleria) {
+		this.valorCartaSplitGalleria = valorCartaSplitGalleria;
+	}
+
+	public String getNomeBancarioCartaSplitGalleria() {
+		return nomeBancarioCartaSplitGalleria;
+	}
+
+	public void setNomeBancarioCartaSplitGalleria(String nomeBancarioCartaSplitGalleria) {
+		this.nomeBancarioCartaSplitGalleria = nomeBancarioCartaSplitGalleria;
+	}
+
+	public String getCpfCnpjBancarioCartaSplitGalleria() {
+		return cpfCnpjBancarioCartaSplitGalleria;
+	}
+
+	public void setCpfCnpjBancarioCartaSplitGalleria(String cpfCnpjBancarioCartaSplitGalleria) {
+		this.cpfCnpjBancarioCartaSplitGalleria = cpfCnpjBancarioCartaSplitGalleria;
+	}
+
+	public String getBancoBancarioCartaSplitGalleria() {
+		return bancoBancarioCartaSplitGalleria;
+	}
+
+	public void setBancoBancarioCartaSplitGalleria(String bancoBancarioCartaSplitGalleria) {
+		this.bancoBancarioCartaSplitGalleria = bancoBancarioCartaSplitGalleria;
+	}
+
+	public String getAgenciaBancarioCartaSplitGalleria() {
+		return agenciaBancarioCartaSplitGalleria;
+	}
+
+	public void setAgenciaBancarioCartaSplitGalleria(String agenciaBancarioCartaSplitGalleria) {
+		this.agenciaBancarioCartaSplitGalleria = agenciaBancarioCartaSplitGalleria;
+	}
+
+	public String getContaBancarioCartaSplitGalleria() {
+		return contaBancarioCartaSplitGalleria;
+	}
+
+	public void setContaBancarioCartaSplitGalleria(String contaBancarioCartaSplitGalleria) {
+		this.contaBancarioCartaSplitGalleria = contaBancarioCartaSplitGalleria;
+	}
+
+	public String getPixCartaSplitGalleria() {
+		return pixCartaSplitGalleria;
+	}
+
+	public void setPixCartaSplitGalleria(String pixCartaSplitGalleria) {
+		this.pixCartaSplitGalleria = pixCartaSplitGalleria;
+	}
+
+	public BigDecimal getValorCustoEmissao() {
+		return valorCustoEmissao;
+	}
+
+	public void setValorCustoEmissao(BigDecimal valorCustoEmissao) {
+		this.valorCustoEmissao = valorCustoEmissao;
+	}
+
+	public String getNomeBancarioCustoEmissao() {
+		return nomeBancarioCustoEmissao;
+	}
+
+	public void setNomeBancarioCustoEmissao(String nomeBancarioCustoEmissao) {
+		this.nomeBancarioCustoEmissao = nomeBancarioCustoEmissao;
+	}
+
+	public String getCpfCnpjBancarioCustoEmissao() {
+		return cpfCnpjBancarioCustoEmissao;
+	}
+
+	public void setCpfCnpjBancarioCustoEmissao(String cpfCnpjBancarioCustoEmissao) {
+		this.cpfCnpjBancarioCustoEmissao = cpfCnpjBancarioCustoEmissao;
+	}
+
+	public String getBancoBancarioCustoEmissao() {
+		return bancoBancarioCustoEmissao;
+	}
+
+	public void setBancoBancarioCustoEmissao(String bancoBancarioCustoEmissao) {
+		this.bancoBancarioCustoEmissao = bancoBancarioCustoEmissao;
+	}
+
+	public String getAgenciaBancarioCustoEmissao() {
+		return agenciaBancarioCustoEmissao;
+	}
+
+	public void setAgenciaBancarioCustoEmissao(String agenciaBancarioCustoEmissao) {
+		this.agenciaBancarioCustoEmissao = agenciaBancarioCustoEmissao;
+	}
+
+	public String getContaBancarioCustoEmissao() {
+		return contaBancarioCustoEmissao;
+	}
+
+	public void setContaBancarioCustoEmissao(String contaBancarioCustoEmissao) {
+		this.contaBancarioCustoEmissao = contaBancarioCustoEmissao;
+	}
+
+	public String getPixCustoEmissao() {
+		return pixCustoEmissao;
+	}
+
+	public void setPixCustoEmissao(String pixCustoEmissao) {
+		this.pixCustoEmissao = pixCustoEmissao;
+	}
+
+	public boolean isPendenciaPagamento() {
+		return pendenciaPagamento;
+	}
+
+	public void setPendenciaPagamento(boolean pendenciaPagamento) {
+		this.pendenciaPagamento = pendenciaPagamento;
 	}
 	
 	

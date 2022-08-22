@@ -1684,6 +1684,10 @@
 		
 		<property name="operacaoPaga" type="boolean">
 			<column name="operacaoPaga" not-null="true" default="false"/>
+		</property>
+		
+		<property name="pendenciaPagamento" type="boolean">
+			<column name="pendenciaPagamento" not-null="true" default="false" />
 		</property>	
 
 		<property name="operacaoPagaUsuario" type="java.lang.String">
@@ -1712,7 +1716,70 @@
 		
 		<property name="contaBancarioCartaSplit" type="java.lang.String">
 			<column name="contaBancarioCartaSplit" />
-		</property>		
+		</property>	
+		
+		
+		<property name="pixCartaSplit" type="java.lang.String">
+			<column name="pixCartaSplit" />
+		</property>	
+		
+				<property name="valorCartaSplitGalleria" type="big_decimal">
+			<column name="valorCartaSplitGalleria" />
+		</property>
+		
+		<property name="nomeBancarioCartaSplitGalleria" type="java.lang.String">
+			<column name="nomeBancarioCartaSplitGalleria" />
+		</property>	
+		
+		<property name="cpfCnpjBancarioCartaSplitGalleria" type="java.lang.String">
+			<column name="cpfCnpjBancarioCartaSplitGalleria" />
+		</property>	
+		
+		<property name="bancoBancarioCartaSplitGalleria" type="java.lang.String">
+			<column name="bancoBancarioCartaSplitGalleria" />
+		</property>	
+		
+		<property name="agenciaBancarioCartaSplitGalleria" type="java.lang.String">
+			<column name="agenciaBancarioCartaSplitGalleria" />
+		</property>	
+		
+		<property name="contaBancarioCartaSplitGalleria" type="java.lang.String">
+			<column name="contaBancarioCartaSplitGalleria" />
+		</property>	
+		
+		
+		<property name="pixCartaSplitGalleria" type="java.lang.String">
+			<column name="pixCartaSplitGalleria" />
+		</property>	
+		
+						<property name="valorCartaSplitTac" type="big_decimal">
+			<column name="valorCartaSplitTac" />
+		</property>
+		
+		<property name="nomeBancarioCartaSplitTac" type="java.lang.String">
+			<column name="nomeBancarioCartaSplitTac" />
+		</property>	
+		
+		<property name="cpfCnpjBancarioCartaSplitTac" type="java.lang.String">
+			<column name="cpfCnpjBancarioCartaSplitTac" />
+		</property>	
+		
+		<property name="bancoBancarioCartaSplitTac" type="java.lang.String">
+			<column name="bancoBancarioCartaSplitTac" />
+		</property>	
+		
+		<property name="agenciaBancarioCartaSplitTac" type="java.lang.String">
+			<column name="agenciaBancarioCartaSplitTac" />
+		</property>	
+		
+		<property name="contaBancarioCartaSplitTac" type="java.lang.String">
+			<column name="contaBancarioCartaSplitTac" />
+		</property>	
+		
+		
+		<property name="pixCartaSplitTac" type="java.lang.String">
+			<column name="pixCartaSplitTac" />
+		</property>	
 		
 		<property name="nomeBancarioContaPagar" type="java.lang.String">
 			<column name="nomeBancarioContaPagar" />
