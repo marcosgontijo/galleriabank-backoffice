@@ -15266,7 +15266,16 @@ public class ContratoCobrancaMB {
 	public void mostrarReParcelamento() {
 		try {			
 			this.objetoContratoCobranca.setQtdeParcelas(CommonsUtil.intValue(this.qtdeParcelas));
-			this.simuladorParcelas = calcularReParcelamento();
+			
+			try {
+				if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+					this.simuladorParcelas = calcularParcelasIPCAV2();
+				} else {
+					this.simuladorParcelas = calcularReParcelamento();
+				}
+				
+			} catch (Exception e) {
+			}			
 		} catch (Exception e) {
 		}
 	}
@@ -15308,7 +15317,13 @@ public class ContratoCobrancaMB {
 						if ( CommonsUtil.mesmoValor(BigInteger.ZERO, this.numeroParcelaReparcelamento)) {
 							detalhe.setDataVencimento(dataParcela);
 							detalhe.setVlrSaldoInicial(saldoAnterior);
-							detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
+							//detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
+							
+							if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCAV2")) {
+								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+							} else {
+								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+							}
 						}
 						
 						encontrouParcela = true;
@@ -15327,8 +15342,15 @@ public class ContratoCobrancaMB {
 					detalhe.setDataVencimento(dataParcela);
 					
 					detalhe.setVlrSaldoInicial(saldoAnterior);
-					detalhe.setVlrSaldoParcela(
-							parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					//detalhe.setVlrSaldoParcela(
+					//parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCAV2")) {
+						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					} else {
+						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					}
+					
 					detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));

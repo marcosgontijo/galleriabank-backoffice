@@ -5463,6 +5463,4 @@ public class ContratoCobranca implements Serializable {
 	public void setPendenciaPagamento(boolean pendenciaPagamento) {
 		this.pendenciaPagamento = pendenciaPagamento;
 	}
-	
-	
 }

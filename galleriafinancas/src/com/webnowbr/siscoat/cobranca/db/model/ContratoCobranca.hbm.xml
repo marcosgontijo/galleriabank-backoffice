@@ -1751,36 +1751,7 @@
 		<property name="pixCartaSplitGalleria" type="java.lang.String">
 			<column name="pixCartaSplitGalleria" />
 		</property>	
-		
-						<property name="valorCartaSplitTac" type="big_decimal">
-			<column name="valorCartaSplitTac" />
-		</property>
-		
-		<property name="nomeBancarioCartaSplitTac" type="java.lang.String">
-			<column name="nomeBancarioCartaSplitTac" />
-		</property>	
-		
-		<property name="cpfCnpjBancarioCartaSplitTac" type="java.lang.String">
-			<column name="cpfCnpjBancarioCartaSplitTac" />
-		</property>	
-		
-		<property name="bancoBancarioCartaSplitTac" type="java.lang.String">
-			<column name="bancoBancarioCartaSplitTac" />
-		</property>	
-		
-		<property name="agenciaBancarioCartaSplitTac" type="java.lang.String">
-			<column name="agenciaBancarioCartaSplitTac" />
-		</property>	
-		
-		<property name="contaBancarioCartaSplitTac" type="java.lang.String">
-			<column name="contaBancarioCartaSplitTac" />
-		</property>	
-		
-		
-		<property name="pixCartaSplitTac" type="java.lang.String">
-			<column name="pixCartaSplitTac" />
-		</property>	
-		
+	
 		<property name="nomeBancarioContaPagar" type="java.lang.String">
 			<column name="nomeBancarioContaPagar" />
 		</property>	
