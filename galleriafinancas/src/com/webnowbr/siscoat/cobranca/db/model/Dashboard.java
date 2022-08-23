@@ -31,6 +31,8 @@ public class Dashboard implements Serializable {
 	private String nomeResponsavel;
 	private String gerenteResponsavel;
 	private String origemLead;
+	private String motivoReprova;
+	private String numeroContrato;
 	private int totalNovosContratos;
 	
 	
@@ -503,5 +505,23 @@ public class Dashboard implements Serializable {
 
 	public void setListaLeadsCompletos(List<ContratoCobranca> listaLeadsCompletos) {
 		this.listaLeadsCompletos = listaLeadsCompletos;
+	}
+
+	public String getMotivoReprova() {
+		return motivoReprova;
+	}
+
+	public void setMotivoReprova(String motivoReprova) {
+		this.motivoReprova = motivoReprova;
+	}
+
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
 	}	
+	
+	
 }
