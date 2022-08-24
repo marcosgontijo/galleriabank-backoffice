@@ -2915,9 +2915,11 @@ public class ContratoCobrancaMB {
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
 
-			if (!this.preContratoCustom) {
-				return geraConsultaContratosPendentes();
-			} else {
+			 //if (!this.preContratoCustom) {
+				CRMMB crmMb = new CRMMB();
+	
+				return crmMb.clearFieldsDetalhado();
+			/*} else {
 				if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 					return geraConsultaLeads("Novo Lead");
 				}
@@ -2935,7 +2937,7 @@ public class ContratoCobrancaMB {
 				}
 
 				return "";
-			}
+			}*/
 		} else {
 			if (context != null) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -3500,10 +3502,13 @@ public class ContratoCobrancaMB {
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 				
+				if(usuarioLogado.isComiteConsultar()) {
+					return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
+				}
+				
 				if (this.tituloTelaConsultaPreStatus.equals("Geração de PAJU")) {
 					return clearFieldsGeracaoPAJU(); 
 				}
-
 				if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
 					return geraConsultaContratosPorStatus("Aguardando Análise");
 				}
@@ -3517,18 +3522,12 @@ public class ContratoCobrancaMB {
 					return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Análise Pré-Aprovada")) {
-					if(usuarioLogado.isComiteConsultar()) {
-						return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
-					}
 					return geraConsultaContratosPorStatus("Análise Aprovada");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
 					return geraConsultaContratosPorStatus("Ag. DOC");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Pré-Comite")) {
-					if(usuarioLogado.isComiteConsultar()) {
-						return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
-					}
 					return geraConsultaContratosPorStatus("Pré-Comite");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
@@ -6245,6 +6244,8 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getEmpresa() != null) {
 			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
 				this.selectedRecebedor = prDao.findById((long) 6625);
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+				this.selectedRecebedor = prDao.findById((long) 15765);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
 			}
@@ -6994,6 +6995,7 @@ public class ContratoCobrancaMB {
 	private int numeroPresenteParcela;
 	private int numeroParcelaQuitar;
 	private Date dataQuitacao;
+	private boolean calcularComSeguro;
 	
 	private Date dataAmortizacao;
 	private BigDecimal valorPresenteTotal;
@@ -7011,6 +7013,44 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		/*
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+		*/
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+	}
+	
+	public void calcularValorPresenteParcela(boolean calcularComSeguro){
+		TimeZone zone = TimeZone.getDefault(); 
+		Locale locale = new Locale("pt", "BR"); 
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		
+		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
+		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+		BigDecimal saldo;
+		if(calcularComSeguro) {
+			saldo = parcelas.getVlrParcela();
+		} else {
+			saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
+		}
+		
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
 		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
@@ -7481,9 +7521,16 @@ public class ContratoCobrancaMB {
 
 	public void setNumeroPresenteParcela(int numeroPresenteParcela) {
 		this.numeroPresenteParcela = numeroPresenteParcela;
+	} 
+
+	public boolean isCalcularComSeguro() {
+		return calcularComSeguro;
 	}
-	
-	
+
+	public void setCalcularComSeguro(boolean calcularComSeguro) {
+		this.calcularComSeguro = calcularComSeguro;
+	}
+
 	public String clearFieldsEditarPendentes() {
 			
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -15963,8 +16010,12 @@ public class ContratoCobrancaMB {
 		Date dateSelected = (Date) event.getObject();
 		this.rowEditNewDate = dateSelected;
 		calculaNovaData(dateSelected);
-		calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
-		this.setVlrRecebido(this.valorPresenteParcela);
+		if(dateSelected.before(this.bpContratoCobrancaDetalhes.getDataVencimento())) {
+			calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
+			this.setVlrRecebido(this.valorPresenteParcela);
+		} else {
+			this.setVlrRecebido(this.vlrParcelaAtualizadaNew);
+		}		
 	}
 	
 	public void atualizaValorBaixaPresente() {
@@ -15997,7 +16048,7 @@ public class ContratoCobrancaMB {
 						this.bpContratoCobrancaDetalhes.getDataVencimentoAtual(), novaData,
 						this.bpContratoCobrancaDetalhes.getVlrParcela(), juros, multa);
 
-				if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() > 0) {
+				if (this.bpContratoCobrancaDetalhes.isPagoParcial()) { /////provavel problema do baixa galleria aaaaaaaaaaaaa
 					contratoCobrancaUtilsMB.recalculaValorSemMulta();
 				} else {
 					contratoCobrancaUtilsMB.recalculaValor();
@@ -16262,11 +16313,11 @@ public class ContratoCobrancaMB {
 			
 			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
 			contratoCobrancaDetalhesParcial.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
-			
 			contratoCobrancaDetalhesParcial.setBaixaGalleria(true);
 			contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
 			contratoCobrancaDetalhesParcial.setVlrRecebidoGalleria(this.vlrRecebido);
 
+			bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
 			bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 
 			// compoem o valor da parcela de acordo com o historico de baixas
