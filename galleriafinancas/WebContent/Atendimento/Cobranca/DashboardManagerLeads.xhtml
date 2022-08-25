@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaDashboardManager" header="Dashboard Manager - Consultar"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{dashboardMBVer2.dataInicio}"
+						label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" />
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{dashboardMBVer2.dataFim}" 
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+						
+					<p:outputLabel value="Filtro: "
+						styleClass="labelBold" style="margin-right: 59px;" />				
+					<p:selectOneMenu id="filtroConsulta"
+						value="#{dashboardMBVer2.filtroConsulta}"
+						label="filtroConsulta" style="margin-right: 59px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Filtro" />
+						<f:selectItem itemValue="Responsaveis" itemLabel="Responsaveis" />
+						<f:selectItem itemValue="Gerentes" itemLabel="Gerentes" />
+						<f:selectItem itemValue="Campanha" itemLabel="Campanha" />
+						<f:selectItem itemValue="Cidade" itemLabel="Cidade" />
+						<p:ajax update="filtros"  />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="2" id="filtros">
+					<p:outputLabel value="Consultar Por Status: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectBooleanCheckbox value="#{dashboardMBVer2.consultaStatus}"/>
+					
+					<p:outputLabel value="Consultar Motivo Reprova: "
+						styleClass="labelBold" style="margin-right: 59px;" 
+						rendered="#{dashboardMBVer2.filtroConsulta eq 'Cidade' or dashboardMBVer2.filtroConsulta eq 'Campanha' }"/>
+					<p:selectBooleanCheckbox value="#{dashboardMBVer2.motivoReprova}"
+						rendered="#{dashboardMBVer2.filtroConsulta eq 'Cidade' or dashboardMBVer2.filtroConsulta eq 'Campanha' }"/>
+								
+					<p:outputLabel value="Campanha: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{dashboardMBVer2.filtroConsulta eq 'Cidade'}" />
+					<p:autoComplete id="campanhaSelecionada" dropdown="true"
+						value="#{dashboardMBVer2.campanhaSelecionada}" rendered="#{dashboardMBVer2.filtroConsulta eq 'Cidade'}"
+						completeMethod="#{dashboardMBVer2.completeTextCampanhas()}"
+						scrollHeight="250" />
+					
+					<p:outputLabel value="Consultar Responsaveis Zerados: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{dashboardMBVer2.filtroConsulta eq 'Responsaveis' or dashboardMBVer2.filtroConsulta eq 'Gerentes'}" />
+					<h:panelGroup rendered="#{dashboardMBVer2.filtroConsulta eq 'Responsaveis' or dashboardMBVer2.filtroConsulta eq 'Gerentes' }">
+						<p:selectBooleanCheckbox value="#{dashboardMBVer2.consultarResponsaveisZerados}" />
+						<p:spacer height="10" />
+						<p:commandButton id="botaoZerados" type="button"
+							onclick="PF('responsavelZeradoDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"  
+							disabled="#{dashboardMBVer2.listResponsavelZerado.size() == 0}"/>
+					</h:panelGroup>
+					<p:outputLabel for="responsavel" value="Gerente:  " rendered="#{dashboardMBVer2.filtroConsulta eq 'Responsaveis' or dashboardMBVer2.filtroConsulta eq 'Gerentes' }"
+						styleClass="labelBold" />
+					<h:panelGrid columns="2" rendered="#{dashboardMBVer2.filtroConsulta eq 'Responsaveis' or dashboardMBVer2.filtroConsulta eq 'Gerentes' }">
+							<p:inputText id="responsavel"
+								value="#{dashboardMBVer2.selectedResponsavel.nome}"
+								label="Responsável" disabled="true" 
+								style="width:210px;" />
+							<p:commandButton id="botaoResponsavel" type="button"
+								onclick="PF('responsavelDialog').show();"
+								image="ui-icon ui-icon-circle-zoomin"  />
+					</h:panelGrid>			
+				</h:panelGrid>
+				
+				<p:commandButton value="Consultar" ajax="false"
+					icon="ui-icon-check" action="#{dashboardMBVer2.processaDashContratos}" update="ConsultaDashboardManagerResultados">
+				</p:commandButton>
+			</p:panel>
+			<p:panel id="ConsultaDashboardManagerResultados" header="Dashboard Manager - Resultados" style="margin-bottom:10px;">		    
+				<h:panelGroup rendered="#{!dashboardMBVer2.motivoReprova}">
+					<f:facet name="header"> Dashboard Manager - Resultados
+						<p:outputLabel value="" />  
+						<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{dashboardMBVer2.readXLSXFile}" ajax="false"/>
+					</f:facet>		    				
+					<p:dataTable id="dtDashboardManager" var="dashContratos"
+					value="#{dashboardMBVer2.dashContratos}" paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="10,20,30,50" selection="" emptyMessage=""
+					reflow="true">
+					<p:column style="text-align: center;" headerText="Responsável" rendered="#{!dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.nomeResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.nomeResponsavel}">
+						<h:outputText value="#{dashContratos.nomeResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Gerente" rendered="#{!dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.gerenteResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.gerenteResponsavel}">
+						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"
+						sortBy="#{dashContratos.origemLead}">
+						<h:outputText value="#{dashContratos.origemLead}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Total cadastrados" sortBy="#{dashContratos.contratosCadastrados}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaCadastrados}" />
+							<p:outputLabel
+								value="#{dashContratos.contratosCadastrados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorContratosCadastrados}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+					</p:column>
+	
+					<p:column style="text-align: center;" headerText="Total Em Tratamento" sortBy="#{dashContratos.leadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsEmTratamento}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsEmTratamento}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsEmTratamento}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Total Reprovado" sortBy="#{dashContratos.leadsReprovados}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsReprovados}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsReprovados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadsReprovados}" rendered="#{dashboardMBVer2.consultaLead}"> 
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsReprovados}" converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Leads Completos" sortBy="#{dashContratos.leadsCompletos}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsCompletos}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsCompletos}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadscompletos}"  rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadscompletos}" converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosPreAprovados}" headerText="Total preaprovado">
+						<p:commandLink onclick="PF('listaContratosAprovados').show()"
+							update="contratosFormAprovados">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaPreAprovados}" />
+							<h:outputText value="#{dashContratos.contratosPreAprovados}" />
+						</p:commandLink>						
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorContratosPreAprovados}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosBoletosPagos}" headerText="Pedido Laudo e Paju">				
+						<p:commandLink onclick="PF('listaContratosAprovados').show()"
+							update="contratosFormAprovados">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaBoletosPagos}" />
+							<h:outputText value="#{dashContratos.contratosBoletosPagos}" />
+						</p:commandLink>										
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorBoletosPagos}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorBoletosPagos}" converter="bigDecimalConverter" />
+					</p:column>
+										
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosComite}" headerText="Comitê">
+						<p:commandLink onclick="PF('listaContratosComite').show()"
+							update="contratosFormComite">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaComite}" />
+							<h:outputText value="#{dashContratos.contratosComite}" />
+						</p:commandLink>					
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorContratosComite}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosComite}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" sortBy="#{dashboardMBVer2.listaContratosConsulta}" headerText="CCBs Emitidas">	
+						<p:commandLink onclick="PF('listaContratosCcb').show()"
+							update="contratosFormCcb">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaCcbsEmitidas}" />
+							<h:outputText value="#{dashContratos.contratosCcbsEmitidas}" />
+						</p:commandLink>					
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorCcbsEmitidas}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorCcbsEmitidas}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosRegistrados}" headerText="CCBs Pagas">
+						<p:commandLink onclick="PF('listaContratosCcb').show()"
+							update="contratosFormCcb">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaRegistrados}" />
+							<h:outputText value="#{dashContratos.contratosRegistrados}"/>
+						</p:commandLink>						
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorContratosRegistrados}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosRegistrados}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<f:facet name="footer">
+						<h:panelGroup style="display:block;">
+							<h:panelGrid columns="6">
+								<h:outputText value="Menu " />
+								<h:outputText value="Quantidade" />
+								<h:outputText value="Valor"/>
+								<h:outputText value="Taxa Mínima"/>
+								<h:outputText value="Taxa Máxima"/>
+								<h:outputText value="Taxa Média"/>
+						
+								<h:outputText value="Total Cadastrados: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosCadastrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosCadastrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+						
+								<h:outputText value="Total Leads Em Tratamento: " rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsEmTratamento}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+								<h:outputText value="Total Leads Reprovados: "  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsReprovados}"  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsReprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+
+								<h:outputText value="Total Leads Completos: "  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsCompletos}"  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsCompletos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+
+								<h:outputText value="Total Pré-Aprovados: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosPreAprovados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosPreAprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>	
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+
+								
+								<h:outputText value="Pedido Laudo e Paju: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosBoletosPagos}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorBoletosPagos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+								
+								<h:outputText value="Comitê: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosComite}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosComite}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaAprovadaComite}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+								<h:outputText value="CCBs Emitidas: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosCcbsEmitidas}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorCcbsEmitidas}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+								
+								<h:outputText value="CCBs Pagas: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosRegistrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosRegistrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+							</h:panelGrid>
+						</h:panelGroup>
+					</f:facet>
+				</p:dataTable>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{dashboardMBVer2.motivoReprova}">
+					<f:facet name="header"> Dashboard Manager - Resultados
+						<p:outputLabel value="" />  
+						<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{dashboardMBVer2.readXLSXFile}" ajax="false"/>
+					</f:facet>		    				
+					<p:dataTable id="dtMotivoReprova" var="dashContratos"
+					value="#{dashboardMBVer2.dashContratos}" paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="10,20,30,50" selection="" emptyMessage=""
+					reflow="true">
+					
+					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"
+						sortBy="#{dashContratos.origemLead}">
+						<h:outputText value="#{dashContratos.origemLead}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Sem motivo" sortBy="#{dashContratos.contratosCadastrados}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaCadastrados}" />
+							<p:outputLabel
+								value="#{dashContratos.contratosCadastrados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorContratosCadastrados}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
+					</p:column>
+	
+					<p:column style="text-align: center;" headerText="Dados Inconsistentes" sortBy="#{dashContratos.leadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsEmTratamento}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsEmTratamento}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsEmTratamento}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Cliente Não Atendeu" sortBy="#{dashContratos.leadsReprovados}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsReprovados}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsReprovados}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadsReprovados}" rendered="#{dashboardMBVer2.consultaLead}"> 
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsReprovados}" converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Clientes Fora de Perfil" sortBy="#{dashContratos.leadsCompletos}" rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsCompletos}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsCompletos}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorLeadscompletos}"  rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadscompletos}" converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosPreAprovados}" headerText="Operação Duplicada">
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosFormAprovados">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaPreAprovados}" />
+							<h:outputText value="#{dashContratos.contratosPreAprovados}" />
+						</p:commandLink>						
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorContratosPreAprovados}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosPreAprovados}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosBoletosPagos}" headerText="Cliente Desistiu">				
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosFormAprovados">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaBoletosPagos}" />
+							<h:outputText value="#{dashContratos.contratosBoletosPagos}" />
+						</p:commandLink>										
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorBoletosPagos}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorBoletosPagos}" converter="bigDecimalConverter" />
+					</p:column>
+										
+					<p:column style="text-align: center;" sortBy="#{dashContratos.listaCcbsEmitidas}" headerText="Imóvel Ruim">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosFormCcb">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaCcbsEmitidas}" />
+							<h:outputText value="#{dashContratos.contratosCcbsEmitidas}" />
+						</p:commandLink>					
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorCcbsEmitidas}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorCcbsEmitidas}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosRegistrados}" headerText="Imóvel Fora Perfil">
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosFormCcb">
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaRegistrados}" />
+							<h:outputText value="#{dashContratos.contratosRegistrados}"/>
+						</p:commandLink>						
+					</p:column>
+					<p:column style="text-align: center;" sortBy="#{dashContratos.valorContratosRegistrados}" headerText="Valor Total">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorContratosRegistrados}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<f:facet name="footer">
+						<h:panelGroup style="display:block;">
+							<h:panelGrid columns="6">
+								<h:outputText value="Menu " />
+								<h:outputText value="Quantidade" />
+								<h:outputText value="Valor"/>
+								<h:outputText value="Taxa Mínima"/>
+								<h:outputText value="Taxa Máxima"/>
+								<h:outputText value="Taxa Média"/>
+						
+								<h:outputText value="Total Sem Motivo: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosCadastrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosCadastrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+								<h:outputText value=""/>
+						
+								<h:outputText value="Total Dados Inconsistentes: " rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsEmTratamento}" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsEmTratamento}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+								<h:outputText value="Total Cliente Não Atendeu: "  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsReprovados}"  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsReprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+
+
+								<h:outputText value="Total Clientes Fora de Perfil: "  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsCompletos}"  rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsCompletos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+
+								<h:outputText value="Total Operação Duplicada: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosPreAprovados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosPreAprovados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>	
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaPreAprovada}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+
+		
+								<h:outputText value="Total Cliente Desistiu: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosBoletosPagos}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorBoletosPagos}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaPajuLado}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+
+								<h:outputText value="Total Imóvel Ruim: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosCcbsEmitidas}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorCcbsEmitidas}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaCcb}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+								
+								<h:outputText value="Total Imóvel Fora Perfil: " />
+								<h:outputText value="#{dashboardMBVer2.totalContratosRegistrados}" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorContratosRegistrados}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:panelGroup>									
+									<h:outputText value="#{dashboardMBVer2.menorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.maiorTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="#{dashboardMBVer2.mediaTaxaRegistro}"
+										converter="bigDecimalConverter" />
+									<h:outputText value="%" />
+								</h:panelGroup>
+								
+							</h:panelGrid>
+						</h:panelGroup>
+					</f:facet>
+				</p:dataTable>
+				</h:panelGroup>
+			</p:panel>
+			<p:commandButton value="Gerar Relatorio Leads" icon="ui-icon-print" action ="#{dashboardMBVer2.gerarCSVleads}" ajax="false"/>
+			<p:commandButton value="Gerar Relatorio Reprovado" icon="ui-icon-print" action ="#{dashboardMBVer2.gerarCSVContratosReprovados}" ajax="false"/>
+		</h:form>
+		<ui:include src="../../Dialog/DialogResponsavel.xhtml">
+			<ui:param name="mbean" value="#{dashboardMBVer2}"></ui:param>
+			<ui:param name="titulo" value="Gerente Responsável"></ui:param>
+		</ui:include>
+
+		<p:dialog header="Responsaveis Zerados"
+			widgetVar="responsavelZeradoDialog" resizable="true"
+			style="FONT-SIZE: 10pt;" responsive="true" height="480px"
+			width="770px">
+			<h:form id="responsavelZeradoForm">
+				<p:dataTable id="dtresponsavelZerado" var="responsavel"
+					value="#{dashboardMBVer2.listResponsavelZerado}" paginator="true" rows="40"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					reflow="true">
+					
+					<p:column style="text-align: center;" headerText="Responsável"
+						filterBy="#{responsavel.nome}"
+						filterMatchMode="contains"
+						sortBy="#{responsavel.nome}">
+						<h:outputText value="#{responsavel.nome}" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Gerente"
+						filterBy="#{responsavel.donoResponsavel.nome}"
+						filterMatchMode="contains"
+						sortBy="#{responsavel.donoResponsavel.nome}">
+						<h:outputText value="#{responsavel.donoResponsavel.nome}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos" overflow="auto"
+			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMBVer2.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos Pré-Arovados" overflow="auto"
+			widgetVar="listaContratosAprovados" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormAprovados">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMBVer2.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa Pré-Aprovada"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.taxaPreAprovada}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center"
+						headerText="Valor Pré-Aprovada "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.quantoPrecisa}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos Comitê" overflow="auto"
+			widgetVar="listaContratosComite" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormComite">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMBVer2.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa Comite"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.taxaAprovada}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Valor Comite "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.valorAprovadoComite}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de contratos CCB" overflow="auto"
+			widgetVar="listaContratosCcb" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="contratosFormCcb">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{dashboardMBVer2.listaContratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Taxa CCB"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.txJurosParcelas}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Valor CCB "
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.valorCCB}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+							converter="bigDecimalConverter" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

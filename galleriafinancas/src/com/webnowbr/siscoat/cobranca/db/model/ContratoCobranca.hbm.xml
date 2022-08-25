@@ -1721,12 +1721,11 @@
 			<column name="contaBancarioCartaSplit" />
 		</property>	
 		
-		
 		<property name="pixCartaSplit" type="java.lang.String">
 			<column name="pixCartaSplit" />
 		</property>	
 		
-				<property name="valorCartaSplitGalleria" type="big_decimal">
+		<property name="valorCartaSplitGalleria" type="big_decimal">
 			<column name="valorCartaSplitGalleria" />
 		</property>
 		
@@ -1750,10 +1749,37 @@
 			<column name="contaBancarioCartaSplitGalleria" />
 		</property>	
 		
-		
 		<property name="pixCartaSplitGalleria" type="java.lang.String">
 			<column name="pixCartaSplitGalleria" />
 		</property>	
+		<property name="valorCustoEmissao" type="big_decimal">
+			<column name="valorCustoEmissao" />
+		</property>
+		
+		<property name="nomeBancarioCustoEmissao" type="java.lang.String">
+			<column name="nomeBancarioCustoEmissao" />
+		</property>	
+		
+		<property name="cpfCnpjBancarioCustoEmissao" type="java.lang.String">
+			<column name="cpfCnpjBancarioCustoEmissao" />
+		</property>	
+		
+		<property name="bancoBancarioCustoEmissao" type="java.lang.String">
+			<column name="bancoBancarioCustoEmissao" />
+		</property>	
+		
+		<property name="agenciaBancarioCustoEmissao" type="java.lang.String">
+			<column name="agenciaBancarioCustoEmissao" />
+		</property>	
+		
+		<property name="contaBancarioCustoEmissao" type="java.lang.String">
+			<column name="contaBancarioCustoEmissao" />
+		</property>	
+		
+		<property name="pixCustoEmissao" type="java.lang.String">
+			<column name="pixCustoEmissao" />
+		</property>
+	
 	
 		<property name="nomeBancarioContaPagar" type="java.lang.String">
 			<column name="nomeBancarioContaPagar" />

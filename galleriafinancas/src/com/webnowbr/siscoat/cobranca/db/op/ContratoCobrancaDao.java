@@ -6097,7 +6097,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					String query = QUERY_CONTRATOS_CRM;
 					
-					query = query + "where status = 'Aprovado' and c.operacaoPaga = false" ;				
+					query = query + "where status = 'Aprovado' and c.operacaoPaga = false or c.pendenciapagamento = true";				
 					query = query + " order by id desc";				
 					connection = getConnection();
 					ps = connection.prepareStatement(query);	
