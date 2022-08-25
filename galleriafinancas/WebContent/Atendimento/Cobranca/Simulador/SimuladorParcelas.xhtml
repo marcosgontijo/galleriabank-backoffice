@@ -47,7 +47,7 @@
 			<h:outputText value="#{bpParcela.numeroParcela}">
 			</h:outputText>
 		</p:column>
-		<p:column style="text-align: center;" headerText="Saldo devedor (R$)">
+		<p:column style="text-align: center;" headerText="Saldo devedor inicial(R$)">
 			<h:outputText value="#{bpParcela.saldoDevedorInicial}"
 				converter="bigDecimalConverter">
 				<f:convertNumber pattern="#,##0.00" />
@@ -61,6 +61,12 @@
 		</p:column>
 		<p:column style="text-align: center;" headerText="Juros (R$)">
 			<h:outputText value="#{bpParcela.juros}"
+				converter="bigDecimalConverter">
+				<f:convertNumber pattern="#,##0.00" />
+			</h:outputText>
+		</p:column>
+		<p:column style="text-align: center;" headerText="IPCA (R$)">
+			<h:outputText value="#{bpParcela.ipca}"
 				converter="bigDecimalConverter">
 				<f:convertNumber pattern="#,##0.00" />
 			</h:outputText>
@@ -93,6 +99,13 @@
 							<f:convertNumber pattern="#,##0.00" />
 						</h:outputText>
 					</p:column> 
+					
+		<p:column style="text-align: center;" headerText="Saldo devedor Final (R$)">
+			<h:outputText value="#{bpParcela.saldoDevedorFinal}"
+				converter="bigDecimalConverter">
+				<f:convertNumber pattern="#,##0.00" />
+			</h:outputText>
+		</p:column>
 
 	</p:dataTable>
 </ui:composition>

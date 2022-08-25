@@ -16,6 +16,8 @@ public class SimulacaoIPCADadosV2 {
 	private BigDecimal saldoDevedorFinal;
 	private BigDecimal taxaIPCA;
 	
+	private BigDecimal taxaADM;
+	
 	private Date dataReferencia;
 
 	public SimulacaoIPCADadosV2() {
@@ -108,5 +110,13 @@ public class SimulacaoIPCADadosV2 {
 
 	public void setTaxaIPCA(BigDecimal taxaIPCA) {
 		this.taxaIPCA = taxaIPCA;
+	}
+
+	public BigDecimal getTaxaADM() {
+		return taxaADM;
+	}
+
+	public void setTaxaADM(BigDecimal taxaADM) {
+		this.taxaADM = taxaADM;
 	}
 }

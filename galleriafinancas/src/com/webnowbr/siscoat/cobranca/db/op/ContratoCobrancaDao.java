@@ -2511,7 +2511,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2598,7 +2598,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2672,7 +2672,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2763,7 +2763,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}

@@ -134,6 +134,17 @@
 						<p:ajax event="change" update="PanelResponsavel" />
 					</p:selectBooleanButton>
 					
+					<h:outputLabel for="GerenciaContratosFinanceiro"
+						value="Sistema de Cobrança - Gerencia Contratos Financeiro: "
+						class="labelBold" />
+					<p:selectBooleanButton id="GerenciaContratosFinanceiro"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userCobrancaFinanceiro}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+						<p:ajax event="change" update="PanelResponsavel" />
+					</p:selectBooleanButton>
+					
 					<h:outputLabel for="ComiteConsultar"
 						value="Sistema de Cobrança - Comitê Consultar: "
 						class="labelBold" />

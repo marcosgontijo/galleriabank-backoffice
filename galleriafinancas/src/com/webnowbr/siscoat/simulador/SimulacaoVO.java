@@ -4,13 +4,18 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
+import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
@@ -28,6 +33,7 @@ public class SimulacaoVO {
 	private boolean naoCalcularMIP;
 	private boolean naoCalcularTxAdm;
 	private boolean mostrarIPCA;
+	private boolean corrigidoNovoIPCA = false;
 	
 	private boolean simularComIPCA = false;
 	private BigDecimal ipcaSimulado = BigDecimal.ZERO;;
@@ -57,7 +63,7 @@ public class SimulacaoVO {
 	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 
 	public void calcular() {
-		if(simularComIPCA)
+		if(simularComIPCA && !corrigidoNovoIPCA)
 			taxaJuros = taxaJuros.add(ipcaSimulado);
 		
 		if (this.tipoCalculo.equals("Price")) {
@@ -70,8 +76,22 @@ public class SimulacaoVO {
 			calcularEnvelope();
 		}
 		
-		if(simularComIPCA)
+		if(simularComIPCA && !corrigidoNovoIPCA)
 			taxaJuros = taxaJuros.subtract(ipcaSimulado);
+		
+		// Calcula IPCA
+		if (corrigidoNovoIPCA) {
+			corrigiNovoIPCA();
+		}
+	}
+	
+	public void corrigiNovoIPCA() {
+		
+		// percorre todas as parcelas geradas pelo simulador
+		for (SimulacaoDetalheVO parcela : this.parcelas) {
+			
+		}
+		
 	}
 
 	public void calcularPrice() {
@@ -594,6 +614,44 @@ public class SimulacaoVO {
 			parcelas.add(parcelaCalculo);
 		}
 	}
+	
+	
+	private BigDecimal getIPCAMes(Date dataReferencia) {
+		// Transforma data para 2 meses antes
+		// 0-Janeiro, 1-fevereiro, 2-Março ....
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar calendar = Calendar.getInstance(zone, locale);
+		
+		calendar.setTime(dataReferencia);
+		String mesReferencia = "";
+		
+		// se subtrair 1 mês
+		if (calendar.get(Calendar.MONTH) == 0) {
+			mesReferencia = "11";
+		} else {
+			mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 1);
+		}
+		
+		String dataStr = calendar.get(Calendar.DAY_OF_MONTH) + "/" + mesReferencia + "/" + calendar.get(Calendar.YEAR);
+		SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
+		
+		IPCADao ipcaDao = new IPCADao();
+		BigDecimal taxaMes = new BigDecimal("0.5");
+		
+		try {
+			taxaMes = ipcaDao.getTaxaIPCAMes(formataData.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (taxaMes == null || taxaMes.compareTo(BigDecimal.ZERO) == 0) {
+			taxaMes = new BigDecimal("0.5");
+		}
+		
+		return taxaMes;
+	}
 
 	public BigDecimal getIOFTotal() {
 		return this.valorTotalIOF.add(this.valorTotalIOFAdicional);
@@ -814,7 +872,12 @@ public class SimulacaoVO {
 	public void setIpcaSimulado(BigDecimal ipcaSimulado) {
 		this.ipcaSimulado = ipcaSimulado;
 	}
-	
-	
-		
+
+	public boolean isCorrigidoNovoIPCA() {
+		return corrigidoNovoIPCA;
+	}
+
+	public void setCorrigidoNovoIPCA(boolean corrigidoNovoIPCA) {
+		this.corrigidoNovoIPCA = corrigidoNovoIPCA;
+	}		
 }

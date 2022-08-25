@@ -222,6 +222,8 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor10;
 	
 	private boolean corrigidoIPCA;
+	private boolean corrigidoNovoIPCA;
+	
 	private boolean recalculaIPCA;
 	
 	private boolean exibeRecebedor1;
@@ -5462,5 +5464,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setPendenciaPagamento(boolean pendenciaPagamento) {
 		this.pendenciaPagamento = pendenciaPagamento;
+	}
+
+	public boolean isCorrigidoNovoIPCA() {
+		return corrigidoNovoIPCA;
+	}
+
+	public void setCorrigidoNovoIPCA(boolean corrigidoNovoIPCA) {
+		this.corrigidoNovoIPCA = corrigidoNovoIPCA;
 	}
 }

@@ -292,7 +292,7 @@
 					<p:panel header="Dispesas" style="margin-bottom:10px;">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 								<p:selectBooleanButton
 									value="#{contratoCobrancaMB.addContasPagar}"
 									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
@@ -484,7 +484,7 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 								<p:spacer height="10" />
-								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
 										update=":form:ContasPagarPanel" />

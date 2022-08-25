@@ -229,6 +229,9 @@
 		<property name="corrigidoIPCA" type="boolean">
 			<column name="corrigidoIPCA" />
 		</property>
+		<property name="corrigidoNovoIPCA" type="boolean">
+			<column name="corrigidoNovoIPCA" not-null="true" default="false" />
+		</property>	
 		<property name="recalculaIPCA" type="boolean">
 			<column name="recalculaIPCA" />
 		</property>

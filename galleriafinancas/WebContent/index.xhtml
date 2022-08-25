@@ -117,7 +117,7 @@
 									styleClass="itemMenu" />							
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, AVALIADORIMOVEL, LAUDO, USER_GALACHE">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, AVALIADORIMOVEL, LAUDO, USER_GALACHE, COBRANCA_FINANCEIRO">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -262,10 +262,14 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO">	
 									<p:menuitem value="13 - Ag. Pag. Op."
 										action="#{contratoCobrancaMB.consultaAgPagamentoOp}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
 									<p:menuitem value="Pré-Cont Análise Reprovada"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
