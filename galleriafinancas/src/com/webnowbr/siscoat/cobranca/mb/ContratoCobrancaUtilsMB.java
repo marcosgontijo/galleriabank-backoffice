@@ -62,6 +62,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.CalculoDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 /** ManagedBean. */
@@ -1138,6 +1139,51 @@ public class ContratoCobrancaUtilsMB {
 		} else {
 			this.valorAtualizado = null;
 		}
+	}	
+	
+	/*
+	 * Método responsável pelo recalculo do valor
+	 */
+	public void recalculaValorDiaUtil() {
+		if (this.dtVencimento != null) {
+			
+			this.qtdeDias = DateUtil.getWorkingDaysBetweenTwoDates(this.dtVencimento, this.dtPagamento); 
+
+			if (this.qtdeDias > 0) {
+				if (!this.txJuros.equals(BigDecimal.ZERO)) {
+					//calcula Indice da Taxa de Juros		
+					double percentual = ((this.txJuros.doubleValue() / 100) / 30) * this.qtdeDias;
+					//Calcula valor Atualizado apenas com o Juros
+					this.valorAtualizado = this.valorParcela.add(this.valorParcela.multiply(BigDecimal.valueOf(percentual)));
+				} else {
+					this.valorAtualizado = this.valorParcela;
+				}
+
+				if (this.multa != null) {
+					if (!this.multa.equals(BigDecimal.ZERO)) {
+						//calcula Multa
+						double multa = (this.multa.doubleValue() / 100);
+						BigDecimal valorMulta = this.valorParcela;
+						valorMulta = (valorMulta.add(this.valorParcela.multiply(BigDecimal.valueOf(multa))).subtract(this.valorParcela));		
+	
+						//Calcula valor Atualizado com a multa
+						this.valorAtualizado = this.valorAtualizado.add(valorMulta);		
+					}
+				}
+
+				//Seta para apenas 2 casas decimais
+				this.valorAtualizado = this.valorAtualizado.setScale(2, RoundingMode.HALF_EVEN);
+			} else {
+				this.valorAtualizado = null;
+			}
+		} else {
+			this.valorAtualizado = this.valorParcela;
+		}
+		
+		if (this.valorAtualizado == null) {
+			this.valorAtualizado = BigDecimal.ZERO;
+		}
+		this.valorAcrescimo = this.valorAtualizado.subtract(this.valorParcela);
 	}	
 
 	/*

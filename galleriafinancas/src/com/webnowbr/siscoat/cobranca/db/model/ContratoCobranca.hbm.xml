@@ -1813,6 +1813,11 @@
 		<property name="dataCadastro" type="java.util.Date">
 			<column name="dataCadastro" />
 		</property>
+		
+		<property name="obsDocsPendentesRessalva" type="java.lang.String">
+			<column name="obsDocsPendentesRessalva" />
+		</property>	
+		
 
 	</class>
 </hibernate-mapping>

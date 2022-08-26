@@ -6199,7 +6199,7 @@ public class ContratoCobrancaMB {
 						if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
 							contratoCobrancaUtilsMB.recalculaValorSemMulta();
 						} else {
-							contratoCobrancaUtilsMB.recalculaValor();
+							contratoCobrancaUtilsMB.recalculaValorDiaUtil();
 						}
 						ccd.setVlrParcelaAtualizada(contratoCobrancaUtilsMB.getValorAtualizado());
 					} else {
@@ -16114,7 +16114,7 @@ public class ContratoCobrancaMB {
 				if (this.bpContratoCobrancaDetalhes.isPagoParcial()) { /////provavel problema do baixa galleria aaaaaaaaaaaaa
 					contratoCobrancaUtilsMB.recalculaValorSemMulta();
 				} else {
-					contratoCobrancaUtilsMB.recalculaValor();
+					contratoCobrancaUtilsMB.recalculaValorDiaUtil();
 				}
 
 				// se recalculo retornou vazio
@@ -16897,10 +16897,8 @@ public class ContratoCobrancaMB {
 		//amortizacao.setVlrRecebido(amortizacao.getVlrParcela());
 		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
 		objetoContratoCobranca.getListContratoCobrancaDetalhes().add(amortizacao);
-
-		
-		
 	}
+	
 	public String incluirAntecipacao() {
 
 		List<ContratoCobrancaParcelasInvestidor> listaCobrancaParcelas = null;

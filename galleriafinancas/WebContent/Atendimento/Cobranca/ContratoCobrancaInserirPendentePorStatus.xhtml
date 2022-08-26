@@ -77,11 +77,9 @@
 								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
 								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
 								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
-								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>
-								    
+								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>								    
 								    <p:menuitem id="analiseComercialStep" value="Análise Comercial"/>
-								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>
-								    
+								    <p:menuitem id="comentarioJuridicoStep" value="Comentário Jurídico"/>								    
 								    <p:menuitem id="preComiteStep" value="Pré-Comitê"/>
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
 								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
@@ -1149,6 +1147,13 @@
 										style="margin-left:30px;" />
 									<p:inputText id="chequeDevolvidoRessalva"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoRessalva}"
+										style="FONT-SIZE: 10pt;width:260px;"
+										disabled="#{contratoCobrancaMB.deleteMode}" />	
+									
+									<p:outputLabel for="obsDocsPendentesRessalva" value="Obs. Documentos Pendentes: "
+										style="margin-left:30px;" />
+									<p:inputText id="obsDocsPendentesRessalva"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.obsDocsPendentesRessalva}"
 										style="FONT-SIZE: 10pt;width:260px;"
 										disabled="#{contratoCobrancaMB.deleteMode}" />	
 
