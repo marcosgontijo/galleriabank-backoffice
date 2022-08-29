@@ -14823,15 +14823,27 @@ public class ContratoCobrancaMB {
 			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 				if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
 					
-					SimulacaoVO simulador;
+					SimulacaoVO simulador = new SimulacaoVO();
 					
-					String origemCalculo = "";
-					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {													
-						simulador = calcularParcelasIPCAV2();
-						origemCalculo = "IPCAV2";
+					String origemCalculo = "IPCA Novo";
+					
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+						simulador = calcularParcelasPriceIPCANovo();
 					} else {
-						simulador = calcularParcelas();
-						origemCalculo = "legado";
+						if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
+							if (this.objetoContratoCobranca.getTipoCalculo().equals("Price")) {
+								simulador = calcularParcelasPriceIPCANovo();
+							}
+							if (this.objetoContratoCobranca.getTipoCalculo().equals("SAC")) {
+								simulador = calcularParcelasSACIPCANovo();
+							}
+							if (this.objetoContratoCobranca.getTipoCalculo().equals("Americano")) {
+								//simulador = calcularParcelasPriceIPCANovo();
+							}
+						} else {
+							simulador = calcularParcelas();
+							origemCalculo = "legado";
+						}
 					}
 	
 					BigDecimal saldoAnterior = BigDecimal.ZERO;
@@ -14900,7 +14912,7 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDetalhes
 				.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		
-		if (origemCalculo.equals("IPCAV2")) {
+		if (origemCalculo.equals("IPCA Novo")) {
 			contratoCobrancaDetalhes
 			.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		} else {
@@ -14986,12 +14998,14 @@ public class ContratoCobrancaMB {
 		simulador.setNaoCalcularMIP(
 				!(this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()));
 		simulador.setNaoCalcularTxAdm(!this.objetoContratoCobranca.isTemTxAdm());
+		
+		simulador.setCorrigidoNovoIPCA(this.objetoContratoCobranca.isCorrigidoNovoIPCA());
 
 		simulador.calcular();
 		return simulador;
 	}
 		
-	private SimulacaoVO calcularParcelasIPCAV2() {
+	private SimulacaoVO calcularParcelasPriceIPCANovo() {
 		
 		this.simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
 		
@@ -15032,12 +15046,60 @@ public class ContratoCobrancaMB {
 			simulacaoIPCACalculoV2.setCalculaTxAdm(true);
 		}
 		
-		simulacaoIPCACalculoV2.calcularIPVAv2();
+		simulacaoIPCACalculoV2.calcularPriceIPCANovo();
 		
 		this.simuladorParcelas = convertIPCA2toSimuladorV0();
 		
 		return this.simuladorParcelas;
 	}
+	
+	private SimulacaoVO calcularParcelasSACIPCANovo() {
+		
+		this.simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
+		
+		if (this.qtdeParcelas != null) {
+			this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
+		}
+
+		//simulacaoIPCACalculoV2.setDataInicio(DateUtil.getDataHoje());
+		simulacaoIPCACalculoV2.setDataInicio(this.objetoContratoCobranca.getDataInicio());
+		
+		simulacaoIPCACalculoV2.setPrazo(BigInteger.valueOf(this.objetoContratoCobranca.getQtdeParcelas()));
+	
+		simulacaoIPCACalculoV2.setTaxaJuros(this.objetoContratoCobranca.getTxJurosParcelas());		
+		
+		simulacaoIPCACalculoV2.setCarencia(BigInteger.valueOf(this.objetoContratoCobranca.getMesesCarencia()));		
+		
+		simulacaoIPCACalculoV2.setValorCredito(this.objetoContratoCobranca.getValorCCB());	
+		
+		simulacaoIPCACalculoV2.setValorImovel(this.objetoContratoCobranca.getValorImovel());
+		
+		simulacaoIPCACalculoV2.setSeguroMIP(SiscoatConstants.SEGURO_MIP_5_DIGITOS);
+		
+		simulacaoIPCACalculoV2.setSeguroDFI(SiscoatConstants.SEGURO_DFI_6_DIGITOS);
+		
+		if (this.objetoContratoCobranca.isTemSeguroDFI() && this.objetoContratoCobranca.isTemSeguro()) {
+			simulacaoIPCACalculoV2.setCalculaSeguroDFI(true);
+		} else {
+			simulacaoIPCACalculoV2.setCalculaSeguroDFI(false);
+		}
+		
+		if (this.objetoContratoCobranca.isTemSeguroMIP() && this.objetoContratoCobranca.isTemSeguro()) {
+			simulacaoIPCACalculoV2.setCalculaSeguroMIP(true);
+		} else {
+			simulacaoIPCACalculoV2.setCalculaSeguroMIP(false);
+		}
+		
+		if (this.objetoContratoCobranca.isTemTxAdm()){
+			simulacaoIPCACalculoV2.setCalculaTxAdm(true);
+		}
+		
+		simulacaoIPCACalculoV2.calcularSACIPCANovo();
+		
+		this.simuladorParcelas = convertIPCA2toSimuladorV0();
+		
+		return this.simuladorParcelas;
+	}	
 		
 	public SimulacaoVO convertIPCA2toSimuladorV0() {
 		SimulacaoVO simulacaoVO = new SimulacaoVO();
@@ -15059,6 +15121,10 @@ public class ContratoCobrancaMB {
 				parcela.setAmortizacao(BigDecimal.ZERO);
 			}
 			
+			parcela.setIpca(parcelasIPCAV2.getIpca());
+			
+			parcela.setTaxaIpca(parcelasIPCAV2.getTaxaIPCA());
+			
 			parcela.setJuros(parcelasIPCAV2.getJuros());
 			
 			parcela.setSeguroMIP(parcelasIPCAV2.getSeguroMIP());
@@ -15066,8 +15132,12 @@ public class ContratoCobrancaMB {
 			parcela.setSeguroDFI(parcelasIPCAV2.getSeguroDFI());
 			
 			parcela.setValorParcela(parcelasIPCAV2.getValorParcela());
-			
-			parcela.setTxAdm(BigDecimal.ZERO);		
+
+			if (parcelasIPCAV2.getTaxaADM() != null) {
+				parcela.setTxAdm(parcelasIPCAV2.getTaxaADM());	
+			} else {
+				parcela.setTxAdm(BigDecimal.ZERO);	
+			}
 			
 			parcelas.add(parcela);
 		}
@@ -15294,9 +15364,21 @@ public class ContratoCobrancaMB {
 	public void mostrarParcela() {
 		try {
 			if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
-				this.simuladorParcelas = calcularParcelasIPCAV2();
+				this.simuladorParcelas = calcularParcelasPriceIPCANovo();
 			} else {
-				this.simuladorParcelas = calcularParcelas();
+				if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price")) {
+						this.simuladorParcelas = calcularParcelasPriceIPCANovo();
+					}
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("SAC")) {
+						this.simuladorParcelas = calcularParcelasSACIPCANovo();
+					}
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Americano")) {
+						//this.simuladorParcelas = calcularParcelasPriceIPCANovo();
+					}
+				} else {
+					this.simuladorParcelas = calcularParcelas();
+				}
 			}
 			
 		} catch (Exception e) {
@@ -15316,7 +15398,7 @@ public class ContratoCobrancaMB {
 			
 			try {
 				if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
-					this.simuladorParcelas = calcularParcelasIPCAV2();
+					this.simuladorParcelas = calcularParcelasPriceIPCANovo();
 				} else {
 					this.simuladorParcelas = calcularReParcelamento();
 				}
@@ -15366,7 +15448,7 @@ public class ContratoCobrancaMB {
 							detalhe.setVlrSaldoInicial(saldoAnterior);
 							//detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
 							
-							if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCAV2")) {
+							if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
 								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 							} else {
 								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -15392,7 +15474,7 @@ public class ContratoCobrancaMB {
 					//detalhe.setVlrSaldoParcela(
 					//parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					
-					if (this.objetoContratoCobranca.getTipoCalculo().equals("IPCAV2")) {
+					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
 						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					} else {
 						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));

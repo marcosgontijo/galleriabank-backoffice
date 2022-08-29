@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.simulador;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class SimulacaoIPCACalculoV2 {
 		this.seguroDFI = SiscoatConstants.SEGURO_DFI;
 	}
 	
-	public void calcularIPVAv2() {
+	public void calcularPriceIPCANovo() {
 		//loadDados();
 		this.listSimulacaoIPCADadosV2 = new ArrayList<SimulacaoIPCADadosV2>();
 		
@@ -77,6 +78,8 @@ public class SimulacaoIPCACalculoV2 {
 		int numeroParcela = 0;
 		BigDecimal saldoDevedorAtualizado = this.valorCredito;
 		boolean primeiraParcelaPosCarencia = false;
+		
+		BigDecimal taxaAdmMensal = new BigDecimal(25.00);
 		
 		for (int i = 0; i <= this.prazo.intValue(); i++) {
 			simulacaoIPCADadosV2 = new SimulacaoIPCADadosV2();
@@ -98,9 +101,13 @@ public class SimulacaoIPCACalculoV2 {
 				
 				simulacaoIPCADadosV2.setSeguroDFI(BigDecimal.ZERO);
 				simulacaoIPCADadosV2.setSeguroMIP(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setTaxaADM(BigDecimal.ZERO);
+				
 			} else {
 				ipcaMesReferencia = getIPCAMes(dataParcelas.getTime());
 				simulacaoIPCADadosV2.setTaxaIPCA(ipcaMesReferencia);
+				
+				simulacaoIPCADadosV2.setTaxaADM(BigDecimal.ZERO);
 				
 				// tratamos os meses de carência
 				if (numeroParcela <= this.carencia.intValue()) {			
@@ -125,7 +132,6 @@ public class SimulacaoIPCACalculoV2 {
 					simulacaoIPCADadosV2.setSaldoDevedorFinal(saldoDevedorAtualizado);
 				} else {
 					// tratamos as parcelas normais pós-carência					
-
 					simulacaoIPCADadosV2.setDataReferencia(dataParcelas.getTime());
 					
 					// Saldo inicial é o Final da última parcela da carência
@@ -171,7 +177,7 @@ public class SimulacaoIPCACalculoV2 {
 								}
 								
 								if (this.calculaTxAdm) {
-									taxaAdmAcumulada = taxaAdmAcumulada.add(new BigDecimal(25));	
+									taxaAdmAcumulada = taxaAdmAcumulada.add(taxaAdmMensal);	
 								}								
 							}							
 						}	
@@ -186,7 +192,9 @@ public class SimulacaoIPCACalculoV2 {
 						}
 						
 						// set parcela
-						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA.add(seguroDFI).add(seguroMPI).add(taxaAdmAcumulada));
+						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA.add(seguroDFI).add(seguroMPI).add(taxaAdmAcumulada).add(taxaAdmMensal));
+						
+						simulacaoIPCADadosV2.setTaxaADM(taxaAdmAcumulada.add(taxaAdmMensal));
 					} else {
 						// demais parcelas calcula com o IPCA do Mês
 						if (this.calculaSeguroDFI) {
@@ -198,7 +206,9 @@ public class SimulacaoIPCACalculoV2 {
 						}
 						
 						// set parcela
-						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA);
+						simulacaoIPCADadosV2.setValorParcela(parcelaPGTOJurosIPCA.add(taxaAdmMensal));
+						
+						simulacaoIPCADadosV2.setTaxaADM(taxaAdmMensal);
 					}
 					
 					simulacaoIPCADadosV2.setSeguroDFI(seguroDFI);
@@ -249,6 +259,194 @@ public class SimulacaoIPCACalculoV2 {
 		}
 	}
 	
+	public void calcularSACIPCANovo() {
+		//loadDados();
+		this.listSimulacaoIPCADadosV2 = new ArrayList<SimulacaoIPCADadosV2>();
+		
+		SimulacaoIPCADadosV2 simulacaoIPCADadosV2 = new SimulacaoIPCADadosV2();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataParcelas = Calendar.getInstance(zone, locale);		
+		dataParcelas.setTime(this.dataInicio);
+		
+		// percorre o prazo
+		int numeroParcela = 0;
+		BigDecimal saldoDevedorAtualizado = this.valorCredito;
+		boolean primeiraParcelaPosCarencia = false;
+		
+		BigDecimal taxaAdmMensal = new BigDecimal(25.00);
+		
+		BigInteger prazoAmortizacao = this.prazo.subtract(this.carencia);
+		
+		BigDecimal valorAmortizacao = BigDecimal.ZERO;
+		
+		for (int i = 0; i <= this.prazo.intValue(); i++) {
+			simulacaoIPCADadosV2 = new SimulacaoIPCADadosV2();
+			BigDecimal juros = BigDecimal.ZERO;
+			BigDecimal ipca = BigDecimal.ZERO;
+			BigDecimal ipcaMesReferencia = BigDecimal.ZERO;
+			
+			simulacaoIPCADadosV2.setNumeroParcela(BigInteger.valueOf(numeroParcela));
+			
+			simulacaoIPCADadosV2.setTaxaADM(BigDecimal.ZERO);
+						
+			// se primeiro registro apenas registra a linha 0
+			if (i == 0) {
+				simulacaoIPCADadosV2.setDataReferencia(dataParcelas.getTime());
+				simulacaoIPCADadosV2.setSaldoDevedorInicial(this.valorCredito);
+				simulacaoIPCADadosV2.setSaldoDevedorFinal(this.valorCredito);
+				
+				simulacaoIPCADadosV2.setJuros(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setAmortizacao(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setValorParcela(BigDecimal.ZERO);
+				
+				
+				simulacaoIPCADadosV2.setSeguroDFI(BigDecimal.ZERO);
+				simulacaoIPCADadosV2.setSeguroMIP(BigDecimal.ZERO);
+			} else {
+				ipcaMesReferencia = getIPCAMes(dataParcelas.getTime());
+				simulacaoIPCADadosV2.setTaxaIPCA(ipcaMesReferencia);
+				ipca = BigDecimal.ZERO;
+				
+				// tratamos os meses de carência
+				if (numeroParcela <= this.carencia.intValue()) {			
+					
+					simulacaoIPCADadosV2.setValorParcela(BigDecimal.ZERO);
+					simulacaoIPCADadosV2.setSeguroDFI(BigDecimal.ZERO);
+					simulacaoIPCADadosV2.setSeguroMIP(BigDecimal.ZERO);
+					
+					simulacaoIPCADadosV2.setSaldoDevedorInicial(saldoDevedorAtualizado);
+										
+					juros = saldoDevedorAtualizado.multiply(this.taxaJuros.divide(BigDecimal.valueOf(100)));
+					
+					ipca = saldoDevedorAtualizado.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));					
+
+					simulacaoIPCADadosV2.setDataReferencia(dataParcelas.getTime());
+
+					simulacaoIPCADadosV2.setJuros(juros);
+					
+					simulacaoIPCADadosV2.setIpca(ipca);
+					
+					simulacaoIPCADadosV2.setAmortizacao(juros.add(ipca));
+					
+					// atualiza saldo incial com o IPCA do mês anterior
+					saldoDevedorAtualizado = saldoDevedorAtualizado.add(simulacaoIPCADadosV2.getAmortizacao());
+					
+					simulacaoIPCADadosV2.setAmortizacao(simulacaoIPCADadosV2.getAmortizacao().negate());
+					
+					simulacaoIPCADadosV2.setSaldoDevedorFinal(saldoDevedorAtualizado);
+				} else {
+					// tratamos as parcelas normais pós-carência					
+
+					simulacaoIPCADadosV2.setDataReferencia(dataParcelas.getTime());
+					
+					// Saldo inicial é o Final da última parcela da carência
+					simulacaoIPCADadosV2.setSaldoDevedorInicial(saldoDevedorAtualizado);
+					
+					juros = saldoDevedorAtualizado.multiply(this.taxaJuros.divide(BigDecimal.valueOf(100)));
+					
+					simulacaoIPCADadosV2.setJuros(juros);
+					
+					ipca = saldoDevedorAtualizado.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));					
+
+					simulacaoIPCADadosV2.setIpca(ipca);
+					
+					// Calcular DFI
+					BigDecimal seguroDFI = BigDecimal.ZERO;
+					
+					// Calcular MIP
+					BigDecimal seguroMPI = BigDecimal.ZERO;
+					
+					// Taxa Adm
+					BigDecimal taxaAdm = BigDecimal.ZERO;
+					
+					// se primeira parcela pós carencia, calcula com ipca acumulado
+					if (!primeiraParcelaPosCarencia) {
+						primeiraParcelaPosCarencia = true;
+						
+						valorAmortizacao = saldoDevedorAtualizado.divide(new BigDecimal(prazoAmortizacao),MathContext.DECIMAL128);
+						
+						BigDecimal seguroDFIAcumulado = BigDecimal.ZERO;
+						BigDecimal seguroMPIAcumulado = BigDecimal.ZERO;
+						BigDecimal taxaAdmAcumulada = BigDecimal.ZERO;
+						
+						// percorre todas as parcelas da carência
+						for (SimulacaoIPCADadosV2 parcela : this.listSimulacaoIPCADadosV2) {
+							// se número parcela maior que 0 soma ao seguro
+							if (parcela.getNumeroParcela().compareTo(BigInteger.ZERO) == 1) {
+								if (this.calculaSeguroDFI) {
+									seguroDFIAcumulado = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
+								}
+								
+								if (this.calculaSeguroMIP) {
+									seguroMPIAcumulado = seguroMPIAcumulado.add((parcela.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(parcela.getTaxaIPCA())).divide(BigDecimal.valueOf(100)));
+								}
+								
+								if (this.calculaTxAdm) {
+									taxaAdmAcumulada = taxaAdmAcumulada.add(taxaAdmMensal);	
+								}								
+							}							
+						}	
+						
+						// calcula com o ipca do mês referência (parcela atual)
+						if (this.calculaSeguroDFI) {
+							seguroDFI = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+						}
+						
+						if (this.calculaSeguroMIP) {
+							seguroMPI = seguroMPIAcumulado.add((simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+						}
+						
+						// set parcela
+						simulacaoIPCADadosV2.setAmortizacao(valorAmortizacao);
+						
+						simulacaoIPCADadosV2.setValorParcela(juros.add(ipca).add(valorAmortizacao));						
+						
+						simulacaoIPCADadosV2.setValorParcela(simulacaoIPCADadosV2.getValorParcela().add(seguroDFI).add(seguroMPI).add(taxaAdmAcumulada).add(taxaAdmMensal));
+						
+						simulacaoIPCADadosV2.setTaxaADM(taxaAdmAcumulada.add(taxaAdmMensal));
+					} else {
+						// demais parcelas calcula com o IPCA do Mês
+						if (this.calculaSeguroDFI) {
+							seguroDFI = (this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+						}
+						
+						if (this.calculaSeguroMIP) {
+							seguroMPI = (simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+						}
+						
+						// set parcela
+						simulacaoIPCADadosV2.setAmortizacao(valorAmortizacao);
+						
+						simulacaoIPCADadosV2.setValorParcela(juros.add(ipca).add(valorAmortizacao));
+						
+						simulacaoIPCADadosV2.setValorParcela(simulacaoIPCADadosV2.getValorParcela().add(seguroDFI).add(seguroMPI).add(taxaAdmMensal));
+						
+						simulacaoIPCADadosV2.setTaxaADM(taxaAdmMensal);
+					}
+					
+
+					saldoDevedorAtualizado = saldoDevedorAtualizado.subtract(valorAmortizacao);
+										
+					simulacaoIPCADadosV2.setSaldoDevedorFinal(saldoDevedorAtualizado);
+					
+					simulacaoIPCADadosV2.setSeguroDFI(seguroDFI);
+					simulacaoIPCADadosV2.setSeguroMIP(seguroMPI);
+				}
+			}
+			
+			dataParcelas.add(Calendar.MONTH, 1);
+			numeroParcela = numeroParcela + 1;
+			this.listSimulacaoIPCADadosV2.add(simulacaoIPCADadosV2);			
+		}
+		
+		// zera saldo devedor final
+		if (this.listSimulacaoIPCADadosV2.size() > 0) {
+			this.listSimulacaoIPCADadosV2.get(this.listSimulacaoIPCADadosV2.size() -1).setSaldoDevedorFinal(BigDecimal.ZERO);
+		}
+	}
+	
 	private BigDecimal getIPCAMes(Date dataReferencia) {
 		// Transforma data para 2 meses antes
 		// 0-Janeiro, 1-fevereiro, 2-Março ....
@@ -257,11 +455,20 @@ public class SimulacaoIPCACalculoV2 {
 		Calendar calendar = Calendar.getInstance(zone, locale);
 		
 		calendar.setTime(dataReferencia);
-		String dataStr = calendar.get(Calendar.DAY_OF_MONTH) + "/" + String.valueOf(calendar.get(Calendar.MONTH) - 1) + "/" + calendar.get(Calendar.YEAR);
+		String mesReferencia = "";
+		
+		// se subtrair 1 mês
+		if (calendar.get(Calendar.MONTH) == 0) {
+			mesReferencia = "11";
+		} else {
+			mesReferencia = String.valueOf(calendar.get(Calendar.MONTH) - 1);
+		}
+		
+		String dataStr = calendar.get(Calendar.DAY_OF_MONTH) + "/" + mesReferencia + "/" + calendar.get(Calendar.YEAR);
 		SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
 		
 		IPCADao ipcaDao = new IPCADao();
-		BigDecimal taxaMes = new BigDecimal("0.5");
+		BigDecimal taxaMes = BigDecimal.ZERO;
 		
 		try {
 			taxaMes = ipcaDao.getTaxaIPCAMes(formataData.parse(dataStr));
@@ -270,8 +477,8 @@ public class SimulacaoIPCACalculoV2 {
 			e.printStackTrace();
 		}
 		
-		if (taxaMes == null || taxaMes.compareTo(BigDecimal.ZERO) == 0) {
-			taxaMes = new BigDecimal("0.5");
+		if (taxaMes == null) {
+			taxaMes = BigDecimal.ZERO;
 		}
 		
 		return taxaMes;

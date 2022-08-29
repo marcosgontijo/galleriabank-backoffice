@@ -1647,6 +1647,10 @@
 								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">								
 							</p:selectBooleanCheckbox>
 							
+							<p:outputLabel value="Corrigido NOVO IPCA: "/>
+								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">								
+							</p:selectBooleanCheckbox>
+							
 							</h:panelGrid>
 							<h:panelGrid columns="2" id="DadosSeguro" columnClasses="labelSeguros, ValorSeguros">
 						    <p:outputLabel value="Tem seguro? "/>
@@ -1867,12 +1871,6 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.mesesCarencia}"
 									required="true" style="width: 30px;">
 								</p:inputText>
-
-								<p:outputLabel value="Gerar Boleto das Parcelas "
-									styleClass="labelBold" />
-								<p:selectBooleanCheckbox
-									value="#{contratoCobrancaMB.geraBoletoInclusaoContrato}"
-									/>
 
 								<p:commandButton value="Visualizar parcelas"
 									action="#{contratoCobrancaMB.mostrarParcela()}"

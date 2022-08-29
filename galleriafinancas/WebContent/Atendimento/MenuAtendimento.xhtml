@@ -217,10 +217,14 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO">	
 									<p:menuitem value="13 - Ag. Pag. Op."
 										action="#{contratoCobrancaMB.consultaAgPagamentoOp}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">	
 									<p:menuitem value="Pré-Cont Análise Reprovada"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Análise Reprovada')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

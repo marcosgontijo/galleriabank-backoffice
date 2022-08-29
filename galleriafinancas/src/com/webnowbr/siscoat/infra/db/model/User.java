@@ -48,6 +48,8 @@ public final class User implements Serializable {
     private boolean userCobrancaIugu;
     private boolean userCobrancaLead;
     
+    private boolean userCobrancaFinanceiro;
+    
     private boolean blockBackoffice;
         
     private boolean userPreContrato;
@@ -517,5 +519,13 @@ public final class User implements Serializable {
 
 	public void setBlockBackoffice(boolean blockBackoffice) {
 		this.blockBackoffice = blockBackoffice;
+	}
+
+	public boolean isUserCobrancaFinanceiro() {
+		return userCobrancaFinanceiro;
+	}
+
+	public void setUserCobrancaFinanceiro(boolean userCobrancaFinanceiro) {
+		this.userCobrancaFinanceiro = userCobrancaFinanceiro;
 	}
 }

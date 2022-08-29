@@ -12,6 +12,8 @@ public class SimulacaoDetalheVO {
 	private BigDecimal valorParcela;
 	private BigDecimal saldoDevedorInicial;
 	private BigDecimal saldoDevedorFinal;
+	private BigDecimal ipca;
+	private BigDecimal taxaIpca;
 
 	private BigDecimal valorIOF;
 	
@@ -33,6 +35,9 @@ public class SimulacaoDetalheVO {
 		this.seguroDFI = BigDecimal.ZERO;
 		this.seguroMIP = BigDecimal.ZERO;
 		this.txAdm = BigDecimal.ZERO;
+		this.ipca = BigDecimal.ZERO;
+		this.taxaIpca = BigDecimal.ZERO;
+		
 		this.saldoDevedorInicial = saldoDevedorInicial;
 	}
 
@@ -116,13 +121,27 @@ public class SimulacaoDetalheVO {
 		this.txAdm = txAdm;
 	}
 
+	public BigDecimal getIpca() {
+		return ipca;
+	}
+
+	public void setIpca(BigDecimal ipca) {
+		this.ipca = ipca;
+	}
+
+	public BigDecimal getTaxaIpca() {
+		return taxaIpca;
+	}
+
+	public void setTaxaIpca(BigDecimal taxaIpca) {
+		this.taxaIpca = taxaIpca;
+	}
+
 //	public BigDecimal getValorIOFAdicional() {
 //		return valorIOFAdicional;
 //	}
 //
 //	public void setValorIOFAdicional(BigDecimal valorIOFAdicional) {
 //		this.valorIOFAdicional = valorIOFAdicional;
-//	}
-
-	
+//	}	
 }

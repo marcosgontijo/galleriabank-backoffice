@@ -2511,7 +2511,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2598,7 +2598,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2672,7 +2672,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -2763,7 +2763,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 						
 						if (!rs.getString(8).equals("")) {
-							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "/" + rs.getString(9));
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
 						}
@@ -6095,7 +6095,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;			
 				try {
-					String query = QUERY_CONTRATOS_CRM;
+					String query = 
+							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
+							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento"
+							+ " from cobranca.contratocobranca c"
+							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
+							+ " pr on pr.id = c.pagador inner join cobranca.imovelcobranca im on c.imovel = im.id ";
 					
 					query = query + "where status = 'Aprovado' and c.operacaoPaga = false or c.pendenciapagamento = true";				
 					query = query + " order by id desc";				
@@ -6115,38 +6120,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNomeResponsavel(rs.getString(4));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
 						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
-						contratoCobranca.setStatusLead(rs.getString(7));
-						contratoCobranca.setNomePagador(rs.getString(8));
-						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
-						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
-						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
-						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
-						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
-						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
-						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
-						contratoCobranca.setCcbPronta(rs.getBoolean(16));
-						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
-						contratoCobranca.setAgRegistro(rs.getBoolean(18));
-						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
-						contratoCobranca.setDocumentosComite(rs.getBoolean(20));
-						contratoCobranca.setAprovadoComite(rs.getBoolean(21));
-						contratoCobranca.setAnaliseReprovada(rs.getBoolean(22)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
-						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
-						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
-						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
-						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
-						contratoCobranca.setStatus(rs.getString(28));	
-						contratoCobranca.setPedidoLaudo(rs.getBoolean(29));
-						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(30));
-						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(31));
-						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
-						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
-						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
-						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(35));
-						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
-						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
-						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+						contratoCobranca.setNomePagador(rs.getString(7));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(8));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(9));
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(10));
+						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
