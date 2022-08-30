@@ -6028,7 +6028,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(11);
-			run2.setText("cláusula 2.1.3 da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
+			run2.setText("cláusula 3.5 do Quadro Resumo da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
 				+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
 			run2.setBold(true);
 			
@@ -6984,7 +6984,7 @@ public class CcbMB {
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
 					this.objetoCcb.setTerceiroGarantidor(true);
-					participante.setTipoParticipante("FIDUCIANTE");
+					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 			}
 			if(this.objetoCcb.isTerceiroGarantidor()) {
@@ -7154,7 +7154,7 @@ public class CcbMB {
 							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
-					participante.setTipoParticipante("DEVEDOR");
+					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 				run3 = tableRow1.getCell(0).getParagraphArray(0).createRun();	
 				run3.setFontSize(12);
@@ -7391,7 +7391,7 @@ public class CcbMB {
 			            
 			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());	
-						text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+						text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());
 						text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());				
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
