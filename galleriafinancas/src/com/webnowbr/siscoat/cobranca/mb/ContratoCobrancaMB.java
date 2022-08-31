@@ -1417,7 +1417,7 @@ public class ContratoCobrancaMB {
 		this.vlrComissaoFinal = null;
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
-		this.codigoResponsavel = null;
+		//this.codigoResponsavel = null;
 		files = new ArrayList<FileUploaded>();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
