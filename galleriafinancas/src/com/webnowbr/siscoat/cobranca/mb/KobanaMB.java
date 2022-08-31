@@ -429,8 +429,8 @@ public class KobanaMB {
 				
 				TakeBlipMB tkblpMb = new TakeBlipMB();
 				PagadorRecebedor pagador;
-				//pagador = contrato.getPagador();
-				pagador = new PagadorRecebedorDao().findById(10737l);
+				pagador = contrato.getPagador();
+				//pagador = new PagadorRecebedorDao().findById(10737l);
 				tkblpMb.sendWhatsAppMessagePagadorBoleto(pagador, "envio_boleto_cobranca", urlBoleto);
 			} else {
 				if (status == 401) {

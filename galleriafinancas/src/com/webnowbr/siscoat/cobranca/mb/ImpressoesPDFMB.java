@@ -177,7 +177,12 @@ public class ImpressoesPDFMB {
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
-
+			if(this.nome.contains("/")) {
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Erro: Favor REMOVER '/' do campo NOME", ""));
+				return;
+			}
+			
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
 			this.nomePDF = "Ficha Cadastral Pessoa Física - " + this.nome + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();

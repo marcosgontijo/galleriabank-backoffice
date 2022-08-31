@@ -1864,6 +1864,10 @@ public class ContratoCobrancaMB {
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
+		
+		ContratoCobranca contrato = new ContratoCobranca();
+		contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		ContratoCobranca c = contrato;
 
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
 				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
@@ -1881,8 +1885,8 @@ public class ContratoCobrancaMB {
 				+ "<span style='font-weight:bold'>" + this.objetoContratoCobranca.getResponsavel().getNome()
 				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> (Pagador: <b>"
-				+ this.objetoContratoCobranca.getPagador().getNome() + "</b>) teve atualização. </td>\n" + "</tr>\n"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> do <b>"
+				+ this.objetoContratoCobranca.getPagador().getNome() + "</b>) teve atualização para" + c.getStatus() + ". </td>\n" + "</tr>\n"
 				+ "</tbody>\n" + "</table>\n"
 				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
 				+ "<table width='100%' style='border-left:3px solid #71A241'>\n" + "<tbody>\n" + "<tr>\n"
@@ -1893,33 +1897,29 @@ public class ContratoCobrancaMB {
 		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #71A241'>" + "<tbody>"
 				+ "<tr>";
 		
-		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = populaStatusUnitario(this.objetoContratoCobranca);
-		ContratoCobranca c = contrato;
-		
 		if(CommonsUtil.mesmoValor(c.getStatus(), "Em Análise")){
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Pagto. Laudo")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Pré-Comite")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/4Cinza-1.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. DOC")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepComite.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Ag. Registro")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepAssinado.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='343.2' width='486'>"
+					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepRegistrado.png' height='467.8' width='330.6'>"
 					+ "</td>";
 		} else {
 			return;
@@ -4749,6 +4749,20 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Ag. Comite");
 	}
 	
+	public String voltarAnaliseComercial() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setAnaliseComercial(false);
+		updateCheckList();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+		
 	public String voltarContratoParaDocumentosComite() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -7758,7 +7772,9 @@ public class ContratoCobrancaMB {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";  
 			}
 		} else if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
-			if( CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(25)) || CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(176)) ) {
+			if( CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(25)) 
+					|| CommonsUtil.mesmoValor(usuarioLogado.getId(), CommonsUtil.longValue(176))
+					|| usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
@@ -25954,6 +25970,7 @@ public class ContratoCobrancaMB {
 	 * 
 	 * @return
 	 */
+	
 	public Collection<FileUploaded> listaArquivos() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
@@ -25991,7 +26008,7 @@ public class ContratoCobrancaMB {
 		if (arqs != null) {
 			for (int i = 0; i < arqs.length; i++) {
 				File arquivo = arqs[i];
-
+				
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
 				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
