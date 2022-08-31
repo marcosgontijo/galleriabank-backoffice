@@ -6028,7 +6028,7 @@ public class CcbMB {
 			
 			run2 = paragraph.createRun();
 			run2.setFontSize(11);
-			run2.setText("cláusula 2.1.3 da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
+			run2.setText("cláusula 3.5 do Quadro Resumo da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
 				+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
 			run2.setBold(true);
 			
@@ -6221,7 +6221,7 @@ public class CcbMB {
 
 				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
 				run.setFontSize(12);
-				run.setText("Pix: " + this.objetoCcb.getIntermediacaoPix());
+				run.setText("PIX");
 				run.setColor("000000");	
 				
 				tableRow1.getCell(2).setParagraph(paragraph);
@@ -6984,7 +6984,7 @@ public class CcbMB {
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
 					this.objetoCcb.setTerceiroGarantidor(true);
-					participante.setTipoParticipante("FIDUCIANTE");
+					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 			}
 			if(this.objetoCcb.isTerceiroGarantidor()) {
@@ -7154,7 +7154,7 @@ public class CcbMB {
 							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
-					participante.setTipoParticipante("DEVEDOR");
+					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 				run3 = tableRow1.getCell(0).getParagraphArray(0).createRun();	
 				run3.setFontSize(12);
@@ -7166,8 +7166,11 @@ public class CcbMB {
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela().add(this.objetoCcb.getValorDfiParcela()).add(this.objetoCcb.getValorParcela()).add(taxaAdm);		
-					
+			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
+			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
@@ -7388,7 +7391,7 @@ public class CcbMB {
 			            
 			            text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
 						text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());	
-						text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+						text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());
 						text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());				
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
@@ -7600,6 +7603,65 @@ public class CcbMB {
 		return null;
 	}
 		
+	public StreamedContent geraEndossosEmPretoGalleria() throws IOException{
+		try {
+			XWPFDocument document;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+				}
+			}	
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/EndossosEmPretoGalleria.docx"));			
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}				
+				}
+			}
+
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            text = trocaValoresXWPF(text, r, "emissaoData", this.objetoCcb.getDataDeEmissao());								
+						text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());		            
+						text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	
+						text = trocaValoresXWPF(text, r, "cpfEmitente", this.objetoCcb.getCpfEmitente()); 
+					}
+			    }
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - Endossos Em Preto %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
@@ -7648,9 +7710,13 @@ public class CcbMB {
 		    	return geraCessao();
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"InstrumentoEmissaoCCI")) {
 		    	return geraInstrumentoEmissaoCCI();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"EndossosEmPretoGalleria")) {
+		    	return geraEndossosEmPretoGalleria();
 		    } else {
 	    		
 	    	}
+	    	
+	    	
 	    	
 	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 

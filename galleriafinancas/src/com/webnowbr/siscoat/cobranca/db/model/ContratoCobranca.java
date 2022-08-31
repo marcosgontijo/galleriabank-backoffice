@@ -662,6 +662,7 @@ public class ContratoCobranca implements Serializable {
 	private String processosRessalva;
 	private String trabalhistaRessalva;
 	private String chequeDevolvidoRessalva;
+	private String obsDocsPendentesRessalva;
 	
 	private String contatoAgendamendoLaudoAvaliacao;
 	private String formaDePagamentoLaudoPAJU;
@@ -5465,7 +5466,7 @@ public class ContratoCobranca implements Serializable {
 	public void setPendenciaPagamento(boolean pendenciaPagamento) {
 		this.pendenciaPagamento = pendenciaPagamento;
 	}
-
+	
 	public boolean isCorrigidoNovoIPCA() {
 		return corrigidoNovoIPCA;
 	}
@@ -5473,4 +5474,13 @@ public class ContratoCobranca implements Serializable {
 	public void setCorrigidoNovoIPCA(boolean corrigidoNovoIPCA) {
 		this.corrigidoNovoIPCA = corrigidoNovoIPCA;
 	}
+
+	public String getObsDocsPendentesRessalva() {
+		return obsDocsPendentesRessalva;
+	}
+
+	public void setObsDocsPendentesRessalva(String obsDocsPendentesRessalva) {
+		this.obsDocsPendentesRessalva = obsDocsPendentesRessalva;
+	}
+	
 }

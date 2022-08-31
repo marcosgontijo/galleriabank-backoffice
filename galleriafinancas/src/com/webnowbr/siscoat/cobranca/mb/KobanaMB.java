@@ -36,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 
 @ManagedBean(name = "kobanaMB")
 @SessionScoped
@@ -425,6 +426,12 @@ public class KobanaMB {
 				ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
 				parcela.setUrlBoletoKonana(urlBoleto);
 				parcelaDao.merge(parcela);
+				
+				TakeBlipMB tkblpMb = new TakeBlipMB();
+				PagadorRecebedor pagador;
+				//pagador = contrato.getPagador();
+				pagador = new PagadorRecebedorDao().findById(10737l);
+				tkblpMb.sendWhatsAppMessagePagadorBoleto(pagador, "envio_boleto_cobranca", urlBoleto);
 			} else {
 				if (status == 401) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
