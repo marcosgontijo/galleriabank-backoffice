@@ -1480,8 +1480,10 @@ public class BRLTrustMB {
 					
 					JSONObject jsonDados = new JSONObject();
 					
-					if (this.objetoContratoCobranca.isCorrigidoIPCA()) {
+					if (this.objetoContratoCobranca.isCorrigidoIPCA() || this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
 						jsonDados.put("indice", "IPCA");
+					} else {
+						jsonDados.put("indice", "Pré-Fixado");						
 					}
 					
 					jsonDados.put("sistemaAmortizacao", this.objetoContratoCobranca.getTipoCalculo());

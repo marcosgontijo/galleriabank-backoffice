@@ -1603,6 +1603,16 @@
 							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
 							<h:outputText value="Não" />
 						</ui:fragment>
+						
+						<p:outputLabel value="Corrigido NOVO IPCA: " styleClass="labelBold" />
+						<ui:fragment
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
+							<h:outputText value="Não" />
+						</ui:fragment>
 
 						<p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
 						<ui:fragment
@@ -2156,8 +2166,8 @@
 							</h:outputText>
 						</p:column>
 						<p:column style="text-align: center;width: 110px;"
-							headerText="Taxa Administação (R$)"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA || contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCA}">
+							headerText="IPCA (R$)"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
 							<h:outputText value="#{parcelas.ipca}"
 								converter="bigDecimalConverter">
 							</h:outputText>

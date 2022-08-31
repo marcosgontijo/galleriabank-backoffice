@@ -11,6 +11,22 @@
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+			
 			<p:panel id="PanelPDF"
 				header="Impressão em PDF / XLS Gerada com Sucesso"
 				style="margin-bottom:10px;"
@@ -376,13 +392,15 @@
 					action="#{contratoCobrancaMB.geraRelFinanceiro}"
 					image="ui-icon ui-icon-check"
 					update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
-					style="TEXT-DECORATION: bold;" />
+					style="TEXT-DECORATION: bold;" 
+					onclick="start();" oncomplete="stop();" />
 				<p:spacer width="10" />
 				<p:commandButton value="Contratos na Última Parcela"
 					action="#{contratoCobrancaMB.geraRelFinanceiroUltimaParcela}"
 					image="ui-icon ui-icon-check"
 					update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
-					style="TEXT-DECORATION: bold;" />
+					style="TEXT-DECORATION: bold;" 
+					onclick="start();" oncomplete="stop();" />
 				<p:spacer width="10" />
 				
 					

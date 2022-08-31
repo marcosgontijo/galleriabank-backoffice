@@ -168,7 +168,15 @@ public class SimuladorMB {
 		simulador.setIpcaSimulado(this.ipcaSimulado);
 		simulador.calcular();
 		
-		simulador.setValorCreditoLiberado(simulador.getValorCredito().subtract(simulador.getIOFTotal()).subtract(simulador.getCustoEmissaoValor()));
+		simulador.setValorCreditoLiberado(simulador.getValorCredito());
+				
+		if (simulador.getCustoEmissaoValor() != null) {
+			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getCustoEmissaoValor()));
+		} 
+		
+		if (simulador.getIOFTotal() != null) {
+			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getIOFTotal()));
+		}
 
 		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
 			BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
@@ -223,40 +231,41 @@ public class SimuladorMB {
 		jurosAoAno = jurosAoAno.setScale(2, BigDecimal.ROUND_HALF_UP);
 		this.simulacao.setTaxaJurosAoAno(jurosAoAno);
 		
-		
-		BigDecimal cet = BigDecimal.ZERO;
-		BigDecimal cetAno = BigDecimal.ZERO;
-		double cetDouble = 0.0;
-		
-		double[] cash_flows = new double[simulacao.getQtdParcelas().intValue() + 1];
-		
-		cash_flows[0] = simulacao.getValorCreditoLiberado().negate().doubleValue();
-		
-		for (int i = 1; i <= simulacao.getQtdParcelas().intValue(); i++) {
-			BigDecimal calc_value = simulacao.getParcelas().get(i).getAmortizacao().add(simulacao.getParcelas().get(i).getJuros());
-			cash_flows[i] = calc_value.doubleValue();
+		if (simulacao.getParcelas().size() > 0) {
+			BigDecimal cet = BigDecimal.ZERO;
+			BigDecimal cetAno = BigDecimal.ZERO;
+			double cetDouble = 0.0;
+			
+			double[] cash_flows = new double[simulacao.getQtdParcelas().intValue() + 1];
+			
+			cash_flows[0] = simulacao.getValorCreditoLiberado().negate().doubleValue();
+			
+			for (int i = 1; i <= simulacao.getQtdParcelas().intValue(); i++) {
+				BigDecimal calc_value = simulacao.getParcelas().get(i).getAmortizacao().add(simulacao.getParcelas().get(i).getJuros());
+				cash_flows[i] = calc_value.doubleValue();
+			}
+			
+			
+			int maxGuess = 500;
+			cetDouble = irr(cash_flows, maxGuess);
+			
+			if (CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
+				cetDouble = 0;
+			} 
+			
+			cetDouble = cetDouble * 100; 
+			cet = CommonsUtil.bigDecimalValue(cetDouble);	
+			cetAno = BigDecimal.ONE.add((cet.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+			cetAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(cetAno), 12));
+			cetAno = cetAno.subtract(BigDecimal.ONE);
+			cetAno = cetAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+			
+			cetAno = cetAno.setScale(2, BigDecimal.ROUND_HALF_UP);
+			cet = cet.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.simulacao.setCetAoAno(cetAno);
+			this.simulacao.setCetAoMes(cet);
 		}
-		
-		
-		int maxGuess = 500;
-		cetDouble = irr(cash_flows, maxGuess);
-		
-		if (CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
-			cetDouble = 0;
-		} 
-		
-		cetDouble = cetDouble * 100; 
-		cet = CommonsUtil.bigDecimalValue(cetDouble);	
-		cetAno = BigDecimal.ONE.add((cet.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
-		cetAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(cetAno), 12));
-		cetAno = cetAno.subtract(BigDecimal.ONE);
-		cetAno = cetAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-		
-		cetAno = cetAno.setScale(2, BigDecimal.ROUND_HALF_UP);
-		cet = cet.setScale(2, BigDecimal.ROUND_HALF_UP);
-		
-		this.simulacao.setCetAoAno(cetAno);
-		this.simulacao.setCetAoMes(cet);
 		
 		BigDecimal ltv = this.simulacao.getValorCredito().divide(this.simulacao.getValorImovel(),MathContext.DECIMAL128);
 		ltv = ltv.multiply(BigDecimal.valueOf(100));
