@@ -1381,6 +1381,8 @@ public class ContratoCobrancaMB {
 
 	public String clearPreContratoCustomizado() {
 		// INICIO - Tratamento para Pré-Contrato
+		
+		this.codigoResponsavel = "";
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
 		this.objetoContratoCobranca.setDataCadastro(new Date());
@@ -12199,7 +12201,19 @@ public class ContratoCobrancaMB {
 
 				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+					
+					if (cBaixas.getVlrRecebido() != null) {
+						somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+					}
+					
+					if (cBaixas.isBaixaGalleria() && cBaixas.getDataPagamento() == null) {
+						ccd.setDataUltimoPagamento(cBaixas.getDataPagamentoGalleria());
+						
+						if (cBaixas.getVlrRecebido() != null) {
+							somaBaixas = somaBaixas.add(cBaixas.getVlrRecebidoGalleria());
+						}
+					}
+
 				}
 				ccd.setValorTotalPagamento(somaBaixas.add(somaAmortizacoes));
 
@@ -12722,9 +12736,17 @@ public class ContratoCobrancaMB {
 				} else {
 					cell.setCellValue(Double.valueOf("0"));
 				}
+				
+				// CCB
+				cell = row.createCell(15);
+				cell.setCellStyle(cell_style);
+				
+				if (record.getNumeroContratoSeguro() != null) {
+					cell.setCellValue(record.getNumeroContratoSeguro() + "-" + parcelas.getNumeroParcela());
+				}
 
 				// Parcela
-				cell = row.createCell(15);
+				cell = row.createCell(16);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -12735,7 +12757,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getNumeroParcela());
 
 				// Data Vencimento
-				cell = row.createCell(16);
+				cell = row.createCell(17);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -12746,7 +12768,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataVencimento());
 
 				// Valor Parcela
-				cell = row.createCell(17);
+				cell = row.createCell(18);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -12762,7 +12784,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// Data pagto
-				cell = row.createCell(18);
+				cell = row.createCell(19);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -12773,7 +12795,7 @@ public class ContratoCobrancaMB {
 				cell.setCellValue(parcelas.getDataUltimoPagamento());
 
 				// Valor Pago
-				cell = row.createCell(19);
+				cell = row.createCell(20);
 				/*
 				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 				 * else { if (parcelas.isParcelaVencida()) {
@@ -12850,6 +12872,8 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(18);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(19);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
 			
 
@@ -14912,7 +14936,7 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDetalhes
 				.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		
-		if (origemCalculo.equals("IPCA Novo")) {
+		if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
 			contratoCobrancaDetalhes
 			.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		} else {
@@ -15403,6 +15427,23 @@ public class ContratoCobrancaMB {
 					this.simuladorParcelas = calcularReParcelamento();
 				}
 				
+				if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+					this.simuladorParcelas = calcularParcelasPriceIPCANovo();
+				} else {
+					if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
+						if (this.objetoContratoCobranca.getTipoCalculo().equals("Price")) {
+							this.simuladorParcelas = calcularParcelasPriceIPCANovo();
+						}
+						if (this.objetoContratoCobranca.getTipoCalculo().equals("SAC")) {
+							this.simuladorParcelas = calcularParcelasSACIPCANovo();
+						}
+						if (this.objetoContratoCobranca.getTipoCalculo().equals("Americano")) {
+							//this.simuladorParcelas = calcularParcelasPriceIPCANovo();
+						}
+					} else {
+						this.simuladorParcelas = calcularReParcelamento();
+					}
+				}				
 			} catch (Exception e) {
 			}			
 		} catch (Exception e) {
@@ -15448,7 +15489,7 @@ public class ContratoCobrancaMB {
 							detalhe.setVlrSaldoInicial(saldoAnterior);
 							//detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial());
 							
-							if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+							if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
 								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 							} else {
 								detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -15474,7 +15515,7 @@ public class ContratoCobrancaMB {
 					//detalhe.setVlrSaldoParcela(
 					//parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					
-					if (this.objetoContratoCobranca.getTipoCalculo().equals("Price [IPCA Novo]")) {
+					if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
 						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 					} else {
 						detalhe.setVlrSaldoParcela(parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -16711,7 +16752,10 @@ public class ContratoCobrancaMB {
 
 			for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 				ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-				somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+
+				if (cBaixas.getVlrRecebido() != null) { 
+					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+				}
 			}
 
 			ccd.setValorTotalPagamento(somaBaixas);

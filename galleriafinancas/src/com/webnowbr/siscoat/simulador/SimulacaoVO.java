@@ -654,7 +654,11 @@ public class SimulacaoVO {
 	}
 
 	public BigDecimal getIOFTotal() {
-		return this.valorTotalIOF.add(this.valorTotalIOFAdicional);
+		if (this.valorTotalIOFAdicional != null) {
+			return this.valorTotalIOF.add(this.valorTotalIOFAdicional);
+		} else {
+			return this.valorTotalIOF;
+		}
 	}
 
 	public BigDecimal getTarifaIOFDiario() {
