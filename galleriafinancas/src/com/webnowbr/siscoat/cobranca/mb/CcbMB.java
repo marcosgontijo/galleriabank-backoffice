@@ -291,6 +291,7 @@ public class CcbMB {
     private boolean temCertidaoDeCasamento = false;
     private boolean temLaudoDeAvaliacao = false;
     private boolean temIntermediacao = false;
+    private boolean temCCBValor = false;
     private boolean temProcessosJucidiais = false;
     private boolean temIptuEmAtraso = false;
     private boolean temCondominioEmAtraso = false;
@@ -6310,6 +6311,66 @@ public class CcbMB {
 				}
 			}
 			
+			if(this.temCCBValor) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("Crédito CCI/CCB");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Ted no "+ this.objetoCcb.getCCBBanco() +" AG: "+ this.objetoCcb.getCCBAgencia()
+					+" C/C: "+ this.objetoCcb.getCCBCC() +" Chave Pix: "+ this.objetoCcb.getCCBPix()
+					+ this.objetoCcb.getCCBNome() +" CNPJ: "+ this.objetoCcb.getCCBCNPJ() );
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getCCBValor(), "R$ "));
+				if(!this.objetoCcb.isCCBInseridoContrato()) {
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar CCB = new ContasPagar();				
+						CCB.setDescricao("Crédito CCB/CCI");
+						CCB.setValor(this.objetoCcb.getCCBValor());
+						CCB.setFormaTransferencia("TED");
+						CCB.setBancoTed(this.objetoCcb.getCCBBanco());
+						CCB.setAgenciaTed(this.objetoCcb.getCCBAgencia());
+						CCB.setContaTed(this.objetoCcb.getCCBCC());
+						CCB.setNomeTed(this.objetoCcb.getCCBNome());
+						CCB.setCpfTed(this.objetoCcb.getCCBCNPJ());	
+						
+						this.objetoContratoCobranca.setNomeBancarioContaPagar(this.objetoCcb.getCCBNome());
+						this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(this.objetoCcb.getCCBCNPJ());
+						this.objetoContratoCobranca.setBancoBancarioContaPagar(this.objetoCcb.getCCBBanco());
+						this.objetoContratoCobranca.setAgenciaBancarioContaPagar(this.objetoCcb.getCCBAgencia());
+						this.objetoContratoCobranca.setContaBancarioContaPagar(this.objetoCcb.getContaCorrente());		
+						
+						/////////////////////////////////////////////////////////////////////////////////////
+						CCB.setContrato(this.objetoContratoCobranca);
+						CCB.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						CCB.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						CCB.setTipoDespesa("C");
+						CCB.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(CCB);
+						this.objetoCcb.setCCBInseridoContrato(true);
+					}
+				}
+			}
+			
 			if (this.temProcessosJucidiais) {
 				for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
 					XWPFTableRow tableRow1 = table.createRow();
@@ -9613,5 +9674,15 @@ public class CcbMB {
 	public void setNumeroProcesso(String numeroProcesso) {
 		this.numeroProcesso = numeroProcesso;
 	}
+
+	public boolean isTemCCBValor() {
+		return temCCBValor;
+	}
+
+	public void setTemCCBValor(boolean temCCBValor) {
+		this.temCCBValor = temCCBValor;
+	}
+	
+	
 	
 }

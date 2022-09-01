@@ -35,6 +35,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
@@ -5760,7 +5761,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
-		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU " +
+		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6035,6 +6036,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						ResponsavelDao rDao = new ResponsavelDao();
 						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(39)));
+						
+						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
+						
+						
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
@@ -7406,9 +7411,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});
 	}
 
-	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel, laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite, analiseComercial, comentarioJuridicoEsteira, aprovadocomite, valorPreLaudo "
-			 + " from cobranca.contratocobranca c "  
-			 + " where c.id = ?";
+	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel,"
+			+ " laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite, analiseComercial, comentarioJuridicoEsteira,"
+			+ " aprovadocomite, valorPreLaudo, CadastroAprovadoValor "
+			+ " from cobranca.contratocobranca c "  
+			+ " where c.id = ? ";
 	
 	@SuppressWarnings("unchecked")
 	public ContratoCobrancaStatus consultaStatusContratos(final long idContrato) {
@@ -7637,6 +7644,58 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							contratoCobranca.setId(rs.getLong("id"));
 							objects.add(contratoCobranca);	
 						}										
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_ZAP_LEADS_EM_TRATAMENTO = " select "
+			+ "	c.id, "
+			+ "	c.numerocontrato, "
+			+ "	c.leademtratamentodata "
+			+ " from "
+			+ "	cobranca.contratocobranca c "
+			+  "where "
+			+ "	 c.statusLead = 'Em Tratamento' "
+			+ "	and (DATE_PART('day', ? ::timestamp - c.leademtratamentodata) < 7) "
+			+ "	and (DATE_PART('day', ? ::timestamp - c.leademtratamentodata) > 2) "
+			+ " and c.enviadoWhatsAppLeadStandby = false ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> ConsultaZapLeadsEmTratamento(final Date dataInicio) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				Calendar dataHoje = Calendar.getInstance(zone, locale);
+				Date auxDataHoje = dataHoje.getTime();
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_ZAP_LEADS_EM_TRATAMENTO);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelInicioSQL);
+					
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						Date data = rs.getDate("leademtratamentodata");
+						if (DateUtil.getWorkingDaysBetweenTwoDates(data, auxDataHoje) == 3) {
+							ContratoCobranca contratoCobranca = new ContratoCobranca();
+							contratoCobranca.setId(rs.getLong("id"));
+							objects.add(contratoCobranca);	
+						}									
 					}
 	
 				} finally {
