@@ -12426,21 +12426,24 @@ public class ContratoCobrancaMB {
 		cell.setCellValue("CET");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(15);
-		cell.setCellValue("Parcela");
+		cell.setCellValue("CCB-Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(16);
-		cell.setCellValue("Data Vencimento");
+		cell.setCellValue("Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(17);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(18);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Valor");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(19);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(20);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
-
+		
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
 		cell_style.setAlignment(HorizontalAlignment.CENTER);
@@ -12740,9 +12743,17 @@ public class ContratoCobrancaMB {
 				// CCB
 				cell = row.createCell(15);
 				cell.setCellStyle(cell_style);
-				
+				String parcela = parcelas.getNumeroParcela();
+
+				if (parcela.length() == 1) {
+					parcela = "00" + parcela;
+				} else if (parcela.length() == 2) {
+					parcela = "0" + parcela;
+				} else {
+					parcela = parcela;
+				}
 				if (record.getNumeroContratoSeguro() != null) {
-					cell.setCellValue(record.getNumeroContratoSeguro() + "-" + parcelas.getNumeroParcela());
+					cell.setCellValue(record.getNumeroContratoSeguro() + "-" + parcela);
 				}
 
 				// Parcela
