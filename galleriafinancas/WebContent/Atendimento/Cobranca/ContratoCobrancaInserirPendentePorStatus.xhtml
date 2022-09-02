@@ -297,7 +297,8 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  || contratoCobrancaMB.indexStepsStatusContrato == 1  || contratoCobrancaMB.indexStepsStatusContrato == 7)}">
+								<ui:fragment rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
+								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7)}">
 									<h:panelGrid columns="2" style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">	
@@ -330,6 +331,20 @@
 											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
 												<p:commandButton value="Voltar Para Comite"
 													onclick="PF('voltarComiteDialog').show();" />
+											</shiro:hasAnyRoles>
+										</h:panelGrid>
+									</ui:fragment>
+									
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 5}">
+										<h:panelGrid columns="2"
+											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold">Voltar Contrato para Analise Comercial</p:outputLabel>
+											<p:spacer></p:spacer>
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+												<p:commandButton value="Voltar Analise Comercial"
+													onclick="PF('voltarAnaliseComercialDialog').show();" />
 											</shiro:hasAnyRoles>
 										</h:panelGrid>
 									</ui:fragment>
@@ -3828,6 +3843,24 @@
 							onclick="PF('reprovarContratoDialog').close();" />
 						<p:spacer width="20" />
 						<p:commandButton  value="Sim" action="#{contratoCobrancaMB.reprovarContratoConsultar('Ag. Comite')}"  style="width:=60px"/>
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Enviar p/ Analise Comercial" widgetVar="voltarAnaliseComercialDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromVoltarAnalisComercial">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="3">
+						<p:commandButton value="Não"
+							onclick="PF('voltarAnaliseComercialDialog').close();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.voltarAnaliseComercial}"
+							style="TEXT-DECORATION: bold;" />
 					</h:panelGrid>
 				</div>
 			</h:form>
