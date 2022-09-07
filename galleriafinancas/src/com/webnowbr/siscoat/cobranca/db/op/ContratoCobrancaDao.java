@@ -3876,6 +3876,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
 				}
 				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoFIDC")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI1")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
+				}
+				
 				try {
 					connection = getConnection();
 					
