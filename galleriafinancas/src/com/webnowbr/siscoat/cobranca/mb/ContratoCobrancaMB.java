@@ -3533,6 +3533,7 @@ public class ContratoCobrancaMB {
 					return geraConsultaContratosPorStatus("Pré-Comite");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
+					loginBean.setNumeroContratosComite(contratoCobrancaDao.getQuantidadeContratosComite());
 					return geraConsultaContratosPorStatus("Ag. Comite");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
@@ -3557,7 +3558,7 @@ public class ContratoCobrancaMB {
 									+ this.codigoResponsavel + ")!",
 							""));
 				}
-
+				
 				return "";
 			}
 		} catch (Exception e) {
@@ -17099,7 +17100,7 @@ public class ContratoCobrancaMB {
 	public void concluirComite(ContratoCobranca contrato) {
 		BigDecimal maiorTaxaAprovada = BigDecimal.ZERO;
 		BigInteger menorPrazoAprovado = BigInteger.valueOf(999999999);
-		BigDecimal menorValorAprovado = BigDecimal.valueOf(999999999);
+		BigDecimal menorValorAprovado = BigDecimal.valueOf(Double.MAX_VALUE);
 		String menorValorAprovadoTipo = "";
 		String comentarioComiteFinal = "";
 		
@@ -17110,7 +17111,7 @@ public class ContratoCobrancaMB {
 			if(comite.getPrazoMaxComite().compareTo(menorPrazoAprovado) <= 0) {
 				menorPrazoAprovado = comite.getPrazoMaxComite();
 			}
-			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0) {
+			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0 && !CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.ZERO)) {
 				menorValorAprovado = comite.getValorComite();
 				menorValorAprovadoTipo = comite.getTipoValorComite();
 			}
@@ -17126,7 +17127,7 @@ public class ContratoCobrancaMB {
 			contrato.setPrazoMaxAprovado(menorPrazoAprovado);
 		}
 		
-		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(999999999))) {
+		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(Double.MAX_VALUE))) {
 			contrato.setValorAprovadoComite(BigDecimal.ZERO);
 		} else {
 			contrato.setValorAprovadoComite(menorValorAprovado);

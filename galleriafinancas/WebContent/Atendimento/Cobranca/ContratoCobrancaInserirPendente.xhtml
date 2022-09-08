@@ -368,6 +368,66 @@
 										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 									</h:outputText>
 								</h:panelGrid> 
+								<h:panelGrid columns="2"
+									style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+									<p:outputLabel styleClass="labelBold">Operacao Paga</p:outputLabel>
+									<p:spacer></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">
+										<p:selectBooleanButton id="operacaoPagaView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT">
+										<p:selectBooleanButton id="operacaoPaga"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px">
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<p:spacer height="7"></p:spacer>
+									<h:outputText id="operacaoPagaUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+									<h:outputText id="operacaoPagaData"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaData}"
+										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</h:panelGrid> 						
+								<h:panelGrid columns="2"
+									style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
+									<p:outputLabel styleClass="labelBold">Pendencia Pagamento</p:outputLabel>
+									<p:spacer></p:spacer>
+									<shiro:hasAnyRoles name="PRECOBRANCA">
+										<p:selectBooleanButton id="pendenciaPagamentoView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+											<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT">
+										<p:selectBooleanButton id="pendenciaPagamento"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px">
+										</p:selectBooleanButton>
+									</shiro:hasAnyRoles>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+									<p:spacer height="7"></p:spacer>
+								</h:panelGrid> 
 							</h:panelGrid>
 						</shiro:hasAnyRoles>
 						
@@ -1997,7 +2057,7 @@
 								</p:selectOneMenu>
 							</h:panelGrid>
 							<h:panelGroup
-								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
 								
 									<p:outputLabel for="regimeCasamento"
@@ -3525,7 +3585,7 @@
 
 					<h:panelGroup id="CheckListDocumentosConjuge">
 						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 							<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
 							<p:inputText id="nomeParticipanteCheckListConjuge"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListConjuge}" />

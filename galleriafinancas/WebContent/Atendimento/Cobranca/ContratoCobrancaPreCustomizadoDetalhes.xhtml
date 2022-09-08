@@ -1322,7 +1322,7 @@
 									label="Status" style="width:190px; margin-left:43px;" />
 							</h:panelGrid>
 							<h:panelGroup
-								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
 									<p:outputLabel for="regimeCasamento"
 										value="Regime do Casamento: " styleClass="labelBold"
@@ -2008,7 +2008,7 @@
 
 					<h:panelGroup id="CheckListDocumentosConjuge">
 						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 							<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
 							<h:outputText id="nomeParticipanteCheckListConjuge"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListConjuge}" />

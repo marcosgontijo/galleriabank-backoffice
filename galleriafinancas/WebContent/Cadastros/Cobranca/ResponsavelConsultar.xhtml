@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtResponsavel" var="Responsavel" value="#{responsavelMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{Responsavel.nome}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{Responsavel.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{responsavelMB.clearFields}"/>
 			        </f:facet>
@@ -27,6 +27,12 @@
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Gerente Conta" filterBy="#{Responsavel.donoResponsavel.nome}" filterMatchMode="contains" sortBy="#{Responsavel.donoResponsavel.nome}">
 			            <h:outputText value="#{Responsavel.donoResponsavel.nome}" />
+			        </p:column>
+			        <p:column style="text-align: center; width:100px" headerText="CPF"  filterBy="#{Responsavel.donoResponsavel.cpf}" filterMatchMode="contains" sortBy="#{Responsavel.donoResponsavel.cpf}">
+			            <h:outputText value="#{Responsavel.cpf}" />
+			        </p:column>
+			        <p:column style="text-align: center; width:120px" headerText="CNPJ" filterBy="#{Responsavel.donoResponsavel.cnpj}" filterMatchMode="contains" sortBy="#{Responsavel.donoResponsavel.cnpj}">
+			            <h:outputText value="#{Responsavel.cnpj}" />
 			        </p:column>
 			        <p:column style="width:120px;">
 			        	<p:commandButton action="#{responsavelMB.clearFieldsView}" ajax="false" icon="ui-icon-search" title="Detalhes">
