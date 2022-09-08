@@ -6038,11 +6038,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(39)));
 						
 						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
-						
-						
-						
+										
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
-
 						
 						//contratoCobranca = findById(rs.getLong(1));
 						

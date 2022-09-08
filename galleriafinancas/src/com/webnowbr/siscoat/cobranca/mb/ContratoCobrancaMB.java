@@ -1862,16 +1862,13 @@ public class ContratoCobrancaMB {
 	/******
 	 * novo método para envio de emails
 	 */
-	public void enviaEmailAtualizacaoPreContratoNovo() {
+	public void enviaEmailCriacaoPreContratoNovo() {
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
-		
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		ContratoCobrancaStatus statusContrato = cDao.consultaStatusContratos(objetoContratoCobranca.getId());
-		
+	
 		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = populaStatusUnitario(this.objetoContratoCobranca, statusContrato);
+		contrato = populaStatusUnitario(this.objetoContratoCobranca);
 		ContratoCobranca c = contrato;
 
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
@@ -1891,7 +1888,72 @@ public class ContratoCobrancaMB {
 				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
 				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> do <b>"
-				+ this.objetoContratoCobranca.getPagador().getNome() + "</b>) teve atualização para" + c.getStatus() + ". </td>\n" + "</tr>\n"
+				+ this.objetoContratoCobranca.getPagador().getNome() + "</b> teve atualização para <b>Operação Cadastrada</b>. </td>\n" + "</tr>\n"
+				+ "</tbody>\n" + "</table>\n"
+				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
+				+ "<table width='100%' style='border-left:3px solid #71A241'>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;padding-left:18px;line-height:16px'> <span style='font-size:10px;'>DATA DA ATUALIZAÇÃO\n"
+				+ "</span>\n" + "<br><b>" + sdfDataRelComHoras.format(dataHoje) + "\n" + "</b> </td>\n"
+				+ "</tr> </tbody> </table>";
+
+		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #71A241'>" + "<tbody>"
+				+ "<tr>";
+
+		mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
+				+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='467.8' width='330.6'>"
+				+ "</td>";
+		
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
+
+		mensagemHtmlTeste = mensagemHtmlTeste + " </tbody> " + " </table>" + " </td>" + " <td width='20'> </td>"
+				+ " </tr>" + " </tbod>" + " </table>" + " <br>"
+				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
+				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
+				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://sistema.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
+				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
+				+ " </html>";
+
+		try {
+			ResponsavelDao rDao = new ResponsavelDao();
+			EnviaEmail eec = new EnviaEmail();
+			eec.enviarEmailHtmlResponsavelAdms("lucaslamr@gmail.com",
+					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
+					mensagemHtmlTeste);
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	
+	}
+	public void enviaEmailAtualizacaoPreContratoNovo() {
+		Locale locale = new Locale("pt", "BR");
+		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
+		Date dataHoje = gerarDataHoje();
+		
+		ContratoCobranca contrato = new ContratoCobranca();
+		contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		ContratoCobranca c = contrato;
+
+		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
+				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+				+ "<link href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' rel='stylesheet'>\n"
+				+ "</head>\n" + "<body>\n"
+				+ "<div bgcolor='#f9f7f7' marginwidth='0' marginheight='0' style=' :#f9f7f7'>\n"
+				+ "<div class='adM'> </div>\n"
+				+ "<div style='background-color:#fff;margin-top:0px;margin-right:auto;margin-bottom:0px;margin-left:auto;width:650px!important;color:#fff;font-size:30px'>\n"
+				+ "<div class='adM'> </div>\n" + "<div align='center'>\n" + "<div class='adM'> </div>\n"
+				+ "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='background-color:#f0f0f0;height:75px; padding: 15px;' align='center'> <img src='http://siscoatimagens.galleriabank.com.br/logo-galleria.png' height='65' width='300'> </td>\n"
+				+ "</tr>\n" + "</tbody>\n" + "</table>\n" + "<br>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td width='20'> </td>\n" + "<td>\n" + "<table>\n" + "<tbody>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#71A241;font-size:20px'>Olá\n"
+				+ "<span style='font-weight:bold'>" + this.objetoContratoCobranca.getResponsavel().getNome()
+				+ "</span>, </td>\n" + "</tr>\n" + "<tr>\n"
+				+ "<td style='font-family:Arial,sans-serif;color:#58585a;font-size:14px;line-height:20px;padding-top:7px'> O contrato <b>"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "</b> do <b>"
+				+ this.objetoContratoCobranca.getPagador().getNome() + "</b> teve atualização para <b>" + c.getStatus() + "</b>. </td>\n" + "</tr>\n"
 				+ "</tbody>\n" + "</table>\n"
 				+ "<div style='height:1px;background-color:#e8e8ed;margin-top:10px;margin-bottom:25px'> </div>\n"
 				+ "<table width='100%' style='border-left:3px solid #71A241'>\n" + "<tbody>\n" + "<tr>\n"
@@ -1902,11 +1964,7 @@ public class ContratoCobrancaMB {
 		mensagemHtmlTeste = mensagemHtmlTeste + "<table width='100%' style='border-left:3px solid #71A241'>" + "<tbody>"
 				+ "<tr>";
 		
-		if(CommonsUtil.mesmoValor(c.getStatus(), "Operação Cadastrada")){
-			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
-					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepCadastrado.png' height='467.8' width='330.6'>"
-					+ "</td>";
-		} else if(CommonsUtil.mesmoValor(c.getStatus(), "Operação Pré-Aprovada")) {
+		if(CommonsUtil.mesmoValor(c.getStatus(), "Operação Pré-Aprovada")) {
 			mensagemHtmlTeste = mensagemHtmlTeste + " <td> "
 					+ "<img src='http://siscoatimagens.galleriabank.com.br/StepPreAprovado.png' height='467.8' width='330.6'>"
 					+ "</td>";
@@ -2846,8 +2904,8 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		try {
-			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
+		try {			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2905,7 +2963,7 @@ public class ContratoCobrancaMB {
 			//gerando parcelas quando contrato esta em ag registro
 			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
-			}
+			}		
 
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -2913,7 +2971,7 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			
 			enviaEmailAtualizacaoPreContrato();
-
+			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
@@ -3495,8 +3553,8 @@ public class ContratoCobrancaMB {
 
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
-
 				enviaEmailAtualizacaoPreContrato();	
+
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -8168,14 +8226,17 @@ public class ContratoCobrancaMB {
 
 		this.contratoCobrancaCheckList.setInicioAnalise(this.objetoContratoCobranca.isInicioAnalise());
 		this.contratoCobrancaCheckList.setCadastroAprovadoValor(this.objetoContratoCobranca.getCadastroAprovadoValor());
-		this.contratoCobrancaCheckList
-				.setMatriculaAprovadaValor(this.objetoContratoCobranca.getMatriculaAprovadaValor());
+		this.contratoCobrancaCheckList.setMatriculaAprovadaValor(this.objetoContratoCobranca.getMatriculaAprovadaValor());
 		this.contratoCobrancaCheckList.setPagtoLaudoConfirmada(this.objetoContratoCobranca.isPagtoLaudoConfirmada());
 		this.contratoCobrancaCheckList.setLaudoRecebido(this.objetoContratoCobranca.isLaudoRecebido());
 		this.contratoCobrancaCheckList.setPajurFavoravel(this.objetoContratoCobranca.isPajurFavoravel());
+		this.contratoCobrancaCheckList.setAprovadoComite(this.objetoContratoCobranca.isAprovadoComite());
 		this.contratoCobrancaCheckList.setDocumentosCompletos(this.objetoContratoCobranca.isDocumentosCompletos());
 		this.contratoCobrancaCheckList.setCcbPronta(this.objetoContratoCobranca.isCcbPronta());
+		this.contratoCobrancaCheckList.setAgAssinatura(this.objetoContratoCobranca.isAgAssinatura());
+		this.contratoCobrancaCheckList.setAgRegistro(this.objetoContratoCobranca.isAgRegistro());
 		this.contratoCobrancaCheckList.setStatusContrato(this.objetoContratoCobranca.getStatusContrato());
+		this.contratoCobrancaCheckList.setStatus(this.objetoContratoCobranca.getStatus());
 	}
 
 	public boolean hasBaixaParcial() {
@@ -11389,102 +11450,44 @@ public class ContratoCobrancaMB {
 		return contratos;
 	}
 	
-	public ContratoCobranca populaStatusUnitario(ContratoCobranca contrato, ContratoCobrancaStatus s) {
+	public ContratoCobranca populaStatusUnitario(ContratoCobranca contrato) {
 		// POPULA STATUS
 		ContratoCobranca c = contrato;
+		ContratoCobranca s = contratoCobrancaCheckList;
 
-		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")
+				&& !CommonsUtil.mesmoValor(c.getStatus(), s.getStatus())) {
 			c.setStatus("Contrato Registrado");
 		} else {
-
-			if(c.isLeadCompleto()) {
-				c.setStatus("Operação Cadastrada");
-			}
 			
-			if (c.isInicioAnalise()) {
-				c.setStatus("Em Análise");
-			}
-
 			if (c.getCadastroAprovadoValor() != null) {
 				if (c.getCadastroAprovadoValor().equals("Aprovado") 
-						&& !CommonsUtil.mesmoValor(c.getCadastroAprovadoValor(), s.getContratoPreAprovado())) {
+						&& !CommonsUtil.mesmoValor(c.getCadastroAprovadoValor(), s.getCadastroAprovadoValor())) {
 					c.setStatus("Operação Pré-Aprovada");
 				}
-
-				if (c.isLaudoRecebido() && c.isPajurFavoravel()) {
-					if(!CommonsUtil.mesmoValor(c.isLaudoRecebido(), s.isLaudoRecebido())
-							|| !CommonsUtil.mesmoValor(c.isPajurFavoravel(), s.isPajuFavoravel())) {
-						c.setStatus("Laudo e Paju Recebidos");
-					}			
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-						&& !c.isPagtoLaudoConfirmada()) {
-					c.setStatus("Ag. Pagto. Laudo");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
-					c.setStatus("Ag. PAJU e Laudo");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
-					c.setStatus("Análise Comercial");
-				}
-				
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && !c.isComentarioJuridicoEsteira() ) {
-					c.setStatus("Comentário Jurídico");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
-					c.setStatus("Pré-Comite");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& !c.isDocumentosComite()) {
-					c.setStatus("Ag. Validação DOCs");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& c.isDocumentosComite() && !c.isAprovadoComite()) {
-					c.setStatus("Ag. Comite");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
-					c.setStatus("Ag. DOC");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-						&& !c.isCcbPronta()) {
-					c.setStatus("Ag. CCB");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-						&& c.isCcbPronta() && c.isAgAssinatura()) {
-					c.setStatus("Ag. Assinatura");
-				}
-
-				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-						&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-						&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
-					c.setStatus("Ag. Registro");
-				}
 			}
-			if (c.isAnaliseReprovada()) {
-				c.setStatus("Análise Reprovada");
+
+			if (c.isLaudoRecebido() && c.isPajurFavoravel()) {
+				if(!CommonsUtil.mesmoValor(c.isLaudoRecebido(), s.isLaudoRecebido())
+						|| !CommonsUtil.mesmoValor(c.isPajurFavoravel(), s.isPajurFavoravel())) {
+					c.setStatus("Laudo e Paju Recebidos");
+				}			
 			}
+			
+			if (c.isAprovadoComite()
+					&& !CommonsUtil.mesmoValor(c.isAprovadoComite(), s.isAprovadoComite())) {
+				c.setStatus("Aprovado no Comitê");
+			}
+			
+			if (!c.isAgAssinatura()
+					&& !CommonsUtil.mesmoValor(c.isAgAssinatura(), s.isAgAssinatura())) {
+				c.setStatus("Contrato Assinado");
+			}
+			
+			if (!c.isAgRegistro()
+					&& !CommonsUtil.mesmoValor(c.isAgRegistro(), s.isAgRegistro())) {
+				c.setStatus("Contrato Registrado");
+			}			
 		}
 		return contrato;
 	}

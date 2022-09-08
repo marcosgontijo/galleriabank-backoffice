@@ -1201,20 +1201,25 @@ public class CcbMB {
 	
 	public void criarCcbNosistema() {
 		
-		CcbDao ccbDao = new CcbDao();
-		
-		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
-			if(CommonsUtil.semValor(participante.getTipoOriginal())) {
-				participante.setTipoOriginal(participante.getTipoParticipante());
-			} else {
-				participante.setTipoParticipante(participante.getTipoOriginal());
+		try {
+			CcbDao ccbDao = new CcbDao();
+			
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
+				if(CommonsUtil.semValor(participante.getTipoOriginal())) {
+					participante.setTipoOriginal(participante.getTipoParticipante());
+				} else {
+					participante.setTipoParticipante(participante.getTipoOriginal());
+				}
 			}
-		}
-		
-		if (this.objetoCcb.getId() > 0) {
-			ccbDao.merge(this.objetoCcb);
-		} else {
-			ccbDao.create(this.objetoCcb);
+			
+			if (this.objetoCcb.getId() > 0) {
+				ccbDao.merge(this.objetoCcb);
+			} else {
+				ccbDao.create(this.objetoCcb);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}	
 	}
 	
