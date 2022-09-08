@@ -186,7 +186,7 @@
 					</p:selectOneMenu>
 					
 					<p:outputLabel value="Adicionar Usuario: " styleClass="labelBold" />
-					<p:selectBooleanCheckbox value="#{responsavelMB.addUsuario}">
+					<p:selectBooleanCheckbox value="#{responsavelMB.addUsuario}" disabled="#{responsavelMB.showUsuario}">
 						<p:ajax update="userPanel" event="change" />
 					</p:selectBooleanCheckbox>
 					
@@ -204,8 +204,8 @@
 				</h:panelGrid>
 
 				<h:panelGroup id="userPanel">
-					<h:panelGroup rendered="#{responsavelMB.addUsuario}">
-						<h:panelGrid columns="2" rendered="#{responsavelMB.addUsuario}">
+					<h:panelGroup rendered="#{responsavelMB.addUsuario or responsavelMB.showUsuario}">
+						<h:panelGrid columns="2" rendered="#{responsavelMB.addUsuario or responsavelMB.showUsuario}">
 
 							<h:outputLabel for="login" value="Login: " class="campoRequerido" />
 							<p:inputText id="login" value="#{responsavelMB.login}"
@@ -224,7 +224,7 @@
 						</h:panelGrid>
 						<p:panel id="Responsaveis"
 							header="Usuarios com acesso a dados desse responsável:"
-							style="margin-bottom:10px;">
+							style="margin-bottom:10px;" rendered="#{!responsavelMB.showUsuario}">
 							<h:panelGrid columns="2">
 								<p:selectCheckboxMenu id="responsavelList"
 									value="#{responsavelMB.selectedResponsaveis}"

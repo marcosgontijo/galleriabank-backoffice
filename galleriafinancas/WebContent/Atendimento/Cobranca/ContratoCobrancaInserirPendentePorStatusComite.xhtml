@@ -694,10 +694,10 @@
 
 											<p:outputLabel for="idadeConjugeComite"
 												value="Idade Conjuge: " styleClass="labelBold"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 											<p:inputText id="idadeConjugeComite"
 												value="#{contratoCobrancaMB.objetoPagadorRecebedor.idade}"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 
 											<p:outputLabel for="estadoCivilComite"
 												value="Estado Civil Emitente: " styleClass="labelBold"
@@ -715,10 +715,10 @@
 
 											<p:outputLabel for="sexoConjugeComite" value="Sexo Conjuge: "
 												styleClass="labelBold"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 											<p:inputText id="sexoConjugeComite"
 												value="#{contratoCobrancaMB.objetoPagadorRecebedor.sexoConjuge}"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 
 											<p:outputLabel for="profissaoComite"
 												value="Profissão Emitente: " styleClass="labelBold"
@@ -729,10 +729,10 @@
 
 											<p:outputLabel for="profissaoConjugeComite"
 												value="Profissão Conjuge: " styleClass="labelBold"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 											<p:inputText id="profissaoConjugeComite"
 												value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoConjuge}"
-												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+												rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}" />
 
 											<p:outputLabel for="rendaComprovadaComite"
 												value="Renda Comprovada: " styleClass="labelBold" />
@@ -2001,7 +2001,7 @@
 								</p:selectOneMenu>
 							</h:panelGrid>
 							<h:panelGroup
-								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
 								
 									<p:outputLabel for="regimeCasamento"
@@ -3448,7 +3448,7 @@
 
 					<h:panelGroup id="CheckListDocumentosConjuge">
 						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 							<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
 							<p:inputText id="nomeParticipanteCheckListConjuge"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListConjuge}" />
