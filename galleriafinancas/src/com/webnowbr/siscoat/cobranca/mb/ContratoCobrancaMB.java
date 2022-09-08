@@ -6071,11 +6071,13 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		filesPagar = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 		filesInterno = listaArquivosInterno();
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = listaArquivosJuridico();
 		filesComite = listaArquivosComite();
+		filesPagar = listaArquivosPagar();
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
@@ -6125,6 +6127,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 		
 		this.reciboGerado = false;
 		this.fileRecibo = null;
@@ -6722,6 +6726,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		this.reciboGerado = false;
 		this.fileRecibo = null;
@@ -7568,6 +7574,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -7622,6 +7630,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 		
@@ -7695,6 +7705,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 		
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
 
@@ -8017,6 +8029,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		loadLovs();
 
@@ -8095,6 +8109,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		loadLovs();
 
@@ -8185,6 +8201,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		loadLovs();
 
@@ -8285,6 +8303,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		loadLovs();
 
@@ -8373,6 +8393,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+		filesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 
 		loadLovs();
 
@@ -27079,11 +27101,13 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesJuridico = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
+	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
 
 	StreamedContent downloadAllFilesInterno;
 
@@ -27257,6 +27281,39 @@ public class ContratoCobrancaMB {
 			filesComite = listaArquivosComite();
 		}
 	}
+	
+	public void handleFilePagarUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+
+		// cria o diretório, caso não exista
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			// atualiza lista de arquivos contidos no diretório
+			filesPagar = listaArquivosPagar();
+		}
+	}
 
 	/**
 	 * deleta o arquivo selecionado na tela
@@ -27304,6 +27361,15 @@ public class ContratoCobrancaMB {
 
 		deletefilesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
+	}
+	
+	public void deleteFilePagar() {
+		for (FileUploaded f : deletefilesPagar) {
+			f.getFile().delete();
+		}
+
+		deletefilesPagar = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
 	}
 
 	public void deleteFiles(Collection<FileUploaded> lista) {
@@ -27360,7 +27426,8 @@ public class ContratoCobrancaMB {
 				if(!arquivo.getName().contains("interno") 
 						&& !arquivo.getName().contains("faltante") 
 						&& !arquivo.getName().contains("juridico") 
-						&& !arquivo.getName().contains("comite")) {
+						&& !arquivo.getName().contains("comite")
+						&& !arquivo.getName().contains("pagar")){
 					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 				}
 			}
@@ -27433,6 +27500,26 @@ public class ContratoCobrancaMB {
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public Collection<FileUploaded> listaArquivosPagar() {
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
 		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
@@ -29624,6 +29711,22 @@ public class ContratoCobrancaMB {
 
 	public void setDeletefilesComite(List<FileUploaded> deletefilesComite) {
 		this.deletefilesComite = deletefilesComite;
+	}
+
+	public Collection<FileUploaded> getFilesPagar() {
+		return filesPagar;
+	}
+
+	public void setFilesPagar(Collection<FileUploaded> filesPagar) {
+		this.filesPagar = filesPagar;
+	}
+
+	public List<FileUploaded> getDeletefilesPagar() {
+		return deletefilesPagar;
+	}
+
+	public void setDeletefilesPagar(List<FileUploaded> deletefilesPagar) {
+		this.deletefilesPagar = deletefilesPagar;
 	}
 
 }
