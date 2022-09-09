@@ -382,6 +382,7 @@ public class ContratoCobranca implements Serializable {
 	private Date comentarioJuridicoEsteiraData;
 	private boolean comentarioJuridicoEsteira;
 	private String comentarioJuridicoEsteiraUsuario;
+	private boolean comentarioJuridicoPendente;
 
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
@@ -630,6 +631,7 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoResgatadoData;
 	
 	private Date dataUltimaAtualizacao;
+	private boolean enviadoWhatsAppLeadStandby;
 	
 	private String tipoOperacao;
 	
@@ -5482,5 +5484,20 @@ public class ContratoCobranca implements Serializable {
 	public void setObsDocsPendentesRessalva(String obsDocsPendentesRessalva) {
 		this.obsDocsPendentesRessalva = obsDocsPendentesRessalva;
 	}
-	
+
+	public boolean isComentarioJuridicoPendente() {
+		return comentarioJuridicoPendente;
+	}
+
+	public void setComentarioJuridicoPendente(boolean comentarioJuridicoPendente) {
+		this.comentarioJuridicoPendente = comentarioJuridicoPendente;
+	}
+
+	public boolean isEnviadoWhatsAppLeadStandby() {
+		return enviadoWhatsAppLeadStandby;
+	}
+
+	public void setEnviadoWhatsAppLeadStandby(boolean enviadoWhatsAppLeadStandby) {
+		this.enviadoWhatsAppLeadStandby = enviadoWhatsAppLeadStandby;
+	}
 }

@@ -1820,7 +1820,14 @@
 		<property name="obsDocsPendentesRessalva" type="java.lang.String">
 			<column name="obsDocsPendentesRessalva" />
 		</property>	
+			
+		<property name="comentarioJuridicoPendente" type="boolean">
+			<column name="comentarioJuridicoPendente" not-null="true" default="false" />
+		</property>	
 		
+		<property name="enviadoWhatsAppLeadStandby" type="boolean">
+			<column name="enviadoWhatsAppLeadStandby" not-null="true" default="false" />
+		</property>	
 
 	</class>
 </hibernate-mapping>

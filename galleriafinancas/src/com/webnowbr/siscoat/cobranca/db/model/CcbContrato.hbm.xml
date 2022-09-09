@@ -255,6 +255,29 @@
 		<property name="intermediacaoPix" type="java.lang.String">
 			<column name="intermediacaoPix" />
 		</property> 
+		
+		<property name="CCBValor" type="big_decimal">
+			<column name="CCBValor" />
+		</property>
+		<property name="CCBBanco" type="java.lang.String">
+			<column name="CCBBanco" />
+		</property> 
+		<property name="CCBAgencia" type="java.lang.String">
+			<column name="CCBAgencia" />
+		</property>
+		<property name="CCBCC" type="java.lang.String">
+			<column name="CCBCC" />
+		</property> 
+		<property name="CCBCNPJ" type="java.lang.String">
+			<column name="CCBCNPJ" />
+		</property> 
+		<property name="CCBNome" type="java.lang.String">
+			<column name="CCBNome" />
+		</property> 
+		<property name="CCBPix" type="java.lang.String">
+			<column name="CCBPix" />
+		</property> 
+		
 		<property name="iptuEmAtrasoValor" type="big_decimal">
 			<column name="iptuEmAtrasoValor" />
 		</property>
