@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtImovelCobranca" var="ImovelCobranca" value="#{imovelCobrancaMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{ImovelCobranca.nome}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{ImovelCobranca.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{imovelCobrancaMB.clearFields}"/>
 			        </f:facet>			        
@@ -24,6 +24,9 @@
 			        </p:column>                 
 			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{ImovelCobranca.nome}" filterMatchMode="contains" sortBy="#{ImovelCobranca.nome}">
 			            <h:outputText value="#{ImovelCobranca.nome}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="CEP" filterBy="#{ImovelCobranca.cep}" filterMatchMode="contains" sortBy="#{ImovelCobranca.cep}">
+			            <h:outputText value="#{ImovelCobranca.cep}" />
 			        </p:column>
 			        <p:column style="width:120px;">
 			        	<p:commandButton action="ImovelCobrancaDetalhes.xhtml" ajax="false" icon="ui-icon-search" title="Detalhes">

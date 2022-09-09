@@ -47,6 +47,8 @@ public class ResponsavelMB {
 	private List<Responsavel> listResponsaveis;
 	
 	private boolean addUsuario = false;
+	private boolean showUsuario = false;
+	
 	private String login = "";
 	private String senha = "";
 	private Responsavel selectedResponsaveis[];
@@ -112,18 +114,27 @@ public class ResponsavelMB {
 
 		return "ResponsavelInserir.xhtml";
 	}
-	
-	
+		
 	public String clearFieldsView() {
 		if (this.objetoResponsavel.getCnpj() != null) {
 			this.tipoPessoaIsFisica = false;
 		} else {
 			this.tipoPessoaIsFisica = true;
-		}		
+		}	
 		
-		addUsuario = false;		
-		login = "";
-		senha = "";
+		UserDao uDao = new UserDao();
+		User user = uDao.findByFilter("codigoresponsavel", objetoResponsavel.getCodigo()).get(0);
+		addUsuario = false;
+		if(CommonsUtil.semValor(user)) {
+			showUsuario = true;
+			login = user.getLogin();
+			senha = user.getPassword();
+		} else {
+			showUsuario = false;
+			login = "";
+			senha = "";
+		}
+		
 		this.selectedResponsaveis = new Responsavel[0];
 		
 		if (this.objetoResponsavel.getDonoResponsavel() != null) {
@@ -141,9 +152,19 @@ public class ResponsavelMB {
 			this.tipoPessoaIsFisica = true;
 		}	
 		
+		UserDao uDao = new UserDao();
+		User user = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo()).get(0);
 		addUsuario = false;
-		login = "";
-		senha = "";
+		if(!CommonsUtil.semValor(user)) {
+			showUsuario = true;
+			login = user.getLogin();
+			senha = user.getPassword();
+		} else {
+			showUsuario = false;
+			login = "";
+			senha = "";
+		}
+		
 		this.selectedResponsaveis = new Responsavel[0];
 		
 		clearResponsavel();
@@ -163,6 +184,7 @@ public class ResponsavelMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		String msgRetorno = null;
+		showUsuario = false;
 		try {
 
 			if (objetoResponsavel.getWhatsAppNumero() == null || objetoResponsavel.getWhatsAppNumero().equals("")) {
@@ -458,6 +480,14 @@ public class ResponsavelMB {
 
 	public void setSelectedResponsaveis(Responsavel[] selectedResponsaveis) {
 		this.selectedResponsaveis = selectedResponsaveis;
+	}
+
+	public boolean isShowUsuario() {
+		return showUsuario;
+	}
+
+	public void setShowUsuario(boolean showUsuario) {
+		this.showUsuario = showUsuario;
 	}	
 	
 }

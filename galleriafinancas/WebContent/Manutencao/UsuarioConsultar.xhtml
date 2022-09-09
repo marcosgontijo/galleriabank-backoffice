@@ -19,6 +19,12 @@
 			        <p:column style="text-align: center;" headerText="Login" filterBy="#{usuario.login}" filterMatchMode="contains" sortBy="#{usuario.login}">
 			            <h:outputText value="#{usuario.login}" />
 			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
+			            <h:outputText value="#{usuario.name}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Codigo" filterBy="#{usuario.codigoResponsavel}" filterMatchMode="contains" sortBy="#{usuario.codigoResponsavel}">
+			            <h:outputText value="#{usuario.codigoResponsavel}" />
+			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Último Acesso" sortBy="#{usuario.ultimoAcesso}">
 			            <h:outputText value="#{usuario.ultimoAcesso}" >			            	
 			            	<f:convertDateTime locale="pt_BR"  />

@@ -893,7 +893,7 @@
 								</p:selectOneMenu>
 							</h:panelGrid>
 							<h:panelGroup
-								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
 								
 									<p:outputLabel for="regimeCasamento"
@@ -1738,7 +1738,7 @@
 
 					<h:panelGroup id="CheckListDocumentosConjuge">
 						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+							rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 							<h:outputText value="Nome do Conjuge: " styleClass="labelBold" />
 							<p:inputText id="nomeParticipanteCheckListConjuge"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeParticipanteCheckListConjuge}" />

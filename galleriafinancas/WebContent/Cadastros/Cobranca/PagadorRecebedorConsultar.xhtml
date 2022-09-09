@@ -15,12 +15,18 @@
    		         <p:dataTable id="dtPagadorRecebedor" var="PagadorRecebedor" value="#{pagadorRecebedorMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{PagadorRecebedor.nome}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{PagadorRecebedor.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}"/>
 			        </f:facet>			        
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{PagadorRecebedor.nome}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">
 			            <h:outputText value="#{PagadorRecebedor.nome}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="CPF" filterBy="#{PagadorRecebedor.cpf}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cpf}">
+			            <h:outputText value="#{PagadorRecebedor.cpf}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="CNPJ" filterBy="#{PagadorRecebedor.cnpj}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cnpj}">
+			            <h:outputText value="#{PagadorRecebedor.cnpj}" />
 			        </p:column>
 			        <p:column style="width:120px;">
 			        	<p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-search" title="Detalhes">
