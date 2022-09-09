@@ -1693,6 +1693,56 @@
 								</h:panelGroup>
 
 								<h:panelGrid columns="1">
+									<p:outputLabel for="CCBValor" value="Crédito CCI/CCB "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneRadio id="temCCBValor" unselectable="true"
+										value="#{ccbMB.temCCBValor}">
+										<f:selectItem itemLabel="Não" itemValue="false" />
+										<f:selectItem itemLabel="Sim" itemValue="true" />
+										<p:ajax update="CCBValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
+									</p:selectOneRadio>
+								</h:panelGrid>
+
+								<h:panelGroup id="CCBValor">
+									<h:panelGrid columns="2" rendered="#{ccbMB.temCCBValor}">
+										<h:panelGroup>
+											<p:outputLabel value="Valor: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText value="#{ccbMB.objetoCcb.CCBValor}"
+												label="Contrato" onkeypress="return isNumberKey(event);"
+												onkeydown="FormataValor(this, 13, event, 2);"
+												converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:spacer width="10px"></p:spacer>
+											<h:panelGrid columns="2">
+												<p:outputLabel value="Banco: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBBanco}" />
+												<p:outputLabel value="Agência: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBAgencia}" />
+												<p:outputLabel value="C/C: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
+												<p:outputLabel value="CNPJ: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
+												<p:outputLabel value="Nome: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBNome}" />
+												<p:outputLabel value="Pix: " styleClass="labelBold"
+													style="font-weight: bold; font-size: 18px;" />
+												<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
+											</h:panelGrid>
+										</h:panelGroup>
+									</h:panelGrid>
+									<p:spacer width="50px" rendered="#{!ccbMB.temCCBValor}"></p:spacer>
+								</h:panelGroup>
+
+								<h:panelGrid columns="1">
 									<p:outputLabel for="iptuEmAtrasoValor" value="IPTU Em Atraso: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />

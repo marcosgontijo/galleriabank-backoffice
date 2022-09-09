@@ -123,6 +123,15 @@ public class CcbContrato implements Serializable{
     private String intermediacaoNome; 
     private String intermediacaoPix; 
     
+    private BigDecimal CCBValor = BigDecimal.ZERO; // - (Banco, Agência, C/C, CNPJ, nome completo e PIX)
+    private boolean CCBInseridoContrato;
+    private String CCBBanco; 
+    private String CCBAgencia; 
+    private String CCBCC; 
+    private String CCBCNPJ; 
+    private String CCBNome; 
+    private String CCBPix;
+    
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private boolean iptuInseridoContrato;
@@ -947,4 +956,70 @@ public class CcbContrato implements Serializable{
 	public void setPixBanco(String pixBanco) {
 		this.pixBanco = pixBanco;
 	}
+
+	public BigDecimal getCCBValor() {
+		return CCBValor;
+	}
+
+	public void setCCBValor(BigDecimal cCBValor) {
+		CCBValor = cCBValor;
+	}
+
+	public boolean isCCBInseridoContrato() {
+		return CCBInseridoContrato;
+	}
+
+	public void setCCBInseridoContrato(boolean cCBInseridoContrato) {
+		CCBInseridoContrato = cCBInseridoContrato;
+	}
+
+	public String getCCBBanco() {
+		return CCBBanco;
+	}
+
+	public void setCCBBanco(String cCBBanco) {
+		CCBBanco = cCBBanco;
+	}
+
+	public String getCCBAgencia() {
+		return CCBAgencia;
+	}
+
+	public void setCCBAgencia(String cCBAgencia) {
+		CCBAgencia = cCBAgencia;
+	}
+
+	public String getCCBCC() {
+		return CCBCC;
+	}
+
+	public void setCCBCC(String cCBCC) {
+		CCBCC = cCBCC;
+	}
+
+	public String getCCBCNPJ() {
+		return CCBCNPJ;
+	}
+
+	public void setCCBCNPJ(String cCBCNPJ) {
+		CCBCNPJ = cCBCNPJ;
+	}
+
+	public String getCCBNome() {
+		return CCBNome;
+	}
+
+	public void setCCBNome(String cCBNome) {
+		CCBNome = cCBNome;
+	}
+
+	public String getCCBPix() {
+		return CCBPix;
+	}
+
+	public void setCCBPix(String cCBPix) {
+		CCBPix = cCBPix;
+	}
+	
+	
 }

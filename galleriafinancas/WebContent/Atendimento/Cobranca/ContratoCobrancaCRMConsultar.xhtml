@@ -129,7 +129,9 @@
 								
 			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }"
+   		         rowStyleClass="#{contratos.analiseReprovada eq true ? 'parcelaparcial' : (contratos.inicioAnalise eq true and contratos.cadastroAprovadoValor eq 'Aprovado' and contratos.matriculaAprovadaValor eq 'Aprovado' and contratos.pagtoLaudoConfirmada eq false) ? 'parcelaPaga' : '' } 
+   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
+   		         #{(contratos.comentarioJuridicoPendente eq true) ? 'linhaAzul' : '' } "
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
