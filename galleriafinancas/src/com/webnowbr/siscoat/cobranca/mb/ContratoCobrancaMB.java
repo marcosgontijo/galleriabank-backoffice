@@ -11051,7 +11051,7 @@ public class ContratoCobrancaMB {
 
 	public String geraConsultaContratosPendentes() {
 		this.baixarPreContratoAutomatico();
-		//this.enviaZapLeadEmTratamento();
+		this.enviaZapLeadEmTratamento();
 
 	//	if (this.preContratoCustom) {
 
@@ -11533,7 +11533,7 @@ public class ContratoCobrancaMB {
 
 	public String geraConsultaContratosPorStatus(String status) {
 		this.baixarPreContratoAutomatico();
-		//this.enviaZapLeadEmTratamento();
+		this.enviaZapLeadEmTratamento();
 		
 		this.tituloTelaConsultaPreStatus = status;
 		
