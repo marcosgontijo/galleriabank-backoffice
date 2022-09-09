@@ -209,6 +209,15 @@
 						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
 						style="width:60px">
 					</p:selectBooleanButton>
+					
+					<h:outputLabel for="laudo"
+						value="Sistema de Cobrança - Gerencia PAJU:" class="labelBold" />
+					<p:selectBooleanButton id="laudo"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userLaudo}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
 
 					<h:outputLabel for="IuguPosto" value="Cobranças IUGU Postos "
 						class="labelBold" />
