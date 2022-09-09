@@ -7958,7 +7958,8 @@ public class ContratoCobrancaMB {
 		this.indexStepsStatusContrato = 0;
 		
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado") &&
-				!this.objetoContratoCobranca.isOperacaoPaga()) {
+				( !this.objetoContratoCobranca.isOperacaoPaga()
+				|| this.objetoContratoCobranca.isPendenciaPagamento())) {
 			this.indexStepsStatusContrato = 12;
 		} else if (!this.objetoContratoCobranca.isInicioAnalise() ) {
 			this.indexStepsStatusContrato = 0;
