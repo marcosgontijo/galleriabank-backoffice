@@ -1918,7 +1918,7 @@ public class ContratoCobrancaMB {
 		try {
 			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms("lucaslamr@gmail.com",
+			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
 					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
 					mensagemHtmlTeste);
 
@@ -1927,6 +1927,7 @@ public class ContratoCobrancaMB {
 		}
 	
 	}
+	
 	public void enviaEmailAtualizacaoPreContratoNovo() {
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
@@ -2003,7 +2004,7 @@ public class ContratoCobrancaMB {
 		try {
 			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms("lucaslamr@gmail.com",
+			eec.enviarEmailHtmlResponsavelAdms(this.objetoContratoCobranca.getResponsavel().getEmail(),
 					"[siscoat] Atualização do contrato " + this.objetoContratoCobranca.getNumeroContrato(),
 					mensagemHtmlTeste);
 
@@ -2499,7 +2500,7 @@ public class ContratoCobrancaMB {
 
 			contratoCobrancaDao.create(this.objetoContratoCobranca);
 
-			enviaEmailCriacaoPreContrato();
+			enviaEmailCriacaoPreContratoNovo();
 
 			if (context != null) {
 				context.addMessage(null,
@@ -2656,7 +2657,7 @@ public class ContratoCobrancaMB {
 
 					contratoCobrancaDao.create(this.objetoContratoCobranca);
 
-					// enviaEmailCriacaoPreContrato();
+					enviaEmailCriacaoPreContratoNovo();
 					if (!this.objetoContratoCobranca.isAgRegistro()) {
 						/*
 						 * this.vlrRepasse = this.vlrRepasseNew; this.vlrRetencao = this.vlrRetencaoNew;
@@ -2878,7 +2879,7 @@ public class ContratoCobrancaMB {
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
 			
-			enviaEmailAtualizacaoPreContrato();
+			enviaEmailAtualizacaoPreContratoNovo();
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -2970,7 +2971,7 @@ public class ContratoCobrancaMB {
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
 			
-			enviaEmailAtualizacaoPreContrato();
+			enviaEmailAtualizacaoPreContratoNovo();
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3554,7 +3555,7 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				enviaEmailAtualizacaoPreContrato();	
+				enviaEmailAtualizacaoPreContratoNovo();	
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -7651,6 +7652,22 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
+		FacesContext context = FacesContext.getCurrentInstance();
+		if(!CommonsUtil.semValor(this.objetoPagadorRecebedor.getReputacao())) {
+			String reputacao = this.objetoPagadorRecebedor.getReputacao();
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			String contratos = cDao.getContratosDoPagador(this.objetoPagadorRecebedor);
+			if(CommonsUtil.mesmoValor(reputacao, "Banido")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else if(CommonsUtil.mesmoValor(reputacao, "Ruim")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else if(CommonsUtil.mesmoValor(reputacao, "Otimo") || CommonsUtil.mesmoValor(reputacao, "Bom")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			}	
+		}
+		
 		this.tituloPainel = "Editar";
 		
 		this.valorPresenteParcela = BigDecimal.ZERO;
@@ -7783,6 +7800,22 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if(!CommonsUtil.semValor(this.objetoPagadorRecebedor.getReputacao())) {
+			String reputacao = this.objetoPagadorRecebedor.getReputacao();
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			String contratos = cDao.getContratosDoPagador(this.objetoPagadorRecebedor);
+			if(CommonsUtil.mesmoValor(reputacao, "Banido")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else if(CommonsUtil.mesmoValor(reputacao, "Ruim")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else if(CommonsUtil.mesmoValor(reputacao, "Otimo") || CommonsUtil.mesmoValor(reputacao, "Bom")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			} else {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
+			}	
+		}
 		
 		this.tituloPainel = "Editar";
 
@@ -7799,7 +7832,10 @@ public class ContratoCobrancaMB {
 		filesPagar = new ArrayList<FileUploaded>();
 		filesPagar = listaArquivosPagar();
 		
-		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar()); 
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		if(!CommonsUtil.semValor(valorDespesas)) {
+			this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
+		}
 
 		loadLovs();
 

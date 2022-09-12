@@ -7717,4 +7717,39 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	    return diff;
 	}
 	
+	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select numerocontrato from cobranca.contratocobranca "
+			+ " where pagador = ?"
+			+ " order by id ";
+	
+	@SuppressWarnings("unchecked")
+	public String getContratosDoPagador(PagadorRecebedor pagador) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;		
+				String retorno = "";
+				try {
+					connection = getConnection();					
+					ps = connection
+							.prepareStatement(QUERY_CONTRATOS_DO_PAGADOR);									
+					ps.setLong(1, pagador.getId());
+					rs = ps.executeQuery();				
+					
+					while (rs.next()) {	
+						retorno += rs.getString("numerocontrato");		
+						if(!rs.isLast()) {
+							retorno += ", ";
+						}
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return retorno;
+			}
+		});	
+	}	
+	
 }
