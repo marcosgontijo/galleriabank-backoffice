@@ -497,7 +497,7 @@ public class CRMMB {
 					this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Análise Aprovada CRM");
 				} else {
 					if (usuarioLogado.getCodigoResponsavel() != null) {
-						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Aprovada"); 	 
+						this.agPagtoBoleto = contratoCobrancaDao.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), "Análise Aprovada CRM"); 	 
 					}
 				}
 			} 
