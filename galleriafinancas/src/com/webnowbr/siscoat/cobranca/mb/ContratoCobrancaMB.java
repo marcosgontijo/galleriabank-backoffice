@@ -6251,7 +6251,7 @@ public class ContratoCobrancaMB {
 			}
 
 			if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
-				if(DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 0 || DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 1 ) {
+				if(DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) > 0) {
 					ccd.setParcelaVencida(true);
 	
 					// calcula coluna valor atualizado

@@ -1147,9 +1147,10 @@ public class ContratoCobrancaUtilsMB {
 	public void recalculaValorDiaUtil() {
 		if (this.dtVencimento != null) {
 			
-			this.qtdeDias = DateUtil.getWorkingDaysBetweenTwoDates(this.dtVencimento, this.dtPagamento); 
+			int qtdeDiasUtil = DateUtil.getWorkingDaysBetweenTwoDates(this.dtVencimento, this.dtPagamento); 
+			this.qtdeDias = qtdeDiasCalculado(this.dtVencimento, this.dtPagamento); 
 
-			if (this.qtdeDias > 0) {
+			if (qtdeDiasUtil > 0) {
 				if (!this.txJuros.equals(BigDecimal.ZERO)) {
 					//calcula Indice da Taxa de Juros		
 					double percentual = ((this.txJuros.doubleValue() / 100) / 30) * this.qtdeDias;
