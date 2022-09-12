@@ -105,6 +105,8 @@ public class PagadorRecebedor implements Serializable {
 	private boolean casado;
 	private boolean coobrigado;
 	
+	private String reputacao;
+	
 	private String iuguAccountId;
 	private String iuguNameAccount;
 	private String iuguLiveApiToken;
@@ -1977,4 +1979,13 @@ public class PagadorRecebedor implements Serializable {
 	public void setWhatsAppNumero(String whatsAppNumero) {
 		this.whatsAppNumero = whatsAppNumero;
 	}
+
+	public String getReputacao() {
+		return reputacao;
+	}
+
+	public void setReputacao(String reputacao) {
+		this.reputacao = reputacao;
+	}
+	
 }
