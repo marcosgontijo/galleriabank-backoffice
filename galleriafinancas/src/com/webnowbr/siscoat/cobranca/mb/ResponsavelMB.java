@@ -104,7 +104,7 @@ public class ResponsavelMB {
 		String codigoAutomatico = "";
 		codigoAutomatico = CommonsUtil.stringValue(maiorCodigo);
 		objetoResponsavel.setCodigo(codigoAutomatico);
-		
+		showUsuario = false;
 		addUsuario = false;		
 		login = "";
 		senha = "";
@@ -123,16 +123,19 @@ public class ResponsavelMB {
 		}	
 		
 		UserDao uDao = new UserDao();
-		User user = uDao.findByFilter("codigoresponsavel", objetoResponsavel.getCodigo()).get(0);
-		addUsuario = false;
-		if(CommonsUtil.semValor(user)) {
-			showUsuario = true;
-			login = user.getLogin();
-			senha = user.getPassword();
-		} else {
-			showUsuario = false;
-			login = "";
-			senha = "";
+		List<User> listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
+		if(!CommonsUtil.semValor(listaUser)) {
+			User user = listaUser.get(0);
+			addUsuario = false;
+			if(!CommonsUtil.semValor(user)) {
+				showUsuario = true;
+				login = user.getLogin();
+				senha = user.getPassword();
+			} else {
+				showUsuario = false;
+				login = "";
+				senha = "";
+			}
 		}
 		
 		this.selectedResponsaveis = new Responsavel[0];
@@ -153,16 +156,19 @@ public class ResponsavelMB {
 		}	
 		
 		UserDao uDao = new UserDao();
-		User user = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo()).get(0);
-		addUsuario = false;
-		if(!CommonsUtil.semValor(user)) {
-			showUsuario = true;
-			login = user.getLogin();
-			senha = user.getPassword();
-		} else {
-			showUsuario = false;
-			login = "";
-			senha = "";
+		List<User> listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
+		if(!CommonsUtil.semValor(listaUser)) {
+			User user = listaUser.get(0);
+			addUsuario = false;
+			if(!CommonsUtil.semValor(user)) {
+				showUsuario = true;
+				login = user.getLogin();
+				senha = user.getPassword();
+			} else {
+				showUsuario = false;
+				login = "";
+				senha = "";
+			}
 		}
 		
 		this.selectedResponsaveis = new Responsavel[0];
