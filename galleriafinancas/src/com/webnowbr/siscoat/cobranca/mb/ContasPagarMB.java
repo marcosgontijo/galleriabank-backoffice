@@ -46,9 +46,7 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 @SessionScoped
 public class ContasPagarMB {
 
-	private boolean addContasPagar;
-	StreamedContent downloadFile;
-	FileUploaded selectedFile = new FileUploaded();
+	
 	private List<ContasPagar> contasPagar;
 	private Map<String, Object> filters;
 	private ContasPagar objetoContasPagar;
@@ -83,10 +81,14 @@ public class ContasPagarMB {
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> DeleteFilesPagar = new ArrayList<FileUploaded>();
 	
+	private boolean addContasPagar;
+	StreamedContent downloadFile;
+	FileUploaded selectedFile = new FileUploaded();
 	
 	public ContasPagarMB() {
 
 	}
+	
 	public List<String> contaPagarDescricaoLista(){
 		List<String> listaNome = new ArrayList<>();
 		listaNome.add("Cartório");
@@ -170,65 +172,6 @@ public class ContasPagarMB {
 		}
 		return this.downloadFile;
 	}
-
-	//removido zippar arquivos (ou não)
-	
-	public class FileUploaded {
-		private File file;
-		private String name;
-		private String path;
-
-		public FileUploaded() {
-		}
-
-		public FileUploaded(String name, File file, String path) {
-			this.name = name;
-			this.file = file;
-			this.path = path;
-		}
-
-		/**
-		 * @return the file
-		 */
-		public File getFile() {
-			return file;
-		}
-
-		/**
-		 * @param file the file to set
-		 */
-		public void setFile(File file) {
-			this.file = file;
-		}
-
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @param name the name to set
-		 */
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		/**
-		 * @return the path
-		 */
-		public String getPath() {
-			return path;
-		}
-
-		/**
-		 * @param path the path to set
-		 */
-		public void setPath(String path) {
-			this.path = path;
-		}
-	}
 	
 	public void viewFilePagar(String fileName) {
 
@@ -299,10 +242,12 @@ public class ContasPagarMB {
 			e.printStackTrace();
 		}
 	}
+	
 	public void pesquisaContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listContratos = cDao.consultaContratosCCBs();
 	}
+	
 	public ContratoCobranca getContrato(String numeroContratoParametro) {		
 		if (numeroContratoParametro != null) { 
 			if (!numeroContratoParametro.equals("")) { 
@@ -339,9 +284,80 @@ public class ContasPagarMB {
 	public String clearFieldsPosOperacao() {
 		this.objetoContasPagar = new ContasPagar();
 		this.selectedContratoLov = new ContratoCobranca();
+		this.filesPagar = new ArrayList<FileUploaded>();
 
 		return "/Atendimento/Cobranca/ContasPagarPosOperacao.xhtml";
 	}
+	
+	public void concluirContaPosOperacao() {
+		this.objetoContasPagar.setContrato(this.selectedContratoLov);
+		this.objetoContasPagar.setNumeroDocumento(this.selectedContratoLov.getNumeroContrato());
+		this.objetoContasPagar.setPagadorRecebedor(this.selectedContratoLov.getPagador());
+		this.objetoContasPagar.setTipoDespesa("C");
+		this.objetoContasPagar.setResponsavel(this.selectedContratoLov.getResponsavel());
+		if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
+			if(!CommonsUtil.semValor(this.selectedContratoLov.getContaPagarValorTotal())) {
+				this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
+						.getContaPagarValorTotal().add(this.objetoContasPagar.getValor()));
+			} else {
+				this.selectedContratoLov.setContaPagarValorTotal(this.objetoContasPagar.getValor());
+			}
+			if(!CommonsUtil.semValor(this.objetoContasPagar.getValorPagamento())) {
+				if(CommonsUtil.mesmoValor(this.objetoContasPagar.getValorPagamento(), this.objetoContasPagar.getValor())) {
+					this.objetoContasPagar.setContaPaga(true);
+				} 
+				this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
+						.getContaPagarValorTotal().subtract(this.objetoContasPagar.getValorPagamento()));
+			}
+		}	
+		
+		if(this.objetoContasPagar.isContaPaga() && CommonsUtil.semValor(this.objetoContasPagar.getDataPagamento())) {
+			this.objetoContasPagar.setDataPagamento(gerarDataHoje());
+		}	
+		this.selectedContratoLov.getListContasPagar().add(this.objetoContasPagar);
+		this.objetoContasPagar = new ContasPagar();
+		this.addContasPagar = false;
+	}
+	
+	public void editarContaPosOperacao(ContasPagar conta) {
+		this.addContasPagar = true;
+		this.objetoContasPagar = new ContasPagar();
+		this.objetoContasPagar = conta;
+		this.removerContaPosOperacao(conta);
+	}
+	
+	public void removerContaPosOperacao(ContasPagar conta) {
+		if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
+			this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
+					.getContaPagarValorTotal().subtract(this.objetoContasPagar.getValor()));
+		}
+		if(!CommonsUtil.semValor(this.objetoContasPagar.getValorPagamento())) {
+			this.selectedContratoLov.setContaPagarValorTotal(this.selectedContratoLov
+					.getContaPagarValorTotal().add(this.objetoContasPagar.getValorPagamento()));
+		}
+		this.selectedContratoLov.getListContasPagar().remove(conta);
+	}
+	
+	public void salvarContasPosOperacao() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		try {				
+			contratoCobrancaDao.merge(this.selectedContratoLov);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contas Inseridas com sucesso!!",
+							""));
+
+			clearFieldsPosOperacao();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
+		}
+	}
+	
 	public String clearFieldsEditar() {
 		
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
@@ -409,6 +425,7 @@ public class ContasPagarMB {
 	public void populateSelectedContrato() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.setSelectedContratoLov(cDao.findById(this.getSelectedContratoLov().getId()));
+		filesPagar = listaArquivosPagar();
 	}
 	
 	public void clearContrato() {
@@ -556,14 +573,68 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setContaContabil(null);
 		this.selectedContaContabil = new ContaContabil();
 	}
+	
+	public class FileUploaded {
+		private File file;
+		private String name;
+		private String path;
+
+		public FileUploaded() {
+		}
+
+		public FileUploaded(String name, File file, String path) {
+			this.name = name;
+			this.file = file;
+			this.path = path;
+		}
+
+		/**
+		 * @return the file
+		 */
+		public File getFile() {
+			return file;
+		}
+
+		/**
+		 * @param file the file to set
+		 */
+		public void setFile(File file) {
+			this.file = file;
+		}
+
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * @param name the name to set
+		 */
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		/**
+		 * @return the path
+		 */
+		public String getPath() {
+			return path;
+		}
+
+		/**
+		 * @param path the path to set
+		 */
+		public void setPath(String path) {
+			this.path = path;
+		}
+	}
 
 	public final void populateSelectedContaContabil() {
 		this.objetoContasPagar.setContaContabil(this.selectedContaContabil);
 	}
 
-	
-	
-	
 	public List<ContasPagar> getContasPagar() {
 		return contasPagar;
 	}
