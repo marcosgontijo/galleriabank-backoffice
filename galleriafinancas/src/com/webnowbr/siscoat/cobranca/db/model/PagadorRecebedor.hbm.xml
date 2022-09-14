@@ -546,6 +546,10 @@
 		
 		<property name="whatsAppNumero" type="java.lang.String">
 			<column name="whatsAppNumero" />
-		</property>	                        
+		</property>	      
+		
+		<property name="reputacao" type="java.lang.String">
+			<column name="reputacao" />
+		</property>	                  
     </class>
 </hibernate-mapping>
