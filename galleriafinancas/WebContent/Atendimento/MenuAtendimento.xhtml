@@ -297,6 +297,10 @@
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
+									<p:menuitem value="Pagar Pós Operação"
+										action="#{contasPagarMB.clearFieldsPosOperacao}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"

@@ -112,6 +112,8 @@ public class ContasPagar implements Serializable {
 		this.dataPagamento = dataPagamento;
 	}
 
+	
+	
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
