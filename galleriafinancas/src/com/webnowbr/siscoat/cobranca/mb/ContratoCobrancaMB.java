@@ -7809,22 +7809,6 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
-		FacesContext context = FacesContext.getCurrentInstance();
-		
-		if(!CommonsUtil.semValor(this.objetoPagadorRecebedor.getReputacao())) {
-			String reputacao = this.objetoPagadorRecebedor.getReputacao();
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			String contratos = cDao.getContratosDoPagador(this.objetoPagadorRecebedor);
-			if(CommonsUtil.mesmoValor(reputacao, "Banido")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else if(CommonsUtil.mesmoValor(reputacao, "Ruim")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else if(CommonsUtil.mesmoValor(reputacao, "Otimo") || CommonsUtil.mesmoValor(reputacao, "Bom")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			}	
-		}
 		
 		this.tituloPainel = "Editar";
 
@@ -7879,7 +7863,7 @@ public class ContratoCobrancaMB {
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
-		saveEstadoCheckListAtual();	
+		saveEstadoCheckListAtual();
 		
 		getIndexStepContrato();
 		
