@@ -17,12 +17,19 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.job.IpcaJobCalcular;
+import com.webnowbr.siscoat.job.IpcaJobContrato;
 
 
 @ManagedBean(name = "ipcaMB")
@@ -34,8 +41,12 @@ public class IPCAMB {
 	private BigDecimal taxa;	
 	private IPCA selectedIPCA;
 	
+	private final IpcaJobCalcular ipcaJobCalcular; 
+	
+	private static final Log LOGGER = LogFactory.getLog(IpcaJobContrato.class);
+	
 	public IPCAMB() {
-		
+		this.ipcaJobCalcular = new IpcaJobCalcular();		
 	}
 	
 	public String clearFieldsIPCA() {
@@ -219,6 +230,46 @@ public class IPCAMB {
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "[IPCA] Este contrato não está configurado para ser corrigido pelo IPCA!", ""));
 		}		
+	}
+	
+	public void atualizaIPCAPorContrato(String numeroContrato) {
+		try {
+			IPCADao ipcaDao = new IPCADao();
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
+			
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
+
+			LOGGER.info("incio atualizaIPCAPorContrato");
+			
+			for (ContratoCobranca contratoCobranca : contratosCobranca) {
+				
+				contratoCobranca.setRecalculaIPCA(true);
+				
+				for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
+					if (CommonsUtil.mesmoValor(contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe).getNumeroParcela() , "0") )
+						continue;
+					
+					try {
+						if (!ipcaJobCalcular.calcularIPCACustom(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+							break;
+					} catch (Exception e) {
+						LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
+						continue;
+					}
+				}
+				
+				contratoCobranca.setRecalculaIPCA(false);
+				contratoCobrancaDao.merge(contratoCobranca);
+			}
+			//contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
+				
+			LOGGER.info("Fim atualizaIPCAPorContrato");
+
+		} catch (Exception e) {
+			LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
+		}
 	}
 	
 	public Date getDataComMesAnterior(Date dataOriginal) {

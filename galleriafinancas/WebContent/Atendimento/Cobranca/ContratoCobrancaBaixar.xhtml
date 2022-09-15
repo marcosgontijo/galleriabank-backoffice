@@ -2032,8 +2032,8 @@
 										value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
 								</p:commandButton>
 								<p:commandButton onclick="PF('baixaParcialGalleriaDialog').show();"
-									value="Baixar Galleria"
-									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
+									value="Baixar Galleria / Custos"
+									title="Baixar Parcela / Custos" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcialGalleria" 
 									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
@@ -2581,7 +2581,11 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaParcialGalleria}" ajax="false"
-							icon="ui-icon-transferthick-e-w" value="Baixar"
+							icon="ui-icon-transferthick-e-w" value="Baixar Galleria"
+							update=":form:DetalheParcelas" />
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelaParcialCustosDiversos}" ajax="false"
+							icon="ui-icon-transferthick-e-w" value="Baixar Custos"
 							update=":form:DetalheParcelas" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>

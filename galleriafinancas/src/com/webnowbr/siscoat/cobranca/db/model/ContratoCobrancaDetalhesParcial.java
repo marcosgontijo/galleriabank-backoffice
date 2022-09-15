@@ -32,6 +32,8 @@ public class ContratoCobrancaDetalhesParcial implements Serializable {
 	private Date dataPagamentoGalleria;
 	private boolean baixaGalleria;
 	
+	private boolean baixaCustosDiversos;
+	
 	public ContratoCobrancaDetalhesParcial(){
 	}
 
@@ -211,5 +213,13 @@ public class ContratoCobrancaDetalhesParcial implements Serializable {
 
 	public void setBaixaGalleria(boolean baixaGalleria) {
 		this.baixaGalleria = baixaGalleria;
+	}
+
+	public boolean isBaixaCustosDiversos() {
+		return baixaCustosDiversos;
+	}
+
+	public void setBaixaCustosDiversos(boolean baixaCustosDiversos) {
+		this.baixaCustosDiversos = baixaCustosDiversos;
 	}
 }

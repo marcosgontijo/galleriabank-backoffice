@@ -45,6 +45,9 @@
 		<property name="baixaGalleria" type="boolean">
 			<column name="baixaGalleria" not-null="true" default="false"/>
 		</property>	
+		<property name="baixaCustosDiversos" type="boolean">
+			<column name="baixaCustosDiversos" not-null="true" default="false"/>
+		</property>	
 		<property name="dataPagamentoGalleria" type="java.util.Date">
 			<column name="dataPagamentoGalleria" />
 		</property>
