@@ -535,8 +535,10 @@ public class IpcaJobCalcular {
 
 										BigDecimal vlrAmortizacaoOriginal = detalheIpca.getVlrAmortizacaoParcela();
 
-										detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()));
-
+										//detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()));
+										
+										detalheIpca.setVlrAmortizacaoParcela(parcela.getAmortizacao());
+										
 										vlrSaldoParcela = saldoDevedorIpca.subtract(detalheIpca.getVlrAmortizacaoParcela());
 										detalheIpca.setVlrParcela(vlrPago);
 									}
