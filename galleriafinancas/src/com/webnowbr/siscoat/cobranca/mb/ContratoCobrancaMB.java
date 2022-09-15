@@ -1931,7 +1931,6 @@ public class ContratoCobrancaMB {
 		}
 	
 	}
-	
 	public void enviaEmailAtualizacaoPreContratoNovo() {
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
@@ -3067,6 +3066,8 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {				
+			updateCheckList();
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			context.addMessage(null,
@@ -3079,7 +3080,7 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e + "/" + e.getCause(), ""));
 			return "";
 		}
 	}
@@ -4890,7 +4891,7 @@ public class ContratoCobrancaMB {
 	public String voltarContratoParaPagamentoNoFinal() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
-		this.objetoContratoCobranca.setPedidoPreLaudoComercial(true);
+		this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
 		this.objetoContratoCobranca.setPedidoPreLaudo(false);
 		this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
 		this.objetoContratoCobranca.setPedidoLaudo(false);
@@ -6255,7 +6256,7 @@ public class ContratoCobrancaMB {
 			}
 
 			if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
-				if(DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 0 || DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) != 1 ) {
+				if(DateUtil.getWorkingDaysBetweenTwoDates(auxDataVencimento, auxDataPagamento) > 0) {
 					ccd.setParcelaVencida(true);
 	
 					// calcula coluna valor atualizado

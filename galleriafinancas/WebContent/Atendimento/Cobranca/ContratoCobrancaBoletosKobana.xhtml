@@ -111,23 +111,10 @@
 							<h:outputLink value="#{parcela.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcela.urlBoletoKonana}</h:outputLink>
 						</ui:fragment>
 					</p:column>
-					<p:column style="text-align: center;width: 30px;">						
-						<p:commandButton
-							onclick="PF('gerarBoletoDlg').show();"
-							title="Gerar Boleto"
-							icon="ui-icon ui-icon-calculator"
-							update=":formGerarBoleto"
-							style="height: 25px;width: 30px;">
-							<f:setPropertyActionListener
-								target="#{kobanaMB.contrato}"
-								value="#{parcela.contrato}" />
-							<f:setPropertyActionListener
-								target="#{kobanaMB.parcela}"
-								value="#{parcela}" />
-							<f:setPropertyActionListener
-								target="#{kobanaMB.valorBoleto}"
-								value="#{parcela.vlrParcela}" />	
-						</p:commandButton>
+					<p:column style="text-align: center;width: 30px;">
+						<p:commandButton ajax="false"
+							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletoSimples(parcela.contrato, parcela)}"
+							update="mensagens" title="Gerar Boleto"/>
 					</p:column>
 					<f:facet name="footer">
 						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
@@ -138,26 +125,5 @@
 				</p:dataTable>
 			</p:panel>
 		</h:form>
-		<p:dialog header="Gerar Boleto Kobana"
-			widgetVar="gerarBoletoDlg" resizable="false"
-			style="FONT-SIZE: 10pt;" responsive="true" height="300" width="300">
-			<h:form id="formGerarBoleto">
-				<h:panelGrid columns="2">
-					<p:outputLabel for="valorBaixa" value="Valor: "
-						styleClass="labelBold" />
-					<p:inputText id="valorBaixa"
-						value="#{kobanaMB.valorBoleto}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter" />
-				</h:panelGrid>
-
-				<div align="center" style="margin-top: 20px;">
-					<p:commandButton ajax="false"
-						icon="ui-icon ui-icon-calculator" value="Gerar Boleto" action="#{kobanaMB.gerarBoletoSimplesCustom(kobanaMB.contrato, kobanaMB.parcela, kobanaMB.valorBoleto)}"
-						update="mensagens" title="Gerar Boleto" oncomplete="PF('gerarBoletoDlg').hide();"/>
-				</div>
-			</h:form>
-		</p:dialog>
 	</ui:define>
 </ui:composition>
