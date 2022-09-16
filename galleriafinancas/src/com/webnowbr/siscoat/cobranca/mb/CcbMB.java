@@ -7431,7 +7431,7 @@ public class CcbMB {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/D7 BANK LTDA - CCI 015490890.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoCCI.docx"));
 				
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
@@ -7440,6 +7440,128 @@ public class CcbMB {
 			fonts.setCs("Times New Roman");
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+
+			XWPFParagraph paragraph;
+			
+			XWPFTable table = document.getTables().get(0);
+			XWPFTableRow tableRow1 = table.getRow(2);
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.LEFT);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			XWPFTableRow tableRowAux = tableRow1.getCell(0).getTableArray(0).getRow(0);
+			int iParticipante = 0;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
+				
+				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR")) {
+					participante.setTipoParticipante("Vendedor");
+				
+					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
+					run.setFontSize(12);
+					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
+					run.setBold(true);
+					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					//run2.setFontFamily("Times New Roman");
+					if (!participante.isEmpresa()) {
+						geraParagrafoPF(run2, participante);
+						run2.addBreak();
+					} else {
+						run2.setFontSize(12);
+						PagadorRecebedor pessoa = participante.getPessoa();
+						String socios = "";
+						if (participante.getSocios().size() > 1) {
+							socios = "pelos seus sócios, ";
+						} else if(participante.getSocios().size() > 0){
+							if (participante.getSocios().iterator().next().isFeminino()) {
+								socios = "pela sua única sócia, ";
+							} else {
+								socios = "pelo seu único sócio, ";
+							}
+						} else {
+							socios = "";
+						}
+						run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+								+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+								+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+								+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+								+ "; neste ato representada " + socios);
+						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
+							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							runSocios.setFontSize(12);
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setBold(true);
+							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							geraParagrafoPF(runSociosNome, sociosParticipante);
+							runSociosNome.addBreak();
+						}
+					}									
+					iParticipante++;
+				}
+			}
+			
+			tableRow1 = table.getRow(4);
+			tableRowAux = tableRow1.getCell(0).getTableArray(0).getRow(0);
+			iParticipante = 0;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
+				
+				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					participante.setTipoParticipante("Devedor");
+								
+					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
+					run.setFontSize(12);
+					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
+					run.setBold(true);
+					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					//run2.setFontFamily("Times New Roman");
+					if (!participante.isEmpresa()) {
+						geraParagrafoPF(run2, participante);
+						run2.addBreak();
+					} else {
+						run2.setFontSize(12);
+						PagadorRecebedor pessoa = participante.getPessoa();
+						String socios = "";
+						if (participante.getSocios().size() > 1) {
+							socios = "pelos seus sócios, ";
+						} else if(participante.getSocios().size() > 0){
+							if (participante.getSocios().iterator().next().isFeminino()) {
+								socios = "pela sua única sócia, ";
+							} else {
+								socios = "pelo seu único sócio, ";
+							}
+						} else {
+							socios = "";
+						}
+						run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+								+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+								+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+								+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+								+ "; neste ato representada " + socios);
+						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
+							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							runSocios.setFontSize(12);
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setBold(true);
+							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							geraParagrafoPF(runSociosNome, sociosParticipante);
+							runSociosNome.addBreak();
+						}
+					}									
+					iParticipante++;
+				}
+			}
 			
 			for (XWPFParagraph p : document.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
@@ -7453,6 +7575,30 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
 						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
+
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());								
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+						text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+						
+						if(CommonsUtil.mesmoValor(text, "aaaaaaaaaaa")){
+							text = trocaValoresXWPF(text, r, "aaaaaaaaaaa", "");	 	
+							
+							for(CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
+							
+								r.setText("____________________________________________________________________");
+								r.setBold(true);
+								r.setFontSize(12);
+								r.setFontFamily("Times New Roman");
+								r.addCarriageReturn();
+								r.setText(participante.getTipoParticipante().toUpperCase() + ": " + participante.getPessoa().getNome());
+								r.addCarriageReturn();
+								r.addCarriageReturn();
+								r.addCarriageReturn();
+							}
+						}
 			        }
 			    }
 			}	
@@ -7460,10 +7606,10 @@ public class CcbMB {
 			int indexSegurados = 47;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
-				XWPFTable table = document.getTables().get(0);
+				table = document.getTables().get(0);
 				table.insertNewTableRow(indexSegurados);
-				XWPFTableRow tableRow1 = table.getRow(indexSegurados);
-				XWPFParagraph paragraph = document.createParagraph();
+				tableRow1 = table.getRow(indexSegurados);
+				paragraph = document.createParagraph();
 				paragraph.setAlignment(ParagraphAlignment.LEFT);
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
@@ -7483,7 +7629,7 @@ public class CcbMB {
 				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 				run.setFontSize(12);
 				run.setFontFamily("Times New Roman");
-				run.setText("Nome:");
+				run.setText("Nome: " + segurado.getPessoa().getNome());
 				tableRow1.createCell();////////////////////////////////////////////////////////////////////////
 				tableRow1.getCell(1).setParagraph(paragraph);
 				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcBorders();
@@ -7491,13 +7637,17 @@ public class CcbMB {
 				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
 				run.setFontSize(12);
 				run.setFontFamily("Times New Roman");
-				run.setText(segurado.getPessoa().getNome());
+				run.setText("Percentual: ");
+				run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run2.setFontSize(12);
+				run2.setFontFamily("Times New Roman");
+				run2.setBold(true);
+				run2.setText(CommonsUtil.formataValorMonetario(segurado.getPorcentagemSegurador()) + "%");
 				tableRow1.createCell();
 				tableRow1.getCell(2).getCTTc().addNewTcPr();
 				CTHMerge hMerge = CTHMerge.Factory.newInstance();
 				table = document.getTables().get(0);
 				hMerge.setVal(STMerge.RESTART);
-				int aaaaaaa = tableRow1.getTableICells().size();
 				table.getRow(indexSegurados).getCell(1).getCTTc().getTcPr().setHMerge(hMerge);
 				CTHMerge hMerge1 = CTHMerge.Factory.newInstance();
 				hMerge.setVal(STMerge.CONTINUE);
@@ -7511,127 +7661,10 @@ public class CcbMB {
 				border.getBottom().setColor("808080");
 				border.getTop().setColor("808080");
 				border.getLeft().setColor("808080");
-				indexSegurados++;////////////////////////////////////////////////////////////////////////////////
-				table.insertNewTableRow(indexSegurados);
-				XWPFTableRow tableRow2 = table.getRow(indexSegurados);				
-				tableRow2.createCell();
-				tableRow2.getCell(0).setParagraph(paragraph);
-				tableRow2.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
-				tableRow2.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				border = tableRow2.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
-				border.addNewRight().setVal(STBorder.SINGLE);
-				border.addNewBottom().setVal(STBorder.SINGLE);
-				border.addNewTop().setVal(STBorder.SINGLE);
-				border.addNewLeft().setVal(STBorder.TRIPLE);
-				border.getRight().setColor("808080");
-				border.getBottom().setColor("808080");
-				border.getTop().setColor("808080");
-				border.getLeft().setColor("808080");
-				run = tableRow2.getCell(0).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setFontFamily("Times New Roman");
-				run.setText("Percentual:");
-				tableRow2.createCell();//////////////////////////////////////////////////////////////////////////
-				tableRow2.getCell(1).setParagraph(paragraph);
-				tableRow2.getCell(1).getCTTc().addNewTcPr().addNewTcBorders();
-				tableRow2.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				run = tableRow2.getCell(1).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setFontFamily("Times New Roman");
-				run.setText(CommonsUtil.formataValorMonetario(segurado.getPorcentagemSegurador()) + "%");
-				tableRow2.createCell();
-				tableRow2.getCell(2).getCTTc().addNewTcPr().addNewTcBorders();
-				hMerge = CTHMerge.Factory.newInstance();
-				table = document.getTables().get(0);
-				hMerge.setVal(STMerge.RESTART);
-				table.getRow(indexSegurados).getCell(1).getCTTc().getTcPr().setHMerge(hMerge);
-				hMerge1 = CTHMerge.Factory.newInstance();
-				hMerge.setVal(STMerge.CONTINUE);
-				table.getRow(indexSegurados).getCell(2).getCTTc().getTcPr().setHMerge(hMerge1);
-				border = tableRow2.getCell(2).getCTTc().addNewTcPr().addNewTcBorders();
-				border.addNewRight().setVal(STBorder.TRIPLE);
-				border.addNewBottom().setVal(STBorder.SINGLE);
-				border.addNewTop().setVal(STBorder.SINGLE);
-				border.addNewLeft().setVal(STBorder.SINGLE);	
-				border.getRight().setColor("808080");
-				border.getBottom().setColor("808080");
-				border.getTop().setColor("808080");
-				border.getLeft().setColor("808080");
 				indexSegurados++;
 			}
 			// First Row
 			
-			XWPFParagraph paragraph;
-			/*
-			XWPFTable table = document.getTables().get(0);
-			XWPFTableRow tableRow1 = table.getRow(6);
-			XWPFParagraph paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.LEFT);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
-			int iParticipante = 0;
-			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {										
-				run = tableRow1.getCell(0).getParagraphArray(0).createRun();	
-				run.setFontSize(12);
-				run.setText(alphabet[iParticipante] + ") ");
-				run.setBold(true);
-				run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
-				run2.setText(" " + participante.getPessoa().getNome() + ", ");
-				//run2.setFontFamily("Times New Roman");
-				if (!participante.isEmpresa()) {
-					geraParagrafoPF(run2, participante);
-					run2.addCarriageReturn();
-				} else {
-					run2.setFontSize(12);
-					PagadorRecebedor pessoa = participante.getPessoa();
-					String socios = "";
-					if (participante.getSocios().size() > 1) {
-						socios = "pelos seus sócios, ";
-					} else if(participante.getSocios().size() > 0){
-						if (participante.getSocios().iterator().next().isFeminino()) {
-							socios = "pela sua única sócia, ";
-						} else {
-							socios = "pelo seu único sócio, ";
-						}
-					} else {
-						socios = "";
-					}
-					run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
-							+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
-							+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
-							+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
-							+ "; neste ato representada " + socios);
-					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
-						XWPFRun runSocios = tableRow1.getCell(0).getParagraphArray(0).createRun();
-						runSocios.setFontSize(12);
-						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
-						runSocios.setBold(true);
-						XWPFRun runSociosNome = tableRow1.getCell(0).getParagraphArray(0).createRun();
-						geraParagrafoPF(runSociosNome, sociosParticipante);
-						runSociosNome.addCarriageReturn();
-					}
-				}									
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
-						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
-					}
-					if(CommonsUtil.semValor(cpfEmitente)) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
-							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
-						} else {
-							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
-						}
-					}
-					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
-				}
-				run3 = tableRow1.getCell(0).getParagraphArray(0).createRun();	
-				run3.setFontSize(12);
-				run3.setText(" (“" + participante.getTipoParticipante() + "”)");
-				run3.setBold(true);
-				run3.addBreak();
-				iParticipante++;
-			}
-			*/
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
@@ -7736,74 +7769,29 @@ public class CcbMB {
 								}
 							}
 						}
-					}
-				}
-			}
-		    
-		    /*
-		    XWPFTableRow tableRow2 = document.getTableArray(1).getRow(0);
-
-		    paragraph = document.createParagraph();
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
-			paragraph.setSpacingBetween(1);
-			paragraph.setAlignment(ParagraphAlignment.LEFT);
-			
-			if (this.objetoCcb.getListaParticipantes().size() > 1) {
-				tableRow2.getCell(0).setParagraph(paragraph);
-				tableRow2.getCell(1).setParagraph(paragraph);
-				int qtdePessoasEsquerdo = 0;
-				for (int iPartTab = 0; iPartTab < this.objetoCcb.getListaParticipantes().size(); iPartTab++) {
-
-					CcbParticipantes participante = this.objetoCcb.getListaParticipantes().get(iPartTab);
-					if (iPartTab != 0) {
-						if (iPartTab % 2 != 0) {
-
-							run = tableRow2.getCell(0).getParagraphArray(0).createRun();
-							run.addBreak();
-							run.setFontSize(12);
-							run.setText("____________________________________   ");
-							run.setBold(false);
-							run.addBreak();
-
-							run2 = tableRow2.getCell(0).getParagraphArray(0).createRun();
-							run2.setFontSize(12);
-							run2.setText(participante.getPessoa().getNome());
-							run2.setBold(true);
-							run2.addBreak();
-
-							run3 = tableRow2.getCell(0).getParagraphArray(0).createRun();
-							run3.setFontSize(12);
-							run3.setText(participante.getTipoParticipante());
-							run3.setBold(false);
-							run3.addBreak();
-
-							qtdePessoasEsquerdo++;
-						} else {
-							run = tableRow2.getCell(1).getParagraphArray(0).createRun();
-							run.addBreak();
-							run.setFontSize(12);
-							run.setText("____________________________________   ");
-							run.setBold(false);
-							run.addBreak();
-
-							run2 = tableRow2.getCell(1).getParagraphArray(0).createRun();
-							run2.setFontSize(12);
-							run2.setText(participante.getPessoa().getNome());
-							run2.setBold(true);
-							run2.addBreak();
-
-							run3 = tableRow2.getCell(1).getParagraphArray(0).createRun();
-							run3.setFontSize(12);
-							run3.setText(participante.getTipoParticipante());
-							run3.setBold(false);
-							run3.addBreak();
-							qtdePessoasEsquerdo--;
+						
+						for (XWPFTable t : cell.getTables()) {
+							for (XWPFTableRow row2 : t.getRows()) {
+								for (XWPFTableCell cell2 : row2.getTableCells()) {
+									for (XWPFParagraph p2 : cell2.getParagraphs()) {
+										for (XWPFRun r2 : p2.getRuns()) {
+											String text = r2.getText(0);
+											text = trocaValoresXWPF(text, r2, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+											text = trocaValoresXWPF(text, r2, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+											text = trocaValoresXWPF(text, r2, "ufImovel", this.objetoCcb.getUfImovel());		
+											text = trocaValoresXWPF(text, r2, "numeroImovel", this.objetoCcb.getNumeroImovel());
+											text = trocaValoresXWPF(text, r2, "inscricaoMunicipal", this.objetoCcb.getInscricaoMunicipal());
+											text = trocaValoresXWPFCci(text, r2, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
+											text = trocaValoresDinheiroExtensoXWPF(text, r2, "VendaLeilao", this.objetoCcb.getVendaLeilao());	
+											
+										}
+									}
+								}
+							}
 						}
 					}
 				}
 			}
-			*/
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
@@ -8183,6 +8171,8 @@ public class CcbMB {
 		    	return geraInstrumentoEmissaoCCI();
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"EndossosEmPretoGalleria")) {
 		    	return geraEndossosEmPretoGalleria();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"AquisicaoCCI")) {
+		    	return geraCciAquisicao();
 		    } else {
 	    		
 	    	}
