@@ -28,7 +28,8 @@
 				<repeat-interval>600000</repeat-interval>
 			</simple>
 		</trigger>
-	</schedule>  -->
+	</schedule>  
+
 	<schedule>
 		<job>
 			<name>IpcaJob</name>
@@ -42,7 +43,7 @@
 			</cron>
 		</trigger>
 	</schedule>
-	
+	-->
 	<schedule>
 		<job>
 			<name>IpcaJobContrato</name>
