@@ -294,7 +294,7 @@
 			<column name="VLRPARCELA" />
 		</property>
 		<property name="numeroContrato" type="java.lang.String">
-			<column name="NUMEROCONTRATO" />
+			<column name="NUMEROCONTRATO" not-null="true" />
 		</property>
 		<property name="vlrRecebedor" type="big_decimal">
 			<column name="VLRRECEBEDOR" />

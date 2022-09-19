@@ -144,16 +144,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>	
-		                </shiro:hasAnyRoles>	
-		                <shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  	                
-			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
-			                </p:commandButton>	            		                		               
-			                <p:spacer width="10" height="10"/>
-			            </shiro:hasAnyRoles>		                	                						
+		                </shiro:hasAnyRoles>		                	                						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -175,16 +166,6 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.observacaoContrato}" value="#{contratoCobrancaMB.tituloPainel}" />		                	
 		                </p:commandButton>	
-		                <p:spacer width="10" height="10"/> 
-		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
-			                <p:commandButton action="#{ipcaMB.reProcessaIPCAContrato(contratos)}" icon="ui-icon-calculator" value="Corrigir IPCA" title="Corrigir IPCA" update=":form:mensagens">
-			                    <p:confirm header="Confirmação" message="Deseja realmente corrigir este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
-			                </p:commandButton> 
-			                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
-					    	</p:confirmDialog>   
-		                </shiro:hasAnyRoles>
 		                <p:spacer width="10" height="10"/>
 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	                
 			                <p:commandButton oncomplete="PF('seguradosDialog').show();" action="#{contratoCobrancaMB.clearFieldsSegurados}" update="formSegurados" icon="ui-icon-check" value="Segurados" >
@@ -204,7 +185,17 @@
 								value="Empresa" title="Empresa">
 								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />								
 							</p:commandButton>
-						</shiro:hasAnyRoles>               
+						</shiro:hasAnyRoles>    
+					    <p:spacer width="10" height="10"/> 
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+			                <p:commandButton action="#{ipcaMB.atualizaIPCAPorContrato(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar IPCA" title="Reprocessar IPCA" update=":form:mensagens">
+			                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
+			                </p:commandButton> 
+			                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+					    	</p:confirmDialog>   
+		                </shiro:hasAnyRoles>           
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
