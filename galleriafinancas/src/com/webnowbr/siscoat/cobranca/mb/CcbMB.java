@@ -299,7 +299,7 @@ public class CcbMB {
     private boolean temIptuEmAtraso = false;
     private boolean temCondominioEmAtraso = false;
     private boolean temIq = false;
-    
+    private boolean temItbi = false;
 	private boolean addSegurador;
 	private Segurado seguradoSelecionado;
     
@@ -6564,6 +6564,52 @@ public class CcbMB {
 				}
 			}
 			
+			if(this.temItbi) {
+				XWPFTableRow tableRow1 = table.createRow();
+				
+				tableRow1.getCell(0).setParagraph(paragraph);
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText("ITBI");
+
+				tableRow1.getCell(1).setParagraph(paragraph);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setText("Boleto");
+				run.setColor("000000");	
+				
+				tableRow1.getCell(2).setParagraph(paragraph);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(12);
+				run.setColor("000000");
+				run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getItbiValor(), "R$ "));
+				if(!this.objetoCcb.isItbiInseridoContrato()) {
+					if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+						ContasPagar itbi = new ContasPagar();				
+						itbi.setDescricao("ITBI");
+						itbi.setValor(this.objetoCcb.getItbiValor());
+						itbi.setFormaTransferencia("Boleto");
+						/////////////////////////////////////////////////////////////////////////////////////
+						itbi.setContrato(this.objetoContratoCobranca);
+						itbi.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+						itbi.setPagadorRecebedor(this.objetoPagadorRecebedor);
+						itbi.setTipoDespesa("C");
+						itbi.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+						this.objetoContratoCobranca.getListContasPagar().add(itbi);
+						this.objetoCcb.setIqInseridoContrato(true);
+					}
+				}
+			}
+			
 			XWPFTableRow tableRow1 = table.createRow();		
 
 			tableRow1.getCell(1).setParagraph(paragraph);
@@ -7441,10 +7487,11 @@ public class CcbMB {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-
+			
 			XWPFParagraph paragraph;
 			
 			XWPFTable table = document.getTables().get(0);
+			setTableAlignment(table, STJc.CENTER);
 			XWPFTableRow tableRow1 = table.getRow(2);
 			paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.LEFT);
@@ -7664,8 +7711,7 @@ public class CcbMB {
 				indexSegurados++;
 			}
 			// First Row
-			
-			
+						
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
 			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
@@ -7673,12 +7719,20 @@ public class CcbMB {
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
 			
+			BigDecimal despesas = this.objetoCcb.getValorDespesas();
+			despesas = despesas.subtract(this.objetoCcb.getCustasCartorariasValor());
+			despesas = despesas.subtract(this.objetoCcb.getItbiValor());
+			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
 						for (XWPFParagraph p : cell.getParagraphs()) {
 							for (XWPFRun r : p.getRuns()) {
 								String text = r.getText(0);		 
+								
+								text = trocaValoresXWPFCci(text, r, "precoVendaCompra", this.objetoCcb.getPrecoVendaCompra(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "PrecoVendaCompra", this.objetoCcb.getPrecoVendaCompra());	
+								
 								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());									
 								text = trocaValoresXWPFCci(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
@@ -7687,8 +7741,14 @@ public class CcbMB {
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.objetoCcb.getCustoEmissao());	
 								text = trocaValoresXWPFCci(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.objetoCcb.getValorIOF());	
-								text = trocaValoresXWPFCci(text, r, "valorDespesas", this.objetoCcb.getValorDespesas(), "R$ ");
-								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", this.objetoCcb.getValorDespesas());	
+								text = trocaValoresXWPFCci(text, r, "valorDespesas", despesas, "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", despesas);	
+								
+								text = trocaValoresXWPFCci(text, r, "custasCartorariasValor", this.objetoCcb.getCustasCartorariasValor(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "CustasCartorariasValor", this.objetoCcb.getCustasCartorariasValor());
+								
+								text = trocaValoresXWPFCci(text, r, "itbiValor", this.objetoCcb.getItbiValor(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ItbiValor", this.objetoCcb.getItbiValor());
 								
 								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
@@ -8121,6 +8181,12 @@ public class CcbMB {
 		return null;
 	}
 
+	public void setTableAlignment(XWPFTable table, STJc.Enum justification) {
+	    CTTblPr tblPr = table.getCTTbl().getTblPr();
+	    CTJc jc = (tblPr.isSetJc() ? tblPr.getJc() : tblPr.addNewJc());
+	    jc.setVal(justification);
+	}
+	
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
@@ -10082,7 +10148,13 @@ public class CcbMB {
 	public void setTemCCBValor(boolean temCCBValor) {
 		this.temCCBValor = temCCBValor;
 	}
-	
-	
-	
+
+	public boolean isTemItbi() {
+		return temItbi;
+	}
+
+	public void setTemItbi(boolean temItbi) {
+		this.temItbi = temItbi;
+	}
+		
 }

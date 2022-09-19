@@ -33,33 +33,33 @@
 					<p:messages />
 
 					<h:panelGrid columns="2">							
-							<p:outputLabel for="tipoDownload"
-								value="Tipo Do Documento: " styleClass="labelBold" />
-							<p:selectOneMenu id="tipoDownload"
-								value="#{ccbMB.tipoDownload}" ajax="true">
-								<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
-								<f:selectItem itemValue="AFnova" itemLabel="AF" />
-								<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
-								<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
-								<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
-								<f:selectItem itemValue="CCI" itemLabel="CCI" />
-								<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
-								<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisição CCI" />
-								<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
-								<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />							
-								<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel" event="valueChange"
-									listener="#{ccbMB.verificaModeloAntigo()}" />
-							</p:selectOneMenu>	
-							
-							<p:outputLabel for="numeroContrato" value="Número do Contrato: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:inputText id="numeroContrato" value="#{ccbMB.objetoCcb.numeroCcb}"
-								label="Contrato" style="width:150px;" />
-							
-							<p:outputLabel for="contrato" value="Referente a Operação: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
+						<p:outputLabel for="tipoDownload"
+							value="Tipo Do Documento: " styleClass="labelBold" />
+						<p:selectOneMenu id="tipoDownload"
+							value="#{ccbMB.tipoDownload}" ajax="true">
+							<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
+							<f:selectItem itemValue="AFnova" itemLabel="AF" />
+							<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
+							<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
+							<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
+							<f:selectItem itemValue="CCI" itemLabel="CCI" />
+							<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
+							<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisição CCI" />
+							<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
+							<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />							
+							<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel" event="valueChange"
+								listener="#{ccbMB.verificaModeloAntigo()}" />
+						</p:selectOneMenu>	
+						
+						<p:outputLabel for="numeroContrato" value="Número do Contrato: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="numeroContrato" value="#{ccbMB.objetoCcb.numeroCcb}"
+							label="Contrato" style="width:150px;" />
+						
+						<p:outputLabel for="contrato" value="Referente a Operação: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
 						<h:panelGroup>
 							<p:outputLabel id="contrato" disabled="true"
 								value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
@@ -1814,6 +1814,30 @@
 										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
 									<p:spacer width="50px" rendered="#{!ccbMB.temIq}"></p:spacer>
 								</h:panelGroup>
+								
+								<h:panelGrid columns="1">
+									<p:outputLabel for="itbiValor"
+										value="ITBI: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneRadio id="temItbi"
+										unselectable="true" value="#{ccbMB.temItbi}">
+										<f:selectItem itemLabel="Não" itemValue="false" />
+										<f:selectItem itemLabel="Sim" itemValue="true" />
+										<p:ajax update="itbiValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
+									</p:selectOneRadio>
+								</h:panelGrid>
+
+								<h:panelGroup id="itbiValor">
+									<p:outputLabel rendered="#{ccbMB.temItbi}"
+										value="Valor: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText rendered="#{ccbMB.temItbi}"
+										value="#{ccbMB.objetoCcb.itbiValor}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);"
+										converter="bigDecimalConverter" > <p:ajax event="blur" update="valorDespesas" listener="#{ccbMB.calcularValorDespesa()}" /> </p:inputText>
+									<p:spacer width="50px" rendered="#{!ccbMB.temItbi}"></p:spacer>
+								</h:panelGroup>
 
 								<h:panelGrid columns="1" id="processosJucidiaisValorView">
 									<p:outputLabel for="processosJucidiaisValor"
@@ -2324,6 +2348,14 @@
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="cepImovel" value="#{ccbMB.objetoCcb.cepImovel}"
 										label="Contrato" />
+										
+									<p:outputLabel for="precoVendaCompra" value="preco Venda Compra:  "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="precoVendaCompra" value="#{ccbMB.objetoCcb.precoVendaCompra}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this,13, event, 2);"
+										converter="bigDecimalConverter" />
 
 								</h:panelGrid>
 							</p:panel>

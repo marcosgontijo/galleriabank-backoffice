@@ -1194,6 +1194,18 @@
 									converter="bigDecimalConverter"
 									style="FONT-SIZE: 10pt;width:100px;" />
 							</h:panelGroup>
+							
+							<shiro:hasAnyRoles name="ROOT">
+								<p:outputLabel for="valorAprovadoComite"
+									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<p:outputLabel id="valorAprovadoComite"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
+										converter="bigDecimalConverter"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</h:panelGroup>
+							</shiro:hasAnyRoles>
 
 							<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
 								styleClass="labelBold" />

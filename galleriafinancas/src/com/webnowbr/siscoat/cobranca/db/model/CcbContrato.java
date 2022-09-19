@@ -83,6 +83,7 @@ public class CcbContrato implements Serializable{
 	private String logradouroNumeroImovel;
 	private String bairroImovel;
 	private String cepImovel;
+	private BigDecimal precoVendaCompra;
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -139,6 +140,8 @@ public class CcbContrato implements Serializable{
     private boolean condominioInseridoContrato;
     private BigDecimal iqValor = BigDecimal.ZERO;
     private boolean iqInseridoContrato;
+    private BigDecimal itbiValor = BigDecimal.ZERO;
+    private boolean itbiInseridoContrato;
     
     private List<Segurado> listSegurados;
     
@@ -1020,6 +1023,30 @@ public class CcbContrato implements Serializable{
 	public void setCCBPix(String cCBPix) {
 		CCBPix = cCBPix;
 	}
+
+	public BigDecimal getPrecoVendaCompra() {
+		return precoVendaCompra;
+	}
+
+	public void setPrecoVendaCompra(BigDecimal precoVendaCompra) {
+		this.precoVendaCompra = precoVendaCompra;
+	}
+
+	public BigDecimal getItbiValor() {
+		return itbiValor;
+	}
+
+	public void setItbiValor(BigDecimal itbiValor) {
+		this.itbiValor = itbiValor;
+	}
+
+	public boolean isItbiInseridoContrato() {
+		return itbiInseridoContrato;
+	}
+
+	public void setItbiInseridoContrato(boolean itbiInseridoContrato) {
+		this.itbiInseridoContrato = itbiInseridoContrato;
+	}
 	
-	
+
 }
