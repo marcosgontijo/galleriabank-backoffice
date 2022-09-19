@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -12,7 +13,10 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.model.LazyDataModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -46,8 +50,12 @@ public class ResponsavelMB {
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsaveis;
 	
+	private long idResponsavelOriginal;
+	private String nomeResponsavelOriginal = null;
+	
 	private boolean addUsuario = false;
 	private boolean showUsuario = false;
+	private String tipoPesquisa;
 	
 	private String login = "";
 	private String senha = "";
@@ -82,14 +90,15 @@ public class ResponsavelMB {
 
 	public String clearFields() {
 		objetoResponsavel = new Responsavel();
-		this.tituloPainel = "Adicionar";
+		objetoResponsavel.setDataCadastro(new Date());
 		
+		this.tituloPainel = "Adicionar";
 		clearResponsavel();
 		loadLovResponsavel();
 		
 		int maiorCodigo = 0;
 		for(Responsavel responsavel : listResponsaveis ) {
-			if(!CommonsUtil.semValor(responsavel.getCodigo()) ) {
+			if(!CommonsUtil.semValor(responsavel.getCodigo()) && CommonsUtil.eSomenteNumero(responsavel.getCodigo()) ) {
 				try {
 					if(maiorCodigo < CommonsUtil.integerValue(responsavel.getCodigo())){
 						maiorCodigo = CommonsUtil.integerValue(responsavel.getCodigo());
@@ -284,9 +293,34 @@ public class ResponsavelMB {
 		return "ResponsavelConsultar.xhtml";
 	}
 	
+	public void pesquisaResponsavel() {
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsaveis = rDao.findAll();		
+		this.tipoPesquisa = "Responsavel";
+	
+		this.nomeResponsavel = "";
+		this.idResponsavel = 0;
+		selectedResponsavel = new Responsavel();
+	}
+	
+	public void pesquisaResponsavelOriginal() {
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsaveis = rDao.findAll();		
+		this.tipoPesquisa = "Original";
+	
+		this.nomeResponsavelOriginal = "";
+		this.idResponsavelOriginal = 0;
+		selectedResponsavel = new Responsavel();
+	}
+	
 	public final void populateSelectedResponsavel() {
-		this.idResponsavel = this.selectedResponsavel.getId();
-		this.nomeResponsavel = this.selectedResponsavel.getNome();
+		if(CommonsUtil.mesmoValor(tipoPesquisa, "Responsavel")) {
+			this.idResponsavel = this.selectedResponsavel.getId();
+			this.nomeResponsavel = this.selectedResponsavel.getNome();
+		} else if(CommonsUtil.mesmoValor(tipoPesquisa, "Original")) {
+			this.idResponsavelOriginal = this.selectedResponsavel.getId();
+			this.nomeResponsavelOriginal = this.selectedResponsavel.getNome();
+		}
 	}
 	
 	public void clearResponsavel() {
@@ -494,6 +528,24 @@ public class ResponsavelMB {
 
 	public void setShowUsuario(boolean showUsuario) {
 		this.showUsuario = showUsuario;
+	}
+
+	public String getNomeResponsavelOriginal() {
+		return nomeResponsavelOriginal;
+	}
+
+	public void setNomeResponsavelOriginal(String nomeResponsavelOriginal) {
+		this.nomeResponsavelOriginal = nomeResponsavelOriginal;
+	}
+
+	public long getIdResponsavelOriginal() {
+		return idResponsavelOriginal;
+	}
+
+	public void setIdResponsavelOriginal(long idResponsavelOriginal) {
+		this.idResponsavelOriginal = idResponsavelOriginal;
 	}	
+	
+	
 	
 }
