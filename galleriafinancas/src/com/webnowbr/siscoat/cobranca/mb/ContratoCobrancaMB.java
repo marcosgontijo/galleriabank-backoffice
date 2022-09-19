@@ -10622,9 +10622,9 @@ public class ContratoCobrancaMB {
 	}
 
 	public String clearFieldsRelFinanceiro() {
-		this.filtrarDataVencimento = "Atualizada";
+		this.filtrarDataVencimento = "Original";
 		this.relIsRelAtraso = false;
-		this.relIsCompleto = true;
+		this.relIsCompleto = false;
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataInicio = Calendar.getInstance(zone, locale);
@@ -10672,7 +10672,7 @@ public class ContratoCobrancaMB {
 
 		this.contratoGerado = false;
 
-		this.exibeSomenteFavorecidosFiltrados = "Todos";
+		this.exibeSomenteFavorecidosFiltrados = "Nenhum";
 
 		this.grupoFavorecidos = true;
 

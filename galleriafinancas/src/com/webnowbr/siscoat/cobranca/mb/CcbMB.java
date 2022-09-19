@@ -8578,6 +8578,14 @@ public class CcbMB {
 		if(!CommonsUtil.semValor(this.objetoCcb.getIqValor())) {
 			this.temIq = true;
 		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getCCBValor())) {
+			this.temCCBValor = true;
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getItbiValor())) {
+			this.temItbi = true;
+		}
 	}
 	
 	public String clearFieldsInserirCcb() {

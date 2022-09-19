@@ -4428,7 +4428,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
 					}
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + "order by cc.numeroContrato ";
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " order by cc.numeroContrato ";
 					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
