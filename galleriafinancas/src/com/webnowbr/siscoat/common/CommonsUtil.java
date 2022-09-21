@@ -620,6 +620,10 @@ public class CommonsUtil {
 	public static final String formataValorTaxa(BigDecimal valor) {
 		return formataNumero(valor, "#,##0.0000");
 	}
+	
+	public static final String formataValorInteiro(int valor) {
+		return formataNumero(valor, "#,##0");
+	}
 
 	/**
 	 * Formata a data no padrão dd/MM/yyyy

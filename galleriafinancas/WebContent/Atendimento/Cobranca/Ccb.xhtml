@@ -31,6 +31,7 @@
 					style="margin-bottom:10px;">
 					<p:focus />
 					<p:messages />
+					<p:messages id="msgs" />
 
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="tipoDownload"
@@ -2182,7 +2183,13 @@
 										onkeypress="return isNumberKey(event);"
 										onkeydown="FormataValor(this, 13, event, 2);" required="true"
 										converter="bigDecimalConverter" >
-									</p:inputText>										
+									</p:inputText>	
+									
+									<p:commandButton ajax="true"
+										action="#{ccbMB.calcularSimulador}"
+										icon="ui-icon ui-icon-circle-zoomin"
+										value="Calcular Parcelas" update="msgs Dados" />
+																							
 								</h:panelGrid>
 							</p:panel>
 							<p:panel header="Parcelas MIP">
@@ -2288,7 +2295,15 @@
 							</p:panel>
 							<p:panel header="Imóvel">
 								<h:panelGrid columns="2">
-
+								
+									<p:outputLabel for="vlrImovel" value="Vlr Imovel:  "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="vlrImovel" value="#{ccbMB.objetoCcb.vlrImovel}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this,13, event, 2);"
+										converter="bigDecimalConverter" />
+									
 									<p:outputLabel for="numeroImovel"
 										value="Nº Matricula Do Imóvel: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />

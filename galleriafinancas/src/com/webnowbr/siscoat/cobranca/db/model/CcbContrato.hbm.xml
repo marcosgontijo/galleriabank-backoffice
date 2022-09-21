@@ -407,6 +407,14 @@
 		<property name="itbiInseridoContrato" type="boolean">
 			<column name="itbiInseridoContrato" not-null="true" default="false" />
 		</property>	
+		
+		<property name="vlrImovel" type="big_decimal">
+			<column name="vlrImovel" />
+		</property>
+		
+		<property name="TipoPessoaEmitente" type="java.lang.String">
+			<column name="TipoPessoaEmitente" />
+		</property>
 		        
     </class>
 </hibernate-mapping>
