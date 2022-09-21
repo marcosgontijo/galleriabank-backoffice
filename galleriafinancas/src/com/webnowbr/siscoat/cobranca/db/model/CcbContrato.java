@@ -28,6 +28,7 @@ public class CcbContrato implements Serializable{
 	private String cidadeEmitente;
 	private String ufEmitente;
 	private String cepEmitente;
+	private String TipoPessoaEmitente;
 	
 	private List<CcbParticipantes> listaParticipantes;
 
@@ -36,6 +37,8 @@ public class CcbContrato implements Serializable{
 	private BigDecimal custoEmissao;
 	private BigDecimal valorIOF;
 	private BigDecimal valorDespesas;
+	
+	private BigDecimal vlrImovel;
 	
 	private BigDecimal taxaDeJurosMes;
 	private BigDecimal taxaDeJurosAno;
@@ -1047,6 +1050,23 @@ public class CcbContrato implements Serializable{
 	public void setItbiInseridoContrato(boolean itbiInseridoContrato) {
 		this.itbiInseridoContrato = itbiInseridoContrato;
 	}
+
+	public String getTipoPessoaEmitente() {
+		return TipoPessoaEmitente;
+	}
+
+	public void setTipoPessoaEmitente(String tipoPessoaEmitente) {
+		TipoPessoaEmitente = tipoPessoaEmitente;
+	}
+
+	public BigDecimal getVlrImovel() {
+		return vlrImovel;
+	}
+
+	public void setVlrImovel(BigDecimal vlrImovel) {
+		this.vlrImovel = vlrImovel;
+	}
+	
 	
 
 }

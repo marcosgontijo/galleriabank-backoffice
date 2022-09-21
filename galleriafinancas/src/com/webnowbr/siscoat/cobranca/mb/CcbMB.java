@@ -100,11 +100,15 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
+import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
+import com.webnowbr.siscoat.simulador.SimulacaoVO;
+import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 /** ManagedBean. */
 @ManagedBean(name = "ccbMB")
@@ -322,6 +326,8 @@ public class CcbMB {
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
+	
+	SimulacaoVO simulador = new SimulacaoVO();
 	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
@@ -1282,7 +1288,7 @@ public class CcbMB {
 	
 	public String trocaValoresXWPFCci(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever, String moeda) {
 		if (text != null && text.contains(valorEscrito)) {
-				text = text.replace(valorEscrito, CommonsUtil.formataValorMonetarioCci(valorSobrescrever, moeda));
+				text = text.replace(valorEscrito, CommonsUtil.formataValorMonetarioCci(valorSobrescrever, moeda) );
 			r.setText(text, 0);
 		}
 		return text;
@@ -7269,6 +7275,14 @@ public class CcbMB {
 							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
+					if(CommonsUtil.semValor(this.objetoCcb.getTipoPessoaEmitente())) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setTipoPessoaEmitente("PF");
+						} else {
+							this.objetoCcb.setTipoPessoaEmitente("PJ");
+						}
+					}
+					
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 				run3 = tableRow1.getCell(0).getParagraphArray(0).createRun();	
@@ -7326,6 +7340,7 @@ public class CcbMB {
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
 								
 								text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());
+								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
 								
 								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
 								
@@ -7449,6 +7464,123 @@ public class CcbMB {
 				}
 			}
 			
+			int indexParcela = 1;
+			
+			//calcularSimulador();
+			
+
+			XWPFParagraph paragraph1 = document.createParagraph();
+			paragraph1.setAlignment(ParagraphAlignment.CENTER);
+			paragraph1.setSpacingBefore(0);
+			paragraph1.setSpacingAfter(0);
+			
+			XWPFParagraph paragraph2 = document.createParagraph();
+			paragraph2.setAlignment(ParagraphAlignment.RIGHT);
+			paragraph2.setSpacingBefore(0);
+			paragraph2.setSpacingAfter(0);
+			
+			int fontSize = 7;
+			for(SimulacaoDetalheVO p : simulador.getParcelas()) {
+				table = document.getTableArray(3);
+				table.insertNewTableRow(indexParcela);
+				tableRow1 = table.getRow(indexParcela);
+				tableRow1.createCell();
+				tableRow1.getCell(0).setParagraph(paragraph1);
+				tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(p.getNumeroParcela().toString());
+				tableRow1.createCell();
+				tableRow1.getCell(1).setParagraph(paragraph2);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataData(DateUtil.adicionarPeriodo(simulador.getDataSimulacao(), p.getNumeroParcela().intValue(), Calendar.MONTH), "dd/MM/yyyy"));
+				tableRow1.createCell();
+				tableRow1.getCell(2).setParagraph(paragraph2);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSaldoDevedorInicial(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(3).setParagraph(paragraph2);
+				tableRow1.getCell(3).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(3).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getAmortizacao(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(4).setParagraph(paragraph2);
+				tableRow1.getCell(4).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(4).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(5).setParagraph(paragraph2);
+				tableRow1.getCell(5).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(5).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros().add(p.getAmortizacao()), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(6).setParagraph(paragraph2);
+				tableRow1.getCell(6).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(6).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getTxAdm(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(7).setParagraph(paragraph2);
+				tableRow1.getCell(7).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(7).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroMIP(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(8).setParagraph(paragraph2);
+				tableRow1.getCell(8).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(8).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroDFI(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(9).setParagraph(paragraph2);
+				tableRow1.getCell(9).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				indexParcela++;////////////////////////////////////////////////////////////////////////////////
+			}
+			
+			table = document.getTableArray(2);			
+			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), "dd/MM/yyyy"));
+			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
+			CabecalhoAnexo1(table, 2, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorCredito(), "R$ "));
+			CabecalhoAnexo1(table, 2, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosMes(),"") + "%");
+			
+			CabecalhoAnexo1(table, 3, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorIOF(), "R$ "));
+			CabecalhoAnexo1(table, 3, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosAno(),"") + "%");
+			
+			CabecalhoAnexo1(table, 4, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCustoEmissao(), "R$ "));
+			CabecalhoAnexo1(table, 4, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetMes(),"") + "%");
+			CabecalhoAnexo1(table, 4, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getVlrImovel(), "R$ "));
+			
+			CabecalhoAnexo1(table, 5, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorDespesas(), "R$ "));
+			CabecalhoAnexo1(table, 5, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetAno(),"") + "%");
+			CabecalhoAnexo1(table, 5, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteMIP(), "R$ "));
+			
+			CabecalhoAnexo1(table, 6, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorLiquidoCredito(), "R$ "));
+			CabecalhoAnexo1(table, 6, 4, CommonsUtil.stringValue(
+					CommonsUtil.formataValorInteiro(
+							DateUtil.getDaysBetweenDates(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), this.objetoCcb.getVencimentoUltimaParcelaPagamento()))));
+			CabecalhoAnexo1(table, 6, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteDFI(), "R$ "));
+			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();
@@ -7461,6 +7593,17 @@ public class CcbMB {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void CabecalhoAnexo1(XWPFTable table, int r, int c, String text) {
+		XWPFRun run;
+		XWPFTableRow tableRow1;
+		tableRow1 = table.getRow(r);
+		run = tableRow1.getCell(c).getParagraphArray(0).createRun();
+		run.setFontSize(8);
+		run.setFontFamily("Calibri");
+		run.setBold(true);
+		run.setText(text);
 	}
 	
 	public StreamedContent geraCciAquisicao() throws IOException{
@@ -8187,7 +8330,6 @@ public class CcbMB {
 	    jc.setVal(justification);
 	}
 	
-	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -8313,7 +8455,6 @@ public class CcbMB {
 	    return null;
 	}
 	
-	
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
@@ -8394,7 +8535,6 @@ public class CcbMB {
 		}
 		return "";
 	}
-
 	
 	public void verificaModeloAntigo() {
 		if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
@@ -8512,6 +8652,156 @@ public class CcbMB {
 
 	}
 	
+	public void calcularSimulador() {
+		this.simulador = new SimulacaoVO();	
+		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
+		simulador.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
+		
+		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+		
+		final BigDecimal custoEmissaoPercentual;
+		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+
+		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+		}
+		
+		if (CommonsUtil.mesmoValor(this.objetoCcb.getTipoPessoaEmitente(), "PF")) {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+		} else {		
+			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+		}
+		
+		simulador.setDataSimulacao(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+		simulador.setTarifaIOFDiario(tarifaIOFDiario);
+		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+		simulador.setValorCredito(this.objetoCcb.getValorCredito());
+		simulador.setTaxaJuros(this.objetoCcb.getTaxaDeJurosMes());
+		simulador.setCarencia(BigInteger.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento())));
+		simulador.setQtdParcelas(BigInteger.valueOf(Long.parseLong(this.objetoCcb.getPrazo())));
+		simulador.setValorImovel(this.objetoCcb.getVlrImovel());
+		simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setTipoCalculo(this.objetoCcb.getSistemaAmortizacao());
+		simulador.setNaoCalcularDFI(false);
+		simulador.setNaoCalcularMIP(false);
+		simulador.setNaoCalcularTxAdm(false);
+		simulador.calcular();
+		
+		BigDecimal jurosAoAno = BigDecimal.ZERO;
+		jurosAoAno = BigDecimal.ONE.add((simulador.getTaxaJuros().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		jurosAoAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosAoAno), 12));
+		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
+		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+		jurosAoAno = jurosAoAno.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.simulador.setTaxaJurosAoAno(jurosAoAno);
+		
+		simulador.setValorCreditoLiberado(simulador.getValorCredito());
+		
+		if (simulador.getCustoEmissaoValor() != null) {
+			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getCustoEmissaoValor()));
+		} 
+		
+		if (simulador.getIOFTotal() != null) {
+			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getIOFTotal()));
+		}
+		
+		if (simulador.getParcelas().size() > 0 ) {
+			BigDecimal cet = BigDecimal.ZERO;
+			BigDecimal cetAno = BigDecimal.ZERO;
+			double cetDouble = 0.0;
+			
+			double[] cash_flows = new double[simulador.getQtdParcelas().intValue() + 1];
+			
+			cash_flows[0] = simulador.getValorCreditoLiberado().negate().doubleValue();
+			
+			for (int i = 1; i <= simulador.getQtdParcelas().intValue(); i++) {
+				BigDecimal calc_value = simulador.getParcelas().get(i).getAmortizacao().add(simulador.getParcelas().get(i).getJuros());
+				cash_flows[i] = calc_value.doubleValue();
+			}
+			
+			
+			int maxGuess = 500;
+			cetDouble = SimuladorMB.irr(cash_flows, maxGuess);
+			
+			if (CommonsUtil.mesmoValor(CommonsUtil.stringValue(cetDouble), "NaN")) {
+				cetDouble = 0;
+			} 
+			
+			cetDouble = cetDouble * 100; 
+			cet = CommonsUtil.bigDecimalValue(cetDouble);	
+			cetAno = BigDecimal.ONE.add((cet.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+			cetAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(cetAno), 12));
+			cetAno = cetAno.subtract(BigDecimal.ONE);
+			cetAno = cetAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+			
+			cetAno = cetAno.setScale(2, BigDecimal.ROUND_HALF_UP);
+			cet = cet.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			this.simulador.setCetAoAno(cetAno);
+			this.simulador.setCetAoMes(cet);
+		}
+		
+		int numeroUltimaParcela = simulador.getParcelas().get(simulador.getParcelas().size() - 1).getNumeroParcela().intValue();
+		Date dataUltimaParcela = DateUtil.adicionarPeriodo(simulador.getDataSimulacao(), numeroUltimaParcela, Calendar.MONTH);
+		
+		this.objetoCcb.setVencimentoUltimaParcelaPagamento(dataUltimaParcela);
+		this.objetoCcb.setVencimentoUltimaParcelaDFI(dataUltimaParcela);
+		this.objetoCcb.setVencimentoUltimaParcelaMIP(dataUltimaParcela);
+		this.objetoCcb.setValorIOF(simulador.getIOFTotal().setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setCustoEmissao(simulador.getCustoEmissaoValor().setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setTaxaDeJurosAno(simulador.getTaxaJurosAoAno());
+		this.objetoCcb.setCetMes(simulador.getCetAoMes());
+		this.objetoCcb.setCetAno(simulador.getCetAoAno());
+		
+		BigDecimal montante = BigDecimal.ZERO;
+		BigDecimal montanteDfi = BigDecimal.ZERO;
+		BigDecimal montanteMip = BigDecimal.ZERO;
+		
+		BigDecimal vlrPrimeiraParcela = BigDecimal.ZERO;
+		BigDecimal vlrPrimeiraDfi = BigDecimal.ZERO;
+		BigDecimal vlrPrimeiraMip = BigDecimal.ZERO;
+		
+		for(SimulacaoDetalheVO parcela : simulador.getParcelas()) {
+			if(!CommonsUtil.semValor(parcela.getAmortizacao().add(parcela.getJuros()))) {
+				if(CommonsUtil.semValor(vlrPrimeiraParcela)) {
+					vlrPrimeiraParcela = parcela.getAmortizacao().add(parcela.getJuros());
+				}
+			}		
+			if(!CommonsUtil.semValor(parcela.getSeguroDFI())) {
+				if(CommonsUtil.semValor(vlrPrimeiraDfi)) {
+					vlrPrimeiraDfi = parcela.getSeguroDFI();
+				}
+			}			
+			if(!CommonsUtil.semValor(parcela.getSeguroDFI())) {
+				if(CommonsUtil.semValor(vlrPrimeiraMip)) {
+					vlrPrimeiraMip = parcela.getSeguroMIP();
+				}
+			}
+			
+			montante = montante.add(parcela.getAmortizacao().add(parcela.getJuros()));
+			montanteDfi = montanteDfi.add(parcela.getSeguroDFI());
+			montanteMip = montanteMip.add(parcela.getSeguroMIP());
+		}
+		
+		this.objetoCcb.setMontanteMIP(montanteMip.setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setMontanteDFI(montanteDfi.setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setMontantePagamento(montante.setScale(2, BigDecimal.ROUND_HALF_UP));
+		
+		this.objetoCcb.setValorMipParcela(vlrPrimeiraMip.setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setValorDfiParcela(vlrPrimeiraDfi.setScale(2, BigDecimal.ROUND_HALF_UP));
+		this.objetoCcb.setValorParcela(vlrPrimeiraParcela.setScale(2, BigDecimal.ROUND_HALF_UP));
+		
+		populateParcelaSeguro();
+		calculaValorLiquidoCredito();
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));
+		
+	}
+	
 	public Date getDataHoje() {
 		TimeZone zone = TimeZone.getDefault(); 
 		Locale locale = new Locale("pt", "BR");  
@@ -8521,7 +8811,6 @@ public class CcbMB {
 		return dataHoje;
 	}
 	
-
 	public String clearFieldsConsultarCcb() {
 		CcbDao ccbDao = new CcbDao();
 		listaCcbs = ccbDao.ConsultaCCBs();
@@ -8533,6 +8822,7 @@ public class CcbMB {
 		loadLovs();	
 		clearPagadorRecebedor();
 		clearDespesas();
+		this.simulador = new SimulacaoVO();
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador = false;
@@ -8762,11 +9052,12 @@ public class CcbMB {
 	    this.fileType = null;
 	    this.fileTypeInt = 0;
 	    
+	    this.simulador = new SimulacaoVO();
+	    
 	    clearPagadorRecebedor();
 		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
-
 	
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -8799,7 +9090,6 @@ public class CcbMB {
 	
 	char[] alphabet = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
-	
 	public static String repeat(String s, int n) {
 			if (s == null) {
 				return null;
@@ -8810,6 +9100,8 @@ public class CcbMB {
 			}
 			return sb.toString();
 		}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public String getNumeroContrato() {
 		return numeroContrato;
