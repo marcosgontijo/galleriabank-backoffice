@@ -314,6 +314,11 @@ public class ResponsavelMB {
 	}
 	
 	public final void populateSelectedResponsavel() {
+		this.idResponsavel = this.selectedResponsavel.getId();
+		this.nomeResponsavel = this.selectedResponsavel.getNome();
+	}
+	
+	public final void populateSelectedResponsavel2() {
 		if(CommonsUtil.mesmoValor(tipoPesquisa, "Responsavel")) {
 			this.idResponsavel = this.selectedResponsavel.getId();
 			this.nomeResponsavel = this.selectedResponsavel.getNome();

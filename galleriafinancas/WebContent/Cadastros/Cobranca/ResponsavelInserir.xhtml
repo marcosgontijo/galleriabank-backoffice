@@ -84,7 +84,7 @@
 					<p:outputLabel for="Responsavel" value="Responsável: " />
 					<p:inputText id="Responsavel" 
 						value="#{responsavelMB.nomeResponsavel}" label="Responsável"
-						
+						readonly="TRUE"
 						style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;" />
 					
 					<p:commandButton id="botaoResponsavel"
@@ -98,7 +98,7 @@
 					<p:outputLabel for="ResponsavelOriginal" value="Responsável Original: " />
 					<p:inputText id="ResponsavelOriginal"
 						value="#{responsavelMB.nomeResponsavelOriginal}" 
-						
+						readonly="TRUE"
 						style="FONT-SIZE: 10pt;width:300px;margin-left: 42px;" />
 					<p:commandButton id="botaoResponsavelOriginal" ajax="true"
 						action="#{responsavelMB.pesquisaResponsavelOriginal}"
