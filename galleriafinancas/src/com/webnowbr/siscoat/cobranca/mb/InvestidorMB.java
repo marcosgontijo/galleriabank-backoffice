@@ -4392,6 +4392,16 @@ public class InvestidorMB {
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
+	
+	public void relatorioDebeturesEmitidas() {
+		System.out.println("Debentures Emitidas Size: Consultando...");
+		clearTitulosQuitadosPDFParams();
+	
+		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas();
+		
+		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
+	}
 
 
 	public void clearTitulosQuitadosPDFParams() {
@@ -4984,7 +4994,7 @@ public class InvestidorMB {
 		populateSelectedPagador();
 
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		this.listPagadores = prDao.findAll();
+// TODO		this.listPagadores = prDao.findAll();
 
 		loadContratos();
 

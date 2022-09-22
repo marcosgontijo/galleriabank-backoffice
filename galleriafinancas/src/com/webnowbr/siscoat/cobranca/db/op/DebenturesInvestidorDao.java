@@ -780,6 +780,730 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 			}
 		});
 	}
+	
+	private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_1 = "select iddebenture, idcontrato from ("
+			+ "select d.id iddebenture, c.id idcontrato from cobranca.DebenturesInvestidor d "
+			+ "inner join cobranca.contratocobranca c on d.contrato = c.id ";
+			
+		private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_2 = "select 0 iddebenture, ct.id idcontrato from cobranca.contratocobranca ct  "
+			+ "inner join cobranca.responsavel res on ct.responsavel = res.id  "
+			+ "where ct.status = 'Aprovado' "
+			+ "and ct.pagador in (15, 34,14, 182, 417, 803) ";
+			
+	@SuppressWarnings("unchecked")
+	public List<DebenturesInvestidor> getRelatorioDebenturesEmitidas() {
+		return (List<DebenturesInvestidor>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<DebenturesInvestidor> objects = new ArrayList<DebenturesInvestidor>();
+				
+				String query_QUERY_DEBENTURES_EMITIDAS = "";
+				String query_INVESTIDORES_DEBENTURES = null;
+				String query_INVESTIDORES_CONTRATO = "";
+				String query_IDs_INVESTIDORES = null;
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {				
+
+					query_QUERY_DEBENTURES_EMITIDAS =  QUERY_DEBENTURES_EMITIDAS_PART_1 + " union all " + QUERY_DEBENTURES_EMITIDAS_PART_2;
+										
+					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + " ) debentures ";	
+					
+					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + "order by idcontrato desc";	
+					
+					connection = getConnection();
+
+					ps = connection.prepareStatement(query_QUERY_DEBENTURES_EMITIDAS);
+					
+					rs = ps.executeQuery();
+					
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					ContratoCobranca c = new ContratoCobranca();
+					DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
+					DebenturesInvestidor db = new DebenturesInvestidor();
+					DebenturesInvestidor debenturesCompleta = new DebenturesInvestidor();
+
+					while (rs.next()) {
+						db = new DebenturesInvestidor();
+						debenturesCompleta = new DebenturesInvestidor();
+						c = new ContratoCobranca();
+
+						c = cDao.findById(rs.getLong(2));
+						
+						// se tem cadastro de debentures (pagador diferente de Galleria)
+						if (rs.getLong(1) > 0) {
+							db = dbDao.findById(rs.getLong(1));
+							
+							debenturesCompleta.setDataDebentures(db.getDataDebentures());
+							debenturesCompleta.setRecebedor(db.getRecebedor());
+							//debenturesCompleta.setValorDebenture(BigDecimal.valueOf(db.getQtdeDebentures() * 1000).setScale(2, BigDecimal.ROUND_UP));
+							//debenturesCompleta.setPrazo(c.getQtdeParcelas());
+							
+							debenturesCompleta.setContrato(c);
+							
+							if (c.getRecebedor() != null) {
+								if (c.getRecebedor().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
+									//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
+									
+									if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor1())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor1().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor1().get(
+													c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor1().get(
+														c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getDataVencimento());
+									}	
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
+										
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor2() != null) {
+								if (c.getRecebedor2().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor2());
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
+									
+									if(!CommonsUtil.semValor(c.getVlrInvestidor2())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor2());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor2())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor2().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor2());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor2().get(
+													c.getListContratoCobrancaParcelasInvestidor2().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor2().get(
+														c.getListContratoCobrancaParcelasInvestidor2().size() - 1).getDataVencimento());
+									}	
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor2()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor3() != null) {
+								if (c.getRecebedor3().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor3());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor3())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor3());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor3());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor3())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor3().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor3());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor3().get(
+													c.getListContratoCobrancaParcelasInvestidor3().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor3().get(
+														c.getListContratoCobrancaParcelasInvestidor3().size() - 1).getDataVencimento());
+									}	
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor3()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor4() != null) {
+								if (c.getRecebedor4().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor4());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor4())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor4());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor4());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor4())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor4().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor4());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor4().get(
+													c.getListContratoCobrancaParcelasInvestidor4().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor4().get(
+														c.getListContratoCobrancaParcelasInvestidor4().size() - 1).getDataVencimento());
+									}	
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor4()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor5() != null) {
+								if (c.getRecebedor5().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor5());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor5())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor5());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor5());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor5())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor5().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor5());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor5().get(
+													c.getListContratoCobrancaParcelasInvestidor5().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor5().get(
+														c.getListContratoCobrancaParcelasInvestidor5().size() - 1).getDataVencimento());
+									}
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor5()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor6() != null) {
+								if (c.getRecebedor6().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor6());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor6())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor6());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor6());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor6())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor6().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor6());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor6().get(
+													c.getListContratoCobrancaParcelasInvestidor6().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor6().get(
+														c.getListContratoCobrancaParcelasInvestidor6().size() - 1).getDataVencimento());
+									}
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor6()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor7() != null) {
+								if (c.getRecebedor7().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor7());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor7())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor7());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor7());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor7())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor7().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor7());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor7().get(
+													c.getListContratoCobrancaParcelasInvestidor7().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor7().get(
+														c.getListContratoCobrancaParcelasInvestidor7().size() - 1).getDataVencimento());
+									}		
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor7()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor8() != null) {
+								if (c.getRecebedor8().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor8());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor8())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor8());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor8());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor8())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor8().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor8());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor8().get(
+													c.getListContratoCobrancaParcelasInvestidor8().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor8().get(
+														c.getListContratoCobrancaParcelasInvestidor8().size() - 1).getDataVencimento());
+									}		
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor8()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor9() != null) {
+								if (c.getRecebedor9().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor9());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor9())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor9());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor9());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor9())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor9().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor9());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor9().get(
+													c.getListContratoCobrancaParcelasInvestidor9().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor9().get(
+														c.getListContratoCobrancaParcelasInvestidor9().size() - 1).getDataVencimento());
+									}	
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor9()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+							
+							if (c.getRecebedor10() != null) {
+								if (c.getRecebedor10().getId() == debenturesCompleta.getRecebedor().getId()) {
+									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor10());
+
+									if(!CommonsUtil.semValor(c.getVlrInvestidor10())) {
+										debenturesCompleta.setValorDebenture(c.getVlrInvestidor10());
+									} else {
+										debenturesCompleta.setValorDebenture(c.getVlrRecebedor10());
+									}
+									
+									if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor10())) {
+										debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor10().size());
+									} else {
+										debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor10());
+									}
+									
+									debenturesCompleta.setParcelaFinal(
+											c.getListContratoCobrancaParcelasInvestidor10().get(
+													c.getListContratoCobrancaParcelasInvestidor10().size() - 1).getParcelaMensalBaixa());
+									
+									if (c.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
+										debenturesCompleta.setDataUltimaParcela(
+												c.getListContratoCobrancaParcelasInvestidor10().get(
+														c.getListContratoCobrancaParcelasInvestidor10().size() - 1).getDataVencimento());
+									}		
+									
+									// Verifica se estão quitadas todas as parcelas
+									boolean quitado = true;								
+									for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor10()) {
+										if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+											debenturesCompleta.setParcelaMensal(
+													parcelas.getParcelaMensalBaixa());
+										}
+										
+										if(parcelas.isBaixado()) {
+											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+										} else {
+											quitado = false;
+											break;
+										}
+									}
+									if (quitado) {
+										debenturesCompleta.setQuitado("Sim");
+									} else {
+										debenturesCompleta.setQuitado("Não");
+									}	
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+									}
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+									}
+								}
+							}
+						} else {	
+							// se pagador for galleria
+							debenturesCompleta.setDataDebentures(c.getDataInicio());
+							
+							if (c.getRecebedor() != null) {
+								debenturesCompleta.setContrato(c);
+								debenturesCompleta.setRecebedor(c.getRecebedor());
+								debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
+								//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
+								
+								if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
+									debenturesCompleta.setValorDebenture(c.getVlrInvestidor1());
+								} else if(!CommonsUtil.semValor(c.getVlrRecebedor())) {
+									debenturesCompleta.setValorDebenture(c.getVlrRecebedor());
+								} else if(!CommonsUtil.semValor(c.getValorCCB())) {
+									debenturesCompleta.setValorDebenture(c.getValorCCB());
+								}
+								
+								// ADICIONAR ISSO
+								if(CommonsUtil.semValor(c.getQtdeParcelasInvestidor1())) {
+									debenturesCompleta.setPrazo(c.getListContratoCobrancaParcelasInvestidor1().size());
+								} else {
+									debenturesCompleta.setPrazo(c.getQtdeParcelasInvestidor1());
+								}
+								
+								debenturesCompleta.setParcelaFinal(
+										c.getListContratoCobrancaParcelasInvestidor1().get(
+												c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getParcelaMensalBaixa());
+								
+								if (c.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
+									debenturesCompleta.setDataUltimaParcela(
+											c.getListContratoCobrancaParcelasInvestidor1().get(
+													c.getListContratoCobrancaParcelasInvestidor1().size() - 1).getDataVencimento());
+								}	
+								
+								// Verifica se estão quitadas todas as parcelas
+								boolean quitado = true;								
+								for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
+									
+									if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
+										debenturesCompleta.setParcelaMensal(
+												parcelas.getParcelaMensalBaixa());
+									}
+									
+									if(parcelas.isBaixado()) {
+										debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
+										debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+									} else {
+										quitado = false;
+										break;
+									}
+								}
+								if (quitado) {
+									debenturesCompleta.setQuitado("Sim");
+								} else {
+									debenturesCompleta.setQuitado("Não");
+								}					
+								
+								if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
+									debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
+								}
+								
+								if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
+									debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
+								}
+								
+							}							
+						}
+						objects.add(debenturesCompleta);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
 
 	private static final String QUERY_TITULOS_QUITADOS = "select d.id from cobranca.DebenturesInvestidor d "
 			+ "where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp ";
