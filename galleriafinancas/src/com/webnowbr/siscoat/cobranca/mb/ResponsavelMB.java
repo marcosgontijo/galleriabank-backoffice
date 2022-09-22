@@ -119,6 +119,9 @@ public class ResponsavelMB {
 		senha = "";
 		this.selectedResponsaveis = new Responsavel[0];
 		
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsaveis = rDao.findAll();
+		
 		this.tipoPessoaIsFisica = true;
 
 		return "ResponsavelInserir.xhtml";
@@ -294,31 +297,32 @@ public class ResponsavelMB {
 	}
 	
 	public void pesquisaResponsavel() {
-		ResponsavelDao rDao = new ResponsavelDao();
-		this.listResponsaveis = rDao.findAll();		
+		//ResponsavelDao rDao = new ResponsavelDao();
+		//this.listResponsaveis = rDao.findAll();		
 		this.tipoPesquisa = "Responsavel";
 	
-		this.nomeResponsavel = "";
-		this.idResponsavel = 0;
-		selectedResponsavel = new Responsavel();
+		//this.nomeResponsavel = "";
+		//this.idResponsavel = 0;
+		//selectedResponsavel = new Responsavel();
 	}
 	
 	public void pesquisaResponsavelOriginal() {
-		ResponsavelDao rDao = new ResponsavelDao();
-		this.listResponsaveis = rDao.findAll();		
+		//ResponsavelDao rDao = new ResponsavelDao();
+		//this.listResponsaveis = rDao.findAll();		
 		this.tipoPesquisa = "Original";
 	
-		this.nomeResponsavelOriginal = "";
-		this.idResponsavelOriginal = 0;
-		selectedResponsavel = new Responsavel();
+		//this.nomeResponsavelOriginal = "";
+		//this.idResponsavelOriginal = 0;
+		//selectedResponsavel = new Responsavel();
 	}
 	
-	public final void populateSelectedResponsavel() {
+	
+	public final void populateSelectedResponsavel2() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();
 	}
 	
-	public final void populateSelectedResponsavel2() {
+	public final void populateSelectedResponsavel() {
 		if(CommonsUtil.mesmoValor(tipoPesquisa, "Responsavel")) {
 			this.idResponsavel = this.selectedResponsavel.getId();
 			this.nomeResponsavel = this.selectedResponsavel.getNome();
@@ -331,6 +335,8 @@ public class ResponsavelMB {
 	public void clearResponsavel() {
 		this.idResponsavel = 0;
 		this.nomeResponsavel = null;
+		this.nomeResponsavelOriginal = "";
+		this.idResponsavelOriginal = 0;
 		this.selectedResponsavel = new Responsavel();
 	}
 	
