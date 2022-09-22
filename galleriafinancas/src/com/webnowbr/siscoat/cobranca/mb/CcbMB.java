@@ -1,12 +1,19 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.awt.image.RenderedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,6 +55,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.hibernate.JDBCException;
 import org.jasypt.encryption.BigDecimalEncryptor;
+import org.json.JSONObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -7284,6 +7292,7 @@ public class CcbMB {
 					}
 					
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
+					this.objetoCcb.setTipoParticipanteEmitente("DEVEDOR FIDUCIANTE");
 				}
 				run3 = tableRow1.getCell(0).getParagraphArray(0).createRun();	
 				run3.setFontSize(12);
@@ -7358,6 +7367,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
 								text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
 								
+								text = trocaValoresXWPF(text, r, "tipoParticipanteEmitente", this.objetoCcb.getTipoParticipanteEmitente());	 		
 								text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	 		
 								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
@@ -7559,7 +7569,7 @@ public class CcbMB {
 			}
 			
 			table = document.getTableArray(2);			
-			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), "dd/MM/yyyy"));
+			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
 			CabecalhoAnexo1(table, 2, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorCredito(), "R$ "));
 			CabecalhoAnexo1(table, 2, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosMes(),"") + "%");
@@ -7578,7 +7588,7 @@ public class CcbMB {
 			CabecalhoAnexo1(table, 6, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorLiquidoCredito(), "R$ "));
 			CabecalhoAnexo1(table, 6, 4, CommonsUtil.stringValue(
 					CommonsUtil.formataValorInteiro(
-							DateUtil.getDaysBetweenDates(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento(), this.objetoCcb.getVencimentoUltimaParcelaPagamento()))));
+							DateUtil.getDaysBetweenDates(this.objetoCcb.getDataDeEmissao(), this.objetoCcb.getVencimentoUltimaParcelaPagamento()))));
 			CabecalhoAnexo1(table, 6, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteDFI(), "R$ "));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -8674,7 +8684,7 @@ public class CcbMB {
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
 		
-		simulador.setDataSimulacao(this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+		simulador.setDataSimulacao(this.objetoCcb.getDataDeEmissao());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
 		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
@@ -8765,10 +8775,14 @@ public class CcbMB {
 		BigDecimal vlrPrimeiraDfi = BigDecimal.ZERO;
 		BigDecimal vlrPrimeiraMip = BigDecimal.ZERO;
 		
+		int numeroPrimeiraParcela = 0;
+		Date dataPrimeiraParcela;
+		
 		for(SimulacaoDetalheVO parcela : simulador.getParcelas()) {
 			if(!CommonsUtil.semValor(parcela.getAmortizacao().add(parcela.getJuros()))) {
 				if(CommonsUtil.semValor(vlrPrimeiraParcela)) {
 					vlrPrimeiraParcela = parcela.getAmortizacao().add(parcela.getJuros());
+					numeroPrimeiraParcela = parcela.getNumeroParcela().intValue();
 				}
 			}		
 			if(!CommonsUtil.semValor(parcela.getSeguroDFI())) {
@@ -8781,11 +8795,16 @@ public class CcbMB {
 					vlrPrimeiraMip = parcela.getSeguroMIP();
 				}
 			}
-			
+
 			montante = montante.add(parcela.getAmortizacao().add(parcela.getJuros()));
 			montanteDfi = montanteDfi.add(parcela.getSeguroDFI());
 			montanteMip = montanteMip.add(parcela.getSeguroMIP());
 		}
+		
+		dataPrimeiraParcela = DateUtil.adicionarPeriodo(simulador.getDataSimulacao(), numeroPrimeiraParcela, Calendar.MONTH);
+		this.objetoCcb.setVencimentoPrimeiraParcelaPagamento(dataPrimeiraParcela);
+		this.objetoCcb.setVencimentoPrimeiraParcelaDFI(dataPrimeiraParcela);
+		this.objetoCcb.setVencimentoPrimeiraParcelaMIP(dataPrimeiraParcela);
 		
 		this.objetoCcb.setMontanteMIP(montanteMip.setScale(2, BigDecimal.ROUND_HALF_UP));
 		this.objetoCcb.setMontanteDFI(montanteDfi.setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -8798,8 +8817,7 @@ public class CcbMB {
 		populateParcelaSeguro();
 		calculaValorLiquidoCredito();
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));
-		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));	
 	}
 	
 	public Date getDataHoje() {
@@ -9062,6 +9080,113 @@ public class CcbMB {
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
+	}
+	
+	public void getEnderecoByViaNet() {
+		try {
+			String inputCep = this.participanteSelecionado.getPessoa().getCep().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+
+				this.participanteSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+				this.participanteSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
+				this.participanteSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
+				this.participanteSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getEnderecoByViaNetImovelCobranca() {
+		try {
+			String inputCep = this.objetoCcb.getCepImovel().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+				this.objetoCcb.setLogradouroRuaImovel(myResponse.get("logradouro").toString());
+				this.objetoCcb.setBairroImovel(myResponse.get("bairro").toString());
+				this.objetoCcb.setCidadeImovel(myResponse.get("localidade").toString());
+				this.objetoCcb.setUfImovel(myResponse.get("uf").toString());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static String RomanNumerals(int Int) {

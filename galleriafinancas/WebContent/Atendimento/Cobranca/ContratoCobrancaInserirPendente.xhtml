@@ -3791,7 +3791,6 @@
 					</h:panelGroup>
 				</h:panelGrid>
 
-
 				<p:dataView var="socio" id="CheckListDocumentosSocios"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.listSocios}"
 					paginator="false"
@@ -4018,7 +4017,7 @@
 				</p:panel>
 			</shiro:hasAnyRoles>
 		
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" >						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;"  >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -4072,7 +4071,7 @@
 			</p:panel>	
 		
 			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
-				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >						
+				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo and contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" >						
 					<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
