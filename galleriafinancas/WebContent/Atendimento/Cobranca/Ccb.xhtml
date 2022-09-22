@@ -1196,7 +1196,11 @@
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText id="cepParticipante"
 												value="#{ccbMB.participanteSelecionado.pessoa.cep}"
-												label="Contrato" />
+												label="Contrato" mask="99999-999" >
+												<p:ajax event="blur"
+													update="cidadeParticipante logradouroParticipante ufParticipante"
+													listener="#{ccbMB.getEnderecoByViaNet()}"/>									
+											</p:inputText>
 
 											<p:outputLabel for="emailParticipante" value="Email: "
 												styleClass="labelBold"
@@ -2361,8 +2365,13 @@
 									<p:outputLabel for="cepImovel" value="CEP: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText id="cepImovel" value="#{ccbMB.objetoCcb.cepImovel}"
-										label="Contrato" />
+									<p:inputText id="cepImovel"
+										value="#{ccbMB.objetoCcb.cepImovel}"
+										label="Contrato" mask="99999-999" >
+										<p:ajax event="blur"
+											update="bairroImovel LogradouroRua ufImovel"
+											listener="#{ccbMB.getEnderecoByViaNetImovelCobranca()}"/>									
+									</p:inputText>
 										
 									<p:outputLabel for="precoVendaCompra" value="preco Venda Compra:  "
 										styleClass="labelBold"

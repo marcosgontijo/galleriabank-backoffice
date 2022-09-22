@@ -29,6 +29,7 @@ public class CcbContrato implements Serializable{
 	private String ufEmitente;
 	private String cepEmitente;
 	private String TipoPessoaEmitente;
+	private String tipoParticipanteEmitente;
 	
 	private List<CcbParticipantes> listaParticipantes;
 
@@ -1066,7 +1067,13 @@ public class CcbContrato implements Serializable{
 	public void setVlrImovel(BigDecimal vlrImovel) {
 		this.vlrImovel = vlrImovel;
 	}
-	
-	
 
+	public String getTipoParticipanteEmitente() {
+		return tipoParticipanteEmitente;
+	}
+
+	public void setTipoParticipanteEmitente(String tipoParticipanteEmitente) {
+		this.tipoParticipanteEmitente = tipoParticipanteEmitente;
+	}
+	
 }

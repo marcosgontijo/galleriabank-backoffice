@@ -8019,6 +8019,9 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
 		
+		filesJuridico = new ArrayList<FileUploaded>();
+		filesJuridico = listaArquivosJuridico();
+		
 		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
 			
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusGeracaoPAJU.xhtml";
