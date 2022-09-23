@@ -798,9 +798,6 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 				List<DebenturesInvestidor> objects = new ArrayList<DebenturesInvestidor>();
 				
 				String query_QUERY_DEBENTURES_EMITIDAS = "";
-				String query_INVESTIDORES_DEBENTURES = null;
-				String query_INVESTIDORES_CONTRATO = "";
-				String query_IDs_INVESTIDORES = null;
 
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -808,7 +805,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 				
 				try {				
 
-					query_QUERY_DEBENTURES_EMITIDAS =  QUERY_DEBENTURES_EMITIDAS_PART_1 + " union all " + QUERY_DEBENTURES_EMITIDAS_PART_2;
+					query_QUERY_DEBENTURES_EMITIDAS =  QUERY_DEBENTURES_REL_EMITIDAS_PART_1 + " union all " + QUERY_DEBENTURES_REL_EMITIDAS_PART_2;
 										
 					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + " ) debentures ";	
 					
@@ -846,6 +843,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor() != null) {
 								if (c.getRecebedor().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido1()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
 									//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
 									
@@ -883,8 +885,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -906,6 +911,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor2() != null) {
 								if (c.getRecebedor2().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido2()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor2());
 									debenturesCompleta.setValorDebenture(c.getVlrInvestidor2());
 									
@@ -942,8 +952,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -965,6 +978,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor3() != null) {
 								if (c.getRecebedor3().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido3()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor3());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor3())) {
@@ -1000,8 +1018,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1023,6 +1044,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor4() != null) {
 								if (c.getRecebedor4().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido4()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor4());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor4())) {
@@ -1058,8 +1084,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1081,6 +1110,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor5() != null) {
 								if (c.getRecebedor5().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido5()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor5());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor5())) {
@@ -1116,8 +1150,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1139,6 +1176,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor6() != null) {
 								if (c.getRecebedor6().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido6()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor6());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor6())) {
@@ -1174,8 +1216,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1197,6 +1242,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor7() != null) {
 								if (c.getRecebedor7().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido7()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor7());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor7())) {
@@ -1232,8 +1282,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1255,6 +1308,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor8() != null) {
 								if (c.getRecebedor8().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido8()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor8());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor8())) {
@@ -1290,8 +1348,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1313,6 +1374,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor9() != null) {
 								if (c.getRecebedor9().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido9()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
+									
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor9());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor9())) {
@@ -1348,8 +1415,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
 											break;
 										}
 									}
@@ -1371,6 +1441,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 							
 							if (c.getRecebedor10() != null) {
 								if (c.getRecebedor10().getId() == debenturesCompleta.getRecebedor().getId()) {
+									if (c.isRecebedorGarantido10()) {
+										debenturesCompleta.setGarantido("Sim");
+									} else {
+										debenturesCompleta.setGarantido("Não");
+									}
+									
 									debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor10());
 
 									if(!CommonsUtil.semValor(c.getVlrInvestidor10())) {
@@ -1406,8 +1482,13 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										if(parcelas.isBaixado()) {
 											debenturesCompleta.setDataUltimaParcelaPaga(parcelas.getDataVencimento());//
 											debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
+											
+											debenturesCompleta.setDataQuitacao(parcelas.getDataBaixa());
 										} else {
 											quitado = false;
+											
+											debenturesCompleta.setDataQuitacao(null);
+											
 											break;
 										}
 									}
@@ -1434,6 +1515,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								debenturesCompleta.setContrato(c);
 								debenturesCompleta.setRecebedor(c.getRecebedor());
 								debenturesCompleta.setTaxa(c.getTaxaRemuneracaoInvestidor1());
+								
+								if (c.isRecebedorGarantido1()) {
+									debenturesCompleta.setGarantido("Sim");
+								} else {
+									debenturesCompleta.setGarantido("Não");
+								}
 								//debenturesCompleta.setParcelaMensal(c.getVlrRecebedor());	
 								
 								if(!CommonsUtil.semValor(c.getVlrInvestidor1())) {
@@ -1494,6 +1581,20 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								
 							}							
 						}
+						
+						BigDecimal valorFace = new BigDecimal(db.getQtdeDebentures()).multiply(new BigDecimal(1000.00));
+						debenturesCompleta.setValorFace(valorFace.setScale(2));
+						
+						debenturesCompleta.setMesesCarencia(c.getMesesCarencia());
+						
+						if (debenturesCompleta.getMesesCarencia() > 0) {
+							debenturesCompleta.setPagamentoMensal("Sim");
+						} else {
+							debenturesCompleta.setPagamentoMensal("Não");
+						}
+						
+						debenturesCompleta.setTipoCalculo(c.getTipoCalculo());
+						
 						objects.add(debenturesCompleta);
 					}
 

@@ -43,6 +43,16 @@ public class DebenturesInvestidor implements Serializable {
 	private BigDecimal valorUltimaParcelaPaga;
 	private Date dataUltimaParcelaPaga;
 	
+	
+	private int mesesCarencia;
+	
+	private String pagamentoMensal;
+	private Date dataQuitacao;
+	
+	private String tipoCalculo;
+	
+	private String garantido;
+	
 	public DebenturesInvestidor(){
 	}
 
@@ -212,5 +222,45 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setDataUltimaParcelaPaga(Date dataUltimaParcelaPaga) {
 		this.dataUltimaParcelaPaga = dataUltimaParcelaPaga;
+	}
+
+	public int getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(int mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public String getPagamentoMensal() {
+		return pagamentoMensal;
+	}
+
+	public void setPagamentoMensal(String pagamentoMensal) {
+		this.pagamentoMensal = pagamentoMensal;
+	}
+
+	public Date getDataQuitacao() {
+		return dataQuitacao;
+	}
+
+	public void setDataQuitacao(Date dataQuitacao) {
+		this.dataQuitacao = dataQuitacao;
+	}
+
+	public String getTipoCalculo() {
+		return tipoCalculo;
+	}
+
+	public void setTipoCalculo(String tipoCalculo) {
+		this.tipoCalculo = tipoCalculo;
+	}
+
+	public String getGarantido() {
+		return garantido;
+	}
+
+	public void setGarantido(String garantido) {
+		this.garantido = garantido;
 	}
 }

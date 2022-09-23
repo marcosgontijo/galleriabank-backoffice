@@ -3261,6 +3261,235 @@ public class InvestidorMB {
 
 		this.debenturesEmitidasXLSGerado = true;
 	}
+	
+	public void geraXLSRelatorioDebenturesEmitidas() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomeContrato = "Relatório Debetures Emitidas.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Debenturista");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("Emissão");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Prazo");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Taxa Remuneração");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Carência");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Mensal");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Valor Parcela Mensal");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Data Última Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
+		cell.setCellValue("Valor Última Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(10);
+		cell.setCellValue("Quitado");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(11);
+		cell.setCellValue("Data Quitação");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(12);
+		cell.setCellValue("Tipo de Cálculo");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(13);
+		cell.setCellValue("Garantido");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (DebenturesInvestidor record : this.listDebenturesInvestidor) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Debenturista
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getRecebedor().getNome());
+			
+			// Emissao
+			cell = row.createCell(1);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataDebentures());
+			
+			// Prazo
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPrazo());
+			
+			// Valor Face
+			cell = row.createCell(3);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorDebenture() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorFace()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Taxa
+			cell = row.createCell(4);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getTaxa() != null) {
+				cell.setCellValue(((BigDecimal) record.getTaxa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Meses Carência
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getMesesCarencia());
+			
+			// Mensal
+			cell = row.createCell(6);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagamentoMensal());
+			
+			// Valor Parcela Mensal
+			cell = row.createCell(7);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getParcelaMensal() != null) {
+				cell.setCellValue(record.getParcelaMensal().doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}			
+			
+			// Data Última Parcela
+			cell = row.createCell(8);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataUltimaParcela());
+			
+			//Valor Última Parcela
+			cell = row.createCell(9);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getParcelaFinal() != null) {
+				cell.setCellValue(record.getParcelaFinal().doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Quitado
+			cell = row.createCell(10);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getQuitado());
+			
+			// Data Quitação
+			cell = row.createCell(11);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataUltimaParcelaPaga());			
+			
+			// Tipo de Cálculo
+			cell = row.createCell(12);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getTipoCalculo());
+						
+			// Garantido
+			cell = row.createCell(13);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getGarantido());
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.debenturesEmitidasXLSGerado = true;
+	}
 
 	public StreamedContent geraPDFInformeRendimentos() {
 		/*
@@ -4381,6 +4610,23 @@ public class InvestidorMB {
 				listRecebedoresSeleciodados);
 
 		return "/Atendimento/Cobranca/DebenturesEmitidasConsultar.xhtml";
+	}
+	
+	public final String clearFieldsRelatorioDebeturesEmitidas() {
+		this.dataInicio = gerarDataHoje();
+		this.dataFim = gerarDataHoje();
+
+		clearTitulosQuitadosPDFParams();
+		
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		this.listRecebedores = pagadorRecebedorDao.findAll();
+		this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
+		
+		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
+				listRecebedores,
+				listRecebedoresSeleciodados);
+
+		return "/Atendimento/Cobranca/RelatorioDebenturesEmitidas.xhtml";
 	}
 	
 	public void consultaDebeturesEmitidas() {
