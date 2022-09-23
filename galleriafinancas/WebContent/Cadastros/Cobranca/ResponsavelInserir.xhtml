@@ -96,13 +96,13 @@
 				</h:panelGrid>
 				
 				<h:panelGrid columns="3">
-					<p:outputLabel for="ResponsavelOriginal" value="Responsável Original: " />
-					<p:inputText id="ResponsavelOriginal"
-						value="#{responsavelMB.nomeResponsavelOriginal}" 
+					<p:outputLabel for="ResponsavelCaptador" value="Responsável Captador: " />
+					<p:inputText id="ResponsavelCaptador"
+						value="#{responsavelMB.nomeResponsavelCaptador}" 
 						readonly="TRUE"
-						style="FONT-SIZE: 10pt;width:300px;margin-left: 42px;" />
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 35px;" />
 					<p:commandButton id="botaoResponsavelOriginal" ajax="true"
-						action="#{responsavelMB.pesquisaResponsavelOriginal}"
+						action="#{responsavelMB.pesquisaResponsavelCaptador}"
 						icon="ui-icon ui-icon-circle-zoomin"
 						immediate="true"
 						oncomplete="PF('responsavelDialog').show();"
@@ -307,12 +307,12 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{responsavelMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelOriginal"
+							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{responsavelMB.clearResponsavel}"
+							action="#{responsavelMB.clearResponsavelDialog}"
 							image="ui-icon ui-icon-trash"
-							update=":form:Responsavel responsavelDialogdlg"
+							update=":form:Responsavel :form:ResponsavelCaptador responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />

@@ -589,8 +589,6 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					ResponsavelDao responsavelDao = new ResponsavelDao();
 					Responsavel responsavel = new Responsavel();
 					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-					
-					
 
 					while (rs.next()) {
 						dashboard = new Dashboard();
@@ -601,7 +599,10 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 							dashboard.setNomeResponsavel(rs.getString(2));
 						}
 						
-						responsavel = responsavelDao.findById(rs.getLong(1));
+						if(!CommonsUtil.semValor(rs.getLong(1))) {
+							responsavel = responsavelDao.findById(rs.getLong(1));
+						}
+							
 						dashboard.setResponsavel(responsavel);
 						
 						if(!consultarGerente) {
@@ -609,6 +610,12 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 								dashboard.setGerenteResponsavel(responsavel.getDonoResponsavel().getNome());
 							}
 						}
+						
+						if (!CommonsUtil.semValor(responsavel.getResponsavelCaptador())) {
+							dashboard.setCaptadorResponsavel(responsavel.getResponsavelCaptador().getNome());
+						}
+						
+						dashboard.setDataCadastroResponsavel(responsavel.getDataCadastro());
 
 						dashboard.setContratosCadastrados(rs.getInt("contratosCadastrados"));
 						dashboard.setValorContratosCadastrados(rs.getBigDecimal("valorContratosCadastrados"));
@@ -1365,11 +1372,24 @@ public class DashboardDao extends HibernateDao <Dashboard,Long> {
 					while (rs.next()) {
 						dashboard = new Dashboard();
 						dashboard.setNomeResponsavel(rs.getString(2));
-
-						responsavel = responsavelDao.findById(rs.getLong(1));
+						
+						if(!CommonsUtil.semValor(rs.getLong(1))) {
+							responsavel = responsavelDao.findById(rs.getLong(1));
+						}
+							
 						dashboard.setResponsavel(responsavel);
-
+						
+						if (responsavel.getDonoResponsavel() != null) {
+							dashboard.setGerenteResponsavel(responsavel.getDonoResponsavel().getNome());
+						}
+					
 						dashboard.setGerenteResponsavel(responsavelGerente.getNome());
+						
+						if (!CommonsUtil.semValor(responsavel.getResponsavelCaptador())) {
+							dashboard.setCaptadorResponsavel(responsavel.getResponsavelCaptador().getNome());
+						}
+						
+						dashboard.setDataCadastroResponsavel(responsavel.getDataCadastro());
 
 						dashboard.setContratosCadastrados(rs.getInt("contratosCadastrados"));
 						dashboard.setValorContratosCadastrados(rs.getBigDecimal("valorContratosCadastrados"));

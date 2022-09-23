@@ -30,6 +30,8 @@ public class Dashboard implements Serializable {
 	private Responsavel responsavel;
 	private String nomeResponsavel;
 	private String gerenteResponsavel;
+	private String captadorResponsavel;
+	private Date dataCadastroResponsavel;
 	private String origemLead;
 	private String motivoReprova;
 	private String numeroContrato;
@@ -521,7 +523,22 @@ public class Dashboard implements Serializable {
 
 	public void setNumeroContrato(String numeroContrato) {
 		this.numeroContrato = numeroContrato;
+	}
+
+	public String getCaptadorResponsavel() {
+		return captadorResponsavel;
+	}
+
+	public void setCaptadorResponsavel(String captadorResponsavel) {
+		this.captadorResponsavel = captadorResponsavel;
+	}
+
+	public Date getDataCadastroResponsavel() {
+		return dataCadastroResponsavel;
+	}
+
+	public void setDataCadastroResponsavel(Date dataCadastroResponsavel) {
+		this.dataCadastroResponsavel = dataCadastroResponsavel;
 	}	
-	
-	
+
 }

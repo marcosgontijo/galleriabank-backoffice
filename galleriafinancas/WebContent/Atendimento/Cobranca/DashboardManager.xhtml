@@ -87,6 +87,20 @@
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
 					
+					<p:column style="text-align: center;" headerText="Captador" rendered="#{!dashboardMB.consultaLead}"
+						filterBy="#{dashContratos.captadorResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.captadorResponsavel}">
+						<h:outputText value="#{dashContratos.captadorResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Data Cadastro" rendered="#{!dashboardMB.consultaLead}"
+						filterBy="#{dashContratos.dataCadastroResponsavel}" filterMatchMode="contains" 
+						sortBy="#{dashContratos.dataCadastroResponsavel}">
+			           <p:outputLabel value="#{dashContratos.dataCadastroResponsavel}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+			        </p:column>
+					
 					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMB.consultaLead}"
 						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"
 						sortBy="#{dashContratos.origemLead}">
