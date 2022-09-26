@@ -1155,6 +1155,30 @@ public class CcbMB {
 		}
 	}
 	
+	public void populateDadosEmitente() {
+		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {																	
+			if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+				if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+					this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+				}
+				if(CommonsUtil.semValor(cpfEmitente)) {
+					if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+						this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+					} else {
+						this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+					}
+				}
+				if(CommonsUtil.semValor(this.objetoCcb.getTipoPessoaEmitente())) {
+					if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+						this.objetoCcb.setTipoPessoaEmitente("PF");
+					} else {
+						this.objetoCcb.setTipoPessoaEmitente("PJ");
+					}
+				}
+			}
+		}
+	}
+	
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
 		PagadorRecebedor pagadorRecebedor = null;
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -8663,6 +8687,7 @@ public class CcbMB {
 	}
 	
 	public void calcularSimulador() {
+		populateDadosEmitente();
 		this.simulador = new SimulacaoVO();	
 		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
 		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));

@@ -2110,6 +2110,16 @@
 							</p:panel>
 							<p:panel header="Parcelas Pagamento">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="tipoPessoaEmitente" value="Tipo Pessoa: "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoPessoaEmitente"
+										value="#{ccbMB.objetoCcb.tipoPessoaEmitente}" 
+										style="width: 80px;">
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItem itemValue="PF" itemLabel="PF" />	
+										<f:selectItem itemValue="PJ" itemLabel="PJ" />						
+									</p:selectOneMenu>
 									
 									<p:outputLabel for="sistemaAmortizacao" value="Tipo Cálculo: "
 										styleClass="labelBold" />
