@@ -72,10 +72,10 @@
 			<column name="taxaRemuneracao" />
 		</property>      
 		
-		<many-to-one name="donoResponsavelOriginal"
+		<many-to-one name="responsavelCaptador"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
-			<column name="donoResponsavelOriginal" />
+			<column name="responsavelCaptador" />
 		</many-to-one>             
 		
 		 <property name="dataCadastro" type="java.util.Date">

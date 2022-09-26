@@ -82,6 +82,7 @@
 				<p:commandButton value="Consultar" ajax="false"
 					icon="ui-icon-check" action="#{dashboardMBVer2.processaDashContratos}" update="ConsultaDashboardManagerResultados">
 				</p:commandButton>
+				<p:commandButton value="Gerar Arquivo" icon="ui-icon-print" action ="#{dashboardMBVer2.readXLSXFile}" ajax="false"/>
 			</p:panel>
 			<p:panel id="ConsultaDashboardManagerResultados" header="Dashboard Manager - Resultados" style="margin-bottom:10px;">		    
 				<h:panelGroup rendered="#{!dashboardMBVer2.motivoReprova}">
@@ -106,6 +107,20 @@
 						sortBy="#{dashContratos.gerenteResponsavel}">
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Captador" rendered="#{!dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.captadorResponsavel}" filterMatchMode="contains"
+						sortBy="#{dashContratos.captadorResponsavel}">
+						<h:outputText value="#{dashContratos.captadorResponsavel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Data Cadastro" rendered="#{!dashboardMBVer2.consultaLead}"
+						filterBy="#{dashContratos.dataCadastroResponsavel}" filterMatchMode="contains" 
+						sortBy="#{dashContratos.dataCadastroResponsavel}">
+			           <p:outputLabel value="#{dashContratos.dataCadastroResponsavel}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+			        </p:column>
 					
 					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMBVer2.consultaLead}"
 						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"

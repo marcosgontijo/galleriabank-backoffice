@@ -26,7 +26,7 @@ public class Responsavel implements Serializable {
 	private String contato;
 	
 	private Date dataCadastro;
-	private Responsavel donoResponsavelOriginal;
+	private Responsavel responsavelCaptador;
 	
 	private String rg;
 	private String cpf;
@@ -357,11 +357,12 @@ public class Responsavel implements Serializable {
 		this.dataCadastro = dataCadastro;
 	}
 
-	public Responsavel getDonoResponsavelOriginal() {
-		return donoResponsavelOriginal;
+	public Responsavel getResponsavelCaptador() {
+		return responsavelCaptador;
 	}
 
-	public void setDonoResponsavelOriginal(Responsavel donoResponsavelOriginal) {
-		this.donoResponsavelOriginal = donoResponsavelOriginal;
+	public void setResponsavelCaptador(Responsavel responsavelCaptador) {
+		this.responsavelCaptador = responsavelCaptador;
 	}
+	
 }
