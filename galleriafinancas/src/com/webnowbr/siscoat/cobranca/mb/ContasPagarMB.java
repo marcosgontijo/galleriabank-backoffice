@@ -414,7 +414,7 @@ public class ContasPagarMB {
 		} 
 		
 		try {
-			this.contasPagar = cDao.atualizaListagemContasPagar(tipoDespesa, contaPaga, this.relDataContratoInicio, this.relDataContratoFim);
+			this.contasPagar = cDao.atualizaListagemContasPagar(tipoDespesa, contaPaga, this.relDataContratoInicio, this.relDataContratoFim, tipoData);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
