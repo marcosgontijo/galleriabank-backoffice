@@ -25,6 +25,9 @@ public class Responsavel implements Serializable {
 	private String codigo;
 	private String contato;
 	
+	private Date dataCadastro;
+	private Responsavel responsavelCaptador;
+	
 	private String rg;
 	private String cpf;
 	private String cnpj;
@@ -345,4 +348,21 @@ public class Responsavel implements Serializable {
 	public void setWhatsAppNumero(String whatsAppNumero) {
 		this.whatsAppNumero = whatsAppNumero;
 	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public Responsavel getResponsavelCaptador() {
+		return responsavelCaptador;
+	}
+
+	public void setResponsavelCaptador(Responsavel responsavelCaptador) {
+		this.responsavelCaptador = responsavelCaptador;
+	}
+	
 }

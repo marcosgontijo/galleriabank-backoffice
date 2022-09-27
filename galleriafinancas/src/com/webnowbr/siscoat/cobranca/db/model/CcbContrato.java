@@ -28,6 +28,8 @@ public class CcbContrato implements Serializable{
 	private String cidadeEmitente;
 	private String ufEmitente;
 	private String cepEmitente;
+	private String TipoPessoaEmitente;
+	private String tipoParticipanteEmitente;
 	
 	private List<CcbParticipantes> listaParticipantes;
 
@@ -36,6 +38,8 @@ public class CcbContrato implements Serializable{
 	private BigDecimal custoEmissao;
 	private BigDecimal valorIOF;
 	private BigDecimal valorDespesas;
+	
+	private BigDecimal vlrImovel;
 	
 	private BigDecimal taxaDeJurosMes;
 	private BigDecimal taxaDeJurosAno;
@@ -83,6 +87,7 @@ public class CcbContrato implements Serializable{
 	private String logradouroNumeroImovel;
 	private String bairroImovel;
 	private String cepImovel;
+	private BigDecimal precoVendaCompra;
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -139,6 +144,8 @@ public class CcbContrato implements Serializable{
     private boolean condominioInseridoContrato;
     private BigDecimal iqValor = BigDecimal.ZERO;
     private boolean iqInseridoContrato;
+    private BigDecimal itbiValor = BigDecimal.ZERO;
+    private boolean itbiInseridoContrato;
     
     private List<Segurado> listSegurados;
     
@@ -1020,6 +1027,53 @@ public class CcbContrato implements Serializable{
 	public void setCCBPix(String cCBPix) {
 		CCBPix = cCBPix;
 	}
-	
+
+	public BigDecimal getPrecoVendaCompra() {
+		return precoVendaCompra;
+	}
+
+	public void setPrecoVendaCompra(BigDecimal precoVendaCompra) {
+		this.precoVendaCompra = precoVendaCompra;
+	}
+
+	public BigDecimal getItbiValor() {
+		return itbiValor;
+	}
+
+	public void setItbiValor(BigDecimal itbiValor) {
+		this.itbiValor = itbiValor;
+	}
+
+	public boolean isItbiInseridoContrato() {
+		return itbiInseridoContrato;
+	}
+
+	public void setItbiInseridoContrato(boolean itbiInseridoContrato) {
+		this.itbiInseridoContrato = itbiInseridoContrato;
+	}
+
+	public String getTipoPessoaEmitente() {
+		return TipoPessoaEmitente;
+	}
+
+	public void setTipoPessoaEmitente(String tipoPessoaEmitente) {
+		TipoPessoaEmitente = tipoPessoaEmitente;
+	}
+
+	public BigDecimal getVlrImovel() {
+		return vlrImovel;
+	}
+
+	public void setVlrImovel(BigDecimal vlrImovel) {
+		this.vlrImovel = vlrImovel;
+	}
+
+	public String getTipoParticipanteEmitente() {
+		return tipoParticipanteEmitente;
+	}
+
+	public void setTipoParticipanteEmitente(String tipoParticipanteEmitente) {
+		this.tipoParticipanteEmitente = tipoParticipanteEmitente;
+	}
 	
 }

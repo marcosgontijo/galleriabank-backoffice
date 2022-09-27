@@ -75,7 +75,7 @@
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectOneRadio id="TipoFiltros"
 						value="#{contratoCobrancaMB.tipoFiltros}" required="true">
-						<f:selectItem itemLabel="Outros Filtros" itemValue="true" />
+						<f:selectItem itemLabel="Data" itemValue="true" />
 						<f:selectItem itemLabel="Número do Contrato" itemValue="false" />
 						<p:ajax update="ConsultaFinanceiro" event="valueChange"
 							listener="#{contratoCobrancaMB.habilitaFiltros}" />
@@ -94,7 +94,7 @@
 						disabled="#{!contratoCobrancaMB.tipoFiltros}">
 						<f:selectItem itemLabel="Com Parcelas no Período"
 							itemValue="false" />
-						<f:selectItem itemLabel="Com Parcelas em Atraso" itemValue="true" />
+						<f:selectItem itemLabel="Com Parcelas não pagas" itemValue="true" />
 						<p:ajax update="ConsultaFinanceiro" event="valueChange" />
 					</p:selectOneRadio>
 

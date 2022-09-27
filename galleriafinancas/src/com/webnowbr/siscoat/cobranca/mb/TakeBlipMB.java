@@ -100,6 +100,36 @@ public class TakeBlipMB {
 	
 		Agora é só aguardar o registro para fazermos o pagamento 🤑
 	*/
+	
+	// aprovacao_credito_compass
+	/* 
+		Olá {{1}}!!! 
+
+		Parabéns pela pré-aprovação do seu Crédito com Imóvel em Garantia aqui na Galleria Bank 🤑
+		
+		Nós, junto com o seu consultor financeiro, queremos fazer parte dos seus projetos.
+		
+		Logo mais, a empresa Compass estará entrando em contato com você para a agendar o Laudo de Avaliação do seu imóvel.
+		
+		Conte sempre com a gente
+		
+		Até mais.
+	*/
+	
+	// aprovacao_credito_galache
+	/* 
+		Olá {{1}}!!! 
+
+		Parabéns pela pré-aprovação do seu Crédito com Imóvel em Garantia aqui na Galleria Bank 🤑
+		
+		Nós, junto com o seu consultor financeiro, queremos fazer parte dos seus projetos.
+		
+		Logo mais, a empresa Galache estará entrando em contato com você para a agendar o Laudo de Avaliação do seu imóvel.
+		
+		Conte sempre com a gente
+		
+		Até mais.
+	*/
 
 	
 	/*
@@ -459,6 +489,17 @@ public class TakeBlipMB {
 					jsonWhatsAppParameter.put("type", "text");
 					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				} else if(nomeTemplateMensagem.equals("aprovacao_credito_compass")
+						|| nomeTemplateMensagem.equals("aprovacao_credito_galache")) {
+					
+					jsonWhatsAppParameters = new JSONArray();
+					
+					// Nome do notificado
+					jsonWhatsAppParameter = new JSONObject();
+					jsonWhatsAppParameter.put("type", "text");
+					jsonWhatsAppParameter.put("text", pessoa.getNome());
+					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+				
 				} else {
 					jsonWhatsAppParameters = new JSONArray();
 					

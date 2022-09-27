@@ -4428,7 +4428,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
 					}
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + "order by cc.numeroContrato ";
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " order by cc.numeroContrato ";
 					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
@@ -7418,7 +7418,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel,"
 			+ " laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite, analiseComercial, comentarioJuridicoEsteira,"
-			+ " aprovadocomite, valorPreLaudo, CadastroAprovadoValor "
+			+ " aprovadocomite, valorPreLaudo, CadastroAprovadoValor, pedidoLaudo "
 			+ " from cobranca.contratocobranca c "  
 			+ " where c.id = ? ";
 	
@@ -7457,6 +7457,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobrancaStatus.setComentarioJuridicoEsteira(rs.getBoolean(11));
 						contratoCobrancaStatus.setAprovadoComite(rs.getBoolean(12));
 						contratoCobrancaStatus.setValorPreLaudo(rs.getBigDecimal(13)); 
+						contratoCobrancaStatus.setPedidoLaudo(rs.getBoolean(15)); 
 					}
 	
 				} finally {

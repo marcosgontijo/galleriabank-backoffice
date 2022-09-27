@@ -12,6 +12,7 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean ccbPronta;
 	private boolean agAssinatura;
 	private boolean agRegistro;
+	private boolean pedidoLaudo;
 	private boolean pajuFavoravel;
 	private boolean laudoRecebido;
 	private boolean analiseComercial;
@@ -103,5 +104,11 @@ public class ContratoCobrancaStatus implements Serializable {
 	}
 	public void setValorPreLaudo(BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
+	}
+	public boolean isPedidoLaudo() {
+		return pedidoLaudo;
+	}
+	public void setPedidoLaudo(boolean pedidoLaudo) {
+		this.pedidoLaudo = pedidoLaudo;
 	}
 }

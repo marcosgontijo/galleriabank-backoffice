@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -12,7 +13,10 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.model.LazyDataModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -46,8 +50,12 @@ public class ResponsavelMB {
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsaveis;
 	
+	private long idResponsavelCaptador;
+	private String nomeResponsavelCaptador = null;
+	
 	private boolean addUsuario = false;
 	private boolean showUsuario = false;
+	private String tipoPesquisa;
 	
 	private String login = "";
 	private String senha = "";
@@ -82,14 +90,15 @@ public class ResponsavelMB {
 
 	public String clearFields() {
 		objetoResponsavel = new Responsavel();
-		this.tituloPainel = "Adicionar";
+		objetoResponsavel.setDataCadastro(new Date());
 		
+		this.tituloPainel = "Adicionar";
 		clearResponsavel();
 		loadLovResponsavel();
 		
 		int maiorCodigo = 0;
 		for(Responsavel responsavel : listResponsaveis ) {
-			if(!CommonsUtil.semValor(responsavel.getCodigo()) ) {
+			if(!CommonsUtil.semValor(responsavel.getCodigo()) && CommonsUtil.eSomenteNumero(responsavel.getCodigo()) ) {
 				try {
 					if(maiorCodigo < CommonsUtil.integerValue(responsavel.getCodigo())){
 						maiorCodigo = CommonsUtil.integerValue(responsavel.getCodigo());
@@ -105,10 +114,13 @@ public class ResponsavelMB {
 		codigoAutomatico = CommonsUtil.stringValue(maiorCodigo);
 		objetoResponsavel.setCodigo(codigoAutomatico);
 		showUsuario = false;
-		addUsuario = false;		
+		addUsuario = false;
 		login = "";
 		senha = "";
 		this.selectedResponsaveis = new Responsavel[0];
+		
+		ResponsavelDao rDao = new ResponsavelDao();
+		this.listResponsaveis = rDao.findAll();
 		
 		this.tipoPessoaIsFisica = true;
 
@@ -140,10 +152,7 @@ public class ResponsavelMB {
 		
 		this.selectedResponsaveis = new Responsavel[0];
 		
-		if (this.objetoResponsavel.getDonoResponsavel() != null) {
-			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
-			populateSelectedResponsavel();
-		}
+		loadResponsavel();
 	
 		return "ResponsavelDetalhes.xhtml";
 	}
@@ -173,13 +182,8 @@ public class ResponsavelMB {
 		
 		this.selectedResponsaveis = new Responsavel[0];
 		
-		clearResponsavel();
+		loadResponsavel();
 		loadLovResponsavel();
-		
-		if (this.objetoResponsavel.getDonoResponsavel() != null) {
-			this.selectedResponsavel = this.objetoResponsavel.getDonoResponsavel();
-			populateSelectedResponsavel();
-		}
 		
 		return "ResponsavelInserir.xhtml";
 	}		
@@ -198,10 +202,16 @@ public class ResponsavelMB {
 				objetoResponsavel.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoResponsavel(objetoResponsavel));
 			}
 			
-			if (this.selectedResponsavel != null) {
-				if (this.selectedResponsavel.getId() > 0) {
-					objetoResponsavel.setDonoResponsavel(this.selectedResponsavel);
-				}
+			if (!CommonsUtil.semValor(this.idResponsavel)) {
+				objetoResponsavel.setDonoResponsavel(responsavelDao.findById(this.idResponsavel));
+			} else {
+				objetoResponsavel.setDonoResponsavel(null);
+			}
+			
+			if (!CommonsUtil.semValor(this.idResponsavelCaptador)) {
+				objetoResponsavel.setResponsavelCaptador(responsavelDao.findById(this.idResponsavelCaptador));
+			} else {
+				objetoResponsavel.setResponsavelCaptador(null);
 			}
 
 			if (objetoResponsavel.getId() <= 0) {
@@ -284,20 +294,73 @@ public class ResponsavelMB {
 		return "ResponsavelConsultar.xhtml";
 	}
 	
-	public final void populateSelectedResponsavel() {
+	public void pesquisaResponsavel() {	
+		this.tipoPesquisa = "Responsavel";
+	}
+	
+	public void pesquisaResponsavelCaptador() {
+		this.tipoPesquisa = "Captador";
+	}
+	
+	public final void populateSelectedResponsavel2() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();
+	}
+	
+	public final void populateSelectedResponsavel() {
+		if(CommonsUtil.mesmoValor(tipoPesquisa, "Responsavel")) {
+			this.idResponsavel = this.selectedResponsavel.getId();
+			this.nomeResponsavel = this.selectedResponsavel.getNome();
+		} else if(CommonsUtil.mesmoValor(tipoPesquisa, "Captador")) {
+			this.idResponsavelCaptador = this.selectedResponsavel.getId();
+			this.nomeResponsavelCaptador = this.selectedResponsavel.getNome();
+		}
+		this.tipoPesquisa = "";
 	}
 	
 	public void clearResponsavel() {
 		this.idResponsavel = 0;
 		this.nomeResponsavel = null;
+		this.idResponsavelCaptador = 0;
+		this.nomeResponsavelCaptador = "";
 		this.selectedResponsavel = new Responsavel();
+		this.tipoPesquisa = "";
+	}
+	
+	public void clearResponsavelDialog() {
+		if(CommonsUtil.mesmoValor(tipoPesquisa, "Responsavel")) {
+			this.idResponsavel = 0;
+			this.nomeResponsavel = "";
+		} else if(CommonsUtil.mesmoValor(tipoPesquisa, "Captador")) {
+			this.idResponsavelCaptador = 0;
+			this.nomeResponsavelCaptador = "";
+		}
+		this.tipoPesquisa = "";
 	}
 	
 	public void loadLovResponsavel() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		this.listResponsaveis = responsavelDao.findAll();
+	}
+	
+	public void loadResponsavel() {
+		if(!CommonsUtil.semValor(this.objetoResponsavel.getDonoResponsavel())) {
+			this.idResponsavel = this.objetoResponsavel.getDonoResponsavel().getId();
+			this.nomeResponsavel = this.objetoResponsavel.getDonoResponsavel().getNome();
+		} else {
+			this.idResponsavel = 0;
+			this.nomeResponsavel = null;	
+		}
+		
+		if(!CommonsUtil.semValor(this.objetoResponsavel.getResponsavelCaptador())) {
+			this.idResponsavelCaptador = this.objetoResponsavel.getResponsavelCaptador().getId();
+			this.nomeResponsavelCaptador = this.objetoResponsavel.getResponsavelCaptador().getNome();
+		} else {
+			this.idResponsavelCaptador = 0;
+			this.nomeResponsavelCaptador = "";
+		}
+		
+		this.tipoPesquisa = "";
 	}
 		
 	public void selectedTipoPessoa() {
@@ -494,6 +557,24 @@ public class ResponsavelMB {
 
 	public void setShowUsuario(boolean showUsuario) {
 		this.showUsuario = showUsuario;
+	}
+
+	public String getNomeResponsavelCaptador() {
+		return nomeResponsavelCaptador;
+	}
+
+	public void setNomeResponsavelCaptador(String nomeResponsavelCaptador) {
+		this.nomeResponsavelCaptador = nomeResponsavelCaptador;
+	}
+
+	public long getIdResponsavelCaptador() {
+		return idResponsavelCaptador;
+	}
+
+	public void setIdResponsavelCaptador(long idResponsavelCaptador) {
+		this.idResponsavelCaptador = idResponsavelCaptador;
 	}	
+	
+	
 	
 }

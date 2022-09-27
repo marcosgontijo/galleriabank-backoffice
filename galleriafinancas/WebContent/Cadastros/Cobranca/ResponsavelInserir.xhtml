@@ -70,17 +70,43 @@
 					<p:inputText id="Codigo"
 						value="#{responsavelMB.objetoResponsavel.codigo}" label="Codigo"
 						required="true" onblur="" style="width:150px;" />
+						
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro: "
+						styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:calendar id="dataCadastro" showOn="button"
+						value="#{responsavelMB.objetoResponsavel.dataCadastro}"
+						size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField" />
 
 				</h:panelGrid>
 				<h:panelGrid columns="3">
 					<p:outputLabel for="Responsavel" value="Responsável: " />
-					<p:inputText id="Responsavel"
+					<p:inputText id="Responsavel" 
 						value="#{responsavelMB.nomeResponsavel}" label="Responsável"
 						readonly="TRUE"
 						style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;" />
-					<p:commandButton id="botaoResponsavel" type="button"
-						onclick="PF('responsavelDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" />
+					
+					<p:commandButton id="botaoResponsavel"
+						action="#{responsavelMB.pesquisaResponsavel()}"
+						icon="ui-icon ui-icon-circle-zoomin"
+						immediate="true"
+						oncomplete="PF('responsavelDialog').show();"
+						update="formResponsaveis" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="3">
+					<p:outputLabel for="ResponsavelCaptador" value="Responsável Captador: " />
+					<p:inputText id="ResponsavelCaptador"
+						value="#{responsavelMB.nomeResponsavelCaptador}" 
+						readonly="TRUE"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 35px;" />
+					<p:commandButton id="botaoResponsavelOriginal" ajax="true"
+						action="#{responsavelMB.pesquisaResponsavelCaptador}"
+						icon="ui-icon ui-icon-circle-zoomin"
+						immediate="true"
+						oncomplete="PF('responsavelDialog').show();"
+						update="formResponsaveis" />
 				</h:panelGrid>
 				<h:panelGrid columns="2">
 					<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): " />
@@ -239,8 +265,6 @@
 					</h:panelGroup>
 				</h:panelGroup>
 
-
-
 			</p:panel>
 
 			<div align="center">
@@ -278,19 +302,17 @@
 							<h:outputText value="Nome" />
 						</f:facet>
 						<h:outputText value="#{responsavelDialogdlg.nome}" />
-					</p:column>
-					
-					
+					</p:column>	
 
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{responsavelMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":form:Responsavel"
+							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{responsavelMB.clearResponsavel}"
+							action="#{responsavelMB.clearResponsavelDialog}"
 							image="ui-icon ui-icon-trash"
-							update=":form:Responsavel responsavelDialogdlg"
+							update=":form:Responsavel :form:ResponsavelCaptador responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />

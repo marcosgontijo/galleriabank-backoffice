@@ -66,9 +66,21 @@
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
 			<column name="donoResponsavel" />
-		</many-to-one>     
+		</many-to-one>  
+		 
 		<property name="taxaRemuneracao" type="big_decimal">
 			<column name="taxaRemuneracao" />
-		</property>                   
+		</property>      
+		
+		<many-to-one name="responsavelCaptador"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="responsavelCaptador" />
+		</many-to-one>             
+		
+		 <property name="dataCadastro" type="java.util.Date">
+            <column name="dataCadastro"/>
+        </property> 
+        
     </class>
 </hibernate-mapping>

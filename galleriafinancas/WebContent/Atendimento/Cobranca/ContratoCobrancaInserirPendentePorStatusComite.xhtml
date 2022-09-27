@@ -1517,7 +1517,6 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de condomínio' }"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -2860,6 +2859,8 @@
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
 							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
+							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+							<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
@@ -3835,7 +3836,7 @@
 				</script>
 			</p:panel>	
 				
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" >						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.filesFaltante.size() > 0}" >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"

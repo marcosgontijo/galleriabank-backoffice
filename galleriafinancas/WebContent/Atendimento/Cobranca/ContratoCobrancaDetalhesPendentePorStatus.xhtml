@@ -818,7 +818,6 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de condomínio' }"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -852,7 +851,7 @@
 						</h:panelGrid>
 
 						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo != 'Apartamento' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Casa' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Sala Comercial'}">
+							rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo != 'Apartamento' and contratoCobrancaMB.objetoImovelCobranca.tipo != 'Casa' }">
 							<p:outputLabel value="Geração de Boleto invalida para esse tipo de imóvel " styleClass="labelBold" />
 						</h:panelGrid>
 					</p:panel>
@@ -2761,7 +2760,7 @@
 				</p:panel>	
 			</shiro:hasAnyRoles>
 		 	
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido and contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}" >						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
