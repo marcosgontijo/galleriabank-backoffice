@@ -937,7 +937,6 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Sala Comercial' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de condomínio' }"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -2508,7 +2507,8 @@
 							<f:selectItem itemValue="Casa" itemLabel="Casa" />
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio" />
+							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+							<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />

@@ -2950,7 +2950,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		try {
-			//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
+			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3015,7 +3015,7 @@ public class ContratoCobrancaMB {
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
 			
-			//enviaEmailAtualizacaoPreContratoNovo();
+			enviaEmailAtualizacaoPreContratoNovo();
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3500,24 +3500,24 @@ public class ContratoCobrancaMB {
 		try {				
 			
 			// envia WhatsApp
-			//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				//notificaCompassWhatsApp();
-				//notificaCompassEmail();
+				notificaCompassWhatsApp();
+				notificaCompassEmail();
 			}
 			
 			if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
-				//notificaGalacheWhatsApp();
-				//notificaGalacheEmail();
+				notificaGalacheWhatsApp();
+				notificaGalacheEmail();
 			}
 			
 			// notifica a Compass caso for setado contrato para eles
 			if (this.controleWhatsAlteracaoGeracaoPAJU) {				
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-				//notificaPAJUWhatsApp();
-				//notificaPAJUEmail();
+				notificaPAJUWhatsApp();
+				notificaPAJUEmail();
 			} else {
 				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
 			}
@@ -3584,7 +3584,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 										this.objetoContratoCobranca.setAprovadoComite(true);
-										//notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+										notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 									}
 								} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
@@ -3601,7 +3601,7 @@ public class ContratoCobrancaMB {
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
 
-				//enviaEmailAtualizacaoPreContratoNovo();	
+				enviaEmailAtualizacaoPreContratoNovo();	
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3756,6 +3756,21 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							}
 						}
+					}
+				}
+			}
+			
+			// Mensagem APROVACAO CREDITO COMPASS / GALACHE
+			if (this.objetoContratoCobranca.isPedidoLaudo() != statusContrato.isPedidoLaudo()) {
+				if (this.objetoContratoCobranca.isPedidoLaudo()) {
+					TakeBlipMB tkblpMb = new TakeBlipMB();
+					PagadorRecebedor pagador;
+					pagador = this.objetoContratoCobranca.getPagador();
+					//pagador = new PagadorRecebedorDao().findById(10737l);
+					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Compass")) {
+						tkblpMb.sendWhatsAppMessagePagadorRecebedor(pagador, "aprovacao_credito_compass", pagador.getNome(), "", "", "");
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Galache")) {
+						tkblpMb.sendWhatsAppMessagePagadorRecebedor(pagador, "aprovacao_credito_galache", pagador.getNome(), "", "", "");
 					}
 				}
 			}
@@ -7702,22 +7717,6 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
-		FacesContext context = FacesContext.getCurrentInstance();
-		if(!CommonsUtil.semValor(this.objetoPagadorRecebedor.getReputacao())) {
-			String reputacao = this.objetoPagadorRecebedor.getReputacao();
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			String contratos = cDao.getContratosDoPagador(this.objetoPagadorRecebedor);
-			if(CommonsUtil.mesmoValor(reputacao, "Banido")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else if(CommonsUtil.mesmoValor(reputacao, "Ruim")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else if(CommonsUtil.mesmoValor(reputacao, "Otimo") || CommonsUtil.mesmoValor(reputacao, "Bom")) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			} else {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pagador " + reputacao + "! Contratos ("+ contratos + ")", ""));
-			}	
-		}
-		
 		this.tituloPainel = "Editar";
 		
 		this.valorPresenteParcela = BigDecimal.ZERO;
@@ -11123,8 +11122,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		//this.baixarPreContratoAutomatico();
-		//this.enviaZapLeadEmTratamento();
+		this.baixarPreContratoAutomatico();
+		this.enviaZapLeadEmTratamento();
 
 	//	if (this.preContratoCustom) {
 
@@ -11605,8 +11604,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
-		//this.baixarPreContratoAutomatico();
-		//this.enviaZapLeadEmTratamento();
+		this.baixarPreContratoAutomatico();
+		this.enviaZapLeadEmTratamento();
 		
 		this.tituloTelaConsultaPreStatus = status;
 		

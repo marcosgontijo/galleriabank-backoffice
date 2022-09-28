@@ -12,6 +12,12 @@
 			<p:panel id="ConsultaContasPagar" header="Contas a Pagar - Consultar"
 				style="margin-bottom:10px;">
 				<h:panelGrid columns="2">
+					<p:outputLabel for="TipoData" value="Tipo Data: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoData"	value="#{contasPagarMB.tipoData}">
+						<f:selectItem itemLabel="Vencimento" itemValue="V" />
+						<f:selectItem itemLabel="Prevista" itemValue="P" />
+					</p:selectOneRadio>
 					<p:outputLabel for="dataInicio" value="Data Vencimento Inicio: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:calendar id="dataInicio"

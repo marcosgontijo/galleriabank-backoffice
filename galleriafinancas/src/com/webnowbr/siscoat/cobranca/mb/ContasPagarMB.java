@@ -55,6 +55,7 @@ public class ContasPagarMB {
 	private boolean deleteMode;
 
 	private String tipoDespesa;
+	private String tipoData;
 	
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
@@ -91,16 +92,14 @@ public class ContasPagarMB {
 	
 	public List<String> contaPagarDescricaoLista(){
 		List<String> listaNome = new ArrayList<>();
-		listaNome.add("Cartório");
-		listaNome.add("Certidão");
-		listaNome.add("Condomínio");
-		listaNome.add("Crédito Cliente");
-		listaNome.add("Honorário");
-		listaNome.add("IPTU");
-		listaNome.add("IQ");
-		listaNome.add("ITBI");
-		listaNome.add("Laudo");
-		listaNome.add("Processo");
+		listaNome.add("Busca de endereços JUD");
+		listaNome.add("Custas de agravo");
+		listaNome.add("Custas de apelação");
+		listaNome.add("Custas embargos de terceiro");
+		listaNome.add("Custas processuais iniciais");
+		listaNome.add("Honorários sucumbenciais");
+		listaNome.add("Intimação por AR");
+		listaNome.add("Oficial de justiça");
 		
 		return listaNome.stream().collect(Collectors.toList());
 	}
@@ -415,7 +414,7 @@ public class ContasPagarMB {
 		} 
 		
 		try {
-			this.contasPagar = cDao.atualizaListagemContasPagar(tipoDespesa, contaPaga, this.relDataContratoInicio, this.relDataContratoFim);
+			this.contasPagar = cDao.atualizaListagemContasPagar(tipoDespesa, contaPaga, this.relDataContratoInicio, this.relDataContratoFim, tipoData);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -820,6 +819,14 @@ public class ContasPagarMB {
 	}
 	public void setDownloadFile(StreamedContent downloadFile) {
 		this.downloadFile = downloadFile;
+	}
+
+	public String getTipoData() {
+		return tipoData;
+	}
+
+	public void setTipoData(String tipoData) {
+		this.tipoData = tipoData;
 	}
 
 }

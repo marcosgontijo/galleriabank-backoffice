@@ -95,7 +95,7 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			"and tipodespesa = ? " +
 			"and contapaga = ? ";
 
-	public List<ContasPagar> atualizaListagemContasPagar(final String tipoDespesa, final Boolean contaPaga, final Date dataInicio, final Date dataFim) throws Exception {
+	public List<ContasPagar> atualizaListagemContasPagar(final String tipoDespesa, final Boolean contaPaga, final Date dataInicio, final Date dataFim, final String tipoData) throws Exception {
 
 		List<ContasPagar> listContasPagar = new ArrayList<ContasPagar>();
 
@@ -107,6 +107,8 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			
 			String query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR;
 			
+			if (CommonsUtil.mesmoValor(tipoData, "V")) {
+		
 			if (dataInicio != null) {
 				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento >= ? ::timestamp ";
 			}
@@ -114,7 +116,17 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			if (dataFim != null) {
 				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento <= ? ::timestamp ";
 			}
+			}
+			if (CommonsUtil.mesmoValor(tipoData, "P")) {
 			
+			if (dataInicio != null) {
+				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista >= ? ::timestamp ";
+			}
+			
+			if (dataFim != null) {
+				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista <= ? ::timestamp ";
+			}
+			}
 			ps = connection.prepareStatement(query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR);
 
 			ps.setString(1, tipoDespesa);
