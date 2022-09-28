@@ -7619,7 +7619,7 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-			gerador.open(String.format("Galleria Bank - CCI %s.docx", ""));
+			gerador.open(String.format(this.objetoCcb.getNomeEmitente() +  " - CCI - " + this.objetoCcb.getNumeroCcb() +"%s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
