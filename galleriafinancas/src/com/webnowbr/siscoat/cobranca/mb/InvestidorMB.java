@@ -247,6 +247,14 @@ public class InvestidorMB {
 	private DualListModel<PagadorRecebedor> dualListModelRecebedores;
 	private List<PagadorRecebedor> listRecebedoresSeleciodados;
 	private List<PagadorRecebedor> listRecebedores;
+	
+	private String filtroDebenturesTipoDocumento;
+	private String filtroDebenturesDocumento;
+	private String filtroDebenturesStatus;
+	
+	private String filtroDebenturesPorValor = "Todos";
+	private BigDecimal filtroValorFaceInicial = null;
+	private BigDecimal filtroValorFaceFinal = null;
 		
 	public InvestidorMB() {
 
@@ -4615,6 +4623,15 @@ public class InvestidorMB {
 	public final String clearFieldsRelatorioDebeturesEmitidas() {
 		this.dataInicio = gerarDataHoje();
 		this.dataFim = gerarDataHoje();
+		
+
+		this.filtroDebenturesDocumento = "";
+		this.filtroDebenturesTipoDocumento = "Todos";
+		this.filtroDebenturesStatus = "Todos";
+		
+		this.filtroDebenturesPorValor = "Todos";
+		this.filtroValorFaceInicial = null;
+		this.filtroValorFaceFinal = null;
 
 		clearTitulosQuitadosPDFParams();
 		
@@ -4629,6 +4646,19 @@ public class InvestidorMB {
 		return "/Atendimento/Cobranca/RelatorioDebenturesEmitidas.xhtml";
 	}
 	
+	public void updateFiltroDocumento() {
+		if (this.filtroDebenturesTipoDocumento.equals("Todos")) {
+			this.filtroDebenturesDocumento = "";
+		}
+	}
+	
+	public void updateFiltroPorValor() {
+		if (this.filtroDebenturesPorValor.equals("Todos")) {
+			this.filtroValorFaceInicial = null;
+			this.filtroValorFaceFinal = null;
+		}
+	}
+
 	public void consultaDebeturesEmitidas() {
 		System.out.println("Debentures Emitidas Size: Consultando...");
 		clearTitulosQuitadosPDFParams();
@@ -4644,7 +4674,7 @@ public class InvestidorMB {
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas();
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal);
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
@@ -10737,5 +10767,53 @@ public class InvestidorMB {
 
 	public void setListRecebedores(List<PagadorRecebedor> listRecebedores) {
 		this.listRecebedores = listRecebedores;
+	}
+
+	public String getFiltroDebenturesDocumento() {
+		return filtroDebenturesDocumento;
+	}
+
+	public void setFiltroDebenturesDocumento(String filtroDebenturesDocumento) {
+		this.filtroDebenturesDocumento = filtroDebenturesDocumento;
+	}
+
+	public String getFiltroDebenturesStatus() {
+		return filtroDebenturesStatus;
+	}
+
+	public void setFiltroDebenturesStatus(String filtroDebenturesStatus) {
+		this.filtroDebenturesStatus = filtroDebenturesStatus;
+	}
+
+	public String getFiltroDebenturesTipoDocumento() {
+		return filtroDebenturesTipoDocumento;
+	}
+
+	public void setFiltroDebenturesTipoDocumento(String filtroDebenturesTipoDocumento) {
+		this.filtroDebenturesTipoDocumento = filtroDebenturesTipoDocumento;
+	}
+
+	public String getFiltroDebenturesPorValor() {
+		return filtroDebenturesPorValor;
+	}
+
+	public void setFiltroDebenturesPorValor(String filtroDebenturesPorValor) {
+		this.filtroDebenturesPorValor = filtroDebenturesPorValor;
+	}
+
+	public BigDecimal getFiltroValorFaceInicial() {
+		return filtroValorFaceInicial;
+	}
+
+	public void setFiltroValorFaceInicial(BigDecimal filtroValorFaceInicial) {
+		this.filtroValorFaceInicial = filtroValorFaceInicial;
+	}
+
+	public BigDecimal getFiltroValorFaceFinal() {
+		return filtroValorFaceFinal;
+	}
+
+	public void setFiltroValorFaceFinal(BigDecimal filtroValorFaceFinal) {
+		this.filtroValorFaceFinal = filtroValorFaceFinal;
 	}
 }

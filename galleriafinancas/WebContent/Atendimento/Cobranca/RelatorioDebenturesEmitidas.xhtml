@@ -44,7 +44,79 @@
 				</h:panelGrid>
 			</p:panel>
 			<p:panel id="ConsultaFiltrosTitulosQuitados" header="Relatório Debêntures Emitidas - Consultar"
-				style="margin-bottom:10px;">		
+				style="margin-bottom:10px;">	
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{investidorMB.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{investidorMB.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+						
+					<p:outputLabel for="TipoDocumento" value="Tipo Doc.: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoDocumento"
+						value="#{investidorMB.filtroDebenturesTipoDocumento}">
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+						<f:selectItem itemLabel="CPF" itemValue="CPF" />
+						<f:selectItem itemLabel="CNPJ" itemValue="CNPJ" />
+						<p:ajax update="ConsultaFiltrosTitulosQuitados" event="valueChange"
+							listener="#{investidorMB.updateFiltroDocumento}" />
+					</p:selectOneRadio>		
+					
+					<p:outputLabel for="Documento" value="Documento: "
+						styleClass="labelBold"
+						rendered="#{investidorMB.filtroDebenturesTipoDocumento ne 'Todos'}" />
+					<p:inputText id="Documento"
+						value="#{investidorMB.filtroDebenturesDocumento}" label="Recebedor" required="true"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
+						rendered="#{investidorMB.filtroDebenturesTipoDocumento ne 'Todos'}" />
+						
+					<p:outputLabel for="Status" value="Status: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="Status"
+						value="#{investidorMB.filtroDebenturesStatus}">
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+						<f:selectItem itemLabel="Quitadas" itemValue="Quitadas" />
+						<f:selectItem itemLabel="Ativas" itemValue="Ativas" />
+					</p:selectOneRadio>		
+					
+					<p:outputLabel for="FiltroValor" value="Valor Face: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="FiltroValor"
+						value="#{investidorMB.filtroDebenturesPorValor}">
+						<f:selectItem itemLabel="Todos" itemValue="Todos" />
+						<f:selectItem itemLabel="Filtrar" itemValue="Filtrar" />
+						<p:ajax update="ConsultaFiltrosTitulosQuitados" event="valueChange"
+							listener="#{investidorMB.updateFiltroPorValor}" />
+					</p:selectOneRadio>	
+					
+					<p:outputLabel for="valorFaceInicial" value="Valor Face Inicial: "
+							styleClass="labelBold"
+							rendered="#{investidorMB.filtroDebenturesPorValor ne 'Todos'}" />
+					<p:inputText id="valorFaceInicial" 
+						value="#{investidorMB.filtroValorFaceInicial}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						rendered="#{investidorMB.filtroDebenturesPorValor ne 'Todos'}" />
+						
+					<p:outputLabel for="valorFaceFinal" value="Valor Face Final: "
+							styleClass="labelBold"
+							rendered="#{investidorMB.filtroDebenturesPorValor ne 'Todos'}" />							
+					<p:inputText id="valorFaceFinal" 
+						value="#{investidorMB.filtroValorFaceFinal}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						rendered="#{investidorMB.filtroDebenturesPorValor ne 'Todos'}" />
+				</h:panelGrid>	
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.relatorioDebeturesEmitidas}"
 					image="ui-icon ui-icon-check"

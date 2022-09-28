@@ -783,15 +783,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 	
 	private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_1 = "select iddebenture, idcontrato from ("
 			+ "select d.id iddebenture, c.id idcontrato from cobranca.DebenturesInvestidor d "
-			+ "inner join cobranca.contratocobranca c on d.contrato = c.id ";
+			+ "inner join cobranca.contratocobranca c on d.contrato = c.id "
+			+ "where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp ";
 			
 		private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_2 = "select 0 iddebenture, ct.id idcontrato from cobranca.contratocobranca ct  "
 			+ "inner join cobranca.responsavel res on ct.responsavel = res.id  "
 			+ "where ct.status = 'Aprovado' "
-			+ "and ct.pagador in (15, 34,14, 182, 417, 803) ";
-			
+			+ "and ct.pagador in (15, 34,14, 182, 417, 803) "
+			+ "and ct.datainicio >= ? ::timestamp and ct.datainicio <= ? ::timestamp ";
+		
 	@SuppressWarnings("unchecked")
-	public List<DebenturesInvestidor> getRelatorioDebenturesEmitidas() {
+	public List<DebenturesInvestidor> getRelatorioDebenturesEmitidas(final Date dtRelInicio, final Date dtRelFim, final String tipoDocumento, final String documento, final String status,
+			final String filtraValorFace, final BigDecimal valorFaceInicial, final BigDecimal valorFaceFinal) {
 		return (List<DebenturesInvestidor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -814,6 +817,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 					connection = getConnection();
 
 					ps = connection.prepareStatement(query_QUERY_DEBENTURES_EMITIDAS);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);
 					
 					rs = ps.executeQuery();
 					
@@ -1595,7 +1606,58 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 						
 						debenturesCompleta.setTipoCalculo(c.getTipoCalculo());
 						
-						objects.add(debenturesCompleta);
+						
+						/***
+						 * Aplica filtros de Documento e Status
+						 */
+						boolean addDebenture = true;
+						
+						// filtro documento
+						if (!tipoDocumento.equals("Todos")) {
+							if (tipoDocumento.equals("CPF")) {
+								if (debenturesCompleta.getRecebedor().getCpf() != null) { 
+									if (!debenturesCompleta.getRecebedor().getCpf().equals(documento)) {
+										addDebenture = false;
+									}
+								} else {
+									addDebenture = false;
+								}
+							}
+							if (tipoDocumento.equals("CNPJ")) {
+								if (debenturesCompleta.getRecebedor().getCnpj() != null) {
+									if (!debenturesCompleta.getRecebedor().getCnpj().equals(documento)) {
+										addDebenture = false;
+									}
+								} else {
+									addDebenture = false;
+								}
+							}
+						}	
+						
+						// filtro status	
+						if (!status.equals("Todos")) {
+							if (status.equals("Quitadas")) {
+								if (debenturesCompleta.getQuitado().equals("Não")) {
+									addDebenture = false;
+								}
+							}
+							if (status.equals("Ativas")) {
+								if (debenturesCompleta.getQuitado().equals("Sim")) {
+									addDebenture = false;
+								}
+							}
+						}			
+						
+						// filtro valor face
+						if (filtraValorFace.equals("Filtrar")) {
+							if (debenturesCompleta.getValorFace().compareTo(valorFaceInicial) < 0 || debenturesCompleta.getValorFace().compareTo(valorFaceFinal) > 0) {
+								addDebenture = false;
+							}
+						}
+						
+						if (addDebenture) {
+							objects.add(debenturesCompleta);
+						}						
 					}
 
 				} finally {
