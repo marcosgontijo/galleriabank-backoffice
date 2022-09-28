@@ -82,8 +82,14 @@
                 	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			        <p:column style="text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Pagamento Op.'}" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
 						<p:outputLabel value="#{contratos.dataContrato}" >
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}" />
+						</p:outputLabel>
+			        </p:column>
+			        
+			        <p:column style="text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}" headerText="Data Início" sortBy="#{contratos.dataContrato}">
+						<p:outputLabel value="#{contratos.dataInicio}" >
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}" />
 						</p:outputLabel>
 			        </p:column>
@@ -100,8 +106,28 @@
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	    
-			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
+			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)"
+			        	rendered="#!{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Assinatura' 
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
+			        </p:column>	
+			        
+			        <p:column style="text-align: center;" 
+			        	headerText="Valor Aprovado no Comitê (R$)"
+			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Assinatura' 
+			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorAprovadoComite}" rendered="#{contratos.aprovadoComite and contratos.agRegistro}"  converter="bigDecimalConverter" />
+			        </p:column>	
+			        
+			         <p:column style="text-align: center;"
+			        	headerText="Valor CCB (R$)"
+			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}"  rendered="#{!contratos.agRegistro}"  converter="bigDecimalConverter" />
 			        </p:column>	
 						
 			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">

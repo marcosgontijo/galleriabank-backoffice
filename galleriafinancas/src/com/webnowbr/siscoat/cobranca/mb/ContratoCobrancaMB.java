@@ -7866,9 +7866,9 @@ public class ContratoCobrancaMB {
 		filesPagar = listaArquivosPagar();
 		
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
-		if(!CommonsUtil.semValor(valorDespesas)) {
+		//if(!CommonsUtil.semValor(valorDespesas)) {
 			this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
-		}
+		//}
 
 		loadLovs();
 
@@ -17203,7 +17203,12 @@ public class ContratoCobrancaMB {
 		if(this.contasPagarSelecionada.isContaPaga() && CommonsUtil.semValor(this.contasPagarSelecionada.getDataPagamento())) {
 			this.contasPagarSelecionada.setDataPagamento(gerarDataHoje());
 		}	
+		
 		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+		
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
+		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 	}
@@ -17296,6 +17301,8 @@ public class ContratoCobrancaMB {
 					.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValorPagamento()));
 		}
 		this.objetoContratoCobranca.getListContasPagar().remove(conta);
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
 	}
 	
 	public void baixarConta(ContasPagar conta) {
