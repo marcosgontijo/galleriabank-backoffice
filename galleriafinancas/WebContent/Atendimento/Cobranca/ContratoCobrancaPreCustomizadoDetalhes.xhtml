@@ -313,7 +313,8 @@
 									<p:selectBooleanButton id="preAprovadoComiteView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" />
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>

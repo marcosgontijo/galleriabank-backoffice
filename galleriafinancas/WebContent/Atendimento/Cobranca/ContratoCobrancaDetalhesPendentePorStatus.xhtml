@@ -185,7 +185,9 @@
 									<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 									<p:spacer></p:spacer>
 									<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">
-										<p:selectOneRadio id="PreAprovadoComite" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" >
+										<p:selectOneRadio id="PreAprovadoComite" unselectable="false"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" >
 								            <f:selectItem itemLabel="Não" itemValue="false" />
 								            <f:selectItem itemLabel="Sim" itemValue="true" />
 									    </p:selectOneRadio>
