@@ -92,6 +92,7 @@
 								label="Data" size="100" pattern="dd/MM/yyyy"
 								styleClass="dateTimeField" />
 								
+							<!-- Usuário que cadastra contas não insere valor pago
 							<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
 								styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorPago"
@@ -110,7 +111,7 @@
 							<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
 								styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
-							<p:selectOneMenu id="formaTransferencia"
+							<p:selectOneMenu id="formaTransferencia">
 								value="#{contasPagarMB.objetoContasPagar.formaTransferencia}">
 								<f:selectItem itemValue="" itemLabel="Selecione" />
 								<f:selectItem itemValue="TED" itemLabel="TED" />
@@ -118,7 +119,7 @@
 								<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
 								<p:ajax event="change" 
 									update="tedGrid pixGrid" />
-							</p:selectOneMenu>
+							</p:selectOneMenu>  -->
 						</h:panelGrid>
 					
 						<h:panelGroup id="tedGrid">
