@@ -130,8 +130,8 @@
 											<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 										</p:selectOneMenu>			
 															
-										<p:outputLabel styleClass="labelBold">Avaliação Laudo: </p:outputLabel>
-										<p:selectOneMenu id="avaliacaoLaudo"
+										<p:outputLabel styleClass="labelBold" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Avaliação Laudo: </p:outputLabel>
+										<p:selectOneMenu id="avaliacaoLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
 											label="Tipo">
 											<f:selectItem itemValue="" itemLabel="" />
@@ -150,11 +150,12 @@
 										</shiro:hasAnyRoles>											
 										
 										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">PAJU Pedido: </p:outputLabel>
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">PAJU Pedido: </p:outputLabel>
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="pedirPajuBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" 
 											onLabel="Pedido" offLabel="Não Pedido" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
 											<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeGeracaoPAJU}"/>
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>
@@ -220,7 +221,9 @@
 										<p:outputLabel styleClass="labelBold">Pré-Comite</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR, COMITEEDITAR">									
-											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" >
+											<p:selectBooleanButton id="PreAprovadoComite" value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}" 
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}">
 											</p:selectBooleanButton>
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>

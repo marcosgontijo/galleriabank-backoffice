@@ -8052,17 +8052,19 @@ public class ContratoCobrancaMB {
 					this.indexStepsStatusContrato = 2;
 				}
 				
-				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
+				else if ( (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Avaliação de Imóvel - Galache - Consultar") 
+						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Avaliação de Imóvel - Consultar")
+						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Laudo")) && 
+						!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
-						(!this.objetoContratoCobranca.isLaudoRecebido() || !this.objetoContratoCobranca.isPajurFavoravel())) {
+						(!this.objetoContratoCobranca.isPajurFavoravel() || !this.objetoContratoCobranca.isLaudoRecebido())) {
 					this.indexStepsStatusContrato = 3;
 				}
 				
 				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
-						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
 						!this.objetoContratoCobranca.isAnaliseComercial()) {
 					this.indexStepsStatusContrato = 4;
@@ -8071,7 +8073,6 @@ public class ContratoCobrancaMB {
 				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
-						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
 						this.objetoContratoCobranca.isAnaliseComercial() &&
 						!this.objetoContratoCobranca.isComentarioJuridicoEsteira()) {
@@ -8081,7 +8082,6 @@ public class ContratoCobrancaMB {
 				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
-						this.objetoContratoCobranca.isLaudoRecebido() &&
 						this.objetoContratoCobranca.isPajurFavoravel() &&
 						this.objetoContratoCobranca.isAnaliseComercial() &&
 						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
@@ -11492,28 +11492,44 @@ public class ContratoCobrancaMB {
 						status = status + "Ag. PAJU";
 					}
 					
-					if(!CommonsUtil.semValor(status)) {
-						c.setStatus(status);
-					}
-					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPendenciaLaudoPaju()
 							&& (!c.isLaudoRecebido() || !c.isPajurFavoravel()) ) {
-						c.setStatus("Laudo + Paju Pendente");
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Laudo + Paju Pendente";
+						//c.setStatus("Laudo + Paju Pendente");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-							&& c.isLaudoRecebido() &&  c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
-						c.setStatus("Análise Comercial");
+							&&  c.isPajurFavoravel() && !c.isAnaliseComercial() ) {
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Análise Comercial";
+						//c.setStatus("Análise Comercial");
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && !c.isComentarioJuridicoEsteira() ) {
-						c.setStatus("Comentário Jurídico");
+							&& c.isPajurFavoravel() && c.isAnaliseComercial() && !c.isComentarioJuridicoEsteira() ) {
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Comentário Jurídico";
+						//c.setStatus("Comentário Jurídico");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
-							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
-						c.setStatus("Pré-Comite");
+							&& c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
+						if(!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Pré-Comite";
+						//c.setStatus("Pré-Comite");
+					}
+					
+					if(!CommonsUtil.semValor(status)) {
+						c.setStatus(status);
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
