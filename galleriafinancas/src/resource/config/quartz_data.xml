@@ -15,7 +15,7 @@
 		<ignore-duplicates>false</ignore-duplicates>
 	</processing-directives>
 
-	 <!--<schedule>
+    <schedule>
 		<job>
 			<name>IpcaJobUnico</name>
 			<job-class>com.webnowbr.siscoat.job.IpcaJobContrato</job-class>
@@ -39,11 +39,10 @@
 			<cron>
 				<name>IpcaJobTrigger</name>
 				<job-name>IpcaJob</job-name>
-				<cron-expression>0 0 2 * * ?</cron-expression>
+				<cron-expression>0 0 15 * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>
-	-->
 	<schedule>
 		<job>
 			<name>IpcaJobContrato</name>

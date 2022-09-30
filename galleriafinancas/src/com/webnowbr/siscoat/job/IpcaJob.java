@@ -2,6 +2,9 @@ package com.webnowbr.siscoat.job;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
@@ -14,6 +17,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 
 
@@ -57,10 +61,60 @@ public class IpcaJob implements Job {
 			LOGGER.error("IpcaJob.execute (jobKey=" + jobKey + "): EXCEPTION", e);
 		}
 	}
-
 	
+	/**
+	 * mesmo método do IPCAMB atualizaIPCAPorContrato
+	 * @param numeroContrato
+	 */
+	public void atualizaIPCA() {
+		try {
+			IPCADao ipcaDao = new IPCADao();
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
+			
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findAll();
 
-	private void atualizaIPCA() {
+			LOGGER.info("incio atualizaIPCAPorContrato");
+			
+			if (contratosCobranca.size() > 0) {								
+				for (ContratoCobranca contratoCobranca : contratosCobranca) {					
+					if (contratoCobranca.isCorrigidoIPCA() && !contratoCobranca.isCorrigidoNovoIPCA()) {
+						contratoCobranca.setRecalculaIPCA(true);
+						
+						for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
+							if (CommonsUtil.mesmoValor(contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe).getNumeroParcela() , "0") )
+								continue;
+							
+							try {
+								if (!ipcaJobCalcular.calcularIPCACustom(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+									break;
+							} catch (Exception e) {
+								LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
+								continue;
+							}
+						}
+						
+						contratoCobranca.setRecalculaIPCA(false);
+						contratoCobrancaDao.merge(contratoCobranca);
+						
+						LOGGER.info("[Contrato " + contratoCobranca.getNumeroContrato() + "] IPCA Reprocessado com sucesso!" );
+					} else {
+						
+						LOGGER.info("[Contrato " + contratoCobranca.getNumeroContrato() + "] Novo IPCA Reprocessado com sucesso!" );
+					}
+				}
+			}
+			//contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
+				
+			LOGGER.info("Fim atualizaIPCAPorContrato");
+
+		} catch (Exception e) {
+			LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
+		}
+	}
+	
+	private void atualizaIPCAOld() {
 		try {
 			IPCADao ipcaDao = new IPCADao();
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
@@ -89,7 +143,4 @@ public class IpcaJob implements Job {
 			LOGGER.error("IpcaJob.execute " + "atualizaIPCA: EXCEPTION", e);
 		}
 	}
-
-
-
 }

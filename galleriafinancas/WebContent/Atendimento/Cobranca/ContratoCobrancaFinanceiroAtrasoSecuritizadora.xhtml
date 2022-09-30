@@ -60,7 +60,7 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="ConsultaFinanceiro" header="Financeiro Atraso FIDC - Consultar"
+			<p:panel id="ConsultaFinanceiro" header="Financeiro Atraso Securitizadora - Consultar"
 				style="margin-bottom:10px;">		
 				<h:panelGrid columns="1">
 					<p:outputLabel
@@ -69,7 +69,7 @@
 				</h:panelGrid>
 				<h:panelGrid columns="2">						
 					<p:commandButton value="Consultar"
-						action="#{contratoCobrancaMB.geraRelFinanceiroAtrasoFIDC}"
+						action="#{contratoCobrancaMB.geraRelFinanceiroAtrasoSecuritizadora}"
 						image="ui-icon ui-icon-check"
 						update=":form:dtContratos :form:ConsultaFinanceiroResultados PanelPDF"
 						 onclick="start();" oncomplete="stop();"
@@ -85,7 +85,7 @@
 					emptyMessage="" sortBy="#{contratos.dataVencimentoAtual}" sortOrder="descending">
 					<f:facet name="header">
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoFIDC}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoSecuritizadora}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 					</f:facet>
@@ -160,7 +160,7 @@
 					
 					<f:facet name="footer">
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoFIDC}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroAtrasoSecuritizadora}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.relObjetoContratoCobranca.size() == 0}" />
 					</f:facet>
