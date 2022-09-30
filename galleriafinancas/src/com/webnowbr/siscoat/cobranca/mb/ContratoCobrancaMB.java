@@ -36,7 +36,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -89,6 +91,7 @@ import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -27443,7 +27446,9 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//		+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 
 		// cria o diretório, caso não exista
@@ -27456,10 +27461,15 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			// cria o arquivo
+			event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
+			String oldFileName = new String(event.getFile().getFileName());
+			String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
+			String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
+			
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos = new FileOutputStream(pathContrato + fileName);
 				fos.write(conteudo);
 				fos.close();
 			} catch (FileNotFoundException e) {
@@ -27472,6 +27482,9 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public String generateFileID() {		
+		return CommonsUtil.stringValue(System.currentTimeMillis());
+	}
 	/**
 	 * deleta o arquivo selecionado na tela
 	 */
@@ -27675,7 +27688,9 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivosPagar() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//		+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
