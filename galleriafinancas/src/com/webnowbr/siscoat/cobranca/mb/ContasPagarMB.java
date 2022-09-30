@@ -53,6 +53,7 @@ public class ContasPagarMB {
 
 	private boolean updateMode;
 	private boolean deleteMode;
+	private boolean baixaMode;
 
 	private String tipoDespesa;
 	private String tipoData;
@@ -89,7 +90,7 @@ public class ContasPagarMB {
 	public ContasPagarMB() {
 
 	}
-	
+	// Lista Pós Operação
 	public List<String> contaPagarDescricaoLista(){
 		List<String> listaNome = new ArrayList<>();
 		listaNome.add("Busca de endereços JUD");
@@ -827,6 +828,12 @@ public class ContasPagarMB {
 
 	public void setTipoData(String tipoData) {
 		this.tipoData = tipoData;
+	}
+	public boolean isBaixaMode() {
+		return baixaMode;
+	}
+	public void setBaixaMode(boolean baixaMode) {
+		this.baixaMode = baixaMode;
 	}
 
 }

@@ -30,7 +30,8 @@
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}">
 						<p:inputText id="numcontrato"
 							value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
-							label="Contrato" style="width:110px;" />
+							label="Contrato" style="width:110px;"
+							disabled="#{contasPagarMB.baixaMode}" />
 					</h:panelGrid>
 
 					<p:outputLabel for="pagadorRecebedor" value="Recebedor: "
@@ -87,34 +88,30 @@
 						value="#{contasPagarMB.objetoContasPagar.dataVencimento}"
 						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'C'}"
 						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+						styleClass="dateTimeField" disabled="#{contasPagarMB.baixaMode}">
 					</p:calendar>
 
 					<p:outputLabel for="dataVencimento" value="Data Vencimento: "
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						styleClass="labelBold" />
 					<p:calendar id="dataVencimento"
 						value="#{contasPagarMB.objetoContasPagar.dataVencimento}"
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						required="true" label="Data" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+						styleClass="dateTimeField" disabled="#{contasPagarMB.baixaMode}">
 						<p:ajax event="dateSelect" update="dataPagamento"
 							listener="#{contasPagarMB.settarDataPagamento()}" />
 					</p:calendar>
 
 					<p:outputLabel for="numeroDocumento" value=" Numero Documento: "
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						styleClass="labelBold" />
 					<p:inputText id="numeroDocumento"
 						value="#{contasPagarMB.objetoContasPagar.numeroDocumento}"
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
-						disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.baixaMode}" />
 
 					<p:outputLabel for="descricao" value="Descrição: "
 						styleClass="labelBold" />
 					<p:inputText id="descricao"
 						value="#{contasPagarMB.objetoContasPagar.descricao}"
-						disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.baixaMode}" />
 					<p:outputLabel for="valor" value="Valor (R$): "
 						styleClass="labelBold" />
 					<p:inputText id="valor"
@@ -122,30 +119,27 @@
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
 						converter="bigDecimalConverter"
-						disabled="#{contasPagarMB.deleteMode}" >
+						disabled="#{contasPagarMB.baixaMode}" >
 						<p:ajax event="blur" update="valorPagamento"
 							listener="#{contasPagarMB.settarValorPagamento()}" />
 					</p:inputText>
 
 					<p:outputLabel for="valorPagamento" value="Valor Pagamento (R$): "
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
+
 						styleClass="labelBold" />
 					<p:inputText id="valorPagamento"
 						value="#{contasPagarMB.objetoContasPagar.valorPagamento}"
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="false"
 						converter="bigDecimalConverter"
-						disabled="#{contasPagarMB.deleteMode}" />
+						disabled="#{contasPagarMB.deleteMode or !contasPagarMB.baixaMode}" />
 						
 					<p:outputLabel for="dataPagamento" value="Data Pagamento: "
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						styleClass="labelBold" />
 					<p:calendar id="dataPagamento"
 						value="#{contasPagarMB.objetoContasPagar.dataPagamento}"
-						rendered="#{contasPagarMB.objetoContasPagar.tipoDespesa eq 'E'}"
 						label="Data" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode}">
+						styleClass="dateTimeField" disabled="#{contasPagarMB.deleteMode or !contasPagarMB.baixaMode}">
 					</p:calendar>
 
 				</h:panelGrid>

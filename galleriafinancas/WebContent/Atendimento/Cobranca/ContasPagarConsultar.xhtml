@@ -49,7 +49,7 @@
 			</p:panel>
 			<p:panel id="ConsultaContasPagarResultados" header="Contas a Pagar - Resultados" style="margin-bottom:10px;">		    		    				
 				<p:dataTable id="dtContasPagar" var="contasPagar"
-					value="#{contasPagarMB.contasPagar}" paginator="true" rows="40"
+					value="#{contasPagarMB.contasPagar}" paginator="true" rows="10"
 					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
 					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
@@ -61,6 +61,8 @@
 							<f:setPropertyActionListener target="#{contasPagarMB.updateMode}"
 								value="false" />
 							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
+								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.baixaMode}"
 								value="false" />
 						</p:commandButton>
 					</f:facet>
@@ -107,6 +109,8 @@
 								value="true" />
 							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
 								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.baixaMode}"
+								value="false" />
 						</p:commandButton>
 						<p:spacer width="10" height="10" />
 						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
@@ -119,6 +123,8 @@
 								value="true" />
 							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
 								value="false" />
+							<f:setPropertyActionListener target="#{contasPagarMB.baixaMode}"
+								value="true" />
 						</p:commandButton>
 						<p:spacer width="10" height="10" />
 						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
@@ -130,6 +136,8 @@
 								value="false" />
 							<f:setPropertyActionListener target="#{contasPagarMB.deleteMode}"
 								value="true" />
+							<f:setPropertyActionListener target="#{contasPagarMB.baixaMode}"
+								value="false" />
 						</p:commandButton>
 					</p:column>
 					<f:facet name="footer">
