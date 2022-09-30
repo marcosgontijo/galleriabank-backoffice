@@ -95,5 +95,17 @@
 			<column name="valorCondominio" />
 		</property> 
 		
+		<property name="numeroCartorio" type="java.lang.String">
+			<column name="numeroCartorio" />
+		</property>
+		
+		<property name="cartorioEstado" type="java.lang.String">
+			<column name="cartorioEstado" />
+		</property>
+		
+		<property name="cartorioMunicipio" type="java.lang.String">
+			<column name="cartorioMunicipio" />
+		</property>
+		
     </class>
 </hibernate-mapping>
