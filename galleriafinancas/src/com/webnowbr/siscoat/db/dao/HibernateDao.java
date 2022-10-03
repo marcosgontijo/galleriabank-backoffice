@@ -453,7 +453,7 @@ public abstract class HibernateDao<T, ID extends Serializable> implements DAO<T,
     /**
      * Helper class to run a database operation.
      */
-    protected abstract class DBRunnable {
+    public abstract class DBRunnable {
         /**
          * Runs the database operation specific code.
          * @return The operation result.
