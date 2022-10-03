@@ -53,6 +53,9 @@ public class DebenturesInvestidor implements Serializable {
 	
 	private String garantido;
 	
+	private String numeroContrato;
+	private BigDecimal valorLiquido;	
+	
 	public DebenturesInvestidor(){
 	}
 
@@ -262,5 +265,21 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setGarantido(String garantido) {
 		this.garantido = garantido;
+	}
+
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
+	}
+
+	public BigDecimal getValorLiquido() {
+		return valorLiquido;
+	}
+
+	public void setValorLiquido(BigDecimal valorLiquido) {
+		this.valorLiquido = valorLiquido;
 	}
 }

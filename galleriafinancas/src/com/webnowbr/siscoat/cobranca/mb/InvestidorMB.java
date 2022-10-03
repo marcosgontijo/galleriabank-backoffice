@@ -4632,9 +4632,11 @@ public class InvestidorMB {
 		this.filtroDebenturesPorValor = "Todos";
 		this.filtroValorFaceInicial = null;
 		this.filtroValorFaceFinal = null;
+		
+		this.filtroNumeroContrato = "";
 
 		clearTitulosQuitadosPDFParams();
-		
+		/*		
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listRecebedores = pagadorRecebedorDao.findAll();
 		this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
@@ -4642,7 +4644,7 @@ public class InvestidorMB {
 		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
 				listRecebedores,
 				listRecebedoresSeleciodados);
-
+		*/
 		return "/Atendimento/Cobranca/RelatorioDebenturesEmitidas.xhtml";
 	}
 	
@@ -4674,7 +4676,7 @@ public class InvestidorMB {
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal);
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato);
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}

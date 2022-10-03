@@ -59,6 +59,12 @@
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
 						styleClass="dateTimeField"/>
 						
+					<p:outputLabel for="NumeroContrato" value="Contrato: "
+						styleClass="labelBold" />
+					<p:inputText id="NumeroContrato"
+						value="#{investidorMB.filtroNumeroContrato}" size="100" label="Número do Contrato" required="true"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"/>
+						
 					<p:outputLabel for="TipoDocumento" value="Tipo Doc.: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:selectOneRadio id="TipoDocumento"
@@ -74,7 +80,7 @@
 						styleClass="labelBold"
 						rendered="#{investidorMB.filtroDebenturesTipoDocumento ne 'Todos'}" />
 					<p:inputText id="Documento"
-						value="#{investidorMB.filtroDebenturesDocumento}" label="Recebedor" required="true"
+						value="#{investidorMB.filtroDebenturesDocumento}" label="Documento" required="true"
 						style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"
 						rendered="#{investidorMB.filtroDebenturesTipoDocumento ne 'Todos'}" />
 						
@@ -131,10 +137,13 @@
 						<p:commandButton action="#{investidorMB.geraXLSRelatorioDebenturesEmitidas}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS" value="Gerar XLS">
 		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
 		                </p:commandButton>
-			        </f:facet>       	
+			        </f:facet>    			            
 			        <p:column style="text-align: center;" headerText="Debenturista" filterBy="#{debentures.recebedor.nome}" filterMatchMode="contains" sortBy="#{debentures.recebedor.nome}">
 			            <h:outputText value="#{debentures.recebedor.nome}" />
-			        </p:column>		        
+			        </p:column>		    
+			        <p:column style="text-align: center;" headerText="Contrato" filterBy="#{debentures.contrato.numeroContrato}" filterMatchMode="contains" sortBy="#{debentures.contrato.numeroContrato}">
+			            <h:outputText value="#{debentures.contrato.numeroContrato}" />
+			        </p:column>		    
 			        <p:column style="text-align: center;" headerText="Emissão" sortBy="#{debentures.dataDebentures}">
 			            <h:outputText value="#{debentures.dataDebentures}" >			            	
 			            	<f:convertDateTime locale="pt_BR"  />
@@ -146,7 +155,7 @@
 						<h:outputText value="#{debentures.prazo}"/>
 					</p:column>	
 					<p:column style="text-align: center;"
-							headerText="Valor Face" >
+							headerText="Valor Debênture" >
 						<h:outputText value="R$ "/><h:outputText value="#{debentures.valorFace}" converter="bigDecimalConverter"/>
 					</p:column>		
 					

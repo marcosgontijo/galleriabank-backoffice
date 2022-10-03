@@ -794,7 +794,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 		
 	@SuppressWarnings("unchecked")
 	public List<DebenturesInvestidor> getRelatorioDebenturesEmitidas(final Date dtRelInicio, final Date dtRelFim, final String tipoDocumento, final String documento, final String status,
-			final String filtraValorFace, final BigDecimal valorFaceInicial, final BigDecimal valorFaceFinal) {
+			final String filtraValorFace, final BigDecimal valorFaceInicial, final BigDecimal valorFaceFinal, final String filtroNumeroContrato) {
 		return (List<DebenturesInvestidor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -908,7 +908,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										debenturesCompleta.setQuitado("Sim");
 									} else {
 										debenturesCompleta.setQuitado("Não");
-									}	
+									}										
 									
 									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
 										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
@@ -917,9 +917,22 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
 										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
 									}
+									
+									debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+									
+									debenturesCompleta.setValorFace(c.getVlrInvestidor1());
+									
+									
+									if (debenturesCompleta.getMesesCarencia() > 0) {
+										debenturesCompleta.setPagamentoMensal("Sim");
+									} else {
+										debenturesCompleta.setPagamentoMensal("Não");
+									}
+									
+									debenturesCompleta.setTipoCalculo(c.getTipoCalculoInvestidor1());
 								}
 							}
-							
+							/*
 							if (c.getRecebedor2() != null) {
 								if (c.getRecebedor2().getId() == debenturesCompleta.getRecebedor().getId()) {
 									if (c.isRecebedorGarantido2()) {
@@ -1518,6 +1531,7 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 									}
 								}
 							}
+							*/
 						} else {	
 							// se pagador for galleria
 							debenturesCompleta.setDataDebentures(c.getDataInicio());
@@ -1589,23 +1603,22 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								if(CommonsUtil.semValor(debenturesCompleta.getValorUltimaParcelaPaga())) {
 									debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
 								}
+																
+								debenturesCompleta.setValorFace(debenturesCompleta.getValorDebenture());
+								
+								debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+								
+								if (debenturesCompleta.getMesesCarencia() > 0) {
+									debenturesCompleta.setPagamentoMensal("Sim");
+								} else {
+									debenturesCompleta.setPagamentoMensal("Não");
+								}
+								
+								debenturesCompleta.setTipoCalculo(c.getTipoCalculoInvestidor1());
+								
 								
 							}							
 						}
-						
-						BigDecimal valorFace = new BigDecimal(db.getQtdeDebentures()).multiply(new BigDecimal(1000.00));
-						debenturesCompleta.setValorFace(valorFace.setScale(2));
-						
-						debenturesCompleta.setMesesCarencia(c.getMesesCarencia());
-						
-						if (debenturesCompleta.getMesesCarencia() > 0) {
-							debenturesCompleta.setPagamentoMensal("Sim");
-						} else {
-							debenturesCompleta.setPagamentoMensal("Não");
-						}
-						
-						debenturesCompleta.setTipoCalculo(c.getTipoCalculo());
-						
 						
 						/***
 						 * Aplica filtros de Documento e Status
@@ -1652,6 +1665,15 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 						if (filtraValorFace.equals("Filtrar")) {
 							if (debenturesCompleta.getValorFace().compareTo(valorFaceInicial) < 0 || debenturesCompleta.getValorFace().compareTo(valorFaceFinal) > 0) {
 								addDebenture = false;
+							}
+						}
+						
+						// filtro número do contrato
+						if (!filtroNumeroContrato.equals("")) {
+							addDebenture = false;
+							
+							if (debenturesCompleta.getContrato().getNumeroContrato().equals(filtroNumeroContrato)) {
+								addDebenture = true;
 							}
 						}
 						
