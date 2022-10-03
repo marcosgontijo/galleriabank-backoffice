@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -99,6 +100,7 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasAPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
@@ -313,11 +315,15 @@ public class CcbMB {
     private boolean temIq = false;
     private boolean temItbi = false;
 	private boolean addSegurador;
+	
+	private boolean mostrarDadosOcultos;
 	private Segurado seguradoSelecionado;
     
     private BigDecimal valorProcesso = BigDecimal.ZERO;
     
     private String numeroProcesso = "";
+    
+    private String carencia = "";
     
     private CcbContrato objetoCcb = new CcbContrato();
     
@@ -422,6 +428,7 @@ public class CcbMB {
 		fiducianteGerado = false;
 		devedorGerado = false;
 		modeloAntigo = false;
+		mostrarDadosOcultos = false;
 		this.objetoCcb.setNomeEmitente(null);
 		this.objetoCcb.setCpfEmitente(null);
 		this.objetoCcb.setTerceiroGarantidor(false);
@@ -531,8 +538,38 @@ public class CcbMB {
 	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		this.objetoCcb.setObjetoContratoCobranca(cDao.findById(this.getObjetoContratoCobranca().getId()));
-		this.objetoCcb.setNumeroOperacao(this.getObjetoContratoCobranca().getNumeroContrato());
+		ContratoCobranca contrato = new ContratoCobranca();
+		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());
+		this.objetoCcb.setObjetoContratoCobranca(contrato);
+		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
+		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
+		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
+		
+		if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Compass")) {
+			this.objetoCcb.setElaboradorNome("Compass Avaliações Imobiliárias");
+			this.objetoCcb.setElaboradorCrea("CAU A40301-6");
+			this.objetoCcb.setResponsavelNome("Ana Maria F. Cooke");
+			this.objetoCcb.setResponsavelCrea("CAU A40301-6");
+		} else if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Galache")) {
+			this.objetoCcb.setElaboradorNome("Galache Engenharia Ltda");
+			this.objetoCcb.setElaboradorCrea("1009877");
+			this.objetoCcb.setResponsavelNome("5060563873-D");
+			this.objetoCcb.setResponsavelCrea("CAU A40301-6");
+		}
+		
+		ImovelCobranca imovel = contrato.getImovel();
+		this.objetoCcb.setCepImovel(imovel.getCep());	
+		this.objetoCcb.setNumeroImovel(imovel.getNumeroMatricula());
+		this.objetoCcb.setCidadeImovel(imovel.getCidade());
+		this.objetoCcb.setUfImovel(imovel.getEstado());
+		String[] endereco = imovel.getEndereco().split(Pattern.quote(","));
+		if(endereco.length > 0) {
+			this.objetoCcb.setLogradouroRuaImovel(endereco[0]);
+		}
+		if(endereco.length > 1) {
+			this.objetoCcb.setLogradouroNumeroImovel(CommonsUtil.removeEspacos(endereco[1]));
+		}
+		this.objetoCcb.setBairroImovel(imovel.getBairro());
 	}
 	
 	public void clearContratoCobranca() {
@@ -7163,21 +7200,7 @@ public class CcbMB {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-			for (XWPFParagraph p : document.getParagraphs()) {
-				List<XWPFRun> runs = p.getRuns();
-			    if (runs != null) {  	
-			    	for (XWPFRun r : runs) {
-			            String text = r.getText(0);
-			            
-			            text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	 		
-			            text = trocaValoresXWPF(text, r, "porcentagemImovel", CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getPorcentagemImovel(), ""));	 		
-			            text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.objetoCcb.getPorcentagemImovel());
-						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
-						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
-						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
-			        }
-			    }
-			}	
+			
 		
 			int indexSegurados = 43;
 			
@@ -7325,6 +7348,22 @@ public class CcbMB {
 				run3.addBreak();
 				iParticipante++;
 			}
+			
+			for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	 		
+			            text = trocaValoresXWPF(text, r, "porcentagemImovel", CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getPorcentagemImovel(), ""));	 		
+			            text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.objetoCcb.getPorcentagemImovel());
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
+			        }
+			    }
+			}	
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
@@ -8680,8 +8719,7 @@ public class CcbMB {
 	
 	public void calculaPorcentagemImovel() {
 		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getVendaLeilao() != null) {
-			this.objetoCcb.setPorcentagemImovel(((this.objetoCcb.getVendaLeilao().divide(this.objetoCcb.getValorCredito(), MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));
-						
+			this.objetoCcb.setPorcentagemImovel(((this.objetoCcb.getVendaLeilao().divide(this.objetoCcb.getValorCredito(), MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));	
 		}
 
 	}
@@ -8708,7 +8746,7 @@ public class CcbMB {
 		} else {		
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
-		
+		this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(carencia)));
 		simulador.setDataSimulacao(this.objetoCcb.getDataDeEmissao());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
@@ -8841,6 +8879,7 @@ public class CcbMB {
 		
 		populateParcelaSeguro();
 		calculaValorLiquidoCredito();
+		calculaPorcentagemImovel();
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));	
 	}
@@ -8872,6 +8911,7 @@ public class CcbMB {
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
 		clearAnexoII();
+		mostrarDadosOcultos = false;
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -9094,6 +9134,8 @@ public class CcbMB {
 	    this.fileName = null;
 	    this.fileType = null;
 	    this.fileTypeInt = 0;
+	    
+	    mostrarDadosOcultos = false;
 	    
 	    this.simulador = new SimulacaoVO();
 	    
@@ -10606,5 +10648,22 @@ public class CcbMB {
 	public void setTemItbi(boolean temItbi) {
 		this.temItbi = temItbi;
 	}
-		
+
+	public boolean isMostrarDadosOcultos() {
+		return mostrarDadosOcultos;
+	}
+
+	public void setMostrarDadosOcultos(boolean mostrarDadosOcultos) {
+		this.mostrarDadosOcultos = mostrarDadosOcultos;
+	}
+
+	public String getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(String carencia) {
+		this.carencia = carencia;
+	}
+	
+	
 }
