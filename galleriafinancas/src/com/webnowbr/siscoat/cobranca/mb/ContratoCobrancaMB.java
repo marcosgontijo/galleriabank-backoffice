@@ -36,7 +36,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -2985,8 +2984,8 @@ public class ContratoCobrancaMB {
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
-			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+			//this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
+			//this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 
 			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
 				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
@@ -27446,10 +27445,9 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
-		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//		+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
-		String pathContrato = "C:/Users/Usuario/Desktop/"
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		//String pathContrato = "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 
 		// cria o diretório, caso não exista
 		File diretorio = new File(pathContrato);
@@ -27461,15 +27459,15 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			// cria o arquivo
-			event.getFile().getFileName();
+			//event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
-			String oldFileName = new String(event.getFile().getFileName());
-			String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
-			String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
+			//String oldFileName = new String(event.getFile().getFileName());
+			//String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
+			//String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
 			
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream(pathContrato + fileName);
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
 				fos.write(conteudo);
 				fos.close();
 			} catch (FileNotFoundException e) {
@@ -27688,10 +27686,9 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivosPagar() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
-		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//		+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
-		String pathContrato = "C:/Users/Usuario/Desktop/"
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		//String pathContrato = "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
 		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
