@@ -473,6 +473,12 @@ public class UsuarioMB {
 		}
 	}
 
+	public void popularListaResponsavel(){
+		UserDao uDao = new UserDao();
+		uDao.popularListaResponsavel();
+	}
+	
+	
 	/**
 	 * @return the lazyModel
 	 */

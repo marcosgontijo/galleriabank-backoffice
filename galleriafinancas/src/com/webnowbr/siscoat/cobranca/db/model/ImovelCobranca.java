@@ -27,7 +27,10 @@ public class ImovelCobranca implements Serializable {
 	private String telResidencial;
 	private String observacao;
 	private String cep;
+	private String numeroCartorio;
 	private String cartorio;
+	private String cartorioEstado;
+	private String cartorioMunicipio;
 	private String tipo;
 	private String areaConstruida;
 	private String areaTotal;
@@ -410,5 +413,29 @@ public class ImovelCobranca implements Serializable {
 
 	public void setValorCondominio(BigDecimal valorCondominio) {
 		this.valorCondominio = valorCondominio;
+	}
+
+	public String getNumeroCartorio() {
+		return numeroCartorio;
+	}
+
+	public void setNumeroCartorio(String numeroCartorio) {
+		this.numeroCartorio = numeroCartorio;
+	}
+
+	public String getCartorioEstado() {
+		return cartorioEstado;
+	}
+
+	public void setCartorioEstado(String cartorioEstado) {
+		this.cartorioEstado = cartorioEstado;
+	}
+
+	public String getCartorioMunicipio() {
+		return cartorioMunicipio;
+	}
+
+	public void setCartorioMunicipio(String cartorioMunicipio) {
+		this.cartorioMunicipio = cartorioMunicipio;
 	}
 }
