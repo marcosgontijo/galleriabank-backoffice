@@ -469,6 +469,39 @@ public class CcbMB {
 		} else {
 			ccbDao.create(this.participanteSelecionado);
 		}
+		if(CommonsUtil.mesmoValor(participanteSelecionado.getTipoParticipante(), "EMITENTE")) {
+			if(CommonsUtil.semValor(this.objetoCcb.getContaCorrente())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getConta())) {
+					this.objetoCcb.setContaCorrente(participanteSelecionado.getPessoa().getConta());
+				}
+			}
+			
+			if(CommonsUtil.semValor(this.objetoCcb.getAgencia())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getAgencia())) {
+					this.objetoCcb.setAgencia(participanteSelecionado.getPessoa().getAgencia());
+				}
+			}
+			
+			if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getBanco())) {			
+				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
+				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
+					if (banco.length > 0) {
+						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
+					}
+				}
+				if (CommonsUtil.semValor(this.objetoCcb.getNumeroBanco())) {
+					if (banco.length > 1) {
+						this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
+					}
+				}	
+			}
+			
+			if(CommonsUtil.semValor(this.objetoCcb.getTitularConta())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getNomeCC())) {
+					this.objetoCcb.setTitularConta(participanteSelecionado.getPessoa().getNomeCC());
+				}
+			}
+		}
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 		this.addParticipante = false;
@@ -7364,8 +7397,8 @@ public class CcbMB {
 			        }
 			    }
 			}	
-			
-			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
+						
+			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM.multiply(BigDecimal.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento()) + 1));
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
 			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
