@@ -2892,8 +2892,8 @@ public class ContratoCobrancaMB {
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
-			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+			//this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
+			//this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 
 			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
 				this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));

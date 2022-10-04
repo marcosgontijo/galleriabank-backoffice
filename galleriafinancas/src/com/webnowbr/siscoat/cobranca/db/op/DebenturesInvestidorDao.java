@@ -783,18 +783,16 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 	
 	private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_1 = "select iddebenture, idcontrato from ("
 			+ "select d.id iddebenture, c.id idcontrato from cobranca.DebenturesInvestidor d "
-			+ "inner join cobranca.contratocobranca c on d.contrato = c.id "
-			+ "where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp ";
+			+ "inner join cobranca.contratocobranca c on d.contrato = c.id ";
 			
 		private static final String QUERY_DEBENTURES_REL_EMITIDAS_PART_2 = "select 0 iddebenture, ct.id idcontrato from cobranca.contratocobranca ct  "
 			+ "inner join cobranca.responsavel res on ct.responsavel = res.id  "
 			+ "where ct.status = 'Aprovado' "
-			+ "and ct.pagador in (15, 34,14, 182, 417, 803) "
-			+ "and ct.datainicio >= ? ::timestamp and ct.datainicio <= ? ::timestamp ";
+			+ "and ct.pagador in (15, 34,14, 182, 417, 803) ";			
 		
 	@SuppressWarnings("unchecked")
 	public List<DebenturesInvestidor> getRelatorioDebenturesEmitidas(final Date dtRelInicio, final Date dtRelFim, final String tipoDocumento, final String documento, final String status,
-			final String filtraValorFace, final BigDecimal valorFaceInicial, final BigDecimal valorFaceFinal, final String filtroNumeroContrato) {
+			final String filtraValorFace, final BigDecimal valorFaceInicial, final BigDecimal valorFaceFinal, final String filtroNumeroContrato, final String filtroDebenturesTipoFiltro) {
 		return (List<DebenturesInvestidor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -807,8 +805,16 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 				ResultSet rs = null;
 				
 				try {				
+					
+					String query_QUERY_DEBENTURES_EMITIDAS_1 = QUERY_DEBENTURES_REL_EMITIDAS_PART_1;
+					String query_QUERY_DEBENTURES_EMITIDAS_2 = QUERY_DEBENTURES_REL_EMITIDAS_PART_2;
+					
+					if (filtroDebenturesTipoFiltro.equals("Periodo")) {
+						query_QUERY_DEBENTURES_EMITIDAS_1 = query_QUERY_DEBENTURES_EMITIDAS_1 + " where d.dataDebentures >= ? ::timestamp and d.dataDebentures <= ? ::timestamp ";
+						query_QUERY_DEBENTURES_EMITIDAS_2 = query_QUERY_DEBENTURES_EMITIDAS_2 + " and ct.datainicio >= ? ::timestamp and ct.datainicio <= ? ::timestamp ";
+					}
 
-					query_QUERY_DEBENTURES_EMITIDAS =  QUERY_DEBENTURES_REL_EMITIDAS_PART_1 + " union all " + QUERY_DEBENTURES_REL_EMITIDAS_PART_2;
+					query_QUERY_DEBENTURES_EMITIDAS =  query_QUERY_DEBENTURES_EMITIDAS_1 + " union all " + query_QUERY_DEBENTURES_EMITIDAS_2;
 										
 					query_QUERY_DEBENTURES_EMITIDAS = query_QUERY_DEBENTURES_EMITIDAS + " ) debentures ";	
 					
@@ -818,13 +824,15 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 
 					ps = connection.prepareStatement(query_QUERY_DEBENTURES_EMITIDAS);
 					
-					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
-					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
-
-					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelFimSQL);
-					ps.setDate(3, dtRelInicioSQL);
-					ps.setDate(4, dtRelFimSQL);
+					if (filtroDebenturesTipoFiltro.equals("Periodo")) {					
+						java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+						java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+						ps.setDate(3, dtRelInicioSQL);
+						ps.setDate(4, dtRelFimSQL);
+					}
 					
 					rs = ps.executeQuery();
 					
@@ -901,14 +909,21 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 											quitado = false;
 											
 											debenturesCompleta.setDataQuitacao(null);
+											
+											debenturesCompleta.setValorLiquido(parcelas.getParcelaMensal());
+											
 											break;
 										}
 									}
 									if (quitado) {
 										debenturesCompleta.setQuitado("Sim");
+										
+										if (c.getListContratoCobrancaParcelasInvestidor1().size() > 1) { 
+											debenturesCompleta.setValorLiquido(c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensal());
+										}
 									} else {
 										debenturesCompleta.setQuitado("Não");
-									}										
+									}									
 									
 									if(CommonsUtil.semValor(debenturesCompleta.getDataUltimaParcelaPaga())) {
 										debenturesCompleta.setDataUltimaParcelaPaga(debenturesCompleta.getDataDebentures());//
@@ -918,15 +933,17 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										debenturesCompleta.setValorUltimaParcelaPaga(debenturesCompleta.getValorDebenture());//
 									}
 									
-									debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+									if (c.getCarenciaInvestidor1() != null) {
+										debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+									}
 									
 									debenturesCompleta.setValorFace(c.getVlrInvestidor1());
 									
 									
 									if (debenturesCompleta.getMesesCarencia() > 0) {
-										debenturesCompleta.setPagamentoMensal("Sim");
-									} else {
 										debenturesCompleta.setPagamentoMensal("Não");
+									} else {
+										debenturesCompleta.setPagamentoMensal("Sim");
 									}
 									
 									debenturesCompleta.setTipoCalculo(c.getTipoCalculoInvestidor1());
@@ -1587,11 +1604,18 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										debenturesCompleta.setValorUltimaParcelaPaga(parcelas.getSaldoCredorAtualizado());//
 									} else {
 										quitado = false;
+										
+										debenturesCompleta.setValorLiquido(parcelas.getParcelaMensal());
+										
 										break;
 									}
 								}
 								if (quitado) {
 									debenturesCompleta.setQuitado("Sim");
+									
+									if (c.getListContratoCobrancaParcelasInvestidor1().size() > 1) { 
+										debenturesCompleta.setValorLiquido(c.getListContratoCobrancaParcelasInvestidor1().get(1).getParcelaMensal());
+									}
 								} else {
 									debenturesCompleta.setQuitado("Não");
 								}					
@@ -1606,12 +1630,14 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 																
 								debenturesCompleta.setValorFace(debenturesCompleta.getValorDebenture());
 								
-								debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+								if (c.getCarenciaInvestidor1() != null) {
+									debenturesCompleta.setMesesCarencia(c.getCarenciaInvestidor1());
+								}
 								
 								if (debenturesCompleta.getMesesCarencia() > 0) {
-									debenturesCompleta.setPagamentoMensal("Sim");
-								} else {
 									debenturesCompleta.setPagamentoMensal("Não");
+								} else {
+									debenturesCompleta.setPagamentoMensal("Sim");
 								}
 								
 								debenturesCompleta.setTipoCalculo(c.getTipoCalculoInvestidor1());
@@ -1669,11 +1695,13 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 						}
 						
 						// filtro número do contrato
-						if (!filtroNumeroContrato.equals("")) {
-							addDebenture = false;
-							
-							if (debenturesCompleta.getContrato().getNumeroContrato().equals(filtroNumeroContrato)) {
-								addDebenture = true;
+						if (filtroDebenturesTipoFiltro.equals("Contrato")) {		
+							if (!filtroNumeroContrato.equals("")) {
+								addDebenture = false;
+								
+								if (debenturesCompleta.getContrato().getNumeroContrato().equals(filtroNumeroContrato)) {
+									addDebenture = true;
+								}
 							}
 						}
 						

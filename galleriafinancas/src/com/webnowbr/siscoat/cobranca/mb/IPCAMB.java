@@ -274,7 +274,7 @@ public class IPCAMB {
 						contratoCobrancaDao.merge(contratoCobranca);
 						
 						context.addMessage(null, new FacesMessage(
-								FacesMessage.SEVERITY_ERROR, "[Reprocessamento IPCA] Contrato " + contratoCobranca.getNumeroContrato() + " reprocessado com sucesso!", ""));
+								FacesMessage.SEVERITY_INFO, "[Reprocessamento IPCA] Contrato " + contratoCobranca.getNumeroContrato() + " reprocessado com sucesso!", ""));
 					}
 				} else {
 					context.addMessage(null, new FacesMessage(
@@ -563,5 +563,13 @@ public class IPCAMB {
 
 	public void setSelectedIPCA(IPCA selectedIPCA) {
 		this.selectedIPCA = selectedIPCA;
+	}
+
+	public ContratoCobrancaMB getContratoCobrancaMB() {
+		return contratoCobrancaMB;
+	}
+
+	public void setContratoCobrancaMB(ContratoCobrancaMB contratoCobrancaMB) {
+		this.contratoCobrancaMB = contratoCobrancaMB;
 	}
 }
