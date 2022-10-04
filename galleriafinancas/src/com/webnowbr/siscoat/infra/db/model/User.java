@@ -61,6 +61,7 @@ public final class User implements Serializable {
     private boolean comiteConsultar;
     
     private boolean assistFinanceiro;
+    private boolean userPosOperacao;
     
     private boolean userAvaliadorImovel;
     private boolean userLaudo;
@@ -528,4 +529,13 @@ public final class User implements Serializable {
 	public void setUserCobrancaFinanceiro(boolean userCobrancaFinanceiro) {
 		this.userCobrancaFinanceiro = userCobrancaFinanceiro;
 	}
+
+	public boolean isUserPosOperacao() {
+		return userPosOperacao;
+	}
+
+	public void setUserPosOperacao(boolean userPosOperacao) {
+		this.userPosOperacao = userPosOperacao;
+	}
+	
 }
