@@ -101,6 +101,7 @@ public class ContasPagarMB {
 		listaNome.add("Honorários sucumbenciais");
 		listaNome.add("Intimação por AR");
 		listaNome.add("Oficial de justiça");
+		listaNome.add("Outros");
 		
 		return listaNome.stream().collect(Collectors.toList());
 	}
@@ -313,10 +314,11 @@ public class ContasPagarMB {
 		
 		if(this.objetoContasPagar.isContaPaga() && CommonsUtil.semValor(this.objetoContasPagar.getDataPagamento())) {
 			this.objetoContasPagar.setDataPagamento(gerarDataHoje());
-		}	
+		}
 		this.selectedContratoLov.getListContasPagar().add(this.objetoContasPagar);
 		this.objetoContasPagar = new ContasPagar();
 		this.addContasPagar = false;
+		
 	}
 	
 	public void editarContaPosOperacao(ContasPagar conta) {
@@ -344,7 +346,10 @@ public class ContasPagarMB {
 
 		try {				
 			contratoCobrancaDao.merge(this.selectedContratoLov);
-
+			
+			TakeBlipMB takeBlipMB = new TakeBlipMB (); 
+			takeBlipMB.sendWhatsAppMessageNovaConta (this.selectedContratoLov.getNumeroContrato());
+			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Contas Inseridas com sucesso!!",
@@ -356,6 +361,7 @@ public class ContasPagarMB {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
 		}
+		
 	}
 	
 	public String clearFieldsEditar() {
