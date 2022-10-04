@@ -230,7 +230,7 @@
 						<h:outputText value="#{dashContratos.valorContratosComite}" converter="bigDecimalConverter" />
 					</p:column>
 					
-					<p:column style="text-align: center;" sortBy="#{dashboardMBVer2.listaContratosConsulta}" headerText="CCBs Emitidas">	
+					<p:column style="text-align: center;" sortBy="#{dashContratos.contratosCcbsEmitidas}" headerText="CCBs Emitidas">	
 						<p:commandLink onclick="PF('listaContratosCcb').show()"
 							update="contratosFormCcb">
 							<f:setPropertyActionListener

@@ -1547,7 +1547,7 @@
 
 										<p:commandButton value="Adicionar" ajax="true"
 											action="#{ccbMB.concluirParticipante()}"
-											update=":form:ParticipantesPanel"
+											update=":form:ParticipantesPanel :form:Dados "
 											image="ui-icon ui-icon-check" />
 
 									</h:panelGroup>
@@ -2050,6 +2050,14 @@
 										onkeydown="FormataValor(this,13, event, 2);"
 										converter="bigDecimalConverter" />
 										
+									<p:outputLabel for="valorDespesas" value="Valor do Despesas: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />									
+									<p:inputText id="valorDespesas" value="#{ccbMB.objetoCcb.valorDespesas}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this,13, event, 2);"
+										converter="bigDecimalConverter" />
+										
 									<p:commandButton ajax="true"
 										action="#{ccbMB.calcularSimulador}"
 										icon="ui-icon ui-icon-circle-zoomin"
@@ -2253,21 +2261,7 @@
 											<p:inputText id="valorIOF" value="#{ccbMB.objetoCcb.valorIOF}"
 												label="Contrato" onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this,13, event, 2);"
-												converter="bigDecimalConverter" />
-											<p:outputLabel for="valorDespesas" value="Valor do Despesas: "
-												styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<h:panelGroup>
-												<p:inputText id="valorDespesas" value="#{ccbMB.objetoCcb.valorDespesas}"
-													label="Contrato" onkeypress="return isNumberKey(event);"
-													onkeydown="FormataValor(this,13, event, 2);"
-													converter="bigDecimalConverter" />
-												<p:spacer height="10" />
-												<p:commandButton ajax="true"
-													action="#{ccbMB.calculaValorLiquidoCredito}"
-													icon="ui-icon ui-icon-circle-zoomin"
-													value="Calcular Valor Liquido do Credito" update="Dados" />
-											</h:panelGroup>
+												converter="bigDecimalConverter" />															
 											<p:outputLabel for="valorLiquidoCredito"
 												value="Valor Liquido do Credito: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
@@ -2276,6 +2270,11 @@
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this,13, event, 2);"
 												converter="bigDecimalConverter" />
+											<p:spacer height="10" />
+											<p:commandButton ajax="true"
+												action="#{ccbMB.calculaValorLiquidoCredito}"
+												icon="ui-icon ui-icon-circle-zoomin"
+												value="Calcular Valor Liquido" update="Dados" />
 										</h:panelGrid>
 									</p:panel>
 									<p:panel header="Taxas">
