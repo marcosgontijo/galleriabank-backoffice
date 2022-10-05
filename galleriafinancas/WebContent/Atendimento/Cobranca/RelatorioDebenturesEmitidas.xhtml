@@ -45,25 +45,35 @@
 			</p:panel>
 			<p:panel id="ConsultaFiltrosTitulosQuitados" header="Relatório Debêntures Emitidas - Consultar"
 				style="margin-bottom:10px;">	
-				<h:panelGrid columns="2">					
-					<p:outputLabel for="dataInicio" value="Data Inicio: "
+				<h:panelGrid columns="2">			
+					<p:outputLabel for="TipoFiltro" value="Tipo Filtro: "
 						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="TipoFiltro"
+						value="#{investidorMB.filtroDebenturesTipoFiltro}">
+						<f:selectItem itemLabel="Período" itemValue="Periodo" />
+						<f:selectItem itemLabel="Contrato" itemValue="Contrato" />
+						<p:ajax update="ConsultaFiltrosTitulosQuitados" event="valueChange"
+							listener="#{investidorMB.updateTipoFiltro}" />
+					</p:selectOneRadio>	
+							
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}" />
 					<p:calendar id="dataInicio"
 						value="#{investidorMB.dataInicio}"
 						required="true" label="Data Inicio" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}"/>
 					<p:outputLabel for="dataFim" value="Data Fim: "
-						styleClass="labelBold" style="margin-right: 59px;" />
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}"/>
 					<p:calendar id="dataFim"
 						value="#{investidorMB.dataFim}" required="true"
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField"/>
+						styleClass="dateTimeField" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}"/>
 						
 					<p:outputLabel for="NumeroContrato" value="Contrato: "
-						styleClass="labelBold" />
+						styleClass="labelBold" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Contrato'}"/>
 					<p:inputText id="NumeroContrato"
-						value="#{investidorMB.filtroNumeroContrato}" size="100" label="Número do Contrato" required="true"
-						style="FONT-SIZE: 10pt;width:300px;margin-left: 2px;"/>
+						value="#{investidorMB.filtroNumeroContrato}" size="50" label="Número do Contrato" 
+						style="FONT-SIZE: 10pt;width:100px;margin-left: 2px;" required="true" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Contrato'}"/>
 						
 					<p:outputLabel for="TipoDocumento" value="Tipo Doc.: "
 						styleClass="labelBold" style="margin-right: 59px;" />
@@ -124,7 +134,8 @@
 						rendered="#{investidorMB.filtroDebenturesPorValor ne 'Todos'}" />
 				</h:panelGrid>	
 				<p:commandButton value="Consultar"
-					action="#{investidorMB.relatorioDebeturesEmitidas}"
+					action="#{investidorMB.relatorioDebeturesEmitidas}" 
+					ajax="false"
 					image="ui-icon ui-icon-check"
 					update="ConsultaTitulosQuitados PanelPDF"
 					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
@@ -172,7 +183,11 @@
 					<p:column style="text-align: center;"
 							headerText="Valor Parcela Mensal" >
 						<h:outputText value="R$ "/><h:outputText value="#{debentures.parcelaMensal}" converter="bigDecimalConverter"/>
-					</p:column>						
+					</p:column>			
+					<p:column style="text-align: center;"
+							headerText="Valor Líquido" >
+						<h:outputText value="R$ "/><h:outputText value="#{debentures.valorLiquido}" converter="bigDecimalConverter"/>
+					</p:column>					
 					<p:column style="text-align: center;" headerText="Data Última Parcela" sortBy="#{debentures.dataUltimaParcela}">			          
 					  <h:outputText value="#{debentures.dataUltimaParcela}" >			            	
 			            	<f:convertDateTime locale="pt_BR"  />

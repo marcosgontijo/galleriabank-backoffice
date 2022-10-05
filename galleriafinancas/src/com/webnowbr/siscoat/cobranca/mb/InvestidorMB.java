@@ -255,6 +255,8 @@ public class InvestidorMB {
 	private String filtroDebenturesPorValor = "Todos";
 	private BigDecimal filtroValorFaceInicial = null;
 	private BigDecimal filtroValorFaceFinal = null;
+	
+	private String filtroDebenturesTipoFiltro;
 		
 	public InvestidorMB() {
 
@@ -3319,42 +3321,48 @@ public class InvestidorMB {
 		cell.setCellValue("Debenturista");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(1);
-		cell.setCellValue("Emissão");
+		cell.setCellValue("Contrato");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(2);
-		cell.setCellValue("Prazo");
+		cell.setCellValue("Emissão");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(3);
-		cell.setCellValue("Valor Face");
+		cell.setCellValue("Prazo");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(4);
-		cell.setCellValue("Taxa Remuneração");
+		cell.setCellValue("Valor Face");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(5);
-		cell.setCellValue("Carência");
+		cell.setCellValue("Taxa Remuneração");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(6);
-		cell.setCellValue("Mensal");
+		cell.setCellValue("Carência");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(7);
-		cell.setCellValue("Valor Parcela Mensal");
+		cell.setCellValue("Mensal");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(8);
-		cell.setCellValue("Data Última Parcela");
+		cell.setCellValue("Valor Parcela Mensal");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(9);
-		cell.setCellValue("Valor Última Parcela");
+		cell.setCellValue("Valor Líquido");		
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
-		cell.setCellValue("Quitado");
+		cell.setCellValue("Data Última Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(11);
-		cell.setCellValue("Data Quitação");
+		cell.setCellValue("Valor Última Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(12);
-		cell.setCellValue("Tipo de Cálculo");
+		cell.setCellValue("Quitado");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(13);
+		cell.setCellValue("Data Quitação");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(14);
+		cell.setCellValue("Tipo de Cálculo");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(15);
 		cell.setCellValue("Garantido");
 		cell.setCellStyle(cell_style);
 
@@ -3403,18 +3411,25 @@ public class InvestidorMB {
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getRecebedor().getNome());
 			
-			// Emissao
+			// Contrato
 			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			if (record.getContrato() != null) {
+				cell.setCellValue(record.getContrato().getNumeroContrato());	
+			} 			
+			
+			// Emissao
+			cell = row.createCell(2);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataDebentures());
 			
 			// Prazo
-			cell = row.createCell(2);
+			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getPrazo());
 			
 			// Valor Face
-			cell = row.createCell(3);
+			cell = row.createCell(4);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorDebenture() != null) {
@@ -3424,7 +3439,7 @@ public class InvestidorMB {
 			}
 			
 			// Taxa
-			cell = row.createCell(4);
+			cell = row.createCell(5);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getTaxa() != null) {
@@ -3434,32 +3449,42 @@ public class InvestidorMB {
 			}
 			
 			// Meses Carência
-			cell = row.createCell(5);
+			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getMesesCarencia());
 			
 			// Mensal
-			cell = row.createCell(6);
+			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getPagamentoMensal());
 			
 			// Valor Parcela Mensal
-			cell = row.createCell(7);
+			cell = row.createCell(8);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaMensal() != null) {
 				cell.setCellValue(record.getParcelaMensal().doubleValue());
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
-			}			
+			}	
+			
+			// Valor Liquido
+			cell = row.createCell(9);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorLiquido() != null) {
+				cell.setCellValue(record.getValorLiquido().doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
 			
 			// Data Última Parcela
-			cell = row.createCell(8);
+			cell = row.createCell(10);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcela());
 			
 			//Valor Última Parcela
-			cell = row.createCell(9);
+			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaFinal() != null) {
@@ -3469,22 +3494,22 @@ public class InvestidorMB {
 			}
 			
 			// Quitado
-			cell = row.createCell(10);
+			cell = row.createCell(12);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQuitado());
 			
 			// Data Quitação
-			cell = row.createCell(11);
+			cell = row.createCell(13);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcelaPaga());			
 			
 			// Tipo de Cálculo
-			cell = row.createCell(12);
+			cell = row.createCell(14);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getTipoCalculo());
 						
 			// Garantido
-			cell = row.createCell(13);
+			cell = row.createCell(15);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getGarantido());
 		}
@@ -4629,6 +4654,8 @@ public class InvestidorMB {
 		this.filtroDebenturesTipoDocumento = "Todos";
 		this.filtroDebenturesStatus = "Todos";
 		
+		this.filtroDebenturesTipoFiltro = "Periodo";
+		
 		this.filtroDebenturesPorValor = "Todos";
 		this.filtroValorFaceInicial = null;
 		this.filtroValorFaceFinal = null;
@@ -4651,6 +4678,17 @@ public class InvestidorMB {
 	public void updateFiltroDocumento() {
 		if (this.filtroDebenturesTipoDocumento.equals("Todos")) {
 			this.filtroDebenturesDocumento = "";
+		}
+	}
+
+	public void updateTipoFiltro() {
+		if (this.filtroDebenturesTipoFiltro.equals("Periodo")) {
+			this.dataInicio = gerarDataHoje();
+			this.dataFim = gerarDataHoje();
+			
+			this.filtroNumeroContrato = "";
+		} else {
+			this.filtroNumeroContrato = "";
 		}
 	}
 	
@@ -4676,7 +4714,7 @@ public class InvestidorMB {
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato);
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro);
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
@@ -10817,5 +10855,13 @@ public class InvestidorMB {
 
 	public void setFiltroValorFaceFinal(BigDecimal filtroValorFaceFinal) {
 		this.filtroValorFaceFinal = filtroValorFaceFinal;
+	}
+
+	public String getFiltroDebenturesTipoFiltro() {
+		return filtroDebenturesTipoFiltro;
+	}
+
+	public void setFiltroDebenturesTipoFiltro(String filtroDebenturesTipoFiltro) {
+		this.filtroDebenturesTipoFiltro = filtroDebenturesTipoFiltro;
 	}
 }

@@ -227,6 +227,15 @@
 						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
 						style="width:60px">
 					</p:selectBooleanButton>
+					
+					<h:outputLabel for="PosOperacao" value="Financeiro Pós Operação "
+						class="labelBold" />
+					<p:selectBooleanButton id="PosOperacao"
+						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+						value="#{usuarioMB.objetoUsuario.userPosOperacao}" onLabel="Sim"
+						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+						style="width:60px">
+					</p:selectBooleanButton>
 				</h:panelGrid>
 				
 				<p:panel id="PanelBlockBackoffice"

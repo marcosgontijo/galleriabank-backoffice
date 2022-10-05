@@ -26,6 +26,7 @@ public class ContasPagar implements Serializable {
 	private PagadorRecebedor pagadorRecebedor;
 	private String tipoDespesa;
 	private ContaContabil contaContabil;
+	private String observacao;
 	
 	private String formaTransferencia;
 	private String pix;
@@ -225,4 +226,13 @@ public class ContasPagar implements Serializable {
 	public void setAgenciaTed(String agenciaTed) {
 		this.agenciaTed = agenciaTed;
 	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
 }

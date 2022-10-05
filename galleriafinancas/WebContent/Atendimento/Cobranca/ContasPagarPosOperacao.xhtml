@@ -92,6 +92,13 @@
 								label="Data" size="100" pattern="dd/MM/yyyy"
 								styleClass="dateTimeField" />
 								
+							<p:outputLabel for="ContaPagarObservacao" value="Observação: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputTextarea id="ContaPagarObservacao"  rows="6" cols="33"
+							value="#{contasPagarMB.objetoContasPagar.observacao}"
+							label="Observação" style="width:210px;" autoResize="false" />
+								
 							<!-- Usuário que cadastra contas não insere valor pago
 							<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
 								styleClass="labelBold" />
