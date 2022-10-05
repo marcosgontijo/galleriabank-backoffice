@@ -412,7 +412,7 @@
 								</p:selectOneMenu>
 
 							</h:panelGrid>
-							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO">  						
+							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO">  						
 					<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
