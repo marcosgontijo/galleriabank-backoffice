@@ -1028,8 +1028,8 @@
 							
 							<h:panelGroup id="ParticipantesPanel">
 								<p:panel header="Participantes" style="margin-bottom:10px;">
-									<f:facet name="header"> Participantes 
-								<p:outputLabel value="" />
+									<f:facet name="header"> Participantes 									
+										<p:outputLabel value="" />
 										<p:selectBooleanButton value="#{ccbMB.addParticipante}"
 											onLabel="Adicionar Participante"
 											offLabel="Adicionar Participante">
@@ -1351,13 +1351,18 @@
 											<p:inputText id="bairroEmpresa"
 												value="#{ccbMB.participanteSelecionado.pessoa.bairro}"
 												label="Contrato" />
-
+											
 											<p:outputLabel for="cepEmpresa" value="CEP: "
 												styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText id="cepEmpresa"
 												value="#{ccbMB.participanteSelecionado.pessoa.cep}"
-												label="Contrato" />
+												label="Contrato" mask="99999-999" >
+												<p:ajax event="blur"
+													update="municipioEmpresa ruaEmpresa estadoEmpresa bairroEmpresa"
+													listener="#{ccbMB.getEnderecoByViaNet()}"/>									
+											</p:inputText>
+
 
 											<p:outputLabel value="É fiduciante: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
@@ -1508,13 +1513,17 @@
 														<p:inputText id="cidadeSocio"
 															value="#{ccbMB.socioSelecionado.pessoa.cidade}"
 															label="Contrato" />
-
+														
 														<p:outputLabel for="cepSocio" value="CEP: "
 															styleClass="labelBold"
 															style="font-weight: bold; font-size: 18px;" />
 														<p:inputText id="cepSocio"
 															value="#{ccbMB.socioSelecionado.pessoa.cep}"
-															label="Contrato" />
+															label="Contrato" mask="99999-999" >
+															<p:ajax event="blur"
+																update="cidadeSocio logradouroSocio ufSocio"
+																listener="#{ccbMB.getEnderecoByViaNetSocio()}"/>									
+														</p:inputText>
 
 														<p:outputLabel for="emailSocio" value="Email: "
 															styleClass="labelBold"
@@ -2556,9 +2565,6 @@
 					</p:panel>
 
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update="valorDespesas, pagadoresAntigos" />
-				
-					<p:commandButton ajax="false" action="#{ccbMB.geraCciAquisicao}"
 						icon="ui-icon ui-icon-print" value="Fazer Download"  update="valorDespesas, pagadoresAntigos" />
 
 					<p:spacer height="10" />

@@ -573,8 +573,11 @@ public class CcbMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		ContratoCobranca contrato = new ContratoCobranca();
 		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());
-		this.objetoCcb.setObjetoContratoCobranca(contrato);
-		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
+		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
+			this.objetoCcb.setObjetoContratoCobranca(contrato);
+			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
+		}
+		
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		
@@ -6099,7 +6102,7 @@ public class CcbMB {
 						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
 					
-					if(CommonsUtil.semValor(cpfEmitente)) {
+					if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
 						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
 							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
 							documento = "CPF: ";
@@ -8515,17 +8518,7 @@ public class CcbMB {
 			if (this.addAvalista == true) {
 				criarPagadorRecebedorNoSistema(this.avalistaSelecionado);
 			}
-			
-			
-			/*text = trocaValoresXWPF(text, r, "FiducianteConjugue","Rua logradouroConjugeEmitente, nº numeroConjugeEmitente, Qd. XX - Lote XX, Cond. Residencial XXXXXX, Bairro - cidadeConjugeEmitente - ufConjugeEmitente -  \n"
-									+ "CEP cepConjugeEmitente \n"
-									+ "Email: emailConjugeEmitente");
-							text = trocaValoresXWPF(text, r, "ConjugeDados","nacionalidadeConjugeEmitente, profissaoConjugeEmitente, estadoCivilEmitente (nomeEmitente , cpfEmitente), portador(a) da Cédula de Identidade RG nº numeroRgConjugeEmitente SSP/ufConjugeEmitente, inscrito(a) no CPF/MF sob o nº cpfConjugeEmitente, residente e domiciliado à logradouroConjugeEmitente, nº numeroConjugeEmitente, complementoConjugeEmitente, cidadeConjugeEmitente/ufConjugeEmitente, CEP cepConjugeEmitente;");*/
-			/*
-			 * text = trocaValoresXWPF(text, r,
-			 * "ConjugeIntervenienteDados","nacionalidadeConjugeInterveniente, profissaoConjugeInterveniente, estadoCivilInterveniente (nomeInterveniente , cpfInterveniente), portador(a) da Cédula de Identidade RG nº numeroRgConjugeInterveniente SSP/ufConjugeInterveniente, inscrito(a) no CPF/MF sob o nº cpfConjugeInterveniente, residente e domiciliado à logradouroConjugeInterveniente, nº numeroConjugeInterveniente, complementoConjugeInterveniente, cidadeConjugeInterveniente/ufConjugeInterveniente, CEP cepConjugeInterveniente;"
-			 * );
-			 */ 
+
 			
 			for (XWPFParagraph p : document.getParagraphs()) {}
 			
@@ -9211,6 +9204,46 @@ public class CcbMB {
 				this.participanteSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
 				this.participanteSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
 				this.participanteSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getEnderecoByViaNetSocio() {
+		try {
+			String inputCep = this.socioSelecionado.getPessoa().getCep().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+
+				this.socioSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+				this.socioSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
+				this.socioSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
+				this.socioSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
