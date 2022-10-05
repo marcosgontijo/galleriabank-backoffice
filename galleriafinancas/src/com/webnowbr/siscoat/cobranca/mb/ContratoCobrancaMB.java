@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
+import org.hibernate.exception.JDBCConnectionException;
 import org.json.JSONObject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -2831,13 +2833,21 @@ public class ContratoCobrancaMB {
 
 				return null;
 			}
-		} catch (JDBCException jdbce) {
+		} catch(JDBCConnectionException t) {
+	        System.out.println("================ {{{");
+	        SQLException current = t.getSQLException();
+	        do {
+	           current.printStackTrace();
+	        } while ((current = current.getNextException()) != null);
+	        System.out.println("================ }}}");
+	        throw t;
+	    } catch (JDBCException jdbce) {
 		    jdbce.getSQLException().getNextException().printStackTrace();
 		    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + jdbce, ""));
 		} catch (Throwable e) {
-			e.getCause().getCause().printStackTrace();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e.getCause().getCause(), ""));
-		} 
+			e.getCause().printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e.getCause(), ""));
+		}
 		
 		enviaEmailCriacaoPreContratoNovo();
 		return null;
