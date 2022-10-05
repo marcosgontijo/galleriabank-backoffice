@@ -1170,7 +1170,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+ 
 				<h:panelGroup id="ComitePanelView" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
@@ -1412,19 +1412,17 @@
 								<f:selectItem itemValue="No final" itemLabel="No final" />
 								<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 							</p:selectOneMenu>
-							
-							<shiro:hasAnyRoles name="ROOT">
-								<p:outputLabel styleClass="labelBold">Avaliação Laudo: </p:outputLabel>
-								<p:selectOneMenu id="avaliacaoLaudo"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
-									label="Tipo">
-									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="Compass" itemLabel="Compass" />
-									<f:selectItem itemValue="Galache" itemLabel="Galache" />
-									<f:selectItem itemValue="Outro" itemLabel="Outro" />
-									<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
-								</p:selectOneMenu>	
-							</shiro:hasAnyRoles>
+													
+							<p:outputLabel styleClass="labelBold">Avaliação Laudo: </p:outputLabel>
+							<p:selectOneMenu id="avaliacaoLaudo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
+								label="Tipo">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Compass" itemLabel="Compass" />
+								<f:selectItem itemValue="Galache" itemLabel="Galache" />
+								<f:selectItem itemValue="Outro" itemLabel="Outro" />
+								<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
+							</p:selectOneMenu>	
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
