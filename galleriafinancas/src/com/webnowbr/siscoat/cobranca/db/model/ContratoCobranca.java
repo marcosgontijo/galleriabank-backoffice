@@ -561,6 +561,7 @@ public class ContratoCobranca implements Serializable {
 	private String tipoValorComite;
 	private String comentarioComite;
 	private String processosQuitarComite;
+	private String obsValidacaoDocumentos;
 	
 	private BigDecimal valorLaudoPajuTotal;
 	private BigDecimal valorLaudoPajuPago;
@@ -5499,5 +5500,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setEnviadoWhatsAppLeadStandby(boolean enviadoWhatsAppLeadStandby) {
 		this.enviadoWhatsAppLeadStandby = enviadoWhatsAppLeadStandby;
+	}
+
+	public String getObsValidacaoDocumentos() {
+		return obsValidacaoDocumentos;
+	}
+
+	public void setObsValidacaoDocumentos(String obsValidacaoDocumentos) {
+		this.obsValidacaoDocumentos = obsValidacaoDocumentos;
 	}
 }

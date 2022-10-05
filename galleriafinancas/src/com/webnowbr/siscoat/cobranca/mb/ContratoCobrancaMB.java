@@ -17295,7 +17295,7 @@ public class ContratoCobrancaMB {
 			if(comite.getPrazoMaxComite().compareTo(menorPrazoAprovado) <= 0) {
 				menorPrazoAprovado = comite.getPrazoMaxComite();
 			}
-			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0 && !CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.ZERO)) {
+			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0 && !CommonsUtil.semValor(comite.getValorComite())) {
 				menorValorAprovado = comite.getValorComite();
 				menorValorAprovadoTipo = comite.getTipoValorComite();
 			}

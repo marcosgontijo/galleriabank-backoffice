@@ -1064,7 +1064,7 @@
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
-						<h:panelGrid columns="1">
+						<h:panelGrid columns="2">
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 								paginator="false" layout="list"
@@ -1124,6 +1124,15 @@
 									</h:panelGrid>
 								</p:dataViewListItem>
 							</p:dataView>
+							
+							<h:panelGrid columns="2" >
+								<p:outputLabel for="obsValidacaoDocumentos" value="Observação Validação Docs: "
+									styleClass="labelBold" />
+								<p:inputTextarea id="obsValidacaoDocumentos" rows="10" cols="48"
+									maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.obsValidacaoDocumentos}" />
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
