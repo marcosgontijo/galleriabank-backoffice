@@ -226,7 +226,7 @@
 						
 			<p:messages id="msgArquivo"/>
 			
-			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  						
+			<shiro:hasAnyRoles name="ROOT, POSOPERACAO">  						
 				<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
