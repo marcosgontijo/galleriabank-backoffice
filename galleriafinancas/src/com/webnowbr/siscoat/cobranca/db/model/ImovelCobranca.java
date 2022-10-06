@@ -72,12 +72,13 @@ public class ImovelCobranca implements Serializable {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date dateHoje = dataHoje.getTime();
-		
-		long idadeLong = dateHoje.getTime() - this.getDataCompra().getTime();
-		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
-		idadeLong = idadeLong / 30;
-		idadeLong = idadeLong / 12;
-	    this.setIdadeCompra(CommonsUtil.stringValue(idadeLong));
+		if(!CommonsUtil.semValor(this.getDataCompra())) {	
+			long idadeLong = dateHoje.getTime() - this.getDataCompra().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+		    this.setIdadeCompra(CommonsUtil.stringValue(idadeLong));
+		}
 	}
 	
 	public void resetarBololean() {

@@ -327,12 +327,13 @@ public class PagadorRecebedor implements Serializable {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date dateHoje = dataHoje.getTime();
-		
-		long idadeLong = dateHoje.getTime() - this.getDtNascimento().getTime();
-		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
-		idadeLong = idadeLong / 30;
-		idadeLong = idadeLong / 12;
-	    this.setIdade(CommonsUtil.stringValue(idadeLong));
+		if(!CommonsUtil.semValor(this.getDtNascimento())) {
+			long idadeLong = dateHoje.getTime() - this.getDtNascimento().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+		    this.setIdade(CommonsUtil.stringValue(idadeLong));
+		}
 	}
 	
 	public void calcularIdadeConjuge() {
@@ -340,12 +341,13 @@ public class PagadorRecebedor implements Serializable {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date dateHoje = dataHoje.getTime();
-		
-		long idadeLong = dateHoje.getTime() - this.getDtNascimentoConjuge().getTime();
-		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
-		idadeLong = idadeLong / 30;
-		idadeLong = idadeLong / 12;
-	    this.setIdadeConjuge(CommonsUtil.stringValue(idadeLong));
+		if(!CommonsUtil.semValor(this.getDtNascimentoConjuge())) {
+			long idadeLong = dateHoje.getTime() - this.getDtNascimentoConjuge().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+		    this.setIdadeConjuge(CommonsUtil.stringValue(idadeLong));
+		}
 	}
 	
 	/**
