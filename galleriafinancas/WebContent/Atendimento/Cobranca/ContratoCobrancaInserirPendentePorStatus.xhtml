@@ -211,7 +211,11 @@
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
 											<p:selectBooleanButton id="comentarioJuridicoEsteira" value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />		
-										</shiro:hasAnyRoles>														    						    
+										</shiro:hasAnyRoles>	
+										<p:commandButton id="reprovadoJuridico"
+											value="Reprovar Contrato" icon="ui-icon-close"
+											style="width:=60px"
+											onclick="PF('reprovarContratoDialog').show();" />												    						    
 									</h:panelGrid>
 								</ui:fragment>					
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -876,6 +880,7 @@
 					            <f:selectItem itemLabel="Fora da política de crédito" itemValue="Fora da política de crédito" />
 					            <f:selectItem itemLabel="Problema na matrícula" itemValue="Problema na matrícula" />
 					            <f:selectItem itemLabel="Cliente com muitas restrições" itemValue="Cliente com muitas restrições" />
+					            <f:selectItem itemLabel="Reprovado pelo Jurídico" itemValue="Reprovado pelo Jurídico" />
 					            <f:selectItem itemLabel="Outro motivo" itemValue="Outro motivo" />
 							</p:selectOneMenu>
 							
@@ -3890,25 +3895,33 @@
 							styleClass="labelBold"
 							style="width:250px;font-weight: bold; font-size: 13px;" />
 						<p:spacer width="20" />
-						<h:panelGroup>
+						<h:panelGrid columns="2">
 							<p:outputLabel for="motivoReprovaSelectItem"  value="Motivo Reprovação: " styleClass="labelBold" />
 							<p:selectOneMenu id="motivoReprovaSelectItem" required="true" value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaSelectItem}" label="Tipo" style="width:250px;">
 								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItem itemLabel="Reprovado pelo Jurídico" itemValue="Reprovado pelo Jurídico" />
 								<f:selectItem itemLabel="Imóvel Reprovado" itemValue="Imóvel Reprovado" />
 					            <f:selectItem itemLabel="Cidade não atendida" itemValue="Cidade não atendida" />
 					            <f:selectItem itemLabel="Fora da política de crédito" itemValue="Fora da política de crédito" />
 					            <f:selectItem itemLabel="Problema na matrícula" itemValue="Problema na matrícula" />
-					            <f:selectItem itemLabel="Cliente com muitas restrições" itemValue="Cliente com muitas restrições" />
+					            <f:selectItem itemLabel="Cliente com muitas restrições" itemValue="Cliente com muitas restrições" />					            
 					            <f:selectItem itemLabel="Outro motivo" itemValue="Outro motivo" />
 							</p:selectOneMenu>
-						</h:panelGroup>
+						</h:panelGrid>		
 						<p:spacer width="20" />
+						<h:panelGrid columns="2">
+							<p:outputLabel for="motivoReprova" value="Motivo Reprovação: "
+								styleClass="labelBold" />
+							<p:inputTextarea id="motivoReprova" rows="10" cols="48" maxlength="3000"
+								onblur="" counterTemplate="{0} characters remaining."
+								autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovacaoAnalise}" />
+						</h:panelGrid>					
 					</h:panelGrid>
 					<h:panelGrid columns="3">
-						<p:commandButton value="Não"
-							onclick="PF('reprovarContratoDialog').close();" />
+						<p:commandButton  value="Sim" action="#{contratoCobrancaMB.reprovarContratoConsultar('Comentario Jurídico')}" update="motivoReprovaSelectItem" style="width:=60px"/>	
 						<p:spacer width="20" />
-						<p:commandButton  value="Sim" action="#{contratoCobrancaMB.reprovarContratoConsultar('Ag. Comite')}"  style="width:=60px"/>
+						<p:commandButton value="Não" onclick="PF('reprovarContratoDialog').close();" />
 					</h:panelGrid>
 				</div>
 			</h:form>

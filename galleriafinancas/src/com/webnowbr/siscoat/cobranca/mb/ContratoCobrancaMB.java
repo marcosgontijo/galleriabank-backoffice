@@ -3701,8 +3701,8 @@ public class ContratoCobrancaMB {
 			// 2 - Se sim, e o valor for true envia mensagem
 			
 			// Mensagem CONTRATO PRE APROVADO
-			if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
-				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+				if (!this.objetoContratoCobranca.getCadastroAprovadoValor().equals(statusContrato.getContratoPreAprovado())) {
 					if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 							this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
 							this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
@@ -11618,7 +11618,8 @@ public class ContratoCobrancaMB {
 			
 			if (c.getCadastroAprovadoValor() != null) {
 				if (c.getCadastroAprovadoValor().equals("Aprovado") 
-						&& !CommonsUtil.mesmoValor(c.getCadastroAprovadoValor(), s.getCadastroAprovadoValor())) {
+						&& (CommonsUtil.semValor(s.getCadastroAprovadoValor())
+							||!CommonsUtil.mesmoValor(c.getCadastroAprovadoValor(), s.getCadastroAprovadoValor()))) {
 					c.setStatus("Operação Pré-Aprovada");
 				}
 			}
