@@ -589,8 +589,8 @@ public class CcbMB {
 		} else if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Galache")) {
 			this.objetoCcb.setElaboradorNome("Galache Engenharia Ltda");
 			this.objetoCcb.setElaboradorCrea("1009877");
-			this.objetoCcb.setResponsavelNome("5060563873-D");
-			this.objetoCcb.setResponsavelCrea("CAU A40301-6");
+			this.objetoCcb.setResponsavelNome("Tales R. S. Galache");
+			this.objetoCcb.setResponsavelCrea("5060563873-D");
 		}
 		
 		ImovelCobranca imovel = contrato.getImovel();
@@ -761,6 +761,10 @@ public class CcbMB {
 		if(isTemIq()) {
 			if(!CommonsUtil.semValor(this.objetoCcb.getIqValor()))
 				total = total.add(this.objetoCcb.getIqValor());
+		}
+		if(isTemCCBValor()) {
+			if(!CommonsUtil.semValor(this.objetoCcb.getCCBValor()))
+				total = total.add(this.objetoCcb.getCCBValor());
 		}
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
@@ -5948,7 +5952,11 @@ public class CcbMB {
 			run.setText("Valor: ");
 			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 			run2 = paragraph.createRun();
-			run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
+			if(this.temCCBValor) {
+				run2.setText(CommonsUtil.formataValorMonetario(valorCartaSplit, "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
+			} else {
+				run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
+			}
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run2.addCarriageReturn();
@@ -5988,7 +5996,12 @@ public class CcbMB {
 			run.setText("Valor: ");
 			valorPorExtenso.setNumber(this.objetoCcb.getValorLiquidoCredito());
 			run2 = paragraph.createRun();
-			run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorLiquidoCredito(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
+			if(this.temCCBValor) {
+				run2.setText("R$ 0,00" + " (Zero reais) " );
+			} else {
+				run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorLiquidoCredito(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
+			}
+			
 			run2.setFontSize(11);
 			run2.setBold(true);
 			run3 = paragraph.createRun();

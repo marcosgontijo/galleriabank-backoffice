@@ -148,10 +148,17 @@
 				icon="ui-icon-print" action="#{contasPagarMB.salvarConta}"
 				rendered="#{!contasPagarMB.deleteMode}" />
 			<p:spacer height="10" rendered="#{!contasPagarMB.deleteMode}" />
+			
+			<p:commandButton value="Baixar Conta" ajax="false"
+				icon="ui-icon-arrowthickstop-1-s"
+				action="#{contasPagarMB.salvarEBaixarConta}"
+				rendered="#{!contasPagarMB.baixaMode}" />
+			
 			<p:commandButton value="Baixar Conta" ajax="false"
 				icon="ui-icon-arrowthickstop-1-s"
 				action="#{contasPagarMB.baixarConta}"
-				rendered="#{!contasPagarMB.deleteMode}" />
+				rendered="#{contasPagarMB.baixaMode}" />
+				
 			<p:commandButton value="Excluir Conta" ajax="false"
 				icon="ui-icon-print" action="#{contasPagarMB.excluirConta}"
 				rendered="#{contasPagarMB.deleteMode}" />

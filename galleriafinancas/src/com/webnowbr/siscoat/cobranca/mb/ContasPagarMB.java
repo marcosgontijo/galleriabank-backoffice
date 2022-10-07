@@ -235,6 +235,7 @@ public class ContasPagarMB {
 
 			// Finalize task.
 			output.flush();
+			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -456,16 +457,9 @@ public class ContasPagarMB {
 		
 		if (this.objetoContasPagar.getValorPagamento() == null)
 			this.objetoContasPagar.setValorPagamento(this.objetoContasPagar.getValor());
-		
-		if(CommonsUtil.mesmoValor(this.objetoContasPagar.getValorPagamento(), this.objetoContasPagar.getValor())) {
-			this.objetoContasPagar.setContaPaga(true);
-			cDao.merge(this.objetoContasPagar);
-		} else {
-			FacesContext facesContext = FacesContext.getCurrentInstance();;
-			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valor pago não corresponde valor a pagar", ""));
-			return "/Atendimento/Cobranca/ContasPagasConsultar.xhtml";
-		}
-
+	
+		this.objetoContasPagar.setContaPaga(true);
+		cDao.merge(this.objetoContasPagar);
 		this.contasPagar.remove(this.objetoContasPagar);
 
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
@@ -506,6 +500,14 @@ public class ContasPagarMB {
 		}
 
 		return clearFields();
+	}
+	
+	public String salvarEBaixarConta() {
+		salvarConta();
+		updateMode = true;
+		deleteMode = false;
+		baixaMode = true;
+		return clearFieldsEditar();
 	}
 
 	public String editarConta() {
