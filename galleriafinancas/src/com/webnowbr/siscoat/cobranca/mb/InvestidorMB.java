@@ -3432,7 +3432,7 @@ public class InvestidorMB {
 			cell = row.createCell(4);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
-			if (record.getValorDebenture() != null) {
+			if (record.getValorFace() != null) {
 				cell.setCellValue(((BigDecimal) record.getValorFace()).doubleValue());
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
