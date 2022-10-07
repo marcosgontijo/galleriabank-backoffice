@@ -12,6 +12,9 @@ import javax.faces.validator.ValidatorException;
 public class ValidaCNPJ {
 	
 	public static boolean isCNPJOnly(String CNPJ) {
+		if (CommonsUtil.semValor(CNPJ)) {
+			return (false);
+		}
 		if(CNPJ.contains(".")) {
 			CNPJ = CNPJ.replace(".", "");
 		}
@@ -90,6 +93,10 @@ public class ValidaCNPJ {
 	}
 
 	public static boolean isCNPJ(String CNPJ) {
+		if (CommonsUtil.semValor(CNPJ)) {
+			return (false);
+		}
+		
 		if(CNPJ.contains(".")) {
 			CNPJ = CNPJ.replace(".", "");
 		}

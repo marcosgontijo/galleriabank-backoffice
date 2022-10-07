@@ -20,6 +20,7 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean preAprovadoComite;
 	private boolean documentosComite;
 	private boolean aprovadoComite;
+	private boolean documentosCompletos;
 	private String contratoPreAprovado;
 	private BigDecimal valorPreLaudo;
 	
@@ -110,5 +111,11 @@ public class ContratoCobrancaStatus implements Serializable {
 	}
 	public void setPedidoLaudo(boolean pedidoLaudo) {
 		this.pedidoLaudo = pedidoLaudo;
+	}
+	public boolean isDocumentosCompletos() {
+		return documentosCompletos;
+	}
+	public void setDocumentosCompletos(boolean documentosCompletos) {
+		this.documentosCompletos = documentosCompletos;
 	}
 }

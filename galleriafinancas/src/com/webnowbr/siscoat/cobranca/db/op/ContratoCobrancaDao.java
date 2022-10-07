@@ -6027,7 +6027,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						if (listResponsavel != null) {
 							if (listResponsavel.size() > 0) {
 								for (Responsavel resp : listResponsavel) {
-									if (!resp.getCodigo().equals("")) {
+									if (!CommonsUtil.semValor(resp.getCodigo())) {
 										// adiciona membro guarda-chuva
 										if (queryGuardaChuva.equals("")) {
 											queryGuardaChuva = " res.codigo = '" + resp.getCodigo() + "' ";
@@ -7489,7 +7489,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 	private static final String QUERY_CONTRATOS_GET_STATUS = "select c.id, ccbPronta, agAssinatura, agRegistro, pajurFavoravel,"
 			+ " laudoRecebido, cadastroAprovadoValor, preaprovadocomite, documentosComite, analiseComercial, comentarioJuridicoEsteira,"
-			+ " aprovadocomite, valorPreLaudo, CadastroAprovadoValor, pedidoLaudo "
+			+ " aprovadocomite, valorPreLaudo, CadastroAprovadoValor, pedidoLaudo, documentosCompletos "
 			+ " from cobranca.contratocobranca c "  
 			+ " where c.id = ? ";
 	
@@ -7529,6 +7529,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobrancaStatus.setAprovadoComite(rs.getBoolean(12));
 						contratoCobrancaStatus.setValorPreLaudo(rs.getBigDecimal(13)); 
 						contratoCobrancaStatus.setPedidoLaudo(rs.getBoolean(15)); 
+						contratoCobrancaStatus.setDocumentosCompletos(rs.getBoolean(16)); 
 					}
 	
 				} finally {

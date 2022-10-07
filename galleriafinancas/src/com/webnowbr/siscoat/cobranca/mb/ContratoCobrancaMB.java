@@ -2178,8 +2178,10 @@ public class ContratoCobrancaMB {
 				this.objetoImovelCobranca.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
+				
+				if(!CommonsUtil.semValor(myResponse.get("logradouro").toString())) {
+					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
+				}			
 				this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
 				this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
 				this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
@@ -3903,8 +3905,7 @@ public class ContratoCobrancaMB {
 					"", "");
 
  					// Tatiane
-					rValidaDocs4 = rDao.findById((long) 643);
-					
+					rValidaDocs4 = rDao.findById((long) 643);					
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
 					"contrato_recebido_laudo", 
 					this.objetoContratoCobranca.getPagador().getNome(),
@@ -4054,10 +4055,61 @@ public class ContratoCobrancaMB {
 					
 					Responsavel rCcb1 = new Responsavel();
 					Responsavel rCcb2 = new Responsavel();
+		
+					// Tati
+					rCcb1 = rDao.findById((long) 643);
+					takeBlipMB.sendWhatsAppMessage(rCcb1,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");					
+					
+					// Juliana
+					rCcb2 = rDao.findById((long) 624);
+					takeBlipMB.sendWhatsAppMessage(rCcb2,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+								
+					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+						enviarWhatsappGislaine("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						enviarWhatsappLuis("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						enviarWhatsappEric("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					} else {
+						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+						"aprovado_comite_ag_ccb",
+						this.objetoContratoCobranca.getPagador().getNome(),
+						this.objetoContratoCobranca.getNumeroContrato(), "", "");
+					}
+				}
+			}
+			
+			// Mensagem Documentos pronto Ag CCB
+			if (this.objetoContratoCobranca.isDocumentosCompletos() != statusContrato.isDocumentosCompletos()) {
+				if (this.objetoContratoCobranca.isDocumentosCompletos()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					ResponsavelDao rDao = new ResponsavelDao();
+					
+					Responsavel rCcb1 = new Responsavel();
+					Responsavel rCcb2 = new Responsavel();
 					Responsavel rCcb3 = new Responsavel();
 					Responsavel rCcb4 = new Responsavel();
 					Responsavel rCcb5 = new Responsavel();
-					Responsavel rCcb6 = new Responsavel();
+					Responsavel rCcb6 = new Responsavel();	
+
 					
 					// Amanda
 					rCcb1 = rDao.findById((long) 621);
@@ -4083,13 +4135,13 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
 					
-					// Juliana
-					rCcb4 = rDao.findById((long) 624);
-					takeBlipMB.sendWhatsAppMessage(rCcb4,
-					"aprovado_comite_ag_ccb", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					// Beatriz
+					//rCcb4 = rDao.findById((long) 000000);
+					//takeBlipMB.sendWhatsAppMessage(rCcb4,
+					//"aprovado_comite_ag_ccb", 
+					//this.objetoContratoCobranca.getPagador().getNome(),
+					//this.objetoContratoCobranca.getNumeroContrato(),
+					//"", "");
 					
 					// Luana
 					rCcb5 = rDao.findById((long) 625);
@@ -4107,28 +4159,6 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
 					
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
-						takeBlipMB = new TakeBlipMB();
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
-						"aprovado_comite_ag_ccb",
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						
-						enviarWhatsappGislaine("aprovado_comite_ag_ccb",
-								this.objetoContratoCobranca.getPagador().getNome(),
-								this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						enviarWhatsappLuis("aprovado_comite_ag_ccb",
-								this.objetoContratoCobranca.getPagador().getNome(),
-								this.objetoContratoCobranca.getNumeroContrato(), "", "");
-						enviarWhatsappEric("aprovado_comite_ag_ccb",
-								this.objetoContratoCobranca.getPagador().getNome(),
-								this.objetoContratoCobranca.getNumeroContrato(), "", "");
-					} else {
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-						"aprovado_comite_ag_ccb",
-						this.objetoContratoCobranca.getPagador().getNome(),
-						this.objetoContratoCobranca.getNumeroContrato(), "", "");
-					}
 				}
 			}
 			
@@ -7881,6 +7911,9 @@ public class ContratoCobrancaMB {
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
+		
+		filesJuridico = new ArrayList<FileUploaded>();
+		filesJuridico = listaArquivosJuridico();
 	
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -7898,6 +7931,9 @@ public class ContratoCobrancaMB {
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
+		
+		filesJuridico = new ArrayList<FileUploaded>();
+		filesJuridico = listaArquivosJuridico();
 	
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovelGalache.xhtml";
 	}
