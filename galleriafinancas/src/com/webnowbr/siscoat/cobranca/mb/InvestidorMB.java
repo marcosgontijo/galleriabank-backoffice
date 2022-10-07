@@ -4221,7 +4221,7 @@ public class InvestidorMB {
 			 */
 
 			// esquerda / direita / top / down
-			doc = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
+			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
 			this.operacoesIndividualizadoPDFStr = "OperacoesIndividualizado.pdf";
 			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
 
@@ -4241,7 +4241,7 @@ public class InvestidorMB {
 			 * p1.setAlignment(Element.ALIGN_CENTER); p1.setSpacingAfter(10); doc.add(p1);
 			 */
 			PdfPTable table = new PdfPTable(
-					new float[] { 0.10f, 0.10f, 0.18f, 0.18f, 0.18f, 0.18f, 0.18f, 0.18f, 0.18f });
+					new float[] { 0.10f, 0.10f, 0.10f, 0.10f, 0.10f,0.10f, 0.10f, 0.10f, 0.10f, 0.10f,0.10f, 0.10f, 0.10f});
 			table.setWidthPercentage(100.0f);
 
 			PdfPCell cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", header));
@@ -4253,7 +4253,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingBottom(20f);
-			cell1.setColspan(9);
+			cell1.setColspan(13);
 			table.addCell(cell1);
 
 			cell1 = new PdfPCell(new Phrase("Relatório de Operações - Individualizado", normal10));
@@ -4262,7 +4262,7 @@ public class InvestidorMB {
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
-			cell1.setColspan(9);
+			cell1.setColspan(13);
 			cell1.setPaddingBottom(5);
 			cell1.setPaddingLeft(5);
 			table.addCell(cell1);
@@ -4274,7 +4274,7 @@ public class InvestidorMB {
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
-			cell1.setColspan(9);
+			cell1.setColspan(13);
 			cell1.setPaddingBottom(15);
 			cell1.setPaddingLeft(5);
 			table.addCell(cell1);
@@ -4399,6 +4399,72 @@ public class InvestidorMB {
 			cell1.setBorderColorTop(BaseColor.GRAY);
 			cell1.setBorderWidthBottom(1);
 			cell1.setBorderColorBottom(BaseColor.GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+
+			cell1 = new PdfPCell(new Phrase("Cessionário", header10));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.GRAY);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.GRAY);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.GRAY);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+
+			cell1 = new PdfPCell(new Phrase("Aquisição", header10));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.GRAY);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.GRAY);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.GRAY);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+
+			cell1 = new PdfPCell(new Phrase("Cessão", header10));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.GRAY);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.GRAY);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.GRAY);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.GRAY);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+
+			cell1 = new PdfPCell(new Phrase("Ágil", header10));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.GRAY);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.GRAY);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.GRAY);
 			cell1.setBorderWidthRight(1);
 			cell1.setBorderColorRight(BaseColor.GRAY);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -4510,6 +4576,66 @@ public class InvestidorMB {
 				cell1.setBorderColorLeft(BaseColor.GRAY);
 				cell1.setBorderWidthBottom(1);
 				cell1.setBorderColorBottom(BaseColor.GRAY);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase(oi.getContrato().getCessionario(), normal8));
+				cell1.setBorder(0);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.GRAY);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.GRAY);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				table.addCell(cell1);
+
+				if (oi.getContrato().getDataAquisicaoCessao() != null) { 
+					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(oi.getContrato().getDataAquisicaoCessao()), normal8));
+				} else {
+					cell1 = new PdfPCell(new Phrase(" ", normal8));
+				}
+				cell1.setBorder(0);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.GRAY);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.GRAY);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				table.addCell(cell1);
+				
+				if (oi.getContrato().getValorCessao() != null) { 
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(oi.getContrato().getValorCessao()), normal8));
+				} else {
+					cell1 = new PdfPCell(new Phrase(" ", normal8));
+				}
+				cell1.setBorder(0);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.GRAY);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.GRAY);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				table.addCell(cell1);
+				
+				if (oi.getContrato().getValorAgilCessao() != null) { 
+					cell1 = new PdfPCell(new Phrase("R$ " + df.format(oi.getContrato().getValorAgilCessao()), normal8));
+				} else {
+					cell1 = new PdfPCell(new Phrase(" ", normal8));
+				}
+				cell1.setBorder(0);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.GRAY);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.GRAY);
 				cell1.setBorderWidthRight(1);
 				cell1.setBorderColorRight(BaseColor.GRAY);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -4582,6 +4708,38 @@ public class InvestidorMB {
 			table.addCell(cell1);
 
 			cell1 = new PdfPCell(new Phrase("R$ 0,00", header8));
+			cell1.setBorder(0);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(" ", header8));
+			cell1.setBorder(0);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(" ", header8));
+			cell1.setBorder(0);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(" ", header8));
+			cell1.setBorder(0);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(" ", header8));
 			cell1.setBorder(0);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);

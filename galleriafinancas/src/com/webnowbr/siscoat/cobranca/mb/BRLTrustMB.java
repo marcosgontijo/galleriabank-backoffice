@@ -1236,12 +1236,30 @@ public class BRLTrustMB {
 	public void atualizaContratoDadosCessaoBRL() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.objetoContratoCobranca.setCedenteBRLCessao(this.cedenteCessao);
+		this.objetoContratoCobranca.setCessionario("Galleria Home Equity FIDC");
 		this.objetoContratoCobranca.setDataAquisicaoCessao(this.dataAquisicao);
+		
+		this.objetoContratoCobranca.setValorCessao(somatoriaValorePresenteContratos);
+		this.objetoContratoCobranca.setValorAgilCessao(somatoriaValorePresenteContratos);
+		
+		
 		
 		if (this.usaTaxaJurosDiferenciada) {
 			this.objetoContratoCobranca.setTxJurosCessao(this.txJurosCessao);
 		} else {
 			this.objetoContratoCobranca.setTxJurosCessao(this.objetoContratoCobranca.getTxJurosParcelas());
+		}
+		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+	}
+	
+	public void atualizaContratoValorAquisicaoCessaoBRL(BigDecimal valorTotalAquisicaoCessao) {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		this.objetoContratoCobranca.setValorCessao(valorTotalAquisicaoCessao);
+		
+		if (this.objetoContratoCobranca.getValorCCB() != null) {			
+			this.objetoContratoCobranca.setValorAgilCessao(valorTotalAquisicaoCessao.subtract(this.objetoContratoCobranca.getValorCCB()));
 		}
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -1506,7 +1524,7 @@ public class BRLTrustMB {
 					jsonRecebiveis.put(jsonRecebivel);
 				}
 			}
-		}
+		} 		
 		
 		jsonCessao.put("recebiveis", jsonRecebiveis);
 		
@@ -1532,6 +1550,8 @@ public class BRLTrustMB {
 		}
 		
 		this.jsonGerado = true;
+		
+		atualizaContratoValorAquisicaoCessaoBRL(this.valorTotalAquisicaoCessao);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
