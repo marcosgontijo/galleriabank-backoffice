@@ -5790,9 +5790,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_CONTRATO_POR_DATA_CONTRATO =  "select cc.id from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
-			+ "and empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.' "
-			+ "and cc.datacontrato >= ? ::timestamp "
-			+ "and cc.datacontrato <= ? ::timestamp ";
+			+ "and cc.dataContrato >= ? ::timestamp "
+			+ "and cc.dataContrato <= ? ::timestamp ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> getContratoPorDataContrato(final Date dtRelInicio, final Date dtRelFim) {

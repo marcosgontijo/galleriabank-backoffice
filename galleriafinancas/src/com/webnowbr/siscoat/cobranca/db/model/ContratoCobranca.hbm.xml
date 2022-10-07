@@ -1756,6 +1756,13 @@
 			<column name="valorCustoEmissao" />
 		</property>
 		
+		<property name="valorCessao" type="big_decimal">
+			<column name="valorCessao" />
+		</property>
+		<property name="valorAgilCessao" type="big_decimal">
+			<column name="valorAgilCessao" />
+		</property>
+		
 		<property name="nomeBancarioCustoEmissao" type="java.lang.String">
 			<column name="nomeBancarioCustoEmissao" />
 		</property>	
@@ -1780,6 +1787,9 @@
 			<column name="pixCustoEmissao" />
 		</property>
 	
+		<property name="cessionario" type="java.lang.String">
+			<column name="cessionario" />
+		</property>	
 	
 		<property name="nomeBancarioContaPagar" type="java.lang.String">
 			<column name="nomeBancarioContaPagar" />

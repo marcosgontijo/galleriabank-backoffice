@@ -18,6 +18,11 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
+	private String cessionario;
+	
+	private BigDecimal valorAgilCessao;
+	private BigDecimal valorCessao;
+	
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
 
@@ -5508,5 +5513,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setObsValidacaoDocumentos(String obsValidacaoDocumentos) {
 		this.obsValidacaoDocumentos = obsValidacaoDocumentos;
+	}
+
+	public String getCessionario() {
+		return cessionario;
+	}
+
+	public void setCessionario(String cessionario) {
+		this.cessionario = cessionario;
+	}
+
+	public BigDecimal getValorAgilCessao() {
+		return valorAgilCessao;
+	}
+
+	public void setValorAgilCessao(BigDecimal valorAgilCessao) {
+		this.valorAgilCessao = valorAgilCessao;
+	}
+
+	public BigDecimal getValorCessao() {
+		return valorCessao;
+	}
+
+	public void setValorCessao(BigDecimal valorCessao) {
+		this.valorCessao = valorCessao;
 	}
 }
