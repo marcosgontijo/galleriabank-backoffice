@@ -76,6 +76,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
 import org.hibernate.exception.JDBCConnectionException;
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
@@ -586,6 +587,8 @@ public class ContratoCobrancaMB {
 
 	private Collection<ContratoCobranca> contratosPendentes;
 	private Collection<ContratoCobranca> contratos;
+	private Collection<ContratoCobranca> contratosPagadorAnalisado;
+	private Collection<ContratoCobranca> contratosImovelAnalisado;
 
 	private Date rowEditNewDate;
 	private boolean grupoFavorecidos = true;
@@ -2835,7 +2838,7 @@ public class ContratoCobrancaMB {
 
 				return null;
 			}
-		} catch(JDBCConnectionException t) {
+		} catch(JDBCException t) {
 	        System.out.println("================ {{{");
 	        SQLException current = t.getSQLException();
 	        do {
@@ -2843,10 +2846,7 @@ public class ContratoCobrancaMB {
 	        } while ((current = current.getNextException()) != null);
 	        System.out.println("================ }}}");
 	        throw t;
-	    } catch (JDBCException jdbce) {
-		    jdbce.getSQLException().getNextException().printStackTrace();
-		    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + jdbce, ""));
-		} catch (Throwable e) {
+	    } catch (Throwable e) {
 			e.getCause().printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e.getCause(), ""));
 		}
@@ -7845,6 +7845,28 @@ public class ContratoCobrancaMB {
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
 		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+		this.contratosPagadorAnalisado = new ArrayList<>();
+		this.contratosImovelAnalisado = new ArrayList<>();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();	
+
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Aguardando Análise")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Em Análise")) {				
+			this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
+			this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);
+			
+			if(contratosPagadorAnalisado.size() > 0) {
+				this.contratosPagadorAnalisado = populaStatus(contratosPagadorAnalisado);
+				PrimeFaces current = PrimeFaces.current();
+				current.executeScript("PF('listaContratosPagador').show();");
+			}	
+			
+			if(contratosImovelAnalisado.size() > 0) {
+				this.contratosImovelAnalisado = populaStatus(contratosImovelAnalisado);
+				PrimeFaces current = PrimeFaces.current();
+				current.executeScript("PF('listaContratosImovel').show();");
+			}	
+		}
+		
 
 		if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
@@ -30064,4 +30086,22 @@ public class ContratoCobrancaMB {
 	public void setBaixaCustosDiversos(boolean baixaCustosDiversos) {
 		this.baixaCustosDiversos = baixaCustosDiversos;
 	}
+
+	public Collection<ContratoCobranca> getContratosPagadorAnalisado() {
+		return contratosPagadorAnalisado;
+	}
+
+	public void setContratosPagadorAnalisado(Collection<ContratoCobranca> contratosPagadorAnalisado) {
+		this.contratosPagadorAnalisado = contratosPagadorAnalisado;
+	}
+
+	public Collection<ContratoCobranca> getContratosImovelAnalisado() {
+		return contratosImovelAnalisado;
+	}
+
+	public void setContratosImovelAnalisado(Collection<ContratoCobranca> contratosImovelAnalisado) {
+		this.contratosImovelAnalisado = contratosImovelAnalisado;
+	}
+	
+	
 }
