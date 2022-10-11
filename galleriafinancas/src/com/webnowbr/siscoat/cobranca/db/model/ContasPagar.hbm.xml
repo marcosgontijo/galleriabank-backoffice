@@ -13,9 +13,9 @@
 		<property name="dataPrevista" type="java.util.Date">
 			<column name="dataPrevista" />
 		</property>	
-		<property name="observacao" type="java.lang.String" length="255">
-			<column name="observacao" />
-		</property>		
+		<property name="observacao" type="text">
+			<column name="OBSERVACAO" />
+		</property>	
 		<property name="descricao" type="java.lang.String">
 			<column name="descricao" />
 		</property>		

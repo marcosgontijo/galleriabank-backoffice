@@ -10,8 +10,15 @@ import javax.faces.validator.ValidatorException;
 public class ValidaCPF {
 	
 	   public static boolean isCPFOnly(String cpf) {
-	       cpf = cpf.replace(".", "");
-	       cpf = cpf.replace("-", "");
+		   if (CommonsUtil.semValor(cpf)) {
+				return (false);
+		   }
+	       if(cpf.contains(".")) {
+	    	   cpf = cpf.replace(".", "");
+	       }
+	       if(cpf.contains("-")) {
+	    	   cpf = cpf.replace("-", "");
+	       }
 	       String strCpf = cpf;
 	        if (strCpf.equals("")) {
 	            return false;
@@ -70,8 +77,18 @@ public class ValidaCPF {
 	    }
 
 	   public static boolean isCPF(String cpf) {
-	       cpf = cpf.replace(".", "");
-	       cpf = cpf.replace("-", "");
+		   if (CommonsUtil.semValor(cpf)) {
+				return (false);
+		   }
+		   if(cpf.contains(".")) {
+			   cpf = cpf.replace(".", "");
+		   }
+		   
+		   if(cpf.contains("-")) {
+			   cpf = cpf.replace("-", "");
+		   }
+	       
+	      
 	       String strCpf = cpf;
 	        if (strCpf.equals("")) {
 	            return false;

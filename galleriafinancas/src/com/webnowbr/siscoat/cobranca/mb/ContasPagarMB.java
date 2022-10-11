@@ -235,6 +235,7 @@ public class ContasPagarMB {
 
 			// Finalize task.
 			output.flush();
+			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

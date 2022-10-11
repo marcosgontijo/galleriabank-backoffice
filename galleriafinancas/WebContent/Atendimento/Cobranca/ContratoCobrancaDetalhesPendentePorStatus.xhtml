@@ -1370,7 +1370,7 @@
 									<p:outputLabel id="CpfConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfConjuge}"
 										label="CPF" mask="999.999.999-99"
-										validator="#{contratoCobrancaMB.validaCPF}" />
+										 />
 
 									<p:outputLabel for="RgConjuge" value="RG / CNH: " />
 									<p:outputLabel id="RgConjuge"
@@ -2269,6 +2269,15 @@
 						<p:outputLabel id="Ocupacao"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.ocupacao}"
 							label="Ocupação" style="width:410px;" />
+							
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:outputLabel id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+											
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:outputLabel id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:outputLabel id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -2731,7 +2740,7 @@
 											value="#{filesInterno.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        
@@ -2787,7 +2796,7 @@
 								<h:outputText value="#{filesFaltante.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileFaltante(filesFaltante.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
 					        
@@ -2836,7 +2845,7 @@
 											value="#{filesJuridico.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        
@@ -2895,7 +2904,7 @@
 										value="#{files.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column> 
 					        

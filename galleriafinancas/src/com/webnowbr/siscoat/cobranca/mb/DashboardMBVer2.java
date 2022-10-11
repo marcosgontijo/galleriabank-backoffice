@@ -648,8 +648,7 @@ public class DashboardMBVer2 {
 				if(!CommonsUtil.semValor(reponsavel.getDataCadastro())) {
 					gravaCelula(3, reponsavel.getDataCadastro(), linha);
 				}
-				
-				
+								
 				iLinha++;
 			} 
 		}

@@ -617,6 +617,14 @@ public class DashboardMB {
 					gravaCelula(1, reponsavel.getDonoResponsavel().getNome(), linha);
 				}
 				
+				if(!CommonsUtil.semValor(reponsavel.getResponsavelCaptador())) {
+					gravaCelula(2, reponsavel.getResponsavelCaptador().getNome(), linha);
+				}
+				
+				if(!CommonsUtil.semValor(reponsavel.getDataCadastro())) {
+					gravaCelula(3, reponsavel.getDataCadastro(), linha);
+				}
+				
 				iLinha++;
 			} 
 		}

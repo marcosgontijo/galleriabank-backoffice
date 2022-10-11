@@ -831,7 +831,7 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCC}"
 								label="CPF" style="width:400px;margin-left:67px;"
 								mask="999.999.999-99"
-								validator="#{pagadorRecebedorMB.validaCPF}"
+								
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 							</p:inputMask>
 
@@ -841,7 +841,7 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpjCC}"
 								label="CNPJ" style="width:400px;margin-left:67px;"
 								mask="99.999.999/9999-99"
-								validator="#{pagadorRecebedorMB.validaCNPJ}"
+								
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="NomeCC" value="Nome: " styleClass="labelBold"
@@ -932,7 +932,7 @@
 									<p:inputMask id="CpfConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfConjuge}"
 										label="CPF" mask="999.999.999-99" required="true"
-										validator="#{contratoCobrancaMB.validaCPF}">
+										>
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
 											update="CpfCCConjuge NomeCCConjuge" />
@@ -1015,7 +1015,7 @@
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCCConjuge}"
 										label="CPF" style="width:400px; margin-left:67px;"
 										mask="999.999.999-99"
-										validator="#{pagadorRecebedorMB.validaCPF}">
+										>
 									</p:inputMask>
 
 									<p:outputLabel for="NomeCCConjuge" value="Nome: "
@@ -1597,6 +1597,16 @@
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />										
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />						    
 						</p:selectOneMenu>  	
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+						
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+						
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" /> 
+						
 					</h:panelGrid>							
 				</p:panel>
 				
@@ -1980,7 +1990,7 @@
 											value="#{files.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>
 						        

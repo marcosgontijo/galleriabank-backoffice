@@ -96,6 +96,10 @@
 										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>	
 										<p:spacer ></p:spacer>
 										<p:selectBooleanButton id="inicioAnaliseView" value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-cancel" style="width:60px" />
+										<p:spacer ></p:spacer>
+										<p:commandButton value="Contratos do Pagador" onclick="PF('listaContratosPagador').show();" />
+										<p:spacer ></p:spacer>
+										<p:commandButton value="Contratos do Imovel" onclick="PF('listaContratosImovel').show();" />
 									</h:panelGrid>								
 								</ui:fragment>
 								
@@ -1597,7 +1601,7 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCC}"
 								label="CPF" style="width:400px;margin-left:67px;"
 								mask="999.999.999-99"
-								validator="#{pagadorRecebedorMB.validaCPF}"
+								
 								rendered="#{contratoCobrancaMB.tipoPessoaIsFisica}">
 							</p:inputMask>
 
@@ -1607,7 +1611,7 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cnpjCC}"
 								label="CNPJ" style="width:400px;margin-left:67px;"
 								mask="99.999.999/9999-99"
-								validator="#{pagadorRecebedorMB.validaCNPJ}"
+								
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
 
 							<p:outputLabel for="NomeCC" value="Nome: " styleClass="labelBold"
@@ -1705,7 +1709,7 @@
 									<p:inputMask id="CpfConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfConjuge}"
 										label="CPF" mask="999.999.999-99" required="true"
-										validator="#{contratoCobrancaMB.validaCPF}">
+										>
 										<p:ajax event="blur"
 											listener="#{contratoCobrancaMB.populaReferenciaBancariaConjuge}"
 											update="CpfCCConjuge NomeCCConjuge" />
@@ -1830,7 +1834,7 @@
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.cpfCCConjuge}"
 										label="CPF" style="width:400px; margin-left:67px;"
 										mask="999.999.999-99"
-										validator="#{pagadorRecebedorMB.validaCPF}">
+										>
 									</p:inputMask>
 
 									<p:outputLabel for="NomeCCConjuge" value="Nome: "
@@ -2597,6 +2601,15 @@
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+											
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -2982,7 +2995,7 @@
 									<h:outputText value="#{filesPagar.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFilePagar(filesPagar.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        
@@ -3598,7 +3611,7 @@
 									<h:outputText value="#{filesComite.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileComite(filesComite.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        
@@ -3627,66 +3640,66 @@
 				</p:panel>	
 			</shiro:hasAnyRoles>
 			
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA">  	
-			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">						
-				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
-					<h:panelGrid columns="1">		
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosInternosSalvos msgArquivo" />								
-					</h:panelGrid>  
+			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA">  	
+				<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">						
+					<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
+						<h:panelGrid columns="1">		
+							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
+	                          update="ArquivosInternosSalvos msgArquivo" />								
+						</h:panelGrid>  
+					</p:panel>	
+					
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+	
+					<p:panel id="ArquivosInternosSalvos" header="Arquivo(s) Interno(s) Salvo(s) no Contrato" style="margin-bottom:10px;">							
+						<h:panelGrid columns="1">			                      								
+							<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
+								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+								 <f:facet name="header">
+									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
+							    	</p:commandButton>								 
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
+						        </f:facet>	        
+						        <p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
+									filterMatchMode="contains" sortBy="#{filesInterno.name}">
+									<h:outputText value="#{filesInterno.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									</p:commandButton>
+								</p:column>  
+						        
+						        <p:column style="width:100px;">
+									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesInterno}" />
+							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+							    	</p:commandButton>	
+					            </p:column>						        
+	
+					             <f:facet name="footer">
+									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
+							    	</p:commandButton>					             
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>								
+						        </f:facet>             	        		               		        			        			           			 		
+							</p:dataTable>								
+						</h:panelGrid>  
+					</p:panel>
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+					</script>
 				</p:panel>	
-				
-				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
-				    <p:graphicImage name="image/ajaxloadingbar.gif" />
-				</p:dialog>
-
-				<p:panel id="ArquivosInternosSalvos" header="Arquivo(s) Interno(s) Salvo(s) no Contrato" style="margin-bottom:10px;">							
-					<h:panelGrid columns="1">			                      								
-						<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
-							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							 <f:facet name="header">
-								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
-						    	</p:commandButton>								 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
-					        </f:facet>	        
-					        <p:column style="text-align: center;"
-								headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
-								filterMatchMode="contains" sortBy="#{filesInterno.name}">
-								<h:outputText value="#{filesInterno.name}" />
-								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
-								</p:commandButton>
-							</p:column>  
-					        
-					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
-						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesInterno}" />
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
-						    	</p:commandButton>	
-				            </p:column>						        
-
-				             <f:facet name="footer">
-								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
-						    	</p:commandButton>					             
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>								
-					        </f:facet>             	        		               		        			        			           			 		
-						</p:dataTable>								
-					</h:panelGrid>  
-				</p:panel>
-				<script type="text/javascript">
-					function start() {
-					    PF('statusDialog').show();
-					}
-					 
-					function stop() {
-					    PF('statusDialog').hide();
-					}
-				</script>
-			</p:panel>	
-		</shiro:hasAnyRoles>
+			</shiro:hasAnyRoles>
 		
 			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
@@ -3713,7 +3726,7 @@
 								<h:outputText value="#{filesFaltante.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileFaltante(filesFaltante.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
 					        
@@ -3772,7 +3785,7 @@
 											value="#{filesJuridico.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        
@@ -3833,7 +3846,7 @@
 										value="#{files.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column> 
 					        
@@ -4081,6 +4094,89 @@
 						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 							oncomplete="PF('recebedorDialog').hide();" />
 					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Lista de Contratos Cliente Analisado" overflow="auto"
+			widgetVar="listaContratosPagador" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosPagadorForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<!-- 
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column> 
+					-->
+					<p:column style="text-align: center" headerText="Data Analise"
+						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
+							style="FONT-SIZE: 10pt;width:100px;" >
+							<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+					</p:column>
+					<p:column style="text-align: center" headerText="Cidade"
+						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.imovel.cidade}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Status"
+						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.status}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Lista de Contratos Imovel Analisado" overflow="auto"
+			widgetVar="listaContratosImovel" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosImovelForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosImovelAnalisado}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>				
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column> 
+					<p:column style="text-align: center" headerText="Data Analise"
+						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
+							style="FONT-SIZE: 10pt;width:100px;" >
+							<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+					</p:column>			
+					<!-- 
+					<p:column style="text-align: center" headerText="Cidade"
+						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.imovel.cidade}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>-->
+					<p:column style="text-align: center" headerText="Status"
+						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.status}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
 				</p:dataTable>
 			</h:form>
 		</p:dialog>

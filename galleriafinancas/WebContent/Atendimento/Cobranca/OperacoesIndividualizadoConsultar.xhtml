@@ -11,6 +11,22 @@
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+
+			<script type="text/javascript">
+				function start() {
+					PF('statusDialog').show();
+				}
+	
+				function stop() {
+					PF('statusDialog').hide();
+				}
+			</script>
+			
 			<p:panel id="PanelPDF"
 				header="PDF Detalhamento Novas Operações gerado com sucesso!!!"
 				style="margin-bottom:10px;"
@@ -63,6 +79,7 @@
 					action="#{investidorMB.consultaOperacoesIndividualizado}"
 					image="ui-icon ui-icon-check"
 					update=":form:ConsultaOperacoesIndividualizado PanelPDF"
+					onclick="start();" oncomplete="stop();" 
 					style="TEXT-DECORATION: bold;" />
 			</p:panel>
 			<p:panel id="ConsultaOperacoesIndividualizado" header="Detalhamento Novas Operações - Consultar" style="margin-bottom:10px;">		    		    
@@ -108,6 +125,23 @@
 							headerText="Saldo." >
 						<h:outputText value="R$ 0,00"/>
 					</p:column>
+					<p:column style="text-align: center;width:105px;" headerText="Cessionário" filterBy="#{contratos.contrato.cessionario}" filterMatchMode="contains" sortBy="#{contratos.contrato.cessionario}">
+			            <h:outputText value="#{contratos.contrato.cessionario}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Aquisição Cessão" sortBy="#{contratos.contrato.dataAquisicaoCessao}">
+			            <h:outputText value="#{contratos.contrato.dataAquisicaoCessao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>
+			        <p:column style="text-align: center;"
+							headerText="Cessão" >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.contrato.valorCessao}" converter="bigDecimalConverter"/>
+					</p:column>
+					<p:column style="text-align: center;"
+							headerText="Agil" >
+						<h:outputText value="R$ "/><h:outputText value="#{contratos.contrato.valorAgilCessao}" converter="bigDecimalConverter"/>
+					</p:column>
 			        <p:summaryRow>
 			        	<p:column colspan="3" style="text-align: center;" >
 			               <h:outputText value=""/>
@@ -129,6 +163,18 @@
 			            </p:column>
 			            <p:column style="text-align: center;">
 			               <h:outputText value="R$ 0,00"/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value=""/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value=""/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value=""/>
+			            </p:column>
+			            <p:column style="text-align: center;">
+			               <h:outputText value=""/>
 			            </p:column>
 			        </p:summaryRow> 
 			        <f:facet name="footer">

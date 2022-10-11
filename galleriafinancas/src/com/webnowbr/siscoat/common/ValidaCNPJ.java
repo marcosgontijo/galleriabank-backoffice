@@ -12,9 +12,18 @@ import javax.faces.validator.ValidatorException;
 public class ValidaCNPJ {
 	
 	public static boolean isCNPJOnly(String CNPJ) {
-		CNPJ = CNPJ.replace(".", "");
-		CNPJ = CNPJ.replace("/", "");
-		CNPJ = CNPJ.replace("-", "");
+		if (CommonsUtil.semValor(CNPJ)) {
+			return (false);
+		}
+		if(CNPJ.contains(".")) {
+			CNPJ = CNPJ.replace(".", "");
+		}
+		if(CNPJ.contains("/")) {
+			CNPJ = CNPJ.replace("/", "");
+		}
+		if(CNPJ.contains("-")) {
+			CNPJ = CNPJ.replace("-", "");
+		}
 		// considera-se erro CNPJ's formados por uma sequencia de numeros iguais
 		if (CNPJ.equals("00000000000000") || CNPJ.equals("11111111111111")
 				|| CNPJ.equals("22222222222222")
@@ -84,9 +93,19 @@ public class ValidaCNPJ {
 	}
 
 	public static boolean isCNPJ(String CNPJ) {
-		CNPJ = CNPJ.replace(".", "");
-		CNPJ = CNPJ.replace("/", "");
-		CNPJ = CNPJ.replace("-", "");
+		if (CommonsUtil.semValor(CNPJ)) {
+			return (false);
+		}
+		
+		if(CNPJ.contains(".")) {
+			CNPJ = CNPJ.replace(".", "");
+		}
+		if(CNPJ.contains("/")) {
+			CNPJ = CNPJ.replace("/", "");
+		}
+		if(CNPJ.contains("-")) {
+			CNPJ = CNPJ.replace("-", "");
+		}
 		// considera-se erro CNPJ's formados por uma sequencia de numeros iguais
 		if (CNPJ.equals("00000000000000") || CNPJ.equals("11111111111111")
 				|| CNPJ.equals("22222222222222")
