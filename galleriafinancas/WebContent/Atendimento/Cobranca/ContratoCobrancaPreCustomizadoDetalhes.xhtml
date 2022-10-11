@@ -1875,6 +1875,16 @@
 						
 						<p:outputLabel for="Ocupacao" value="Ocupação: " />
 						<p:outputLabel id="Ocupacao" value="#{contratoCobrancaMB.objetoImovelCobranca.ocupacao}" label="Ocupação" style="width:410px;"/>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:outputLabel id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+																	
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:outputLabel id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+																	
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:outputLabel id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" /> 
+
 					</h:panelGrid>							
 				</p:panel>
 				
@@ -2417,7 +2427,7 @@
 											value="#{filesJuridico.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
-										icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
 						        

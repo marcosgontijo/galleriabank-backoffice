@@ -600,6 +600,8 @@ public class ContratoCobranca implements Serializable {
 	private String observacaoRenda;
 	private String finalidadeRecurso;
 	
+	private BigDecimal somaValorPago;
+	
 	private BigDecimal contaPagarValorTotal;
 	private String nomeBancarioContaPagar;
 	private String cpfCnpjBancarioContaPagar;
@@ -681,6 +683,17 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	
 	private Responsavel analistaGeracaoPAJU;	
+
+ //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
+	public BigDecimal calcularValorTotalContasPagas() {
+		somaValorPago = BigDecimal.ZERO;
+		for (ContasPagar conta : this.getListContasPagar()) {
+			if(!CommonsUtil.semValor(conta.getValorPagamento())) {
+				somaValorPago = somaValorPago.add(conta.getValorPagamento());
+			}
+		}		
+		return somaValorPago;
+	}
 	
 	public ContratoCobranca() {
 		super();
@@ -5515,6 +5528,14 @@ public class ContratoCobranca implements Serializable {
 		this.obsValidacaoDocumentos = obsValidacaoDocumentos;
 	}
 
+	public BigDecimal getSomaValorPago() {
+		return somaValorPago;
+	}
+
+	public void setSomaValorPago(BigDecimal somaValorPago) {
+		this.somaValorPago = somaValorPago;
+	}
+
 	public String getCessionario() {
 		return cessionario;
 	}
@@ -5538,4 +5559,5 @@ public class ContratoCobranca implements Serializable {
 	public void setValorCessao(BigDecimal valorCessao) {
 		this.valorCessao = valorCessao;
 	}
+
 }

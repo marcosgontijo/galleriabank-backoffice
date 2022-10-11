@@ -7268,7 +7268,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							
 							if (matriculaLimpaBD.equals(matriculaLimpa) && cepLimpoBD.equals(cepLimpo)) {
 								retorno = rs.getString(1);
-							}	
+							}
 						}
 					}
 	
@@ -7790,31 +7790,32 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	    return diff;
 	}
 	
-	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select numerocontrato from cobranca.contratocobranca "
+	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select id from cobranca.contratocobranca "
 			+ " where pagador = ?"
+			+ " and numeroContrato != ?"
 			+ " order by id ";
 	
 	@SuppressWarnings("unchecked")
-	public String getContratosDoPagador(PagadorRecebedor pagador) {
-		return (String) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobranca> getContratosDoPagador(ContratoCobranca contrato) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;		
-				String retorno = "";
+				List<ContratoCobranca> retorno = new ArrayList<ContratoCobranca>();
+				PagadorRecebedor pagador = contrato.getPagador();
 				try {
 					connection = getConnection();					
 					ps = connection
 							.prepareStatement(QUERY_CONTRATOS_DO_PAGADOR);									
 					ps.setLong(1, pagador.getId());
-					rs = ps.executeQuery();				
+					ps.setString(2, contrato.getNumeroContrato());
+					rs = ps.executeQuery();	
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 					
 					while (rs.next()) {	
-						retorno += rs.getString("numerocontrato");		
-						if(!rs.isLast()) {
-							retorno += ", ";
-						}
+						retorno.add(cDao.findById(rs.getLong("id")));
 					}
 	
 				} finally {
@@ -7823,6 +7824,58 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				return retorno;
 			}
 		});	
-	}	
+	}
+	 
+	private static final String QUERY_CONTRATOS_DO_IMOVEL =  ""
+			+ " select c.id, imovel.numeromatricula, imovel.cep from cobranca.contratocobranca c "
+			+ "	inner join cobranca.imovelcobranca imovel on imovel.id = c.imovel"
+			+ " where numeroContrato != ?"
+			+ " order by id";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> getContratosDoImovel(ContratoCobranca contrato) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;		
+				List<ContratoCobranca> retorno = new ArrayList<ContratoCobranca>();
+				ImovelCobranca imovel = contrato.getImovel();
+				
+				// VALIDA IMOVEL
+				String imovelValido = null;
+				String matriculaLimpa = CommonsUtil.somenteNumeros(imovel.getNumeroMatricula());
+				String cepLimpo = CommonsUtil
+						.somenteNumeros(imovel.getCep().replace(".", "").replace("-", ""));
+
+				imovelValido = validaImovelNovoContrato(matriculaLimpa, cepLimpo);
+				
+				try {
+					connection = getConnection();					
+					ps = connection
+							.prepareStatement(QUERY_CONTRATOS_DO_IMOVEL);									
+					ps.setString(1, contrato.getNumeroContrato());
+					rs = ps.executeQuery();	
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					
+					while (rs.next()) {	
+						if (rs.getString(2) != null && rs.getString(3) != null) {
+							String matriculaLimpaBD = CommonsUtil.somenteNumeros(rs.getString(2).replace(".", "").replace("-", ""));
+							String cepLimpoBD = CommonsUtil.somenteNumeros(rs.getString(3).replace(".", "").replace("-", ""));
+							
+							if (matriculaLimpaBD.equals(matriculaLimpa) && cepLimpoBD.equals(cepLimpo)) {
+								retorno.add(cDao.findById(rs.getLong("id")));
+							}
+						}		
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return retorno;
+			}
+		});	
+	}
 	
 }
