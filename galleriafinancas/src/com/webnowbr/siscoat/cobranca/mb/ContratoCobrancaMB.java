@@ -265,9 +265,9 @@ public class ContratoCobrancaMB {
 	private boolean addSegurador;
 	private boolean addSocio;
 	private boolean addPagador;
-	
 	private boolean addContasPagar;
-
+	private boolean gerenciaStatus;
+	
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
 
@@ -7683,6 +7683,21 @@ public class ContratoCobrancaMB {
 				this.tipoPessoaIsFisica = true;
 			}
 		}
+		
+		//permissao para editar inicio analise
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+
+			if (CommonsUtil.mesmoValor(usuarioLogado.getId(), (long) 778)
+					|| usuarioLogado.isAdministrador()) {
+				gerenciaStatus = true;
+			} else {
+				gerenciaStatus = false;
+			}
+		}
+
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -30102,6 +30117,16 @@ public class ContratoCobrancaMB {
 	public void setContratosImovelAnalisado(Collection<ContratoCobranca> contratosImovelAnalisado) {
 		this.contratosImovelAnalisado = contratosImovelAnalisado;
 	}
+	
+	public boolean isGerenciaStatus() {
+		return gerenciaStatus;
+	}
+
+	public void setGerenciaStatus(boolean gerenciaStatus) {
+		this.gerenciaStatus = gerenciaStatus;
+	}
+	
+	
 	
 	
 }

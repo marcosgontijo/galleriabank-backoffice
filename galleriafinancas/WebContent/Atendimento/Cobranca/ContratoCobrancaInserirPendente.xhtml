@@ -124,7 +124,7 @@
 									<p:selectBooleanButton id="inicioAnalise"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-										offIcon="ui-icon-cancel" style="width:60px" />
+										offIcon="ui-icon-cancel" style="width:60px" disabled="#{!contratoCobrancaMB.gerenciaStatus}" />
 								</shiro:hasAnyRoles>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
