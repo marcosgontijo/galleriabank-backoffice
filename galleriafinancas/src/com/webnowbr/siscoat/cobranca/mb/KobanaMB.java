@@ -483,7 +483,7 @@ public class KobanaMB {
 	
 		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
 
-		jsonBoleto.put("customer_address_number", "00");
+		jsonBoleto.put("customer_address_number", cliente.getNumero());
 		
 		if (cliente.getEmail() == null || cliente.getEmail().equals("")) {
 			jsonBoleto.put("customer_email", "contato@gmail.com");
@@ -804,7 +804,7 @@ public class KobanaMB {
 	
 		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
 
-		jsonBoleto.put("customer_address_number", "00");
+		jsonBoleto.put("customer_address_number", cliente.getNumero());
 		
 		if (cliente.getEmail() == null || cliente.getEmail().equals("")) {
 			jsonBoleto.put("customer_email", "contato@gmail.com");
