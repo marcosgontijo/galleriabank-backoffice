@@ -2938,6 +2938,15 @@
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+											
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>

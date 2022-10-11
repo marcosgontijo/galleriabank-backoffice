@@ -395,6 +395,15 @@
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 
+											
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -422,14 +431,7 @@
 			
 			<p:messages id="msgArquivo"/>
 			
-			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo(s)" style="margin-bottom:10px;">						
-				<p:panel id="ArquivosInternos" header="Selecionar Arquivo" style="margin-bottom:10px;text-align: center;">							
-					<h:panelGrid columns="1">		
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosInternosSalvos msgArquivo" />								
-					</h:panelGrid>  
-				</p:panel>	
-				
+			<p:panel id="UploadArquivosInternos" header="" style="margin-bottom:10px;">						
 				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
 				    <p:graphicImage name="image/ajaxloadingbar.gif" />
 				</p:dialog>
@@ -441,8 +443,7 @@
 							 <f:facet name="header">
 								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
-						    	</p:commandButton>								 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
+						    	</p:commandButton>								 							
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
@@ -466,8 +467,7 @@
 				             <f:facet name="footer">
 								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
-						    	</p:commandButton>					             
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>								
+						    	</p:commandButton>					             							
 					        </f:facet>             	        		               		        			        			           			 		
 						</p:dataTable>								
 					</h:panelGrid>  
@@ -483,7 +483,7 @@
 				</script>
 			</p:panel>		
 			
-			<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo and contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}" >						
+			<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
