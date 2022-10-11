@@ -7887,6 +7887,7 @@ public class ContratoCobrancaMB {
 		loadLovs();
 
 		loadSelectedLovsPendentes();
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
 		if (this.objetoContratoCobranca.getPagador() != null) {
 			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
@@ -17290,6 +17291,7 @@ public class ContratoCobrancaMB {
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -17382,6 +17384,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListContasPagar().remove(conta);
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
 		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 	}
 	
 	public void baixarConta(ContasPagar conta) {
