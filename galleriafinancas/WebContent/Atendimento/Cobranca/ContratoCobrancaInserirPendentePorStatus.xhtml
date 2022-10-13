@@ -84,6 +84,7 @@
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
 								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
 								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
+								    <p:menuitem id="contratoConferidoStep" value="Contrato Conferido"/>
 								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
 								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
 								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
@@ -288,7 +289,23 @@
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; 
-										margin-left: 20px;">	
+										margin-left: 20px;"
+										rendered="#{!contratoCobrancaMB.objetoContratoCobranca.contratoConferido}">	
+										<p:outputLabel styleClass="labelBold">Contrato Conferido</p:outputLabel>
+										<p:spacer ></p:spacer>		
+										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											<p:selectBooleanButton id="contratoConferido" value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}" onLabel="Conferido" offLabel="Não Conferido" onIcon="ui-icon-check"  offIcon="ui-icon-close" style="width:=60px">
+											</p:selectBooleanButton>
+										</shiro:hasAnyRoles>														    						    
+									</h:panelGrid>									
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">						
+									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px; 
+										margin-left: 20px;"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}">	
 										<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
 										<p:spacer ></p:spacer>		
 										<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
@@ -297,7 +314,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 12}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; margin-left: 20px;">	
@@ -332,7 +349,7 @@
 									</p:commandButton>	
 									
 									<!-- -->										
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 10}">
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -439,9 +456,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentanaliseReprovadaStep" for="analiseReprovadaStep" position="bottom">
+			   			<p:tooltip id="toolTipContentanaliseReprovadaStep" for="analiseReprovadaStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -451,9 +468,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentcadastroAprovadoStep" for="cadastroAprovadoStep" position="bottom">
+			   			<p:tooltip id="toolTipContentcadastroAprovadoStep" for="cadastroAprovadoStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -463,9 +480,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentpagtoLaudoConfirmadaStep" for="pagtoLaudoConfirmadaStep" position="bottom">
+			   			<p:tooltip id="toolTipContentpagtoLaudoConfirmadaStep" for="pagtoLaudoConfirmadaStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -475,9 +492,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentlaudoRecebidoStep" for="laudoRecebidoStep" position="bottom">
+			   			<p:tooltip id="toolTipContentlaudoRecebidoStep" for="laudoRecebidoStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -487,9 +504,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentAnaliseComercial" for="analiseComercialStep" position="bottom">
+			   			<p:tooltip id="toolTipContentAnaliseComercial" for="analiseComercialStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -499,9 +516,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
+			   			<p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -511,9 +528,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			  <p:tooltip id="toolTipContentPreAprovadoComiteStep" for="preComiteStep" position="bottom">
+			   			<p:tooltip id="toolTipContentPreAprovadoComiteStep" for="preComiteStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -523,9 +540,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentaprovadoComiteStep" for="aprovadoComiteStep" position="bottom">
+			   			<p:tooltip id="toolTipContentaprovadoComiteStep" for="aprovadoComiteStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -535,9 +552,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentdocumentosCompletosStep" for="documentosCompletosStep" position="bottom">
+			   			<p:tooltip id="toolTipContentdocumentosCompletosStep" for="documentosCompletosStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -547,9 +564,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			
-						 <p:tooltip id="toolTipContentccbProntaStep" for="ccbProntaStep" position="bottom">
+						<p:tooltip id="toolTipContentccbProntaStep" for="ccbProntaStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -559,9 +576,21 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentagAssinaturaStep" for="agAssinaturaStep" position="bottom">
+			   			<p:tooltip id="toolTipContentContratoConferidoStep" for="contratoConferidoStep" position="bottom">
+							<h:panelGrid columns="1">	
+						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
+						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+						        <p:outputLabel value="Data Aprovação" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+						        <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoData}" style="width:250px;font-weight: bold; font-size: 18px;">			            	
+									<f:convertDateTime locale="pt_BR" />
+								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</h:outputText>	
+				       		</h:panelGrid>
+			   			</p:tooltip>
+			   			 
+			   			<p:tooltip id="toolTipContentagAssinaturaStep" for="agAssinaturaStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -571,9 +600,9 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>
+			   			</p:tooltip>
 			   			 
-			   			 <p:tooltip id="toolTipContentagRegistroStep" for="agRegistroStep" position="bottom">
+			   			<p:tooltip id="toolTipContentagRegistroStep" for="agRegistroStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>
@@ -583,7 +612,7 @@
 								    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 								</h:outputText>	
 				       		</h:panelGrid>
-			   			 </p:tooltip>																
+			   			</p:tooltip>																
 					</p:panel>
 				</shiro:hasAnyRoles>
 				

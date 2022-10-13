@@ -209,17 +209,21 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. CCB')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="11 - Ag. Assinatura"
+									<p:menuitem value="11 - Ag. Conferência"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Conferência')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="12 - Ag. Assinatura"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Assinatura')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="12 - Ag. Registro"
+									<p:menuitem value="13 - Ag. Registro"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO">	
-									<p:menuitem value="13 - Ag. Pag. Op."
+									<p:menuitem value="14 - Ag. Pag. Op."
 										action="#{contratoCobrancaMB.consultaAgPagamentoOp}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />

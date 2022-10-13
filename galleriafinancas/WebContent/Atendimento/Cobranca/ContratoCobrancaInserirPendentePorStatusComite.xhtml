@@ -86,6 +86,7 @@
 								    <p:menuitem id="aprovadoComiteStep" value="Aprovado pelo comitê"/>
 								    <p:menuitem id="documentosCompletosStep" value="Documentos Completos"/>
 								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
+								    <p:menuitem id="contratoConferidoStep" value="Contrato Conferido"/>
 								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
 								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
 								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
@@ -241,7 +242,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>	
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 10}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; 
@@ -254,7 +255,7 @@
 										</shiro:hasAnyRoles>														    						    
 									</h:panelGrid>	
 								</ui:fragment>
-								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 12}">
 									<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; margin-left: 20px;">	
@@ -288,7 +289,7 @@
 									</p:commandButton>	
 									
 									<!-- -->
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 10}">
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;

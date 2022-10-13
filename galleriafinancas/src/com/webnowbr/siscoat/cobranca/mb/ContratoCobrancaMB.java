@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -56,7 +55,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -74,7 +72,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
-import org.hibernate.exception.JDBCConnectionException;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
@@ -93,7 +90,6 @@ import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
-import org.primefaces.shaded.commons.io.FilenameUtils;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -160,7 +156,6 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
-import com.webnowbr.siscoat.seguro.vo.SeguroTabelaVO;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
 import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
@@ -4719,6 +4714,18 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCcbProntaUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isContratoConferido()) {
+			this.objetoContratoCobranca.setContratoConferidoData(null);
+			this.objetoContratoCobranca.setContratoConferidoUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getContratoConferidoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setContratoConferidoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getContratoConferidoData());
+				this.objetoContratoCobranca.setContratoConferidoUsuario(getNomeUsuarioLogado());
+			}
+		}
 
 		if (this.objetoContratoCobranca.isAgAssinatura()) {
 			this.objetoContratoCobranca.setAgAssinaturaData(null);
@@ -4796,6 +4803,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAprovadoComite(false);
 		this.objetoContratoCobranca.setDocumentosCompletos(false);
 		this.objetoContratoCobranca.setCcbPronta(false);
+		this.objetoContratoCobranca.setContratoConferido(false);
 		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
 				comite.setVotoAnaliseComite("");
@@ -5021,7 +5029,6 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-
 	}
 
 	public void geraContasPagarRemuneracaoResponsavel(ContratoCobranca contrato, Responsavel responsavel) {
@@ -8010,7 +8017,7 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado") &&
 				( !this.objetoContratoCobranca.isOperacaoPaga()
 				|| this.objetoContratoCobranca.isPendenciaPagamento())) {
-			this.indexStepsStatusContrato = 12;
+			this.indexStepsStatusContrato = 13;
 		} else if (!this.objetoContratoCobranca.isInicioAnalise() ) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) { 
@@ -8113,7 +8120,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isAprovadoComite() &&
 						this.objetoContratoCobranca.isDocumentosCompletos() &&
 						this.objetoContratoCobranca.isCcbPronta() &&
-						this.objetoContratoCobranca.isAgAssinatura()) {
+						!this.objetoContratoCobranca.isContratoConferido()) {
 					this.indexStepsStatusContrato = 10;
 				}
 				
@@ -8127,9 +8134,25 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isAprovadoComite() &&
 						this.objetoContratoCobranca.isDocumentosCompletos() &&
 						this.objetoContratoCobranca.isCcbPronta() &&
+						this.objetoContratoCobranca.isContratoConferido() &&
+						this.objetoContratoCobranca.isAgAssinatura()) {
+					this.indexStepsStatusContrato = 11;
+				}
+				
+				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isAnaliseComercial() &&
+						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
+						this.objetoContratoCobranca.isAprovadoComite() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						this.objetoContratoCobranca.isCcbPronta() &&
+						this.objetoContratoCobranca.isContratoConferido() &&
 						!this.objetoContratoCobranca.isAgAssinatura() &&
 						this.objetoContratoCobranca.isAgRegistro()) {
-					this.indexStepsStatusContrato = 11;
+					this.indexStepsStatusContrato = 12;
 					
 				} 
 
@@ -8301,6 +8324,7 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaCheckList.setAprovadoComite(this.objetoContratoCobranca.isAprovadoComite());
 		this.contratoCobrancaCheckList.setDocumentosCompletos(this.objetoContratoCobranca.isDocumentosCompletos());
 		this.contratoCobrancaCheckList.setCcbPronta(this.objetoContratoCobranca.isCcbPronta());
+		this.contratoCobrancaCheckList.setContratoConferido(this.objetoContratoCobranca.isContratoConferido());
 		this.contratoCobrancaCheckList.setAgAssinatura(this.objetoContratoCobranca.isAgAssinatura());
 		this.contratoCobrancaCheckList.setAgRegistro(this.objetoContratoCobranca.isAgRegistro());
 		this.contratoCobrancaCheckList.setStatusContrato(this.objetoContratoCobranca.getStatusContrato());
@@ -11547,18 +11571,25 @@ public class ContratoCobrancaMB {
 							&& !c.isCcbPronta()) {
 						c.setStatus("Ag. CCB");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && !c.isContratoConferido()) {
+						c.setStatus("Ag. Conferência");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isCcbPronta() && c.isAgAssinatura()) {
+							&& c.isCcbPronta() && c.isContratoConferido() && c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
+							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
 				}
@@ -11684,6 +11715,9 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. CCB")) {
 			this.tituloTelaConsultaPreStatus = "Ag. CCB";
 		}
+		if (status.equals("Ag. Conferência")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Conferência";
+		}		
 		if (status.equals("Ag. Assinatura")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Assinatura";
 		}
