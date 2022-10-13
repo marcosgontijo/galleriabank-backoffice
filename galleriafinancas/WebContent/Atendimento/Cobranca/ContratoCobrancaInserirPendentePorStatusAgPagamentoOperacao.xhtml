@@ -545,6 +545,14 @@
 								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>
+						<!-- VALOR TOTAL PAGO -->
+						<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+						converter="bigDecimalConverter" styleClass="labelBold"
+						style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer height="5" />
+						<p:outputLabel value="|" />
+						<p:spacer height="5" /> 
 					</p:panel>
 				</h:panelGroup>
 				

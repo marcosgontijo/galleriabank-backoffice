@@ -80,7 +80,13 @@
 		
 		 <property name="dataCadastro" type="java.util.Date">
             <column name="dataCadastro"/>
-        </property> 
+        </property>
+        
+        <many-to-one name="responsavelAssistenteComercial"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="responsavelAssistenteComercial" />
+		</many-to-one>  
         
     </class>
 </hibernate-mapping>

@@ -50,8 +50,12 @@ public class ResponsavelMB {
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsaveis;
 	
+	
 	private long idResponsavelCaptador;
 	private String nomeResponsavelCaptador = null;
+	
+	private long idResponsavelAssistenteComercial;
+	private String nomeResponsavelAssistenteComercial = null;
 	
 	private boolean addUsuario = false;
 	private boolean showUsuario = false;
@@ -213,6 +217,12 @@ public class ResponsavelMB {
 			} else {
 				objetoResponsavel.setResponsavelCaptador(null);
 			}
+			
+			if (!CommonsUtil.semValor(this.idResponsavelAssistenteComercial)) {
+				objetoResponsavel.setResponsavelAssistenteComercial(responsavelDao.findById(this.idResponsavelAssistenteComercial));
+			} else {
+				objetoResponsavel.setResponsavelAssistenteComercial(null);
+			}
 
 			if (objetoResponsavel.getId() <= 0) {
 				if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
@@ -301,7 +311,9 @@ public class ResponsavelMB {
 	public void pesquisaResponsavelCaptador() {
 		this.tipoPesquisa = "Captador";
 	}
-	
+	public void pesquisaAssistenteComercial() {
+		this.tipoPesquisa = "Assistente";
+	}
 	public final void populateSelectedResponsavel2() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();
@@ -314,6 +326,9 @@ public class ResponsavelMB {
 		} else if(CommonsUtil.mesmoValor(tipoPesquisa, "Captador")) {
 			this.idResponsavelCaptador = this.selectedResponsavel.getId();
 			this.nomeResponsavelCaptador = this.selectedResponsavel.getNome();
+		} else if(CommonsUtil.mesmoValor(tipoPesquisa, "Assistente")) {
+			this.idResponsavelAssistenteComercial = this.selectedResponsavel.getId();
+			this.nomeResponsavelAssistenteComercial = this.selectedResponsavel.getNome();
 		}
 		this.tipoPesquisa = "";
 	}
@@ -323,6 +338,8 @@ public class ResponsavelMB {
 		this.nomeResponsavel = null;
 		this.idResponsavelCaptador = 0;
 		this.nomeResponsavelCaptador = "";
+		this.idResponsavelAssistenteComercial = 0;
+		this.nomeResponsavelAssistenteComercial = "";
 		this.selectedResponsavel = new Responsavel();
 		this.tipoPesquisa = "";
 	}
@@ -358,6 +375,13 @@ public class ResponsavelMB {
 		} else {
 			this.idResponsavelCaptador = 0;
 			this.nomeResponsavelCaptador = "";
+		}
+		if(!CommonsUtil.semValor(this.objetoResponsavel.getResponsavelAssistenteComercial())) {
+			this.idResponsavelAssistenteComercial = this.objetoResponsavel.getResponsavelAssistenteComercial().getId();
+			this.nomeResponsavelAssistenteComercial = this.objetoResponsavel.getResponsavelAssistenteComercial().getNome();
+		} else {
+			this.idResponsavelAssistenteComercial = 0;
+			this.nomeResponsavelAssistenteComercial = "";
 		}
 		
 		this.tipoPesquisa = "";
@@ -573,6 +597,22 @@ public class ResponsavelMB {
 
 	public void setIdResponsavelCaptador(long idResponsavelCaptador) {
 		this.idResponsavelCaptador = idResponsavelCaptador;
+	}
+
+	public String getNomeAssistenteComercial() {
+		return nomeResponsavelAssistenteComercial;
+	}
+
+	public void setNomeAssistenteComercial(String nomeAssistenteComercial) {
+		this.nomeResponsavelAssistenteComercial = nomeAssistenteComercial;
+	}
+
+	public long getIdResponsavelAssistenteComercial() {
+		return idResponsavelAssistenteComercial;
+	}
+
+	public void setIdResponsavelAssistenteComercial(long idResponsavelAssistenteComercial) {
+		this.idResponsavelAssistenteComercial = idResponsavelAssistenteComercial;
 	}	
 	
 	
