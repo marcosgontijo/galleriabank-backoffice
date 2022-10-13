@@ -396,6 +396,10 @@ public class ContratoCobranca implements Serializable {
 	private Date ccbProntaData;
 	private boolean ccbPronta;
 	private String ccbProntaUsuario;
+	
+	private Date contratoConferidoData;
+	private boolean contratoConferido;
+	private String contratoConferidoUsuario;
 
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
@@ -5560,4 +5564,28 @@ public class ContratoCobranca implements Serializable {
 		this.valorCessao = valorCessao;
 	}
 
+	public Date getContratoConferidoData() {
+		return contratoConferidoData;
+	}
+
+	public void setContratoConferidoData(Date contratoConferidoData) {
+		this.contratoConferidoData = contratoConferidoData;
+	}
+
+	public boolean isContratoConferido() {
+		return contratoConferido;
+	}
+
+	public void setContratoConferido(boolean contratoConferido) {
+		this.contratoConferido = contratoConferido;
+	}
+
+	public String getContratoConferidoUsuario() {
+		return contratoConferidoUsuario;
+	}
+
+	public void setContratoConferidoUsuario(String contratoConferidoUsuario) {
+		this.contratoConferidoUsuario = contratoConferidoUsuario;
+	}
+	
 }

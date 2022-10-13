@@ -987,14 +987,21 @@ public class CRMMB {
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isCcbPronta() && c.isAgAssinatura()) {
+							&& c.isCcbPronta() && !c.isContratoConferido()) {
+						c.setStatus("Ag. Conferência");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && c.isContratoConferido() && c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isCcbPronta() && !c.isAgAssinatura() && c.isAgRegistro()) {
+							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
 				}

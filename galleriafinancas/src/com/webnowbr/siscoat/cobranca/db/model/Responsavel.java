@@ -27,6 +27,7 @@ public class Responsavel implements Serializable {
 	
 	private Date dataCadastro;
 	private Responsavel responsavelCaptador;
+	private Responsavel responsavelAssistenteComercial;
 	
 	private String rg;
 	private String cpf;
@@ -38,6 +39,7 @@ public class Responsavel implements Serializable {
 	private BigDecimal taxaRemuneracao;
 	
 	private String whatsAppNumero;
+	
 	
 	public Responsavel(){
 	}
@@ -364,5 +366,14 @@ public class Responsavel implements Serializable {
 	public void setResponsavelCaptador(Responsavel responsavelCaptador) {
 		this.responsavelCaptador = responsavelCaptador;
 	}
+
+	public Responsavel getResponsavelAssistenteComercial() {
+		return responsavelAssistenteComercial;
+	}
+
+	public void setResponsavelAssistenteComercial(Responsavel responsavelAssistenteComercial) {
+		this.responsavelAssistenteComercial = responsavelAssistenteComercial;
+	}
+
 	
 }

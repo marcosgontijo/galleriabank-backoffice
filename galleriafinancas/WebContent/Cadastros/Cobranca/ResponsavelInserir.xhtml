@@ -100,7 +100,7 @@
 					<p:inputText id="ResponsavelCaptador"
 						value="#{responsavelMB.nomeResponsavelCaptador}" 
 						readonly="TRUE"
-						style="FONT-SIZE: 10pt;width:300px;margin-left: 35px;" />
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 33px;" />
 					<p:commandButton id="botaoResponsavelOriginal" ajax="true"
 						action="#{responsavelMB.pesquisaResponsavelCaptador}"
 						icon="ui-icon ui-icon-circle-zoomin"
@@ -108,6 +108,21 @@
 						oncomplete="PF('responsavelDialog').show();"
 						update="formResponsaveis" />
 				</h:panelGrid>
+				
+				<h:panelGrid columns="3">
+					<p:outputLabel for="AssistenteComercial" value="Assistente Comercial " />
+					<p:inputText id="AssistenteComercial"
+						value="#{responsavelMB.nomeAssistenteComercial}" 
+						readonly="TRUE"
+						style="FONT-SIZE: 10pt;width:300px;margin-left: 47px;" />
+					<p:commandButton id="botaoAssistenteComercial" ajax="true"
+						action="#{responsavelMB.pesquisaAssistenteComercial}"
+						icon="ui-icon ui-icon-circle-zoomin"
+						immediate="true"
+						oncomplete="PF('responsavelDialog').show();"
+						update="formResponsaveis" />
+				</h:panelGrid>
+				
 				<h:panelGrid columns="2">
 					<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): " />
 					<p:inputText id="taxaRemuneracao"
@@ -307,12 +322,12 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{responsavelMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador"
+							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador :form:AssistenteComercial"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{responsavelMB.clearResponsavelDialog}"
 							image="ui-icon ui-icon-trash"
-							update=":form:Responsavel :form:ResponsavelCaptador responsavelDialogdlg"
+							update=":form:Responsavel :form:ResponsavelCaptador :form:AssistenteComercial responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />

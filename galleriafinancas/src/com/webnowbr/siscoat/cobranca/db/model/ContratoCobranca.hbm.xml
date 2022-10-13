@@ -1838,6 +1838,18 @@
 		<property name="enviadoWhatsAppLeadStandby" type="boolean">
 			<column name="enviadoWhatsAppLeadStandby" not-null="true" default="false" />
 		</property>	
+			
+		<property name="contratoConferidoData"
+			type="java.util.Date">
+			<column name="contratoConferidoData" />
+		</property>
+		<property name="contratoConferidoUsuario"
+			type="java.lang.String">
+			<column name="contratoConferidoUsuario" />
+		</property>
+		<property name="contratoConferido" type="boolean">
+			<column name="contratoConferido" not-null="true" default="false"/>
+		</property>
 
 	</class>
 </hibernate-mapping>
