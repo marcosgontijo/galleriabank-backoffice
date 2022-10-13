@@ -3848,6 +3848,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ " and c.empresa = 'CRI 1' "
 			+ "	order by numerocontrato ";
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO = " select c.id from cobranca.contratocobranca c "
+			+ "	where c.status = 'Aprovado' "
+			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
+			+ "	order by numerocontrato ";
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
@@ -3861,6 +3866,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				
 				String query_RELATORIO_FINANCEIRO_CUSTOM = "";
+				
+				query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO;
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("Securitizadora")) {
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA;	
