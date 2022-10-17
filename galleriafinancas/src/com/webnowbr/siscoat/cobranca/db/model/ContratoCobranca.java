@@ -686,6 +686,9 @@ public class ContratoCobranca implements Serializable {
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
 	
+	private String documentoPagador;
+	private boolean contratoQuitado;
+	
 	private Responsavel analistaGeracaoPAJU;	
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
@@ -5587,5 +5590,20 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoConferidoUsuario(String contratoConferidoUsuario) {
 		this.contratoConferidoUsuario = contratoConferidoUsuario;
 	}
-	
+
+	public boolean isContratoQuitado() {
+		return contratoQuitado;
+	}
+
+	public void setContratoQuitado(boolean contratoQuitado) {
+		this.contratoQuitado = contratoQuitado;
+	}
+
+	public String getDocumentoPagador() {
+		return documentoPagador;
+	}
+
+	public void setDocumentoPagador(String documentoPagador) {
+		this.documentoPagador = documentoPagador;
+	}
 }

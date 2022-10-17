@@ -3848,11 +3848,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ " and c.empresa = 'CRI 1' "
 			+ "	order by numerocontrato ";
-	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO = " select c.id from cobranca.contratocobranca c "
-			+ "	where c.status = 'Aprovado' "
-			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
-			+ "	order by numerocontrato ";
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
@@ -3866,8 +3861,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				
 				String query_RELATORIO_FINANCEIRO_CUSTOM = "";
-				
-				query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO;
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("Securitizadora")) {
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA;	
@@ -3904,6 +3897,84 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);		
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO = " select "
+			+ "	cc.numeroContrato, "
+			+ "	cc.dataContrato, "
+			+ "	pp.nome, "
+			+ "	pp.cpf, "
+			+ "	pp.cnpj, "
+			+ "	cc.qtdeparcelas, "
+			+ "	cc.corrigidoipca, "
+			+ "	cc.corrigidonovoipca, "
+			+ "	cobranca.contratoQuitado(cc.id), "
+			+ "	cc.empresa, "
+			+ "	ic.cidade, ic.estado, "
+			+ "	cc.valorCCB, "
+			+ "	cc.txJurosParcelas, "
+			+ "	cc.valorImovel "
+			+ "	from cobranca.contratocobranca cc "
+			+ "	inner join cobranca.pagadorrecebedor pp on pp.id = cc.pagador "
+			+ "	inner join cobranca.imovelcobranca ic on ic.id = cc.imovel "
+			+ "	where cc.status = 'Aprovado' "
+			+ "	and cc.pagador not in (15, 34,14, 182, 417, 803) "
+			+ "	order by numerocontrato ";
+
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> relatorioFinanceiroDiaCompleto() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_COMPLETO;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = new ContratoCobranca();
+						
+						contratoCobranca.setNumeroContrato(rs.getString(1));
+						contratoCobranca.setDataContrato(rs.getDate(2));
+						contratoCobranca.setNomePagador(rs.getString(3));
+						
+						if (rs.getString(4) != null) {
+							contratoCobranca.setDocumentoPagador(rs.getString(4));
+						} else {
+							contratoCobranca.setDocumentoPagador(rs.getString(5));
+						}
+	
+						contratoCobranca.setQtdeParcelas(Integer.valueOf(rs.getString(6)));
+						contratoCobranca.setCorrigidoIPCA(rs.getBoolean(7));
+						contratoCobranca.setCorrigidoNovoIPCA(rs.getBoolean(8));
+						contratoCobranca.setContratoQuitado(rs.getBoolean(9));
+						contratoCobranca.setEmpresa(rs.getString(10));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(11) + "/" + rs.getString(12));
+						contratoCobranca.setValorCCB(rs.getBigDecimal(13));
+						contratoCobranca.setTxJurosParcelas(rs.getBigDecimal(14));
+						contratoCobranca.setValorImovel(rs.getBigDecimal(15));
 						
 						objects.add(contratoCobranca);		
 					}
