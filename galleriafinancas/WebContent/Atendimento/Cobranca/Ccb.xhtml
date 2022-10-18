@@ -216,15 +216,17 @@
 												value="Regime do Casamento: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:selectOneMenu id="regimeCasamentoEmitente"
-												value="#{ccbMB.emitenteSelecionado.regimeCasamento}" ajax="true">
-												<f:selectItem itemValue="universal de bens"
+												value="#{ccbMB.emitenteSelecionado.regimeCasamento}" ajax="true">											
+												<f:selectItem itemValue="universal de bens" 
 													itemLabel="Universal de bens" />
-												<f:selectItem itemValue="de comunhão parcial de bens"
+												<f:selectItem itemValue="parcial de bens" 
 													itemLabel="Comunhão parcial de bens" />
-												<f:selectItem itemValue="de separação total de bens"
+												<f:selectItem itemValue="de separação total de bens" 
 													itemLabel="Separação total de bens" />
-												<f:selectItem itemValue="obrigatório de separação de bens"
-													itemLabel="Obrigatório de separação de bens" />
+												<f:selectItem itemValue="de separação legal de bens" 
+													itemLabel="Legal de bens" />
+												<f:selectItem itemValue="de separação obrigatório de bens" 
+													itemLabel="Obrigatório de separação de bens" />	
 											</p:selectOneMenu>
 		
 											<p:outputLabel for="nomeConjugeEmitente"
@@ -452,14 +454,16 @@
 												style="font-weight: bold; font-size: 18px;" />
 											<p:selectOneMenu id="regimeCasamentoInterveniente"
 												value="#{ccbMB.intervenienteSelecionado.regimeCasamento}" ajax="true">
-												<f:selectItem itemValue="universal de bens"
+												<f:selectItem itemValue="universal de bens" 
 													itemLabel="Universal de bens" />
-												<f:selectItem itemValue="de comunhão parcial de bens"
+												<f:selectItem itemValue="parcial de bens" 
 													itemLabel="Comunhão parcial de bens" />
-												<f:selectItem itemValue="de separação total de bens"
+												<f:selectItem itemValue="de separação total de bens" 
 													itemLabel="Separação total de bens" />
-												<f:selectItem itemValue="obrigatório de separação de bens"
-													itemLabel="Obrigatório de separação de bens" />
+												<f:selectItem itemValue="de separação legal de bens" 
+													itemLabel="Legal de bens" />
+												<f:selectItem itemValue="de separação obrigatório de bens" 
+													itemLabel="Obrigatório de separação de bens" />	
 											</p:selectOneMenu>
 											
 											<p:outputLabel for="nomeConjugeInterveniente"
@@ -1201,6 +1205,13 @@
 													update="cidadeParticipante logradouroParticipante ufParticipante"
 													listener="#{ccbMB.getEnderecoByViaNet()}"/>									
 											</p:inputText>
+											
+											<p:outputLabel for="bairroParticipante" value="Bairro: "
+												styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText id="bairroParticipante"
+												value="#{ccbMB.participanteSelecionado.pessoa.bairro}"
+												label="Contrato" />
 
 											<p:outputLabel for="emailParticipante" value="Email: "
 												styleClass="labelBold"
@@ -1239,18 +1250,21 @@
 													<p:outputLabel for="regimeCasamentoParticipante"
 														value="Regime do Casamento: " styleClass="labelBold"
 														style="font-weight: bold; font-size: 18px;" />
-													<p:selectOneMenu id="regimeCasamentoParticipante"
-														value="#{ccbMB.participanteSelecionado.pessoa.regimeCasamento}"
-														ajax="true">
-														<f:selectItem itemValue="de comunhão universal de bens"
-															itemLabel="Universal de bens" />
-														<f:selectItem itemValue="de comunhão parcial de bens"
-															itemLabel="Comunhão parcial de bens" />
-														<f:selectItem itemValue="de separação total de bens"
-															itemLabel="Separação total de bens" />
-														<f:selectItem itemValue="obrigatório de separação de bens"
-															itemLabel="Obrigatório de separação de bens" />
-													</p:selectOneMenu>
+													<h:panelGroup>
+														<p:selectOneMenu id="regimeCasamentoParticipante"
+															value="#{ccbMB.participanteSelecionado.pessoa.regimeCasamento}"
+															ajax="true">
+															<f:selectItem itemValue="de comunhão universal de bens"
+																itemLabel="Universal de bens" />
+															<f:selectItem itemValue="de comunhão parcial de bens"
+																itemLabel="Comunhão parcial de bens" />
+															<f:selectItem itemValue="de separação total de bens"
+																itemLabel="Separação total de bens" />
+															<f:selectItem itemValue="obrigatório de separação de bens"
+																itemLabel="Obrigatório de separação de bens" />
+														</p:selectOneMenu>
+														<p:spacer width="10px" ></p:spacer>
+													</h:panelGroup>
 
 													<p:outputLabel for="nomeConjugeParticipante"
 														value="Nome do Conjuge: " styleClass="labelBold"
@@ -1265,7 +1279,6 @@
 													<p:inputMask id="cpfConjugeParticipante"
 														value="#{ccbMB.participanteSelecionado.pessoa.cpfConjuge}"
 														label="Contrato" mask="999.999.999-99" />
-
 												</h:panelGrid>
 											</p:panel>
 										</h:panelGroup>
@@ -1524,6 +1537,13 @@
 																update="cidadeSocio logradouroSocio ufSocio"
 																listener="#{ccbMB.getEnderecoByViaNetSocio()}"/>									
 														</p:inputText>
+														
+														<p:outputLabel for="bairroSocio" value="Bairro: "
+															styleClass="labelBold"
+															style="font-weight: bold; font-size: 18px;" />
+														<p:inputText id="bairroSocio"
+															value="#{ccbMB.socioSelecionado.pessoa.bairro}"
+															label="Contrato" />
 
 														<p:outputLabel for="emailSocio" value="Email: "
 															styleClass="labelBold"

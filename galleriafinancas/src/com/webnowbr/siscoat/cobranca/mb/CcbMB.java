@@ -18,12 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,7 +31,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.util.Units;
@@ -50,59 +47,38 @@ import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.hibernate.JDBCException;
-import org.jasypt.encryption.BigDecimalEncryptor;
 import org.json.JSONObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLevelText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShortHexNumber;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHexColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STNumberFormat;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
-import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
-import com.webnowbr.siscoat.cobranca.db.model.ContasAPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
@@ -115,7 +91,6 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
-import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
@@ -7060,11 +7035,13 @@ public class CcbMB {
 			} else {
 				estadoCivilStr = "casado";
 			}		
-			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			conjugeStr = ", sob o regime de comunhão " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
 		} else {
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
 			if(participante.isUniaoEstavel()) {
 				estadoCivilStr = estadoCivilStr + " convivente em união estável";
+			} else {
+				estadoCivilStr = estadoCivilStr + " não convivente em união estável";
 			}
 		}
 		
@@ -7074,7 +7051,8 @@ public class CcbMB {
 				+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + "SSP/"+ pessoa.getEstado() +","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
 				+ " residente e domiciliado à "+ pessoa.getEndereco() +", nº "+ pessoa.getNumero() +", "
-				+ pessoa.getComplemento()+", "+ pessoa.getCidade()+"/"+pessoa.getEstado()+", CEP "+ pessoa.getCep()+"; ");
+				+ pessoa.getComplemento() + ", "+ pessoa.getBairro() + ", " 
+				+ pessoa.getCidade()+"/"+pessoa.getEstado()+", CEP "+ pessoa.getCep()+"; ");
 	}
 	
 	public void fazParagrafoSimples(XWPFDocument document, XWPFParagraph paragraph, XWPFRun run, String texto, boolean bold) {

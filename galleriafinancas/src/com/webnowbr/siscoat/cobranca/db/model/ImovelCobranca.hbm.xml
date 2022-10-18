@@ -107,5 +107,17 @@
 			<column name="cartorioMunicipio" />
 		</property>
 		
+		<property name="cndIptuExtratoDebitoCheckList" type="boolean">
+			<column name="cndIptuExtratoDebitoCheckList" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="cndCondominioExtratoDebitoCheckList" type="boolean">
+			<column name="cndCondominioExtratoDebitoCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="matriculaGaragemCheckList" type="boolean">
+			<column name="matriculaGaragemCheckList" not-null="true" default="false"/>
+		</property>
+			
     </class>
 </hibernate-mapping>

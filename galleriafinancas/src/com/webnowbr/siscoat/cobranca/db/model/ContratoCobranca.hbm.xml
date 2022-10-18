@@ -1669,6 +1669,10 @@
 			<column name="processosQuitarComite" />
 		</property>
 		
+		<property name="obsValidacaoDocumentos" type="text">
+			<column name="obsValidacaoDocumentos" />
+		</property>	 
+		
 		<property name="geracaoLaudoObservacao" type="text">
 			<column name="geracaoLaudoObservacao" />
 		</property>	
