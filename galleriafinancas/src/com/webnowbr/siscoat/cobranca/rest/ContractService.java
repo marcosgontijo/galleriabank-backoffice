@@ -136,7 +136,12 @@ public class ContractService {
 						if (responsaveis.size() > 0) {
 							this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
 							
-							this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));
+							if (contratoAPP.has("numeroContrato")) {
+								this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));	
+							} else {
+								this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
+							}
+							
 							this.objetoContratoCobranca.setTipoOperacao(contratoAPP.getString("tipoOperacao"));
 							this.objetoContratoCobranca.setCobrarComissaoCliente(contratoAPP.getString("cobrarComissaoCliente"));
 							this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.getString("tipoCobrarComissaoCliente"));
@@ -291,6 +296,14 @@ public class ContractService {
 					      .build();				
 			}
 		}
+	}
+	
+	public String geraNumeroContrato() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		int numeroUltimoContrato = Integer.valueOf(contratoCobrancaDao.ultimoNumeroContrato());
+
+		return String.format("%05d", numeroUltimoContrato);
 	}
 		
 	public void clearCriacaoContrato() {
