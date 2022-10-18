@@ -550,6 +550,15 @@
 		
 		<property name="reputacao" type="java.lang.String">
 			<column name="reputacao" />
-		</property>	                  
+		</property>	    
+		
+		<property name="cndFederalCheckList" type="boolean">
+			<column name="cndFederalCheckList" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="certidoesDocketCheckList" type="boolean">
+			<column name="certidoesDocketCheckList" not-null="true" default="false"/>
+		</property>	              
+		
     </class>
 </hibernate-mapping>

@@ -46,6 +46,9 @@ public class ImovelCobranca implements Serializable {
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
 	private boolean comprovanteIptuImovelCheckList;
+	private boolean cndIptuExtratoDebitoCheckList;//
+	private boolean cndCondominioExtratoDebitoCheckList;//
+	private boolean matriculaGaragemCheckList;//
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -439,4 +442,29 @@ public class ImovelCobranca implements Serializable {
 	public void setCartorioMunicipio(String cartorioMunicipio) {
 		this.cartorioMunicipio = cartorioMunicipio;
 	}
+
+	public boolean isCndIptuExtratoDebitoCheckList() {
+		return cndIptuExtratoDebitoCheckList;
+	}
+
+	public void setCndIptuExtratoDebitoCheckList(boolean cndIptuExtratoDebitoCheckList) {
+		this.cndIptuExtratoDebitoCheckList = cndIptuExtratoDebitoCheckList;
+	}
+
+	public boolean isCndCondominioExtratoDebitoCheckList() {
+		return cndCondominioExtratoDebitoCheckList;
+	}
+
+	public void setCndCondominioExtratoDebitoCheckList(boolean cndCondominioExtratoDebitoCheckList) {
+		this.cndCondominioExtratoDebitoCheckList = cndCondominioExtratoDebitoCheckList;
+	}
+
+	public boolean isMatriculaGaragemCheckList() {
+		return matriculaGaragemCheckList;
+	}
+
+	public void setMatriculaGaragemCheckList(boolean matriculaGaragemCheckList) {
+		this.matriculaGaragemCheckList = matriculaGaragemCheckList;
+	}
+	
 }

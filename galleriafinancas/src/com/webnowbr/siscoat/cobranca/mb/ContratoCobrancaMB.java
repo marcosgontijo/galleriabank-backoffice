@@ -8235,14 +8235,14 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
 		} else {
 			if( (this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite())
-					|| ((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial())
+					|| ((this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial())
 					|| (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado") && !this.objetoContratoCobranca.isPedidoLaudoPajuComercial() )) {
 				User usuarioLogado = new User();
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 				if(usuarioLogado.isComiteConsultar()) {
 				
-					if((this.objetoContratoCobranca.isLaudoRecebido() && this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial()) {
+					if((this.objetoContratoCobranca.isPajurFavoravel()) && !this.objetoContratoCobranca.isAnaliseComercial()) {
 						this.tituloTelaConsultaPreStatus = "Análise Comercial";
 					} else if(this.objetoContratoCobranca.isComentarioJuridicoEsteira() && !this.objetoContratoCobranca.isPreAprovadoComite()) {
 						this.tituloTelaConsultaPreStatus = "Pré-Comite";
@@ -11612,7 +11612,7 @@ public class ContratoCobrancaMB {
 			c.setStatus("Contrato Registrado");
 		} else {
 			
-			if (c.getCadastroAprovadoValor() != null) {
+			if (!CommonsUtil.semValor(c.getCadastroAprovadoValor())) {
 				if (c.getCadastroAprovadoValor().equals("Aprovado") 
 						&& (CommonsUtil.semValor(s.getCadastroAprovadoValor())
 							||!CommonsUtil.mesmoValor(c.getCadastroAprovadoValor(), s.getCadastroAprovadoValor()))) {

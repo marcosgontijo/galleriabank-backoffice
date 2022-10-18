@@ -182,6 +182,8 @@ public class PagadorRecebedor implements Serializable {
 	private boolean combateFraudeCheckList;
 	private boolean cargoOcupacaoCheckList;
 	private boolean taxaCheckList;
+	private boolean cndFederalCheckList;
+	private boolean certidoesDocketCheckList;
 	
 	private String nomeParticipanteCheckListConjuge;
 	private boolean rgDocumentosCheckListConjuge;
@@ -1989,5 +1991,20 @@ public class PagadorRecebedor implements Serializable {
 	public void setReputacao(String reputacao) {
 		this.reputacao = reputacao;
 	}
-	
+
+	public boolean isCndFederalCheckList() {
+		return cndFederalCheckList;
+	}
+
+	public void setCndFederalCheckList(boolean cndFederalCheckList) {
+		this.cndFederalCheckList = cndFederalCheckList;
+	}
+
+	public boolean isCertidoesDocketCheckList() {
+		return certidoesDocketCheckList;
+	}
+
+	public void setCertidoesDocketCheckList(boolean certidoesDocketCheckList) {
+		this.certidoesDocketCheckList = certidoesDocketCheckList;
+	}
 }
