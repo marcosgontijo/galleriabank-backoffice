@@ -123,7 +123,56 @@
 						<p:ajax event="blur" update="valorPagamento"
 							listener="#{contasPagarMB.settarValorPagamento()}" />
 					</p:inputText>
-
+					
+					<p:outputLabel for="formaTransferencia" value="Forma de Transferência: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu id="formaTransferencia"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}"
+									disabled="#{contasPagarMB.baixaMode}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="TED" itemLabel="TED" />
+									<f:selectItem itemValue="Pix" itemLabel="Pix" />
+									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									
+									<p:ajax event="change" 
+										update="tedGrid pixGrid" />
+								</p:selectOneMenu>
+								<h:panelGroup id="tedGrid" >
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
+									<p:outputLabel for="nomeTed" value="Nome: " />
+									<p:inputText id="nomeTed" 
+									value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" 
+									disabled="#{contasPagarMB.baixaMode}"/>								
+									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
+									<p:inputText id="cpfTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" 
+										disabled="#{contasPagarMB.baixaMode}"/>		
+									<p:outputLabel value="Banco: " for="bancoTed" />
+									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
+										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta" 
+										style="width:100px;"
+										scrollHeight="250" 
+										disabled="#{contasPagarMB.baixaMode}"/>														
+									<p:outputLabel for="contaTed" value="Conta: " />
+									<p:inputText id="contaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" 
+										disabled="#{contasPagarMB.baixaMode}"/>									
+									<p:outputLabel for="agenciaTed" value="Agência: " />
+									<p:inputText id="agenciaTed"
+										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" 
+										disabled="#{contasPagarMB.baixaMode}"/>							
+								</h:panelGrid>
+								</h:panelGroup>	
+								<h:panelGroup id="pixGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel for="pix" value="Pix: " />
+									<p:inputText id="pix" value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" 
+									disabled="#{contasPagarMB.baixaMode}"/>
+								</h:panelGrid>
+								</h:panelGroup>
 					<p:outputLabel for="valorPagamento" value="Valor Pagamento (R$): "
 
 						styleClass="labelBold" />

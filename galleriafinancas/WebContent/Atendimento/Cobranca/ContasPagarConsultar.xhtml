@@ -98,7 +98,10 @@
 			        </p:column>	
 			         <p:column style="text-align: center;" headerText="numeroDocumento" filterBy="#{contasPagar.numeroDocumento}" filterMatchMode="contains" >
 			            <h:outputText value="#{contasPagar.numeroDocumento}" />
-			        </p:column>	
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="formaTransferencia" filterBy="#{contasPagar.formaTransferencia}" filterMatchMode="contains" >
+			            <h:outputText value="#{contasPagar.formaTransferencia}" />
+			        </p:column>		
 					<p:column styleClass="colunaResponsiva">
 						<p:commandButton action="#{contasPagarMB.clearFieldsEditar}"
 							ajax="false" icon="ui-icon-pencil" title="Editar">
