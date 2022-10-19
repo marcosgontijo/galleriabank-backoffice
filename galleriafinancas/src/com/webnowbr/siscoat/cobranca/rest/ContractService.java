@@ -33,6 +33,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB;
 
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.model.Parametros;
 
 
 @Path("/services")
@@ -173,7 +174,7 @@ public class ContractService {
 							/***
 							 * OBJETO PAGADOR
 							 */
-							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagador");
+							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 							this.objetoPagador = new PagadorRecebedor();
 							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
 							
@@ -230,7 +231,11 @@ public class ContractService {
 							} else {
 								this.objetoImovelCobranca.setId(-1);
 								this.objetoImovelCobranca.setCep(contratoAPPImovel.getString("cep"));
-								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", " + contratoAPPImovel.getString("numero"));
+								if(contratoAPPImovel.has("numero")) {
+									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", " + contratoAPPImovel.getString("numero"));
+								}else {
+									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));									
+								}
 								this.objetoImovelCobranca.setComplemento(contratoAPPImovel.getString("complemento"));
 								this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
 								this.objetoImovelCobranca.setBairro(contratoAPPImovel.getString("bairro"));
@@ -271,7 +276,7 @@ public class ContractService {
 								      .build();		
 						}
 					} else {
-						String message = "{\"retorno\": \"[Galleria Bank] Código do Responsável não encontrato!!!\"}";
+						String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
 						
 						return Response
 							      .status(Response.Status.FORBIDDEN)
@@ -325,10 +330,15 @@ public class ContractService {
 		this.objetoContratoCobranca.setStatusLead("Completo");
 		
 		ParametrosDao pDao = new ParametrosDao();
-		this.objetoContratoCobranca
-				.setTxJuros(pDao.findByFilter("nome", "COBRANCA_REC_TX_JUROS").get(0).getValorBigDecimal());
-		this.objetoContratoCobranca
-				.setTxMulta(pDao.findByFilter("nome", "COBRANCA_REC_MULTA").get(0).getValorBigDecimal());
+		List<Parametros> cobrancaRecTxJuros = pDao.findByFilter("nome", "COBRANCA_REC_TX_JUROS");
+		if(!cobrancaRecTxJuros.isEmpty()) {
+			this.objetoContratoCobranca
+			.setTxJuros(cobrancaRecTxJuros.get(0).getValorBigDecimal());
+		}
+		List<Parametros> cobrancaRecMulta = pDao.findByFilter("nome", "COBRANCA_REC_MULTA");
+		if(!cobrancaRecMulta.isEmpty()) {
+			this.objetoContratoCobranca.setTxMulta(cobrancaRecMulta.get(0).getValorBigDecimal());
+		}
 	}
 	
 	/**
