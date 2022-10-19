@@ -6986,27 +6986,29 @@ public class ContratoCobrancaMB {
 		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
-			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
-			//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
-			
-			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
-				this.objetoContratoCobranca.setStatusLead("Arquivado");
-				contratoCobrancaDao.merge(this.objetoContratoCobranca);
-			}
-
-			if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
-				if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
+			if (!contratos.getStatus().equals("Aprovado")) {
+				this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+				//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
+				
+				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+					this.objetoContratoCobranca.setStatusLead("Arquivado");
+					contratoCobrancaDao.merge(this.objetoContratoCobranca);
+				}
+	
+				if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
+					if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
+						if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
+							baixarPreContratoSemMensagem();
+						} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
+							baixarPreContratoSemMensagem();
+						}
+					}
+				} else {
 					if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 						baixarPreContratoSemMensagem();
 					} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
 						baixarPreContratoSemMensagem();
 					}
-				}
-			} else {
-				if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
-					baixarPreContratoSemMensagem();
-				} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
-					baixarPreContratoSemMensagem();
 				}
 			}
 		}
