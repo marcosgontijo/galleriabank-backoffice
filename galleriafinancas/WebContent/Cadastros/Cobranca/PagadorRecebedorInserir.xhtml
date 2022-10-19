@@ -274,6 +274,42 @@
 							<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
 							<p:ajax update="PanelCasado" event="valueChange" />
 						</p:selectOneMenu>
+						<p:outputLabel for="regimeCasamentoEmitente"
+							value="Regime do Casamento: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:selectOneMenu id="regimeCasamentoEmitente"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">			
+							<f:selectItem itemValue="universal de bens" 
+								itemLabel="Universal de bens" />
+							<f:selectItem itemValue="parcial de bens" 
+								itemLabel="Comunhão parcial de bens" />
+							<f:selectItem itemValue="de separação total de bens" 
+								itemLabel="Separação total de bens" />
+							<f:selectItem itemValue="de separação legal de bens" 
+								itemLabel="Legal de bens" />
+							<f:selectItem itemValue="de separação obrigatório de bens" 
+								itemLabel="Obrigatório de separação de bens" />							
+						</p:selectOneMenu>
+						
+						<h:panelGroup style="width: 50%;" layout="block">
+							<p:outputLabel
+								value="Conforme pacto antenupcial registrado no" styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputMask id="registroPacto" value="" />
+							<p:outputLabel
+								value="sob livro" styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputMask id="livroPacto" value="" />
+							<p:outputLabel
+								value="folhas" styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputMask id="folhasPacto" value="" />
+							<p:outputLabel
+								value="datada de" styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputMask id="dataPacto" value="" />
+						</h:panelGroup>
+						
 						<p:outputLabel for="NomeConjuge" value="Nome: "
 							styleClass="labelBold"
 							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
