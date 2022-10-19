@@ -1280,6 +1280,30 @@
 														value="#{ccbMB.participanteSelecionado.pessoa.cpfConjuge}"
 														label="Contrato" mask="999.999.999-99" />
 												</h:panelGrid>
+												<h:panelGroup style="width: 50%;" layout="block">													
+													<p:outputLabel
+														value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
+														style="font-weight: bold; font-size: 16px;" />
+													<p:inputText id="registroPacto" 
+														value="#{ccbMB.participanteSelecionado.pessoa.registroPactoAntenupcial}" />
+													<p:outputLabel
+														value=" sob livro " styleClass="labelBold"
+														style="font-weight: bold; font-size: 16px;" />
+													<p:inputText id="livroPacto" 
+														value="#{ccbMB.participanteSelecionado.pessoa.livroPactoAntenupcial}" />
+													<p:outputLabel
+														value=" folhas " styleClass="labelBold"
+														style="font-weight: bold; font-size: 16px;" />
+													<p:inputText id="folhasPacto" 
+														value="#{ccbMB.participanteSelecionado.pessoa.folhasPactoAntenupcial}" />
+													<p:outputLabel
+														value=" datada de " styleClass="labelBold"
+														style="font-weight: bold; font-size: 16px;" />												
+													<p:calendar id="dataPacto" showOn="button"
+														value="#{ccbMB.participanteSelecionado.pessoa.dataPactoAntenupcial}" 
+														size="100" pattern="dd/MM/yyyy" locale="pt"
+														styleClass="dateTimeField" />
+												</h:panelGroup>
 											</p:panel>
 										</h:panelGroup>
 

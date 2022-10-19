@@ -51,6 +51,11 @@ public class PagadorRecebedor implements Serializable {
 	private String estadocivil;
 	
 	private String regimeCasamento; 
+	private String registroPactoAntenupcial;
+	private String livroPactoAntenupcial;
+	private String folhasPactoAntenupcial;
+	private Date dataPactoAntenupcial;
+	
 	private String cargoConjuge;
 	private String nomeConjuge;	
 	private String cpfConjuge; 
@@ -184,6 +189,7 @@ public class PagadorRecebedor implements Serializable {
 	private boolean taxaCheckList;
 	private boolean cndFederalCheckList;
 	private boolean certidoesDocketCheckList;
+	private boolean contratoSocialAtualizadoCheckList;
 	
 	private String nomeParticipanteCheckListConjuge;
 	private boolean rgDocumentosCheckListConjuge;
@@ -2007,4 +2013,46 @@ public class PagadorRecebedor implements Serializable {
 	public void setCertidoesDocketCheckList(boolean certidoesDocketCheckList) {
 		this.certidoesDocketCheckList = certidoesDocketCheckList;
 	}
+
+	public String getRegistroPactoAntenupcial() {
+		return registroPactoAntenupcial;
+	}
+
+	public void setRegistroPactoAntenupcial(String registroPactoAntenupcial) {
+		this.registroPactoAntenupcial = registroPactoAntenupcial;
+	}
+
+	public String getLivroPactoAntenupcial() {
+		return livroPactoAntenupcial;
+	}
+
+	public void setLivroPactoAntenupcial(String livroPactoAntenupcial) {
+		this.livroPactoAntenupcial = livroPactoAntenupcial;
+	}
+
+	public String getFolhasPactoAntenupcial() {
+		return folhasPactoAntenupcial;
+	}
+
+	public void setFolhasPactoAntenupcial(String folhasPactoAntenupcial) {
+		this.folhasPactoAntenupcial = folhasPactoAntenupcial;
+	}
+
+	public Date getDataPactoAntenupcial() {
+		return dataPactoAntenupcial;
+	}
+
+	public void setDataPactoAntenupcial(Date dataPactoAntenupcial) {
+		this.dataPactoAntenupcial = dataPactoAntenupcial;
+	}
+
+	public boolean isContratoSocialAtualizadoCheckList() {
+		return contratoSocialAtualizadoCheckList;
+	}
+
+	public void setContratoSocialAtualizadoCheckList(boolean contratoSocialAtualizadoCheckList) {
+		this.contratoSocialAtualizadoCheckList = contratoSocialAtualizadoCheckList;
+	}
+
+	
 }

@@ -261,213 +261,221 @@
 					style="margin-bottom:10px;margin-top:20px;"
 					rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
 					<h:panelGrid columns="2">
-						<p:outputLabel for="EstadoCivil" value="Estado Civil: "
-							styleClass="labelBold" />
-						<p:selectOneMenu id="EstadoCivil"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil}"
-							label="Status" style="width:190px;">
-							<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
-							<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
-							<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
-							<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
-							<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
-							<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
-							<p:ajax update="PanelCasado" event="valueChange" />
-						</p:selectOneMenu>
-						<p:outputLabel for="regimeCasamentoEmitente"
-							value="Regime do Casamento: " styleClass="labelBold"
-							style="font-weight: bold; font-size: 18px;" />
-						<p:selectOneMenu id="regimeCasamentoEmitente"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">			
-							<f:selectItem itemValue="universal de bens" 
-								itemLabel="Universal de bens" />
-							<f:selectItem itemValue="parcial de bens" 
-								itemLabel="Comunhão parcial de bens" />
-							<f:selectItem itemValue="de separação total de bens" 
-								itemLabel="Separação total de bens" />
-							<f:selectItem itemValue="de separação legal de bens" 
-								itemLabel="Legal de bens" />
-							<f:selectItem itemValue="de separação obrigatório de bens" 
-								itemLabel="Obrigatório de separação de bens" />							
-						</p:selectOneMenu>
-						
-						<h:panelGroup style="width: 50%;" layout="block">
-							<p:outputLabel
-								value="Conforme pacto antenupcial registrado no" styleClass="labelBold"
-								style="font-weight: bold; font-size: 16px;" />
-							<p:inputMask id="registroPacto" value="" />
-							<p:outputLabel
-								value="sob livro" styleClass="labelBold"
-								style="font-weight: bold; font-size: 16px;" />
-							<p:inputMask id="livroPacto" value="" />
-							<p:outputLabel
-								value="folhas" styleClass="labelBold"
-								style="font-weight: bold; font-size: 16px;" />
-							<p:inputMask id="folhasPacto" value="" />
-							<p:outputLabel
-								value="datada de" styleClass="labelBold"
-								style="font-weight: bold; font-size: 16px;" />
-							<p:inputMask id="dataPacto" value="" />
-						</h:panelGroup>
-						
-						<p:outputLabel for="NomeConjuge" value="Nome: "
-							styleClass="labelBold"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="NomeConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeConjuge}"
-							required="true" label="Nome" onblur=""
-							style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputText>
-						<p:outputLabel for="SexoConjuge" value="Sexo: "
-							styleClass="labelBold"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:selectOneRadio id="SexoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexoConjuge}"
-							required="true"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-							<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
-						</p:selectOneRadio>
-						<p:outputLabel for="CpfConjuge" value="CPF: "
-							styleClass="labelBold"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputMask id="CpfConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfConjuge}"
-							label="CPF" mask="999.999.999-99" required="true"
-							validator="#{pagadorRecebedorMB.validaCPF}"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputMask>
-						<p:outputLabel for="RgConjuge" value="RG / CNH: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="RgConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgConjuge}"
-							label="RG  / CNH"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="dataEmissaoRGConjuge" value="Data Emissão: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputMask id="dataEmissaoRGConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
-							mask="99/99/9999" label="Data Emissão"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:convertDateTime pattern="dd/MM/yyyy"
+						<h:panelGrid columns="2">
+							<p:outputLabel for="EstadoCivil" value="Estado Civil: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="EstadoCivil"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil}"
+								label="Status" style="width:190px;">
+								<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
+								<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
+								<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
+								<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
+								<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
+								<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+								<p:ajax update="PanelCasado" event="valueChange" />
+							</p:selectOneMenu>
+							<p:outputLabel for="regimeCasamentoEmitente"
+								value="Regime do Casamento: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="regimeCasamentoEmitente"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">			
+								<f:selectItem itemValue="universal de bens" 
+									itemLabel="Universal de bens" />
+								<f:selectItem itemValue="parcial de bens" 
+									itemLabel="Comunhão parcial de bens" />
+								<f:selectItem itemValue="de separação total de bens" 
+									itemLabel="Separação total de bens" />
+								<f:selectItem itemValue="de separação legal de bens" 
+									itemLabel="Legal de bens" />
+								<f:selectItem itemValue="de separação obrigatório de bens" 
+									itemLabel="Obrigatório de separação de bens" />							
+							</p:selectOneMenu>
+							
+							
+							<p:outputLabel for="NomeConjuge" value="Nome: "
+								styleClass="labelBold"
 								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						</p:inputMask>
-
-						<p:outputLabel for="emailConjuge" value="E-Mail: "
-							styleClass="labelBold"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="emailConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}"
-							label="E-Mail" type="email" required="true"
-							onblur="" style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="DtNascimentoConjuge"
-							value="Data de Nascimento: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputMask id="DtNascimentoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
-							mask="99/99/9999" label="Data de Nascimento"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:inputMask>
-
-						<p:outputLabel for="TelResidencialConjuge"
-							value="Telefone Residencial: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputMask id="TelResidencialConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialConjuge}"
-							mask="(99) 9999-9999" label="Telefone Residencial"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="TelCelularConjuge" value="Telefone Celular: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="TelCelularConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularConjuge}"
-							styleClass="phone" label="Telefone Celular"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="CargoConjuge" value="Cargo/Ocupação: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="CargoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoConjuge}"
-							label="RG  / CNH"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="EnderecoConjuge" value="Endereço: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="EnderecoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoConjuge}"
-							label="Endereço" onblur=""
-							style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="BairroConjuge" value="Bairro: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="BairroConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroConjuge}"
-							label="Bairro" onblur=""
-							style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="ComplementoConjuge" value="Complemento: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="ComplementoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoConjuge}"
-							label="Complemento" onblur=""
-							style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="CidadeConjuge" value="Cidade: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputText id="CidadeConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeConjuge}"
-							label="Cidade" onblur=""
-							style="width:400px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="CepConjuge" value="Cep: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:inputMask id="CepConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
-							mask="99999-999" label="Cep"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-
-						<p:outputLabel for="EstadoConjuge" value="Estado: "
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
-						<p:selectOneMenu id="EstadoConjuge"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadoConjuge}"
-							label="Estado" style="width:410px;"
-							rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
-							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
-							<f:selectItem itemValue="AC" itemLabel="ACRE" />
-							<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
-							<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
-							<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
-							<f:selectItem itemValue="BA" itemLabel="BAHIA" />
-							<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
-							<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
-							<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
-							<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
-							<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
-							<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
-							<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
-							<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
-							<f:selectItem itemValue="PA" itemLabel="PARÁ" />
-							<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
-							<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
-							<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
-							<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
-							<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
-							<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
-							<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
-							<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
-							<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
-							<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
-							<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
-							<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
-							<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
-						</p:selectOneMenu>
+							<p:inputText id="NomeConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeConjuge}"
+								required="true" label="Nome" onblur=""
+								style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputText>
+							<p:outputLabel for="SexoConjuge" value="Sexo: "
+								styleClass="labelBold"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:selectOneRadio id="SexoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexoConjuge}"
+								required="true"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+								<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+							</p:selectOneRadio>
+							<p:outputLabel for="CpfConjuge" value="CPF: "
+								styleClass="labelBold"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="CpfConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfConjuge}"
+								label="CPF" mask="999.999.999-99" required="true"
+								validator="#{pagadorRecebedorMB.validaCPF}"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"></p:inputMask>
+							<p:outputLabel for="RgConjuge" value="RG / CNH: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="RgConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgConjuge}"
+								label="RG  / CNH"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="dataEmissaoRGConjuge" value="Data Emissão: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="dataEmissaoRGConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRGConjuge}"
+								mask="99/99/9999" label="Data Emissão"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								<f:convertDateTime pattern="dd/MM/yyyy"
+									rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							</p:inputMask>
+	
+							<p:outputLabel for="emailConjuge" value="E-Mail: "
+								styleClass="labelBold"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="emailConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}"
+								label="E-Mail" type="email" required="true"
+								onblur="" style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="DtNascimentoConjuge"
+								value="Data de Nascimento: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="DtNascimentoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimentoConjuge}"
+								mask="99/99/9999" label="Data de Nascimento"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+	
+							<p:outputLabel for="TelResidencialConjuge"
+								value="Telefone Residencial: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="TelResidencialConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialConjuge}"
+								mask="(99) 9999-9999" label="Telefone Residencial"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="TelCelularConjuge" value="Telefone Celular: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="TelCelularConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularConjuge}"
+								styleClass="phone" label="Telefone Celular"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="CargoConjuge" value="Cargo/Ocupação: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="CargoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cargoConjuge}"
+								label="RG  / CNH"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="EnderecoConjuge" value="Endereço: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="EnderecoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.enderecoConjuge}"
+								label="Endereço" onblur=""
+								style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="BairroConjuge" value="Bairro: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="BairroConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bairroConjuge}"
+								label="Bairro" onblur=""
+								style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="ComplementoConjuge" value="Complemento: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="ComplementoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.complementoConjuge}"
+								label="Complemento" onblur=""
+								style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="CidadeConjuge" value="Cidade: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputText id="CidadeConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cidadeConjuge}"
+								label="Cidade" onblur=""
+								style="width:400px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="CepConjuge" value="Cep: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="CepConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
+								mask="99999-999" label="Cep"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+	
+							<p:outputLabel for="EstadoConjuge" value="Estado: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:selectOneMenu id="EstadoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadoConjuge}"
+								label="Estado" style="width:410px;"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+								<f:selectItem itemValue="AC" itemLabel="ACRE" />
+								<f:selectItem itemValue="AL" itemLabel="ALAGOAS" />
+								<f:selectItem itemValue="AP" itemLabel="AMAPÁ" />
+								<f:selectItem itemValue="AM" itemLabel="AMAZONAS" />
+								<f:selectItem itemValue="BA" itemLabel="BAHIA" />
+								<f:selectItem itemValue="CE" itemLabel="CEARÁ" />
+								<f:selectItem itemValue="DF" itemLabel="DISTRITO FEDERAL" />
+								<f:selectItem itemValue="ES" itemLabel="ESPIRITO SANTO" />
+								<f:selectItem itemValue="GO" itemLabel="GOIÁS" />
+								<f:selectItem itemValue="MA" itemLabel="MARANHÃO" />
+								<f:selectItem itemValue="MT" itemLabel="MATO GROSSO" />
+								<f:selectItem itemValue="MS" itemLabel="MATO GROSSO DO SUL" />
+								<f:selectItem itemValue="MG" itemLabel="MINAS GERAIS" />
+								<f:selectItem itemValue="PA" itemLabel="PARÁ" />
+								<f:selectItem itemValue="PB" itemLabel="PARAIBA" />
+								<f:selectItem itemValue="PR" itemLabel="PARANÁ" />
+								<f:selectItem itemValue="PE" itemLabel="PERNAMBUCO" />
+								<f:selectItem itemValue="PI" itemLabel="PIAUÍ" />
+								<f:selectItem itemValue="RJ" itemLabel="RIO DE JANEIRO" />
+								<f:selectItem itemValue="RN" itemLabel="RIO GRANDE DO NORTE" />
+								<f:selectItem itemValue="RS" itemLabel="RIO GRANDE DO SUL" />
+								<f:selectItem itemValue="RO" itemLabel="RONDÔNIA" />
+								<f:selectItem itemValue="RR" itemLabel="RORAIMA" />
+								<f:selectItem itemValue="SC" itemLabel="SANTA CATARINA" />
+								<f:selectItem itemValue="SP" itemLabel="SÃO PAULO" />
+								<f:selectItem itemValue="SE" itemLabel="SERGIPE" />
+								<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGroup style="width: 75%;" layout="block">													
+							<p:outputLabel
+								value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputText id="registroPacto" 
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.registroPactoAntenupcial}" />
+							<p:outputLabel
+								value=" sob livro " styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputText id="livroPacto" 
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.livroPactoAntenupcial}" />
+							<p:outputLabel
+								value=" folhas " styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />
+							<p:inputText id="folhasPacto" 
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.folhasPactoAntenupcial}" />
+							<p:outputLabel
+								value=" datada de " styleClass="labelBold"
+								style="font-weight: bold; font-size: 16px;" />												
+							<p:calendar id="dataPacto" showOn="button"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataPactoAntenupcial}" 
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+						</h:panelGroup>
 					</h:panelGrid>
 				</p:panel>
 
