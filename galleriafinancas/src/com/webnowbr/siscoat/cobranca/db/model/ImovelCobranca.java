@@ -49,6 +49,7 @@ public class ImovelCobranca implements Serializable {
 	private boolean cndIptuExtratoDebitoCheckList;//
 	private boolean cndCondominioExtratoDebitoCheckList;//
 	private boolean matriculaGaragemCheckList;//
+	private boolean simuladorCheckList;//
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -466,5 +467,12 @@ public class ImovelCobranca implements Serializable {
 	public void setMatriculaGaragemCheckList(boolean matriculaGaragemCheckList) {
 		this.matriculaGaragemCheckList = matriculaGaragemCheckList;
 	}
-	
+
+	public boolean isSimuladorCheckList() {
+		return simuladorCheckList;
+	}
+
+	public void setSimuladorCheckList(boolean simuladorCheckList) {
+		this.simuladorCheckList = simuladorCheckList;
+	}	
 }

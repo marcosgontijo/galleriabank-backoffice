@@ -7035,7 +7035,11 @@ public class CcbMB {
 			} else {
 				estadoCivilStr = "casado";
 			}		
-			conjugeStr = ", sob o regime de comunhão " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")";
+			conjugeStr = ", sob o regime de comunhão " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
+					pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme pacto antenupcial registrado no "+
+					pessoa.getRegistroPactoAntenupcial() + ", sob livro " + pessoa.getLivroPactoAntenupcial() + ", folhas " + 
+					pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
+					;
 		} else {
 			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
 			if(participante.isUniaoEstavel()) {
@@ -8095,6 +8099,122 @@ public class CcbMB {
 					}
 				}
 			}
+		    
+		    int indexParcela = 1;
+			
+			//calcularSimulador();
+
+			XWPFParagraph paragraph1 = document.createParagraph();
+			paragraph1.setAlignment(ParagraphAlignment.CENTER);
+			paragraph1.setSpacingBefore(0);
+			paragraph1.setSpacingAfter(0);
+			
+			XWPFParagraph paragraph2 = document.createParagraph();
+			paragraph2.setAlignment(ParagraphAlignment.RIGHT);
+			paragraph2.setSpacingBefore(0);
+			paragraph2.setSpacingAfter(0);
+			
+			int fontSize = 7;
+			for(SimulacaoDetalheVO p : simulador.getParcelas()) {
+				table = document.getTableArray(2);
+				table.insertNewTableRow(indexParcela);
+				tableRow1 = table.getRow(indexParcela);
+				tableRow1.createCell();
+				tableRow1.getCell(0).setParagraph(paragraph1);
+				tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(p.getNumeroParcela().toString());
+				tableRow1.createCell();
+				tableRow1.getCell(1).setParagraph(paragraph2);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataData(DateUtil.adicionarPeriodo(simulador.getDataSimulacao(), p.getNumeroParcela().intValue(), Calendar.MONTH), "dd/MM/yyyy"));
+				tableRow1.createCell();
+				tableRow1.getCell(2).setParagraph(paragraph2);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSaldoDevedorInicial(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(3).setParagraph(paragraph2);
+				tableRow1.getCell(3).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(3).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getAmortizacao(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(4).setParagraph(paragraph2);
+				tableRow1.getCell(4).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(4).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(5).setParagraph(paragraph2);
+				tableRow1.getCell(5).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(5).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros().add(p.getAmortizacao()), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(6).setParagraph(paragraph2);
+				tableRow1.getCell(6).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(6).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getTxAdm(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(7).setParagraph(paragraph2);
+				tableRow1.getCell(7).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(7).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroMIP(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(8).setParagraph(paragraph2);
+				tableRow1.getCell(8).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(8).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroDFI(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(9).setParagraph(paragraph2);
+				tableRow1.getCell(9).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				indexParcela++;////////////////////////////////////////////////////////////////////////////////
+			}
+			
+			table = document.getTableArray(1);			
+			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
+			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
+			CabecalhoAnexo1(table, 2, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorCredito(), "R$ "));
+			CabecalhoAnexo1(table, 2, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosMes(),"") + "%");
+			
+			CabecalhoAnexo1(table, 3, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorIOF(), "R$ "));
+			CabecalhoAnexo1(table, 3, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosAno(),"") + "%");
+			
+			CabecalhoAnexo1(table, 4, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCustoEmissao(), "R$ "));
+			CabecalhoAnexo1(table, 4, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetMes(),"") + "%");
+			CabecalhoAnexo1(table, 4, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getVlrImovel(), "R$ "));
+			
+			CabecalhoAnexo1(table, 5, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorDespesas(), "R$ "));
+			CabecalhoAnexo1(table, 5, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetAno(),"") + "%");
+			CabecalhoAnexo1(table, 5, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteMIP(), "R$ "));
+			
+			CabecalhoAnexo1(table, 6, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorLiquidoCredito(), "R$ "));
+			CabecalhoAnexo1(table, 6, 4, CommonsUtil.stringValue(
+					CommonsUtil.formataValorInteiro(
+							DateUtil.getDaysBetweenDates(this.objetoCcb.getDataDeEmissao(), this.objetoCcb.getVencimentoUltimaParcelaPagamento()))));
+			CabecalhoAnexo1(table, 6, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteDFI(), "R$ "));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);

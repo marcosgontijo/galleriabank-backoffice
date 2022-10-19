@@ -843,6 +843,31 @@
 								style="FONT-SIZE: 10pt; width:800px;white-space: pre-wrap;" />
 							<p:spacer height="10" />
 							<p:spacer height="10" />
+							
+							<p:outputLabel for="divida"
+									value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="divida" required="true"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
+									label="Status" style="width:100px;">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="Sim" itemLabel="Sim" />
+									<f:selectItem itemValue="Nao" itemLabel="Não" />
+									<p:ajax update="comentarioPreComitePanel" event="change" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="dividaValor" value="Valor da dívida: "
+									styleClass="labelBold"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}" />
+
+								<p:inputText id="dividaValor"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter"
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}">
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputText>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -3287,6 +3312,10 @@
 							<h:outputText value="Tem Pedido de Certidões Docket? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.certidoesDocketCheckList}" />
+								
+							<h:outputText value="Tem Contrato Social Atualizado? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.contratoSocialAtualizadoCheckList}" />
 						</h:panelGrid>
 					</h:panelGroup>
 
@@ -3480,6 +3509,10 @@
 							<h:outputText value="Tem Matrícula de Garagem? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoImovelCobranca.matriculaGaragemCheckList}" />
+								
+							<h:outputText value="Tem Simulador? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.simuladorCheckList}" />
 						</h:panelGrid>
 					</h:panelGroup>
 				</h:panelGrid>
