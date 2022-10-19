@@ -9284,6 +9284,8 @@ public class CcbMB {
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listPagadores = pagadorRecebedorDao.findAll();
+		
+		this.filesList = new ArrayList<UploadedFile>();
 	}
 	
 	public void getEnderecoByViaNet() {
