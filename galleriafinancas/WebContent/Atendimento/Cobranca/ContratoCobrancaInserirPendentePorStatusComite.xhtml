@@ -3462,11 +3462,20 @@
 
 							<h:outputText value="Tem Cargo/Ocupacao? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoOcupacaoCheckList}" />
-
-							<h:outputText value="Tem Taxa? " styleClass="labelBold" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoOcupacaoCheckList}" />								
+								
+							<h:outputText value="Tem CND Federal? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.taxaCheckList}" />
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cndFederalCheckList}" />
+								
+							<h:outputText value="Tem Pedido de Certidões Docket? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.certidoesDocketCheckList}" />
+								
+							<h:outputText value="Tem Contrato Social Atualizado? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.contratoSocialAtualizadoCheckList}" />
+
 						</h:panelGrid>
 					</h:panelGroup>
 
@@ -3496,20 +3505,10 @@
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.fichaCadastralDocumentosCheckListConjuge}" />
 
-							<h:outputText value="Tem Dados Bancários? "
-								styleClass="labelBold" />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.bancoDocumentosCheckListConjuge}" />
-
 							<h:outputText value="Tem Telefone e Email? "
 								styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.telefoneEmailDocumentosCheckListConjuge}" />
-
-							<h:outputText value="Tem Comprovante de Renda? "
-								styleClass="labelBold" />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.comprovanteRendaCheckListConjuge}" />
 
 							<h:outputText value="Tem Combate a Fraude? "
 								styleClass="labelBold" />
@@ -3519,10 +3518,6 @@
 							<h:outputText value="Tem Cargo/Ocupacao? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.cargoOcupacaoCheckListConjuge}" />
-
-							<h:outputText value="Tem Taxa? " styleClass="labelBold" />
-							<p:selectBooleanCheckbox
-								value="#{contratoCobrancaMB.objetoPagadorRecebedor.taxaCheckListConjuge}" />
 						</h:panelGrid>
 					</h:panelGroup>
 
@@ -3662,6 +3657,22 @@
 							<h:outputText value="Tem IPTU do Imóvel? " styleClass="labelBold" />
 							<p:selectBooleanCheckbox
 								value="#{contratoCobrancaMB.objetoImovelCobranca.comprovanteIptuImovelCheckList}" />
+								
+							<h:outputText value="Tem CND de IPTU ou Extrato Débito" styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.cndIptuExtratoDebitoCheckList}" />
+								
+							<h:outputText value="Tem CND de Condomínio ou Extrato Débito" styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.cndCondominioExtratoDebitoCheckList}" />
+								
+							<h:outputText value="Tem Matrícula de Garagem? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.matriculaGaragemCheckList}" />
+								
+							<h:outputText value="Tem Simulador? " styleClass="labelBold" />
+							<p:selectBooleanCheckbox
+								value="#{contratoCobrancaMB.objetoImovelCobranca.simuladorCheckList}" />
 						</h:panelGrid>
 					</h:panelGroup>
 				</h:panelGrid>

@@ -6986,8 +6986,8 @@ public class ContratoCobrancaMB {
 		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
-			if (!contratos.getStatus().equals("Aprovado")) {
-				this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			if (!this.objetoContratoCobranca.getStatus().equals("Aprovado")) {
 				//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
 				
 				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
@@ -17696,15 +17696,17 @@ public class ContratoCobrancaMB {
 		String comentarioComiteFinal = "";
 		
 		for (AnaliseComite comite : contrato.getListaAnaliseComite()) {
-			if(comite.getTaxaComite().compareTo(maiorTaxaAprovada) >= 0) {
-				maiorTaxaAprovada = comite.getTaxaComite();
-			}
-			if(comite.getPrazoMaxComite().compareTo(menorPrazoAprovado) <= 0) {
-				menorPrazoAprovado = comite.getPrazoMaxComite();
-			}
-			if(comite.getValorComite().compareTo(menorValorAprovado) <= 0 && !CommonsUtil.semValor(comite.getValorComite())) {
-				menorValorAprovado = comite.getValorComite();
-				menorValorAprovadoTipo = comite.getTipoValorComite();
+			if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
+				if(comite.getTaxaComite().compareTo(maiorTaxaAprovada) >= 0) {
+					maiorTaxaAprovada = comite.getTaxaComite();
+				}
+				if(comite.getPrazoMaxComite().compareTo(menorPrazoAprovado) <= 0) {
+					menorPrazoAprovado = comite.getPrazoMaxComite();
+				}
+				if(comite.getValorComite().compareTo(menorValorAprovado) <= 0 && !CommonsUtil.semValor(comite.getValorComite())) {
+					menorValorAprovado = comite.getValorComite();
+					menorValorAprovadoTipo = comite.getTipoValorComite();
+				}			
 			}
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}

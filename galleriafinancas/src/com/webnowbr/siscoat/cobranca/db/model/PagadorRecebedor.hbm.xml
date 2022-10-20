@@ -558,7 +558,27 @@
 		
 		<property name="certidoesDocketCheckList" type="boolean">
 			<column name="certidoesDocketCheckList" not-null="true" default="false"/>
-		</property>	              
+		</property>	    
+		
+		<property name="registroPactoAntenupcial" type="java.lang.String">
+			<column name="registroPactoAntenupcial" />
+		</property>	  
+		
+		<property name="livroPactoAntenupcial" type="java.lang.String">
+			<column name="livroPactoAntenupcial" />
+		</property>	
+		
+		<property name="folhasPactoAntenupcial" type="java.lang.String">
+			<column name="folhasPactoAntenupcial" />
+		</property>	  
+		
+		<property name="dataPactoAntenupcial" type="java.util.Date">
+			<column name="dataPactoAntenupcial" />
+		</property>
+		
+		<property name="contratoSocialAtualizadoCheckList" type="boolean">
+			<column name="contratoSocialAtualizadoCheckList" not-null="true" default="false"/>
+		</property>	 
 		
     </class>
 </hibernate-mapping>
