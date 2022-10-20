@@ -68,29 +68,33 @@
 							<p:autoComplete id="ContaPagarDescricao" dropdown="true"
 								value="#{contasPagarMB.objetoContasPagar.descricao}"
 								completeMethod="#{contasPagarMB.contaPagarDescricaoLista()}"
-								scrollHeight="250" />
+								scrollHeight="250" 
+								required = "true"/>
 
 							<p:outputLabel for="ContaPagarValor" value="Valor: "
 								styleClass="labelBold" />
 							<p:inputText id="ContaPagarValor"
 								value="#{contasPagarMB.objetoContasPagar.valor}"
 								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" required="false"
-								converter="bigDecimalConverter" />
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" 
+								required = "true"/>
 
 							<p:outputLabel for="ContaPagarDataVencimento"
 								value="Data Vencimento: " styleClass="labelBold" />
 							<p:calendar id="ContaPagarDataVencimento"
 								value="#{contasPagarMB.objetoContasPagar.dataVencimento}"
 								label="Data" size="100" pattern="dd/MM/yyyy"
-								styleClass="dateTimeField" />
+								styleClass="dateTimeField"
+								required = "true" />
 							
 							<p:outputLabel for="ContaPagarDataPrevistaPagamento"
 								value="Data Prevista Pagamento: " styleClass="labelBold" />
 							<p:calendar id="ContaPagarDataPrevistaPagamento"
 								value="#{contasPagarMB.objetoContasPagar.dataPrevista}"
 								label="Data" size="100" pattern="dd/MM/yyyy"
-								styleClass="dateTimeField" />
+								styleClass="dateTimeField"
+								required = "true" />
 								
 							<p:outputLabel for="ContaPagarObservacao" value="Observação: "
 								styleClass="labelBold"
@@ -103,7 +107,8 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:selectOneMenu id="formaTransferencia"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
+									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}"
+									required = "true">
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="TED" itemLabel="TED" />
 									<f:selectItem itemValue="Pix" itemLabel="Pix" />
