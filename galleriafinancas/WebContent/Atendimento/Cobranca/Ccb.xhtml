@@ -32,6 +32,7 @@
 					<p:focus />
 					<p:messages />
 					<p:messages id="msgs" />
+					<p:outputLabel value="#{ccbMB.aviso}" styleClass="labelBold" />
 
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="tipoDownload"
@@ -2609,7 +2610,7 @@
 					</p:panel>
 
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update="valorDespesas, pagadoresAntigos" />
+						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />
 
 					<p:spacer height="10" />
 					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsInserirCcb}"
