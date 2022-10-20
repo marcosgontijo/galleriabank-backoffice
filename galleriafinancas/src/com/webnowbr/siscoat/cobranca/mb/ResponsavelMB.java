@@ -403,6 +403,18 @@ public class ResponsavelMB {
 		return ValidaCNPJ.isCNPJ(object.toString());
 	}	
 
+	public void selectedNome() {
+		this.objetoResponsavel.setNomeCC(this.objetoResponsavel.getNome());		
+	}
+	
+	public void selectedCPF() {
+		this.objetoResponsavel.setCpfCC(this.objetoResponsavel.getCpf());		
+	}
+	
+	public void selectedCNPJ() {
+		this.objetoResponsavel.setCnpjCC(this.objetoResponsavel.getCnpj());		
+	}
+	
 	/**
 	 * @return the lazyModel
 	 */

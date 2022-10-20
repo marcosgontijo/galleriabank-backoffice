@@ -99,7 +99,8 @@ public class PagadorRecebedor implements Serializable {
 	private String conta;
 	private String nomeCC;
 	private String cpfCC;
-	private String cnpjCC;	
+	private String cnpjCC;
+	private String pix;//
 	
 	private String idIugu;
 	
@@ -2052,6 +2053,14 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setContratoSocialAtualizadoCheckList(boolean contratoSocialAtualizadoCheckList) {
 		this.contratoSocialAtualizadoCheckList = contratoSocialAtualizadoCheckList;
+	}
+
+	public String getPix() {
+		return pix;
+	}
+
+	public void setPix(String pix) {
+		this.pix = pix;
 	}
 
 	
