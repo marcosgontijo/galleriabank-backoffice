@@ -6986,8 +6986,8 @@ public class ContratoCobrancaMB {
 		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
-			if (!contratos.getStatus().equals("Aprovado")) {
-				this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			if (!this.objetoContratoCobranca.getStatus().equals("Aprovado")) {
 				//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
 				
 				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
