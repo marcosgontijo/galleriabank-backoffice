@@ -128,7 +128,7 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:selectOneMenu id="formaTransferencia"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}"
+									value="#{contasPagarMB.objetoContasPagar.formaTransferencia}"
 									disabled="#{contasPagarMB.baixaMode}">
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="TED" itemLabel="TED" />
@@ -139,18 +139,18 @@
 										update="tedGrid pixGrid" />
 								</p:selectOneMenu>
 								<h:panelGroup id="tedGrid" >
-								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contasPagarMB.objetoContasPagar.formaTransferencia eq 'TED'}">									
 									<p:outputLabel for="nomeTed" value="Nome: " />
 									<p:inputText id="nomeTed" 
-									value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" 
+									value="#{contasPagarMB.objetoContasPagar.nomeTed}" 
 									disabled="#{contasPagarMB.baixaMode}"/>								
 									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
 									<p:inputText id="cpfTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" 
+										value="#{contasPagarMB.objetoContasPagar.cpfTed}" 
 										disabled="#{contasPagarMB.baixaMode}"/>		
 									<p:outputLabel value="Banco: " for="bancoTed" />
-									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
-										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
+									<p:autoComplete id="bancoTed" value="#{contasPagarMB.objetoContasPagar.bancoTed}"
+										completeMethod="#{contasPagarMB.objetoContasPagar.completeBancos}"
 										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
 										forceSelection="true" styleClass="labelBold" label="Conta" 
 										style="width:100px;"
@@ -158,18 +158,18 @@
 										disabled="#{contasPagarMB.baixaMode}"/>														
 									<p:outputLabel for="contaTed" value="Conta: " />
 									<p:inputText id="contaTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" 
+										value="#{contasPagarMB.objetoContasPagar.contaTed}" 
 										disabled="#{contasPagarMB.baixaMode}"/>									
 									<p:outputLabel for="agenciaTed" value="Agência: " />
 									<p:inputText id="agenciaTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" 
+										value="#{contasPagarMB.objetoContasPagar.agenciaTed}" 
 										disabled="#{contasPagarMB.baixaMode}"/>							
 								</h:panelGrid>
 								</h:panelGroup>	
 								<h:panelGroup id="pixGrid">
-								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contasPagarMB.objetoContasPagar.formaTransferencia eq 'Pix'}">
 									<p:outputLabel for="pix" value="Pix: " />
-									<p:inputText id="pix" value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" 
+									<p:inputText id="pix" value="#{contasPagarMB.objetoContasPagar.pix}" 
 									disabled="#{contasPagarMB.baixaMode}"/>
 								</h:panelGrid>
 								</h:panelGroup>

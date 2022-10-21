@@ -366,6 +366,8 @@ public class ContasPagarMB {
 	}
 	
 	public String clearFieldsEditar() {
+		this.selectedContratoLov = objetoContasPagar.getContrato();
+		filesPagar = listaArquivosPagar();
 		
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
