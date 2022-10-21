@@ -435,14 +435,24 @@ public class SimulacaoIPCACalculoV2 {
 						}	
 						
 						// calcula com o ipca do mês referência (parcela atual)
-						if (this.calculaSeguroDFI) {
-							seguroDFI = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
-							seguroDFI = seguroDFI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
-						}
-						
-						if (this.calculaSeguroMIP) {
-							seguroMPI = seguroMPIAcumulado.add((simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
-							seguroMPI = seguroMPI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+						if (ipcaMesReferencia.compareTo(BigDecimal.ZERO) > 0) {
+							if (this.calculaSeguroDFI) {
+								seguroDFI = seguroDFIAcumulado.add((this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+								seguroDFI = seguroDFI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+							}
+							
+							if (this.calculaSeguroMIP) {
+								seguroMPI = seguroMPIAcumulado.add((simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100)));
+								seguroMPI = seguroMPI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+							}
+						} else {
+							if (this.calculaSeguroDFI) {
+								seguroDFI = seguroDFIAcumulado.add(this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS));
+							}
+							
+							if (this.calculaSeguroMIP) { 
+								seguroMPI = seguroMPIAcumulado.add(simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS));
+							}							
 						}
 						
 						// set parcela
@@ -459,14 +469,24 @@ public class SimulacaoIPCACalculoV2 {
 						}
 					} else {
 						// demais parcelas calcula com o IPCA do Mês
-						if (this.calculaSeguroDFI) {
-							seguroDFI = (this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
-							seguroDFI = seguroDFI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
-						}
-						
-						if (this.calculaSeguroMIP) {
-							seguroMPI = (simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
-							seguroMPI = seguroMPI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+						if (ipcaMesReferencia.compareTo(BigDecimal.ZERO) > 0) {
+							if (this.calculaSeguroDFI) {
+								seguroDFI = (this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+								seguroDFI = seguroDFI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+							}
+							
+							if (this.calculaSeguroMIP) {
+								seguroMPI = (simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS)).multiply(BigDecimal.valueOf(100).add(ipcaMesReferencia)).divide(BigDecimal.valueOf(100));
+								seguroMPI = seguroMPI.multiply(ipcaMesReferencia.divide(BigDecimal.valueOf(100)));
+							}
+						} else {
+							if (this.calculaSeguroDFI) {
+								seguroDFI = this.valorImovel.multiply(SiscoatConstants.SEGURO_DFI_6_DIGITOS);
+							}
+							
+							if (this.calculaSeguroMIP) {
+								seguroMPI = simulacaoIPCADadosV2.getSaldoDevedorInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS);
+							}
 						}
 						
 						// set parcela

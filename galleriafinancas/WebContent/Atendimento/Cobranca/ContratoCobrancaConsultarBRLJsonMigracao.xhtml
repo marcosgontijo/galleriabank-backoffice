@@ -152,6 +152,11 @@
 					<p:column style="text-align: center;" headerText="# Parcelas Vencidas" >
 			            <h:outputText value="#{contratos.parcelasVencidas}" />
 			        </p:column>	 
+			        <p:column style="text-align: center;width: 100px;"
+						headerText="Tx Juros">
+						<h:outputText value="#{contratos.txJurosParcelas}"
+							converter="bigDecimalConverter" />
+					</p:column>
 			       	<f:facet name="footer">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
