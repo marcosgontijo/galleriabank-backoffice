@@ -1622,6 +1622,10 @@ public class BRLTrustMB {
 					jsonRecebivel.put("documento", contrato.getNumeroContratoSeguro());
 					jsonRecebivel.put("termoCessao", contrato.getTermoCessao());
 					
+					if (contrato.getTxJurosParcelas() != null) {
+						jsonRecebivel.put("txJuros", contrato.getTxJurosParcelas());
+					}
+										
 					JSONObject jsonSacado = new JSONObject();
 					
 					JSONObject jsonPessoa = new JSONObject();
