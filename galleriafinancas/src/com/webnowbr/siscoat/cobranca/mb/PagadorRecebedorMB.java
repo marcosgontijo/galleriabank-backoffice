@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -24,6 +25,7 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -359,6 +361,27 @@ public class PagadorRecebedorMB {
 		    this.objetoPagadorRecebedor.setSenhaInvestidor(senha);
 		}
 	}
+	
+	public boolean filterByCPF(Object value, Object filter, Locale locale) {
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        
+        if(filterText.contains(".")) {
+        	filterText = filterText.replace(".", "");
+	    }
+        if(filterText.contains("-")) {
+        	filterText = filterText.replace("-", "");
+	    }
+        
+        if (filterText == null || filterText.equals("")) {
+            return true;
+        }
+ 
+        if (value == null) {
+            return false;
+        }
+ 
+        return filterText.contains(value.toString());
+    }
 	
 	/**
 	 * SERVICO PARA PEGAR O ENDEREÇO AUTOMATICAMENTE
