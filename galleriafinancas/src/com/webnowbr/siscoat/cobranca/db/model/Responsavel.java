@@ -2,7 +2,14 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.faces.model.SelectItem;
+
+import com.webnowbr.siscoat.common.BancosEnum;
 
 public class Responsavel implements Serializable {
 
@@ -32,6 +39,16 @@ public class Responsavel implements Serializable {
 	private String rg;
 	private String cpf;
 	private String cnpj;
+	
+	private String cpfCC;//
+	private String cnpjCC;//
+	private String nomeCC;//
+	private String banco;//
+	private List<SelectItem> listaBancos;
+	private String agencia;//
+	private String conta;//
+	private String pix;//
+
 	
 	private String cep;
 	private Responsavel donoResponsavel;
@@ -63,6 +80,16 @@ public class Responsavel implements Serializable {
 		this.cpf = cpf;
 		this.cep = cep;
 	}
+	
+	 public List<String> completeBancos(String query) {
+	        String queryLowerCase = query.toLowerCase();
+	        List<String> bancos = new ArrayList<>();
+	        for(BancosEnum banco : BancosEnum.values()) {
+	        	String bancoStr = banco.getNomeCompleto().toString();
+	        	bancos.add(bancoStr);
+	        }
+	        return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
 	
 	/**
 	 * @return the id
@@ -373,6 +400,70 @@ public class Responsavel implements Serializable {
 
 	public void setResponsavelAssistenteComercial(Responsavel responsavelAssistenteComercial) {
 		this.responsavelAssistenteComercial = responsavelAssistenteComercial;
+	}
+
+	public String getCpfCC() {
+		return cpfCC;
+	}
+
+	public void setCpfCC(String cpfCC) {
+		this.cpfCC = cpfCC;
+	}
+
+	public String getCnpjCC() {
+		return cnpjCC;
+	}
+
+	public void setCnpjCC(String cnpjCC) {
+		this.cnpjCC = cnpjCC;
+	}
+
+	public String getNomeCC() {
+		return nomeCC;
+	}
+
+	public void setNomeCC(String nomeCC) {
+		this.nomeCC = nomeCC;
+	}
+
+	public String getBanco() {
+		return banco;
+	}
+
+	public void setBanco(String banco) {
+		this.banco = banco;
+	}
+
+	public List<SelectItem> getListaBancos() {
+		return listaBancos;
+	}
+
+	public void setListaBancos(List<SelectItem> listaBancos) {
+		this.listaBancos = listaBancos;
+	}
+
+	public String getAgencia() {
+		return agencia;
+	}
+
+	public void setAgencia(String agencia) {
+		this.agencia = agencia;
+	}
+
+	public String getConta() {
+		return conta;
+	}
+
+	public void setConta(String conta) {
+		this.conta = conta;
+	}
+
+	public String getPix() {
+		return pix;
+	}
+
+	public void setPix(String pix) {
+		this.pix = pix;
 	}
 
 	

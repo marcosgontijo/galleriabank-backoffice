@@ -87,6 +87,34 @@
 			lazy="false">
 			<column name="responsavelAssistenteComercial" />
 		</many-to-one>  
+		
+		<property name="cpfCC" type="java.lang.String">
+            <column name="cpfCC"/>
+        </property> 
+        
+        <property name="cnpjCC" type="java.lang.String">
+            <column name="cnpjCC"/>
+        </property> 
+        
+        <property name="nomeCC" type="java.lang.String">
+            <column name="nomeCC"/>
+        </property> 
+        
+        <property name="banco" type="java.lang.String">
+            <column name="banco"/>
+        </property> 
+        
+        <property name="agencia" type="java.lang.String">
+            <column name="agencia"/>
+        </property> 
+        
+        <property name="conta" type="java.lang.String">
+            <column name="conta"/>
+        </property> 
+        
+        <property name="pix" type="java.lang.String">
+            <column name="pix"/>
+        </property> 	
         
     </class>
 </hibernate-mapping>

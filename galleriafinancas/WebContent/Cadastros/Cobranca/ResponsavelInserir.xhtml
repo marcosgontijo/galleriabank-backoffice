@@ -50,6 +50,8 @@
 						mask="999.999.999-99" required="true"
 						validator="#{responsavelMB.validaCPF}"
 						rendered="#{responsavelMB.tipoPessoaIsFisica}">
+						<p:ajax update="CpfCC" event="blur"
+							listener="#{responsavelMB.selectedCPF}" />
 					</p:inputMask>
 
 					<p:outputLabel for="Rg" value="RG: "
@@ -63,7 +65,10 @@
 						value="#{responsavelMB.objetoResponsavel.cnpj}" label="CNPJ"
 						mask="99.999.999/9999-99" required="true"
 						validator="#{responsavelMB.validaCNPJ}"
-						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" >
+						<p:ajax update="CNPJCC" event="blur"
+							listener="#{responsavelMB.selectedCNPJ}" />
+					</p:inputMask>
 
 					<p:outputLabel for="Codigo" value="Código do Responsável: "
 						styleClass="labelBold" />
@@ -138,7 +143,10 @@
 						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
 					<p:inputText id="Nome"
 						value="#{responsavelMB.objetoResponsavel.nome}" label="Nome"
-						required="true" onblur="" style="width:400px;" />
+						required="true" onblur="" style="width:400px;" >
+						<p:ajax update="NomeCC" event="blur"
+							listener="#{responsavelMB.selectedNome}" />
+					</p:inputText>
 
 					<p:outputLabel for="Contato" value="Contato: " />
 					<p:inputText id="Contato"
@@ -226,6 +234,8 @@
 						<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
 					</p:selectOneMenu>
 					
+					
+					
 					<p:outputLabel value="Adicionar Usuario: " styleClass="labelBold" />
 					<p:selectBooleanCheckbox value="#{responsavelMB.addUsuario}" disabled="#{responsavelMB.showUsuario}">
 						<p:ajax update="userPanel" event="change" />
@@ -242,6 +252,66 @@
 						counterTemplate="{0} characters remaining." autoResize="false"
 						value="#{responsavelMB.objetoResponsavel.observacao}" />
 					<p:outputLabel id="display" styleClass="labelBold" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputMask id="CpfCC"
+						value="#{responsavelMB.objetoResponsavel.cpfCC}"
+						label="CPF" mask="999.999.999-99" required="true"
+						validator="#{responsavelMB.validaCPF}"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}">
+					</p:inputMask>
+					
+					<p:outputLabel for="CNPJCC" value="CNPJ: "
+						styleClass="labelBold"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
+					<p:inputMask id="CNPJCC"
+						value="#{responsavelMB.objetoResponsavel.cnpjCC}"
+						label="CNPJ" mask="99.999.999/9999-99" required="true"
+						validator="#{responsavelMB.validaCNPJ}"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />					
+						
+					<p:outputLabel for="NomeCC" value="Nome: "
+						styleClass="labelBold"
+						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
+					<p:outputLabel for="NomeCC" value="Razão Social: "
+						styleClass="labelBold"
+						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />						
+					<p:inputText id="NomeCC"
+						value="#{responsavelMB.objetoResponsavel.nomeCC}"
+						label="Nome" onblur=""
+						style="width:400px;" />			
+										
+					<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
+					<p:autoComplete id="Banco" value="#{responsavelMB.objetoResponsavel.banco}"
+						completeMethod="#{responsavelMB.objetoResponsavel.completeBancos}"
+						var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+						forceSelection="true" styleClass="labelBold" label="Conta" 
+						style="width:100px;"
+						scrollHeight="250" />		
+										
+					<p:outputLabel for="Agencia" value="Agência: "
+						styleClass="labelBold" />
+					<p:inputText id="Agencia"
+						value="#{responsavelMB.objetoResponsavel.agencia}"
+						label="Agência" onblur=""
+						style="width:100px;" />				
+									
+					<p:outputLabel for="Conta" value="Conta: "
+						styleClass="labelBold" />
+					<p:inputText id="Conta"
+						value="#{responsavelMB.objetoResponsavel.conta}"
+						styleClass="labelBold" label="Conta"
+						onblur="" style="width:100px;" />
+						
+					<p:outputLabel for="Pix" value="Pix: "
+						styleClass="labelBold" />
+					<p:inputText id="Pix"
+						value="#{responsavelMB.objetoResponsavel.pix}"
+						styleClass="labelBold" label="Conta"
+						onblur="" style="width:100px;" />						
 				</h:panelGrid>
 
 				<h:panelGroup id="userPanel">
