@@ -1309,10 +1309,12 @@ public class CcbMB {
 			
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
-				System.out.println("CCB Merge ID: " + objetoCcb.getId());
+				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			} else {
 				ccbDao.create(this.objetoCcb);
-				System.out.println("CCB Create ID: " + objetoCcb.getId());
+				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1321,11 +1323,13 @@ public class CcbMB {
 		} finally {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
 			if (this.objetoCcb.getId() > 0) {
-				this.setAviso("CCB: Contrato salvo no sistema");
+				this.setAviso("CCB: Contrato salvo no sistema " + objetoCcb.getNumeroCcb() + " / "
+					+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " (" + objetoCcb.getId() + ")");
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "CCB: Contrato salvo no sistema", ""));
 				System.out.println("CCB: Contrato salvo");
 			} else {
-				this.setAviso("CCB: Erro ao salver contrato no sistema");
+				this.setAviso("CCB: Erro ao salver contrato no sistema " + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salver contrato no sistema", ""));
 				System.out.println("CCB: Erro ao salvar contrato");
 			}		
@@ -9066,7 +9070,9 @@ public class CcbMB {
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
 		clearAnexoII();
 		mostrarDadosOcultos = false;
+		aviso = "";
 		return "/Atendimento/Cobranca/Ccb.xhtml";
+		
 	}
 	
 	public void clearAnexoII(){
@@ -9290,6 +9296,8 @@ public class CcbMB {
 	    this.fileTypeInt = 0;
 	    
 	    mostrarDadosOcultos = false;
+	    
+	    aviso = "";
 	    
 	    this.simulador = new SimulacaoVO();
 	    

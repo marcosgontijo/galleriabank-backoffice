@@ -31,8 +31,7 @@
 					style="margin-bottom:10px;">
 					<p:focus />
 					<p:messages />
-					<p:messages id="msgs" />
-					<p:outputLabel value="#{ccbMB.aviso}" styleClass="labelBold" />
+					<p:messages id="msgs" />				
 
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="tipoDownload"
@@ -2609,16 +2608,23 @@
 						</p:panel>
 					</p:panel>
 
-					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />
-
-					<p:spacer height="10" />
-					<p:commandButton ajax="true" action="#{ccbMB.clearFieldsInserirCcb}"
-						icon="ui-icon ui-icon-cancel" value="Limpar Campos"  update=":form"/>
-					
-					<p:spacer height="10" />
-					<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
-						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />
+					<h:panelGrid columns="3">	
+						<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
+							icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />
+	
+						
+						<p:commandButton ajax="true" action="#{ccbMB.clearFieldsInserirCcb}"
+							icon="ui-icon ui-icon-cancel" value="Limpar Campos"  update=":form"/>
+						
+		
+						<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
+							icon="ui-icon ui-icon-print" value="Integrar Money Plus" />					
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel id="aviso" value="#{ccbMB.aviso} " styleClass="labelBold" />
+						<p:commandButton ajax="true"
+							update="msgs aviso" icon="ui-icon ui-icon-check"/>
+					</h:panelGrid>		
 				</p:panel>
 			</shiro:hasAnyRoles>
 		</h:form>
