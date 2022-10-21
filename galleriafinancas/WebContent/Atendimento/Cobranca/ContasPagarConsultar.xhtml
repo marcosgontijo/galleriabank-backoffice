@@ -52,7 +52,7 @@
 					value="#{contasPagarMB.contasPagar}" paginator="true" rows="10"
 					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
-					rowsPerPageTemplate="40,60,80" selection="" emptyMessage=""
+					rowsPerPageTemplate="10,40,60,80" selection="" emptyMessage=""
 					sortBy="#{contasPagar.dataVencimento}" sortOrder="descending"
 					reflow="true">
 					<f:facet name="header">
@@ -70,6 +70,14 @@
 						headerText="Data Vencimento "
 						sortBy="#{contasPagar.dataVencimento}">
 						<h:outputText value="#{contasPagar.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="Data Prevista "
+						sortBy="#{contasPagar.dataPrevista}">
+						<h:outputText value="#{contasPagar.dataPrevista}">
 							<f:convertDateTime locale="pt_BR" />
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 						</h:outputText>
@@ -93,13 +101,13 @@
 						<h:outputText
 							value="#{contasPagar.pagadorRecebedor.nome}" />
 					</p:column>
-					<p:column style="text-align: center;" headerText="responsavel" filterBy="#{contasPagar.responsavel.nome}" filterMatchMode="contains" >
+					<p:column style="text-align: center;" headerText="Responsavel" filterBy="#{contasPagar.responsavel.nome}" filterMatchMode="contains" >
 			            <h:outputText value="#{contasPagar.responsavel.nome}" />
 			        </p:column>	
-			         <p:column style="text-align: center;" headerText="numeroDocumento" filterBy="#{contasPagar.numeroDocumento}" filterMatchMode="contains" >
+			         <p:column style="text-align: center;" headerText="Numero do Documento" filterBy="#{contasPagar.numeroDocumento}" filterMatchMode="contains" >
 			            <h:outputText value="#{contasPagar.numeroDocumento}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="formaTransferencia" filterBy="#{contasPagar.formaTransferencia}" filterMatchMode="contains" >
+			        <p:column style="text-align: center;" headerText="Forma de Transferencia" filterBy="#{contasPagar.formaTransferencia}" filterMatchMode="contains" >
 			            <h:outputText value="#{contasPagar.formaTransferencia}" />
 			        </p:column>		
 					<p:column styleClass="colunaResponsiva">

@@ -3219,7 +3219,7 @@
 									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}" />
 								<p:inputMask id="CpfCCResp"
 									value="#{contratoCobrancaMB.cpfCCResp}"
-									label="CPF" mask="999.999.999-99" required="true"
+									label="CPF" mask="999.999.999-99" 
 									validator="#{responsavelMB.validaCPF}"
 									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}">
 								</p:inputMask>
@@ -3229,7 +3229,7 @@
 									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />
 								<p:inputMask id="CNPJCCResp"
 									value="#{contratoCobrancaMB.cnpjCCResp}"
-									label="CNPJ" mask="99.999.999/9999-99" required="true"
+									label="CNPJ" mask="99.999.999/9999-99" 
 									validator="#{responsavelMB.validaCNPJ}"
 									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />					
 									
