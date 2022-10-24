@@ -366,6 +366,10 @@ public class ContasPagarMB {
 	}
 	
 	public String clearFieldsEditar() {
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		objetoContasPagar = contasPagarDao.findById(objetoContasPagar.getId());
+		this.selectedContratoLov = objetoContasPagar.getContrato();
+		filesPagar = listaArquivosPagar();
 		
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}

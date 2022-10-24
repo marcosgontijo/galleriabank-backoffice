@@ -326,12 +326,14 @@ public class IPCAMB {
 			}
 		} catch (Exception e) {
 		}
+		
+		contratoCobrancaDao.merge(contratoCobrancaMB.getObjetoContratoCobranca());
 
 		int numeroParcelaReparcelamento = 0;		
 		
 		contratoCobrancaMB.setSaldoDevedorReparcelamento(contratoCobrancaMB.getObjetoContratoCobranca().getValorCCB());
 			
-		Date dataVencimentoNova = contratoCobrancaMB.getDataInicio();
+		Date dataVencimentoNova = contratoCobrancaMB.getObjetoContratoCobranca().getDataInicio();
 		
 		for (SimulacaoDetalheVO parcela : contratoCobrancaMB.getSimuladorParcelas().getParcelas()) {
 			boolean encontrouParcela = false;

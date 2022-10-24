@@ -6274,7 +6274,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
 							+ " pr on pr.id = c.pagador inner join cobranca.imovelcobranca im on c.imovel = im.id ";
 					
-					query = query + "where status = 'Aprovado' and c.operacaoPaga = false or c.pendenciapagamento = true";				
+					query = query + "where status = 'Aprovado' and c.pagador != 14 and c.operacaoPaga = false or c.pendenciapagamento = true";				
 					query = query + " order by id desc";				
 					connection = getConnection();
 					ps = connection.prepareStatement(query);	

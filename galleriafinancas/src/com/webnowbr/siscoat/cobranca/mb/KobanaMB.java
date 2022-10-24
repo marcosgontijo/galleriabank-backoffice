@@ -500,7 +500,13 @@ public class KobanaMB {
 		/*
 		Enviar este boleto por email para cliente e empresa?
 		 */
-		jsonBoleto.put("customer_ignore_email", true);  // NÀO ALTERAR ESTE PARÂMETRO (HERMES)
+		
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {		
+			jsonBoleto.put("customer_ignore_email", true);
+		} else {
+			jsonBoleto.put("customer_ignore_email", false);
+		}
+		
 		jsonBoleto.put("ignore_email", false);			
 		
 		/*Tipo de juros/mora:

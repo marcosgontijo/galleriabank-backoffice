@@ -49,6 +49,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -451,6 +452,15 @@ public class ContratoCobrancaMB {
 
 	/** Id Objeto selecionado na LoV - Responsavel. */
 	private long idResponsavel;
+	
+	private boolean tipoResponsavelIsFisica = false;	
+	private String cpfCCResp;
+	private String cnpjCCResp;
+	private String nomeCCResp;
+	private String bancoResp;
+	private String agenciaResp;
+	private String contaResp;
+	private String pixResp;
 
 	/** Objeto selecionado na LoV - Imovel. */
 	private ImovelCobranca selectedImovel;
@@ -1491,6 +1501,18 @@ public class ContratoCobrancaMB {
 
 			if (usuarioLogado != null) {
 				this.codigoResponsavel = usuarioLogado.getCodigoResponsavel();
+				ResponsavelDao responsavelDao = new ResponsavelDao();
+				if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+					Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+					if (responsavel.getCpf() != null) {
+						this.tipoResponsavelIsFisica = true;
+					} else {
+						this.tipoResponsavelIsFisica = false;
+					}
+					
+					clearDadosBancariosResponsavel();
+					
+				}
 			}
 		}
 
@@ -2588,8 +2610,10 @@ public class ContratoCobrancaMB {
 			// verifica se o responsavel informado existe
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+				responsavel = populateDadosBancariosResponsavel(responsavel);
+				responsavelDao.merge(responsavel);
 
-				this.objetoContratoCobranca.setResponsavel(responsavel);
+				this.objetoContratoCobranca.setResponsavel(responsavel); 
 				
 				if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
 					this.objetoContratoCobranca.setContratoLead(true);
@@ -2650,9 +2674,9 @@ public class ContratoCobrancaMB {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
 				}
 
-				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
+				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !",
+							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !",
 							""));
 
 					return "";
@@ -2970,6 +2994,9 @@ public class ContratoCobrancaMB {
 		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 
+			responsavel = populateDadosBancariosResponsavel(responsavel);			
+			responsavelDao.merge(responsavel);
+			
 			this.objetoContratoCobranca.setResponsavel(responsavel);
 			
 			if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
@@ -3533,7 +3560,10 @@ public class ContratoCobrancaMB {
 			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
-
+					
+				responsavel = populateDadosBancariosResponsavel(responsavel);
+				responsavelDao.merge(responsavel);
+				
 				this.objetoContratoCobranca.setResponsavel(responsavel);
 				
 				if( CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46") ) ) {
@@ -5783,7 +5813,12 @@ public class ContratoCobrancaMB {
 
 	public final void populateSelectedResponsavel() {
 		this.idResponsavel = this.selectedResponsavel.getId();
-		this.nomeResponsavel = this.selectedResponsavel.getNome();
+		this.nomeResponsavel = this.selectedResponsavel.getNome();		
+		if (this.selectedResponsavel.getCpf() != null) {
+			this.tipoResponsavelIsFisica = true;
+		} else {
+			this.tipoResponsavelIsFisica = false;
+		}
 	}
 
 	public void clearResponsavel() {
@@ -8227,7 +8262,8 @@ public class ContratoCobrancaMB {
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
-			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();		
+			clearDadosBancariosResponsavel();	
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
@@ -15501,6 +15537,14 @@ public class ContratoCobrancaMB {
 			this.selectedResponsavel = this.objetoContratoCobranca.getResponsavel();
 			this.nomeResponsavel = this.objetoContratoCobranca.getResponsavel().getNome();
 			this.idResponsavel = this.objetoContratoCobranca.getResponsavel().getId();
+			
+			if (this.objetoContratoCobranca.getResponsavel().getCpf() != null) {
+				this.tipoResponsavelIsFisica = true;
+			} else {
+				this.tipoResponsavelIsFisica = false;
+			}
+			
+			clearDadosBancariosResponsavel();
 		}
 
 		if (this.objetoContratoCobranca.getImovel() != null) {
@@ -15508,6 +15552,27 @@ public class ContratoCobrancaMB {
 			this.nomeImovel = this.objetoContratoCobranca.getImovel().getNome();
 			this.idImovel = this.objetoContratoCobranca.getImovel().getId();
 		}
+	}
+	
+	public void clearDadosBancariosResponsavel() {
+		cpfCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCC();
+		cnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCnpjCC();
+		nomeCCResp = this.objetoContratoCobranca.getResponsavel().getNomeCC();
+		bancoResp = this.objetoContratoCobranca.getResponsavel().getBanco();
+		agenciaResp = this.objetoContratoCobranca.getResponsavel().getAgencia();
+		contaResp = this.objetoContratoCobranca.getResponsavel().getConta();
+		pixResp = this.objetoContratoCobranca.getResponsavel().getPix();	
+	}
+	
+	public Responsavel populateDadosBancariosResponsavel(Responsavel responsavel) {
+		responsavel.setCpfCC(cpfCCResp);
+		responsavel.setCnpjCC(cnpjCCResp);
+		responsavel.setNomeCC(nomeCCResp);
+		responsavel.setBanco(bancoResp);
+		responsavel.setAgencia(agenciaResp);
+		responsavel.setConta(contaResp);
+		responsavel.setPix(pixResp);			
+		return responsavel;
 	}
 
 	public void clearSelectedLovsPendentes() {
@@ -30560,8 +30625,70 @@ public class ContratoCobrancaMB {
 	public void setGerenciaStatus(boolean gerenciaStatus) {
 		this.gerenciaStatus = gerenciaStatus;
 	}
-	
-	
+
+	public boolean isTipoResponsavelIsFisica() {
+		return tipoResponsavelIsFisica;
+	}
+
+	public void setTipoResponsavelIsFisica(boolean tipoResponsavelIsFisica) {
+		this.tipoResponsavelIsFisica = tipoResponsavelIsFisica;
+	}
+
+	public String getCpfCCResp() {
+		return cpfCCResp;
+	}
+
+	public void setCpfCCResp(String cpfCCResp) {
+		this.cpfCCResp = cpfCCResp;
+	}
+
+	public String getCnpjCCResp() {
+		return cnpjCCResp;
+	}
+
+	public void setCnpjCCResp(String cnpjCCResp) {
+		this.cnpjCCResp = cnpjCCResp;
+	}
+
+	public String getNomeCCResp() {
+		return nomeCCResp;
+	}
+
+	public void setNomeCCResp(String nomeCCResp) {
+		this.nomeCCResp = nomeCCResp;
+	}
+
+	public String getBancoResp() {
+		return bancoResp;
+	}
+
+	public void setBancoResp(String bancoResp) {
+		this.bancoResp = bancoResp;
+	}
+
+	public String getAgenciaResp() {
+		return agenciaResp;
+	}
+
+	public void setAgenciaResp(String agenciaResp) {
+		this.agenciaResp = agenciaResp;
+	}
+
+	public String getContaResp() {
+		return contaResp;
+	}
+
+	public void setContaResp(String contaResp) {
+		this.contaResp = contaResp;
+	}
+
+	public String getPixResp() {
+		return pixResp;
+	}
+
+	public void setPixResp(String pixResp) {
+		this.pixResp = pixResp;
+	}
 	
 	
 }

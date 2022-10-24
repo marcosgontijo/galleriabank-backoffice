@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -90,10 +93,16 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 
 	}
 	
-	private static final String QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = "select id from cobranca.contaspagar " + 
-			"where 1=1 " + 
-			"and tipodespesa = ? " +
-			"and contapaga = ? ";
+	private static final String QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = "select c.id, c.dataVencimento, c.dataPrevista, c.descricao, " +
+			" c.valor, c2.numeroContrato, p.nome pagadorNome, r.nome responsavelNome, p2.nome pagadorContratoNome, c.formaTransferencia " +		
+			" from cobranca.contaspagar c " +
+			" left join cobranca.contratocobranca c2 on c2.id = c.contrato" +
+			" left join cobranca.pagadorrecebedor p2 on p2.id = c2.pagador" +
+			" left join cobranca.pagadorrecebedor p on p.id = c.pagadorrecebedor" +
+			" left join cobranca.responsavel r on r.id = c.responsavel" +
+			" where 1=1 " + 
+			" and tipodespesa = ? " +
+			" and contapaga = ? ";
 
 	public List<ContasPagar> atualizaListagemContasPagar(final String tipoDespesa, final Boolean contaPaga, final Date dataInicio, final Date dataFim, final String tipoData) throws Exception {
 
@@ -109,23 +118,23 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			
 			if (CommonsUtil.mesmoValor(tipoData, "V")) {
 		
-			if (dataInicio != null) {
-				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento >= ? ::timestamp ";
-			}
-			
-			if (dataFim != null) {
-				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento <= ? ::timestamp ";
-			}
+				if (dataInicio != null) {
+					query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento >= ? ::timestamp ";
+				}
+				
+				if (dataFim != null) {
+					query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and datavencimento <= ? ::timestamp ";
+				}
 			}
 			if (CommonsUtil.mesmoValor(tipoData, "P")) {
 			
-			if (dataInicio != null) {
-				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista >= ? ::timestamp ";
-			}
-			
-			if (dataFim != null) {
-				query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista <= ? ::timestamp ";
-			}
+				if (dataInicio != null) {
+					query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista >= ? ::timestamp ";
+				}
+				
+				if (dataFim != null) {
+					query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR = query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR + " and dataprevista <= ? ::timestamp ";
+				}
 			}
 			ps = connection.prepareStatement(query_QUERY_ATUALIZA_LISTAGEM_CONTASPAGAR);
 
@@ -147,11 +156,29 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			}
 			
 			rs = ps.executeQuery();
-			ContasPagarDao cDao = new ContasPagarDao();
-			ContasPagar contasPagar = new ContasPagar();
+			//ContasPagarDao cDao = new ContasPagarDao();
+			//ContasPagar contasPagar = new ContasPagar();
 			
 			while (rs.next()) {
-				contasPagar = cDao.findById(rs.getLong("id"));
+				ContasPagar contasPagar = new ContasPagar();
+				contasPagar.setId(rs.getLong("id"));
+				contasPagar.setDataVencimento(rs.getDate("dataVencimento"));
+				contasPagar.setDataPrevista(rs.getDate("dataPrevista"));
+				contasPagar.setDescricao(rs.getString("descricao"));
+				contasPagar.setValor(rs.getBigDecimal("valor"));
+				ContratoCobranca contratoCobranca = new ContratoCobranca();
+				contratoCobranca.setNumeroContrato(rs.getString("numeroContrato"));
+				PagadorRecebedor pagadorContrato = new PagadorRecebedor();
+				pagadorContrato.setNome(rs.getString("pagadorContratoNome"));
+				contratoCobranca.setPagador(pagadorContrato);
+				contasPagar.setContrato(contratoCobranca);
+				PagadorRecebedor pagador = new PagadorRecebedor();
+				pagador.setNome(rs.getString("pagadorNome"));
+				contasPagar.setPagadorRecebedor(pagador);
+				Responsavel responsavel = new Responsavel();
+				responsavel.setNome(rs.getString("responsavelNome"));
+				contasPagar.setResponsavel(responsavel);
+				contasPagar.setFormaTransferencia(rs.getString("formaTransferencia"));
 				listContasPagar.add(contasPagar);
 			}
 		} catch (SQLException e) {
