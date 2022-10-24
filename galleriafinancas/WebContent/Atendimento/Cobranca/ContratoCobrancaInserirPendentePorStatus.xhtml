@@ -1720,6 +1720,7 @@
 									<f:selectItem itemValue="UNIÃO ESTÁVEL"
 										itemLabel="UNIÃO ESTÁVEL" />
 									<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+									<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 
 									<p:ajax update="PanelCasado :form:CheckListDocumentosConjuge"
 										event="valueChange" />
@@ -3220,7 +3221,6 @@
 								<p:inputMask id="CpfCCResp"
 									value="#{contratoCobrancaMB.cpfCCResp}"
 									label="CPF" mask="999.999.999-99" 
-									validator="#{responsavelMB.validaCPF}"
 									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}">
 								</p:inputMask>
 								
@@ -3230,7 +3230,6 @@
 								<p:inputMask id="CNPJCCResp"
 									value="#{contratoCobrancaMB.cnpjCCResp}"
 									label="CNPJ" mask="99.999.999/9999-99" 
-									validator="#{responsavelMB.validaCNPJ}"
 									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />					
 									
 								<p:outputLabel for="NomeCCResp" value="Nome: "
@@ -3770,7 +3769,8 @@
 			</shiro:hasAnyRoles>
 			
 			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA">  	
-				<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">						
+				<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;" 
+				rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}">						
 					<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
@@ -3830,7 +3830,8 @@
 				</p:panel>	
 			</shiro:hasAnyRoles>
 		
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" >						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" 
+			rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -3885,9 +3886,10 @@
 			
 			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR" >  	
 				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" 
-				rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo 
+				rendered="#{(contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo 
 				and contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada
-				and !contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" >						
+				and !contratoCobrancaMB.objetoContratoCobranca.aprovadoComite)
+				or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >						
 					<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
@@ -3945,7 +3947,8 @@
 			
 			<p:messages/>
 		
-			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}" >						
+			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" 
+			rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
