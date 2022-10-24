@@ -81,15 +81,15 @@ public class Responsavel implements Serializable {
 		this.cep = cep;
 	}
 	
-	 public List<String> completeBancos(String query) {
-	        String queryLowerCase = query.toLowerCase();
-	        List<String> bancos = new ArrayList<>();
-	        for(BancosEnum banco : BancosEnum.values()) {
-	        	String bancoStr = banco.getNomeCompleto().toString();
-	        	bancos.add(bancoStr);
-	        }
-	        return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
-	 }
+	public List<String> completeBancos(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> bancos = new ArrayList<>();
+		for(BancosEnum banco : BancosEnum.values()) {
+			String bancoStr = banco.getNomeCompleto().toString();
+			bancos.add(bancoStr);
+		}
+		return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
 	
 	/**
 	 * @return the id

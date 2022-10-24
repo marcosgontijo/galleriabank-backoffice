@@ -96,7 +96,13 @@ public class ContasPagarMB {
 		listaNome.add("Busca de endereços JUD");
 		listaNome.add("Custas de agravo");
 		listaNome.add("Custas de apelação");
-		listaNome.add("Custas embargos de terceiro");
+		listaNome.add("Custas de certidão de Decurso de Prazo");
+		listaNome.add("Custas de consolidação");
+		listaNome.add("Custas de embargos de terceiro");
+		listaNome.add("Custas de Guia de ITBI");
+		listaNome.add("Custas de Intimação");
+		listaNome.add("Custas de Intimação do RTD");
+		listaNome.add("Custas de Prenotação");
 		listaNome.add("Custas processuais iniciais");
 		listaNome.add("Honorários sucumbenciais");
 		listaNome.add("Intimação por AR");
@@ -366,6 +372,8 @@ public class ContasPagarMB {
 	}
 	
 	public String clearFieldsEditar() {
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		objetoContasPagar = contasPagarDao.findById(objetoContasPagar.getId());
 		this.selectedContratoLov = objetoContasPagar.getContrato();
 		filesPagar = listaArquivosPagar();
 		

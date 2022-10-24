@@ -300,6 +300,8 @@ public class CcbMB {
     
     private String carencia = "";
     
+    private String aviso = " a ";
+    
     private CcbContrato objetoCcb = new CcbContrato();
     
     private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
@@ -1290,10 +1292,104 @@ public class CcbMB {
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 			pagadorRecebedor = this.objetoPagadorRecebedor;
 		}
+		
+		criarConjugeNoSistema(pagadorRecebedor);
+	}
+	
+	public void criarConjugeNoSistema(PagadorRecebedor pagador) {
+		if(CommonsUtil.semValor(pagador.getEstadocivil())){
+			return;
+		}
+		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
+			return;
+		}
+		
+		PagadorRecebedor conjuge = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+		boolean registraPagador = false;
+		Long idPagador = (long) 0;
+
+		if (pagador.getCpfConjuge() != null) {
+			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
+			if(validaCPF) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
+				if (pagadorRecebedorBD.size() > 0) {
+					conjuge = pagadorRecebedorBD.get(0);
+				} else {
+					conjuge = new PagadorRecebedor();
+					registraPagador = true;
+				}
+			}
+		}
+		
+		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
+		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
+		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
+		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
+		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
+		
+		conjuge.setNome(pagador.getNomeConjuge());
+		conjuge.setCpf(pagador.getCpfConjuge());
+		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setSexo(pagador.getSexoConjuge());
+		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
+		conjuge.setTelCelular(pagador.getTelCelularConjuge());
+		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
+		conjuge.setIdade(pagador.getIdadeConjuge());
+		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
+		conjuge.setNomePai(pagador.getNomePaiConjuge());
+		conjuge.setEndereco(pagador.getEnderecoConjuge());
+		conjuge.setBairro(pagador.getBairroConjuge());
+		conjuge.setComplemento(pagador.getComplementoConjuge());
+		conjuge.setCidade(pagador.getCidadeConjuge());
+		conjuge.setEstado(pagador.getEstadoConjuge());
+		conjuge.setCep(pagador.getCepConjuge());
+		conjuge.setEmail(pagador.getEmailConjuge());
+		conjuge.setBanco(pagador.getBancoConjuge());
+		conjuge.setAgencia(pagador.getAgenciaConjuge());
+		conjuge.setConta(pagador.getContaConjuge());
+		conjuge.setNomeCC(pagador.getNomeCCConjuge());
+		conjuge.setCpfCC(pagador.getCpfCCConjuge());
+		
+		conjuge.setNomeConjuge(pagador.getNome());
+		conjuge.setCpfConjuge(pagador.getCpf());
+		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setSexoConjuge(pagador.getSexo());
+		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
+		conjuge.setTelCelularConjuge(pagador.getTelCelular());
+		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
+		conjuge.setIdadeConjuge(pagador.getIdade());
+		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
+		conjuge.setNomePaiConjuge(pagador.getNomePai());
+		conjuge.setEnderecoConjuge(pagador.getEndereco());
+		conjuge.setBairroConjuge(pagador.getBairro());
+		conjuge.setComplementoConjuge(pagador.getComplemento());
+		conjuge.setCidadeConjuge(pagador.getCidade());
+		conjuge.setEstadoConjuge(pagador.getEstado());
+		conjuge.setCepConjuge(pagador.getCep());
+		conjuge.setEmailConjuge(pagador.getEmail());
+		conjuge.setBancoConjuge(pagador.getBanco());
+		conjuge.setAgenciaConjuge(pagador.getAgencia());
+		conjuge.setContaConjuge(pagador.getConta());
+		conjuge.setNomeCCConjuge(pagador.getNomeCC());
+		conjuge.setCpfCCConjuge(pagador.getCpfCC());
+		
+		if (registraPagador) {
+			idPagador = pagadorRecebedorDao.create(conjuge);
+			conjuge = pagadorRecebedorDao.findById(idPagador);
+			System.out.println("ConjugeCriado");
+		} else {
+			pagadorRecebedorDao.merge(conjuge);
+		}
 	}
 	
 	public void criarCcbNosistema() {
-		
+		FacesContext context = FacesContext.getCurrentInstance();
 		try {
 			CcbDao ccbDao = new CcbDao();
 			
@@ -1307,13 +1403,31 @@ public class CcbMB {
 			
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
+				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			} else {
 				ccbDao.create(this.objetoCcb);
+				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
+		} finally {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
+			if (this.objetoCcb.getId() > 0) {
+				this.setAviso("CCB: Contrato salvo no sistema " + objetoCcb.getNumeroCcb() + " / "
+					+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " (" + objetoCcb.getId() + ")");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "CCB: Contrato salvo no sistema", ""));
+				System.out.println("CCB: Contrato salvo");
+			} else {
+				this.setAviso("CCB: Erro ao salver contrato no sistema " + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salver contrato no sistema", ""));
+				System.out.println("CCB: Erro ao salvar contrato");
+			}		
+		}
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, String valorSobrescrever) {
@@ -3064,17 +3178,18 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
+			
+		
 
 			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
-			criarCcbNosistema();
-			
+			criarCcbNosistema();	
 		
 		} catch (JDBCException jdbce) {
 		    jdbce.getSQLException().getNextException().printStackTrace();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.getCause().printStackTrace();
 		} 
 
@@ -7014,7 +7129,7 @@ public class CcbMB {
 			filho = "filho";
 		}
 		String nacionalidade = null;
-		String estadoCivilStr;
+		String estadoCivilStr = "";
 		String conjugeStr = "";
 		
 		PagadorRecebedor pessoa = participante.getPessoa();
@@ -7041,7 +7156,20 @@ public class CcbMB {
 					pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
 					;
 		} else {
-			estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
+			if (participante.isFeminino()) {
+				if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SOLTEIRO")) {
+					estadoCivilStr = "solteira";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "VIÚVO")) {
+					estadoCivilStr = "viúva";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "DIVORCIADO")) {
+					estadoCivilStr = "divorciada";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO")) {
+					estadoCivilStr = "separada";
+				} 
+			} else {
+				estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
+			}
+
 			if(participante.isUniaoEstavel()) {
 				estadoCivilStr = estadoCivilStr + " convivente em união estável";
 			} else {
@@ -8552,7 +8680,7 @@ public class CcbMB {
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
+		//FacesContext context = FacesContext.getCurrentInstance();
 		
 	    try {
 	    	String tipoDownload = this.getTipoDownload();
@@ -8657,10 +8785,10 @@ public class CcbMB {
 			gerador.close();
 			
 	    } catch (Exception e) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
-							""));
+			//context.addMessage(null,
+			//		new FacesMessage(FacesMessage.SEVERITY_ERROR,
+			//				"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
+			//				""));
 	    }  
 	    return null;
 	}
@@ -9018,7 +9146,7 @@ public class CcbMB {
 		calculaValorLiquidoCredito();
 		calculaPorcentagemImovel();
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));	
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
 	}
 	
 	public Date getDataHoje() {
@@ -9049,7 +9177,9 @@ public class CcbMB {
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
 		clearAnexoII();
 		mostrarDadosOcultos = false;
+		aviso = "";
 		return "/Atendimento/Cobranca/Ccb.xhtml";
+		
 	}
 	
 	public void clearAnexoII(){
@@ -9273,6 +9403,8 @@ public class CcbMB {
 	    this.fileTypeInt = 0;
 	    
 	    mostrarDadosOcultos = false;
+	    
+	    aviso = "";
 	    
 	    this.simulador = new SimulacaoVO();
 	    
@@ -10842,6 +10974,14 @@ public class CcbMB {
 
 	public void setCarencia(String carencia) {
 		this.carencia = carencia;
+	}
+
+	public String getAviso() {
+		return aviso;
+	}
+
+	public void setAviso(String aviso) {
+		this.aviso = aviso;
 	}
 	
 	

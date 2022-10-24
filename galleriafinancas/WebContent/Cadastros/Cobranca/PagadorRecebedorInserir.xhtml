@@ -110,7 +110,22 @@
 							style="width:400px;">
 							<p:ajax update="NomeCC" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedNome}" />
-						</p:inputText>
+						</p:inputText>					
+						
+						<p:outputLabel for="pai" value="Nome do pai: "
+							styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="pai" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomePai}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+							
+						<p:outputLabel for="mae" value="Nome da mãe: "
+							styleClass="labelBold" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="mae" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeMae}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
 						<p:outputLabel for="Sexo" value="Sexo: "
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
@@ -273,6 +288,7 @@
 								<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
 								<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 								<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+								<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 								<p:ajax update="PanelCasado" event="valueChange" />
 							</p:selectOneMenu>
 							<p:outputLabel for="regimeCasamentoEmitente"

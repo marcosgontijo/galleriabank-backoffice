@@ -1934,9 +1934,9 @@ public class ContratoCobrancaMB {
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
 	
-		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = populaStatusUnitario(this.objetoContratoCobranca);
-		ContratoCobranca c = contrato;
+		//ContratoCobranca contrato = new ContratoCobranca();
+		//contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		//ContratoCobranca c = contrato;
 
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
 				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
@@ -2674,9 +2674,11 @@ public class ContratoCobrancaMB {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
 				}
 
-				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3000000)) == 1) {
+				criarConjugeNoSistema(this.objetoPagadorRecebedor);
+				
+				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.000.000,00. !",
+							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !",
 							""));
 
 					return "";
@@ -3015,6 +3017,7 @@ public class ContratoCobrancaMB {
 
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			criarConjugeNoSistema(this.objetoPagadorRecebedor);
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
@@ -3604,6 +3607,7 @@ public class ContratoCobrancaMB {
 
 				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 				pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+				criarConjugeNoSistema(this.objetoPagadorRecebedor);
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 				imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
@@ -4210,8 +4214,8 @@ public class ContratoCobrancaMB {
 			}
 			
 			// Mensagem AG ASSINATURA
-			if (this.objetoContratoCobranca.isCcbPronta() != statusContrato.isCcbPronta()) {
-				if (this.objetoContratoCobranca.isCcbPronta()) {
+			if (this.objetoContratoCobranca.isContratoConferido() != statusContrato.isContratoConferido()) {
+				if (this.objetoContratoCobranca.isContratoConferido()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 					"contrato_pronto_para_assinatura_operacao",
@@ -17939,6 +17943,100 @@ public class ContratoCobrancaMB {
 			pagadorRecebedorDao.merge(pagador);
 			pagadorRecebedor = pagador;
 		}
+		
+		criarConjugeNoSistema(pagadorRecebedor);
+	}
+	
+	public void criarConjugeNoSistema(PagadorRecebedor pagador) {
+		if(CommonsUtil.semValor(pagador.getEstadocivil())){
+			return;
+		}
+		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
+			return;
+		}
+		
+		PagadorRecebedor conjuge = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+		boolean registraPagador = false;
+		Long idPagador = (long) 0;
+
+		if (pagador.getCpfConjuge() != null) {
+			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
+			if(validaCPF) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
+				if (pagadorRecebedorBD.size() > 0) {
+					conjuge = pagadorRecebedorBD.get(0);
+				} else {
+					conjuge = new PagadorRecebedor();
+					registraPagador = true;
+				}
+			}
+		}
+		
+		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
+		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
+		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
+		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
+		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
+		
+		conjuge.setNome(pagador.getNomeConjuge());
+		conjuge.setCpf(pagador.getCpfConjuge());
+		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setSexo(pagador.getSexoConjuge());
+		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
+		conjuge.setTelCelular(pagador.getTelCelularConjuge());
+		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
+		conjuge.setIdade(pagador.getIdadeConjuge());
+		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
+		conjuge.setNomePai(pagador.getNomePaiConjuge());
+		conjuge.setEndereco(pagador.getEnderecoConjuge());
+		conjuge.setBairro(pagador.getBairroConjuge());
+		conjuge.setComplemento(pagador.getComplementoConjuge());
+		conjuge.setCidade(pagador.getCidadeConjuge());
+		conjuge.setEstado(pagador.getEstadoConjuge());
+		conjuge.setCep(pagador.getCepConjuge());
+		conjuge.setEmail(pagador.getEmailConjuge());
+		conjuge.setBanco(pagador.getBancoConjuge());
+		conjuge.setAgencia(pagador.getAgenciaConjuge());
+		conjuge.setConta(pagador.getContaConjuge());
+		conjuge.setNomeCC(pagador.getNomeCCConjuge());
+		conjuge.setCpfCC(pagador.getCpfCCConjuge());
+		
+		conjuge.setNomeConjuge(pagador.getNome());
+		conjuge.setCpfConjuge(pagador.getCpf());
+		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setSexoConjuge(pagador.getSexo());
+		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
+		conjuge.setTelCelularConjuge(pagador.getTelCelular());
+		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
+		conjuge.setIdadeConjuge(pagador.getIdade());
+		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
+		conjuge.setNomePaiConjuge(pagador.getNomePai());
+		conjuge.setEnderecoConjuge(pagador.getEndereco());
+		conjuge.setBairroConjuge(pagador.getBairro());
+		conjuge.setComplementoConjuge(pagador.getComplemento());
+		conjuge.setCidadeConjuge(pagador.getCidade());
+		conjuge.setEstadoConjuge(pagador.getEstado());
+		conjuge.setCepConjuge(pagador.getCep());
+		conjuge.setEmailConjuge(pagador.getEmail());
+		conjuge.setBancoConjuge(pagador.getBanco());
+		conjuge.setAgenciaConjuge(pagador.getAgencia());
+		conjuge.setContaConjuge(pagador.getConta());
+		conjuge.setNomeCCConjuge(pagador.getNomeCC());
+		conjuge.setCpfCCConjuge(pagador.getCpfCC());
+		
+		if (registraPagador) {
+			idPagador = pagadorRecebedorDao.create(conjuge);
+			conjuge = pagadorRecebedorDao.findById(idPagador);
+			System.out.println("ConjugeCriado");
+		} else {
+			pagadorRecebedorDao.merge(conjuge);
+		}
 	}
 
 	private boolean validarProcentagensSeguro() {
@@ -28764,6 +28862,76 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void viewFilePagar(String fileName) {
+	
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+			facesContext.responseComplete();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	//removido zippar arquivos (ou não)
 	
 	public StreamedContent getDownloadAllFiles() {

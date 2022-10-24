@@ -606,21 +606,22 @@ public class DashboardMBVer2 {
 				linha = sheet.getRow(iLinha);
 			}
 			
-			gravaCelula(0, dash.getNomeResponsavel(), linha);
-			formataCelula(linha.getCell(0), wb);
-			gravaCelula(1, dash.getGerenteResponsavel(), linha);
-			gravaCelula(2, dash.getCaptadorResponsavel(), linha);
-			gravaCelula(3, dash.getDataCadastroResponsavel(), linha);
-			gravaCelula(4, dash.getContratosCadastrados(), linha);
-			gravaCelula(5, CommonsUtil.formataValorMonetario(dash.getValorContratosCadastrados(),"R$ "), linha);
-			gravaCelula(6, dash.getContratosPreAprovados(), linha);
-			gravaCelula(7, CommonsUtil.formataValorMonetario(dash.getValorContratosPreAprovados(),"R$ "), linha);
-			gravaCelula(8, dash.getContratosBoletosPagos(), linha);
-			gravaCelula(9, CommonsUtil.formataValorMonetario(dash.getValorBoletosPagos(),"R$ "), linha);
-			gravaCelula(10, dash.getContratosCcbsEmitidas(), linha);
-			gravaCelula(11, CommonsUtil.formataValorMonetario(dash.getValorCcbsEmitidas(),"R$ "), linha);
-			gravaCelula(12, dash.getContratosRegistrados(), linha);
-			gravaCelula(13, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
+			gravaCelula(0, dash.getResponsavel().getCodigo(), linha);
+			gravaCelula(1, dash.getNomeResponsavel(), linha);
+			formataCelula(linha.getCell(1), wb);
+			gravaCelula(2, dash.getGerenteResponsavel(), linha);
+			gravaCelula(3, dash.getCaptadorResponsavel(), linha);
+			gravaCelula(4, dash.getDataCadastroResponsavel(), linha);
+			gravaCelula(5, dash.getContratosCadastrados(), linha);
+			gravaCelula(6, CommonsUtil.formataValorMonetario(dash.getValorContratosCadastrados(),"R$ "), linha);
+			gravaCelula(7, dash.getContratosPreAprovados(), linha);
+			gravaCelula(8, CommonsUtil.formataValorMonetario(dash.getValorContratosPreAprovados(),"R$ "), linha);
+			gravaCelula(9, dash.getContratosBoletosPagos(), linha);
+			gravaCelula(10, CommonsUtil.formataValorMonetario(dash.getValorBoletosPagos(),"R$ "), linha);
+			gravaCelula(11, dash.getContratosCcbsEmitidas(), linha);
+			gravaCelula(12, CommonsUtil.formataValorMonetario(dash.getValorCcbsEmitidas(),"R$ "), linha);
+			gravaCelula(13, dash.getContratosRegistrados(), linha);
+			gravaCelula(14, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
 			
 			iLinha++;
 		}
@@ -633,22 +634,23 @@ public class DashboardMBVer2 {
 					sheet.createRow(iLinha);
 					linha = sheet.getRow(iLinha);
 				}
+				gravaCelula(0, reponsavel.getCodigo(), linha);
 				
-				gravaCelula(0, reponsavel.getNome(), linha);
-				formataCelula(linha.getCell(0), wb);
+				gravaCelula(1, reponsavel.getNome(), linha);
+				formataCelula(linha.getCell(1), wb);
 				
 				if(!CommonsUtil.semValor(reponsavel.getDonoResponsavel())) {
-					gravaCelula(1, reponsavel.getDonoResponsavel().getNome(), linha);
+					gravaCelula(2, reponsavel.getDonoResponsavel().getNome(), linha);
 				}
 				
 				if(!CommonsUtil.semValor(reponsavel.getResponsavelCaptador())) {
-					gravaCelula(2, reponsavel.getResponsavelCaptador().getNome(), linha);
+					gravaCelula(3, reponsavel.getResponsavelCaptador().getNome(), linha);
 				}
 				
 				if(!CommonsUtil.semValor(reponsavel.getDataCadastro())) {
-					gravaCelula(3, reponsavel.getDataCadastro(), linha);
+					gravaCelula(4, reponsavel.getDataCadastro(), linha);
 				}
-								
+				
 				iLinha++;
 			} 
 		}
@@ -657,16 +659,16 @@ public class DashboardMBVer2 {
 		calculaSoma();
 		XSSFRow linha = sheet.getRow(1);
 		
-		gravaCelula(17, this.totalContratosCadastrados, linha);
-		gravaCelula(18, CommonsUtil.formataValorMonetario(this.totalValorContratosPreAprovados,"R$ "), linha);
-		gravaCelula(19, this.totalContratosPreAprovados, linha);
-		gravaCelula(20, CommonsUtil.formataValorMonetario(this.totalValorContratosCadastrados,"R$ "), linha);	
-		gravaCelula(21, this.totalContratosBoletosPagos, linha);
-		gravaCelula(22, CommonsUtil.formataValorMonetario(this.totalValorBoletosPagos,"R$ "), linha);	
-		gravaCelula(23, this.totalContratosCcbsEmitidas, linha);
-		gravaCelula(24, CommonsUtil.formataValorMonetario(this.totalValorCcbsEmitidas,"R$ "), linha);	
-		gravaCelula(25, this.totalContratosRegistrados, linha);
-		gravaCelula(26, CommonsUtil.formataValorMonetario(this.totalValorContratosRegistrados,"R$ "), linha);
+		gravaCelula(18, this.totalContratosCadastrados, linha);
+		gravaCelula(19, CommonsUtil.formataValorMonetario(this.totalValorContratosPreAprovados,"R$ "), linha);
+		gravaCelula(20, this.totalContratosPreAprovados, linha);
+		gravaCelula(21, CommonsUtil.formataValorMonetario(this.totalValorContratosCadastrados,"R$ "), linha);	
+		gravaCelula(22, this.totalContratosBoletosPagos, linha);
+		gravaCelula(23, CommonsUtil.formataValorMonetario(this.totalValorBoletosPagos,"R$ "), linha);	
+		gravaCelula(24, this.totalContratosCcbsEmitidas, linha);
+		gravaCelula(25, CommonsUtil.formataValorMonetario(this.totalValorCcbsEmitidas,"R$ "), linha);	
+		gravaCelula(26, this.totalContratosRegistrados, linha);
+		gravaCelula(27, CommonsUtil.formataValorMonetario(this.totalValorContratosRegistrados,"R$ "), linha);
 		
 		
 		
@@ -684,6 +686,7 @@ public class DashboardMBVer2 {
 		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
+
 		return null;
 	}
 	

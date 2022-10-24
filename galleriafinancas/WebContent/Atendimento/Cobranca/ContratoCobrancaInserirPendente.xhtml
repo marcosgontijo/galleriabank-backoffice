@@ -2126,14 +2126,13 @@
 								<p:selectOneMenu id="estadocivil"
 									value="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil}"
 									label="Status" style="width:190px; margin-left:43px;">
-									<f:selectItem itemValue="NÃO INFORMADO"
-										itemLabel="NÃO INFORMADO" />
+									<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
 									<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
 									<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
 									<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
-									<f:selectItem itemValue="UNIÃO ESTÁVEL"
-										itemLabel="UNIÃO ESTÁVEL" />
+									<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 									<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+									<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 
 									<p:ajax update="PanelCasado :form:CheckListDocumentosConjuge"
 										event="valueChange" />
@@ -3582,7 +3581,7 @@
 									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}" />
 								<p:inputMask id="CpfCCResp"
 									value="#{contratoCobrancaMB.cpfCCResp}"
-									label="CPF" mask="999.999.999-99" required="true"
+									label="CPF" mask="999.999.999-99" 
 									validator="#{responsavelMB.validaCPF}"
 									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}">
 								</p:inputMask>
@@ -3592,7 +3591,7 @@
 									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />
 								<p:inputMask id="CNPJCCResp"
 									value="#{contratoCobrancaMB.cnpjCCResp}"
-									label="CNPJ" mask="99.999.999/9999-99" required="true"
+									label="CNPJ" mask="99.999.999/9999-99" 
 									validator="#{responsavelMB.validaCNPJ}"
 									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />					
 									
