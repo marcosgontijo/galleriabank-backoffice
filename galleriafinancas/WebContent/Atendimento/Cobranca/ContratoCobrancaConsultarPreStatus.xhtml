@@ -102,10 +102,17 @@
 			        
 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
-			        </p:column>	  
+			        </p:column>
+			        
+			        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.responsavel.donoResponsavel.nome}" 
+			        	filterMatchMode="contains" sortBy="#{contratos.responsavel.donoResponsavel.nome}"
+			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}" >
+				    	<h:outputText value="#{contratos.responsavel.donoResponsavel.nome}" />
+				    </p:column>	
+				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
-			        </p:column>	    
+			        </p:column>	    	       
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)"
 			        	rendered="#!{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
@@ -124,7 +131,7 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorAprovadoComite}" rendered="#{contratos.aprovadoComite and contratos.agRegistro}"  converter="bigDecimalConverter" />
 			        </p:column>	
 			        
-			         <p:column style="text-align: center;"
+			       	<p:column style="text-align: center;"
 			        	headerText="Valor CCB (R$)"
 			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Pagamento Op.'}">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}"  rendered="#{!contratos.agRegistro}"  converter="bigDecimalConverter" />

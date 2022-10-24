@@ -2126,14 +2126,13 @@
 								<p:selectOneMenu id="estadocivil"
 									value="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil}"
 									label="Status" style="width:190px; margin-left:43px;">
-									<f:selectItem itemValue="NÃO INFORMADO"
-										itemLabel="NÃO INFORMADO" />
+									<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
 									<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
 									<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
 									<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
-									<f:selectItem itemValue="UNIÃO ESTÁVEL"
-										itemLabel="UNIÃO ESTÁVEL" />
+									<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 									<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
+									<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 
 									<p:ajax update="PanelCasado :form:CheckListDocumentosConjuge"
 										event="valueChange" />

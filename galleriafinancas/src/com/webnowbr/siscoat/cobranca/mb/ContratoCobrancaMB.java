@@ -2674,6 +2674,8 @@ public class ContratoCobrancaMB {
 					pagadorRecebedor = this.objetoPagadorRecebedor;
 				}
 
+				criarConjugeNoSistema(this.objetoPagadorRecebedor);
+				
 				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !",
@@ -3015,6 +3017,7 @@ public class ContratoCobrancaMB {
 
 			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+			criarConjugeNoSistema(this.objetoPagadorRecebedor);
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
@@ -3582,6 +3585,7 @@ public class ContratoCobrancaMB {
 
 				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 				pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
+				criarConjugeNoSistema(this.objetoPagadorRecebedor);
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 				imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
@@ -4188,8 +4192,8 @@ public class ContratoCobrancaMB {
 			}
 			
 			// Mensagem AG ASSINATURA
-			if (this.objetoContratoCobranca.isCcbPronta() != statusContrato.isCcbPronta()) {
-				if (this.objetoContratoCobranca.isCcbPronta()) {
+			if (this.objetoContratoCobranca.isContratoConferido() != statusContrato.isContratoConferido()) {
+				if (this.objetoContratoCobranca.isContratoConferido()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 					"contrato_pronto_para_assinatura_operacao",
@@ -17916,6 +17920,100 @@ public class ContratoCobrancaMB {
 		} else {
 			pagadorRecebedorDao.merge(pagador);
 			pagadorRecebedor = pagador;
+		}
+		
+		criarConjugeNoSistema(pagadorRecebedor);
+	}
+	
+	public void criarConjugeNoSistema(PagadorRecebedor pagador) {
+		if(CommonsUtil.semValor(pagador.getEstadocivil())){
+			return;
+		}
+		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
+			return;
+		}
+		
+		PagadorRecebedor conjuge = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+		boolean registraPagador = false;
+		Long idPagador = (long) 0;
+
+		if (pagador.getCpfConjuge() != null) {
+			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
+			if(validaCPF) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
+				if (pagadorRecebedorBD.size() > 0) {
+					conjuge = pagadorRecebedorBD.get(0);
+				} else {
+					conjuge = new PagadorRecebedor();
+					registraPagador = true;
+				}
+			}
+		}
+		
+		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
+		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
+		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
+		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
+		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
+		
+		conjuge.setNome(pagador.getNomeConjuge());
+		conjuge.setCpf(pagador.getCpfConjuge());
+		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setSexo(pagador.getSexoConjuge());
+		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
+		conjuge.setTelCelular(pagador.getTelCelularConjuge());
+		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
+		conjuge.setIdade(pagador.getIdadeConjuge());
+		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
+		conjuge.setNomePai(pagador.getNomePaiConjuge());
+		conjuge.setEndereco(pagador.getEnderecoConjuge());
+		conjuge.setBairro(pagador.getBairroConjuge());
+		conjuge.setComplemento(pagador.getComplementoConjuge());
+		conjuge.setCidade(pagador.getCidadeConjuge());
+		conjuge.setEstado(pagador.getEstadoConjuge());
+		conjuge.setCep(pagador.getCepConjuge());
+		conjuge.setEmail(pagador.getEmailConjuge());
+		conjuge.setBanco(pagador.getBancoConjuge());
+		conjuge.setAgencia(pagador.getAgenciaConjuge());
+		conjuge.setConta(pagador.getContaConjuge());
+		conjuge.setNomeCC(pagador.getNomeCCConjuge());
+		conjuge.setCpfCC(pagador.getCpfCCConjuge());
+		
+		conjuge.setNomeConjuge(pagador.getNome());
+		conjuge.setCpfConjuge(pagador.getCpf());
+		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setSexoConjuge(pagador.getSexo());
+		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
+		conjuge.setTelCelularConjuge(pagador.getTelCelular());
+		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
+		conjuge.setIdadeConjuge(pagador.getIdade());
+		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
+		conjuge.setNomePaiConjuge(pagador.getNomePai());
+		conjuge.setEnderecoConjuge(pagador.getEndereco());
+		conjuge.setBairroConjuge(pagador.getBairro());
+		conjuge.setComplementoConjuge(pagador.getComplemento());
+		conjuge.setCidadeConjuge(pagador.getCidade());
+		conjuge.setEstadoConjuge(pagador.getEstado());
+		conjuge.setCepConjuge(pagador.getCep());
+		conjuge.setEmailConjuge(pagador.getEmail());
+		conjuge.setBancoConjuge(pagador.getBanco());
+		conjuge.setAgenciaConjuge(pagador.getAgencia());
+		conjuge.setContaConjuge(pagador.getConta());
+		conjuge.setNomeCCConjuge(pagador.getNomeCC());
+		conjuge.setCpfCCConjuge(pagador.getCpfCC());
+		
+		if (registraPagador) {
+			idPagador = pagadorRecebedorDao.create(conjuge);
+			conjuge = pagadorRecebedorDao.findById(idPagador);
+			System.out.println("ConjugeCriado");
+		} else {
+			pagadorRecebedorDao.merge(conjuge);
 		}
 	}
 
