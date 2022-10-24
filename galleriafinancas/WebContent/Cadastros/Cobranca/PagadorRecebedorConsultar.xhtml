@@ -10,9 +10,16 @@
 
 	<ui:define name="conteudo">  
 		<h:form style="margin-bottom:10px;">				
+			
 			<p:messages id="mensagens" showDetail="true"/>							
 			<p:panel id="ConsultaPagadorRecebedor" header="Pagador / Recebedor - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtPagadorRecebedor" var="PagadorRecebedor" value="#{pagadorRecebedorMB.lazyModel}" paginator="true" rows="20" lazy="true"
+   		    <script>
+		        jQuery(function($){
+		        	$("input.cnpj:text").mask("99.999.999/9999-99");
+		        	$("input.cpf:text").mask("999.999.999-99");
+		        });
+			</script>
+			<p:dataTable id="dtPagadorRecebedor" var="PagadorRecebedor" value="#{pagadorRecebedorMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{PagadorRecebedor.nome}">
@@ -22,10 +29,10 @@
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{PagadorRecebedor.nome}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">
 			            <h:outputText value="#{PagadorRecebedor.nome}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="CPF" filterBy="#{PagadorRecebedor.cpf}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cpf}">
+			        <p:column style="text-align: center;" headerText="CPF" filterBy="#{PagadorRecebedor.cpf}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cpf}" >
 			            <h:outputText value="#{PagadorRecebedor.cpf}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="CNPJ" filterBy="#{PagadorRecebedor.cnpj}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cnpj}">
+			        <p:column style="text-align: center;" headerText="CNPJ" filterBy="#{PagadorRecebedor.cnpj}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.cnpj}" >
 			            <h:outputText value="#{PagadorRecebedor.cnpj}" />
 			        </p:column>
 			        <p:column style="width:120px;">

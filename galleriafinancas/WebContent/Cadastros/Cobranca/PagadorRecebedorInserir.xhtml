@@ -110,7 +110,22 @@
 							style="width:400px;">
 							<p:ajax update="NomeCC" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedNome}" />
-						</p:inputText>
+						</p:inputText>					
+						
+						<p:outputLabel for="pai" value="Nome do pai: "
+							styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="pai" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomePai}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+							
+						<p:outputLabel for="mae" value="Nome da mãe: "
+							styleClass="labelBold" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="mae" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeMae}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
 						<p:outputLabel for="Sexo" value="Sexo: "
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />

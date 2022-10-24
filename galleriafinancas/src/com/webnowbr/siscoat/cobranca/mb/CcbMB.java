@@ -300,6 +300,8 @@ public class CcbMB {
     
     private String carencia = "";
     
+    private String aviso = " a ";
+    
     private CcbContrato objetoCcb = new CcbContrato();
     
     private List<CcbContrato> listaCcbs = new ArrayList<CcbContrato>();
@@ -1293,7 +1295,7 @@ public class CcbMB {
 	}
 	
 	public void criarCcbNosistema() {
-		
+		FacesContext context = FacesContext.getCurrentInstance();
 		try {
 			CcbDao ccbDao = new CcbDao();
 			
@@ -1307,13 +1309,31 @@ public class CcbMB {
 			
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
+				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			} else {
 				ccbDao.create(this.objetoCcb);
+				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
+		} finally {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
+			if (this.objetoCcb.getId() > 0) {
+				this.setAviso("CCB: Contrato salvo no sistema " + objetoCcb.getNumeroCcb() + " / "
+					+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " (" + objetoCcb.getId() + ")");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "CCB: Contrato salvo no sistema", ""));
+				System.out.println("CCB: Contrato salvo");
+			} else {
+				this.setAviso("CCB: Erro ao salver contrato no sistema " + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salver contrato no sistema", ""));
+				System.out.println("CCB: Erro ao salvar contrato");
+			}		
+		}
 	}
 	
 	public String trocaValoresXWPF(String text, XWPFRun r, String valorEscrito, String valorSobrescrever) {
@@ -3064,17 +3084,18 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
+			
+		
 
 			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
-			criarCcbNosistema();
-			
+			criarCcbNosistema();	
 		
 		} catch (JDBCException jdbce) {
 		    jdbce.getSQLException().getNextException().printStackTrace();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.getCause().printStackTrace();
 		} 
 
@@ -8552,7 +8573,7 @@ public class CcbMB {
 	
 	@SuppressWarnings("resource")
 	public StreamedContent readXWPFile() throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
+		//FacesContext context = FacesContext.getCurrentInstance();
 		
 	    try {
 	    	String tipoDownload = this.getTipoDownload();
@@ -8657,10 +8678,10 @@ public class CcbMB {
 			gerador.close();
 			
 	    } catch (Exception e) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
-							""));
+			//context.addMessage(null,
+			//		new FacesMessage(FacesMessage.SEVERITY_ERROR,
+			//				"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
+			//				""));
 	    }  
 	    return null;
 	}
@@ -9018,7 +9039,7 @@ public class CcbMB {
 		calculaValorLiquidoCredito();
 		calculaPorcentagemImovel();
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Gerdas com sucesso", ""));	
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
 	}
 	
 	public Date getDataHoje() {
@@ -9049,7 +9070,9 @@ public class CcbMB {
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
 		clearAnexoII();
 		mostrarDadosOcultos = false;
+		aviso = "";
 		return "/Atendimento/Cobranca/Ccb.xhtml";
+		
 	}
 	
 	public void clearAnexoII(){
@@ -9273,6 +9296,8 @@ public class CcbMB {
 	    this.fileTypeInt = 0;
 	    
 	    mostrarDadosOcultos = false;
+	    
+	    aviso = "";
 	    
 	    this.simulador = new SimulacaoVO();
 	    
@@ -10842,6 +10867,14 @@ public class CcbMB {
 
 	public void setCarencia(String carencia) {
 		this.carencia = carencia;
+	}
+
+	public String getAviso() {
+		return aviso;
+	}
+
+	public void setAviso(String aviso) {
+		this.aviso = aviso;
 	}
 	
 	
