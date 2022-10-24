@@ -53,6 +53,8 @@ public class PagadorRecebedorMB {
 	private String tituloPainel = null;
 	private boolean tipoPessoaIsFisica = false;
 	private boolean tipoPessoaIsFisicaCC = false;
+	private List<PagadorRecebedor> listaPagadorRecebedor;
+	private List<PagadorRecebedor> filteredPagadorRecebedor;
 	/**
 	 * Construtor.
 	 */
@@ -363,25 +365,46 @@ public class PagadorRecebedorMB {
 	}
 	
 	public boolean filterByCPF(Object value, Object filter, Locale locale) {
+		//System.out.println("entrou em filter");
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
         String filterText = (filter == null) ? null : filter.toString().trim();
-        
-        if(filterText.contains(".")) {
-        	filterText = filterText.replace(".", "");
+        String valueStr = "";
+        if (CommonsUtil.semValor(value)) {
+            return false;
+        } else {
+        	 valueStr = value.toString();
+        }
+       
+        if(valueStr.contains(".")) {
+        	valueStr = valueStr.replace(".", "");
 	    }
-        if(filterText.contains("-")) {
-        	filterText = filterText.replace("-", "");
+        if(valueStr.contains("-")) {
+        	valueStr = valueStr.replace("-", "");
 	    }
         
         if (filterText == null || filterText.equals("")) {
+        	//filteredPagadorRecebedor = pagadorRecebedorDao.findAll();
             return true;
         }
  
-        if (value == null) {
+        if (valueStr == null) {
             return false;
         }
- 
-        return filterText.contains(value.toString());
+        
+        System.out.println("value = " + valueStr);
+        System.out.println(valueStr.contains(filterText));
+        //System.out.println("filterText = " + filterText);
+        
+        //System.out.println("saiu em filter");
+        return valueStr.contains(filterText);
     }
+	
+	public String clearConsultar() {
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		listaPagadorRecebedor = pagadorRecebedorDao.findAll();
+		filteredPagadorRecebedor = listaPagadorRecebedor;
+		return "/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml";
+	}
 	
 	/**
 	 * SERVICO PARA PEGAR O ENDEREÇO AUTOMATICAMENTE
@@ -592,5 +615,24 @@ public class PagadorRecebedorMB {
 	 */
 	public void setTipoPessoaIsFisicaCC(boolean tipoPessoaIsFisicaCC) {
 		this.tipoPessoaIsFisicaCC = tipoPessoaIsFisicaCC;
-	}	
+	}
+
+	public List<PagadorRecebedor> getListaPagadorRecebedor() {
+		return listaPagadorRecebedor;
+	}
+
+	public void setListaPagadorRecebedor(List<PagadorRecebedor> listaPagadorRecebedor) {
+		this.listaPagadorRecebedor = listaPagadorRecebedor;
+	}
+
+	public List<PagadorRecebedor> getFilteredPagadorRecebedor() {
+		return filteredPagadorRecebedor;
+	}
+
+	public void setFilteredPagadorRecebedor(List<PagadorRecebedor> filteredPagadorRecebedor) {
+		this.filteredPagadorRecebedor = filteredPagadorRecebedor;
+	}
+	
+	
+
 }
