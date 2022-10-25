@@ -443,6 +443,9 @@ public class ContasPagarMB {
 	}
 	
 	public void populateSelectedContrato() {
+		if(CommonsUtil.semValor(this.getSelectedContratoLov())) {
+			return;
+		}
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.setSelectedContratoLov(cDao.findById(this.getSelectedContratoLov().getId()));
 		filesPagar = listaArquivosPagar();
