@@ -154,8 +154,7 @@ public class ContractService {
 							this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.getString("tipoCobrarComissaoCliente"));
 							this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"));
 							
-							String valorDesejado = contratoAPP.getString("quantoPrecisa").replace(".", "").replace(",", ".");						
-							this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(valorDesejado));
+							this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
 							this.objetoContratoCobranca.setObservacao(contratoAPP.has("observacao") ? contratoAPP.getString("observacao") : null);
 							
 							this.objetoContratoCobranca.setPagadorDonoGarantia(contratoAPP.getBoolean("pagadorDonoGarantia"));
