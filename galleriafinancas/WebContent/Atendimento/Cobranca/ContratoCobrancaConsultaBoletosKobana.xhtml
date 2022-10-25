@@ -129,6 +129,28 @@
 						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
+						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
+						<p:commandButton onclick="PF('baixaParcialDialog').show();"
+							title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
+							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago'}">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.callMetodoPorDialogBaixaParcial}" value="true" />	
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.objetoContratoCobranca}"
+								value="#{boleto.contrato}" />							
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+								value="#{boleto.parcela}" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.txZero}" value="true" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.vlrRecebido}"
+								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align: center;width: 130px;"
 						headerText="Link Boleto" styleClass="colunaHiddenRelFinanceiro">
 						<ui:fragment rendered="#{boleto.urlBoleto ne null}">
 							<h:outputLink value="#{boleto.urlBoleto}" target="_blank" styleClass="botaoBoletoKobana">#{boleto.urlBoleto}</h:outputLink>
@@ -137,5 +159,205 @@
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<p:dialog header="Baixa Parcial" widgetVar="baixaParcialDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
+			height="650" width="500">
+			<h:form id="formBaixaParcial">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato:"
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroContrato"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="numeroParcela" value="Número da Parcela: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroParcela"
+						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
+						label="Número da Parcela:"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="taxa" value="Método de Cálculo:" />
+					<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
+						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
+						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
+						<p:ajax update="dataPagamento valorAt" event="valueChange"
+							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
+					</p:selectOneRadio>
+					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataPagamento"
+						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField">
+						<p:ajax event="dateSelect" update="ValoresAtualizados Pessoas"
+							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
+					</p:calendar>
+				</h:panelGrid>
+				<p:panel id="ValoresAtualizados" header="Valores Atualizados"
+					style="margin-top:20px;margin-bottom:20px;">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="saldoParcela" value="Valor da Parcela:"
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="saldoParcela"
+							value="#{contratoCobrancaMB.vlrParcelaNew}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+						<p:outputLabel value="Saldo Atualizado: " styleClass="labelBold"
+							style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:outputText id="valorAt"
+							value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}"
+							style="font-weight: bold; font-size: 18px;"
+							converter="bigDecimalConverter" />
+						<p:outputLabel for="valorRecebido" value="Valor Recebido: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorRecebido"
+							value="#{contratoCobrancaMB.vlrRecebido}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+				</p:panel>
+
+				<p:panel id="Pessoas" header="Recebedor" style="margin-bottom:10px;">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="Recebedor" value="Favorecido: "
+							styleClass="labelBold" />
+						<p:inputText id="Recebedor"
+							value="#{contratoCobrancaMB.nomeRecebedor}" label="Recebedor"
+							readonly="TRUE" required="true"
+							style="FONT-SIZE: 10pt;width:290px;" />
+						<p:commandButton id="botaoRecebedor" type="button"
+							onclick="PF('recebedorDialog').show();"
+							icon="ui-icon ui-icon-circle-zoomin" />
+					</h:panelGrid>
+					<p:panel id="ConsultaFinanceiroResultados"
+						header="Dados para Pagamento"
+						style="margin-bottom:10px;margin-top:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Banco: " styleClass="labelBold" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.selectedRecebedor.banco}" />
+							<p:outputLabel value="Agência: " styleClass="labelBold" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.selectedRecebedor.agencia}" />
+							<p:outputLabel value="C/C: " styleClass="labelBold" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.selectedRecebedor.conta}" />
+							<p:outputLabel value="Favorecido: " styleClass="labelBold" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.selectedRecebedor.nomeCC}" />
+							<p:outputLabel value="CPF: " styleClass="labelBold"
+								rendered="#{contratoCobrancaMB.selectedRecebedor.cpfCC != null}" />
+							<p:outputLabel value="CNPJ: " styleClass="labelBold"
+								rendered="#{contratoCobrancaMB.selectedRecebedor.cnpjCC != null}" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.selectedRecebedor.cpfCC}#{contratoCobrancaMB.selectedRecebedor.cnpjCC}" />
+						</h:panelGrid>
+						<h:panelGrid columns="3">
+							<p:outputLabel value="Saldo Atualizado: " styleClass="labelBold"
+								style="" />
+							<h:outputText value="R$" style="" />
+							<h:outputText
+								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" style=""
+								converter="bigDecimalConverter" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Data do Pagamento: " styleClass="labelBold"
+								style="" />
+							<h:outputText value="#{contratoCobrancaMB.rowEditNewDate}"
+								style="">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</h:panelGrid>
+					</p:panel>
+					<p:panel id="ConsultaObservacores" header="Detalhes do Pagamento"
+						style="margin-bottom:10px;margin-top:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="Observacao" value="Observação: " />
+							<p:inputTextarea rows="10" cols="50" id="Observacao"
+								value="#{contratoCobrancaMB.observacao}" label="Observação"
+								onblur="" style="width:300px;" />
+							<p:spacer width="10" />
+						</h:panelGrid>
+					</p:panel>
+				</p:panel>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelaParcial}" ajax="false"
+							icon="ui-icon-transferthick-e-w" value="Baixar"
+							update=":form:DetalheParcelas" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcialDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+				<p:dialog header="Recebedores" widgetVar="recebedorDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="formRecebedores">
+				<p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg"
+					value="#{contratoCobrancaMB.listRecebedores}" paginator="true"
+					rows="10" selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{contratoCobrancaMB.selectedRecebedor}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{recebedorDialogdlg.id}">
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cnpj}"
+						filterBy="#{recebedorDialogdlg.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cnpj}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.cpf}"
+						filterBy="#{recebedorDialogdlg.cpf}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.cpf}" />
+					</p:column>
+
+					<p:column style="text-align: center;"
+						sortBy="#{recebedorDialogdlg.nome}"
+						filterBy="#{recebedorDialogdlg.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{recebedorDialogdlg.nome}" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar"
+							action="#{contratoCobrancaMB.populateSelectedRecebedor}"
+							icon="ui-icon ui-icon-check"
+							update=":formBaixaParcial:Recebedor :formBaixaParcial:Pessoas"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Limpar Seleção"
+							action="#{contratoCobrancaMB.clearRecebedor}"
+							icon="ui-icon ui-icon-trash"
+							update=":formBaixaParcial:Recebedor recebedorDialogdlg :formBaixaParcial:Pessoas"
+							oncomplete="PF('recebedorDialog').hide();" />
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+							oncomplete="PF('recebedorDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>		
 	</ui:define>
 </ui:composition>

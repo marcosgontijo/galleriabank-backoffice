@@ -209,6 +209,8 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 	private boolean controleWhatsAlteracaoGeracaoPAJU = false;
 	
+	private boolean callMetodoPorDialogBaixaParcial = false;
+	
 	private long idAnalistaGeracaoPAJU = 0;
 	
 	/************************************************************
@@ -3250,7 +3252,7 @@ public class ContratoCobrancaMB {
 				*/
 		
 		// "João Paulo Gomes Massaro"
-		/*
+	
 		responsavel = rDao.findById((long) 797);	
 		
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -3260,11 +3262,10 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
-		*/
 		
 		responsavel = rDao.findById((long) 793);	
 		
-		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"geracao_paju", 
 				"Adelaide Cristina Grilo Fornari",
@@ -6398,9 +6399,9 @@ public class ContratoCobrancaMB {
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
 			}
+			
+			this.nomeRecebedor = this.selectedRecebedor.getNome();
 		}
-		
-		this.nomeRecebedor = this.selectedRecebedor.getNome();
 
 		/*
 		 * if (this.objetoContratoCobranca.getRecebedor2().getCpf() != null) {
@@ -18600,6 +18601,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public void baixarParcelaParcialGalleria() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -18636,6 +18639,9 @@ public class ContratoCobrancaMB {
 		} 
 		
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+			"Baixa Parcela: Parcela Baixada com sucesso!", ""));
 	}
 	
 	public void baixarParcelaParcialCustosDiversos() {
@@ -30879,6 +30885,8 @@ public class ContratoCobrancaMB {
 	public void setPixResp(String pixResp) {
 		this.pixResp = pixResp;
 	}
-	
-	
+
+	public void setCallMetodoPorDialogBaixaParcial(boolean callMetodoPorDialogBaixaParcial) {
+		clearFieldsBaixar();
+	}
 }

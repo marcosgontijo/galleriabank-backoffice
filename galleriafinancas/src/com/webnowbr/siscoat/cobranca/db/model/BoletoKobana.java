@@ -24,6 +24,9 @@ public class BoletoKobana implements Serializable {
 	private String documentNumber;
 	private String description;
 	
+	private ContratoCobranca contrato;
+	private ContratoCobrancaDetalhes parcela;
+	
 	public long getId() {
 		return id;
 	}
@@ -101,5 +104,17 @@ public class BoletoKobana implements Serializable {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public ContratoCobranca getContrato() {
+		return contrato;
+	}
+	public void setContrato(ContratoCobranca contrato) {
+		this.contrato = contrato;
+	}
+	public ContratoCobrancaDetalhes getParcela() {
+		return parcela;
+	}
+	public void setParcela(ContratoCobrancaDetalhes parcela) {
+		this.parcela = parcela;
 	}
 }

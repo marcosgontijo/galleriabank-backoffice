@@ -35,6 +35,7 @@ import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 
@@ -125,6 +126,8 @@ public class KobanaMB {
 	private ContratoCobrancaDetalhes parcela;
 	private BigDecimal valorBoleto;
 	
+	private BoletoKobana selectedBoletoKobana;
+	
 	public String clearFieldsConsultarBoleto() {
 		
 		this.listBoletosKobana = new ArrayList<BoletoKobana>();
@@ -196,6 +199,9 @@ public class KobanaMB {
 			
 			JSONArray myResponse = new JSONArray(result);		
 			
+			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+			ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
+			
 			if (status == 200) {
 				this.listBoletosKobana = new ArrayList<BoletoKobana>();
 				
@@ -212,6 +218,10 @@ public class KobanaMB {
 					
 					boleto.setCreatedAt(processStringToDate(objetoBoleto.getString("created_at")));
 					
+					if (!objetoBoleto.isNull("document_number")) {
+						boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
+					}
+					
 					if (objetoBoleto.getString("status").equals("paid")) {
 						boleto.setStatus("Pago");
 					} else if (objetoBoleto.getString("status").equals("opened")) {
@@ -222,7 +232,23 @@ public class KobanaMB {
 						boleto.setStatus("Vencido");
 					} else {
 						boleto.setStatus(objetoBoleto.getString("status"));
-					}					
+					}		
+					
+					//if (boleto.getStatus().equals("Pago")) {						
+						if (objetoBoleto.has("custom_data")) {
+							if (!objetoBoleto.isNull("custom_data")) {
+							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
+
+							ContratoCobranca contrato = new ContratoCobranca();
+							contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
+							boleto.setContrato(contrato);
+							
+							ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
+							parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+							boleto.setParcela(parcela);
+							}
+						}
+					//}
 					
 					boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 					boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
@@ -231,9 +257,7 @@ public class KobanaMB {
 					boleto.setUrlBoleto(objetoBoleto.getString("url"));
 					boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
 					
-					if (!objetoBoleto.isNull("document_number")) {
-						boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
-					}
+					
 					
 					if (!objetoBoleto.isNull("description")) {
 						boleto.setDescription(objetoBoleto.getString("description"));
@@ -547,6 +571,12 @@ public class KobanaMB {
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
 		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		
+		JSONObject jsonCustomData = new JSONObject();
+		jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
+		jsonCustomData.put("idParcela", String.valueOf(parcela.getId()));
+		
+		jsonBoleto.put("custom_data", jsonCustomData);
 		
 		return jsonBoleto;
 	}
@@ -869,6 +899,12 @@ public class KobanaMB {
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
 		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		
+		JSONObject jsonCustomData = new JSONObject();
+		jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
+		jsonCustomData.put("idParcela", String.valueOf(parcela.getId()));
+		
+		jsonBoleto.put("custom_data", jsonCustomData);
+		
 		return jsonBoleto;
 	}	
 	
@@ -1046,5 +1082,13 @@ public class KobanaMB {
 
 	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
+	}
+
+	public BoletoKobana getSelectedBoletoKobana() {
+		return selectedBoletoKobana;
+	}
+
+	public void setSelectedBoletoKobana(BoletoKobana selectedBoletoKobana) {
+		this.selectedBoletoKobana = selectedBoletoKobana;
 	}
 }
