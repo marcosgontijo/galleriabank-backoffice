@@ -9011,7 +9011,10 @@ public class CcbMB {
 		} else {		
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
-		this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(carencia)));
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(carencia)) {
+			this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(carencia)));
+		}
 		simulador.setDataSimulacao(this.objetoCcb.getDataDeEmissao());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
@@ -9175,6 +9178,12 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
+		
+		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
+			this.carencia = CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
+					- CommonsUtil.integerValue(objetoCcb.getNumeroParcelasPagamento()));
+		}
+		
 		clearAnexoII();
 		mostrarDadosOcultos = false;
 		aviso = "";

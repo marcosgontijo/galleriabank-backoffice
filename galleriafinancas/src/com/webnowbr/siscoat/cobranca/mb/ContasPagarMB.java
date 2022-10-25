@@ -146,6 +146,9 @@ public class ContasPagarMB {
 	}
 	
 	public Collection<FileUploaded> listaArquivosPagar() {
+		if(CommonsUtil.semValor(this.selectedContratoLov)) {
+			return null;
+		}
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
