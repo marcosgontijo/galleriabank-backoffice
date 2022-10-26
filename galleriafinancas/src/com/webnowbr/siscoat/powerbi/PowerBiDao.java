@@ -495,7 +495,9 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 									for (ContratoCobrancaDetalhesParcial cBaixas : ccd
 											.getListContratoCobrancaDetalhesParcial()) {
 										ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-										somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+										if(!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
+											somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+										}										
 									}
 								}
 
