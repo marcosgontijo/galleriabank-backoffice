@@ -116,5 +116,13 @@
             <column name="pix"/>
         </property> 	
         
+        <list name="taxasComissao"
+			table="Responsavel_Comissao_Join" cascade="all" lazy="false">
+			<key column="idResponsavel" />
+			<list-index></list-index>
+			<many-to-many column="idComissao"
+				class="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" />
+		</list>
+        
     </class>
 </hibernate-mapping>

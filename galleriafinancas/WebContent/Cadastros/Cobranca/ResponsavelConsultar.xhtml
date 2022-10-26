@@ -18,6 +18,8 @@
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{Responsavel.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{responsavelMB.clearFields}"/>
+						<p:spacer width="10px"/>
+						<p:commandButton value="Atualizar Todos" action="#{responsavelMB.clearComissaoTodos}" oncomplete="PF('ComissaoResponsaveis').show();"/>
 			        </f:facet>
 			         <p:column style="text-align: center;" headerText="Código" filterBy="#{Responsavel.codigo}" filterMatchMode="contains" sortBy="#{Responsavel.codigo}">
 			            <h:outputText value="#{Responsavel.codigo}" />
@@ -63,6 +65,85 @@
 			<div align="center">	
 				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuCadastros.xhtml"/>
 			</div>	
-		</h:form>	
+		</h:form>
+		
+		<p:dialog header="Comissao p/ Todos Responsaveis" widgetVar="ComissaoResponsaveis"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromComissaoResponsaveis">
+				<div align="center">
+					<h:panelGrid columns="1" id="DadosComissaoNova" > 
+						<p:messages />
+						<h:panelGrid columns="2" >
+							<p:outputLabel value="Adicionar Comissão" styleClass="labelBold"/>
+							<p:selectBooleanButton id="botaoAdicionarComissao"
+								value="#{responsavelMB.addComissao}" 
+								onLabel="-" offLabel="+">
+								<p:ajax update="DadosComissaoNova" event="change" listener="#{responsavelMB.adicionarComissao(responsavelMB.taxasComissao)}"/>
+							</p:selectBooleanButton>
+							
+							<h:panelGroup>
+								<h:panelGrid columns="2" rendered="#{responsavelMB.addComissao}">
+									<p:outputLabel for="valorMinimo" value="valor Minimo: " styleClass="labelBold" />
+									<p:inputText id="valorMinimo" value="#{responsavelMB.selectedComissao.valorMinimo}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);"
+										converter="bigDecimalConverter" />
+									
+									<p:outputLabel for="valorMaximo" value="valor Maximo: " styleClass="labelBold" />
+									<p:inputText id="valorMaximo" value="#{responsavelMB.selectedComissao.valorMaximo}"
+										label="Contrato" onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);"
+										converter="bigDecimalConverter" />
+										
+									<p:outputLabel for="taxaRemuneracaoComissao" value="taxa Remuneracao: "
+										styleClass="labelBold" />
+									<p:inputText id="taxaRemuneracaoComissao"
+										value="#{responsavelMB.selectedComissao.taxaRemuneracao}"
+										onkeypress="return isNumberKey(event);"
+										onkeydown="FormataValor(this, 13, event, 2);" 
+										converter="bigDecimalConverter" />
+										
+									<p:commandButton id="botaoConcluir" value="Concluir" icon="ui-icon-check" ajax="true" 
+										action="#{responsavelMB.concluirComissao(responsavelMB.taxasComissao)}" style="TEXT-DECORATION: bold;" 
+										update="DadosComissaoNova" />
+								</h:panelGrid>
+							</h:panelGroup>	
+							
+						</h:panelGrid>
+						<p:dataView var="comissao"
+							value="#{responsavelMB.taxasComissao}" paginator="false"
+							layout="list"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="Min: " styleClass="labelBold" />
+								<p:outputLabel value="#{comissao.valorMinimo}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" 
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" - " styleClass="labelBold" />
+								<p:outputLabel value="Max: " styleClass="labelBold" />
+								<p:outputLabel value="#{comissao.valorMaximo}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" 
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" - " styleClass="labelBold" />									
+								<p:outputLabel value="Tx: " styleClass="labelBold" />
+								<p:outputLabel value="#{comissao.taxaRemuneracao}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" 
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" " />
+								<p:commandButton value="Editar" icon="ui-icon-pencil"
+									action="#{responsavelMB.editarComissao(comissao)}"
+									ajax="true" update=":fromComissaoResponsaveis:DadosComissaoNova" />
+								<p:commandButton icon="ui-icon-trash"
+									action="#{responsavelMB.removerComissao(comissao)}"
+									ajax="true" update=":fromComissaoResponsaveis:DadosComissaoNova" />
+							</p:dataViewListItem>
+						</p:dataView>
+						<p:commandButton value="Atualizar Todos" icon="ui-icon-check" ajax="true" 
+							action="#{responsavelMB.atualizarComissaoTodosResponsaveis}" style="TEXT-DECORATION: bold;" 
+							update="DadosComissaoNova" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>	
 	</ui:define>
 </ui:composition>	        
