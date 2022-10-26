@@ -146,6 +146,9 @@ public class ContasPagarMB {
 	}
 	
 	public Collection<FileUploaded> listaArquivosPagar() {
+		if(CommonsUtil.semValor(this.selectedContratoLov)) {
+			return null;
+		}
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
@@ -440,6 +443,9 @@ public class ContasPagarMB {
 	}
 	
 	public void populateSelectedContrato() {
+		if(CommonsUtil.semValor(this.getSelectedContratoLov())) {
+			return;
+		}
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.setSelectedContratoLov(cDao.findById(this.getSelectedContratoLov().getId()));
 		filesPagar = listaArquivosPagar();
