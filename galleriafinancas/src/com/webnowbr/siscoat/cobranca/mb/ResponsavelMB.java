@@ -1,21 +1,29 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.LazyDataModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
+import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -26,10 +34,12 @@ import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.mb.UsuarioMB;
+import com.webnowbr.siscoat.security.LoginBean;
 
 import org.primefaces.model.SortOrder;
 
 import java.util.Map;
+import java.util.TimeZone;
 
 /** ManagedBean. */
 @ManagedBean(name = "responsavelMB")
@@ -65,6 +75,12 @@ public class ResponsavelMB {
 	private String senha = "";
 	private Responsavel selectedResponsaveis[];
 	
+	private boolean addComissao = false;
+	private ComissaoResponsavel selectedComissao = new ComissaoResponsavel();
+	List<ComissaoResponsavel> taxasComissao;
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
 	
 	/**
 	 * Construtor
@@ -311,9 +327,11 @@ public class ResponsavelMB {
 	public void pesquisaResponsavelCaptador() {
 		this.tipoPesquisa = "Captador";
 	}
+	
 	public void pesquisaAssistenteComercial() {
 		this.tipoPesquisa = "Assistente";
 	}
+	
 	public final void populateSelectedResponsavel2() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();
@@ -414,6 +432,145 @@ public class ResponsavelMB {
 	public void selectedCNPJ() {
 		this.objetoResponsavel.setCnpjCC(this.objetoResponsavel.getCnpj());		
 	}
+	
+	public void clearComissaoTodos() {
+		this.selectedComissao = new ComissaoResponsavel();
+		this.taxasComissao = new ArrayList<ComissaoResponsavel>();
+		this.objetoResponsavel = null;
+		this.addComissao = false;
+		loadLovResponsavel();
+	}
+	
+	public void adicionarComissao(List<ComissaoResponsavel> lista) {
+		this.selectedComissao = new ComissaoResponsavel();
+		if(CommonsUtil.semValor(lista)) {
+			lista = new ArrayList<ComissaoResponsavel>();
+			this.selectedComissao.setValorMinimo(BigDecimal.ZERO);
+		} else {
+			int size = lista.size();
+			ComissaoResponsavel comissao = lista.get(size - 1);
+			this.selectedComissao.setValorMinimo(comissao.getValorMaximo().add(BigDecimal.valueOf(0.01)));
+		}
+	}
+	
+	public void concluirComissao(List<ComissaoResponsavel> lista) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String erro = "";
+		if(this.selectedComissao.getValorMinimo().compareTo(this.selectedComissao.getValorMaximo()) >= 1) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "valor minimo maior que maximo" , ""));
+			return;
+		}
+		if(CommonsUtil.semValor(lista)) {
+			//lista = new ArrayList<ComissaoResponsavel>();
+		} else {
+			for(ComissaoResponsavel comissao : lista) {
+				if(this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+						&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+					erro = erro + "Valor minimo Indisponivel";	
+				}
+				if(this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+						&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+					if(erro.length() > 1) {
+						erro = erro + " / ";	
+					}		
+					erro = erro + "Valor maximo Indisponivel";	
+				}
+			}
+			if(erro.length() > 1) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, erro , ""));
+				return;
+			} 		
+		}
+		if(!CommonsUtil.semValor(this.objetoResponsavel)) {
+			this.selectedComissao.setResponsavel(this.objetoResponsavel);
+		}
+		this.selectedComissao.setUserCriacao(getUsuarioLogado());
+		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
+		this.selectedComissao.setDataCriacao(gerarDataHoje());
+		
+		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
+		comDao.create(this.selectedComissao);
+		lista.add(this.selectedComissao);
+		this.setAddComissao(false);
+	}
+	
+	public void editarComissao(ComissaoResponsavel comissao) {
+		this.setAddComissao(true);
+		selectedComissao = new ComissaoResponsavel(comissao);
+		removerComissao(comissao);
+	}
+	
+	public void removerComissao(ComissaoResponsavel comissao) {
+		comissao.setUserRemocao(getUsuarioLogado());
+		comissao.setLoginRemocao(getNomeUsuarioLogado());
+		comissao.setDataRemocao(gerarDataHoje());
+		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
+		comDao.merge(comissao);
+		this.objetoResponsavel.getTaxasComissao().remove(comissao);
+	}
+	
+	public void atualizarComissaoTodosResponsaveis() {
+		ResponsavelDao rDao = new ResponsavelDao();
+		for(Responsavel r : this.listResponsaveis) {
+			this.objetoResponsavel = r;
+			if(!CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+				while(this.objetoResponsavel.getTaxasComissao().size() > 0) {
+					removerComissao(this.objetoResponsavel.getTaxasComissao().get(0));
+				}
+				/*for(ComissaoResponsavel c : this.objetoResponsavel.getTaxasComissao()) {
+					removerComissao(c);
+				}*/
+			}
+			for(ComissaoResponsavel c : this.taxasComissao) {
+				this.selectedComissao = new ComissaoResponsavel(c);
+				concluirComissao(this.objetoResponsavel.getTaxasComissao());
+			}
+			rDao.merge(r);
+		}
+		this.objetoResponsavel = new Responsavel();
+		PrimeFaces current = PrimeFaces.current();
+		current.executeScript("PF('ComissaoResponsaveis').hide();");
+	}
+	
+	public User getUsuarioLogado() {
+		User usuario = new User();
+		if (loginBean != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
+			}
+		}
+
+		return usuario;
+	}
+	
+	public String getNomeUsuarioLogado() {
+		User usuario = getUsuarioLogado();
+
+		if (usuario.getLogin() != null) {
+			if (!usuario.getLogin().equals("")) {
+				return usuario.getLogin();
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
+
+
 	
 	/**
 	 * @return the lazyModel
@@ -625,8 +782,38 @@ public class ResponsavelMB {
 
 	public void setIdResponsavelAssistenteComercial(long idResponsavelAssistenteComercial) {
 		this.idResponsavelAssistenteComercial = idResponsavelAssistenteComercial;
+	}
+
+	
+	public boolean isAddComissao() {
+		return addComissao;
+	}
+
+	public void setAddComissao(boolean addComissao) {
+		this.addComissao = addComissao;
+	}
+
+	public ComissaoResponsavel getSelectedComissao() {
+		return selectedComissao;
+	}
+
+	public void setSelectedComissao(ComissaoResponsavel selectedComissao) {
+		this.selectedComissao = selectedComissao;
+	}
+
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
+	}
+
+	public List<ComissaoResponsavel> getTaxasComissao() {
+		return taxasComissao;
+	}
+
+	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
+		this.taxasComissao = taxasComissao;
 	}	
-	
-	
-	
 }
