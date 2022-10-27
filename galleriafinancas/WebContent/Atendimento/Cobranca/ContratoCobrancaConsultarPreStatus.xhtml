@@ -107,7 +107,7 @@
 			        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.responsavel.donoResponsavel.nome}" 
 			        	filterMatchMode="contains" sortBy="#{contratos.responsavel.donoResponsavel.nome}"
 			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}" >
-				    	<h:outputText value="#{contratos.responsavel.donoResponsavel.nome}" />
+				    	<h:outputText value="#{contratos.nomeGerente}" />
 				    </p:column>	
 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">

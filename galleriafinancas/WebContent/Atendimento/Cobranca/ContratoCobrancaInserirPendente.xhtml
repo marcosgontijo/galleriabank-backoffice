@@ -912,7 +912,7 @@
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
-								<p:outputLabel styleClass="labelBold">Contrtato Conferido </p:outputLabel>
+								<p:outputLabel styleClass="labelBold">Contrato Conferido </p:outputLabel>
 								<p:spacer height="50"></p:spacer>
 								<shiro:hasAnyRoles name="PRECOBRANCA">
 									<p:selectBooleanButton id="contratoConferidoView"
@@ -2113,6 +2113,12 @@
 							<p:inputText id="Conta"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.conta}"
 								styleClass="labelBold" label="Conta" onblur=""
+								style="width:100px; margin-left:67px;" />
+								
+							<p:outputLabel for="pixPagador" value="Pix: " styleClass="labelBold" />
+							<p:inputText id="pixPagador"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.pix}"
+								styleClass="labelBold" label="pix"
 								style="width:100px; margin-left:67px;" />
 
 						</h:panelGrid>

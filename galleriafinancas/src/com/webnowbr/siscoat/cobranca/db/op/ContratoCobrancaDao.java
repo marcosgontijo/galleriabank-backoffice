@@ -5923,11 +5923,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
-			"c.valorAprovadoComite, c.contratoConferido " +
+			"c.valorAprovadoComite, c.contratoConferido" +
+			" , gerente.nome nomeGerente " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
-			"inner join cobranca.imovelcobranca im on c.imovel = im.id ";
+			"inner join cobranca.imovelcobranca im on c.imovel = im.id " +
+			"left join cobranca.responsavel gerente on gerente.id = res.donoResponsavel ";
 	
 	private static final String QUERY_CONTRATOS_CRM_COMITE = "select * " +
 			" from cobranca.analisecomite ";
@@ -6166,6 +6168,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNumeroContrato(rs.getString(2));
 						contratoCobranca.setDataContrato(rs.getTimestamp(3));
 						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setNomeGerente(rs.getString("nomeGerente")); // utilizado nome da variavel na query para não mudar a posicao dos elementos
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
 						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
 						contratoCobranca.setStatusLead(rs.getString(7));
@@ -6205,6 +6208,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
 						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(41));
 						contratoCobranca.setContratoConferido(rs.getBoolean(42));
+
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						//contratoCobranca = findById(rs.getLong(1));
 						

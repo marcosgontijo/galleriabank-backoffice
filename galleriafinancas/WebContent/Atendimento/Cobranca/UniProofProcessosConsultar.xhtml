@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtUniProof" var="processos" value="#{uniproofMB.processos}" paginator="true" rows="40" 
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="50,100,150" selection="" emptyMessage="" sortBy="#{processos.updatedAt}" sortOrder="descending"
+                 rowsPerPageTemplate="40,50,100,150" selection="" emptyMessage="" sortBy="#{processos.updatedAt}" sortOrder="descending"
                  reflow="true"> 
                  	<p:column style="text-align: center;" headerText="Processo" filterBy="#{processos.lotName}" filterMatchMode="contains" sortBy="#{processos.lotName}">
 			            <h:outputText value="#{processos.lotName}" />

@@ -100,7 +100,7 @@ public class PagadorRecebedor implements Serializable {
 	private String nomeCC;
 	private String cpfCC;
 	private String cnpjCC;
-	private String pix;//
+	private String pix;
 	
 	private String idIugu;
 	

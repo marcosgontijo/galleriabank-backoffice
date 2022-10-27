@@ -120,6 +120,7 @@ public class ContratoCobranca implements Serializable {
 	private String nomePagador;
 	private String nomeCidadeImovel;
 	private String nomeResponsavel;
+	private String nomeGerente;
 
 	private BigDecimal txJurosParcelas;
 	
@@ -4403,6 +4404,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setNomeResponsavel(String nomeResponsavel) {
 		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public String getNomeGerente() {
+		return nomeGerente;
+	}
+
+	public void setNomeGerente(String nomeGerente) {
+		this.nomeGerente = nomeGerente;
 	}
 
 	public String getIuguLaudoPaju() {

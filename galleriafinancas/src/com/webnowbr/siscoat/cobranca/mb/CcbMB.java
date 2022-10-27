@@ -1718,7 +1718,7 @@ public class CcbMB {
 			fazParagrafoSimples(document, paragraph, run, "1.  Partes:", true);
 
 			geraParagrafoComposto(document, paragraph, run, run2,
-					"I – CREDOR: BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A.",
+					"I – CREDOR: BMP SOCIEDADE DE CRÉDITO DIRETO S.A.",
 					", instituição financeira, inscrita no CNPJ/MF sob nº 34.337.707/0001-00,"
 						+ " com sede na Av. Paulista, 1765, 1º Andar, CEP 01311-200, São Paulo, SP,"
 						+ " neste ato, representada na forma do seu Estatuto Social; ",
@@ -2912,7 +2912,7 @@ public class CcbMB {
 			run.setFontSize(12);
 			run.setText("(Página de assinaturas da Cédula de Crédito "
 					+ "Bancário nº " + this.objetoCcb.getNumeroCcb() + ", emitida por "+ this.objetoCcb.getNomeEmitente() +", CPF/MF nº "+ this.objetoCcb.getCpfEmitente() +", em favor de "
-					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
+					+ "BMP SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
 					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
 			run.setItalic(true);
@@ -2941,7 +2941,7 @@ public class CcbMB {
 
 			run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
 			run2.setFontSize(12);
-			run2.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+			run2.setText("BMP SOCIEDADE DE CRÉDITO DIRETO S.A");
 			run2.setBold(true);
 			run2.addBreak();
 
@@ -3180,7 +3180,10 @@ public class CcbMB {
 					FacesContext.getCurrentInstance());
 			
 		
-
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -3318,7 +3321,7 @@ public class CcbMB {
 			run.setFontSize(12);
 			run.setText(iParticipante + ")");
 			run.addTab();
-			run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., ");
+			run.setText("BMP SOCIEDADE DE CRÉDITO DIRETO S.A., ");
 			run.setBold(true);
 			
 			run2 = paragraph.createRun();
@@ -4604,7 +4607,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.addCarriageReturn();
 			run.setFontSize(12);
-			run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A. ");
+			run.setText("BMP SOCIEDADE DE CRÉDITO DIRETO S.A. ");
 			run.setBold(true);
 			run.addCarriageReturn();
 			
@@ -5317,7 +5320,7 @@ public class CcbMB {
 			run.setFontSize(12);
 			run.setText("(Página de assinaturas do INSTRUMENTO PARTICULAR DE ALIENAÇÃO FIDUCIÁRIA DE BEM(NS) IMÓVEL(EIS) EM GARANTIA E OUTRAS AVENÇAS "
 					+ "nº " + this.objetoCcb.getNumeroCcb() + ", emitida por "+ this.objetoCcb.getNomeEmitente() +", CPF/MF nº "+ this.objetoCcb.getCpfEmitente() +", em favor de "
-					+ "BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
+					+ "BMP SOCIEDADE DE CRÉDITO DIRETO S.A., CNPJ/ MF sob nº 34.337.707/0001-00,"
 					+ " em "+ CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy" )+".)");
 			run.setBold(false);
 			run.setItalic(true);
@@ -5346,7 +5349,7 @@ public class CcbMB {
 
 			run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
 			run2.setFontSize(12);
-			run2.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+			run2.setText("BMP SOCIEDADE DE CRÉDITO DIRETO S.A");
 			run2.setBold(true);
 			run2.addBreak();
 
@@ -5564,7 +5567,10 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
-
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -5722,7 +5728,7 @@ public class CcbMB {
 				run = paragraph.createRun();
 				run.setText("Pela presente, levamos ao seu conhecimento que, nesta data,"
 						+ " o GALLERIA FINANÇAS SECURITIZADORA S.A., inscrito no CNPJ/MF "
-						+ "sob nº 34.425.347/0001-06, adquiriu da BMP MONEY PLUS SOCIEDADE "
+						+ "sob nº 34.425.347/0001-06, adquiriu da BMP SOCIEDADE "
 						+ "DE CRÉDITO DIRETO S.A. os direitos de crédito, decorrentes da(s) "
 						+ "Cédula(s) de Crédito Imobiliário (“CCI”) em referência, celebrado por"
 						+ " V. Sa(s), dos vencimentos a partir de ");
@@ -5795,7 +5801,7 @@ public class CcbMB {
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
 				run.setText("Qualquer alteração dos procedimentos acima descritos dependerá"
-						+ " de prévia e expressa autorização do BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A. ");
+						+ " de prévia e expressa autorização do BMP SOCIEDADE DE CRÉDITO DIRETO S.A. ");
 				run.setFontSize(10);
 				run.setBold(false);
 				run.addCarriageReturn();
@@ -5826,7 +5832,7 @@ public class CcbMB {
 				paragraph.setAlignment(ParagraphAlignment.BOTH);
 				paragraph.setSpacingBefore(0);
 				paragraph.setSpacingAfter(0);
-				run.setText("BMP MONEY PLUS SOCIEDADE DE CRÉDITO DIRETO S.A");
+				run.setText("BMP SOCIEDADE DE CRÉDITO DIRETO S.A");
 				run.setFontSize(11);
 				run.setBold(true);
 				
@@ -5911,7 +5917,10 @@ public class CcbMB {
 				document.close();
 				final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 						FacesContext.getCurrentInstance());
-
+				String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+				if(nomeSemvirgula.contains(",")) {
+					nomeSemvirgula = nomeSemvirgula.replace(",", "");
+			    }
 				gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 				gerador.close();
@@ -5978,7 +5987,7 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(0);
 			run = paragraph.createRun();
-			run.setText("BMP Money Plus Sociedade de Crédito Direto S.A.");
+			run.setText("BMP Sociedade de Crédito Direto S.A.");
 			run.setFontSize(11);
 			run.setBold(true);
 			run.addCarriageReturn();
@@ -6159,7 +6168,10 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
-
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - Carta Split %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -6273,8 +6285,8 @@ public class CcbMB {
 			run.setText("por meio do crédito oriundo da CCI. O montante total necessário para o pagamento"
 					+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
 					+ " da Galleria Correspondente Bancário Eireli, CNPJ 34.787.885/0001-32, Banco do Brasil"
-					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP Money "
-					+ "Plus, será a responsável por efetuar todos os pagamentos devidamente especificados na"
+					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP,"
+					+ " será a responsável por efetuar todos os pagamentos devidamente especificados na"
 					+ " tabela abaixo:");
 			run.setFontSize(11);
 			run.setBold(false);	
@@ -6891,7 +6903,10 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
-
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - AnexoII %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -7055,6 +7070,10 @@ public class CcbMB {
 			document.close();
 			
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - AnexoII %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -7817,7 +7836,11 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-			gerador.open(String.format(this.objetoCcb.getNomeEmitente() +  " - CCI - " + this.objetoCcb.getNumeroCcb() +"%s.docx", ""));
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
+			gerador.open(String.format(nomeSemvirgula +  " - CCI - " + this.objetoCcb.getNumeroCcb() +"%s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -8348,6 +8371,10 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - CCI %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -8457,6 +8484,10 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -8603,6 +8634,10 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -8662,6 +8697,10 @@ public class CcbMB {
 			document.write(out);
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
 			gerador.open(String.format("Galleria Bank - Endossos Em Preto %s.docx", ""));
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
@@ -9011,7 +9050,10 @@ public class CcbMB {
 		} else {		
 			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
-		this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(carencia)));
+		
+		if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(carencia)) {
+			this.objetoCcb.setNumeroParcelasPagamento(CommonsUtil.stringValue(Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(carencia)));
+		}
 		simulador.setDataSimulacao(this.objetoCcb.getDataDeEmissao());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
@@ -9175,6 +9217,12 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
+		
+		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
+			this.carencia = CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
+					- CommonsUtil.integerValue(objetoCcb.getNumeroParcelasPagamento()));
+		}
+		
 		clearAnexoII();
 		mostrarDadosOcultos = false;
 		aviso = "";

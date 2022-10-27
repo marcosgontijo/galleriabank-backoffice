@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" table="COMISSAORESPONSAVEL">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>		
+		<property name="valorMinimo" type="big_decimal">
+			<column name="valorMinimo" />
+		</property>
+		<property name="valorMaximo" type="big_decimal">
+			<column name="valorMaximo" />
+		</property>
+		<property name="taxaRemuneracao" type="big_decimal">
+			<column name="taxaRemuneracao" />
+		</property>	
+		<property name="dataCriacao" type="java.util.Date">
+			<column name="dataCriacao" />
+		</property>
+		
+		<property name="loginCriacao" type="java.lang.String" >
+			<column name="loginCriacao" />
+		</property>
+		
+		<many-to-one name="userCriacao"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="userCriacao" />
+		</many-to-one>   
+					
+		<property name="dataRemocao" type="java.util.Date">
+			<column name="dataRemocao" />
+		</property>
+		
+		<property name="loginRemocao" type="java.lang.String" >
+			<column name="loginRemocao" />
+		</property>	
+		
+		<many-to-one name="userRemocao"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="userRemocao" />
+		</many-to-one> 	
+			
+		<many-to-one name="responsavel"
+			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
+			lazy="false">
+			<column name="responsavel" />
+		</many-to-one>   
+
+	</class>
+</hibernate-mapping>

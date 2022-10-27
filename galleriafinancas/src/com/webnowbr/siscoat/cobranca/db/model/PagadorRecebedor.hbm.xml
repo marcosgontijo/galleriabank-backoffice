@@ -580,5 +580,9 @@
 			<column name="contratoSocialAtualizadoCheckList" not-null="true" default="false"/>
 		</property>	 
 		
+		<property name="pix" type="java.lang.String">
+			<column name="pix" />
+		</property>	  
+		
     </class>
 </hibernate-mapping>

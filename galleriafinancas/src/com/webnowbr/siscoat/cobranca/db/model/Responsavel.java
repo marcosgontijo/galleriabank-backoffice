@@ -53,6 +53,8 @@ public class Responsavel implements Serializable {
 	private String cep;
 	private Responsavel donoResponsavel;
 	
+	List<ComissaoResponsavel> taxasComissao;
+	
 	private BigDecimal taxaRemuneracao;
 	
 	private String whatsAppNumero;
@@ -466,5 +468,11 @@ public class Responsavel implements Serializable {
 		this.pix = pix;
 	}
 
-	
+	public List<ComissaoResponsavel> getTaxasComissao() {
+		return taxasComissao;
+	}
+
+	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
+		this.taxasComissao = taxasComissao;
+	}
 }

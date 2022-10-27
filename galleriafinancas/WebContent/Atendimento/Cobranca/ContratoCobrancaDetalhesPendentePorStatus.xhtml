@@ -1086,6 +1086,28 @@
 					</p:panel>
 				</h:panelGroup>
 
+				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, COMITECONSULTAR">
+					<h:panelGroup id="CheckListInformacoesAdicionais">
+						<p:panel header="Check-List - Informações Adicionais"
+							style="margin-bottom:10px;" id="DataVistoriaPanel"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">						
+							<h:panelGrid columns="2">												
+								<p:outputLabel for="dataVistoria"
+									value="Data Vistoria Imóvel: " styleClass="labelBold" />		
+								<p:outputLabel id="dataVistoria" value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" >			            	
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+								</p:outputLabel>								
+							
+								<p:outputLabel for="nomeVistoriador"
+									value="Nome Vistoriador: " styleClass="labelBold" />
+								<p:outputLabel id="nomeVistoriador"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
+									style="width:150px;"/>					
+							</h:panelGrid>				
+						</p:panel>
+					</h:panelGroup>
+				</shiro:hasAnyRoles>
+
 				<p:panel id="Pessoas" header="Responsável"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
@@ -1331,6 +1353,11 @@
 							<p:outputLabel id="Conta"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.conta}"
 								styleClass="labelBold" label="Conta"
+								style="width:100px; margin-left:67px;" />
+							
+							<p:outputLabel for="pix" value="Pix: " styleClass="labelBold" />
+							<p:outputLabel id="pix" value="#{contratoCobrancaMB.objetoPagadorRecebedor.pix}"
+								styleClass="labelBold" label="pix"
 								style="width:100px; margin-left:67px;" />
 
 						</h:panelGrid>

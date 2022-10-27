@@ -919,11 +919,11 @@
 									style="width:400px;" />	
 								
 								<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
-								<p:autoComplete id="Banco" value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
-									completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
+								<p:autoComplete id="Banco" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
+									completeMethod="#{pagadorRecebedorMB.objetoPagadorRecebedor.completeBancos}"
 									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
 									forceSelection="true" styleClass="labelBold" label="Conta" 
-									style="width:100px; margin-left:67px;"
+									style="width:100px; "
 									scrollHeight="250" />
 								
 								<p:outputLabel for="Agencia" value="Agência: "
@@ -938,6 +938,12 @@
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
 									styleClass="labelBold" label="Conta"
 									onblur="" style="width:100px;" />
+									
+								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold" />
+								<p:inputText id="pix"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
+									styleClass="labelBold" label="pix"
+									style="width:100px;" />
 							</h:panelGrid>
 						</div>
 						<div class="ui-g-12 ui-md-6 ui-lg-6">
