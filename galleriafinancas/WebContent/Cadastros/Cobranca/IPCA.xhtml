@@ -37,7 +37,7 @@
  				<p:dataTable id="dtIPCA" var="ipca" value="#{ipcaMB.listIPCA}" paginator="true" rows="20" lazy="true"
 	   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
 	   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-	                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{ipca.data}" sortOrder="desc">	        
+	                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{ipca.data}" sortOrder="desc">	        
 			        <p:column style="text-align: center;" headerText="Data" sortBy="#{ipca.data}" sortOrder="desc">
 			            <h:outputText value="#{ipca.data}" >			            	
 			            	<f:convertDateTime locale="pt_BR"  />

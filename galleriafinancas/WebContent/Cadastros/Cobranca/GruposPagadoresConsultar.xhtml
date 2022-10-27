@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtGruposFavorecidos" var="GruposFavorecidos" value="#{gruposPagadoresMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{GruposFavorecidos.nomeGrupo}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{GruposFavorecidos.nomeGrupo}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{gruposPagadoresMB.clearFields}"/>
 			        </f:facet>			        

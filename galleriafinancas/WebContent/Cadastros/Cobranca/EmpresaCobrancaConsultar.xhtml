@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtEmpresaCobranca" var="EmpresaCobranca" value="#{empresaCobrancaMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="40,60,80" selection="" emptyMessage="" sortBy="#{EmpresaCobranca.nome}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{EmpresaCobranca.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{empresaCobrancaMB.clearFields}"/>
 			        </f:facet>			        
