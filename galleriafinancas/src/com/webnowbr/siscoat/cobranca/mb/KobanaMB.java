@@ -126,6 +126,8 @@ public class KobanaMB {
 	private ContratoCobrancaDetalhes parcela;
 	private BigDecimal valorBoleto;
 	
+	private PagadorRecebedor cedente;
+	
 	private BoletoKobana selectedBoletoKobana;
 	
 	public String clearFieldsConsultarBoleto() {
@@ -138,6 +140,62 @@ public class KobanaMB {
 		this.filtroData = "Todos";
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultaBoletosKobana.xhtml";
+	}
+	
+	public void cancelarBoleto() {
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+			
+			String urlKobana = "";
+			
+			if (this.selectedBoletoKobana != null) {
+				urlKobana = "https://api.kobana.com.br/v1/bank_billets/" + this.selectedBoletoKobana.getId() + "/cancel";	
+			}
+
+			URL myURL = new URL(urlKobana);			
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("PUT");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-type", "Application/JSON");
+			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+	
+			int status = myURLConnection.getResponseCode();
+			
+			if (status == 204) {
+				
+				// limpa url kobana
+				ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
+				this.parcela.setUrlBoletoKonana(null);
+				parcelaDao.merge(this.parcela);
+				
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"[Kobana - Geração Boleto] Boleto cancelado com sucesso!", ""));
+			} else {
+				if (status == 403) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Este boleto não pode ser cancelado!", ""));
+				}
+				if (status == 404) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Boleto não encontrado.", ""));
+				}	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Consulta Boletos] Erro não conhecido!", ""));
+			}
+						
+			myURLConnection.disconnect();
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void consultarBoletosKobana() {
@@ -234,7 +292,7 @@ public class KobanaMB {
 						boleto.setStatus(objetoBoleto.getString("status"));
 					}		
 					
-					//if (boleto.getStatus().equals("Pago")) {						
+					if (boleto.getStatus().equals("Pago")) {						
 						if (objetoBoleto.has("custom_data")) {
 							if (!objetoBoleto.isNull("custom_data")) {
 							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
@@ -248,7 +306,7 @@ public class KobanaMB {
 							boleto.setParcela(parcela);
 							}
 						}
-					//}
+					}
 					
 					boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 					boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
@@ -319,6 +377,89 @@ public class KobanaMB {
     "created_at": "2022-06-06T12:46:35-03:00",
     
 	 */
+	/**
+	 * TODO
+	 * @param valorBoleto
+	 */
+	public void gerarBoletoSimplesTela(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, Date vencimento,
+			BigDecimal valor) {
+		
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
+
+			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, vencimento, valor);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+			myURLConnection.setRequestProperty("User-Agent", "webnowbr@gmail.com");
+		     
+			myURLConnection.setDoOutput(true);
+			//myURLConnection.getOutputStream().write(postDataBytes);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = jsonObj.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);			
+			}
+	
+			JSONObject myResponse = null;
+			int status = myURLConnection.getResponseCode();
+			
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());			
+			
+			String urlBoleto = "";
+			
+			if (status == 201) {
+				if (myResponse.has("url")) {					
+					if (!myResponse.isNull("url")) {
+						urlBoleto = myResponse.getString("url");
+					}
+				}
+			
+				ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
+				parcela.setUrlBoletoKonana(urlBoleto);
+				parcelaDao.merge(parcela);
+				
+				TakeBlipMB tkblpMb = new TakeBlipMB();
+				PagadorRecebedor pagador;
+				pagador = contrato.getPagador();
+		
+				tkblpMb.sendWhatsAppMessagePagadorBoleto(pagador, "envio_boleto_cobranca", urlBoleto);
+			} else {
+				if (status == 401) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de autenticação. Token inválido!", ""));
+				}
+				if (status == 403) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
+				}
+				if (status == 422) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Boleto inválido!", ""));
+				}			
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Geração Boleto] Erro não conhecido!", ""));
+			}
+						
+			myURLConnection.disconnect();
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
 	
 	public void gerarBoletoSimplesCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, BigDecimal valorBoleto) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -343,7 +484,7 @@ public class KobanaMB {
 
 			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
 
-			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, valoBoleto);
+			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, null, valoBoleto);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
@@ -414,7 +555,7 @@ public class KobanaMB {
 		}
 	}
 	
-	public JSONObject getJSONBoletoKobanaCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, BigDecimal valorBoleto) {
+	public JSONObject getJSONBoletoKobanaCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, Date vencimento, BigDecimal valorBoleto) {
 		PagadorRecebedor cliente = contrato.getPagador();
 		
 		// Quantidade de dias após o vencimento que a mora começará a incidir. 
@@ -469,7 +610,11 @@ public class KobanaMB {
 		/*
 		Data vencimento		
 		 */
-		jsonBoleto.put("expire_at", getDataFormatada(parcela.getDataVencimento()));
+		if (vencimento != null) {
+			jsonBoleto.put("expire_at", getDataFormatada(vencimento));
+		} else {
+			jsonBoleto.put("expire_at", getDataFormatada(parcela.getDataVencimento()));
+		}
 		/*
 		DADOS CLIENTE
 		 */	     	    
@@ -1090,5 +1235,13 @@ public class KobanaMB {
 
 	public void setSelectedBoletoKobana(BoletoKobana selectedBoletoKobana) {
 		this.selectedBoletoKobana = selectedBoletoKobana;
+	}
+
+	public PagadorRecebedor getCedente() {
+		return cedente;
+	}
+
+	public void setCedente(PagadorRecebedor cedente) {
+		this.cedente = cedente;
 	}
 }

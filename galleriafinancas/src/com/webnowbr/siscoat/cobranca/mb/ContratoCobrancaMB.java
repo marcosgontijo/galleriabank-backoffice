@@ -211,6 +211,8 @@ public class ContratoCobrancaMB {
 	
 	private boolean callMetodoPorDialogBaixaParcial = false;
 	
+	private boolean baixaCustasDiversas = false;
+	
 	private long idAnalistaGeracaoPAJU = 0;
 	
 	/************************************************************
@@ -658,6 +660,7 @@ public class ContratoCobrancaMB {
 	private boolean splitBoletoIugu;
 
 	private List<PagadorRecebedor> cedentesIugu;
+	private PagadorRecebedor cedente;
 	private long cedenteSelecionado;
 
 	private ContratoCobrancaDetalhes contratoCobrancaDetalhes;
@@ -667,6 +670,8 @@ public class ContratoCobrancaMB {
 	private ContratoCobrancaDetalhesObservacoes contratoCobrancaDetalhesObservacoes;
 
 	public IuguMB iuguMb = new IuguMB();
+	
+	public KobanaMB kobanaMB = new KobanaMB();
 
 	private List<FilaInvestidores> listFilaInvestidores;
 	private FilaInvestidores selectedInvestidor;
@@ -984,6 +989,15 @@ public class ContratoCobrancaMB {
 	public void geraBoletoDaParcelaGalleria(ContratoCobranca contrato, String parcela, long idParcela, Date vencimento,
 			BigDecimal valor, boolean splitBoletoIugu, long cedente) {
 		this.iuguMb.geraBoletoDaParcela(contrato, parcela, idParcela, vencimento, valor, splitBoletoIugu, cedente);
+
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
+	}
+
+	public void geraBoletoDaParcelaKobana(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, Date vencimento,
+			BigDecimal valor) {
+
+		this.kobanaMB.gerarBoletoSimplesTela(contrato, parcela, vencimento, valor);
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
@@ -6236,6 +6250,8 @@ public class ContratoCobrancaMB {
 
 		this.dataHoje = gerarDataHoje();
 
+		this.baixaCustasDiversas = false;
+		
 		loadListRecebedores();
 
 		this.contratoGerado = true;
@@ -18600,6 +18616,11 @@ public class ContratoCobrancaMB {
 		return c.getTime();
 	}
 
+	public void clearBaixaGalleriaCustas() {
+		this.vlrRecebido = null;
+		this.observacao = "Custas";
+	}
+	
 	public void baixarParcelaParcialGalleria() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -18622,7 +18643,7 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
 		
-		if (this.vlrRecebido.intValue() != 0) {
+		if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0) {
 			
 			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
 			contratoCobrancaDetalhesParcial.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
@@ -18666,7 +18687,25 @@ public class ContratoCobrancaMB {
 		
 		if (this.vlrRecebido.intValue() != 0) {
 			
+			// pré-seleciona o recebedor -- default galleria SA
+			PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+			this.selectedRecebedor = new PagadorRecebedor();
+			if (this.objetoContratoCobranca.getEmpresa() != null) {
+				if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
+					this.selectedRecebedor = prDao.findById((long) 6625);
+				} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+					this.selectedRecebedor = prDao.findById((long) 15765);
+				} else {
+					this.selectedRecebedor = prDao.findById((long) 803);
+				}
+			} else {
+				this.selectedRecebedor = prDao.findById((long) 803);
+			}
+			
+			contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+			
 			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+			contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimento());
 			contratoCobrancaDetalhesParcial.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 			contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
 			contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
@@ -30888,5 +30927,21 @@ public class ContratoCobrancaMB {
 
 	public void setCallMetodoPorDialogBaixaParcial(boolean callMetodoPorDialogBaixaParcial) {
 		clearFieldsBaixar();
+	}
+
+	public boolean isBaixaCustasDiversas() {
+		return baixaCustasDiversas;
+	}
+
+	public void setBaixaCustasDiversas(boolean baixaCustasDiversas) {
+		this.baixaCustasDiversas = baixaCustasDiversas;
+	}
+
+	public PagadorRecebedor getCedente() {
+		return cedente;
+	}
+
+	public void setCedente(PagadorRecebedor cedente) {
+		this.cedente = cedente;
 	}
 }

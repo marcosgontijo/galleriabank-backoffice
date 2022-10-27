@@ -2017,8 +2017,9 @@
 							styleClass="colunaResponsivaRelFinanceiro">
 							<shiro:hasAnyRoles name="ROOT">
 								<p:commandButton onclick="PF('baixaParcialDialog').show();"
+									value="Baixar Parcela"
 									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
-									update=":formBaixaParcial" style="height: 25px;width: 30px;"
+									update=":formBaixaParcial" 
 									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
@@ -2032,8 +2033,8 @@
 										value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
 								</p:commandButton>
 								<p:commandButton onclick="PF('baixaParcialGalleriaDialog').show();"
-									value="Baixar Galleria / Custos"
-									title="Baixar Parcela / Custos" icon="ui-icon-transferthick-e-w"
+									value="Baixar Galleria|Custas"
+									title="Baixar Galleria|Custas" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcialGalleria" 
 									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
@@ -2049,6 +2050,15 @@
 								</p:commandButton>
 								<p:spacer width="10" />
 							</shiro:hasAnyRoles>
+							<p:commandButton onclick="PF('bpGerarBoletoKobanaDialog').show();"
+								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
+								update=":formBpGerarBoletoKobana"
+								rendered="#{!parcelas.parcelaPaga}">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+									value="#{parcelas}" />
+							</p:commandButton>
+							<p:spacer width="10" height="10" />
 							<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU">
 								<p:commandButton onclick="PF('bpHistoricoDialog').show();"
 									title="Estorno e Histórico de Baixas" icon="ui-icon-search"
@@ -2059,18 +2069,6 @@
 								</p:commandButton>
 								<p:spacer width="10" height="10" />
 							</shiro:hasAnyRoles>
-							<p:commandButton onclick="PF('bpGerarBoletoIUGUDialog').show();"
-								icon="ui-icon-video" title="Gerar Boleto IUGU"
-								update=":formBpGerarBoletoIUGU"
-								style="height: 25px;width: 30px;"
-								rendered="#{!parcelas.parcelaPaga}">
-								<f:setPropertyActionListener
-									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
-									value="#{parcelas}" />
-								<f:setPropertyActionListener
-									target="#{contratoCobrancaMB.splitBoletoIugu}" value="false" />
-							</p:commandButton>
-							<p:spacer width="10" height="10" />
 							<p:commandButton onclick="PF('observacoesDialog').show();"
 								title="Observação" icon="ui-icon-plus" update=":formObservacoes">
 								<f:setPropertyActionListener
@@ -2178,10 +2176,11 @@
 								converter="bigDecimalConverter">
 							</h:outputText>
 						</p:column>
-						<p:column style="text-align: center;width: 45px;"
-							headerText="Kobana" filterMatchMode="contains"
-							sortBy="#{parcelas.urlBoletoKonana}">
-							<h:outputText value="#{parcelas.urlBoletoKonana}" />
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Kobana">
+							<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
+								<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
+							</ui:fragment>
 						</p:column>
 					</p:dataTable>
 				</p:panel>
@@ -2384,6 +2383,7 @@
 						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
 						label="Número da Parcela:"
 						style="font-weight: bold; font-size: 18px;" />
+				
 					<p:outputLabel for="taxa" value="Método de Cálculo:" />
 					<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
 						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
@@ -2400,7 +2400,8 @@
 						<p:ajax event="dateSelect" update="ValoresAtualizados Pessoas"
 							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
 					</p:calendar>
-				</h:panelGrid>
+				</h:panelGrid>	
+				
 				<p:panel id="ValoresAtualizados" header="Valores Atualizados"
 					style="margin-top:20px;margin-bottom:20px;">
 					<h:panelGrid columns="3">
@@ -2512,7 +2513,7 @@
 			</h:form>
 		</p:dialog>
 		
-		<p:dialog header="Baixa Parcial Galleria" widgetVar="baixaParcialGalleriaDialog"
+		<p:dialog header="Baixa Parcial Galleria / Custas" widgetVar="baixaParcialGalleriaDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
 			height="650" width="500">
 			<h:form id="formBaixaParcialGalleria">
@@ -2529,25 +2530,63 @@
 						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
 						label="Número da Parcela:"
 						style="font-weight: bold; font-size: 18px;" />
-					<p:outputLabel for="taxaGalleria" value="Método de Cálculo:" />
-					<p:selectOneRadio id="taxaGalleria" value="#{contratoCobrancaMB.txZero}">
-						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
-						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
-						<p:ajax update="dataPagamentoGalleria valorAtGalleria" event="valueChange"
-							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
-					</p:selectOneRadio>
-					<p:outputLabel for="dataPagamentoGalleria" value="Data do Pagamento: "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataPagamentoGalleria"
-						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
-						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField">
-						<p:ajax event="dateSelect" update="ValoresAtualizadosGalleria"
-							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
-					</p:calendar>
-				</h:panelGrid>
+					<p:outputLabel for="tipoBaixa" value="Baixa:" styleClass="labelBold" style="margin-right: 59px;"/>
+					<p:selectOneRadio id="tipoBaixa" value="#{contratoCobrancaMB.baixaCustasDiversas}">					
+						<f:selectItem itemLabel="Parcela" itemValue="false" />
+						<f:selectItem itemLabel="Custas" itemValue="true" />
+						<p:ajax update=":formBaixaParcialGalleria ParcelaPagto CustasPagto ValoresAtualizadosGalleria" event="valueChange" listener="#{contratoCobrancaMB.clearBaixaGalleriaCustas}" />
+					</p:selectOneRadio>	
+				</h:panelGrid>	
+				
+				<p:panel id="CustasPagto" header="Dados Baixa Custas"
+					style="margin-top:20px;margin-bottom:20px;" rendered="#{contratoCobrancaMB.baixaCustasDiversas}">	
+					<h:panelGrid columns="3">
+						<p:outputLabel for="valorRecebidoGalleriaCustas" value="Valor Recebido: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorRecebidoGalleriaCustas"
+							value="#{contratoCobrancaMB.vlrRecebido}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel id="ConsultaObservacores" header="Observação"
+						style="margin-bottom:10px;margin-top:10px;" rendered="#{contratoCobrancaMB.baixaCustasDiversas}">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Observacao" value="Observação: " />
+						<p:inputTextarea rows="10" cols="50" id="Observacao"
+							value="#{contratoCobrancaMB.observacao}" label="Observação"
+							onblur="" style="width:300px;" />
+						<p:spacer width="10" />
+					</h:panelGrid>
+				</p:panel>
+			
+				<p:panel id="ParcelaPagto" header="Dados Baixa Parcela"
+					style="margin-top:20px;margin-bottom:20px;" rendered="#{!contratoCobrancaMB.baixaCustasDiversas}">		
+					<h:panelGrid columns="2">
+						<p:outputLabel for="taxaGalleria" value="Método de Cálculo:" />
+						<p:selectOneRadio id="taxaGalleria" value="#{contratoCobrancaMB.txZero}">
+							<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
+							<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
+							<p:ajax update="dataPagamentoGalleria valorAtGalleria" event="valueChange"
+								listener="#{contratoCobrancaMB.verificaTaxaZero}" />
+						</p:selectOneRadio>
+						<p:outputLabel for="dataPagamentoGalleria" value="Data do Pagamento: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="dataPagamentoGalleria"
+							value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
+							label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+							styleClass="dateTimeField">
+							<p:ajax event="dateSelect" update="ValoresAtualizadosGalleria"
+								listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
+						</p:calendar>
+					</h:panelGrid>
+				</p:panel>
 				<p:panel id="ValoresAtualizadosGalleria" header="Valores Atualizados Galleria"
-					style="margin-top:20px;margin-bottom:20px;">
+					style="margin-top:20px;margin-bottom:20px;" rendered="#{!contratoCobrancaMB.baixaCustasDiversas}">
 					<h:panelGrid columns="3">
 						<p:outputLabel for="saldoParcelaGalleria" value="Valor da Parcela:"
 							styleClass="labelBold" style="margin-right: 59px;" />
@@ -2582,7 +2621,11 @@
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaParcialGalleria}" ajax="false"
 							icon="ui-icon-transferthick-e-w" value="Baixar Galleria"
-							update=":form:DetalheParcelas" />
+							update=":form:DetalheParcelas"  rendered="#{!contratoCobrancaMB.baixaCustasDiversas}"/>
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelaParcialCustosDiversos}" ajax="false"
+							icon="ui-icon-transferthick-e-w" value="Baixar Custas"
+							update=":form:DetalheParcelas"  rendered="#{contratoCobrancaMB.baixaCustasDiversas}"/>
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
 					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
@@ -2630,10 +2673,10 @@
 				</p:panel>
 			</h:form>
 		</p:dialog>
-		<p:dialog header="Gerar Boleto IUGU"
-			widgetVar="bpGerarBoletoIUGUDialog" resizable="false"
+		<p:dialog header="Gerar Boleto Kobana"
+			widgetVar="bpGerarBoletoKobanaDialog" resizable="false"
 			style="FONT-SIZE: 10pt;" width="460">
-			<h:form id="formBpGerarBoletoIUGU">
+			<h:form id="formBpGerarBoletoKobana">
 				<div style="float: left; width: 75%;">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="numeroContrato" value="Número do Contrato:"
@@ -2658,7 +2701,7 @@
 							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
 							required="true" label="Data do Vencimento" size="100"
 							pattern="dd/MM/yyyy" styleClass="dateTimeField">
-							<p:ajax event="dateSelect" update="formBpGerarBoletoIUGU"
+							<p:ajax event="dateSelect" update="formBpGerarBoletoKobana"
 								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
 						</p:calendar>
 					</h:panelGrid>
@@ -2673,48 +2716,24 @@
 							onkeydown="FormataValor(this, 13, event, 2);" required="true"
 							converter="bigDecimalConverter" />
 					</h:panelGrid>
-					<h:panelGrid columns="2">
-						<p:outputLabel for="splitter" value="Deseja utilizar split:"
-							styleClass="labelBold" style="margin-right: 20px;" />
-						<p:selectBooleanButton id="splitter"
-							value="#{contratoCobrancaMB.splitBoletoIugu}" onLabel="Sim"
-							offLabel="Não" style="width:60px">
-							<p:ajax update="selectCedente" event="valueChange" />
-						</p:selectBooleanButton>
-						<p:outputLabel for="selectCedente" value="Cedente Boleto Iugu:"
-							styleClass="labelBold" style="margin-right: 20px;" />
-						<p:selectOneMenu id="selectCedente"
-							value="#{contratoCobrancaMB.cedenteSelecionado}" label="Cliente"
-							required="true" style="width: 300px;"
-							disabled="#{!contratoCobrancaMB.splitBoletoIugu}">
-							<f:selectItem itemLabel="Selecione" itemValue="" />
-							<f:selectItems value="#{contratoCobrancaMB.cedentesIugu}"
-								var="cedente" itemLabel="#{cedente.nome}"
-								itemValue="#{cedente.id}" />
-						</p:selectOneMenu>
-					</h:panelGrid>
 				</div>
 				<div style="float: right; width: 25%; text-align: right;">
 					<img src="#{resource['image/boleto.jpg']}" alt="" />
 				</div>
 				<div align="center"
 					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
-					<p:commandButton value="Gerar Boleto IUGU"
-						action="#{contratoCobrancaMB.geraBoletoDaParcelaGalleria(contratoCobrancaMB.objetoContratoCobranca,
-																	contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela,
-																	contratoCobrancaMB.bpContratoCobrancaDetalhes.id,
+					<p:commandButton value="Gerar Boleto Kobana"
+						action="#{contratoCobrancaMB.geraBoletoDaParcelaKobana(contratoCobrancaMB.objetoContratoCobranca,
+																	contratoCobrancaMB.bpContratoCobrancaDetalhes,
 																	contratoCobrancaMB.dataVencimentoBoleto,																	
-																	contratoCobrancaMB.valorBoleto,
-																	contratoCobrancaMB.splitBoletoIugu,
-																	contratoCobrancaMB.cedenteSelecionado
-																	)}"
+																	contratoCobrancaMB.valorBoleto)}"
 						update=":form:msgs :form:PanelRecibo :form:dtParcelas"
 						ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU">
 					</p:commandButton>
 					<p:spacer width="10" />
 					<p:commandButton value="Voltar"
 						icon="ui-icon-arrowreturnthick-1-w"
-						oncomplete="PF('bpGerarBoletoIUGUDialog').hide();" />
+						oncomplete="PF('bpGerarBoletoKobanaDialog').hide();" />
 				</div>
 			</h:form>
 		</p:dialog>

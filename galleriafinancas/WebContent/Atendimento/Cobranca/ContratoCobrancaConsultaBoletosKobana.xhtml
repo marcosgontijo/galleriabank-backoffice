@@ -10,7 +10,10 @@
 		<h:form id="form" style="margin-bottom:10px;">
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
-			<p:messages id="mensagens" showDetail="true" />			
+			<p:messages id="mensagens" showDetail="true" />		
+			<p:focus />
+			<p:messages />	
+			<p:growl id="msgs" showDetail="true" />
 			<p:panel id="ConsultaBoletosKobana" header="Consulta Boletos Kobana"
 				style="margin-bottom:10px;">
 				
@@ -61,6 +64,7 @@
 					action="#{kobanaMB.consultarBoletosKobana}"
 					image="ui-icon ui-icon-check"
 					update="mensagens ConsultaBoletosKobanaResultado"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
 					style="TEXT-DECORATION: bold; margin-top: 15px;" />
 			</p:panel>
 			<p:panel id="ConsultaBoletosKobanaResultado" header="Consulta Boletos Kobana - Resultados"
@@ -156,6 +160,25 @@
 							<h:outputLink value="#{boleto.urlBoleto}" target="_blank" styleClass="botaoBoletoKobana">#{boleto.urlBoleto}</h:outputLink>
 						</ui:fragment>
 					</p:column>
+					<p:column style="text-align: center;width: 130px;"
+						headerText="Cancelar Boleto" styleClass="colunaHiddenRelFinanceiro">
+						<p:commandButton 
+							title="Cancelar Boleto"
+							icon="ui-icon-trash"
+							action="#{kobanaMB.cancelarBoleto}"
+							update=":form:msgs"
+							style="height: 25px;width: 30px;">
+							<p:confirm header="Confirmação"
+								message="Deseja realmente cancelar este boleto?"
+								icon="ui-icon-alert" />	
+							<f:setPropertyActionListener
+								target="#{kobanaMB.selectedBoletoKobana}"
+								value="#{boleto}" />
+							<f:setPropertyActionListener
+								target="#{kobanaMB.parcela}"
+								value="#{boleto.parcela}" />
+						</p:commandButton>
+					</p:column>											
 				</p:dataTable>
 			</p:panel>
 		</h:form>
