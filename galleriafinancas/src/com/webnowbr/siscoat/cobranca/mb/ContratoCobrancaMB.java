@@ -7937,7 +7937,13 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();	
 
 		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Aguardando Análise")
-			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Em Análise")) {				
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Em Análise")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir PAJU")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Documentos Comite")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")
+			|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {			
 			this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
 			this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);
 			
