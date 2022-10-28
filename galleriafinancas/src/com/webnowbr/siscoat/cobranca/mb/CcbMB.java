@@ -1311,7 +1311,7 @@ public class CcbMB {
 		boolean registraPagador = false;
 		Long idPagador = (long) 0;
 
-		if (pagador.getCpfConjuge() != null) {
+		if (!CommonsUtil.semValor(pagador.getCpfConjuge())) {
 			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
 			if(validaCPF) {
 				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
@@ -1321,7 +1321,11 @@ public class CcbMB {
 					conjuge = new PagadorRecebedor();
 					registraPagador = true;
 				}
+			} else {
+				return;
 			}
+		} else {
+			return;
 		}
 		
 		conjuge.setEstadocivil(pagador.getEstadocivil());
