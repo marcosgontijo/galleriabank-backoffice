@@ -194,7 +194,7 @@ public class ContasPagarMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.selectedContratoLov.getNumeroContrato() + "/" + fileName;
+					+ this.selectedContratoLov.getNumeroContrato() + "//pagar/" + fileName;
 
 			/*
 			 * 'docx' =>
