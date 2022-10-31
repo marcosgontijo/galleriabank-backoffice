@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 
@@ -45,6 +47,7 @@ public class ContractService {
 	private PagadorRecebedor objetoPagador;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<PagadorRecebedorSocio> listSocios;
+	private PagadorRecebedorAdicionais pagadorRecebedorAdicionais;
 	
 	public static void main(String[] args) {
 		
@@ -279,15 +282,20 @@ public class ContractService {
 								if(pagadoresAdicionaisAPP.length() > 0) {
 								
 									for(int i = 0; i < pagadoresAdicionaisAPP.length(); i++) {
-										JSONObject pessoaApp = pagadoresAdicionaisAPP.getJSONObject(i);
-										if(pessoaApp.has("id")) {
-											PagadorRecebedorAdicionais pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-											PagadorRecebedor objetoPagadorAdicionais = new PagadorRecebedor();
-											objetoPagadorAdicionais = pagadorDao.findById(contratoAPPPagador.getLong("id"));
-											pagadorRecebedorAdicionais.setPessoa(objetoPagadorAdicionais);
+										long idPessoa = pagadoresAdicionaisAPP.getJSONObject(i).isNull("id") ? 0 : pagadoresAdicionaisAPP.getJSONObject(i).getLong("id");
+										JSONObject pessoaApp = pagadoresAdicionaisAPP.getJSONObject(i).getJSONObject("pessoa");
+										long pessoaId = pagadoresAdicionaisAPP.getJSONObject(i).getJSONObject("pessoa").getLong("id");
+										
+										if(idPessoa != 0) {
+											pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
+											PagadorRecebedor pessoa = pagadorDao.findById(idPessoa);
+											
+											pagadorRecebedorAdicionais.setId(idPessoa);
+											pagadorRecebedorAdicionais.setPessoa(pessoa);
 											pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
 											
-											pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoaApp.getString("nomeParticipanteCheckList"));
+											pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList")
+													? pessoaApp.getString("nomeParticipanteCheckList") : null);
 											pagadorRecebedorAdicionais.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
 											pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
 											pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
@@ -299,32 +307,20 @@ public class ContractService {
 											pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
 											pagadorRecebedorAdicionais.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
 											
+											listaPagadores = new HashSet<PagadorRecebedorAdicionais>();
 											listaPagadores.add(pagadorRecebedorAdicionais);
-											
-											// TODO Salvar pagadorRecebedorAdicionais DS 
+											this.objetoContratoCobranca.setListaPagadores(listaPagadores);
 											
 										}else {
-											PagadorRecebedor pessoa = new PagadorRecebedor();
-											PagadorRecebedorAdicionais pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-											pessoa.setCpf(pessoaApp.getString("cpfCnpj"));
-											pessoa.setSexo(pessoaApp.getString("sexo"));
-											pessoa.setNomeMae(pessoaApp.getString("nomeMae"));
-											pessoa.setNomeParticipanteCheckList(pessoaApp.getString("nomeParticipanteCheckList"));
-											pessoa.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-											pessoa.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-											pessoa.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-											pessoa.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-											pessoa.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-											pessoa.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-											pessoa.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-											pessoa.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-											pessoa.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-											pessoa.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
+											pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
+											PagadorRecebedor pessoa = pagadorDao.findById(pessoaId);
+											
 											pagadorRecebedorAdicionais.setPessoa(pessoa);
+											pagadorRecebedorAdicionais.setContratoCobranca(new ContratoCobranca());
+											pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
 											
-											pagadorRecebedorAdicionais.setContratoCobranca(objetoContratoCobranca);
-											
-											pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoaApp.getString("nomeParticipanteCheckList"));
+											pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList")
+													? pessoaApp.getString("nomeParticipanteCheckList") : null);
 											pagadorRecebedorAdicionais.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
 											pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
 											pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
@@ -336,9 +332,9 @@ public class ContractService {
 											pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
 											pagadorRecebedorAdicionais.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
 											
+											listaPagadores = new HashSet<PagadorRecebedorAdicionais>();
 											listaPagadores.add(pagadorRecebedorAdicionais);
-											
-											// TODO Salvar pagadorRecebedorAdicionais DS 
+											this.objetoContratoCobranca.setListaPagadores(listaPagadores);
 										}
 									}
 								}
@@ -375,6 +371,7 @@ public class ContractService {
 											pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
 											pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
 											
+											listSocios = new HashSet<PagadorRecebedorSocio>();
 											listSocios.add(pagadorRecebedorSocio);
 											
 											// TODO Salvar pagadorRecebedorAdicionais DS 
@@ -412,6 +409,7 @@ public class ContractService {
 											pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
 											pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
 											
+											listSocios = new HashSet<PagadorRecebedorSocio>();
 											listSocios.add(pagadorRecebedorSocio);
 											
 											// TODO Salvar pagadorRecebedorAdicionais DS 
@@ -526,7 +524,12 @@ public class ContractService {
 		
 		this.objetoContratoCobranca.setRecebedor(null);
 
-		contratoCobrancaDao.create(this.objetoContratoCobranca);
+		Long idContratoCobranca = contratoCobrancaDao.create(this.objetoContratoCobranca);
+		
+		PagadorRecebedorAdicionaisDao pagadorRecebedorAdicionaisDao = new PagadorRecebedorAdicionaisDao();
+		pagadorRecebedorAdicionais.getContratoCobranca().setId(idContratoCobranca);
+		pagadorRecebedorAdicionaisDao.create(pagadorRecebedorAdicionais);
+
 	}
 	
 	public PagadorRecebedor validaPagadorOperacao() {
@@ -581,4 +584,75 @@ public class ContractService {
 		
 		return this.objetoPagador;
 	}
+
+	/**
+	 * @return the objetoContratoCobranca
+	 */
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+
+	/**
+	 * @param objetoContratoCobranca the objetoContratoCobranca to set
+	 */
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
+	}
+
+	/**
+	 * @return the objetoImovelCobranca
+	 */
+	public ImovelCobranca getObjetoImovelCobranca() {
+		return objetoImovelCobranca;
+	}
+
+	/**
+	 * @param objetoImovelCobranca the objetoImovelCobranca to set
+	 */
+	public void setObjetoImovelCobranca(ImovelCobranca objetoImovelCobranca) {
+		this.objetoImovelCobranca = objetoImovelCobranca;
+	}
+
+	/**
+	 * @return the objetoPagador
+	 */
+	public PagadorRecebedor getObjetoPagador() {
+		return objetoPagador;
+	}
+
+	/**
+	 * @param objetoPagador the objetoPagador to set
+	 */
+	public void setObjetoPagador(PagadorRecebedor objetoPagador) {
+		this.objetoPagador = objetoPagador;
+	}
+
+	/**
+	 * @return the listaPagadores
+	 */
+	public Set<PagadorRecebedorAdicionais> getListaPagadores() {
+		return listaPagadores;
+	}
+
+	/**
+	 * @param listaPagadores the listaPagadores to set
+	 */
+	public void setListaPagadores(Set<PagadorRecebedorAdicionais> listaPagadores) {
+		this.listaPagadores = listaPagadores;
+	}
+
+	/**
+	 * @return the listSocios
+	 */
+	public Set<PagadorRecebedorSocio> getListSocios() {
+		return listSocios;
+	}
+
+	/**
+	 * @param listSocios the listSocios to set
+	 */
+	public void setListSocios(Set<PagadorRecebedorSocio> listSocios) {
+		this.listSocios = listSocios;
+	}
+	
 }
