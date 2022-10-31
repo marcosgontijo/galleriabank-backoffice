@@ -426,11 +426,11 @@ public class ResponsavelMB {
 	}
 	
 	public void selectedCPF() {
-		this.objetoResponsavel.setCpfCC(this.objetoResponsavel.getCpf());		
+		this.objetoResponsavel.setCpfCnpjCC(this.objetoResponsavel.getCpf());		
 	}
 	
 	public void selectedCNPJ() {
-		this.objetoResponsavel.setCnpjCC(this.objetoResponsavel.getCnpj());		
+		this.objetoResponsavel.setCpfCnpjCC(this.objetoResponsavel.getCnpj());		
 	}
 	
 	public void clearComissaoTodos() {

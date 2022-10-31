@@ -1670,24 +1670,11 @@
 								</p:selectOneMenu>							
 							</h:panelGrid>
 							
-							<h:panelGrid columns="2">		
-								<p:outputLabel for="CpfCCResp" value="CPF: " styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}" />
-								<p:inputMask id="CpfCCResp"
-									value="#{contratoCobrancaMB.cpfCCResp}"
-									label="CPF" mask="999.999.999-99" 
-									validator="#{responsavelMB.validaCPF}"
-									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}">
-								</p:inputMask>
-								
-								<p:outputLabel for="CNPJCCResp" value="CNPJ: "
-									styleClass="labelBold"
-									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />
-								<p:inputMask id="CNPJCCResp"
-									value="#{contratoCobrancaMB.cnpjCCResp}"
-									label="CNPJ" mask="99.999.999/9999-99" 
-									validator="#{responsavelMB.validaCNPJ}"
-									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />					
+							<h:panelGrid columns="2">									
+								<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
+									styleClass="labelBold" />
+								<p:inputText id="cpfCnpjCC"
+									value="#{contratoCobrancaMB.cpfCnpjCCResp}" />					
 									
 								<p:outputLabel for="NomeCCResp" value="Nome: "
 									styleClass="labelBold"

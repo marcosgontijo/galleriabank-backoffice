@@ -40,14 +40,15 @@ public class Responsavel implements Serializable {
 	private String cpf;
 	private String cnpj;
 	
-	private String cpfCC;//
-	private String cnpjCC;//
-	private String nomeCC;//
-	private String banco;//
+	private String cpfCC;
+	private String cnpjCC;
+	private String cpfCnpjCC;
+	private String nomeCC;
+	private String banco;
 	private List<SelectItem> listaBancos;
-	private String agencia;//
-	private String conta;//
-	private String pix;//
+	private String agencia;
+	private String conta;
+	private String pix;
 
 	
 	private String cep;
@@ -474,5 +475,13 @@ public class Responsavel implements Serializable {
 
 	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
 		this.taxasComissao = taxasComissao;
+	}
+
+	public String getCpfCnpjCC() {
+		return cpfCnpjCC;
+	}
+
+	public void setCpfCnpjCC(String cpfCnpjCC) {
+		this.cpfCnpjCC = cpfCnpjCC;
 	}
 }
