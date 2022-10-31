@@ -1434,30 +1434,28 @@
 				       	</p:panel>		
 				    </p:overlayPanel> 
 				</p:panel>	
-				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">
-					<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
-						<h:panelGrid columns="1">
-							<p:outputLabel
-								value="NOVO Pagador: preencha os dados do painel Dados Pagador"
-								styleClass="labelBold" style="color: green !important;" />
-							<p:outputLabel
-								value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
-								styleClass="labelBold" style="color: green !important;" />
-						</h:panelGrid>
-						<h:panelGrid columns="3" style="margin-top: 10px;">
-							<p:outputLabel for="Recebedor" value="Pagador: "
-								styleClass="labelBold" />
-							<p:inputText id="Recebedor"
-								value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
-								readonly="TRUE"
-								style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-							<p:commandButton id="botaoRecebedor" type="button"
-								onclick="PF('recebedorDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-						</h:panelGrid>
-					</shiro:hasAnyRoles>
+				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">		
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
+							styleClass="labelBold" style="color: green !important;" />
+						<p:outputLabel
+							value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
+							styleClass="labelBold" style="color: green !important;" />
+					</h:panelGrid>
+					<h:panelGrid columns="3" style="margin-top: 10px;">
+						<p:outputLabel for="Recebedor" value="Pagador: "
+							styleClass="labelBold" />
+						<p:inputText id="Recebedor"
+							value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
+							readonly="TRUE"
+							style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+						<p:commandButton id="botaoRecebedor" type="button"
+							onclick="PF('recebedorDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+					</h:panelGrid>
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
 						style="margin-top:10px;margin-bottom:10px;">
 						<p:messages id="mensagensCPFCNPJ" showDetail="true" />
