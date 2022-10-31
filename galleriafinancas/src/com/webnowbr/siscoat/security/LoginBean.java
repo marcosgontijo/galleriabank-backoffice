@@ -248,6 +248,18 @@ public class LoginBean {
     	}    		
     }
     
+	 public void redirectWrongURL() throws IOException {
+    	
+    	String url = "";
+    	Object request = FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    	if(request instanceof HttpServletRequest) {
+	    	url = ((HttpServletRequest) request).getRequestURL().toString();
+	    	url = url.replace("/Denied.xhtml", "");
+	    }
+    	
+    	FacesContext.getCurrentInstance().getExternalContext().redirect(url + "/Login.xhtml");
+    }
+    
     public String changePwd() {    
         FacesContext context = FacesContext.getCurrentInstance();
      

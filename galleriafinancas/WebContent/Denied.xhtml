@@ -34,11 +34,11 @@
 							</div>
 							
 							<div class="container-login100-form-btn m-t-32">
-								<p:commandLink id="aa" styleClass="login100-form-btn" action="/Login.xhtml" update="messages" >
+								<p:commandLink id="aa" styleClass="login100-form-btn" action="#{loginBean.redirectAccessDenied}" update="messages" >
 									EFETUAR LOGIN
 								</p:commandLink>
 								<p:defaultCommand target="aa" />	
-							</div>		
+							</div>
 						</h:form>
 					</div>
 				</div>
