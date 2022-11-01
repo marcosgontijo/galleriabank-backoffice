@@ -1168,9 +1168,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					
 					String parcela = "";
 					while (rs.next()) {
 						contratoCobranca = findById(rs.getLong(1));
+						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(9));
 						
 						parcela = rs.getString(2) + " de " + contarTotalParcelas(contratoCobranca.getListContratoCobrancaDetalhes());
 						
