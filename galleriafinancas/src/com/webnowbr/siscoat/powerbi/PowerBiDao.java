@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
@@ -643,5 +645,149 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 		});
 	}  
 	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	private static final String CONTRATOS_POWERBI_NEW = " select c.id, c.numeroContrato, c.quantoPrecisa, r.nome "
+			+ "	from cobranca.contratocobranca c "
+			+ " left join cobranca.pagadorRecebedor r on r.id = c.pagador";
+	
+	private static final String POWERBI_DETALHES_NEW = " analista, count(c.id) qtd,	sum(c.quantoPrecisa) valor "
+			+ "	from cobranca.contratocobranca c "
+			+ " where numeroContrato in ( ";
+	
+	@SuppressWarnings("unchecked")
+	public PowerBiNew pbNew(final Date dataInicio, final Date dataFim, final String tipo) {
+		return (PowerBiNew) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				PowerBiNew object = new PowerBiNew();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query = CONTRATOS_POWERBI_NEW;
+				String query2 = POWERBI_DETALHES_NEW;
+				String param1 = null;
+
+				try {
+					connection = getConnection();				
+					if(CommonsUtil.mesmoValor(tipo, "Cadastradas")) {
+						object.setTipo("Cadastradas");
+						query = query + " where dataCadastro >= ? ::timestamp " 
+						+ " and dataCadastro <= ? ::timestamp ";					
+					} else if(CommonsUtil.mesmoValor(tipo, "Aprovadas")) {
+						object.setTipo("Aprovadas");
+						query = query + " where cadastroAprovadoData >= ? ::timestamp " 
+						+ " and cadastroAprovadoData <= ? ::timestamp ";	
+						param1 = "select c.cadastroAprovadoUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Reprovadas")) {
+						object.setTipo("Reprovadas");
+						query = query + " where analiseReprovadaData >= ? ::timestamp " 
+						+ " and analiseReprovadaData <= ? ::timestamp ";
+						param1 = "select c.analiseReprovadaUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Com pedido de laudo")) {
+						object.setTipo("Com pedido de laudo");
+						query = query + " where pedidoLaudoData >= ? ::timestamp " 
+						+ " and pedidoLaudoData <= ? ::timestamp ";	
+						param1 = "select c.pedidoLaudoUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Com pedido de paju")) {
+						object.setTipo("Com pedido de paju");
+						query = query + " where pagtoLaudoConfirmadaData >= ? ::timestamp " 
+						+ " and pagtoLaudoConfirmadaData <= ? ::timestamp ";	
+						param1 = "select c.pagtoLaudoConfirmadaUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Com. Jurídico")) {
+						object.setTipo("Enviadas para Com. Jurídico");
+						query = query + " where analiseComercialData >= ? ::timestamp " 
+						+ " and analiseComercialData <= ? ::timestamp ";	
+						param1 = "select c.analiseComercialUsuario";
+					}  else if(CommonsUtil.mesmoValor(tipo, "Comentadas pelo Jurídico")) {
+						object.setTipo("Comentadas pelo Jurídico");
+						query = query + " where comentarioJuridicoEsteiraData >= ? ::timestamp " 
+						+ " and comentarioJuridicoEsteiraData <= ? ::timestamp ";		
+						param1 = "select c.comentarioJuridicoEsteiraUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Validação Doc.")) {
+						object.setTipo("Enviadas para Validação Doc.");
+						query = query + " where preAprovadoComiteData >= ? ::timestamp " 
+						+ " and preAprovadoComiteData <= ? ::timestamp ";
+						param1 = "select c.preAprovadoComiteUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Comitê")) {
+						object.setTipo("Enviadas para Comitê");
+						query = query + " where documentosComiteData >= ? ::timestamp " 
+						+ " and documentosComiteData <= ? ::timestamp ";	
+						param1 = "select c.documentosComiteUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Ag. Doc")) {
+						object.setTipo("Enviadas para Ag. Doc");
+						query = query + " where aprovadoComiteData >= ? ::timestamp " 
+						+ " and aprovadoComiteData <= ? ::timestamp ";		
+						param1 = "select c.aprovadoComiteUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Ag. CCB")) {
+						object.setTipo("Enviadas para Ag. CCB");
+						query = query + " where documentosCompletosData >= ? ::timestamp " 
+						+ " and documentosCompletosData <= ? ::timestamp ";	
+						param1 = "select c.documentosCompletosUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "com CCI Emitida")) {
+						object.setTipo("com CCI Emitida");
+						query = query + " where ccbProntaData >= ? ::timestamp " 
+						+ " and ccbProntaData <= ? ::timestamp ";			
+						param1 = "select c.ccbProntaUsuario";
+					}  else if(CommonsUtil.mesmoValor(tipo, "com CCI Assinada")) {
+						object.setTipo("com CCI Assinada");
+						query = query + " where agAssinaturaData >= ? ::timestamp " 
+						+ " and agAssinaturaData <= ? ::timestamp ";
+						param1 = "select c.agAssinaturaUsuario";
+					}
+					
+					query = query + " order by id desc ";
+					ps = connection.prepareStatement(query);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());				
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contrato = new ContratoCobranca();
+					List<String> numerosContratos = new ArrayList<String>(0);
+					while(rs.next()) {
+						contrato.setId(rs.getLong("id"));
+						contrato.setNumeroContrato(rs.getString("numeroContrato"));
+						numerosContratos.add(contrato.getNumeroContrato());
+						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
+						contrato.setNomePagador(rs.getString("nome"));
+						object.getContratos().add(contrato);
+						object.setValorOperacoes(object.getValorOperacoes().add(contrato.getQuantoPrecisa()));	
+					}
+
+					object.setNumeroOperacoes(object.getContratos().size());
+					
+					rs.close();				
+					if (!CommonsUtil.semValor(param1)) {
+						query2 = param1 + query2;
+						boolean comeco = true;
+						for(String s : numerosContratos) {
+							if(comeco) {
+								query2 = query2 + "'" + s + "'";
+								comeco = false;
+							} else {
+								query2 = query2 + ",'" + s + "'";
+							}						
+						}
+						query2 = query2 + " ) group by analista";
+						
+						ps = connection.prepareStatement(query2);	
+						rs = ps.executeQuery();
+						
+						while (rs.next()) {
+							PowerBiDetalhes pbDetalhes = new PowerBiDetalhes();
+							pbDetalhes.setNome(rs.getString("analista"));
+							pbDetalhes.setQtdContratos(rs.getInt("qtd"));
+							object.getDetalhes().add(pbDetalhes);
+						}
+					}					
+				} finally {
+					closeResources(connection, ps);
+				}
+				return object;
+			}
+		});
+	}
 }

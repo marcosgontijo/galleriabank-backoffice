@@ -2,13 +2,18 @@ package com.webnowbr.siscoat.powerbi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
+import org.apache.poi.util.StringUtil;
+
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+
+import antlr.StringUtils;
 
 /** ManagedBean. */
 @ManagedBean(name = "powerBiMb")
@@ -19,6 +24,11 @@ public class PowerBiMb {
 	public Collection<ContratoCobranca> contratosConsulta;
 	public List<ContratoCobrancaDetalhes> listParcelas;
 	public List<PowerBiDetalhes> powBiDetalhes = new ArrayList<PowerBiDetalhes>();
+	
+	///////////////////////////////////
+	public Date dataInicio;
+	public Date datafim;
+	public List<PowerBiNew> powerBiNew = new ArrayList<PowerBiNew>();
 	
 	public String clearPowerBi() {
 		powerBiHoje = new PowerBiVO();
@@ -60,11 +70,40 @@ public class PowerBiMb {
 		powerBiOntem();
 	}
 	
+	public String clearPowerBiNew() {
+		dataInicio = null;
+		datafim = null;
+		powerBiNew = new ArrayList<PowerBiNew>();
+		contratosConsulta = new ArrayList<ContratoCobranca>();
+		powBiDetalhes = new ArrayList<PowerBiDetalhes>();
+		
+		return "/Atendimento/Cobranca/PowerBi/PowerBiNew.xhtml";
+	}
 	
+	public void carregarListagemNew() {
+		powerBiNew.add(getPBNewDataBase("Cadastradas"));
+		powerBiNew.add(getPBNewDataBase("Aprovadas"));
+		powerBiNew.add(getPBNewDataBase("Reprovadas"));
+		powerBiNew.add(getPBNewDataBase("Com pedido de laudo"));
+		powerBiNew.add(getPBNewDataBase("Com pedido de paju"));
+		powerBiNew.add(getPBNewDataBase("Enviadas para Com. Jurídico"));
+		powerBiNew.add(getPBNewDataBase("Comentadas pelo Jurídico"));
+		powerBiNew.add(getPBNewDataBase("Enviadas para Validação Doc."));
+		powerBiNew.add(getPBNewDataBase("Enviadas para Comitê"));
+		powerBiNew.add(getPBNewDataBase("Enviadas para Ag. Doc"));
+		powerBiNew.add(getPBNewDataBase("Enviadas para Ag. CCB"));
+		powerBiNew.add(getPBNewDataBase("com CCI Emitida"));		
+		powerBiNew.add(getPBNewDataBase("com CCI Assinada"));
+	}
+	
+	public PowerBiNew getPBNewDataBase(String tipo) {
+		PowerBiDao powerBiDao = new PowerBiDao();
+		return powerBiDao.pbNew(dataInicio, datafim, tipo);
+	}
 	
 	public PowerBiVO getPowerBiHoje() {
 		return powerBiHoje;
-	}
+	}	
 	public void setPowerBiHoje(PowerBiVO powerBiHoje) {
 		this.powerBiHoje = powerBiHoje;
 	}
@@ -91,6 +130,32 @@ public class PowerBiMb {
 	}
 	public void setPowBiDetalhes(List<PowerBiDetalhes> powBiDetalhes) {
 		this.powBiDetalhes = powBiDetalhes;
-	}		
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDatafim() {
+		return datafim;
+	}
+
+	public void setDatafim(Date datafim) {
+		this.datafim = datafim;
+	}
+
+	public List<PowerBiNew> getPowerBiNew() {
+		return powerBiNew;
+	}
+
+	public void setPowerBiNew(List<PowerBiNew> powerBiNew) {
+		this.powerBiNew = powerBiNew;
+	}	
+	
+	
 }
 

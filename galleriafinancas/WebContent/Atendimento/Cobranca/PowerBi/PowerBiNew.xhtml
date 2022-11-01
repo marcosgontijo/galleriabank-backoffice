@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="PowerBiPanel" header="Power Bi Novo"
+				style="margin-bottom:10px;">
+				
+				<h:panelGrid columns="2">		
+					<p:outputLabel for="dataInicio" value="data Inicio"
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio" showOn="button"
+						value="#{powerBiMb.dataInicio}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+					
+					<p:outputLabel for="datafim" value="data fim"
+						styleClass="labelBold" />
+					<p:calendar id="datafim" showOn="button"
+						value="#{powerBiMb.datafim}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+
+					<p:commandButton value="Ver Contratos" 
+						action="#{powerBiMb.carregarListagemNew}"
+						update="Dados" />
+				</h:panelGrid>
+				
+				<h:panelGroup id="Dados">
+					<ui:repeat var="powerBi" value="#{powerBiMb.powerBiNew}">
+						<p:panel header="Operações #{powerBi.tipo}" style="margin-bottom:10px;">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="quantidade" value="Quantidade Total" />	
+								<h:outputText id="quantidade" value="#{powerBi.numeroOperacoes}" style="margin-left:10px;"/>
+							
+								<p:outputLabel for="valorTotal" value="Valor Total" />
+								<h:outputText id="valorTotal" value="#{powerBi.valorOperacoes}"
+									converter="bigDecimalConverter" style="margin-left:10px;" />
+							</h:panelGrid>				
+							
+							<p:accordionPanel multiple="true" activeIndex="-1"
+								style="margin-bottom: 15px;margin-top: 15px;"
+								rendered="#{powerBi.detalhes.size() > 0}">
+								<p:tab title="Analistas">
+									<p:dataTable  var="analistas"
+										value="#{powerBi.detalhes}">
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{analistas.nome}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{analistas.qtdContratos}" />
+										</p:column>						
+									</p:dataTable>
+								</p:tab>
+							</p:accordionPanel>
+						</p:panel>
+					</ui:repeat>
+				</h:panelGroup>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Detalhes" overflow="auto"
+			widgetVar="listaDetalhes" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="detalhesForm">
+				<p:dataTable var="pessoas" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.powBiDetalhes}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Nomes"
+						filterBy="#{pessoas.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.nome}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{pessoas.qtdContratos}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.qtdContratos}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column> 
+						<p:commandButton onclick="PF('listaContratos').show()" value="Ver Contratos" update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{powerBiMb.contratosConsulta}"
+								value="#{pessoas.contratos}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Lista de contratos" overflow="auto"
+			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.contratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column>
+						<p:commandButton onclick="PF('parcelasContratos').show()" value="Ver Parcelas" update="parcelasForm" >
+							<f:setPropertyActionListener
+								target="#{powerBiMb.listParcelas}"
+								value="#{contratos.listContratoCobrancaDetalhes}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="parcelas"  overflow="auto"
+			widgetVar="parcelasContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			minWidth="800" height="620" width="1000">
+			<h:form id="parcelasForm">
+				<p:dataTable var="parcelas" paginator="false" scrollable="true"
+					scrollHeight="580"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.listParcelas}"
+					sortBy="#{contratos.numeroParcela}" sortOrder="ascending"
+					rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center;width: 45px;"
+						headerText="Parcela" filterMatchMode="contains"
+						sortBy="#{parcelas.numeroParcela}">
+						<h:outputText value="#{parcelas.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo Inicial (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoInicial}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto."
+						sortBy="#{parcelas.dataUltimoPagamento}">
+						<h:outputText value="#{parcelas.dataUltimoPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Total Pago (R$)">
+						<h:outputText value="#{parcelas.valorTotalPagamento}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto." sortBy="#{parcelas.dataPagamento}">
+						<h:outputText value="#{parcelas.dataPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor (R$)">
+						<h:outputText value="#{parcelas.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Juros (R$)">
+						<h:outputText value="#{parcelas.vlrJurosParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Amortização (R$)">
+						<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro DFI (R$)">
+						<h:outputText value="#{parcelas.seguroDFI}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro MIP (R$)">
+						<h:outputText value="#{parcelas.seguroMIP}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
