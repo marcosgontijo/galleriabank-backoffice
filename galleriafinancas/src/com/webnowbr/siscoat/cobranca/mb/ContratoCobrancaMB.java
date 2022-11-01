@@ -457,9 +457,10 @@ public class ContratoCobrancaMB {
 	/** Id Objeto selecionado na LoV - Responsavel. */
 	private long idResponsavel;
 	
-	private boolean tipoResponsavelIsFisica = false;	
+	//private boolean tipoResponsavelIsFisica = false;	
 	private String cpfCCResp;
 	private String cnpjCCResp;
+	private String cpfCnpjCCResp;
 	private String nomeCCResp;
 	private String bancoResp;
 	private String agenciaResp;
@@ -1471,8 +1472,7 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = "";
 		this.addSegurador = false;
 		this.addSocio = false;
-		this.addPagador = false;
-		
+		this.addPagador = false;		
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -1520,11 +1520,13 @@ public class ContratoCobrancaMB {
 				ResponsavelDao responsavelDao = new ResponsavelDao();
 				if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 					Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
-					if (responsavel.getCpf() != null) {
+					/*if (responsavel.getCpf() != null) {
 						this.tipoResponsavelIsFisica = true;
 					} else {
 						this.tipoResponsavelIsFisica = false;
-					}
+					}*/
+					
+					this.objetoContratoCobranca.setResponsavel(responsavel);
 					
 					clearDadosBancariosResponsavel();
 					
@@ -3037,7 +3039,7 @@ public class ContratoCobrancaMB {
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
-			//this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
+			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
 			//this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 
 			if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
@@ -3628,7 +3630,7 @@ public class ContratoCobrancaMB {
 
 				// teste para ver se para de sobrescrever pagador
 				
-				//this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
+				this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
 				//this.objetoContratoCobranca.setImovel(objetoImovelCobranca);
 
 				if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
@@ -5855,11 +5857,11 @@ public class ContratoCobrancaMB {
 	public final void populateSelectedResponsavel() {
 		this.idResponsavel = this.selectedResponsavel.getId();
 		this.nomeResponsavel = this.selectedResponsavel.getNome();		
-		if (this.selectedResponsavel.getCpf() != null) {
+		/*if (this.selectedResponsavel.getCpf() != null) {
 			this.tipoResponsavelIsFisica = true;
 		} else {
 			this.tipoResponsavelIsFisica = false;
-		}
+		}*/
 	}
 
 	public void clearResponsavel() {
@@ -15587,11 +15589,11 @@ public class ContratoCobrancaMB {
 			this.nomeResponsavel = this.objetoContratoCobranca.getResponsavel().getNome();
 			this.idResponsavel = this.objetoContratoCobranca.getResponsavel().getId();
 			
-			if (this.objetoContratoCobranca.getResponsavel().getCpf() != null) {
+			/*if (this.objetoContratoCobranca.getResponsavel().getCpf() != null) {
 				this.tipoResponsavelIsFisica = true;
 			} else {
 				this.tipoResponsavelIsFisica = false;
-			}
+			}*/
 			
 			clearDadosBancariosResponsavel();
 		}
@@ -15604,8 +15606,9 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void clearDadosBancariosResponsavel() {
-		cpfCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCC();
-		cnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCnpjCC();
+		//cpfCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCC();
+		//cnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCnpjCC();
+		cpfCnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCnpjCC();
 		nomeCCResp = this.objetoContratoCobranca.getResponsavel().getNomeCC();
 		bancoResp = this.objetoContratoCobranca.getResponsavel().getBanco();
 		agenciaResp = this.objetoContratoCobranca.getResponsavel().getAgencia();
@@ -15614,13 +15617,24 @@ public class ContratoCobrancaMB {
 	}
 	
 	public Responsavel populateDadosBancariosResponsavel(Responsavel responsavel) {
-		responsavel.setCpfCC(cpfCCResp);
-		responsavel.setCnpjCC(cnpjCCResp);
+		//responsavel.setCpfCC(cpfCCResp);
+		//responsavel.setCnpjCC(cnpjCCResp);
+		cpfCnpjCCResp = CommonsUtil.somenteNumeros(cpfCnpjCCResp);
+		if(cpfCnpjCCResp.length() == 11) {
+			//transforma em cpf	
+			cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
+		} else if(cpfCnpjCCResp.length() == 13) {
+			//transforma em cnpj
+			if(!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
+				cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
+			}	
+		}
+		responsavel.setCpfCnpjCC(cpfCnpjCCResp);
 		responsavel.setNomeCC(nomeCCResp);
 		responsavel.setBanco(bancoResp);
 		responsavel.setAgencia(agenciaResp);
 		responsavel.setConta(contaResp);
-		responsavel.setPix(pixResp);			
+		responsavel.setPix(pixResp);
 		return responsavel;
 	}
 
@@ -30871,13 +30885,13 @@ public class ContratoCobrancaMB {
 		this.gerenciaStatus = gerenciaStatus;
 	}
 
-	public boolean isTipoResponsavelIsFisica() {
+	/*public boolean isTipoResponsavelIsFisica() {
 		return tipoResponsavelIsFisica;
 	}
 
 	public void setTipoResponsavelIsFisica(boolean tipoResponsavelIsFisica) {
 		this.tipoResponsavelIsFisica = tipoResponsavelIsFisica;
-	}
+	}*/
 
 	public String getCpfCCResp() {
 		return cpfCCResp;
@@ -30893,6 +30907,14 @@ public class ContratoCobrancaMB {
 
 	public void setCnpjCCResp(String cnpjCCResp) {
 		this.cnpjCCResp = cnpjCCResp;
+	}
+	
+	public String getCpfCnpjCCResp() {
+		return cpfCnpjCCResp;
+	}
+
+	public void setCpfCnpjCCResp(String cpfCnpjCCResp) {
+		this.cpfCnpjCCResp = cpfCnpjCCResp;
 	}
 
 	public String getNomeCCResp() {

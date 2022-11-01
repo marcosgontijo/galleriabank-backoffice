@@ -6053,11 +6053,12 @@ public class CcbMB {
 			run.setText("C/C: 131094-1");
 			run.addCarriageReturn();
 			run.setText("Valor: ");
-			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 			run2 = paragraph.createRun();
 			if(this.temCCBValor) {
+				valorPorExtenso.setNumber(valorCartaSplit);
 				run2.setText(CommonsUtil.formataValorMonetario(valorCartaSplit, "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			} else {
+				valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 				run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			}
 			run2.setFontSize(11);

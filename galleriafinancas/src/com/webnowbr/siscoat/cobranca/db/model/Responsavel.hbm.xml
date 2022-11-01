@@ -96,6 +96,10 @@
             <column name="cnpjCC"/>
         </property> 
         
+        <property name="cpfCnpjCC" type="java.lang.String">
+            <column name="cpfCnpjCC"/>
+        </property>
+        
         <property name="nomeCC" type="java.lang.String">
             <column name="nomeCC"/>
         </property> 

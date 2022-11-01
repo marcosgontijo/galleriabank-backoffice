@@ -1342,11 +1342,11 @@
 									<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
 									<f:selectItem itemValue="Casa" itemLabel="Casa" />
 									<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-									<f:selectItem itemValue="Sala Comercial"
-										itemLabel="Sala Comercial" />
-									<f:selectItem itemValue="Prédio Comercial"
-										itemLabel="Prédio Comercial" />
+									<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />							
+									<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
+									<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+									<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
 									<f:selectItem itemValue="Rural" itemLabel="Rural" />
@@ -1434,30 +1434,28 @@
 				       	</p:panel>		
 				    </p:overlayPanel> 
 				</p:panel>	
-				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">
-					<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
-						<h:panelGrid columns="1">
-							<p:outputLabel
-								value="NOVO Pagador: preencha os dados do painel Dados Pagador"
-								styleClass="labelBold" style="color: green !important;" />
-							<p:outputLabel
-								value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
-								styleClass="labelBold" style="color: green !important;" />
-						</h:panelGrid>
-						<h:panelGrid columns="3" style="margin-top: 10px;">
-							<p:outputLabel for="Recebedor" value="Pagador: "
-								styleClass="labelBold" />
-							<p:inputText id="Recebedor"
-								value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
-								readonly="TRUE"
-								style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-							<p:commandButton id="botaoRecebedor" type="button"
-								onclick="PF('recebedorDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-						</h:panelGrid>
-					</shiro:hasAnyRoles>
+				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">		
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
+							styleClass="labelBold" style="color: green !important;" />
+						<p:outputLabel
+							value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
+							styleClass="labelBold" style="color: green !important;" />
+					</h:panelGrid>
+					<h:panelGrid columns="3" style="margin-top: 10px;">
+						<p:outputLabel for="Recebedor" value="Pagador: "
+							styleClass="labelBold" />
+						<p:inputText id="Recebedor"
+							value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
+							readonly="TRUE"
+							style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+						<p:commandButton id="botaoRecebedor" type="button"
+							onclick="PF('recebedorDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+					</h:panelGrid>
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
 						style="margin-top:10px;margin-bottom:10px;">
 						<p:messages id="mensagensCPFCNPJ" showDetail="true" />
@@ -2603,14 +2601,14 @@
 							<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
 							<f:selectItem itemValue="Casa" itemLabel="Casa" />
 							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-							<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
+							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />						
 							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
+							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+							<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-							<f:selectItem itemValue="Rural" itemLabel="Rural" />		
+							<f:selectItem itemValue="Rural" itemLabel="Rural" />
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
@@ -3232,28 +3230,13 @@
 							</h:panelGrid>
 							
 							<h:panelGrid columns="2">		
-								<p:outputLabel for="CpfCCResp" value="CPF: " styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}" />
-								<p:inputMask id="CpfCCResp"
-									value="#{contratoCobrancaMB.cpfCCResp}"
-									label="CPF" mask="999.999.999-99" 
-									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}">
-								</p:inputMask>
-								
-								<p:outputLabel for="CNPJCCResp" value="CNPJ: "
-									styleClass="labelBold"
-									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />
-								<p:inputMask id="CNPJCCResp"
-									value="#{contratoCobrancaMB.cnpjCCResp}"
-									label="CNPJ" mask="99.999.999/9999-99" 
-									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />					
+								<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
+									styleClass="labelBold" />
+								<p:inputText id="cpfCnpjCC"
+									value="#{contratoCobrancaMB.cpfCnpjCCResp}" />		
 									
 								<p:outputLabel for="NomeCCResp" value="Nome: "
-									styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.tipoResponsavelIsFisica}" />
-								<p:outputLabel for="NomeCCResp" value="Razão Social: "
-									styleClass="labelBold"
-									rendered="#{!contratoCobrancaMB.tipoResponsavelIsFisica}" />						
+									styleClass="labelBold" />							
 								<p:inputText id="NomeCCResp"
 									value="#{contratoCobrancaMB.nomeCCResp}"
 									label="Nome" onblur=""

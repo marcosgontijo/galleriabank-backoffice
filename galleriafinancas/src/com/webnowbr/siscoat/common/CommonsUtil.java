@@ -1706,4 +1706,46 @@ public class CommonsUtil {
 		}
 		return dataRetorno;
 	}
+	
+	public static String formataCpf(String cpf) {
+		//cpf = CommonsUtil.somenteNumeros(cpf);
+		char[] temp = cpf.toCharArray();
+		char[] array = new char[14];
+		array[3] = '.';
+		array[7] = '.';
+		array[11] = '-';
+		int j = 0;
+		for(int i = 0; i < array.length; i++) {
+			if(!CommonsUtil.semValor(array[i])) {
+				i++;
+			}
+			array[i] = temp[j];
+			j++;
+		}  
+		cpf = new String(array);
+		return cpf;
+	}
+	
+	public static String formataCnpj(String cnpj) {
+		//cnpj = CommonsUtil.somenteNumeros(cnpj);
+		char[] temp = cnpj.toCharArray();
+		char[] array = new char[17];
+		array[2] = '.';
+		array[6] = '.';
+		array[10] = '/';
+		array[14] = '-';
+		int j = 0;
+		for(int i = 0; i < array.length; i++) {
+			if(!CommonsUtil.semValor(array[i])) {
+				i++;
+			}
+			array[i] = temp[j];
+			j++;
+		}  
+		cnpj = new String(array);
+		return cnpj;
+		
+		//MaskFormatter mf = new MaskFormatter("##.###.###/####-##");        
+		//cpfCnpjCCResp =  mf.valueToString(cpfCnpjCCResp);
+	}
 }

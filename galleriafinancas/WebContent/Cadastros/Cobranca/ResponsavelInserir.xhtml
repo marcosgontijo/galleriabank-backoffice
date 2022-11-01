@@ -51,7 +51,7 @@
 							mask="999.999.999-99" required="true"
 							validator="#{responsavelMB.validaCPF}"
 							rendered="#{responsavelMB.tipoPessoaIsFisica}">
-							<p:ajax update="CpfCC" event="blur"
+							<p:ajax update="cpfCnpjCC" event="blur"
 								listener="#{responsavelMB.selectedCPF}" />
 						</p:inputMask>
 	
@@ -67,7 +67,7 @@
 							mask="99.999.999/9999-99" required="true"
 							validator="#{responsavelMB.validaCNPJ}"
 							rendered="#{!responsavelMB.tipoPessoaIsFisica}" >
-							<p:ajax update="CNPJCC" event="blur"
+							<p:ajax update="cpfCnpjCC" event="blur"
 								listener="#{responsavelMB.selectedCNPJ}" />
 						</p:inputMask>
 	
@@ -125,8 +125,7 @@
 								immediate="true"
 								oncomplete="PF('responsavelDialog').show();"
 								update="formResponsaveis" />
-						</h:panelGroup>
-					
+						</h:panelGroup>		
 					
 						<p:outputLabel for="taxaRemuneracao" value="Taxa Remuneração (%): " />
 						<p:inputText id="taxaRemuneracao"
@@ -323,30 +322,13 @@
 					
 				</h:panelGrid>
 				<h:panelGrid columns="2">
-					<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
-						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
-					<p:inputMask id="CpfCC"
-						value="#{responsavelMB.objetoResponsavel.cpfCC}"
-						label="CPF" mask="999.999.999-99" 
-						validator="#{responsavelMB.validaCPF}"
-						rendered="#{responsavelMB.tipoPessoaIsFisica}">
-					</p:inputMask>
-					
-					<p:outputLabel for="CNPJCC" value="CNPJ: "
-						styleClass="labelBold"
-						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />
-					<p:inputMask id="CNPJCC"
-						value="#{responsavelMB.objetoResponsavel.cnpjCC}"
-						label="CNPJ" mask="99.999.999/9999-99"
-						validator="#{responsavelMB.validaCNPJ}"
-						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />					
+					<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
+						styleClass="labelBold" />
+					<p:inputText id="cpfCnpjCC"
+						value="#{responsavelMB.objetoResponsavel.cpfCnpjCC}" />
 						
 					<p:outputLabel for="NomeCC" value="Nome: "
-						styleClass="labelBold"
-						rendered="#{responsavelMB.tipoPessoaIsFisica}" />
-					<p:outputLabel for="NomeCC" value="Razão Social: "
-						styleClass="labelBold"
-						rendered="#{!responsavelMB.tipoPessoaIsFisica}" />						
+						styleClass="labelBold" />					
 					<p:inputText id="NomeCC"
 						value="#{responsavelMB.objetoResponsavel.nomeCC}"
 						label="Nome" onblur=""

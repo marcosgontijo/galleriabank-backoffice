@@ -148,11 +148,7 @@
         <property name="contato" type="java.lang.String">
             <column name="contato"/>
         </property>   
-        
-        
-        
-        
-        
+                
          <property name="telResidencialConjuge" type="java.lang.String">
             <column name="telResidencialConjuge"/>
         </property>   
