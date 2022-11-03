@@ -1854,6 +1854,14 @@
 		<property name="contratoConferido" type="boolean">
 			<column name="contratoConferido" not-null="true" default="false"/>
 		</property>
+		
+		<property name="recebedorCompraVenda" type="java.lang.String">
+			<column name="recebedorCompraVenda" />
+		</property>
+		
+		<property name="valorCompraVenda" type="big_decimal">
+			<column name="valorCompraVenda" />
+		</property>
 
 	</class>
 </hibernate-mapping>
