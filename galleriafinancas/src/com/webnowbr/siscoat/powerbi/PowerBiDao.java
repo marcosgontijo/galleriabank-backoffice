@@ -654,6 +654,11 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 	private static final String POWERBI_DETALHES_NEW = " analista, count(c.id) qtd,	sum(c.quantoPrecisa) valor "
 			+ "	from cobranca.contratocobranca c "
 			+ " where numeroContrato in ( ";
+
+	private static final String POWERBI_DETALHES_NEW2 = " analista, c.id, c.numerocontrato, c.quantoPrecisa, r.nome "
+			+ "	from cobranca.contratocobranca c "
+			+ " left join cobranca.pagadorRecebedor r on r.id = c.pagador"
+			+ " where numeroContrato in ( ";
 	
 	@SuppressWarnings("unchecked")
 	public PowerBiNew pbNew(final Date dataInicio, final Date dataFim, final String tipo) {
@@ -665,7 +670,7 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				String query = CONTRATOS_POWERBI_NEW;
-				String query2 = POWERBI_DETALHES_NEW;
+				String query2 = POWERBI_DETALHES_NEW2;
 				String param1 = null;
 
 				try {
@@ -745,16 +750,18 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					ps.setDate(2, dtRelFimSQL);
 					
 					rs = ps.executeQuery();
-					ContratoCobranca contrato = new ContratoCobranca();
 					List<String> numerosContratos = new ArrayList<String>(0);
 					while(rs.next()) {
+						ContratoCobranca contrato = new ContratoCobranca();
 						contrato.setId(rs.getLong("id"));
 						contrato.setNumeroContrato(rs.getString("numeroContrato"));
 						numerosContratos.add(contrato.getNumeroContrato());
 						contrato.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
 						contrato.setNomePagador(rs.getString("nome"));
 						object.getContratos().add(contrato);
-						object.setValorOperacoes(object.getValorOperacoes().add(contrato.getQuantoPrecisa()));	
+						if(!CommonsUtil.semValor(contrato.getQuantoPrecisa())) {
+							object.setValorOperacoes(object.getValorOperacoes().add(contrato.getQuantoPrecisa()));	
+						}						
 					}
 
 					object.setNumeroOperacoes(object.getContratos().size());
@@ -771,16 +778,31 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 								query2 = query2 + ",'" + s + "'";
 							}						
 						}
-						query2 = query2 + " ) group by analista";
+						query2 = query2 + " ) order by analista";
 						
 						ps = connection.prepareStatement(query2);	
 						rs = ps.executeQuery();
-						
+						String analistaAterior = "inicio";
+						PowerBiDetalhes pbDetalhes = new PowerBiDetalhes();
+						//ContratoCobranca contratoDetalhes = new ContratoCobranca();
 						while (rs.next()) {
-							PowerBiDetalhes pbDetalhes = new PowerBiDetalhes();
-							pbDetalhes.setNome(rs.getString("analista"));
-							pbDetalhes.setQtdContratos(rs.getInt("qtd"));
-							object.getDetalhes().add(pbDetalhes);
+							ContratoCobranca contratoDetalhes = new ContratoCobranca();
+							if(CommonsUtil.mesmoValor(rs.getString("analista"), analistaAterior)
+								|| CommonsUtil.mesmoValor(analistaAterior, "inicio")) {
+
+							} else {							
+								pbDetalhes.setNome(analistaAterior);
+								pbDetalhes.setQtdContratos(pbDetalhes.getContratos().size());
+								object.getDetalhes().add(pbDetalhes);							
+								pbDetalhes = new PowerBiDetalhes();																					
+							}
+							
+							contratoDetalhes.setId(rs.getLong("id"));
+							contratoDetalhes.setNumeroContrato(rs.getString("numeroContrato"));						
+							contratoDetalhes.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
+							contratoDetalhes.setNomePagador(rs.getString("nome"));	
+							pbDetalhes.getContratos().add(contratoDetalhes);
+							analistaAterior = rs.getString("analista");
 						}
 					}					
 				} finally {
