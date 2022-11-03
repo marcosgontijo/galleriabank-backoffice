@@ -12,6 +12,7 @@ import org.apache.poi.util.StringUtil;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 import antlr.StringUtils;
 
@@ -82,8 +83,17 @@ public class PowerBiMb {
 	
 	public void carregarListagemNew() {
 		powerBiNew.add(getPBNewDataBase("Cadastradas"));
-		powerBiNew.add(getPBNewDataBase("Aprovadas"));
-		powerBiNew.add(getPBNewDataBase("Reprovadas"));
+		PowerBiNew pbAnalisadas = new PowerBiNew();
+		PowerBiNew pbAprovadas = new PowerBiNew();
+		PowerBiNew pbReprovadas = new PowerBiNew();
+		
+		pbAprovadas = getPBNewDataBase("Aprovadas");	
+		pbReprovadas = getPBNewDataBase("Reprovadas");
+		pbAnalisadas = mergePowerBi(pbAprovadas, pbReprovadas);
+		pbAnalisadas.setTipo("Analisadas");
+		powerBiNew.add(pbAnalisadas);
+		powerBiNew.add(pbAprovadas);
+		powerBiNew.add(pbReprovadas);
 		powerBiNew.add(getPBNewDataBase("Com pedido de laudo"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de paju"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Com. Jurídico"));
@@ -99,6 +109,28 @@ public class PowerBiMb {
 	public PowerBiNew getPBNewDataBase(String tipo) {
 		PowerBiDao powerBiDao = new PowerBiDao();
 		return powerBiDao.pbNew(dataInicio, datafim, tipo);
+	}
+	
+	public PowerBiNew mergePowerBi(PowerBiNew a, PowerBiNew b){
+		PowerBiNew c = new PowerBiNew();
+		for(PowerBiDetalhes pda : a.getDetalhes()) {
+			for(PowerBiDetalhes pdb : b.getDetalhes()) {
+				if(CommonsUtil.mesmoValor(pda.getNome(), pdb.getNome())){
+					PowerBiDetalhes cDetalhes = new PowerBiDetalhes();
+					cDetalhes.setNome(pda.getNome());
+					cDetalhes.setContratos(pda.getContratos());
+					cDetalhes.getContratos().addAll(pdb.getContratos());
+					cDetalhes.setQtdContratos(cDetalhes.getContratos().size());
+					c.getDetalhes().add(cDetalhes);
+				}
+			}
+		}
+		c.setContratos(a.getContratos());
+		c.getContratos().addAll(b.getContratos());
+		c.setNumeroOperacoes(a.getNumeroOperacoes() + b.getNumeroOperacoes());
+		c.setValorOperacoes(a.getValorOperacoes().add(b.getValorOperacoes()));
+		
+		return c;
 	}
 	
 	public PowerBiVO getPowerBiHoje() {
