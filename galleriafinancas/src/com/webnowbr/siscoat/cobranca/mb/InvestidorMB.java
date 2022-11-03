@@ -3502,7 +3502,7 @@ public class InvestidorMB {
 			// Data Quitação
 			cell = row.createCell(13);
 			cell.setCellStyle(dateStyle);
-			cell.setCellValue(record.getDataUltimaParcelaPaga());			
+			cell.setCellValue(record.getDataQuitacao());			
 			
 			// Tipo de Cálculo
 			cell = row.createCell(14);

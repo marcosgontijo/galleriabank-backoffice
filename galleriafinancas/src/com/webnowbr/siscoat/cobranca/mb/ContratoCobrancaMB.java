@@ -15620,16 +15620,19 @@ public class ContratoCobrancaMB {
 		//responsavel.setCpfCC(cpfCCResp);
 		//responsavel.setCnpjCC(cnpjCCResp);
 		cpfCnpjCCResp = CommonsUtil.somenteNumeros(cpfCnpjCCResp);
-		if(cpfCnpjCCResp.length() == 11) {
-			//transforma em cpf	
-			cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
-		} else if(cpfCnpjCCResp.length() == 13) {
-			//transforma em cnpj
-			if(!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
-				cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
-			}	
+		
+		if (cpfCnpjCCResp != null) {
+			if(cpfCnpjCCResp.length() == 11) {
+				//transforma em cpf	
+				cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
+			} else if(cpfCnpjCCResp.length() == 13) {
+				//transforma em cnpj
+				if(!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
+					cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
+				}	
+			}
+			responsavel.setCpfCnpjCC(cpfCnpjCCResp);
 		}
-		responsavel.setCpfCnpjCC(cpfCnpjCCResp);
 		responsavel.setNomeCC(nomeCCResp);
 		responsavel.setBanco(bancoResp);
 		responsavel.setAgencia(agenciaResp);
