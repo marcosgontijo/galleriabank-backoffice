@@ -411,22 +411,45 @@
 				<p:panel id="Infos" header="Outras Informações"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
-						<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
-							styleClass="labelBold" />
-						<p:inputText id="quantoPrecisa"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);" required="true"
-							converter="bigDecimalConverter"  disabled="true"/>
-							
-						<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
-						<p:selectOneRadio id="tipoOperacao" unselectable="true" columns="1"
-							layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}" disabled="true">
-							<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
-							<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
-						</p:selectOneRadio>
+						<h:panelGrid columns="2">
+							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
+								styleClass="labelBold" />
+							<p:inputText id="quantoPrecisa"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
+							<p:selectOneRadio id="tipoOperacao" unselectable="true" required="true" columns="1"
+								layout="responsive" value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}">
+								<f:selectItem itemLabel="Home Equity" itemValue="Home Equity" />
+								<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
+								<p:ajax update="compraVenda" event="change"/>
+							</p:selectOneRadio>
+						</h:panelGrid>
+						
+						<h:panelGroup id="compraVenda">
+							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao == 'Emprestimo'}">
+								<p:outputLabel for="valorCompraVenda" value="Valor de Compra e Venda"
+									styleClass="labelBold" />
+								<p:inputText id="valorCompraVenda" 
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCompraVenda}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" 
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="recebedorCompraVenda" value="Recebedor"
+									styleClass="labelBold" />							
+								<p:selectOneMenu id="recebedorCompraVenda"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorCompraVenda}" ajax="true">
+									<f:selectItem itemValue="Vendedor" itemLabel="Vendedor" />							
+									<f:selectItem itemValue="Comprador" itemLabel="Comprador" />	
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGroup>
 					</h:panelGrid>
-				</p:panel>																																																						
+				</p:panel>																																																			
 			</p:panel>
 			
 			<p:messages id="msgArquivo"/>

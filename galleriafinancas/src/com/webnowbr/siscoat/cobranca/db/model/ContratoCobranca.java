@@ -690,6 +690,9 @@ public class ContratoCobranca implements Serializable {
 	private String documentoPagador;
 	private boolean contratoQuitado;
 	
+	private BigDecimal valorCompraVenda;
+	private String recebedorCompraVenda;
+	
 	private Responsavel analistaGeracaoPAJU;	
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
@@ -5615,4 +5618,21 @@ public class ContratoCobranca implements Serializable {
 	public void setDocumentoPagador(String documentoPagador) {
 		this.documentoPagador = documentoPagador;
 	}
+
+	public BigDecimal getValorCompraVenda() {
+		return valorCompraVenda;
+	}
+
+	public void setValorCompraVenda(BigDecimal valorCompraVenda) {
+		this.valorCompraVenda = valorCompraVenda;
+	}
+
+	public String getRecebedorCompraVenda() {
+		return recebedorCompraVenda;
+	}
+
+	public void setRecebedorCompraVenda(String recebedorCompraVenda) {
+		this.recebedorCompraVenda = recebedorCompraVenda;
+	}
+	
 }

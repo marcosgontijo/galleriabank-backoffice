@@ -4569,11 +4569,16 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 					}
 				} else {
-					this.objetoContratoCobranca.setStatus("Reprovado");
+					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
+						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());				
+						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
+					}
 					this.objetoContratoCobranca.setAnaliseReprovada(true);
-					this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());
-					this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAnaliseReprovadaData());
-					this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+					if (this.objetoContratoCobranca.getAnaliseReprovadaData() == null) {
+						this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());				
+						this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+					}
+					this.objetoContratoCobranca.setStatus("Reprovado");		
 				}
 			}
 		}
@@ -15620,8 +15625,7 @@ public class ContratoCobrancaMB {
 		//responsavel.setCpfCC(cpfCCResp);
 		//responsavel.setCnpjCC(cnpjCCResp);
 		cpfCnpjCCResp = CommonsUtil.somenteNumeros(cpfCnpjCCResp);
-		
-		if (cpfCnpjCCResp != null) {
+		if(!CommonsUtil.semValor(cpfCnpjCCResp)) {
 			if(cpfCnpjCCResp.length() == 11) {
 				//transforma em cpf	
 				cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
@@ -15631,16 +15635,17 @@ public class ContratoCobrancaMB {
 					cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
 				}	
 			}
+			
 			responsavel.setCpfCnpjCC(cpfCnpjCCResp);
+			responsavel.setNomeCC(nomeCCResp);
+			responsavel.setBanco(bancoResp);
+			responsavel.setAgencia(agenciaResp);
+			responsavel.setConta(contaResp);
+			responsavel.setPix(pixResp);
 		}
-		responsavel.setNomeCC(nomeCCResp);
-		responsavel.setBanco(bancoResp);
-		responsavel.setAgencia(agenciaResp);
-		responsavel.setConta(contaResp);
-		responsavel.setPix(pixResp);
 		return responsavel;
 	}
-
+	
 	public void clearSelectedLovsPendentes() {
 		this.selectedPagador = new PagadorRecebedor();
 		this.nomePagador = null;
