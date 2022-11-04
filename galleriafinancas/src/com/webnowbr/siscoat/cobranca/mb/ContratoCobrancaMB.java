@@ -7041,12 +7041,30 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();		
+		ResponsavelDao rDao = new ResponsavelDao();
+		Responsavel rValidaDocs = new Responsavel();
+		
+		//gera data de hoje no horario de brasilia
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR, -3);
+		Date dataHoje = cal.getTime();
+		String dataHojeStr = CommonsUtil.formataDataHora(dataHoje);
+
+		// Tatiane
+		rValidaDocs = rDao.findById((long) 643);
+		//envia a mensagem
+		takeBlipMB.sendWhatsAppMessageContratoBaixado(rValidaDocs,
+		"operacao_baixada", 
+		getNomeUsuarioLogado(),
+		this.objetoContratoCobranca.getNumeroContrato(),
+		dataHojeStr);
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));
-		
+						""));	
 	}
 	
 	public void baixarPreContratoSemMensagem() {
