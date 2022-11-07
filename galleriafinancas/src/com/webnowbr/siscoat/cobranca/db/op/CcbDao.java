@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /**
@@ -19,6 +21,11 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 			+ "	ccb.id, ccb.numeroCcb,  ccb.numeroOperacao, ccb.nomeEmitente "
 			+ " FROM "
 			+ "	cobranca.ccbcontrato ccb ";
+	
+	private static final String QUERY_CONSULTA_CCB_CONTRATO =  " select "
+			+ "	ccb.id FROM "
+			+ "	cobranca.ccbcontrato ccb "
+			+ " where objetoContratoCobranca = ?";
 	
 	@SuppressWarnings("unchecked")
 	public List<CcbContrato> ConsultaCCBs() {
@@ -49,6 +56,68 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 					closeResources(connection, ps, rs);					
 				}
 				return objects;
+			}
+		});	
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public CcbContrato ConsultaCcbPorContrato(ContratoCobranca contrato) {
+		return (CcbContrato) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				CcbContrato object = new CcbContrato();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_CCBS);
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						CcbDao ccbDao = new CcbDao();
+						object = ccbDao.findById(rs.getLong("id"));												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return object;
+			}
+		});	
+	}	
+	
+	
+
+	private static final String QUERY_CONSULTA_TESTEMUNHAS= "select id, nome, cpf, rg from cobranca.pagadorrecebedor p ";
+	
+	@SuppressWarnings("unchecked")
+	public PagadorRecebedor ConsultaTestemunha(Long id) {
+		return (PagadorRecebedor) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				PagadorRecebedor object = new PagadorRecebedor();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query = QUERY_CONSULTA_TESTEMUNHAS;
+				query = query + " where p.id = " + id;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();
+					while (rs.next()) {				
+						object.setId(rs.getLong("id"));		
+						object.setNome(rs.getString("nome"));
+						object.setCpf(rs.getString("cpf"));
+						object.setRg(rs.getString("rg"));
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return object;
 			}
 		});	
 	}	

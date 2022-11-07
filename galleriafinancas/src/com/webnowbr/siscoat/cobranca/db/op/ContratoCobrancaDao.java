@@ -5928,7 +5928,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido" +
-			" , gerente.nome nomeGerente " +
+			" , gerente.nome nomeGerente, pr.id idPagador " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6212,6 +6212,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
 						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(41));
 						contratoCobranca.setContratoConferido(rs.getBoolean(42));
+						contratoCobranca.getPagador().setId(rs.getLong("idPagador"));
 
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						//contratoCobranca = findById(rs.getLong(1));
