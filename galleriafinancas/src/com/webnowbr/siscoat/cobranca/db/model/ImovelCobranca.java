@@ -43,6 +43,7 @@ public class ImovelCobranca implements Serializable {
 	private String nomeProprietario;
 	private BigDecimal valorIptu;
 	private BigDecimal valorCondominio;
+	private String inscricaoMunicipal;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
 	private boolean comprovanteIptuImovelCheckList;
@@ -474,5 +475,13 @@ public class ImovelCobranca implements Serializable {
 
 	public void setSimuladorCheckList(boolean simuladorCheckList) {
 		this.simuladorCheckList = simuladorCheckList;
+	}
+
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
 	}	
 }
