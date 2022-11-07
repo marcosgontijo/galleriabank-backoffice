@@ -55,7 +55,7 @@ public class IPCADao extends HibernateDao <IPCA,Long> {
 		});	
 	}
 	
-	private static final String QUERY_ULTIMO_IPCA = "select * from cobranca.ipca where date_trunc('day', data) < date_trunc('day', ? ::timestamp) order by data desc limit 1";
+	private static final String QUERY_ULTIMO_IPCA = "select * from cobranca.ipca where date_trunc('day', data) <= date_trunc('day', ? ::timestamp) order by data desc limit 1";
 	
 	@SuppressWarnings("unchecked")
 	public IPCA getUltimoIPCA(final Date dataReferencia) {
