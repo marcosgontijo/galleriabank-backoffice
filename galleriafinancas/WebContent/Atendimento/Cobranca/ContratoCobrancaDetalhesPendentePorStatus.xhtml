@@ -2309,20 +2309,36 @@
 
 					</h:panelGrid>
 				</p:panel>
-
+				
 				<p:panel id="Infos" header="Outras Informações"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
-						<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
-							styleClass="labelBold" />
-						<p:outputLabel id="quantoPrecisa"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
-							converter="bigDecimalConverter" />
-
-						<p:outputLabel for="tipoOperacao" value="Tipo da Operação"
-							styleClass="labelBold" />
-						<p:outputLabel id="tipoOperacao" layout="responsive"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}" />
+						<h:panelGrid columns="2">
+							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
+								styleClass="labelBold" />
+							<p:outputLabel id="quantoPrecisa"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.quantoPrecisa}"
+								converter="bigDecimalConverter" />
+														
+							<p:outputLabel for="tipoOperacao" value="Tipo da Operação" styleClass="labelBold" />
+							<p:outputLabel id="tipoOperacao" layout="responsive"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao}" />						
+						</h:panelGrid>
+						
+						<h:panelGroup id="compraVenda">
+							<h:panelGrid columns="2"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoOperacao == 'Emprestimo'}">
+								<p:outputLabel for="valorCompraVenda" value="Valor de Compra e Venda"
+									styleClass="labelBold" />
+								<p:outputLabel id="valorCompraVenda"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCompraVenda}"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel for="recebedorCompraVenda" value="Recebedor"
+									styleClass="labelBold" />							
+								<p:outputLabel id="recebedorCompraVenda" layout="responsive"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.recebedorCompraVenda}" />
+							</h:panelGrid>
+						</h:panelGroup>
 					</h:panelGrid>
 				</p:panel>
 

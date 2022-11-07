@@ -4569,11 +4569,16 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 					}
 				} else {
-					this.objetoContratoCobranca.setStatus("Reprovado");
+					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
+						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());				
+						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
+					}
 					this.objetoContratoCobranca.setAnaliseReprovada(true);
-					this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());
-					this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAnaliseReprovadaData());
-					this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+					if (this.objetoContratoCobranca.getAnaliseReprovadaData() == null) {
+						this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());				
+						this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+					}
+					this.objetoContratoCobranca.setStatus("Reprovado");		
 				}
 			}
 		}
@@ -7036,12 +7041,30 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
+		TakeBlipMB takeBlipMB = new TakeBlipMB();		
+		ResponsavelDao rDao = new ResponsavelDao();
+		Responsavel rValidaDocs = new Responsavel();
+		
+		//gera data de hoje no horario de brasilia
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR, -3);
+		Date dataHoje = cal.getTime();
+		String dataHojeStr = CommonsUtil.formataDataHora(dataHoje);
+
+		// Tatiane
+		rValidaDocs = rDao.findById((long) 643);
+		//envia a mensagem
+		takeBlipMB.sendWhatsAppMessageContratoBaixado(rValidaDocs,
+		"operacao_baixada", 
+		getNomeUsuarioLogado(),
+		this.objetoContratoCobranca.getNumeroContrato(),
+		dataHojeStr);
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato baixado com sucesso! (Contrato: "
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-						""));
-		
+						""));	
 	}
 	
 	public void baixarPreContratoSemMensagem() {
@@ -15620,8 +15643,7 @@ public class ContratoCobrancaMB {
 		//responsavel.setCpfCC(cpfCCResp);
 		//responsavel.setCnpjCC(cnpjCCResp);
 		cpfCnpjCCResp = CommonsUtil.somenteNumeros(cpfCnpjCCResp);
-		
-		if (cpfCnpjCCResp != null) {
+		if(!CommonsUtil.semValor(cpfCnpjCCResp)) {
 			if(cpfCnpjCCResp.length() == 11) {
 				//transforma em cpf	
 				cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
@@ -15631,16 +15653,17 @@ public class ContratoCobrancaMB {
 					cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
 				}	
 			}
+			
 			responsavel.setCpfCnpjCC(cpfCnpjCCResp);
+			responsavel.setNomeCC(nomeCCResp);
+			responsavel.setBanco(bancoResp);
+			responsavel.setAgencia(agenciaResp);
+			responsavel.setConta(contaResp);
+			responsavel.setPix(pixResp);
 		}
-		responsavel.setNomeCC(nomeCCResp);
-		responsavel.setBanco(bancoResp);
-		responsavel.setAgencia(agenciaResp);
-		responsavel.setConta(contaResp);
-		responsavel.setPix(pixResp);
 		return responsavel;
 	}
-
+	
 	public void clearSelectedLovsPendentes() {
 		this.selectedPagador = new PagadorRecebedor();
 		this.nomePagador = null;
