@@ -89,7 +89,7 @@ public class PowerBiMb {
 		
 		pbAprovadas = getPBNewDataBase("Aprovadas");	
 		pbReprovadas = getPBNewDataBase("Reprovadas");
-		pbAnalisadas = mergePowerBi(pbAprovadas, pbReprovadas);
+		pbAnalisadas = mergePowerBiNew(pbAprovadas, pbReprovadas);
 		pbAnalisadas.setTipo("Analisadas");
 		powerBiNew.add(pbAnalisadas);
 		powerBiNew.add(pbAprovadas);
@@ -113,16 +113,21 @@ public class PowerBiMb {
 	
 	public PowerBiNew mergePowerBi(PowerBiNew a, PowerBiNew b){
 		PowerBiNew c = new PowerBiNew();
+		
 		for(PowerBiDetalhes pda : a.getDetalhes()) {
 			for(PowerBiDetalhes pdb : b.getDetalhes()) {
-				if(CommonsUtil.mesmoValor(pda.getNome(), pdb.getNome())){
-					PowerBiDetalhes cDetalhes = new PowerBiDetalhes();
-					cDetalhes.setNome(pda.getNome());
-					cDetalhes.setContratos(pda.getContratos());
-					cDetalhes.getContratos().addAll(pdb.getContratos());
-					cDetalhes.setQtdContratos(cDetalhes.getContratos().size());
-					c.getDetalhes().add(cDetalhes);
-				}
+				if(containsAnalista(a.getDetalhes(), pdb.getNome())) {
+					if(CommonsUtil.mesmoValor(pda.getNome(), pdb.getNome())){
+						PowerBiDetalhes cDetalhes = new PowerBiDetalhes();
+						cDetalhes.setNome(pda.getNome());
+						cDetalhes.setContratos(pda.getContratos());
+						cDetalhes.getContratos().addAll(pdb.getContratos());
+						cDetalhes.setQtdContratos(cDetalhes.getContratos().size());
+						c.getDetalhes().add(cDetalhes);
+					}
+				} else {
+					c.getDetalhes().add(pdb);
+				}	
 			}
 		}
 		c.setContratos(a.getContratos());
@@ -131,6 +136,42 @@ public class PowerBiMb {
 		c.setValorOperacoes(a.getValorOperacoes().add(b.getValorOperacoes()));
 		
 		return c;
+	}
+	
+	public PowerBiNew mergePowerBiNew(PowerBiNew a, PowerBiNew b){
+		PowerBiNew c = new PowerBiNew();
+		List<PowerBiDetalhes> aDetalhes = new ArrayList<>(a.getDetalhes());
+		for(PowerBiDetalhes aa : aDetalhes) {
+			c.getDetalhes().add(new PowerBiDetalhes(aa));
+		}
+		//c.getDetalhes().addAll(aDetalhes);
+		//c.getDetalhes().addAll(b.getDetalhes());
+		
+		for(PowerBiDetalhes pdb : b.getDetalhes()) {
+			boolean analistaEncontrado = false;
+			for(PowerBiDetalhes pdc : c.getDetalhes()) {		
+				if(CommonsUtil.mesmoValor(pdc.getNome(), pdb.getNome())){
+					pdc.getContratos().addAll(pdb.getContratos());
+					pdc.setQtdContratos(pdc.getContratos().size());		
+					analistaEncontrado = true;
+				}	
+			}
+			if(!analistaEncontrado) {
+				c.getDetalhes().add(pdb);
+			}
+		}
+		
+		c.getContratos().addAll(a.getContratos());
+		c.getContratos().addAll(b.getContratos());
+		c.setNumeroOperacoes(a.getNumeroOperacoes() + b.getNumeroOperacoes());
+		c.setValorOperacoes(a.getValorOperacoes().add(b.getValorOperacoes()));
+		
+		return c;
+	}
+	
+	public boolean containsAnalista(List<PowerBiDetalhes> list, String name){
+		return false;
+		//return list.stream().map(PowerBiDetalhes::getNome).filter(name::equals).findFirst().isPresent();
 	}
 	
 	public PowerBiVO getPowerBiHoje() {

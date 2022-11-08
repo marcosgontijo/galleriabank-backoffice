@@ -767,7 +767,7 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 					object.setNumeroOperacoes(object.getContratos().size());
 					
 					rs.close();				
-					if (!CommonsUtil.semValor(param1)) {
+					if (!CommonsUtil.semValor(param1) && object.getNumeroOperacoes() > 0) {
 						query2 = param1 + query2;
 						boolean comeco = true;
 						for(String s : numerosContratos) {
@@ -804,6 +804,11 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 							pbDetalhes.getContratos().add(contratoDetalhes);
 							analistaAterior = rs.getString("analista");
 						}
+						
+						pbDetalhes.setNome(analistaAterior);
+						pbDetalhes.setQtdContratos(pbDetalhes.getContratos().size());
+						object.getDetalhes().add(pbDetalhes);							
+						pbDetalhes = new PowerBiDetalhes();	
 					}					
 				} finally {
 					closeResources(connection, ps);
