@@ -2694,9 +2694,9 @@ public class ContratoCobrancaMB {
 
 				criarConjugeNoSistema(this.objetoPagadorRecebedor);
 				
-				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
+				if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !",
+							"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !",
 							""));
 
 					return "";
@@ -2957,9 +2957,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
 				
 				return "";
 			}
@@ -3053,9 +3053,9 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 			
-			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(3500000)) == 1) {
+			if(this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$3.500.000,00. !", ""));
+						"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
 				
 				return "";
 			}
