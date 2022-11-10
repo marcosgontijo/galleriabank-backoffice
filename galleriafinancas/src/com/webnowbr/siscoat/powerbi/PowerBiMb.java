@@ -82,6 +82,9 @@ public class PowerBiMb {
 	}
 	
 	public void carregarListagemNew() {
+		powerBiNew = new ArrayList<PowerBiNew>();
+		contratosConsulta = new ArrayList<ContratoCobranca>();
+		powBiDetalhes = new ArrayList<PowerBiDetalhes>();
 		powerBiNew.add(getPBNewDataBase("Cadastradas"));
 		PowerBiNew pbAnalisadas = new PowerBiNew();
 		PowerBiNew pbAprovadas = new PowerBiNew();
