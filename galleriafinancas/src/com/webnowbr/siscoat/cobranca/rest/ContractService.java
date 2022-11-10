@@ -6,9 +6,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -474,12 +477,20 @@ public class ContractService {
 
 		return String.format("%05d", numeroUltimoContrato);
 	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 		
 	public void clearCriacaoContrato() {
 		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(new Date());
-		this.objetoContratoCobranca.setDataCadastro(new Date());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(new Date());
+		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
+		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
