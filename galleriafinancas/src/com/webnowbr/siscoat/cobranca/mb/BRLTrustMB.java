@@ -1477,7 +1477,8 @@ public class BRLTrustMB {
 					
 					BigDecimal valorTotalFaceCessaoCalc = BigDecimal.ZERO;
 					
-					valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
+					//valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
+					valorTotalFaceCessaoCalc = parcela.getVlrParcela().subtract(parcela.getSeguroDFI()).subtract(parcela.getSeguroMIP()).subtract(parcela.getTaxaAdm());
 					
 					this.valorTotalFaceCessao = this.valorTotalFaceCessao.add(valorTotalFaceCessaoCalc);
 					jsonValores.put("face", valorTotalFaceCessaoCalc);

@@ -5652,40 +5652,6 @@ public class ContratoCobranca implements Serializable {
 		this.recebedorCompraVenda = recebedorCompraVenda;
 	}
 
-	public Date getAgEnvioCartorioData() {
-		return agEnvioCartorioData;
-	}
-
-	public void setAgEnvioCartorioData(Date agEnvioCartorioData) {
-		this.agEnvioCartorioData = agEnvioCartorioData;
-	}
-
-	public boolean isAgEnvioCartorio() {
-		return agEnvioCartorio;
-	}
-
-	public void setAgEnvioCartorio(boolean agEnvioCartorio) {
-		this.agEnvioCartorio = agEnvioCartorio;
-	}
-
-	public String getAgEnvioCartorioUsuario() {
-		return agEnvioCartorioUsuario;
-	}
-
-	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
-		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
-	}
-
-	public Date getNotificacaoCartorioData() {
-		return notificacaoCartorioData;
-	}
-
-	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
-		this.notificacaoCartorioData = notificacaoCartorioData;
-	}
-	
-	
-
 	public boolean isQuitarInvestidor1() {
 		return quitarInvestidor1;
 	}
@@ -5764,5 +5730,37 @@ public class ContratoCobranca implements Serializable {
 
 	public void setQuitarInvestidor10(boolean quitarInvestidor10) {
 		this.quitarInvestidor10 = quitarInvestidor10;
+	}
+	
+	public Date getAgEnvioCartorioData() {
+		return agEnvioCartorioData;
+	}
+
+	public void setAgEnvioCartorioData(Date agEnvioCartorioData) {
+		this.agEnvioCartorioData = agEnvioCartorioData;
+	}
+
+	public boolean isAgEnvioCartorio() {
+		return agEnvioCartorio;
+	}
+
+	public void setAgEnvioCartorio(boolean agEnvioCartorio) {
+		this.agEnvioCartorio = agEnvioCartorio;
+	}
+
+	public String getAgEnvioCartorioUsuario() {
+		return agEnvioCartorioUsuario;
+	}
+
+	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
+		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
+	}
+
+	public Date getNotificacaoCartorioData() {
+		return notificacaoCartorioData;
+	}
+
+	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
+		this.notificacaoCartorioData = notificacaoCartorioData;
 	}
 }
