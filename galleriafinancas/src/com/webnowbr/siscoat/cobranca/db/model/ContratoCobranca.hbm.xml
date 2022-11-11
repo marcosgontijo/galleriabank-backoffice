@@ -1862,6 +1862,18 @@
 		<property name="valorCompraVenda" type="big_decimal">
 			<column name="valorCompraVenda" />
 		</property>
+		
+		<property name="agEnvioCartorio" type="boolean">
+			<column name="agEnvioCartorio" not-null="true" default="true"/>
+		</property>
+		
+		<property name="agEnvioCartorioUsuario" type="java.lang.String">
+			<column name="agEnvioCartorioUsuario" />
+		</property>
+		
+		<property name="agEnvioCartorioData" type="java.util.Date">
+			<column name="agEnvioCartorioData" />
+		</property>
 
 	</class>
 </hibernate-mapping>

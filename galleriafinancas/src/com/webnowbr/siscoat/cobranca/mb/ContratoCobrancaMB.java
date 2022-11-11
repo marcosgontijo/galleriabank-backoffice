@@ -1505,6 +1505,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgEnvioCartorio(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 
 		this.qtdeParcelas = null;
@@ -1594,6 +1595,7 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = "Adicionar";
 		this.objetoContratoCobranca.setStatus("Ag. Análise");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgEnvioCartorio(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		
 
@@ -2967,7 +2969,7 @@ public class ContratoCobrancaMB {
 			updateCheckList();
 			
 			//gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
+			if (!this.objetoContratoCobranca.isAgEnvioCartorio() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
 
@@ -3063,7 +3065,7 @@ public class ContratoCobrancaMB {
 			updateCheckList();
 			
 			//gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgAssinatura() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
+			if (!this.objetoContratoCobranca.isAgEnvioCartorio() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
 
@@ -3645,7 +3647,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// gerando parcelas quando contrato esta em ag registro
-				if (this.objetoContratoCobranca.getAgAssinaturaData() != null
+				if (this.objetoContratoCobranca.getAgEnvioCartorioData() != null
 						&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 						&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 					geraContratoCobrancaDetalhes(contratoCobrancaDao);
@@ -3733,6 +3735,9 @@ public class ContratoCobrancaMB {
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
 					return geraConsultaContratosPorStatus("Ag. Assinatura");
+				}
+				if (this.tituloTelaConsultaPreStatus.equals("Ag. Envio Cartório")) {
+					return geraConsultaContratosPorStatus("Ag. Envio Cartorio");
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
 					return geraConsultaContratosPorStatus("Ag. Registro");
@@ -4816,6 +4821,18 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgAssinaturaUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (this.objetoContratoCobranca.isAgEnvioCartorio()) {
+			this.objetoContratoCobranca.setAgEnvioCartorioData(null);
+			this.objetoContratoCobranca.setAgEnvioCartorioUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getAgEnvioCartorioData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setAgEnvioCartorioData(gerarDataHoje());				
+				this.objetoContratoCobranca.setAgEnvioCartorioUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAgEnvioCartorioData());
+			}
+		}		
 
 		if (this.objetoContratoCobranca.isAgRegistro()) {
 			this.objetoContratoCobranca.setAgRegistroData(null);
@@ -8129,7 +8146,7 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado") &&
 				( !this.objetoContratoCobranca.isOperacaoPaga()
 				|| this.objetoContratoCobranca.isPendenciaPagamento())) {
-			this.indexStepsStatusContrato = 13;
+			this.indexStepsStatusContrato = 14;
 		} else if (!this.objetoContratoCobranca.isInicioAnalise() ) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) { 
@@ -8263,8 +8280,27 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isCcbPronta() &&
 						this.objetoContratoCobranca.isContratoConferido() &&
 						!this.objetoContratoCobranca.isAgAssinatura() &&
+						this.objetoContratoCobranca.isAgEnvioCartorio() &&
 						this.objetoContratoCobranca.isAgRegistro()) {
 					this.indexStepsStatusContrato = 12;
+					
+				} 
+				
+				else if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
+						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isLaudoRecebido() &&
+						this.objetoContratoCobranca.isPajurFavoravel() &&
+						this.objetoContratoCobranca.isAnaliseComercial() &&
+						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
+						this.objetoContratoCobranca.isAprovadoComite() &&
+						this.objetoContratoCobranca.isDocumentosCompletos() &&
+						this.objetoContratoCobranca.isCcbPronta() &&
+						this.objetoContratoCobranca.isContratoConferido() &&
+						!this.objetoContratoCobranca.isAgAssinatura() &&
+						!this.objetoContratoCobranca.isAgEnvioCartorio() &&
+						this.objetoContratoCobranca.isAgRegistro()) {
+					this.indexStepsStatusContrato = 13;
 					
 				} 
 
@@ -11713,11 +11749,18 @@ public class ContratoCobrancaMB {
 							&& c.isCcbPronta() && c.isContratoConferido() && c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
+						c.setStatus("Ag. Envio Cartório");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && c.isAgRegistro()) {
+							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && !c.isAgEnvioCartorio() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
 				}
@@ -11848,6 +11891,9 @@ public class ContratoCobrancaMB {
 		}		
 		if (status.equals("Ag. Assinatura")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Assinatura";
+		}
+		if (status.equals("Ag. Envio Cartorio")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Envio Cartório";
 		}
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";

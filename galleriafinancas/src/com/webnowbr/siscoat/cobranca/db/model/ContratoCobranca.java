@@ -406,6 +406,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
 	
+	private Date agEnvioCartorioData;
+	private boolean agEnvioCartorio;
+	private String agEnvioCartorioUsuario;
+	
 	private Date agRegistroData;
 	private boolean agRegistro;
 	private String agRegistroUsuario;
@@ -5634,5 +5638,29 @@ public class ContratoCobranca implements Serializable {
 	public void setRecebedorCompraVenda(String recebedorCompraVenda) {
 		this.recebedorCompraVenda = recebedorCompraVenda;
 	}
+
+	public Date getAgEnvioCartorioData() {
+		return agEnvioCartorioData;
+	}
+
+	public void setAgEnvioCartorioData(Date agEnvioCartorioData) {
+		this.agEnvioCartorioData = agEnvioCartorioData;
+	}
+
+	public boolean isAgEnvioCartorio() {
+		return agEnvioCartorio;
+	}
+
+	public void setAgEnvioCartorio(boolean agEnvioCartorio) {
+		this.agEnvioCartorio = agEnvioCartorio;
+	}
+
+	public String getAgEnvioCartorioUsuario() {
+		return agEnvioCartorioUsuario;
+	}
+
+	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
+		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
+	}	
 	
 }
