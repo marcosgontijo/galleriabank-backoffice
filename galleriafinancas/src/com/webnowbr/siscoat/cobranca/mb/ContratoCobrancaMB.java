@@ -9310,6 +9310,7 @@ public class ContratoCobrancaMB {
 		this.contratos = new ArrayList<ContratoCobranca>();
 		
 		this.tituloPainel = ""; 
+		this.updatePagadorRecebedor = "";
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPerformance.xhtml";
 	}
