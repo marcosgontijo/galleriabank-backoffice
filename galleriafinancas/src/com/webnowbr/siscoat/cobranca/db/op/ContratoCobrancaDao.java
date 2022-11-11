@@ -7909,6 +7909,46 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> ConsultaContratosCartorio(final Date dataInicio) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				TimeZone zone = TimeZone.getDefault();
+				Locale locale = new Locale("pt", "BR");
+				Calendar dataHoje = Calendar.getInstance(zone, locale);
+				Date auxDataHoje = dataHoje.getTime();
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_ZAP_LEADS_EM_TRATAMENTO);
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelInicioSQL);
+					
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						Date data = rs.getDate("leademtratamentodata");
+						if (DateUtil.getWorkingDaysBetweenTwoDates(data, auxDataHoje) == 3) {
+							ContratoCobranca contratoCobranca = new ContratoCobranca();
+							contratoCobranca.setId(rs.getLong("id"));
+							objects.add(contratoCobranca);	
+						}									
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	public static long getDifferenceDays(Date d1, Date d2) {
 	    long diff = d2.getTime() - d1.getTime();
 	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);

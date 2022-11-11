@@ -7162,6 +7162,60 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void enviaZapCartorio() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+		
+		this.contratosPendentes = contratoCobrancaDao.ConsultaZapLeadsEmTratamento(auxDataHoje);
+		
+		for (ContratoCobranca contratos : this.contratosPendentes) {	
+			
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+				this.objetoContratoCobranca.setEnviadoWhatsAppLeadStandby(true);
+				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+			}
+
+			TakeBlipMB tkblpMb = new TakeBlipMB();
+			//pagador = new PagadorRecebedorDao().findById(10737l);
+			//tkblpMb.sendWhatsAppMessageCartorio(pagador, "leads_standby");	
+			ResponsavelDao rDao = new ResponsavelDao();
+			
+			Responsavel rCcb1 = new Responsavel();
+			Responsavel rCcb2 = new Responsavel();
+			Responsavel rCcb3 = new Responsavel();
+			Responsavel rCcb4 = new Responsavel();
+			Responsavel rCcb5 = new Responsavel();
+			Responsavel rCcb6 = new Responsavel();	
+			
+			// Amanda
+			rCcb1 = rDao.findById((long) 621);
+			tkblpMb.sendWhatsAppMessageCartorio(rCcb1,
+			"aprovado_comite_ag_ccb");
+					
+			// Anna Flavia
+			rCcb2 = rDao.findById((long) 622);
+			tkblpMb.sendWhatsAppMessageCartorio(rCcb2,
+			"aprovado_comite_ag_ccb");
+			
+			// Flavia
+			rCcb3 = rDao.findById((long) 623);
+			tkblpMb.sendWhatsAppMessageCartorio(rCcb3,
+			"aprovado_comite_ag_ccb");	
+			
+			// Luana
+			rCcb5 = rDao.findById((long) 625);
+			tkblpMb.sendWhatsAppMessageCartorio(rCcb5,
+			"aprovado_comite_ag_ccb");
+		}
+	}
+	
 
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();

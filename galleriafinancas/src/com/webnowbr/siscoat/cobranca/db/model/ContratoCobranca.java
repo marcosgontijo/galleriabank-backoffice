@@ -698,6 +698,8 @@ public class ContratoCobranca implements Serializable {
 	private String recebedorCompraVenda;
 	
 	private Responsavel analistaGeracaoPAJU;	
+	
+	private Date notificacaoCartorioData;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -5661,6 +5663,16 @@ public class ContratoCobranca implements Serializable {
 
 	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
 		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
-	}	
+	}
+
+	public Date getNotificacaoCartorioData() {
+		return notificacaoCartorioData;
+	}
+
+	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
+		this.notificacaoCartorioData = notificacaoCartorioData;
+	}
+	
+	
 	
 }
