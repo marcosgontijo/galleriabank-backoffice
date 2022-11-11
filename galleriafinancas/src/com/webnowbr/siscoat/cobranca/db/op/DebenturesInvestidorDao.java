@@ -920,6 +920,11 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										}
 									}
 									
+									// verifica o novo campo de investidor quitado, independe das parcelas
+									if (c.isQuitarInvestidor1()) {
+										quitado = true;
+									}
+									
 									if (quitado) {
 										debenturesCompleta.setQuitado("Sim");
 										
@@ -1596,7 +1601,8 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 								}	
 								
 								// Verifica se estão quitadas todas as parcelas
-								boolean quitado = true;								
+								boolean quitado = true;		
+								
 								for (ContratoCobrancaParcelasInvestidor parcelas : c.getListContratoCobrancaParcelasInvestidor1()) {
 									
 									if(CommonsUtil.semValor(debenturesCompleta.getParcelaMensal())){
@@ -1619,6 +1625,12 @@ public class DebenturesInvestidorDao extends HibernateDao<DebenturesInvestidor, 
 										}
 									}
 								}
+								
+								// verifica o novo campo de investidor quitado, independe das parcelas
+								if (c.isQuitarInvestidor1()) {
+									quitado = true;
+								}
+								
 								if (quitado) {
 									debenturesCompleta.setQuitado("Sim");
 									
