@@ -731,9 +731,6 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
-						</h:panelGrid>
-						
-						<h:panelGrid columns="5" style="margin-top: 20px;">
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -767,6 +764,9 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="5" style="margin-top: 20px;">							
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -904,10 +904,7 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
-							</h:panelGrid>
-						</h:panelGrid>
-						
-						<h:panelGrid columns="4" style="margin-top:20px; margin-bottom: 20px;">
+							</h:panelGrid>							
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -945,6 +942,9 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" style="margin-top:20px; margin-bottom: 20px;">						
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -978,7 +978,42 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
+							</h:panelGrid>						
+							<h:panelGrid columns="2"
+								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
+								<p:spacer></p:spacer>
+								<shiro:hasAnyRoles name="PRECOBRANCA">
+									<p:selectBooleanButton id="agEnvioCartorioView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+									<p:selectBooleanButton id="agEnvioCartorio"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px" >
+									</p:selectBooleanButton>
+								</shiro:hasAnyRoles>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="agEnvioCartorioUsuario"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioUsuario}"
+									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								<h:outputText id="agEnvioCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
 							</h:panelGrid>
+							
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;

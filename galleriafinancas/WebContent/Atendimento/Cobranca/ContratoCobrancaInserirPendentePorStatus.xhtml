@@ -2719,7 +2719,7 @@
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -2896,7 +2896,7 @@
 
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataInicio" value="Data Inicio: "
 								styleClass="labelBold" style="margin-right: 59px;" />
@@ -2988,7 +2988,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 
 						<f:facet name="header"> Contas a Pagar 
 							<p:outputLabel value="" />							
