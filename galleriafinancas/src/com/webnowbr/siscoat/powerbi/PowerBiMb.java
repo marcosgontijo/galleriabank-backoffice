@@ -97,6 +97,7 @@ public class PowerBiMb {
 		powerBiNew.add(pbAnalisadas);
 		powerBiNew.add(pbAprovadas);
 		powerBiNew.add(pbReprovadas);
+		powerBiNew.add(getPBNewDataBase("Pendenciadas"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de laudo"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de paju"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Com. Jurídico"));

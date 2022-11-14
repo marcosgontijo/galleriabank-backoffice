@@ -690,6 +690,11 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 						query = query + " where analiseReprovadaData >= ? ::timestamp " 
 						+ " and analiseReprovadaData <= ? ::timestamp ";
 						param1 = "select c.analiseReprovadaUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Pendenciadas")) {
+						object.setTipo("Pendenciadas");
+						query = query + " where analisePendenciadaData >= ? ::timestamp " 
+						+ " and analisePendenciadaData <= ? ::timestamp";	
+						param1 = "select c.analisePendenciadaUsuario";
 					} else if(CommonsUtil.mesmoValor(tipo, "Com pedido de laudo")) {
 						object.setTipo("Com pedido de laudo");
 						query = query + " where pedidoLaudoData >= ? ::timestamp " 
