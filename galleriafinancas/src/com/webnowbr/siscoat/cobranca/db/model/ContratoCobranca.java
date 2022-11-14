@@ -350,6 +350,9 @@ public class ContratoCobranca implements Serializable {
 	private boolean cadastroAprovado;
 	private String cadastroAprovadoValor;
 	private String cadastroAprovadoUsuario;
+	
+	private Date analisePendenciadaData;
+	private String analisePendenciadaUsuario;
 
 	private boolean matriculaAprovada;
 	private Date matriculaAprovadaData;
@@ -5763,4 +5766,21 @@ public class ContratoCobranca implements Serializable {
 	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
 		this.notificacaoCartorioData = notificacaoCartorioData;
 	}
+
+	public Date getAnalisePendenciadaData() {
+		return analisePendenciadaData;
+	}
+
+	public void setAnalisePendenciadaData(Date analisePendenciadaData) {
+		this.analisePendenciadaData = analisePendenciadaData;
+	}
+
+	public String getAnalisePendenciadaUsuario() {
+		return analisePendenciadaUsuario;
+	}
+
+	public void setAnalisePendenciadaUsuario(String analisePendenciadaUsuario) {
+		this.analisePendenciadaUsuario = analisePendenciadaUsuario;
+	}
+	
 }

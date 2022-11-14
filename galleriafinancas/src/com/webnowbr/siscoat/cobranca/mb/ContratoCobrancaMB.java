@@ -4573,6 +4573,11 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
 						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 					}
+					
+					if(this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") && this.objetoContratoCobranca.getAnalisePendenciadaData() == null) {
+						this.objetoContratoCobranca.setAnalisePendenciadaData(gerarDataHoje());
+						this.objetoContratoCobranca.setAnalisePendenciadaUsuario(getNomeUsuarioLogado());
+					}
 				} else {
 					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
 						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());				

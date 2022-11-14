@@ -1904,6 +1904,14 @@
 		<property name="agEnvioCartorioData" type="java.util.Date">
 			<column name="agEnvioCartorioData" />
 		</property>
+	
+		<property name="analisePendenciadaData" type="java.util.Date">
+			<column name="analisePendenciadaData" />
+		</property>
+		
+		<property name="analisePendenciadaUsuario" type="java.lang.String">
+			<column name="analisePendenciadaUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>
