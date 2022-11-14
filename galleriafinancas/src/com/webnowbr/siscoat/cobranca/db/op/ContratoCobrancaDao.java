@@ -7909,6 +7909,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONSULTA_ZAP_CARTORIO = " select "
+			+ "	c.id, "
+			+ "	c.numerocontrato, "
+			+ "	c.notificacaoCartorioData "
+			+ " from "
+			+ "	cobranca.contratocobranca c "
+			+ " where "
+			+ " agregistro = true "
+			+ " and agassinatura = false"	
+			+ "	and (DATE_PART('day', ? ::timestamp) >= DATE_PART('day', c.notificacaoCartorioData) ) ";
+	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> ConsultaContratosCartorio(final Date dataInicio) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -7925,20 +7936,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Date auxDataHoje = dataHoje.getTime();
 				try {
 					connection = getConnection();
-					ps = connection.prepareStatement(QUERY_CONSULTA_ZAP_LEADS_EM_TRATAMENTO);
+					ps = connection.prepareStatement(QUERY_CONSULTA_ZAP_CARTORIO);
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
 					ps.setDate(1, dtRelInicioSQL);
-					ps.setDate(2, dtRelInicioSQL);
 					
 					rs = ps.executeQuery();
-					while (rs.next()) {
-						Date data = rs.getDate("leademtratamentodata");
-						if (DateUtil.getWorkingDaysBetweenTwoDates(data, auxDataHoje) == 3) {
-							ContratoCobranca contratoCobranca = new ContratoCobranca();
-							contratoCobranca.setId(rs.getLong("id"));
-							objects.add(contratoCobranca);	
-						}									
+					while (rs.next()) {					
+						ContratoCobranca contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong("id"));
+						objects.add(contratoCobranca);													
 					}
 	
 				} finally {

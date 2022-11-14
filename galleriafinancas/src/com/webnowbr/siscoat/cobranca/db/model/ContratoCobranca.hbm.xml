@@ -1904,6 +1904,10 @@
 		<property name="agEnvioCartorioData" type="java.util.Date">
 			<column name="agEnvioCartorioData" />
 		</property>
+
+		<property name="notificacaoCartorioData" type="java.util.Date">
+			<column name="notificacaoCartorioData" />
+		</property>
 	
 		<property name="analisePendenciadaData" type="java.util.Date">
 			<column name="analisePendenciadaData" />

@@ -1128,6 +1128,12 @@
 									cols="48" maxlength="3000" onblur=""
 									counterTemplate="{0} characters remaining." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.exigenciasCartorioObservacao}" />
+									
+								<p:outputLabel for="notificacaoCartorioData" value="Data Prox. Notificação"
+									styleClass="labelBold" />
+								<p:calendar id="notificacaoCartorioData" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.notificacaoCartorioData}" label="Data"
+									size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>

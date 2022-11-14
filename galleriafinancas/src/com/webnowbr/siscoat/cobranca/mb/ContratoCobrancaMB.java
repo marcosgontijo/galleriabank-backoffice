@@ -4836,6 +4836,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAgEnvioCartorioData(gerarDataHoje());				
 				this.objetoContratoCobranca.setAgEnvioCartorioUsuario(getNomeUsuarioLogado());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAgEnvioCartorioData());
+				this.objetoContratoCobranca.setNotificacaoCartorioData(DateUtil.adicionarDias(gerarDataHoje(), 5));
 			}
 		}		
 
@@ -7176,16 +7177,14 @@ public class ContratoCobrancaMB {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
 		
-		this.contratosPendentes = contratoCobrancaDao.ConsultaZapLeadsEmTratamento(auxDataHoje);
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosCartorio(auxDataHoje);
 		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
 			
-			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
-				this.objetoContratoCobranca.setEnviadoWhatsAppLeadStandby(true);
-				contratoCobrancaDao.merge(this.objetoContratoCobranca);
-			}
+			this.objetoContratoCobranca.setNotificacaoCartorioData(DateUtil.adicionarDias(objetoContratoCobranca.getNotificacaoCartorioData(), 5));
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);		
 
 			TakeBlipMB tkblpMb = new TakeBlipMB();
 			//pagador = new PagadorRecebedorDao().findById(10737l);
@@ -7196,28 +7195,36 @@ public class ContratoCobrancaMB {
 			Responsavel rCcb2 = new Responsavel();
 			Responsavel rCcb3 = new Responsavel();
 			Responsavel rCcb4 = new Responsavel();
-			Responsavel rCcb5 = new Responsavel();
-			Responsavel rCcb6 = new Responsavel();	
+			//Responsavel rCcb5 = new Responsavel();
+			//Responsavel rCcb6 = new Responsavel();	
 			
 			// Amanda
 			rCcb1 = rDao.findById((long) 621);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb1,
-			"aprovado_comite_ag_ccb");
+			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
+			this.objetoContratoCobranca.getPagador().getNome(),
+			this.objetoContratoCobranca.getNotificacaoCartorioData());
 					
 			// Anna Flavia
 			rCcb2 = rDao.findById((long) 622);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb2,
-			"aprovado_comite_ag_ccb");
+			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
+			this.objetoContratoCobranca.getPagador().getNome(),
+			this.objetoContratoCobranca.getNotificacaoCartorioData());
 			
 			// Flavia
 			rCcb3 = rDao.findById((long) 623);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb3,
-			"aprovado_comite_ag_ccb");	
+			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
+			this.objetoContratoCobranca.getPagador().getNome(),
+			this.objetoContratoCobranca.getNotificacaoCartorioData());	
 			
 			// Luana
-			rCcb5 = rDao.findById((long) 625);
-			tkblpMb.sendWhatsAppMessageCartorio(rCcb5,
-			"aprovado_comite_ag_ccb");
+			rCcb4 = rDao.findById((long) 625);
+			tkblpMb.sendWhatsAppMessageCartorio(rCcb4,
+			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
+			this.objetoContratoCobranca.getPagador().getNome(),
+			this.objetoContratoCobranca.getNotificacaoCartorioData());
 		}
 	}
 	
@@ -11365,6 +11372,7 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosPendentes() {
 		this.baixarPreContratoAutomatico();
 		this.enviaZapLeadEmTratamento();
+		enviaZapCartorio();
 
 	//	if (this.preContratoCustom) {
 
@@ -11878,6 +11886,7 @@ public class ContratoCobrancaMB {
 	public String geraConsultaContratosPorStatus(String status) {
 		this.baixarPreContratoAutomatico();
 		this.enviaZapLeadEmTratamento();
+		enviaZapCartorio();
 		
 		this.tituloTelaConsultaPreStatus = status;
 		
