@@ -253,6 +253,8 @@ public class InvestidorMB {
 	private String filtroDebenturesStatus;
 	
 	private String filtroDebenturesPorValor = "Todos";
+	private String filtroDebenturesTipoData = "Todos";
+	
 	private BigDecimal filtroValorFaceInicial = null;
 	private BigDecimal filtroValorFaceFinal = null;
 	
@@ -3366,6 +3368,12 @@ public class InvestidorMB {
 		cell = row.createCell(15);
 		cell.setCellValue("Garantido");
 		cell.setCellStyle(cell_style);
+		cell = row.createCell(16);
+		cell.setCellValue("Saldo Credor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(17);
+		cell.setCellValue("Número Parcela");
+		cell.setCellStyle(cell_style);
 
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
@@ -3513,6 +3521,27 @@ public class InvestidorMB {
 			cell = row.createCell(15);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getGarantido());
+			
+			if (record.getParcelaInvestidor() != null) {
+				if (record.getParcelaInvestidor().getId() > 0) {
+					//Saldo Credor
+					cell = row.createCell(16);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (record.getParcelaFinal() != null) {
+						cell.setCellValue(record.getParcelaInvestidor().getSaldoCredorAtualizado().doubleValue());
+					} else {
+						cell.setCellValue(Double.valueOf("0.00"));
+					}
+					
+					//Número Parcela
+					cell = row.createCell(17);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					cell.setCellValue(record.getParcelaInvestidor().getNumeroParcela());
+				}
+			}
+
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
@@ -4814,6 +4843,7 @@ public class InvestidorMB {
 		this.filtroDebenturesStatus = "Todos";
 		
 		this.filtroDebenturesTipoFiltro = "Periodo";
+		this.filtroDebenturesTipoData = "Contrato";
 		
 		this.filtroDebenturesPorValor = "Todos";
 		this.filtroValorFaceInicial = null;
@@ -4873,7 +4903,7 @@ public class InvestidorMB {
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro);
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro, this.filtroDebenturesTipoData);
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
@@ -11022,5 +11052,13 @@ public class InvestidorMB {
 
 	public void setFiltroDebenturesTipoFiltro(String filtroDebenturesTipoFiltro) {
 		this.filtroDebenturesTipoFiltro = filtroDebenturesTipoFiltro;
+	}
+
+	public String getFiltroDebenturesTipoData() {
+		return filtroDebenturesTipoData;
+	}
+
+	public void setFiltroDebenturesTipoData(String filtroDebenturesTipoData) {
+		this.filtroDebenturesTipoData = filtroDebenturesTipoData;
 	}
 }

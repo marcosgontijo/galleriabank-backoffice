@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class DebenturesInvestidor implements Serializable {
 
@@ -55,6 +56,9 @@ public class DebenturesInvestidor implements Serializable {
 	
 	private String numeroContrato;
 	private BigDecimal valorLiquido;	
+	
+	private List<ContratoCobrancaParcelasInvestidor> parcelasInvestidor;
+	private ContratoCobrancaParcelasInvestidor parcelaInvestidor;
 	
 	public DebenturesInvestidor(){
 	}
@@ -281,5 +285,21 @@ public class DebenturesInvestidor implements Serializable {
 
 	public void setValorLiquido(BigDecimal valorLiquido) {
 		this.valorLiquido = valorLiquido;
+	}
+
+	public List<ContratoCobrancaParcelasInvestidor> getParcelasInvestidor() {
+		return parcelasInvestidor;
+	}
+
+	public void setParcelasInvestidor(List<ContratoCobrancaParcelasInvestidor> parcelasInvestidor) {
+		this.parcelasInvestidor = parcelasInvestidor;
+	}
+
+	public ContratoCobrancaParcelasInvestidor getParcelaInvestidor() {
+		return parcelaInvestidor;
+	}
+
+	public void setParcelaInvestidor(ContratoCobrancaParcelasInvestidor parcelaInvestidor) {
+		this.parcelaInvestidor = parcelaInvestidor;
 	}
 }

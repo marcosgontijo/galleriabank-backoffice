@@ -55,6 +55,14 @@
 						<p:ajax update="ConsultaFiltrosTitulosQuitados" event="valueChange"
 							listener="#{investidorMB.updateTipoFiltro}" />
 					</p:selectOneRadio>	
+					
+					<p:outputLabel for="TipoData" value="Filtrar Data: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}"/>
+					<p:selectOneRadio id="TipoData"
+						value="#{investidorMB.filtroDebenturesTipoData}" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}">
+						<f:selectItem itemLabel="Contrato" itemValue="Contrato" />
+						<f:selectItem itemLabel="Parcela" itemValue="Parcela" />
+					</p:selectOneRadio>	
 							
 					<p:outputLabel for="dataInicio" value="Data Inicio: "
 						styleClass="labelBold" style="margin-right: 59px;" rendered="#{investidorMB.filtroDebenturesTipoFiltro eq 'Periodo'}" />
@@ -216,6 +224,14 @@
 							headerText="Garantido" >
 						<h:outputText value="#{debentures.garantido}"/>
 					</p:column>	
+					<p:column style="text-align: center;"
+							headerText="Saldo Credor" rendered="#{investidorMB.filtroDebenturesTipoData eq 'Parcela'}">
+						<h:outputText value="R$ "/><h:outputText value="#{debentures.parcelaInvestidor.saldoCredorAtualizado}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:column style="text-align: center;"
+							headerText="Número Parcela" rendered="#{investidorMB.filtroDebenturesTipoData eq 'Parcela'}">
+						<h:outputText value="#{debentures.parcelaInvestidor.numeroParcela}"/>
+					</p:column>			
 			        <f:facet name="footer">
 						<p:commandButton action="#{investidorMB.geraXLSRelatorioDebenturesEmitidas}" update="PanelPDF" ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS" value="Gerar XLS">
 		                	<f:setPropertyActionListener target="#{investidorMB.debenturesInvestidor}" value="#{debentures}" />
