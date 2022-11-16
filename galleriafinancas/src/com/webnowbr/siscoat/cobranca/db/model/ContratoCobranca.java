@@ -350,6 +350,9 @@ public class ContratoCobranca implements Serializable {
 	private boolean cadastroAprovado;
 	private String cadastroAprovadoValor;
 	private String cadastroAprovadoUsuario;
+	
+	private Date analisePendenciadaData;
+	private String analisePendenciadaUsuario;
 
 	private boolean matriculaAprovada;
 	private Date matriculaAprovadaData;
@@ -416,6 +419,10 @@ public class ContratoCobranca implements Serializable {
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
+	
+	private Date agEnvioCartorioData;
+	private boolean agEnvioCartorio;
+	private String agEnvioCartorioUsuario;
 	
 	private Date agRegistroData;
 	private boolean agRegistro;
@@ -705,6 +712,8 @@ public class ContratoCobranca implements Serializable {
 	private String recebedorCompraVenda;
 	
 	private Responsavel analistaGeracaoPAJU;	
+	
+	private Date notificacaoCartorioData;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -5725,4 +5734,53 @@ public class ContratoCobranca implements Serializable {
 	public void setQuitarInvestidor10(boolean quitarInvestidor10) {
 		this.quitarInvestidor10 = quitarInvestidor10;
 	}
+	
+	public Date getAgEnvioCartorioData() {
+		return agEnvioCartorioData;
+	}
+
+	public void setAgEnvioCartorioData(Date agEnvioCartorioData) {
+		this.agEnvioCartorioData = agEnvioCartorioData;
+	}
+
+	public boolean isAgEnvioCartorio() {
+		return agEnvioCartorio;
+	}
+
+	public void setAgEnvioCartorio(boolean agEnvioCartorio) {
+		this.agEnvioCartorio = agEnvioCartorio;
+	}
+
+	public String getAgEnvioCartorioUsuario() {
+		return agEnvioCartorioUsuario;
+	}
+
+	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
+		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
+	}
+
+	public Date getNotificacaoCartorioData() {
+		return notificacaoCartorioData;
+	}
+
+	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
+		this.notificacaoCartorioData = notificacaoCartorioData;
+	}
+
+	public Date getAnalisePendenciadaData() {
+		return analisePendenciadaData;
+	}
+
+	public void setAnalisePendenciadaData(Date analisePendenciadaData) {
+		this.analisePendenciadaData = analisePendenciadaData;
+	}
+
+	public String getAnalisePendenciadaUsuario() {
+		return analisePendenciadaUsuario;
+	}
+
+	public void setAnalisePendenciadaUsuario(String analisePendenciadaUsuario) {
+		this.analisePendenciadaUsuario = analisePendenciadaUsuario;
+	}
+	
 }

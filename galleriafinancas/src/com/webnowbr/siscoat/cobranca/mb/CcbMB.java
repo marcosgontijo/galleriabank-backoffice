@@ -745,6 +745,10 @@ public class CcbMB {
 			if(!CommonsUtil.semValor(this.objetoCcb.getCCBValor()))
 				total = total.add(this.objetoCcb.getCCBValor());
 		}
+		if(isTemItbi()) {
+			if(!CommonsUtil.semValor(this.objetoCcb.getItbiValor()))
+				total = total.add(this.objetoCcb.getItbiValor());
+		}
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
 				if(!CommonsUtil.semValor(processo.getValor()))

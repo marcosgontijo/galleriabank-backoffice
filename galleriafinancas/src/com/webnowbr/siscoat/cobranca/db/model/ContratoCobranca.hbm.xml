@@ -1892,6 +1892,30 @@
 		<property name="valorCompraVenda" type="big_decimal">
 			<column name="valorCompraVenda" />
 		</property>
+		
+		<property name="agEnvioCartorio" type="boolean">
+			<column name="agEnvioCartorio" not-null="true" default="true"/>
+		</property>
+		
+		<property name="agEnvioCartorioUsuario" type="java.lang.String">
+			<column name="agEnvioCartorioUsuario" />
+		</property>
+		
+		<property name="agEnvioCartorioData" type="java.util.Date">
+			<column name="agEnvioCartorioData" />
+		</property>
+
+		<property name="notificacaoCartorioData" type="java.util.Date">
+			<column name="notificacaoCartorioData" />
+		</property>
+	
+		<property name="analisePendenciadaData" type="java.util.Date">
+			<column name="analisePendenciadaData" />
+		</property>
+		
+		<property name="analisePendenciadaUsuario" type="java.lang.String">
+			<column name="analisePendenciadaUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>

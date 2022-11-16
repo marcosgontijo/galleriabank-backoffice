@@ -221,13 +221,17 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Assinatura')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<p:menuitem value="13 - Ag. Registro"
+									<p:menuitem value="13 - Ag. Envio Cartorio"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Envio Cartorio')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="14 - Ag. Registro"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO">	
-									<p:menuitem value="14 - Ag. Pag. Op."
+									<p:menuitem value="15 - Ag. Pag. Op."
 										action="#{contratoCobrancaMB.consultaAgPagamentoOp}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />

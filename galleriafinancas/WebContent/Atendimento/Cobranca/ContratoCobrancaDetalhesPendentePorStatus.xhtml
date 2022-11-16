@@ -111,6 +111,7 @@
 								    <p:menuitem id="ccbProntaStep" value="CCB Pronta"/>
 								    <p:menuitem id="contratoConferidoStep" value="Contrato Conferido"/>
 								    <p:menuitem id="agAssinaturaStep" value="Aguardando Assinatura"/>
+								    <p:menuitem id="agEnvioCartorioStep" value="Aguardando Envio Cartório"/>
 								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
 								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
 								</p:steps>
@@ -436,6 +437,26 @@
 								style="width:250px;font-weight: bold; font-size: 18px;" />
 							<h:outputText
 								value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}"
+								style="width:250px;font-weight: bold; font-size: 18px;">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</h:panelGrid>
+					</p:tooltip>
+					
+					<p:tooltip id="toolTipContentAgEnvioCartorioStep"
+						for="agEnvioCartorioStep" position="bottom">
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Aprovador" styleClass="labelBold"
+								style="font-weight: bold;" />
+							<p:outputLabel
+								value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioUsuario}"
+								styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;" />
+							<p:outputLabel value="Data Aprovação" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px;" />
+							<h:outputText
+								value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioData}"
 								style="width:250px;font-weight: bold; font-size: 18px;">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />

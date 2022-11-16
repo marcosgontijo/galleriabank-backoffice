@@ -499,6 +499,7 @@ public class ContractService {
 		this.objetoContratoCobranca.setStatus("Pendente");
 		this.objetoContratoCobranca.setStatusContrato("Pendente");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgEnvioCartorio(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		this.objetoContratoCobranca.setAnaliseReprovada(false);
 		this.objetoContratoCobranca.setInicioAnalise(false);
