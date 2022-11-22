@@ -238,6 +238,99 @@
 					</p:selectBooleanButton>
 				</h:panelGrid>
 				
+				<p:panel id="PanelProfiles"
+					header="Novo Sistema de Permissionamento"
+					style="margin-bottom:10px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputLabel for="profileAnalistaCredito" value="Analista de Crédito"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAnalistaCredito"
+							value="#{usuarioMB.objetoUsuario.profileAnalistaCredito}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileAnalistaComite" value="Analista Comitê"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAnalistaComite"
+							value="#{usuarioMB.objetoUsuario.profileAnalistaComite}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileAnalistaPosComite" value="Analista Pós Comitê"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAnalistaPosComite"
+							value="#{usuarioMB.objetoUsuario.profileAnalistaPosComite}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileGerenteAnalise" value="Gerente Análise"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileGerenteAnalise"
+							value="#{usuarioMB.objetoUsuario.profileGerenteAnalise}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileContrato" value="Contratos"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileContrato"
+							value="#{usuarioMB.objetoUsuario.profileContrato}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileCobranca" value="Cobrança"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileCobranca"
+							value="#{usuarioMB.objetoUsuario.profileCobranca}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileComentarioJuridico" value="Comentário Jurídico"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileComentarioJuridico"
+							value="#{usuarioMB.objetoUsuario.profileComentarioJuridico}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileAvaliadorImovel" value="Avaliador Imóvel"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAvaliadorImovel"
+							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovel}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileAvaliadorImovelCompass" value="Avaliador Imóvel Compass"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAvaliadorImovelCompass"
+							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelCompass}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileAvaliadorImovelGalache" value="Avaliador Imóvel Galache"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileAvaliadorImovelGalache"
+							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelGalache}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						
+						<h:outputLabel for="profileLaudo" value="Laudo"
+							class="labelBold" />
+						<p:selectBooleanButton id="profileLaudo"
+							value="#{usuarioMB.objetoUsuario.profileLaudo}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+					</h:panelGrid>
+				</p:panel>
 				<p:panel id="PanelBlockBackoffice"
 					header="Sistema de Cobrança - Bloqueia acesso ao Backoffice"
 					style="margin-bottom:10px;margin-top:20px;">

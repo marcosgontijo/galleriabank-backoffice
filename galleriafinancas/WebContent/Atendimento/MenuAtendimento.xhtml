@@ -534,6 +534,80 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_ANALISTA_CREDITO">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<p:menuitem value="01 - Ag. Análise"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="02 - Em Análise"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="02.5 - Análise Pendente"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Analise Pendente')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Consulta SCR"
+									action="#{bmpDigitalMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_ANALISTA_COMITE">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<p:menuitem value="07.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
+											action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Documentos Comite')}"
+											ajax="false" icon="ui-icon ui-icon-newwin"
+											styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_ANALISTA_POS_COMITE">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<p:menuitem value="09 - Ag. DOC"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<p:menuitem value="06 - Comentario Jurídico"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Comentario Jurídico')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">						
+							<p:submenu label="Contratos" styleClass="titulosMenu">
+								<p:menuitem value="Contratos Geral"
+									action="#{contratoCobrancaMB.clearFieldsContratosPerformance()}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />										
+								<p:menuitem value="Contratos Securitizadora"
+									action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Contratos FIDC"
+									action="#{contratoCobrancaMB.clearFieldsContratos('FIDC')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Contratos CRI 1"
+									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</p:submenu>
+							<p:submenu label="Financeiro" styleClass="titulosMenu">
+								<p:menuitem value="Boletos Kobana"
+									action="#{kobanaMB.clearFieldsParcelasBoleto}"
+									ajax="false" icon="ui-icon ui-icon-calculator"
+									styleClass="itemMenu" />
+								<p:menuitem value="Financeiro"
+									action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
+									ajax="false" icon="ui-icon ui-icon-calculator"
+									styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
 					</p:menu>
 				</h:form>
 			</ui:define>		

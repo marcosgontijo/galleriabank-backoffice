@@ -97,6 +97,39 @@
         <property name="comiteConsultar" type="boolean">
             <column name="comiteConsultar" />
         </property> 
+        <property name="profileAnalistaCredito" type="boolean">
+            <column name="profileAnalistaCredito" />
+        </property>  
+        <property name="profileAnalistaComite" type="boolean">
+            <column name="profileAnalistaComite" />
+        </property> 
+        <property name="profileAnalistaPosComite" type="boolean">
+            <column name="profileAnalistaPosComite" />
+        </property> 
+        <property name="profileGerenteAnalise" type="boolean">
+            <column name="profileGerenteAnalise" />
+        </property> 
+        <property name="profileContrato" type="boolean">
+            <column name="profileContrato" />
+        </property> 
+        <property name="profileComentarioJuridico" type="boolean">
+            <column name="profileComentarioJuridico" />
+        </property> 
+        <property name="profileAvaliadorImovel" type="boolean">
+            <column name="profileAvaliadorImovel" />
+        </property> 
+        <property name="profileAvaliadorImovelCompass" type="boolean">
+            <column name="profileAvaliadorImovelCompass" />
+        </property> 
+        <property name="profileAvaliadorImovelGalache" type="boolean">
+            <column name="profileAvaliadorImovelGalache" />
+        </property> 
+        <property name="profileLaudo" type="boolean">
+            <column name="profileLaudo" />
+        </property>     
+        <property name="profileCobranca" type="boolean">
+            <column name="profileCobranca" />
+        </property>        
         <property name="comiteEditar" type="boolean">
             <column name="comiteEditar" />
         </property>

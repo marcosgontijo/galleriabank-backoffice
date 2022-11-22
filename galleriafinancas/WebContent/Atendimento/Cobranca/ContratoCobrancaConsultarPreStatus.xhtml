@@ -165,7 +165,7 @@
 					</p:column>
 					
 					<p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO">  				
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
@@ -187,7 +187,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
 			             </shiro:hasAnyRoles>
-			             <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">   
+			             <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO">   
 			               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 				                and contratos.statusLead == 'Completo' 
 				                and contratos.inicioAnalise == true
