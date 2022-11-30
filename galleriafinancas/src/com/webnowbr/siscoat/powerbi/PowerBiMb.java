@@ -94,6 +94,7 @@ public class PowerBiMb {
 		pbReprovadas = getPBNewDataBase("Reprovadas");
 		pbAnalisadas = mergePowerBiNew(pbAprovadas, pbReprovadas);
 		pbAnalisadas.setTipo("Analisadas");
+		pbAprovadas = getPBNewDataBase("Aprovadas"); // consulta feita novamente pois lista de contratos de cada analista fica zuada apos o merge
 		powerBiNew.add(pbAnalisadas);
 		powerBiNew.add(pbAprovadas);
 		powerBiNew.add(pbReprovadas);
@@ -158,6 +159,7 @@ public class PowerBiMb {
 					pdc.getContratos().addAll(pdb.getContratos());
 					pdc.setQtdContratos(pdc.getContratos().size());		
 					analistaEncontrado = true;
+					break;
 				}	
 			}
 			if(!analistaEncontrado) {
