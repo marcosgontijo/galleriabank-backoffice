@@ -1458,6 +1458,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
 		this.objetoContratoCobranca.setDataCadastro(new Date());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -1551,6 +1552,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(new Date());
 		this.objetoContratoCobranca.setDataCadastro(new Date());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		loadLovs();
 		clearSelectedLovs();
 		this.contratoGerado = false;
@@ -6002,6 +6004,8 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
 		this.objetoContratoCobranca.setDataCadastro(new Date());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
+		
 
 		loadLovs();
 
@@ -6067,6 +6071,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.setDataContrato(new Date());
 		this.objetoContratoCobranca.setDataCadastro(new Date());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 
 		loadLovs();
 

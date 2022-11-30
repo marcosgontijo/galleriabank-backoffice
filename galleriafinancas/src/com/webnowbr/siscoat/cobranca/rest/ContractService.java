@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.faces.bean.ManagedProperty;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -37,7 +38,10 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.Parametros;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 
 @Path("/services")
@@ -48,6 +52,9 @@ public class ContractService {
 	private PagadorRecebedor objetoPagador;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<PagadorRecebedorSocio> listSocios;
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
 	
 	public static void main(String[] args) {
 		
@@ -72,8 +79,6 @@ public class ContractService {
 		System.out.println("LeadBySite - username: " + authorization);
 		System.out.println("LeadBySite - password: " + authorization);
     }
-
-
 
 	@GET
 	@Path("/TestarOperacao")
@@ -487,12 +492,43 @@ public class ContractService {
 
 		return dataHoje.getTime();
 	}
+	
+	public String getNomeUsuarioLogado() {
+		User usuario = getUsuarioLogado();
+
+		if (usuario.getLogin() != null) {
+			if (!usuario.getLogin().equals("")) {
+				return usuario.getLogin();
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	public User getUsuarioLogado() {
+		User usuario = new User();
+		if (loginBean != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
+			}
+		}
+
+		return usuario;
+	}
 		
 	public void clearCriacaoContrato() {
 		this.objetoContratoCobranca = new ContratoCobranca();
 		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
 		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
 		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
