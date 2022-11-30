@@ -7918,7 +7918,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " where "
 			+ " agregistro = true "
 			+ " and agassinatura = false"	
-			+ "	and (DATE_PART('day', ? ::timestamp) >= DATE_PART('day', c.notificacaoCartorioData) ) ";
+			+ "	and ( ? ::timestamp >=  c.notificacaoCartorioData ) ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> ConsultaContratosCartorio(final Date dataInicio) {
