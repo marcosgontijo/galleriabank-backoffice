@@ -21,7 +21,10 @@ public class PowerBiDetalhes {
 	
 	public PowerBiDetalhes(PowerBiDetalhes pbD) {
 		super();
-		this.contratos = pbD.getContratos();
+		this.contratos = new ArrayList<ContratoCobranca>();
+		for(ContratoCobranca contrato : pbD.getContratos()) {
+			this.contratos.add(contrato);
+		}
 		this.nome = pbD.getNome();
 		this.qtdContratos = pbD.getQtdContratos();
 	}
