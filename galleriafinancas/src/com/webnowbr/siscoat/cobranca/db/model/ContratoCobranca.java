@@ -94,13 +94,15 @@ public class ContratoCobranca implements Serializable {
 	private Date dataContrato; // data do contrato mas muda na aprovacao
 	
 	private Date dataCadastro; //data que operacao foi inserida no sistema
+	private String userCadastro;
+	
 	private int diaMes;
 	private int qtdeParcelas;
 	
 	private int mesesCarencia;
 	
 	private int parcelasVencidas;
-		
+	
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
 	private BigDecimal txJurosCessao;
@@ -5782,5 +5784,15 @@ public class ContratoCobranca implements Serializable {
 	public void setAnalisePendenciadaUsuario(String analisePendenciadaUsuario) {
 		this.analisePendenciadaUsuario = analisePendenciadaUsuario;
 	}
+
+	public String getUserCadastro() {
+		return userCadastro;
+	}
+
+	public void setUserCadastro(String userCadastro) {
+		this.userCadastro = userCadastro;
+	}
+	
+	
 	
 }

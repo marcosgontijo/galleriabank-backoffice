@@ -79,7 +79,7 @@
 				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">
 					<p:panel id="Status" header="Check-List"
 						style="margin-bottom:20px;">
-						<h:panelGrid columns="5" style="margin-top:20px;">
+						<h:panelGrid columns="6" style="margin-top:20px;">
 							<shiro:hasAnyRoles name="ROOT">
 								<h:panelGrid columns="2" style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -108,8 +108,31 @@
 										</p:selectOneMenu>												    						    
 									</h:panelGrid>								
 							</shiro:hasAnyRoles>
+							
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Início Cadastro</p:outputLabel>
+								<p:spacer height="50"></p:spacer>
+							
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="userCadastro"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.userCadastro}"
+									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								<h:outputText id="dataCadastro"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dataCadastro}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2"
+								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
@@ -768,7 +791,7 @@
 						
 						<h:panelGrid columns="5" style="margin-top: 20px;">							
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
@@ -946,7 +969,7 @@
 						
 						<h:panelGrid columns="4" style="margin-top:20px; margin-bottom: 20px;">						
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
