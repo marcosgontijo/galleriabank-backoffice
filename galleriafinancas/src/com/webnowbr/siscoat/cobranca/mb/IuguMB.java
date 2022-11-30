@@ -968,7 +968,7 @@ public class IuguMB {
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
-		+ "\",\"number\":\"" + 000 + "\"}}";		
+		+ "\",\"number\":\"" + this.selectedRecebedor.getNumero() + "\"}}";		
 		
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
@@ -5203,7 +5203,7 @@ public class IuguMB {
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
-		+ "\",\"number\":\"" + 000 + "\"}}";
+		+ "\",\"number\":\"" + this.selectedRecebedor.getNumero() + "\"}}";
 
 
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
@@ -5372,7 +5372,7 @@ public class IuguMB {
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
-		+ "\",\"number\":\"" + 000 + "\"}}";
+		+ "\",\"number\":\"" + this.selectedRecebedor.getNumero() + "\"}}";
 
 
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"

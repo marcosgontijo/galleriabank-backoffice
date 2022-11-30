@@ -24,6 +24,7 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private BigDecimal saldoCredorAtualizado;
 	private BigDecimal irRetido;
 	private BigDecimal valorLiquido;
+	private BigDecimal valorFace;
 	
 	///
 	
@@ -296,5 +297,13 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setIdContrato(long idContrato) {
 		this.idContrato = idContrato;
+	}
+
+	public BigDecimal getValorFace() {
+		return valorFace;
+	}
+
+	public void setValorFace(BigDecimal valorFace) {
+		this.valorFace = valorFace;
 	}
 }
