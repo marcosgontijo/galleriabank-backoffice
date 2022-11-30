@@ -7179,6 +7179,22 @@ public class ContratoCobrancaMB {
 		
 		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosCartorio(auxDataHoje);
 		
+		ResponsavelDao rDao = new ResponsavelDao();
+		
+		Responsavel rCcb1 = new Responsavel();
+		Responsavel rCcb2 = new Responsavel();
+		Responsavel rCcb3 = new Responsavel();
+		Responsavel rCcb4 = new Responsavel();
+		
+		// Amanda
+		rCcb1 = rDao.findById((long) 621);
+		// Anna Flavia
+		rCcb2 = rDao.findById((long) 622);
+		// Flavia
+		rCcb3 = rDao.findById((long) 623);
+		// Luana
+		rCcb4 = rDao.findById((long) 625);
+		
 		for (ContratoCobranca contratos : this.contratosPendentes) {	
 			
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
@@ -7187,40 +7203,30 @@ public class ContratoCobrancaMB {
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);		
 
 			TakeBlipMB tkblpMb = new TakeBlipMB();
-			//pagador = new PagadorRecebedorDao().findById(10737l);
-			//tkblpMb.sendWhatsAppMessageCartorio(pagador, "leads_standby");	
-			ResponsavelDao rDao = new ResponsavelDao();
-			
-			Responsavel rCcb1 = new Responsavel();
-			Responsavel rCcb2 = new Responsavel();
-			Responsavel rCcb3 = new Responsavel();
-			Responsavel rCcb4 = new Responsavel();
-			//Responsavel rCcb5 = new Responsavel();
-			//Responsavel rCcb6 = new Responsavel();	
-			
+
 			// Amanda
-			rCcb1 = rDao.findById((long) 621);
+			//rCcb1 = rDao.findById((long) 621);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb1,
 			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
 			this.objetoContratoCobranca.getPagador().getNome(),
 			this.objetoContratoCobranca.getNotificacaoCartorioData());
 					
 			// Anna Flavia
-			rCcb2 = rDao.findById((long) 622);
+			//rCcb2 = rDao.findById((long) 622);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb2,
 			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
 			this.objetoContratoCobranca.getPagador().getNome(),
 			this.objetoContratoCobranca.getNotificacaoCartorioData());
 			
 			// Flavia
-			rCcb3 = rDao.findById((long) 623);
+			//rCcb3 = rDao.findById((long) 623);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb3,
 			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
 			this.objetoContratoCobranca.getPagador().getNome(),
 			this.objetoContratoCobranca.getNotificacaoCartorioData());	
 			
 			// Luana
-			rCcb4 = rDao.findById((long) 625);
+			//rCcb4 = rDao.findById((long) 625);
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb4,
 			"notificacao_cartorio", this.objetoContratoCobranca.getNumeroContrato(),
 			this.objetoContratoCobranca.getPagador().getNome(),
