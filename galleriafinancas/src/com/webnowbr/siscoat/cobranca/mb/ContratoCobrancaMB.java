@@ -2981,6 +2981,7 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			
 			enviaEmailAtualizacaoPreContratoNovo();
+			System.out.println("saveLeadTerceiros");
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3077,6 +3078,7 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			
 			enviaEmailAtualizacaoPreContratoNovo();
+			System.out.println("editPreContrato");
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3690,6 +3692,7 @@ public class ContratoCobrancaMB {
 				// senao valida se houve alteração no checklist para envio de email.
 
 				enviaEmailAtualizacaoPreContratoNovo();	
+				System.out.println("editPreContratoPorStatus");
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
