@@ -35,6 +35,7 @@
 						<f:selectItem itemValue="Gerentes" itemLabel="Gerentes" />
 						<f:selectItem itemValue="Campanha" itemLabel="Campanha" />
 						<f:selectItem itemValue="Cidade" itemLabel="Cidade" />
+						<f:selectItem itemValue="Taxa" itemLabel="Taxa" />
 						<p:ajax update="filtros"  />
 					</p:selectOneMenu>
 				</h:panelGrid>
@@ -96,25 +97,25 @@
 					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
 					rowsPerPageTemplate="10,20,30,50" selection="" emptyMessage=""
 					reflow="true">
-					<p:column style="text-align: center;" headerText="Responsável" rendered="#{!dashboardMBVer2.consultaLead}"
+					<p:column style="text-align: center;" headerText="Responsável" rendered="#{!dashboardMBVer2.consultaLead and ! dashboardMBVer2.consultaTaxa}"
 						filterBy="#{dashContratos.nomeResponsavel}" filterMatchMode="contains"
 						sortBy="#{dashContratos.nomeResponsavel}">
 						<h:outputText value="#{dashContratos.nomeResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Gerente" rendered="#{!dashboardMBVer2.consultaLead}"
+					<p:column style="text-align: center;" headerText="Gerente" rendered="#{!dashboardMBVer2.consultaLead and ! dashboardMBVer2.consultaTaxa}"
 						filterBy="#{dashContratos.gerenteResponsavel}" filterMatchMode="contains"
 						sortBy="#{dashContratos.gerenteResponsavel}">
 						<h:outputText value="#{dashContratos.gerenteResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Captador" rendered="#{!dashboardMBVer2.consultaLead}"
+					<p:column style="text-align: center;" headerText="Captador" rendered="#{!dashboardMBVer2.consultaLead and ! dashboardMBVer2.consultaTaxa}"
 						filterBy="#{dashContratos.captadorResponsavel}" filterMatchMode="contains"
 						sortBy="#{dashContratos.captadorResponsavel}">
 						<h:outputText value="#{dashContratos.captadorResponsavel}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Data Cadastro" rendered="#{!dashboardMBVer2.consultaLead}"
+					<p:column style="text-align: center;" headerText="Data Cadastro" rendered="#{!dashboardMBVer2.consultaLead and ! dashboardMBVer2.consultaTaxa}"
 						filterBy="#{dashContratos.dataCadastroResponsavel}" filterMatchMode="contains" 
 						sortBy="#{dashContratos.dataCadastroResponsavel}">
 			           <p:outputLabel value="#{dashContratos.dataCadastroResponsavel}" >			            	
@@ -122,13 +123,19 @@
 						</p:outputLabel>
 			        </p:column>
 					
-					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMBVer2.consultaLead}"
+					<p:column style="text-align: center;" headerText="Origem" rendered="#{dashboardMBVer2.consultaLead and ! dashboardMBVer2.consultaTaxa}"
 						filterBy="#{dashContratos.origemLead}" filterMatchMode="contains"
 						sortBy="#{dashContratos.origemLead}">
 						<h:outputText value="#{dashContratos.origemLead}" />
 					</p:column>
 					
-					<p:column style="text-align: center;" headerText="Total cadastrados" sortBy="#{dashContratos.contratosCadastrados}">	
+					<p:column style="text-align: center;" headerText="Taxa" rendered="#{!dashboardMBVer2.consultaLead and dashboardMBVer2.consultaTaxa}"
+						filterBy="#{dashContratos.taxaOrigem}" filterMatchMode="contains"
+						sortBy="#{dashContratos.taxaOrigem}">
+						<h:outputText value="#{dashContratos.taxaOrigem}" converter="bigDecimalConverter"/>
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Total cadastrados" sortBy="#{dashContratos.contratosCadastrados}" rendered="#{!dashboardMBVer2.consultaTaxa}">	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm" >
 							<f:setPropertyActionListener
@@ -138,7 +145,7 @@
 								value="#{dashContratos.contratosCadastrados}"/>
 						</p:commandLink>		
 					</p:column>
-					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorContratosCadastrados}">
+					<p:column style="text-align: center;" headerText="Valor Total" sortBy="#{dashContratos.valorContratosCadastrados}" rendered="#{!dashboardMBVer2.consultaTaxa}">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorContratosCadastrados}" converter="bigDecimalConverter" />
 					</p:column>

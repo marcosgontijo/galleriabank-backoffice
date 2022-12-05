@@ -36,7 +36,7 @@ public class Dashboard implements Serializable {
 	private String motivoReprova;
 	private String numeroContrato;
 	private int totalNovosContratos;
-	
+	BigDecimal taxaOrigem;
 	
 	
 	private int contratosCadastrados;
@@ -539,6 +539,16 @@ public class Dashboard implements Serializable {
 
 	public void setDataCadastroResponsavel(Date dataCadastroResponsavel) {
 		this.dataCadastroResponsavel = dataCadastroResponsavel;
+	}
+
+	public BigDecimal getTaxaOrigem() {
+		return taxaOrigem;
+	}
+
+	public void setTaxaOrigem(BigDecimal taxaOrigem) {
+		this.taxaOrigem = taxaOrigem;
 	}	
+	
+	
 
 }
