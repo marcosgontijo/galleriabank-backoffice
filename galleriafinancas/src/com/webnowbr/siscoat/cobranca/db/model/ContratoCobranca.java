@@ -405,6 +405,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean comentarioJuridicoEsteira;
 	private String comentarioJuridicoEsteiraUsuario;
 	private boolean comentarioJuridicoPendente;
+	
+	private Date reprovadoJuridicoEsteiraData;
+	private boolean reprovadoJuridicoEsteira;
+	private String reprovadoJuridicoEsteiraUsuario;
 
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
@@ -5791,6 +5795,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setUserCadastro(String userCadastro) {
 		this.userCadastro = userCadastro;
+	}
+
+	public Date getReprovadoJuridicoEsteiraData() {
+		return reprovadoJuridicoEsteiraData;
+	}
+
+	public void setReprovadoJuridicoEsteiraData(Date reprovadoJuridicoEsteiraData) {
+		this.reprovadoJuridicoEsteiraData = reprovadoJuridicoEsteiraData;
+	}
+
+	public boolean isReprovadoJuridicoEsteira() {
+		return reprovadoJuridicoEsteira;
+	}
+
+	public void setReprovadoJuridicoEsteira(boolean reprovadoJuridicoEsteira) {
+		this.reprovadoJuridicoEsteira = reprovadoJuridicoEsteira;
+	}
+
+	public String getReprovadoJuridicoEsteiraUsuario() {
+		return reprovadoJuridicoEsteiraUsuario;
+	}
+
+	public void setReprovadoJuridicoEsteiraUsuario(String reprovadoJuridicoEsteiraUsuario) {
+		this.reprovadoJuridicoEsteiraUsuario = reprovadoJuridicoEsteiraUsuario;
 	}
 	
 	

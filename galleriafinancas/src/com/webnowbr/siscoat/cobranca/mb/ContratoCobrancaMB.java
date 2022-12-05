@@ -7056,6 +7056,31 @@ public class ContratoCobrancaMB {
 						""));
 	}
 	
+	public String reprovarContratoJuridico() {		
+		//this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setStatusContrato("Reprovado");
+		this.objetoContratoCobranca.setReprovado(true);
+		this.objetoContratoCobranca.setStatus("Reprovado");
+		
+		this.objetoContratoCobranca.setMotivoReprovaSelectItem("Reprovado pelo Jurídico");
+		this.objetoContratoCobranca.setReprovadoJuridicoEsteira(true);
+		this.objetoContratoCobranca.setReprovadoJuridicoEsteiraData(gerarDataHoje());
+		this.objetoContratoCobranca.setReprovadoJuridicoEsteiraUsuario(getNomeUsuarioLogado());
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato Reprovado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		
+		return geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+	
 	public String reprovarContratoConsultar(String consulta) {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		reprovarContrato();

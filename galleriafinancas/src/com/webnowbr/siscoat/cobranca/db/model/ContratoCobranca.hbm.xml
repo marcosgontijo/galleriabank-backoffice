@@ -1919,7 +1919,19 @@
 		
 		<property name="userCadastro" type="java.lang.String">
 			<column name="userCadastro" />
+		</property>	
+		<property name="reprovadoJuridicoEsteiraData"
+			type="java.util.Date">
+			<column name="reprovadoJuridicoEsteiraData" />
 		</property>
+		<property name="reprovadoJuridicoEsteira" type="boolean">
+			<column name="reprovadoJuridicoEsteira" not-null="true" default="false"/>
+		</property>
+		<property name="reprovadoJuridicoEsteiraUsuario"
+			type="java.lang.String">
+			<column name="reprovadoJuridicoEsteiraUsuario" />
+		</property>
+		
 
 	</class>
 </hibernate-mapping>
