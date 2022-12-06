@@ -3275,7 +3275,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	and cdp.dataPagamento <= ? ::timestamp) "
 			+ "	or (cdp.baixagalleria "
 			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
-			+ "		and cdp.datapagamentogalleria >= ? ::timestamp))	";	
+			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";	
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {

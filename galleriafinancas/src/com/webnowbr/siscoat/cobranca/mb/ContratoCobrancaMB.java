@@ -18651,76 +18651,91 @@ public class ContratoCobrancaMB {
 		// se só possui uma baixa parcial:
 		// remove da lista de pagamentos
 		// e volta a data e valor originais
-		if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() == 1) {
-			this.bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimento());
-			BigDecimal valorParcela = BigDecimal.ZERO;
-			
-			if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getVlrJurosParcela())) {
-				valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getVlrJurosParcela());
-			}
-			
-			if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela())) {
-				valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela());
-			}
-			
-			if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getSeguroMIP())) {
-				valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getSeguroMIP());
-			}
-			
-			if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getSeguroDFI())) {
-				valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getSeguroDFI());
-			}
-			
-			if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getTaxaAdm())) {
-				valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getTaxaAdm());
-			}
-			
-			//if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getIpca())) {
-			//	valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getIpca());
-			//}
-			
-			this.bpContratoCobrancaDetalhes.setVlrParcela(valorParcela);
-			this.bpContratoCobrancaDetalhes.setDataUltimoPagamento(null);
-			this.bpContratoCobrancaDetalhes.setValorTotalPagamento(null);
-			
-			
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (contratoCobrancaDetalhesParcial.isBaixaGalleria() || contratoCobrancaDetalhesParcial.isBaixaCustosDiversos()) {
 			// remove baixa da lista de parcelas
 			this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
 					.remove(contratoCobrancaDetalhesParcial);
+			
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+			contratoCobrancaDetalhesDao.merge(this.bpContratoCobrancaDetalhes);
 		} else {
-			// Se tem mais de uma baixa parcial
-			if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() > 1) {
-				// verifica se baixa em questão é a última feita
-				// se sim, deverá atualizar, além do valor, a data de pagamento
-				if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().get(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() - 1).getId() == contratoCobrancaDetalhesParcial.getId()) {
-					// atualiza data de vencimento
-					this.bpContratoCobrancaDetalhes.setDataUltimoPagamento(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().get(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() - 2).getDataVencimentoAtual());
-					// atualiza valor
-					if(!this.bpContratoCobrancaDetalhes.isParcelaPaga()) {
-						this.bpContratoCobrancaDetalhes.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcela().add(contratoCobrancaDetalhesParcial.getVlrRecebido()));
+			if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() == 1) {
+				this.bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimento());
+				BigDecimal valorParcela = BigDecimal.ZERO;
+				
+				if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getVlrJurosParcela())) {
+					valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getVlrJurosParcela());
+				}
+				
+				if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela())) {
+					valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getVlrAmortizacaoParcela());
+				}
+				
+				if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getSeguroMIP())) {
+					valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getSeguroMIP());
+				}
+				
+				if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getSeguroDFI())) {
+					valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getSeguroDFI());
+				}
+				
+				if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getTaxaAdm())) {
+					valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getTaxaAdm());
+				}
+				
+				//if(!CommonsUtil.semValor(this.bpContratoCobrancaDetalhes.getIpca())) {
+				//	valorParcela = valorParcela.add(this.bpContratoCobrancaDetalhes.getIpca());
+				//}
+				
+				this.bpContratoCobrancaDetalhes.setVlrParcela(valorParcela);
+				this.bpContratoCobrancaDetalhes.setDataUltimoPagamento(null);
+				this.bpContratoCobrancaDetalhes.setValorTotalPagamento(null);
+				
+				
+				// remove baixa da lista de parcelas
+				this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
+						.remove(contratoCobrancaDetalhesParcial);
+			} else {
+				// Se tem mais de uma baixa parcial
+				if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() > 1) {
+					// verifica se baixa em questão é a última feita
+					// se sim, deverá atualizar, além do valor, a data de pagamento
+					if (this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().get(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() - 1).getId() == contratoCobrancaDetalhesParcial.getId()) {
+						// atualiza data de vencimento
+						this.bpContratoCobrancaDetalhes.setDataUltimoPagamento(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().get(this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().size() - 2).getDataVencimentoAtual());
+						// atualiza valor
+						if(!this.bpContratoCobrancaDetalhes.isParcelaPaga()) {
+							this.bpContratoCobrancaDetalhes.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcela().add(contratoCobrancaDetalhesParcial.getVlrRecebido()));
+						}
+						// remove baixa da lista de parcelas
+						this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().remove(contratoCobrancaDetalhesParcial);
+					} else {
+						// se a baixa em questão não for a única e nem a última da lista
+						// atualiza apenas o valor
+						if(!this.bpContratoCobrancaDetalhes.isParcelaPaga()) {
+							this.bpContratoCobrancaDetalhes.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcela().add(contratoCobrancaDetalhesParcial.getVlrRecebido()));
+						}
+						// remove baixa da lista de parcelas
+						this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().remove(contratoCobrancaDetalhesParcial);
 					}
-					// remove baixa da lista de parcelas
-					this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().remove(contratoCobrancaDetalhesParcial);
-				} else {
-					// se a baixa em questão não for a única e nem a última da lista
-					// atualiza apenas o valor
-					if(!this.bpContratoCobrancaDetalhes.isParcelaPaga()) {
-						this.bpContratoCobrancaDetalhes.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcela().add(contratoCobrancaDetalhesParcial.getVlrRecebido()));
-					}
-					// remove baixa da lista de parcelas
-					this.bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().remove(contratoCobrancaDetalhesParcial);
 				}
 			}
+			
+			// seta a parcela para paga = FALSE
+			this.bpContratoCobrancaDetalhes.setParcelaPaga(false);
+					
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+			contratoCobrancaDetalhesDao.merge(this.bpContratoCobrancaDetalhes);
+	
+			realcularValorAtualizadoEstornoBxparcial(this.bpContratoCobrancaDetalhes);
+			// clearFieldsBaixar();
 		}
 		
-		// seta a parcela para paga = FALSE
-		this.bpContratoCobrancaDetalhes.setParcelaPaga(false);
-				
-		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-		contratoCobrancaDetalhesDao.merge(this.bpContratoCobrancaDetalhes);
-
-		realcularValorAtualizadoEstornoBxparcial(this.bpContratoCobrancaDetalhes);
-		// clearFieldsBaixar();
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Estorno Baixa Parcela: Estorno feito com sucesso!", ""));
 	}
 
 	/* BAIXA PARCELA PARA O PORTAL INVESTIDOR */
@@ -18849,6 +18864,10 @@ public class ContratoCobrancaMB {
 		
 		if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0) {
 			
+			contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+			
+			contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+			
 			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
 			contratoCobrancaDetalhesParcial.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 			contratoCobrancaDetalhesParcial.setBaixaGalleria(true);
@@ -18907,6 +18926,8 @@ public class ContratoCobrancaMB {
 			}
 			
 			contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+			
+			contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
 			
 			contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
 			contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimento());

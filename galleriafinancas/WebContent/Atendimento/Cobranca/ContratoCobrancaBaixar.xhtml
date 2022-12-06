@@ -2810,15 +2810,36 @@
 					</p:column>
 					<p:column style="text-align: center;"
 						headerText="Valor Recebido (R$)">
-						<h:outputText value="#{bpHistorico.vlrRecebido}"
+						<ui:fragment rendered="#{bpHistorico.baixaGalleria}">
+							<h:outputText value="#{bpHistorico.vlrRecebidoGalleria}"
 							converter="bigDecimalConverter">
-						</h:outputText>
+							</h:outputText>
+						</ui:fragment>
+						<ui:fragment rendered="#{!bpHistorico.baixaGalleria}">
+							<h:outputText value="#{bpHistorico.vlrRecebido}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</ui:fragment>						
 					</p:column>
 					<p:column style="text-align: center;" headerText="Recebedor">
 						<h:outputText value="#{bpHistorico.recebedor.nome}"></h:outputText>
 					</p:column>
 					<p:column style="text-align: center;" headerText="Observação">
 						<h:outputText value="#{bpHistorico.observacaoRecebedor}"></h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Tipo Baixa">
+						<ui:fragment rendered="#{bpHistorico.baixaGalleria}">
+							<h:outputText value="Baixa Galleria" />
+						</ui:fragment>
+						
+						<ui:fragment rendered="#{bpHistorico.baixaCustosDiversos}">
+							<h:outputText value="Baixa Custos Diversos" />
+						</ui:fragment>
+						
+						<ui:fragment rendered="#{!bpHistorico.baixaGalleria and !bpHistorico.baixaCustosDiversos}">
+							<h:outputText value="Baixa Normal" />
+						</ui:fragment>
 					</p:column>
 
 					<p:column style="width:50px;text-align: center;"
