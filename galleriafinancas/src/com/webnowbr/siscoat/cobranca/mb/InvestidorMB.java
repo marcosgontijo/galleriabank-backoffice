@@ -3432,15 +3432,21 @@ public class InvestidorMB {
 		cell.setCellValue("Em dia");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(8);
-		cell.setCellValue("Valor Bruto da Parcela");
+		cell.setCellValue("Taxa Remuneração");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(9);
-		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellValue("Antecipação?");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
-		cell.setCellValue("Valor Face");
+		cell.setCellValue("Valor Bruto da Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(11);
+		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(12);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(13);
 		cell.setCellValue("Saldo Credor");
 		cell.setCellStyle(cell_style);
 
@@ -3537,10 +3543,25 @@ public class InvestidorMB {
 				cell.setCellValue("Sim");		
 			} else {
 				cell.setCellValue("Não");
-			}			
+			}		
+			
+			// Taxa Remuneração
+			cell = row.createCell(8);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getTxRemuneracao() != null) {
+				cell.setCellValue(((BigDecimal) record.getTxRemuneracao()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Antecipação?
+			cell = row.createCell(9);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getTipoParcela());	
 
 			// Valor Bruto Parcela
-			cell = row.createCell(8);
+			cell = row.createCell(10);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaMensalBaixa() != null) {
@@ -3550,7 +3571,7 @@ public class InvestidorMB {
 			}
 			
 			// Valor Líquido a Receber
-			cell = row.createCell(9);
+			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorLiquidoBaixa() != null) {
@@ -3560,7 +3581,7 @@ public class InvestidorMB {
 			}
 
 			// Valor Face
-			cell = row.createCell(10);
+			cell = row.createCell(12);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorFace() != null) {
@@ -3570,7 +3591,7 @@ public class InvestidorMB {
 			}
 			
 			// Saldo Credor
-			cell = row.createCell(11);
+			cell = row.createCell(13);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getSaldoCredorAtualizado() != null) {
