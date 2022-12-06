@@ -6334,6 +6334,8 @@ public class ContratoCobrancaMB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		dataCalculoValorPresente = dataHoje.getTime();
 
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
@@ -6936,6 +6938,7 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 
+		dataCalculoValorPresente = dataHoje.getTime();
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
 
@@ -7340,6 +7343,7 @@ public class ContratoCobrancaMB {
 	}
 	
 	private BigDecimal valorPresenteParcela;
+	private Date dataCalculoValorPresente;
 
 	private int numeroPresenteParcela;
 	private int numeroParcelaQuitar;
@@ -7356,15 +7360,15 @@ public class ContratoCobrancaMB {
 	public void calcularValorPresenteParcela(){
 		TimeZone zone = TimeZone.getDefault(); 
 		Locale locale = new Locale("pt", "BR"); 
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Date auxDataHoje = dataHoje.getTime();
+		//Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
 		
 		ContratoCobrancaDetalhes parcelas = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().get(this.numeroPresenteParcela);
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		BigDecimal saldo = parcelas.getVlrJurosParcela().add(parcelas.getVlrAmortizacaoParcela());
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
-		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(dataCalculoValorPresente, parcelas.getDataVencimento()));
 		
 		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
 			
@@ -7864,6 +7868,14 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = valorPresenteParcela;
 	}
 	
+	public Date getDataCalculoValorPresente() {
+		return dataCalculoValorPresente;
+	}
+
+	public void setDataCalculoValorPresente(Date dataCalculoValorPresente) {
+		this.dataCalculoValorPresente = dataCalculoValorPresente;
+	}
+
 	public int getNumeroPresenteParcela() {
 		return numeroPresenteParcela;
 	}

@@ -1941,6 +1941,12 @@
 						<p:inputText id="numeroPresenteParcela" value="#{contratoCobrancaMB.numeroPresenteParcela}" />
 						<!--  -->
 						
+						<p:outputLabel for="dataCalculoValorPresente" value="Data Calculo Valor Presente" />
+						<p:calendar id="dataCalculoValorPresente" showOn="button"
+							value="#{contratoCobrancaMB.dataCalculoValorPresente}"
+							size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+						<!--  -->
+						
 						<p:outputLabel value="Calcular Valor Presente Parcela " />
 						<p:commandButton value="Calcular Valor Presente Parcela" action="#{contratoCobrancaMB.calcularValorPresenteParcela}" 
 							ajax="true" update="valorPresenteParcela" />
