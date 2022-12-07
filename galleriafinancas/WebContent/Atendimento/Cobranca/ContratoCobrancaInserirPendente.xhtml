@@ -622,12 +622,9 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
-							</h:panelGrid>
-						</h:panelGrid>
-							
-						<h:panelGrid columns="5" style="margin-top: 20px;">				
+							</h:panelGrid>							
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
@@ -663,8 +660,12 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+						</h:panelGrid>
+							
+						<h:panelGrid columns="5" style="margin-top: 20px;">				
+							
 							<h:panelGrid columns="2"
-								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
@@ -741,7 +742,7 @@
 								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
-								<p:outputLabel styleClass="labelBold">Comentário Jurídico</p:outputLabel>
+								<p:outputLabel styleClass="labelBold">Comentário Jurídico (Esteira)</p:outputLabel>
 								<p:spacer></p:spacer>
 								<shiro:hasAnyRoles name="PRECOBRANCA">
 									<p:selectBooleanButton id="comentarioJuridicoEsteiraView"
@@ -773,7 +774,44 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
-							</h:panelGrid>
+							</h:panelGrid>						
+							<h:panelGrid columns="2"
+								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Comentado pelo Jurídico</p:outputLabel>
+								<p:spacer></p:spacer>
+								<shiro:hasAnyRoles name="PRECOBRANCA">
+									<p:selectBooleanButton id="comentarioJuridicoInternoView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+									</p:selectBooleanButton>
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+									<p:selectBooleanButton id="comentarioJuridicoInterno"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px">
+										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+									</p:selectBooleanButton>
+								</shiro:hasAnyRoles>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="comentarioJuridicoInternoUsuario"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoUsuario}"
+									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								<h:outputText id="comentarioJuridicoInternoData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>						
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;

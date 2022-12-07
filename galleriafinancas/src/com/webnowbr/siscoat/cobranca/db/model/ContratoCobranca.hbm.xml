@@ -1920,6 +1920,7 @@
 		<property name="userCadastro" type="java.lang.String">
 			<column name="userCadastro" />
 		</property>	
+		
 		<property name="reprovadoJuridicoEsteiraData"
 			type="java.util.Date">
 			<column name="reprovadoJuridicoEsteiraData" />
@@ -1932,6 +1933,17 @@
 			<column name="reprovadoJuridicoEsteiraUsuario" />
 		</property>
 		
+		<property name="comentarioJuridicoInternoData"
+			type="java.util.Date">
+			<column name="comentarioJuridicoInternoData" />
+		</property>
+		<property name="comentarioJuridicoInterno" type="boolean">
+			<column name="comentarioJuridicoInterno" not-null="true" default="false"/>
+		</property>
+		<property name="comentarioJuridicoInternoUsuario"
+			type="java.lang.String">
+			<column name="comentarioJuridicoInternoUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>
