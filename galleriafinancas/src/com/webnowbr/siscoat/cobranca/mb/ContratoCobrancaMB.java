@@ -4360,7 +4360,8 @@ public class ContratoCobrancaMB {
 						taxaAprovada,
 						prazoAprovado);
 			}
-			// Jaque (assistente Luis)
+			// Jaque (assistente Luis) (não é mais)
+			/*
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 689);
 
@@ -4369,7 +4370,7 @@ public class ContratoCobrancaMB {
 			nomeCliente,
 			numeroContrato,
 			taxaAprovada,
-			prazoAprovado);
+			prazoAprovado);*/
 		}
 	}
 	
@@ -4742,6 +4743,18 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+		if (!this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
+			this.objetoContratoCobranca.setComentarioJuridicoInternoData(null);
+			this.objetoContratoCobranca.setComentarioJuridicoInternoUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getComentarioJuridicoInternoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setComentarioJuridicoInternoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getComentarioJuridicoInternoData());
+				this.objetoContratoCobranca.setComentarioJuridicoInternoUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
 		if (!this.objetoContratoCobranca.isPreAprovadoComite()) {
 			this.objetoContratoCobranca.setPreAprovadoComiteData(null);
 			this.objetoContratoCobranca.setPreAprovadoComiteUsuario(null);
@@ -4938,6 +4951,11 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
 		return geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+	
+	public String enviarPreComiteJuridico() {
+		this.objetoContratoCobranca.setComentarioJuridicoEsteira(true);
+		return editPreContratoPorStatus();
 	}
 		
 	public String voltarContratoParaDocumentosComite() {

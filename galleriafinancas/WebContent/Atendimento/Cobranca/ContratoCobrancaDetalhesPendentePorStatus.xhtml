@@ -144,7 +144,10 @@
 													|| contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq null
 													|| contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ' ')}">
 												<f:selectItem itemValue="" itemLabel="" />
-												<f:selectItem itemValue="No final" itemLabel="No final" />
+												<f:selectItem itemValue="No final" itemLabel="No final" 
+													itemDisabled="#{!(contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Apartamento' or 
+																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Casa' or
+																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Casa de condomínio')}"/>
 												<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 											</p:selectOneMenu>
 											
@@ -165,19 +168,19 @@
 								</h:panelGrid>
 							</shiro:hasAnyRoles>
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
-									<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">	
-										<p:outputLabel styleClass="labelBold">Enviar para Jurídico</p:outputLabel>
-										<p:spacer ></p:spacer>		
-										<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">									
-											<p:selectOneRadio id="analiseComercial" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >
-								           	 	<f:selectItem itemLabel="Não" itemValue="false" />
-								            	<f:selectItem itemLabel="Sim" itemValue="true" />
-									    	</p:selectOneRadio>
-										</shiro:hasAnyRoles>														    						    
-									</h:panelGrid>
-								</ui:fragment>
+								<h:panelGrid columns="2" style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">	
+									<p:outputLabel styleClass="labelBold">Enviar para Jurídico</p:outputLabel>
+									<p:spacer ></p:spacer>		
+									<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">									
+										<p:selectOneRadio id="analiseComercial" unselectable="false" value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}" >
+							           	 	<f:selectItem itemLabel="Não" itemValue="false" />
+							            	<f:selectItem itemLabel="Sim" itemValue="true" />
+								    	</p:selectOneRadio>
+									</shiro:hasAnyRoles>														    						    
+								</h:panelGrid>
+							</ui:fragment>
 
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
 								<h:panelGrid columns="2"
