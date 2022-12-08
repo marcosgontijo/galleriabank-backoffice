@@ -53,6 +53,7 @@ public class ContractService {
 	private ContratoCobranca objetoContratoCobranca;
 	private ImovelCobranca objetoImovelCobranca;
 	private PagadorRecebedor objetoPagador;
+	private List<PagadorRecebedor> pagadores;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<PagadorRecebedorSocio> listSocios;
 	private PagadorRecebedorAdicionais pagadorRecebedorAdicionais;
@@ -287,18 +288,20 @@ public class ContractService {
 							Long idContratoCobranca = criaContratoBD();
 							criaPagadores(contratoAPP);
 							
-							
-							Iterator<PagadorRecebedorAdicionais> pagadores = this.objetoContratoCobranca.getListaPagadores().iterator();
-							
-							while(pagadores.hasNext()) {
-								String cpf = pagadores.next().getPessoa().getCpf();
-								if(cpf != null) {
-									PagadorRecebedor pagador = validaPagadorOperacaoLista(cpf, pagadores);
-									createPagadoresLista(pagador, idContratoCobranca);
-								}else {
-									this.objetoContratoCobranca.setPagador(validaPagadorOperacaoLista(cpf, pagadores));
-								}
-								
+							if(contratoAPP.has("pagadores")) {
+								 JSONArray pagadoresJson = contratoAPP.getJSONArray("pagadores");
+								 if(pagadoresJson.length() > 0) {
+									 for(int i=0; i < pagadoresJson.length(); i++) {
+										 String cpf = pagadoresJson.getJSONObject(i).getString("cpf");
+										 if(cpf != null) {
+											 PagadorRecebedor pagador = validaPagadorOperacaoLista(cpf, pagadoresJson);
+											 //createPagadoresLista(pagador, idContratoCobranca);
+										 }else {
+											 //this.objetoContratoCobranca.setPagador(validaPagadorOperacaoLista(cpf, pagadores));
+										 }
+										 
+									 }
+								 }
 							}
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação criada com sucesso!!!\"}";
@@ -611,7 +614,7 @@ public class ContractService {
 		return contratoCobrancaDao.create(this.objetoContratoCobranca);
 	}
 	
-	public PagadorRecebedor validaPagadorOperacaoLista(String cpfCnpj, Iterator<PagadorRecebedorAdicionais> pagadores) {
+	public PagadorRecebedor validaPagadorOperacaoLista(String cpfCnpj, JSONArray pagadoresJson) {
 		/***
 		 * Busca pagador Lista
 		 */
@@ -627,8 +630,8 @@ public class ContractService {
 					pagadorRecebedorLista = pagadorPf.get(0);
 				} else {
 					pagadorRecebedorLista = new PagadorRecebedor();
-					pagadorRecebedorLista.setCpf(pagadores.next().getPessoa().getCpf());
-					pagadorRecebedorLista.setNome(pagadores.next().getPessoa().getNome());
+					pagadorRecebedorLista.setCpf(pagadoresJson.getJSONObject(0).getString("cpf"));
+					pagadorRecebedorLista.setNome(pagadoresJson.getJSONObject(0).getString("nome"));
 					registraPagador = true;
 				}
 			}
@@ -639,8 +642,8 @@ public class ContractService {
 					pagadorRecebedorLista = pagadorPj.get(0);
 				} else {
 					pagadorRecebedorLista = new PagadorRecebedor();
-					pagadorRecebedorLista.setCnpj(pagadores.next().getPessoa().getCnpj());
-					pagadorRecebedorLista.setNome(pagadores.next().getPessoa().getNome());
+					pagadorRecebedorLista.setCnpj(pagadoresJson.getJSONObject(0).getString("cnpj"));
+					pagadorRecebedorLista.setNome(pagadoresJson.getJSONObject(0).getString("nome"));
 					registraPagador = true;
 				}
 			}
@@ -748,6 +751,20 @@ public class ContractService {
 	 */
 	public void setObjetoPagador(PagadorRecebedor objetoPagador) {
 		this.objetoPagador = objetoPagador;
+	}
+	
+	/**
+	 * @return the pagadores
+	 */
+	public List<PagadorRecebedor> getPagadores() {
+		return pagadores;
+	}
+
+	/**
+	 * @param pagadores the pagadores to set
+	 */
+	public void setPagadores(List<PagadorRecebedor> pagadores) {
+		this.pagadores = pagadores;
 	}
 
 	/**
