@@ -425,7 +425,7 @@ public class VisaoGeralDao extends HibernateDao <VisaoGeralVO,Long> {
 		VisaoGeralGrupo visaoGeralGrupo = new VisaoGeralGrupo();
 		visaoGeralGrupo.setDetalhe(new ArrayList<VisaoGeralGrupoDetalhe>(0));
 		visaoGeralGrupo.setTipo("Total Deb");
-		visaoGeralGrupo.setCodigo(2);
+		visaoGeralGrupo.setCodigo(10);
 
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -477,7 +477,11 @@ public class VisaoGeralDao extends HibernateDao <VisaoGeralVO,Long> {
 						visaoGeralGrupo.addValor(visaoGeralGrupoDetalhe.getValor());
 					}
 					saldoInvestidor = rs.getBigDecimal("SALDOCREDORATUALIZADO");
-					numeroparcelaAnterior = CommonsUtil.intValue(rs.getString("NUMEROPARCELA"));
+					
+					if (!rs.getString("NUMEROPARCELA").equals("Antecipação")) {
+						numeroparcelaAnterior = CommonsUtil.intValue(rs.getString("NUMEROPARCELA"));
+					}
+					
 					numeroContratoAnterior = rs.getString("NUMEROCONTRATO");
 					idcontrato = rs.getLong("idContratoCobranca");
 					nomeAnterior = rs.getString("nome");

@@ -253,6 +253,8 @@ public class InvestidorMB {
 	private String filtroDebenturesStatus;
 	
 	private String filtroDebenturesPorValor = "Todos";
+	private String filtroDebenturesTipoData = "Todos";
+	
 	private BigDecimal filtroValorFaceInicial = null;
 	private BigDecimal filtroValorFaceFinal = null;
 	
@@ -950,11 +952,14 @@ public class InvestidorMB {
 		this.nomePDF = "";
 		this.file = null;
 		
+		this.valoresLiquidosInvestidoresPDFGerado = false;
+		
 		return "/Atendimento/Cobranca/InvestidorValorLiquido.xhtml";
 	}
 
 	public void gerarRelatorioValorLiquido() {
 
+		this.valoresLiquidosInvestidoresPDFGerado = false;
 		this.parcelasInvestidorEnvelope = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 		this.parcelasInvestidorSA = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 		this.parcelasInvestidorCorrespondente = new ArrayList<ContratoCobrancaParcelasInvestidor>();
@@ -1083,6 +1088,90 @@ public class InvestidorMB {
 		}
 
 		return totalParcela;
+	}
+	
+	public BigDecimal getTotalFaceInvestidorBaixa(long idInvestidor) {
+		BigDecimal totalFace = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getValorFace() != null) {
+					totalFace = totalFace.add(parcelas.getValorFace());
+				}
+			}
+		}
+
+		return totalFace.setScale(2);
+	}
+	
+	public BigDecimal getTotalSaldoCredorInvestidorBaixa(long idInvestidor) {
+		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getSaldoCredorAtualizado() != null) {
+					totalSaldoCredor = totalSaldoCredor.add(parcelas.getSaldoCredorAtualizado());
+				}
+			}
+		}
+
+		return totalSaldoCredor.setScale(2);
+	}
+	
+	public BigDecimal getTotalFaceInvestidorBaixaCorrespondente(long idInvestidor) {
+		BigDecimal totalFace = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorCorrespondente) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getValorFace() != null) {
+					totalFace = totalFace.add(parcelas.getValorFace());
+				}
+			}
+		}
+
+		return totalFace.setScale(2);
+	}
+	
+	public BigDecimal getTotalSaldoCredorInvestidorBaixaCorrespondente(long idInvestidor) {
+		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorCorrespondente) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getSaldoCredorAtualizado() != null) {
+					totalSaldoCredor = totalSaldoCredor.add(parcelas.getSaldoCredorAtualizado());
+				}
+			}
+		}
+
+		return totalSaldoCredor.setScale(2);
+	}
+	
+	public BigDecimal getTotalFaceInvestidorBaixaEnvelope(long idInvestidor) {
+		BigDecimal totalFace = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorEnvelope) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getValorFace() != null) {
+					totalFace = totalFace.add(parcelas.getValorFace());
+				}
+			}
+		}
+
+		return totalFace.setScale(2);
+	}
+	
+	public BigDecimal getTotalSaldoCredorInvestidorBaixaEnvelope(long idInvestidor) {
+		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
+
+		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorEnvelope) {
+			if (parcelas.getInvestidor().getId() == idInvestidor) {
+				if (parcelas.getSaldoCredorAtualizado() != null) {
+					totalSaldoCredor = totalSaldoCredor.add(parcelas.getSaldoCredorAtualizado());
+				}
+			}
+		}
+
+		return totalSaldoCredor.setScale(2);
 	}
 
 	public BigDecimal getTotalLiquidoInvestidorCorrespondente(long idInvestidor) {
@@ -3273,6 +3362,711 @@ public class InvestidorMB {
 		this.debenturesEmitidasXLSGerado = true;
 	}
 	
+	public void geraXLSValorLiquidoInvestidores() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomePDF = "Relatorio Valor Liquido - Debetures Emitidas.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathPDF + this.nomePDF;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Investidor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("CPF/CNPJ");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Agência / Conta");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Garantido");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Em dia");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Taxa Remuneração");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
+		cell.setCellValue("Antecipação?");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(10);
+		cell.setCellValue("Valor Bruto da Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(11);
+		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(12);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(13);
+		cell.setCellValue("Saldo Credor");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (ContratoCobrancaParcelasInvestidor record : this.parcelasInvestidorSA) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Investidor
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getNome());
+			
+			// CPF CNPJ
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			
+			if (record.getInvestidor().getCpf() != null) {
+				cell.setCellValue(record.getInvestidor().getCpf());
+			} else {
+				cell.setCellValue(record.getInvestidor().getCnpj());
+			}
+
+			// Agencia Conta
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
+			
+			// Contrato
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());			
+			
+			// Pagador
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagador().getNome());		
+			
+			// Garantido
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			
+			if (record.isInvestidorGarantido()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}
+						
+			// Data Vencimento
+			cell = row.createCell(6);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+			
+			// Em dia
+			cell = row.createCell(7);
+			cell.setCellStyle(cell_style);
+			
+			if (!record.isParcelaContratoVencida()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}		
+			
+			// Taxa Remuneração
+			cell = row.createCell(8);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getTxRemuneracao() != null) {
+				cell.setCellValue(((BigDecimal) record.getTxRemuneracao()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Antecipação?
+			cell = row.createCell(9);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getTipoParcela());	
+
+			// Valor Bruto Parcela
+			cell = row.createCell(10);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getParcelaMensalBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getParcelaMensalBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Valor Líquido a Receber
+			cell = row.createCell(11);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorLiquidoBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorLiquidoBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+
+			// Valor Face
+			cell = row.createCell(12);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorFace() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorFace()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Saldo Credor
+			cell = row.createCell(13);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getSaldoCredorAtualizado() != null) {
+				cell.setCellValue(((BigDecimal) record.getSaldoCredorAtualizado()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.valoresLiquidosInvestidoresPDFGerado = true;
+	}
+	
+	public void geraXLSValorLiquidoCorrespondente() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomePDF = "Relatorio Pagto Valor Liquido Correspondente - Debetures Emitidas.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathPDF + this.nomePDF;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Investidor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("CPF/CNPJ");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Agência / Conta");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Garantido");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Em dia");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Valor Bruto da Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
+		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(10);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(11);
+		cell.setCellValue("Saldo Credor");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (ContratoCobrancaParcelasInvestidor record : this.parcelasInvestidorCorrespondente) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Investidor
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getNome());
+			
+			// CPF CNPJ
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			
+			if (record.getInvestidor().getCpf() != null) {
+				cell.setCellValue(record.getInvestidor().getCpf());
+			} else {
+				cell.setCellValue(record.getInvestidor().getCnpj());
+			}
+
+			// Agencia Conta
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
+			
+			// Contrato
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());			
+			
+			// Pagador
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagador().getNome());		
+			
+			// Garantido
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			
+			if (record.isInvestidorGarantido()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}
+						
+			// Data Vencimento
+			cell = row.createCell(6);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+			
+			// Em dia
+			cell = row.createCell(7);
+			cell.setCellStyle(cell_style);
+			
+			if (!record.isParcelaContratoVencida()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}			
+
+			// Valor Bruto Parcela
+			cell = row.createCell(8);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getParcelaMensalBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getParcelaMensalBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Valor Líquido a Receber
+			cell = row.createCell(9);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorLiquidoBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorLiquidoBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+
+			// Valor Face
+			cell = row.createCell(10);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorFace() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorFace()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Saldo Credor
+			cell = row.createCell(11);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getSaldoCredorAtualizado() != null) {
+				cell.setCellValue(((BigDecimal) record.getSaldoCredorAtualizado()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.valoresLiquidosInvestidoresPDFGerado = true;
+	}
+	
+	public void geraXLSValorLiquidoEnvelope() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		this.nomePDF = "Relatorio Pagto Valor Liquido Envelope - Debetures Emitidas.xlsx";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		dataHoje.set(Calendar.HOUR_OF_DAY, 0);
+		dataHoje.set(Calendar.MINUTE, 0);
+		dataHoje.set(Calendar.SECOND, 0);
+		dataHoje.set(Calendar.MILLISECOND, 0);
+
+		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
+
+		String excelFileName = this.pathPDF + this.nomePDF;// name of excel file
+
+		String sheetName = "Resultado";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		sheet.setDefaultColumnWidth(25);
+
+		// Style para cabeçalho
+		XSSFCellStyle cell_style = wb.createCellStyle();
+		cell_style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// iterating r number of rows
+		// cria CABEÇALHO
+		int countLine = 0;
+		XSSFRow row = sheet.createRow(countLine);
+		XSSFCell cell;
+		cell = row.createCell(0);
+		cell.setCellValue("Investidor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(1);
+		cell.setCellValue("CPF/CNPJ");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(2);
+		cell.setCellValue("Agência / Conta");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(3);
+		cell.setCellValue("Contrato");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(4);
+		cell.setCellValue("Pagador");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(5);
+		cell.setCellValue("Garantido");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(6);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(7);
+		cell.setCellValue("Em dia");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(8);
+		cell.setCellValue("Valor Bruto da Parcela");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(9);
+		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(10);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(11);
+		cell.setCellValue("Saldo Credor");
+		cell.setCellStyle(cell_style);
+
+		// cria estilo para dados em geral
+		cell_style = wb.createCellStyle();
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		for (ContratoCobrancaParcelasInvestidor record : this.parcelasInvestidorEnvelope) {
+			countLine++;
+			row = sheet.createRow(countLine);
+
+			// Investidor
+			cell = row.createCell(0);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getNome());
+			
+			// CPF CNPJ
+			cell = row.createCell(1);
+			cell.setCellStyle(cell_style);
+			
+			if (record.getInvestidor().getCpf() != null) {
+				cell.setCellValue(record.getInvestidor().getCpf());
+			} else {
+				cell.setCellValue(record.getInvestidor().getCnpj());
+			}
+
+			// Agencia Conta
+			cell = row.createCell(2);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
+			
+			// Contrato
+			cell = row.createCell(3);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getNumeroContrato());			
+			
+			// Pagador
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getPagador().getNome());		
+			
+			// Garantido
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			
+			if (record.isInvestidorGarantido()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}
+						
+			// Data Vencimento
+			cell = row.createCell(6);
+			cell.setCellStyle(dateStyle);
+			cell.setCellValue(record.getDataVencimento());
+			
+			// Em dia
+			cell = row.createCell(7);
+			cell.setCellStyle(cell_style);
+			
+			if (!record.isParcelaContratoVencida()) {
+				cell.setCellValue("Sim");		
+			} else {
+				cell.setCellValue("Não");
+			}			
+
+			// Valor Bruto Parcela
+			cell = row.createCell(8);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getParcelaMensalBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getParcelaMensalBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Valor Líquido a Receber
+			cell = row.createCell(9);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorLiquidoBaixa() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorLiquidoBaixa()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+
+			// Valor Face
+			cell = row.createCell(10);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getValorFace() != null) {
+				cell.setCellValue(((BigDecimal) record.getValorFace()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+			
+			// Saldo Credor
+			cell = row.createCell(11);
+			cell.setCellStyle(numericStyle);
+			cell.setCellType(CellType.NUMERIC);
+			if (record.getSaldoCredorAtualizado() != null) {
+				cell.setCellValue(((BigDecimal) record.getSaldoCredorAtualizado()).doubleValue());
+			} else {
+				cell.setCellValue(Double.valueOf("0.00"));
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+
+		this.valoresLiquidosInvestidoresPDFGerado = true;
+	}
+	
 	public void geraXLSRelatorioDebenturesEmitidas() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -3365,6 +4159,12 @@ public class InvestidorMB {
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(15);
 		cell.setCellValue("Garantido");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(16);
+		cell.setCellValue("Saldo Credor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(17);
+		cell.setCellValue("Número Parcela");
 		cell.setCellStyle(cell_style);
 
 		// cria estilo para dados em geral
@@ -3502,7 +4302,7 @@ public class InvestidorMB {
 			// Data Quitação
 			cell = row.createCell(13);
 			cell.setCellStyle(dateStyle);
-			cell.setCellValue(record.getDataUltimaParcelaPaga());			
+			cell.setCellValue(record.getDataQuitacao());			
 			
 			// Tipo de Cálculo
 			cell = row.createCell(14);
@@ -3513,6 +4313,27 @@ public class InvestidorMB {
 			cell = row.createCell(15);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getGarantido());
+			
+			if (record.getParcelaInvestidor() != null) {
+				if (record.getParcelaInvestidor().getId() > 0) {
+					//Saldo Credor
+					cell = row.createCell(16);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (record.getParcelaFinal() != null) {
+						cell.setCellValue(record.getParcelaInvestidor().getSaldoCredorAtualizado().doubleValue());
+					} else {
+						cell.setCellValue(Double.valueOf("0.00"));
+					}
+					
+					//Número Parcela
+					cell = row.createCell(17);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					cell.setCellValue(record.getParcelaInvestidor().getNumeroParcela());
+				}
+			}
+
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
@@ -4814,6 +5635,7 @@ public class InvestidorMB {
 		this.filtroDebenturesStatus = "Todos";
 		
 		this.filtroDebenturesTipoFiltro = "Periodo";
+		this.filtroDebenturesTipoData = "Contrato";
 		
 		this.filtroDebenturesPorValor = "Todos";
 		this.filtroValorFaceInicial = null;
@@ -4873,7 +5695,7 @@ public class InvestidorMB {
 		clearTitulosQuitadosPDFParams();
 	
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro);
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro, this.filtroDebenturesTipoData);
 		
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
@@ -11022,5 +11844,13 @@ public class InvestidorMB {
 
 	public void setFiltroDebenturesTipoFiltro(String filtroDebenturesTipoFiltro) {
 		this.filtroDebenturesTipoFiltro = filtroDebenturesTipoFiltro;
+	}
+
+	public String getFiltroDebenturesTipoData() {
+		return filtroDebenturesTipoData;
+	}
+
+	public void setFiltroDebenturesTipoData(String filtroDebenturesTipoData) {
+		this.filtroDebenturesTipoData = filtroDebenturesTipoData;
 	}
 }

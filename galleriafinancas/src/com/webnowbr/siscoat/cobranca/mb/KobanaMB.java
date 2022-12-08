@@ -695,7 +695,11 @@ public class KobanaMB {
 		1 Para percentual do valor do boleto
 		2 Para valor fixo  		 
 		 */
-		jsonBoleto.put("fine_type", 1);
+		if (!parcela.isParcelaVencida()) {
+			jsonBoleto.put("fine_type", 1);	
+		} else {
+			jsonBoleto.put("fine_type", 0);
+		}
 		
 		/*
 		 * VALORES PADRÕES
@@ -708,7 +712,7 @@ public class KobanaMB {
 		
 	    jsonBoleto.put("days_for_interest", days_for_interest);
 		//jsonBoleto.put("interest_percentage", interest_percentage);
-	    jsonBoleto.put("interest_value", (parcela.getVlrParcela().multiply(BigDecimal.valueOf(0.033))).divide(BigDecimal.valueOf(100)));
+	    jsonBoleto.put("interest_value", (valorBoleto.multiply(BigDecimal.valueOf(0.033))).divide(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_UP));
 		//jsonBoleto.put("interest_value", interest_value);
 		jsonBoleto.put("days_for_fine", days_for_fine);
 		jsonBoleto.put("fine_percentage", fine_percentage);

@@ -63,6 +63,7 @@ public class DashboardMBVer2 {
     private boolean consultaStatus;
     private boolean consultarResponsaveisZerados;
     private boolean consultaLead;
+    private boolean consultaTaxa;
     private boolean motivoReprova;
     private String filtroConsulta;
     private String campanhaSelecionada;
@@ -229,6 +230,9 @@ public class DashboardMBVer2 {
 			} else if(CommonsUtil.mesmoValor(filtroConsulta, "Gerentes")) {
 				this.dashContratos = dDao.getDashboardContratos(this.dataInicio, this.dataFim, this.consultaStatus, true);	
 				consultaLead = false;
+			} else if(CommonsUtil.mesmoValor(filtroConsulta, "Taxa")) {
+				this.dashContratos = dDao.getDashboardContratosTaxasPreAprovado(this.dataInicio, this.dataFim, this.consultaStatus);
+				consultaTaxa = true;
 			}
 		}
 		
@@ -1458,5 +1462,15 @@ public class DashboardMBVer2 {
 	public void setMotivoReprova(boolean motivoReprova) {
 		this.motivoReprova = motivoReprova;
 	}
+
+	public boolean isConsultaTaxa() {
+		return consultaTaxa;
+	}
+
+	public void setConsultaTaxa(boolean consultaTaxa) {
+		this.consultaTaxa = consultaTaxa;
+	}
+	
+	
 
 }

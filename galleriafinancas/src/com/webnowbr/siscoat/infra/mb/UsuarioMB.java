@@ -351,6 +351,105 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}				
 			}
+		    
+		    gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_CREDITO");
+			if (objetoUsuario.isProfileAnalistaCredito()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_COMITE");
+			if (objetoUsuario.isProfileAnalistaComite()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_POS_COMITE");
+			if (objetoUsuario.isProfileAnalistaPosComite()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_GERENTE_ANALISE");
+			if (objetoUsuario.isProfileGerenteAnalise()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_CONTRATO");
+			if (objetoUsuario.isProfileContrato()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_COBRANCA");
+			if (objetoUsuario.isProfileCobranca()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_COMENTARIO_JURIDICO");
+			if (objetoUsuario.isProfileComentarioJuridico()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL");
+			if (objetoUsuario.isProfileAvaliadorImovel()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL_COMPASS");
+			if (objetoUsuario.isProfileAvaliadorImovelCompass()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL_GALACHE");
+			if (objetoUsuario.isProfileAvaliadorImovelGalache()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_LAUDO");
+			if (objetoUsuario.isProfileLaudo()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
 			
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);

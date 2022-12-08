@@ -573,7 +573,9 @@ public class CcbMB {
 		ImovelCobranca imovel = contrato.getImovel();
 		this.objetoCcb.setCepImovel(imovel.getCep());	
 		this.objetoCcb.setNumeroImovel(imovel.getNumeroMatricula());
+		this.objetoCcb.setInscricaoMunicipal(imovel.getInscricaoMunicipal());
 		this.objetoCcb.setCidadeImovel(imovel.getCidade());
+		this.objetoCcb.setCartorioImovel(imovel.getCartorio());
 		this.objetoCcb.setUfImovel(imovel.getEstado());
 		String[] endereco = imovel.getEndereco().split(Pattern.quote(","));
 		if(endereco.length > 0) {
@@ -743,6 +745,10 @@ public class CcbMB {
 			if(!CommonsUtil.semValor(this.objetoCcb.getCCBValor()))
 				total = total.add(this.objetoCcb.getCCBValor());
 		}
+		if(isTemItbi()) {
+			if(!CommonsUtil.semValor(this.objetoCcb.getItbiValor()))
+				total = total.add(this.objetoCcb.getItbiValor());
+		}
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
 				if(!CommonsUtil.semValor(processo.getValor()))
@@ -770,11 +776,65 @@ public class CcbMB {
 	}
 	
 	public String EmitirCcbPreContrato() {
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-		//this.selectedPagadorGenerico = this.objetoContratoCobranca.getPagador();
-		//this.setTipoPesquisa("Emitente"); 
-		//populateSelectedPagadorRecebedor();	
 		clearFieldsInserirCcb();
+		List<CcbContrato> ccbContratoDB = new ArrayList<CcbContrato>();
+		CcbDao ccbDao = new CcbDao();
+		ccbContratoDB = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca);
+
+		if (ccbContratoDB.size() > 0) {
+			objetoCcb = ccbContratoDB.get(0);
+			this.objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
+		} else {
+			this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		}	
+		populateSelectedContratoCobranca();
+		
+		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
+		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
+		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
+		
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
+			this.temLaudoDeAvaliacao = true;
+			objetoCcb.setLaudoDeAvaliacaoValor(objetoContratoCobranca.getValorLaudoPajuFaltante());
+		}
+		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {
+			this.temIntermediacao = true;
+			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
+			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
+			objetoCcb.setIntermediacaoCC(objetoContratoCobranca.getResponsavel().getConta());
+			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
+			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
+		}
+		
+		calculaPorcentagemImovel();
+		
+		if (objetoCcb.getId() <= 0) {
+			//procura e setta pagador	
+			this.selectedPagadorGenerico = getPagadorById(this.objetoContratoCobranca.getPagador().getId());
+			pesquisaParticipante();
+			populateSelectedPagadorRecebedor();	
+			addParticipante = true;
+			
+			if(participanteSelecionado.isEmpresa()) {
+				objetoCcb.setTipoPessoaEmitente("PJ");
+			} else {
+				objetoCcb.setTipoPessoaEmitente("PF");
+			}
+		}
+		
+		//luana
+		pesquisaTestemunha1();
+		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
+		populateSelectedPagadorRecebedor();
+		
+		//anna flavia
+		pesquisaTestemunha2();
+		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 25929);
+		populateSelectedPagadorRecebedor();
+		
+		//clearFieldsInserirCcb();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -783,6 +843,20 @@ public class CcbMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();				
 		contrato = cDao.findById(idContrato);	
 		return contrato;
+	}
+	
+	public PagadorRecebedor getPagadorById(long idPagador) {
+		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();				
+		pagador = pDao.findById(idPagador);	
+		return pagador;
+	}
+	
+	public PagadorRecebedor getTestemunha(long idPagador) {
+		PagadorRecebedor pagador = new PagadorRecebedor();
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();				
+		pagador = pDao.findById(idPagador);	
+		return pagador;
 	}
 	 	
 	public void populatePagadores() {
@@ -6053,11 +6127,12 @@ public class CcbMB {
 			run.setText("C/C: 131094-1");
 			run.addCarriageReturn();
 			run.setText("Valor: ");
-			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 			run2 = paragraph.createRun();
 			if(this.temCCBValor) {
+				valorPorExtenso.setNumber(valorCartaSplit);
 				run2.setText(CommonsUtil.formataValorMonetario(valorCartaSplit, "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			} else {
+				valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas());
 				run2.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ")  + " (" + valorPorExtenso.toString() + ") " );
 			}
 			run2.setFontSize(11);
@@ -7721,7 +7796,7 @@ public class CcbMB {
 			
 			int indexParcela = 1;
 			
-			//calcularSimulador();
+			calcularSimulador();
 			
 
 			XWPFParagraph paragraph1 = document.createParagraph();
@@ -7809,7 +7884,7 @@ public class CcbMB {
 				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
@@ -9026,7 +9101,7 @@ public class CcbMB {
 	}
 	
 	public void calculaPorcentagemImovel() {
-		if (this.objetoCcb.getValorCredito() != null && this.objetoCcb.getVendaLeilao() != null) {
+		if (!CommonsUtil.semValor(this.objetoCcb.getValorCredito()) && this.objetoCcb.getVendaLeilao() != null) {
 			this.objetoCcb.setPorcentagemImovel(((this.objetoCcb.getVendaLeilao().divide(this.objetoCcb.getValorCredito(), MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));	
 		}
 

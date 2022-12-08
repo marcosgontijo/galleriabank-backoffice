@@ -82,6 +82,18 @@ public final class User implements Serializable {
     
     private boolean twoFactorAuth;
     
+    private boolean profileAnalistaCredito;
+    private boolean profileAnalistaComite;
+    private boolean profileAnalistaPosComite;
+    private boolean profileGerenteAnalise;
+    private boolean profileContrato;
+    private boolean profileCobranca;
+    private boolean profileComentarioJuridico;
+    private boolean profileAvaliadorImovel;
+    private boolean profileAvaliadorImovelCompass;
+    private boolean profileAvaliadorImovelGalache;
+    private boolean profileLaudo; 
+    
     /**
      * Construtor.
      */
@@ -537,5 +549,92 @@ public final class User implements Serializable {
 	public void setUserPosOperacao(boolean userPosOperacao) {
 		this.userPosOperacao = userPosOperacao;
 	}
-	
+
+	public boolean isProfileAnalistaCredito() {
+		return profileAnalistaCredito;
+	}
+
+	public void setProfileAnalistaCredito(boolean profileAnalistaCredito) {
+		this.profileAnalistaCredito = profileAnalistaCredito;
+	}
+
+	public boolean isProfileAnalistaComite() {
+		return profileAnalistaComite;
+	}
+
+	public void setProfileAnalistaComite(boolean profileAnalistaComite) {
+		this.profileAnalistaComite = profileAnalistaComite;
+	}
+
+	public boolean isProfileAnalistaPosComite() {
+		return profileAnalistaPosComite;
+	}
+
+	public void setProfileAnalistaPosComite(boolean profileAnalistaPosComite) {
+		this.profileAnalistaPosComite = profileAnalistaPosComite;
+	}
+
+	public boolean isProfileGerenteAnalise() {
+		return profileGerenteAnalise;
+	}
+
+	public void setProfileGerenteAnalise(boolean profileGerenteAnalise) {
+		this.profileGerenteAnalise = profileGerenteAnalise;
+	}
+
+	public boolean isProfileContrato() {
+		return profileContrato;
+	}
+
+	public void setProfileContrato(boolean profileContrato) {
+		this.profileContrato = profileContrato;
+	}
+
+	public boolean isProfileComentarioJuridico() {
+		return profileComentarioJuridico;
+	}
+
+	public void setProfileComentarioJuridico(boolean profileComentarioJuridico) {
+		this.profileComentarioJuridico = profileComentarioJuridico;
+	}
+
+	public boolean isProfileAvaliadorImovel() {
+		return profileAvaliadorImovel;
+	}
+
+	public void setProfileAvaliadorImovel(boolean profileAvaliadorImovel) {
+		this.profileAvaliadorImovel = profileAvaliadorImovel;
+	}
+
+	public boolean isProfileAvaliadorImovelCompass() {
+		return profileAvaliadorImovelCompass;
+	}
+
+	public void setProfileAvaliadorImovelCompass(boolean profileAvaliadorImovelCompass) {
+		this.profileAvaliadorImovelCompass = profileAvaliadorImovelCompass;
+	}
+
+	public boolean isProfileAvaliadorImovelGalache() {
+		return profileAvaliadorImovelGalache;
+	}
+
+	public void setProfileAvaliadorImovelGalache(boolean profileAvaliadorImovelGalache) {
+		this.profileAvaliadorImovelGalache = profileAvaliadorImovelGalache;
+	}
+
+	public boolean isProfileLaudo() {
+		return profileLaudo;
+	}
+
+	public void setProfileLaudo(boolean profileLaudo) {
+		this.profileLaudo = profileLaudo;
+	}
+
+	public boolean isProfileCobranca() {
+		return profileCobranca;
+	}
+
+	public void setProfileCobranca(boolean profileCobranca) {
+		this.profileCobranca = profileCobranca;
+	}
 }

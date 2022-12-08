@@ -122,5 +122,10 @@
 		<property name="simuladorCheckList" type="boolean">
 			<column name="simuladorCheckList" not-null="true" default="false"/>
 		</property>
+		
+		<property name="inscricaoMunicipal" type="java.lang.String">
+			<column name="inscricaoMunicipal" />
+		</property>
+
     </class>
 </hibernate-mapping>

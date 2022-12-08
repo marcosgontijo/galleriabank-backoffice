@@ -819,7 +819,7 @@
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	        
 			        <p:column styleClass="colunaResponsiva">	
-			       		<shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  
+			       		<shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA">  
 				        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsView}" ajax="false" icon="ui-icon-print" value="Imprimir" title="Imprimir">
 				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
 				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
@@ -827,7 +827,7 @@
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>		
 			            </shiro:hasAnyRoles>        
-		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">  
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -835,7 +835,7 @@
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>	
 		                </shiro:hasAnyRoles>	
-		                <shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO">  	                
+		                <shiro:hasAnyRoles name="PRECOBRANCA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="fa fa-fw fa-hospital-o" value="Boleto IUGU" title="Gerar Boleto IUGU">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -866,7 +866,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.observacaoContrato}" value="#{contratoCobrancaMB.tituloPainel}" />		                	
 		                </p:commandButton>	
 		                <p:spacer width="10" height="10"/> 
-		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">  
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">  
 			                <p:commandButton action="#{ipcaMB.reProcessaIPCAContrato(contratos)}" icon="ui-icon-calculator" value="Corrigir IPCA" title="Corrigir IPCA" update=":form:mensagens">
 			                    <p:confirm header="Confirmação" message="Deseja realmente corrigir este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 			                </p:commandButton> 
@@ -876,7 +876,7 @@
 					    	</p:confirmDialog>   
 		                </shiro:hasAnyRoles>
 		                <p:spacer width="10" height="10"/>
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	                
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COBRANCA">  	                
 			                <p:commandButton oncomplete="PF('seguradosDialog').show();" action="#{contratoCobrancaMB.clearFieldsSegurados}" update="formSegurados" icon="ui-icon-check" value="Segurados" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -1012,7 +1012,7 @@
 					</p:column>
 
 					<p:column>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
 								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 								<f:setPropertyActionListener
@@ -1058,7 +1058,7 @@
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton
 								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
 								icon="ui-icon-calculator" value="Corrigir IPCA"
@@ -1103,7 +1103,7 @@
 					</p:column>
 
 					<p:column>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
 								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 								<f:setPropertyActionListener
@@ -1149,7 +1149,7 @@
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton
 								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
 								icon="ui-icon-calculator" value="Corrigir IPCA"
@@ -1194,7 +1194,7 @@
 					</p:column>
 
 					<p:column>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
 								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 								<f:setPropertyActionListener
@@ -1240,7 +1240,7 @@
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton
 								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
 								icon="ui-icon-calculator" value="Corrigir IPCA"
@@ -1286,7 +1286,7 @@
 					</p:column>
 
 					<p:column>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
 								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 								<f:setPropertyActionListener
@@ -1332,7 +1332,7 @@
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton
 								action="#{ipcaMB.reProcessaIPCAContrato(contratos)}"
 								icon="ui-icon-calculator" value="Corrigir IPCA"

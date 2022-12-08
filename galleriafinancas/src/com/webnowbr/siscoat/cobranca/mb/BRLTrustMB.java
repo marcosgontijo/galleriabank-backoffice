@@ -291,161 +291,12 @@ public class BRLTrustMB {
 	}
 	
 	public void processaRelatorioFIDCMigracao() {
-		this.selectedContratosXLS = new ArrayList<ContratoCobranca>();
-		this.selectedContratosXLS = this.selectedContratos;
 		this.xlsGerado = false;
 
-		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Date auxDataPagamento = this.dataValorPresente;
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
-		String auxDataPagamentoStr = sdf.format(auxDataPagamento.getTime());
-		try {
-			auxDataPagamento = sdf.parse(auxDataPagamentoStr);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();
-		
-		for (ContratoCobranca contratos : this.selectedContratosXLS) {
-
-			int countParcelas = 0;
-			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
-			
-			SimuladorMB  simuladorMB = new SimuladorMB();
-			
-			if (!CommonsUtil.semValor(contratos.getValorCCB())) {
-				if (contratos.getListContratoCobrancaDetalhes().size() > 0) {
-					if (contratos.getPagador().getCpf() != null) {
-						simuladorMB.setTipoPessoa("PF");
-					} else {
-						simuladorMB.setTipoPessoa("PJ");
-					}
-					simuladorMB.setTipoCalculo(contratos.getTipoCalculo());
-					simuladorMB.setValorImovel(
-							contratos.getValorCCB().multiply(BigDecimal.valueOf(3), MathContext.DECIMAL128));
-					if (CommonsUtil.mesmoValor(simuladorMB.getValorImovel(), BigDecimal.ZERO)) {
-						simuladorMB.setValorImovel(BigDecimal.ONE);
-					}
-					simuladorMB.setValorCredito(contratos.getValorCCB());
-					simuladorMB.setTaxaJuros(contratos.getTxJurosParcelas());
-					simuladorMB.setParcelas(BigInteger.valueOf(contratos.getListContratoCobrancaDetalhes().size() + 1));
-					simuladorMB.setCarencia(BigInteger.valueOf(contratos.getMesesCarencia()));
-					simuladorMB.setNaoCalcularMIP(contratos.isTemSeguroMIP());
-					simuladorMB.setNaoCalcularDFI(contratos.isTemSeguroMIP());
-					simuladorMB.setNaoCalcularTxAdm(contratos.isTemTxAdm());
-					simuladorMB.setMostrarIPCA(true);
-					simuladorMB.setTipoCalculoFinal('B');
-					simuladorMB.setValidar(false);
-					simuladorMB.setSimularComIPCA(false);
-					simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
-					simuladorMB.simular();
-				}
-			}
-
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
-				
-				if (ccd.isAmortizacao()) {
-					somaAmortizacoes.add(ccd.getVlrParcela());
-					continue;
-				}
-				
-				// se já houve baixa parcial, utiliza a data de vencimento atualizada
-				// senão utiliza a data de vencimento antiga
-				String auxDataVencimentoStr = "";
-				Date auxDataVencimento = null;
-				if (ccd.getDataVencimentoAtual() != null) {
-					auxDataVencimentoStr = sdf.format(ccd.getDataVencimentoAtual());
-					auxDataVencimento = ccd.getDataVencimentoAtual();
-				} else {
-					auxDataVencimentoStr = sdf.format(ccd.getDataVencimento());
-					auxDataVencimento = ccd.getDataVencimento();
-				}
-
-				try {
-					auxDataVencimento = sdf.parse(auxDataVencimentoStr);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
-					ccd.setParcelaVencida(true);
-
-					// calcula coluna valor atualizado
-					ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
-					/*
-					 * if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
-					 * contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB( auxDataVencimento,
-					 * auxDataPagamento, ccd.getVlrParcela(), BigDecimal.valueOf(1.00),
-					 * ccd.getTxMulta()); } else { contratoCobrancaUtilsMB = new
-					 * ContratoCobrancaUtilsMB( auxDataVencimento, auxDataPagamento,
-					 * ccd.getVlrParcela(), ccd.getVlrJuros(), ccd.getTxMulta()); }
-					 */
-					if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
-						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-								ccd.getVlrParcela(), BigDecimal.valueOf(1.00),
-								this.objetoContratoCobranca.getTxMulta());
-					} else {
-						contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB(auxDataVencimento, auxDataPagamento,
-								ccd.getVlrParcela(), this.objetoContratoCobranca.getTxJuros(),
-								this.objetoContratoCobranca.getTxMulta());
-					}
-
-					if (!ccd.isParcelaPaga()) {
-						if (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
-							contratoCobrancaUtilsMB.recalculaValorSemMulta();
-						} else {
-							contratoCobrancaUtilsMB.recalculaValor();
-						}
-						ccd.setVlrParcelaAtualizada(contratoCobrancaUtilsMB.getValorAtualizado());
-					} else {
-						ccd.setVlrParcelaAtualizada(null);
-					}
-				}
-
-				if (auxDataVencimento.equals(auxDataPagamento) && !ccd.isParcelaPaga()) {
-					ccd.setParcelaVencendo(true);
-				}
-
-				BigDecimal somaBaixas = BigDecimal.ZERO;
-
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
-				}
-				ccd.setValorTotalPagamento(somaBaixas.add(somaAmortizacoes));
-
-				// seta valor original da parcela
-				/*
-				 * countParcelas = countParcelas + 1;
-				 * 
-				 * if (countParcelas < contratos.getListContratoCobrancaDetalhes().size()) {
-				 * ccd.setVlrParcela(contratos.getVlrParcela()); } else { if
-				 * (!contratos.isGeraParcelaFinal()) {
-				 * ccd.setVlrParcela(contratos.getVlrParcela()); } }
-				 */
-
-			}
-			BigDecimal cet = BigDecimal.ZERO;
-			
-			if (!CommonsUtil.semValor(simuladorMB.getSimulacao())) {
-				if (!CommonsUtil.semValor(simuladorMB.getSimulacao().getCetAoMes())) {
-					cet = simuladorMB.getSimulacao().getCetAoMes();
-				}
-			}		
-			
-			contratos.setCetMes(cet);
-			
-			listContratos.add(contratos);
-		}
+		this.selectedContratosXLS = this.selectedContratos;
 		
 		// GERA XLS
-		if (this.selectedContratosXLS.size() > 0) {
+		if (this.selectedContratos.size() > 0) {
 			try {
 				geraXLSFinanceiroDia();
 			} catch (IOException e) {
@@ -1477,7 +1328,8 @@ public class BRLTrustMB {
 					
 					BigDecimal valorTotalFaceCessaoCalc = BigDecimal.ZERO;
 					
-					valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
+					//valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
+					valorTotalFaceCessaoCalc = parcela.getVlrParcela().subtract(parcela.getSeguroDFI()).subtract(parcela.getSeguroMIP()).subtract(parcela.getTaxaAdm());
 					
 					this.valorTotalFaceCessao = this.valorTotalFaceCessao.add(valorTotalFaceCessaoCalc);
 					jsonValores.put("face", valorTotalFaceCessaoCalc);
@@ -1837,7 +1689,11 @@ public class BRLTrustMB {
 			jsonSacado.put("pessoa", jsonPessoa);
 			
 			JSONObject jsonEndereco = new JSONObject();
-			jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCep())));
+			if (parcela.getContrato().getPagador().getCep() != null) {
+				jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCep())));
+			} else {
+				jsonEndereco.put("cep", Long.valueOf(00000000));
+			}
 			jsonEndereco.put("logradouro", parcela.getContrato().getPagador().getEndereco());
 			jsonEndereco.put("numero", parcela.getContrato().getPagador().getNumero());
 			jsonEndereco.put("complemento", parcela.getContrato().getPagador().getComplemento());

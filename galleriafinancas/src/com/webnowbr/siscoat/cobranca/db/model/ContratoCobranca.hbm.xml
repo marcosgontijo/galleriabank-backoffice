@@ -165,6 +165,36 @@
 		<property name="taxaRemuneracaoInvestidor10" type="big_decimal">
 			<column name="taxaRemuneracaoInvestidor10" />
 		</property>
+		<property name="quitarInvestidor1" type="boolean">
+			<column name="quitarInvestidor1" not-null="true" default="false"/>
+		</property>
+		<property name="quitarInvestidor2" type="boolean">
+			<column name="quitarInvestidor2" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor3" type="boolean">
+			<column name="quitarInvestidor3" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor4" type="boolean">
+			<column name="quitarInvestidor4" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor5" type="boolean">
+			<column name="quitarInvestidor5" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor6" type="boolean">
+			<column name="quitarInvestidor6" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor7" type="boolean">
+			<column name="quitarInvestidor7" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor8" type="boolean">
+			<column name="quitarInvestidor8" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor9" type="boolean">
+			<column name="quitarInvestidor9" not-null="true" default="false" />
+		</property>
+		<property name="quitarInvestidor10" type="boolean">
+			<column name="quitarInvestidor10" not-null="true" default="false" />
+		</property>
 		<property name="valorCCB" type="big_decimal">
 			<column name="valorCCB" />
 		</property>
@@ -1854,6 +1884,54 @@
 		<property name="contratoConferido" type="boolean">
 			<column name="contratoConferido" not-null="true" default="false"/>
 		</property>
+		
+		<property name="recebedorCompraVenda" type="java.lang.String">
+			<column name="recebedorCompraVenda" />
+		</property>
+		
+		<property name="valorCompraVenda" type="big_decimal">
+			<column name="valorCompraVenda" />
+		</property>
+		
+		<property name="agEnvioCartorio" type="boolean">
+			<column name="agEnvioCartorio" not-null="true" default="true"/>
+		</property>
+		
+		<property name="agEnvioCartorioUsuario" type="java.lang.String">
+			<column name="agEnvioCartorioUsuario" />
+		</property>
+		
+		<property name="agEnvioCartorioData" type="java.util.Date">
+			<column name="agEnvioCartorioData" />
+		</property>
+
+		<property name="notificacaoCartorioData" type="java.util.Date">
+			<column name="notificacaoCartorioData" />
+		</property>
+	
+		<property name="analisePendenciadaData" type="java.util.Date">
+			<column name="analisePendenciadaData" />
+		</property>
+		
+		<property name="analisePendenciadaUsuario" type="java.lang.String">
+			<column name="analisePendenciadaUsuario" />
+		</property>
+		
+		<property name="userCadastro" type="java.lang.String">
+			<column name="userCadastro" />
+		</property>	
+		<property name="reprovadoJuridicoEsteiraData"
+			type="java.util.Date">
+			<column name="reprovadoJuridicoEsteiraData" />
+		</property>
+		<property name="reprovadoJuridicoEsteira" type="boolean">
+			<column name="reprovadoJuridicoEsteira" not-null="true" default="false"/>
+		</property>
+		<property name="reprovadoJuridicoEsteiraUsuario"
+			type="java.lang.String">
+			<column name="reprovadoJuridicoEsteiraUsuario" />
+		</property>
+		
 
 	</class>
 </hibernate-mapping>

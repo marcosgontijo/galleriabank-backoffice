@@ -165,7 +165,7 @@
 					</p:column>
 					
 					<p:column style="width:180px;">
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  				
+		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO">  				
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
@@ -187,7 +187,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
 			             </shiro:hasAnyRoles>
-			             <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">   
+			             <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO">   
 			               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 				                and contratos.statusLead == 'Completo' 
 				                and contratos.inicioAnalise == true
@@ -201,7 +201,11 @@
 								and contratos.cadastroAprovadoValor == 'Aprovado'
 								and contratos.aprovadoComite == true}"
 							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
-
+					
+							<p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
+			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>	
+			                
 		                </shiro:hasAnyRoles>
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 
@@ -213,13 +217,10 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false"/>
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-			                </p:commandButton>
-			                <p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
-			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
-			                </p:commandButton>	            	
+			                </p:commandButton>			                            	
 		                </shiro:hasAnyRoles>
 		            </p:column>	
-					<f:facet name="footer">					
+					<f:facet name="footer">	
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>						
 			        </f:facet>		            		        		               		        			        			           			 		

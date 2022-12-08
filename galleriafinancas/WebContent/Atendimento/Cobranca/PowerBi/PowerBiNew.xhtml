@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:messages id="mensagens" showDetail="true" />
+
+			<p:panel id="PowerBiPanel" header="Power Bi Novo"
+				style="margin-bottom:10px;">
+				
+				<h:panelGrid columns="2">		
+					<p:outputLabel for="dataInicio" value="data Inicio"
+						styleClass="labelBold" />
+					<p:calendar id="dataInicio" showOn="button"
+						value="#{powerBiMb.dataInicio}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+					
+					<p:outputLabel for="datafim" value="data fim"
+						styleClass="labelBold" />
+					<p:calendar id="datafim" showOn="button"
+						value="#{powerBiMb.datafim}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+
+					<p:commandButton value="Ver Contratos" 
+						action="#{powerBiMb.carregarListagemNew}"
+						update="Dados DadosDG" />
+				</h:panelGrid>
+				
+				<h:panelGroup id="Dados">				
+					<ui:repeat var="powerBi" value="#{powerBiMb.powerBiNew}" style="width:50%;">
+						<p:panel header="Operações #{powerBi.tipo}" style="margin-bottom:10px;">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="quantidade" value="Quantidade Total" />	
+								<p:commandLink onclick="PF('listaContratos').show()"
+									id="quantidade" update="contratosForm">
+									<f:setPropertyActionListener
+										target="#{powerBiMb.contratosConsulta}"
+										value="#{powerBi.contratos}" />
+									<h:outputText value="#{powerBi.numeroOperacoes}" style="margin-left:10px;" />
+								</p:commandLink>
+							
+								<p:outputLabel for="valorTotal" value="Valor Total" />
+								<h:outputText id="valorTotal" value="#{powerBi.valorOperacoes}"
+									converter="bigDecimalConverter" style="margin-left:10px;" >
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</h:panelGrid>				
+							
+							<p:accordionPanel multiple="true" activeIndex="-1"
+								style="margin-bottom: 15px;margin-top: 15px;"
+								rendered="#{powerBi.detalhes.size() > 0}">
+								<p:tab title="Analistas">
+									<p:dataTable  var="analistas"
+										value="#{powerBi.detalhes}">
+										<p:column style="text-align: center;width: 100px;">
+											<h:outputText value="#{analistas.nome}" />
+										</p:column>
+
+										<p:column style="text-align: center;width: 100px;">
+											<p:commandLink onclick="PF('listaContratos').show()"
+												update="contratosForm">
+												<f:setPropertyActionListener
+													target="#{powerBiMb.contratosConsulta}"
+													value="#{analistas.contratos}" />
+												<h:outputText value="#{analistas.qtdContratos}" />
+											</p:commandLink>									
+										</p:column>						
+									</p:dataTable>
+								</p:tab>
+							</p:accordionPanel>
+						</p:panel>
+					</ui:repeat>			
+				</h:panelGroup>
+				
+				<p:dataGrid id="DadosDG" rendered="false" var="powerBi" value="#{powerBiMb.powerBiNew}"
+					columns="2" layout="grid" paginator="false" style="width:0px;"
+					paginatorAlwaysVisible="false" styleClass="ui-datagrid-no-border" >
+					<div align="center">
+						<p:panelGrid columns="2" >
+							<f:facet name="header">
+								<p:outputLabel value="Operações #{powerBi.tipo}" />
+							</f:facet>
+	
+							<p:outputLabel for="quantidade3" value="Quantidade "
+								styleClass="labelBold col-4" style="width:250px;"/>
+							<h:outputText id="quantidade3" value="#{powerBi.numeroOperacoes}"/>
+							
+							<p:outputLabel for="valorTotal3" value="Valor Total "
+								styleClass="labelBold col-4" style="width:250px;"/>
+							<h:outputText id="valorTotal3" value="#{powerBi.valorOperacoes}"
+								converter="bigDecimalConverter">
+								<f:convertNumber pattern="#,##0.00" />
+							</h:outputText>	
+						</p:panelGrid>
+						<p:panelGrid columns="1">
+							<p:dataGrid var="analistas" value="#{powerBi.detalhes}"
+								columns="2" layout="grid" paginator="false" rendered="#{powerBi.detalhes.size() > 0}"
+								paginatorAlwaysVisible="false" styleClass="labelBold col-4" >
+								<p:panelGrid columns="2">
+									<h:outputText value="#{analistas.nome}" styleClass="labelBold col-4" style="width:250px;"/>
+									<h:outputText value="#{analistas.qtdContratos}" styleClass="labelBold col-4" style="width:250px;" />											
+								</p:panelGrid>
+							</p:dataGrid>
+						</p:panelGrid>
+					</div>
+				</p:dataGrid>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Lista de contratos" overflow="auto"
+			widgetVar="listaContratos" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.contratosConsulta}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<p:column style="text-align: center"  headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{contratos.nomePagador}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.nomePagador}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Detalhes" overflow="auto"
+			widgetVar="listaDetalhes" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="detalhesForm">
+				<p:dataTable var="pessoas" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{powerBiMb.powBiDetalhes}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="text-align: center"  headerText="Nomes"
+						filterBy="#{pessoas.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.nome}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					
+					<p:column style="text-align: center"  headerText="Pagador"
+						filterBy="#{pessoas.qtdContratos}" filterMatchMode="contains">
+						<p:outputLabel value="#{pessoas.qtdContratos}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+
+					<p:column> 
+						<p:commandButton onclick="PF('listaContratos').show()" value="Ver Contratos" update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{powerBiMb.contratosConsulta}"
+								value="#{pessoas.contratos}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

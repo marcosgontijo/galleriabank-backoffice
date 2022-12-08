@@ -94,13 +94,15 @@ public class ContratoCobranca implements Serializable {
 	private Date dataContrato; // data do contrato mas muda na aprovacao
 	
 	private Date dataCadastro; //data que operacao foi inserida no sistema
+	private String userCadastro;
+	
 	private int diaMes;
 	private int qtdeParcelas;
 	
 	private int mesesCarencia;
 	
 	private int parcelasVencidas;
-		
+	
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
 	private BigDecimal txJurosCessao;
@@ -232,6 +234,17 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean recalculaIPCA;
 	
+	private boolean quitarInvestidor1;
+	private boolean quitarInvestidor2;
+	private boolean quitarInvestidor3;
+	private boolean quitarInvestidor4;
+	private boolean quitarInvestidor5;
+	private boolean quitarInvestidor6;
+	private boolean quitarInvestidor7;
+	private boolean quitarInvestidor8;
+	private boolean quitarInvestidor9;
+	private boolean quitarInvestidor10;
+	
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
 	private boolean exibeRecebedor3;
@@ -339,6 +352,9 @@ public class ContratoCobranca implements Serializable {
 	private boolean cadastroAprovado;
 	private String cadastroAprovadoValor;
 	private String cadastroAprovadoUsuario;
+	
+	private Date analisePendenciadaData;
+	private String analisePendenciadaUsuario;
 
 	private boolean matriculaAprovada;
 	private Date matriculaAprovadaData;
@@ -389,6 +405,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean comentarioJuridicoEsteira;
 	private String comentarioJuridicoEsteiraUsuario;
 	private boolean comentarioJuridicoPendente;
+	
+	private Date reprovadoJuridicoEsteiraData;
+	private boolean reprovadoJuridicoEsteira;
+	private String reprovadoJuridicoEsteiraUsuario;
 
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
@@ -405,6 +425,10 @@ public class ContratoCobranca implements Serializable {
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
+	
+	private Date agEnvioCartorioData;
+	private boolean agEnvioCartorio;
+	private String agEnvioCartorioUsuario;
 	
 	private Date agRegistroData;
 	private boolean agRegistro;
@@ -690,7 +714,12 @@ public class ContratoCobranca implements Serializable {
 	private String documentoPagador;
 	private boolean contratoQuitado;
 	
+	private BigDecimal valorCompraVenda;
+	private String recebedorCompraVenda;
+	
 	private Responsavel analistaGeracaoPAJU;	
+	
+	private Date notificacaoCartorioData;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -5615,4 +5644,183 @@ public class ContratoCobranca implements Serializable {
 	public void setDocumentoPagador(String documentoPagador) {
 		this.documentoPagador = documentoPagador;
 	}
+
+	public BigDecimal getValorCompraVenda() {
+		return valorCompraVenda;
+	}
+
+	public void setValorCompraVenda(BigDecimal valorCompraVenda) {
+		this.valorCompraVenda = valorCompraVenda;
+	}
+
+	public String getRecebedorCompraVenda() {
+		return recebedorCompraVenda;
+	}
+
+	public void setRecebedorCompraVenda(String recebedorCompraVenda) {
+		this.recebedorCompraVenda = recebedorCompraVenda;
+	}
+
+	public boolean isQuitarInvestidor1() {
+		return quitarInvestidor1;
+	}
+
+	public void setQuitarInvestidor1(boolean quitarInvestidor1) {
+		this.quitarInvestidor1 = quitarInvestidor1;
+	}
+
+	public boolean isQuitarInvestidor2() {
+		return quitarInvestidor2;
+	}
+
+	public void setQuitarInvestidor2(boolean quitarInvestidor2) {
+		this.quitarInvestidor2 = quitarInvestidor2;
+	}
+
+	public boolean isQuitarInvestidor3() {
+		return quitarInvestidor3;
+	}
+
+	public void setQuitarInvestidor3(boolean quitarInvestidor3) {
+		this.quitarInvestidor3 = quitarInvestidor3;
+	}
+
+	public boolean isQuitarInvestidor4() {
+		return quitarInvestidor4;
+	}
+
+	public void setQuitarInvestidor4(boolean quitarInvestidor4) {
+		this.quitarInvestidor4 = quitarInvestidor4;
+	}
+
+	public boolean isQuitarInvestidor5() {
+		return quitarInvestidor5;
+	}
+
+	public void setQuitarInvestidor5(boolean quitarInvestidor5) {
+		this.quitarInvestidor5 = quitarInvestidor5;
+	}
+
+	public boolean isQuitarInvestidor6() {
+		return quitarInvestidor6;
+	}
+
+	public void setQuitarInvestidor6(boolean quitarInvestidor6) {
+		this.quitarInvestidor6 = quitarInvestidor6;
+	}
+
+	public boolean isQuitarInvestidor7() {
+		return quitarInvestidor7;
+	}
+
+	public void setQuitarInvestidor7(boolean quitarInvestidor7) {
+		this.quitarInvestidor7 = quitarInvestidor7;
+	}
+
+	public boolean isQuitarInvestidor8() {
+		return quitarInvestidor8;
+	}
+
+	public void setQuitarInvestidor8(boolean quitarInvestidor8) {
+		this.quitarInvestidor8 = quitarInvestidor8;
+	}
+
+	public boolean isQuitarInvestidor9() {
+		return quitarInvestidor9;
+	}
+
+	public void setQuitarInvestidor9(boolean quitarInvestidor9) {
+		this.quitarInvestidor9 = quitarInvestidor9;
+	}
+
+	public boolean isQuitarInvestidor10() {
+		return quitarInvestidor10;
+	}
+
+	public void setQuitarInvestidor10(boolean quitarInvestidor10) {
+		this.quitarInvestidor10 = quitarInvestidor10;
+	}
+	
+	public Date getAgEnvioCartorioData() {
+		return agEnvioCartorioData;
+	}
+
+	public void setAgEnvioCartorioData(Date agEnvioCartorioData) {
+		this.agEnvioCartorioData = agEnvioCartorioData;
+	}
+
+	public boolean isAgEnvioCartorio() {
+		return agEnvioCartorio;
+	}
+
+	public void setAgEnvioCartorio(boolean agEnvioCartorio) {
+		this.agEnvioCartorio = agEnvioCartorio;
+	}
+
+	public String getAgEnvioCartorioUsuario() {
+		return agEnvioCartorioUsuario;
+	}
+
+	public void setAgEnvioCartorioUsuario(String agEnvioCartorioUsuario) {
+		this.agEnvioCartorioUsuario = agEnvioCartorioUsuario;
+	}
+
+	public Date getNotificacaoCartorioData() {
+		return notificacaoCartorioData;
+	}
+
+	public void setNotificacaoCartorioData(Date notificacaoCartorioData) {
+		this.notificacaoCartorioData = notificacaoCartorioData;
+	}
+
+	public Date getAnalisePendenciadaData() {
+		return analisePendenciadaData;
+	}
+
+	public void setAnalisePendenciadaData(Date analisePendenciadaData) {
+		this.analisePendenciadaData = analisePendenciadaData;
+	}
+
+	public String getAnalisePendenciadaUsuario() {
+		return analisePendenciadaUsuario;
+	}
+
+	public void setAnalisePendenciadaUsuario(String analisePendenciadaUsuario) {
+		this.analisePendenciadaUsuario = analisePendenciadaUsuario;
+	}
+
+	public String getUserCadastro() {
+		return userCadastro;
+	}
+
+	public void setUserCadastro(String userCadastro) {
+		this.userCadastro = userCadastro;
+	}
+
+	public Date getReprovadoJuridicoEsteiraData() {
+		return reprovadoJuridicoEsteiraData;
+	}
+
+	public void setReprovadoJuridicoEsteiraData(Date reprovadoJuridicoEsteiraData) {
+		this.reprovadoJuridicoEsteiraData = reprovadoJuridicoEsteiraData;
+	}
+
+	public boolean isReprovadoJuridicoEsteira() {
+		return reprovadoJuridicoEsteira;
+	}
+
+	public void setReprovadoJuridicoEsteira(boolean reprovadoJuridicoEsteira) {
+		this.reprovadoJuridicoEsteira = reprovadoJuridicoEsteira;
+	}
+
+	public String getReprovadoJuridicoEsteiraUsuario() {
+		return reprovadoJuridicoEsteiraUsuario;
+	}
+
+	public void setReprovadoJuridicoEsteiraUsuario(String reprovadoJuridicoEsteiraUsuario) {
+		this.reprovadoJuridicoEsteiraUsuario = reprovadoJuridicoEsteiraUsuario;
+	}
+	
+	
+	
 }

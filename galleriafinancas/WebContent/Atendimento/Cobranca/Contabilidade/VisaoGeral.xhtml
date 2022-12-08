@@ -179,6 +179,29 @@
 					</p:panelGrid>
 				</div>
 				
+				<div align="center">
+					<p:panelGrid columns="2" rendered="#{vg.codigo eq 10}">
+						<f:facet name="header">
+							<p:outputLabel value="#{vg.tipo}" />
+						</f:facet>
+
+						<p:outputLabel for="quantidade10" value="Quantidade "
+							styleClass="labelBold col-4" style="width:250px;"/>
+						<p:outputLabel for="valorTotal10" value="Valor Total "
+							styleClass="labelBold col-4" style="width:250px;"/>
+
+						<h:outputText id="quantidade10" value="#{vg.quantidade}">
+							<f:convertNumber pattern="#,##0" />
+						</h:outputText>
+						<h:outputText id="valorTotal10" value="#{vg.valorTotal}"
+							converter="bigDecimalConverter">
+							<f:convertNumber pattern="#,##0.00" />
+						</h:outputText>
+					</p:panelGrid>
+				</div>
+				
+				
+				
 			</p:dataGrid>
 			<p:spacer height="175" />
 			</h:panelGrid>

@@ -24,6 +24,8 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private BigDecimal saldoCredorAtualizado;
 	private BigDecimal irRetido;
 	private BigDecimal valorLiquido;
+	private BigDecimal valorFace;
+	private BigDecimal txRemuneracao;
 	
 	///
 	
@@ -49,6 +51,8 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 	private boolean investidorGarantido;
 
 	private boolean parcelaContratoVencida;
+	
+	private String tipoParcela;
 
 	public ContratoCobrancaParcelasInvestidor() {
 
@@ -296,5 +300,29 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setIdContrato(long idContrato) {
 		this.idContrato = idContrato;
+	}
+
+	public BigDecimal getValorFace() {
+		return valorFace;
+	}
+
+	public void setValorFace(BigDecimal valorFace) {
+		this.valorFace = valorFace;
+	}
+
+	public BigDecimal getTxRemuneracao() {
+		return txRemuneracao;
+	}
+
+	public void setTxRemuneracao(BigDecimal txRemuneracao) {
+		this.txRemuneracao = txRemuneracao;
+	}
+
+	public String getTipoParcela() {
+		return tipoParcela;
+	}
+
+	public void setTipoParcela(String tipoParcela) {
+		this.tipoParcela = tipoParcela;
 	}
 }

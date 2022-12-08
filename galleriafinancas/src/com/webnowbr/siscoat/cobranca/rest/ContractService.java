@@ -6,12 +6,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
+import javax.faces.bean.ManagedProperty;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -37,7 +41,10 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.Parametros;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 
 @Path("/services")
@@ -49,6 +56,9 @@ public class ContractService {
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<PagadorRecebedorSocio> listSocios;
 	private PagadorRecebedorAdicionais pagadorRecebedorAdicionais;
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
 	
 	public static void main(String[] args) {
 		
@@ -73,8 +83,6 @@ public class ContractService {
 		System.out.println("LeadBySite - username: " + authorization);
 		System.out.println("LeadBySite - password: " + authorization);
     }
-
-
 
 	@GET
 	@Path("/TestarOperacao")
@@ -203,6 +211,8 @@ public class ContractService {
 								}
 								
 								this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
+								this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
+								this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular") : null);
 								this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
 								
 								SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
@@ -506,12 +516,51 @@ public class ContractService {
 
 		return String.format("%05d", numeroUltimoContrato);
 	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
+	
+	public String getNomeUsuarioLogado() {
+		User usuario = getUsuarioLogado();
+
+		if (usuario.getLogin() != null) {
+			if (!usuario.getLogin().equals("")) {
+				return usuario.getLogin();
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	public User getUsuarioLogado() {
+		User usuario = new User();
+		if (loginBean != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
+			}
+		}
+
+		return usuario;
+	}
 		
 	public void clearCriacaoContrato() {
 		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(new Date());
-		this.objetoContratoCobranca.setDataCadastro(new Date());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(new Date());
+		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
+		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
@@ -520,6 +569,7 @@ public class ContractService {
 		this.objetoContratoCobranca.setStatus("Pendente");
 		this.objetoContratoCobranca.setStatusContrato("Pendente");
 		this.objetoContratoCobranca.setAgAssinatura(true);
+		this.objetoContratoCobranca.setAgEnvioCartorio(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		this.objetoContratoCobranca.setAnaliseReprovada(false);
 		this.objetoContratoCobranca.setInicioAnalise(false);
