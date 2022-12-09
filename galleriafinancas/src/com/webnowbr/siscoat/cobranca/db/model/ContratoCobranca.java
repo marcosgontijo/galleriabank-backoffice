@@ -404,6 +404,10 @@ public class ContratoCobranca implements Serializable {
 	private Date comentarioJuridicoEsteiraData;
 	private boolean comentarioJuridicoEsteira;
 	private String comentarioJuridicoEsteiraUsuario;
+	
+	private Date comentarioJuridicoInternoData;
+	private boolean comentarioJuridicoInterno;
+	private String comentarioJuridicoInternoUsuario;
 	private boolean comentarioJuridicoPendente;
 	
 	private Date reprovadoJuridicoEsteiraData;
@@ -5820,7 +5824,29 @@ public class ContratoCobranca implements Serializable {
 	public void setReprovadoJuridicoEsteiraUsuario(String reprovadoJuridicoEsteiraUsuario) {
 		this.reprovadoJuridicoEsteiraUsuario = reprovadoJuridicoEsteiraUsuario;
 	}
-	
-	
+
+	public Date getComentarioJuridicoInternoData() {
+		return comentarioJuridicoInternoData;
+	}
+
+	public void setComentarioJuridicoInternoData(Date comentarioJuridicoInternoData) {
+		this.comentarioJuridicoInternoData = comentarioJuridicoInternoData;
+	}
+
+	public boolean isComentarioJuridicoInterno() {
+		return comentarioJuridicoInterno;
+	}
+
+	public void setComentarioJuridicoInterno(boolean comentarioJuridicoInterno) {
+		this.comentarioJuridicoInterno = comentarioJuridicoInterno;
+	}
+
+	public String getComentarioJuridicoInternoUsuario() {
+		return comentarioJuridicoInternoUsuario;
+	}
+
+	public void setComentarioJuridicoInternoUsuario(String comentarioJuridicoInternoUsuario) {
+		this.comentarioJuridicoInternoUsuario = comentarioJuridicoInternoUsuario;
+	}
 	
 }

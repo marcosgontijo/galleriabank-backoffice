@@ -6300,8 +6300,12 @@ public class IuguMB {
 			//READ JSON response and print
 			JSONObject myResponse = new JSONObject(response.toString());
 			String erros = "";
+			List<String> listKeyErrors = new ArrayList<String>();
 
-			List<String> listKeyErrors = new ArrayList<String>(myResponse.getJSONObject("errors").keySet());
+			if(myResponse.has("errors")) {
+				listKeyErrors = new ArrayList<String>(myResponse.getJSONObject("errors").keySet());
+			}
+			
 
 			for (String errorsKey : listKeyErrors) { 
 				if (erros.equals("")) {

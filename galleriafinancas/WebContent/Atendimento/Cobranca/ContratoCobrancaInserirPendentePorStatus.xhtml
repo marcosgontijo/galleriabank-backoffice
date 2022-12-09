@@ -129,7 +129,7 @@
 												value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
 												label="Tipo"  >
 												<f:selectItem itemValue="" itemLabel="" />
-												<f:selectItem itemValue="No final" itemLabel="No final" />
+												<f:selectItem itemValue="No final" itemLabel="No final"/>
 												<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 											</p:selectOneMenu>			
 																
@@ -213,12 +213,12 @@
 											<p:outputLabel styleClass="labelBold">Comentário Jurídico</p:outputLabel>
 											<p:spacer ></p:spacer>		
 											<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA">									
-												<p:selectBooleanButton id="comentarioJuridicoEsteira" value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />		
-											</shiro:hasAnyRoles>	
-											<p:commandButton id="reprovadoJuridico"
-												value="Reprovar Contrato" icon="ui-icon-close"
+												<p:selectBooleanButton id="comentarioJuridicoEsteira" value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px" />		
+											</shiro:hasAnyRoles>		
+											<p:commandButton id="acoesJuridico"
+												value="Enviar para..." 
 												style="width:=60px"
-												onclick="PF('reprovarContratoDialog').show();" />												    						    
+												onclick="PF('acoesJuridico').show();" />											    						    
 										</h:panelGrid>
 									</ui:fragment>					
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -387,21 +387,7 @@
 											</shiro:hasAnyRoles>
 										</h:panelGrid>
 									</ui:fragment>
-									
-									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 5}">
-										<h:panelGrid columns="2"
-											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Voltar Contrato para Analise Comercial</p:outputLabel>
-											<p:spacer></p:spacer>
-											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
-												<p:commandButton value="Voltar Analise Comercial"
-													onclick="PF('voltarAnaliseComercialDialog').show();" />
-											</shiro:hasAnyRoles>
-										</h:panelGrid>
-									</ui:fragment>
-									
+
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato eq 7}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
@@ -1058,7 +1044,7 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de condomínio' }"> 
+							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de Condomínio' }"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
@@ -1377,11 +1363,12 @@
 									<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />							
 									<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-									<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-									<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
+									<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+									<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
 									<f:selectItem itemValue="Rural" itemLabel="Rural" />
+									<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
 								</p:selectOneMenu>
 
 								<p:outputLabel for="AreaTotalLaudoPaju"
@@ -2640,11 +2627,12 @@
 							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />						
 							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
 							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-							<f:selectItem itemValue="Casa de condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-							<f:selectItem itemValue="Casa de condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
+							<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
+							<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
 							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
 							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
 							<f:selectItem itemValue="Rural" itemLabel="Rural" />
+							<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
@@ -4155,6 +4143,26 @@
 			</div>			
 		</h:form>
 		
+		<p:dialog header="Enviar Para..." widgetVar="acoesJuridico"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromAcoesJuridico">
+				<div align="center">
+					<h:outputText value="O que deseja fazer?" styleClass="labelBold" 
+						style="margin-bottom:10px; width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="5" style="margin-top:30px;">
+						<p:commandButton value=" - Pendenciar"
+							onclick="PF('voltarAnaliseComercialDialog').show();" />
+						<p:spacer width="20" />
+						<p:commandButton value=" X Reprovar"
+							onclick="PF('reprovarContratoDialog').show();" />
+						<p:spacer width="20" />
+						<p:commandButton value=" ✓ Anvaçar"
+							onclick="PF('enviarPreComiteJuridico').show();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
 		<p:dialog header="Reprovar Contrato" widgetVar="reprovarContratoDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formReprovarContrato">
@@ -4211,6 +4219,24 @@
 						<p:spacer width="20" />
 						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
 							action="#{contratoCobrancaMB.voltarAnaliseComercial}"
+							style="TEXT-DECORATION: bold;" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Enviar p/ Pré Comite" widgetVar="enviarPreComiteJuridico"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromEnviarPreComiteJuridico">
+				<div align="center">
+					<h:outputText value="Tem Certeza?" styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="3">
+						<p:commandButton value="Não"
+							onclick="PF('enviarPreComiteJuridico').close();" />
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.enviarPreComiteJuridico}"
 							style="TEXT-DECORATION: bold;" />
 					</h:panelGrid>
 				</div>
