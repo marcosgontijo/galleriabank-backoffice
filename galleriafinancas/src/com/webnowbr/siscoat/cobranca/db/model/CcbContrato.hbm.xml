@@ -415,6 +415,10 @@
 		<property name="TipoPessoaEmitente" type="java.lang.String">
 			<column name="TipoPessoaEmitente" />
 		</property>
+		
+		<property name="serieCcb" type="java.lang.String">
+			<column name="serieCcb" />
+		</property>
 		        
     </class>
 </hibernate-mapping>

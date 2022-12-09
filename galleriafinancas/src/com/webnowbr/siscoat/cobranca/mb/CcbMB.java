@@ -7459,7 +7459,7 @@ public class CcbMB {
 			
 			
 		
-			int indexSegurados = 43;
+			int indexSegurados = 40;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
 				XWPFTable table = document.getTables().get(0);
@@ -7529,7 +7529,7 @@ public class CcbMB {
 			
 			
 			XWPFTable table = document.getTables().get(0);
-			XWPFTableRow tableRow1 = table.getRow(6);
+			XWPFTableRow tableRow1 = table.getRow(3);
 			XWPFParagraph paragraph = document.createParagraph();
 			paragraph.setAlignment(ParagraphAlignment.LEFT);
 			paragraph.setSpacingBefore(0);
@@ -7634,7 +7634,8 @@ public class CcbMB {
 					for (XWPFTableCell cell : row.getTableCells()) {
 						for (XWPFParagraph p : cell.getParagraphs()) {
 							for (XWPFRun r : p.getRuns()) {
-								String text = r.getText(0);		 
+								String text = r.getText(0);										
+								
 								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());									
 								text = trocaValoresXWPFCci(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
@@ -7668,6 +7669,7 @@ public class CcbMB {
 								text = trocaValoresXWPFCci(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
 								
+								text = trocaValoresXWPF(text, r, "serieCcb", this.objetoCcb.getSerieCcb());
 								text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());
 								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
 								
