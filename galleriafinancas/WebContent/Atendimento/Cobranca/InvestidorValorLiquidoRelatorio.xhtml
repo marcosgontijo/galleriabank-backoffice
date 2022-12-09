@@ -61,7 +61,7 @@
 				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
-					action="#{investidorMB.gerarRelatorioValorLiquido}"
+					action="#{investidorMB.gerarRelatorioValorLiquidoCustom}"
 					image="ui-icon ui-icon-check"
 					update=":form:dtResultado :form:ConsultaResultadosGallerias :form:ConsultaResultadosSA :form:ConsultaResultadosCorrespondente :form:ConsultaResultadosEnvelope PanelPDF mensagens"
 					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
@@ -78,7 +78,7 @@
 						<f:facet name="header">
 							<p:commandButton value="Gerar XLS - Valor Líquido" ajax="false"
 								icon="ui-icon-print"
-								action="#{investidorMB.geraXLSValorLiquidoInvestidores}"
+								action="#{investidorMB.geraXLSValorLiquidoInvestidoresRelatorio}"
 								update="PanelPDF"
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 							<p:spacer width="10" />	
@@ -100,7 +100,7 @@
 							</p:commandButton>									
 						</f:facet>
 						<p:headerRow>
-							<p:column style="text-align: center;width: 100px;" colspan="9"
+							<p:column style="text-align: center;width: 100px;" colspan="13"
 								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 								<h:outputText value="#{parcelas.investidor.nome}"/>
@@ -116,40 +116,56 @@
 				        
 				        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 				        
-				        <p:column style="text-align: center;"
+				        <p:column style="text-align: center;width: 50px;"
 							headerText="Contrato">
 							<h:outputText value="#{parcelas.numeroContrato}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Pagador">
 							<h:outputText value="#{parcelas.pagador.nome}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 15px;"
 							headerText="Garantido">
 							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
 							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 100px;"
 							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 15px;"
 							headerText="Em dia">
 							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
 							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Taxa Remuneração" >
+							<h:outputText value="#{parcelas.txRemuneracao}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Antecipação?" >
+							<h:outputText value="#{parcelas.tipoParcela}"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
 							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
 							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
-						<p:column style="" headerText="Ações">
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Face" >
+							<h:outputText value="#{parcelas.valorFace}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Saldo credor" >
+							<h:outputText value="#{parcelas.saldoCredorAtualizado}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
 									<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 										title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
@@ -168,7 +184,7 @@
 							</shiro:hasAnyRoles>
 						</p:column>							
 						<p:summaryRow>
-				            <p:column colspan="6" style="text-align:right">
+				            <p:column colspan="8" style="text-align:right">
 				                <h:outputText value="Total:" />
 				            </p:column>
 				            <p:column style="text-align: center;">
@@ -176,6 +192,12 @@
 				            </p:column>			            
 				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorBaixa(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalFaceInvestidorBaixa(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalSaldoCredorInvestidorBaixa(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>
 				            <p:column >
 				                <h:outputText value="" />
@@ -192,7 +214,7 @@
 							</div>		
 							<p:commandButton value="Gerar XLS - Valor Líquido" ajax="false"
 								icon="ui-icon-print"
-								action="#{investidorMB.geraXLSValorLiquidoInvestidores}"
+								action="#{investidorMB.geraXLSValorLiquidoInvestidoresRelatorio}"
 								update="PanelPDF"
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 							<p:spacer width="10" />	
@@ -236,7 +258,7 @@
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />	
 						</f:facet>
 						<p:headerRow>
-							<p:column style="text-align: center;width: 100px;" colspan="9"
+							<p:column style="text-align: center;width: 100px;" colspan="13"
 								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 								<h:outputText value="#{parcelas.investidor.nome}"/>
@@ -252,40 +274,56 @@
 				        
 				        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 				        
-				        <p:column style="text-align: center;"
+				        <p:column style="text-align: center;width: 50px;"
 							headerText="Contrato">
 							<h:outputText value="#{parcelas.numeroContrato}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Pagador">
 							<h:outputText value="#{parcelas.pagador.nome}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 15px;"
 							headerText="Garantido">
 							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
 							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 100px;"
 							headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 							<h:outputText value="#{parcelas.dataVencimento}">
 								<f:convertDateTime locale="pt_BR" />
 								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 15px;"
 							headerText="Em dia">
 							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
 							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
 						</p:column>
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Taxa Remuneração" >
+							<h:outputText value="#{parcelas.txRemuneracao}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Antecipação?" >
+							<h:outputText value="#{parcelas.tipoParcela}"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
 							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
-						<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Líquido a Receber" >
 							<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 						</p:column>	
-						<p:column style="" headerText="Ações">
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Face" >
+							<h:outputText value="#{parcelas.valorFace}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Saldo credor" >
+							<h:outputText value="#{parcelas.saldoCredorAtualizado}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="width:3px" headerText="Ações">
 							<shiro:hasAnyRoles name="ROOT">
 									<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 										title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
@@ -304,7 +342,7 @@
 							</shiro:hasAnyRoles>
 						</p:column>							
 						<p:summaryRow>
-				            <p:column colspan="6" style="text-align:right">
+				            <p:column colspan="8" style="text-align:right">
 				                <h:outputText value="Total:" />
 				            </p:column>
 				            <p:column style="text-align: center;">
@@ -312,6 +350,12 @@
 				            </p:column>			            
 				            <p:column style="text-align: center;">
 				                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalFaceInvestidorBaixaCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalSaldoCredorInvestidorBaixaCorrespondente(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 				            </p:column>
 				            <p:column >
 				                <h:outputText value="" />
@@ -352,7 +396,7 @@
 					<f:facet name="header">
 						<p:commandButton value="Gerar XLS - Envelope" ajax="false"
 								icon="ui-icon-print"
-								action="#{investidorMB.geraXLSValorLiquidoEnvelope}"
+								action="#{investidorMB.geraXLSValorLiquidoEnvelopeRelatorio}"
 								update="PanelPDF"
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 						<p:spacer width="10" />
@@ -374,7 +418,7 @@
 						</p:commandButton>								
 					</f:facet>
 					<p:headerRow>
-						<p:column style="text-align: center;width: 100px;" colspan="9"
+						<p:column style="text-align: center;width: 100px;" colspan="13"
 							headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 							filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 							<h:outputText value="#{parcelas.investidor.nome}"/>
@@ -390,41 +434,56 @@
 			        
 			        <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 			        
-			        <p:column style="text-align: center;"
+			        <p:column style="text-align: center;width: 50px;"
 						headerText="Contrato">
 						<h:outputText value="#{parcelas.numeroContrato}" />
 					</p:column>
-					<p:column style="text-align: center;"
+					<p:column style="text-align: center;width: 50px;"
 						headerText="Pagador">
 						<h:outputText value="#{parcelas.pagador.nome}" />
 					</p:column>
-					<p:column style="text-align: center;"
+					<p:column style="text-align: center;width: 15px;"
 							headerText="Garantido">
 							<h:outputText value="Sim" rendered="#{parcelas.investidorGarantido}" />
 							<h:outputText value="Não" rendered="#{!parcelas.investidorGarantido}" />
 						</p:column>
-					<p:column style="text-align: center;"
+					<p:column style="text-align: center;width: 100px;"
 						headerText="Data Vencimento" sortBy="#{parcelas.dataVencimento}">
 						<h:outputText value="#{parcelas.dataVencimento}">
 							<f:convertDateTime locale="pt_BR" />
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 						</h:outputText>
 					</p:column>
-					<p:column style="text-align: center;"
+					<p:column style="text-align: center;width: 15px;"
 							headerText="Em dia">
 							<h:outputText value="Sim" rendered="#{!parcelas.parcelaContratoVencida}" />
 							<h:outputText value="Não" rendered="#{parcelas.parcelaContratoVencida}" />
 						</p:column>
-					<p:column style="text-align: center;"
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Taxa Remuneração" >
+							<h:outputText value="#{parcelas.txRemuneracao}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Antecipação?" >
+							<h:outputText value="#{parcelas.tipoParcela}"/>
+						</p:column>	
+					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Bruto da Parcela" >
 						<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 					</p:column>									
-					<p:column style="text-align: center;"
+					<p:column style="text-align: center;width: 50px;"
 						headerText="Valor Líquido a Receber" >
 						<h:outputText value="#{parcelas.valorLiquidoBaixa}" converter="bigDecimalConverter"/>
 					</p:column>	
-
-					<p:column style="" headerText="Ações">
+					<p:column style="text-align: center;width: 50px;"
+							headerText="Valor Face" >
+							<h:outputText value="#{parcelas.valorFace}" converter="bigDecimalConverter"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
+							headerText="Saldo credor" >
+							<h:outputText value="#{parcelas.saldoCredorAtualizado}" converter="bigDecimalConverter"/>
+						</p:column>	
+					<p:column style="width:3px" headerText="Ações">
 						<shiro:hasAnyRoles name="ROOT">
 								<p:commandButton onclick="PF('baixaParcelaInvestidorDialog').show();"
 									title="Baixar Parcela do Investidor" icon="fa fa-fw fa-arrow-circle-down"
@@ -443,7 +502,7 @@
 						</shiro:hasAnyRoles>
 					</p:column>							
 					<p:summaryRow>
-			            <p:column colspan="6" style="text-align:right">
+			            <p:column colspan="8" style="text-align:right">
 			                <h:outputText value="Total:" />
 			            </p:column>
 			            <p:column style="text-align: center;">
@@ -452,6 +511,12 @@
 			            <p:column style="text-align: center;">
 			                <h:outputText value="#{investidorMB.getTotalLiquidoInvestidorEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
 			            </p:column>
+			            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalFaceInvestidorBaixaEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
+				            <p:column style="text-align: center;">
+				                <h:outputText value="#{investidorMB.getTotalSaldoCredorInvestidorBaixaEnvelope(parcelas.investidor.id)}" converter="bigDecimalConverter"/>
+				            </p:column>
 			            <p:column >
 			                <h:outputText value="" />
 			            </p:column>
@@ -467,7 +532,7 @@
 						</div>				
 						<p:commandButton value="Gerar XLS - Envelope" ajax="false"
 								icon="ui-icon-print"
-								action="#{investidorMB.geraXLSValorLiquidoEnvelope}"
+								action="#{investidorMB.geraXLSValorLiquidoEnvelopeRelatorio}"
 								update="PanelPDF"
 								disabled="#{investidorMB.parcelasInvestidor} == 0}" />
 						<p:spacer width="10" />	

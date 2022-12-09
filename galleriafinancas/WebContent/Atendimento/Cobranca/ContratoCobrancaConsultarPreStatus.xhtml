@@ -200,13 +200,13 @@
 				                and contratos.inicioAnalise == true
 								and contratos.cadastroAprovadoValor == 'Aprovado'
 								and contratos.aprovadoComite == true}"
-							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
-					
-							<p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
+							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />			                
+		                </shiro:hasAnyRoles>
+		                <shiro:lacksRole name="PROFILE_ANALISTA_CREDITO">
+		                	<p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
 			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
-			                
-		                </shiro:hasAnyRoles>
+			            </shiro:lacksRole>   
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">

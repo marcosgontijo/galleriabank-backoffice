@@ -451,6 +451,15 @@ public class UsuarioMB {
 				}				
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_MARKETING");
+			if (objetoUsuario.isProfileMarketing()) {				
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}				
+			}
+			
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
 			}

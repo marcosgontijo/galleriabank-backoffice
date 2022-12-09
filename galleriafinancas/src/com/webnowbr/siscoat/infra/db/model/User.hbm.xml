@@ -129,7 +129,10 @@
         </property>     
         <property name="profileCobranca" type="boolean">
             <column name="profileCobranca" />
-        </property>        
+        </property>     
+        <property name="profileMarketing" type="boolean">
+            <column name="profileMarketing" />
+        </property>     
         <property name="comiteEditar" type="boolean">
             <column name="comiteEditar" />
         </property>

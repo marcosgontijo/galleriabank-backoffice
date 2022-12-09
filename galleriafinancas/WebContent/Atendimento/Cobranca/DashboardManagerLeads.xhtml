@@ -31,11 +31,17 @@
 						value="#{dashboardMBVer2.filtroConsulta}"
 						label="filtroConsulta" style="margin-right: 59px;">
 						<f:selectItem itemValue="" itemLabel="Escolha o Filtro" />
-						<f:selectItem itemValue="Responsaveis" itemLabel="Responsaveis" />
-						<f:selectItem itemValue="Gerentes" itemLabel="Gerentes" />
-						<f:selectItem itemValue="Campanha" itemLabel="Campanha" />
-						<f:selectItem itemValue="Cidade" itemLabel="Cidade" />
-						<f:selectItem itemValue="Taxa" itemLabel="Taxa" />
+						<shiro:hasAnyRoles name="ROOT">	
+							<f:selectItem itemValue="Responsaveis" itemLabel="Responsaveis" />
+							<f:selectItem itemValue="Gerentes" itemLabel="Gerentes" />
+							<f:selectItem itemValue="Campanha" itemLabel="Campanha" />
+							<f:selectItem itemValue="Cidade" itemLabel="Cidade" />
+							<f:selectItem itemValue="Taxa" itemLabel="Taxa" />
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="PROFILE_MARKETING">	
+							<f:selectItem itemValue="Campanha" itemLabel="Campanha" />
+							<f:selectItem itemValue="Cidade" itemLabel="Cidade" />
+						</shiro:hasAnyRoles>
 						<p:ajax update="filtros"  />
 					</p:selectOneMenu>
 				</h:panelGrid>

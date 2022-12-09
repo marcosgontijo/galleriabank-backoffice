@@ -28,7 +28,7 @@
 					    	</shiro:hasAnyRoles>
 					    </td>
 					    <td>
-					    	<shiro:hasAnyRoles name="ROOT, POSTO, LOCACAO, COBRANCA, PRECOBRANCA, IUGU_POSTO, COBRANCA_IUGU, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO">
+					    	<shiro:hasAnyRoles name="ROOT, POSTO, LOCACAO, COBRANCA, PRECOBRANCA, IUGU_POSTO, COBRANCA_IUGU, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, PROFILE_ANALISTA_POS_COMITE, PROFILE_COMENTARIO_JURIDICO, PROFILE_MARKETING">
 					    		<p:commandLink title="Atendimento" action="/Atendimento/MenuAtendimento.xhtml" ajax="false"><img src="#{resource['image/Commons/logoFuncionalidades.png']}" alt=""/></p:commandLink>
 					    	</shiro:hasAnyRoles>
 					    </td>
@@ -89,10 +89,14 @@
 									action="#{dashboardMB.clearFieldsDashContratos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT, PROFILE_MARKETING">
 								<p:menuitem value="Dashboard Manager Ver2"
 									action="#{dashboardMBVer2.clearFieldsDashContratos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT">
 								<p:menuitem value="PowerBi"
 									action="#{powerBiMb.clearPowerBi}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
@@ -473,6 +477,9 @@
 									<p:menuitem value="Pagto. Valor Líquido"
 										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"
 										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
+									<p:menuitem value="Relatório Debêntures"
+										action="#{investidorMB.clearFieldsValorLiquidoRelatorio}" ajax="false"
+										icon="ui-icon ui-icon-calculator" styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
@@ -542,11 +549,6 @@
 																
 									<p:menuitem value="Debêntures Emitidas"
 											action="#{investidorMB.clearFieldsDebeturesEmitidas}"
-											ajax="false" icon="ui-icon ui-icon-calculator"
-											styleClass="itemMenu" /> 
-											
-									<p:menuitem value="Relatório Debêntures"
-											action="#{investidorMB.clearFieldsRelatorioDebeturesEmitidas}"
 											ajax="false" icon="ui-icon ui-icon-calculator"
 											styleClass="itemMenu" /> 
 								</shiro:hasAnyRoles>												
@@ -685,6 +687,92 @@
 									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Registro')}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
+							</p:submenu>
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_LAUDO">
+							<shiro:hasAnyRoles name="ROOT, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS,">
+								<p:menuitem value="03.3 - Avaliação Compass"
+									action="#{contratoCobrancaMB.clearFieldsAvaliacaoCompass}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_GALACHE,">
+								<p:menuitem value="03.3 - Avaliação Galache"
+									action="#{contratoCobrancaMB.clearFieldsAvaliacaoGalache}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO">
+								<p:menuitem value="03.5 - Laudo + Paju Pendente"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Laudo Paju Pendente')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO">
+								<p:menuitem value="04 - Ag. PAJU"
+									action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+							</shiro:hasAnyRoles>						
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+							<p:submenu label="Análise" styleClass="titulosMenu">
+								<p:menuitem value="Pré-Contratos"
+										action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								<p:menuitem value="01 - Ag. Análise"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="02 - Em Análise"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Em Analise')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="02.5 - Análise Pendente"
+									action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Analise Pendente')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Consulta SCR"
+									action="#{bmpDigitalMB.clearFields}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="03.1 - Pedir Laudo"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pedir Laudo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.2 - Pedir PAJU"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pedir PAJU')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.3 - Avaliação Compass"
+										action="#{contratoCobrancaMB.clearFieldsAvaliacaoCompass}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.3 - Avaliação Galache"
+										action="#{contratoCobrancaMB.clearFieldsAvaliacaoGalache}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="03.5 - Laudo + Paju Pendente"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Laudo Paju Pendente')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="04 - Ag. PAJU"
+										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="04.1 - Ag. Laudo"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+									<p:menuitem value="07.5 - Ag. Validação DOCs:  #{loginBean.numeroContratosDocumentosComite}"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Documentos Comite')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+									<p:menuitem value="09 - Ag. DOC"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. DOC')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />																	
 							</p:submenu>
 						</shiro:hasAnyRoles>
 					</p:menu>

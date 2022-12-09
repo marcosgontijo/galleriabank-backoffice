@@ -67,6 +67,8 @@ public final class User implements Serializable {
     private boolean userLaudo;
     private boolean userGalache;
     private boolean userAgenteEspelhamento;
+   
+    private boolean profileMarketing;
         
     private String codigoResponsavel;    
 
@@ -636,5 +638,13 @@ public final class User implements Serializable {
 
 	public void setProfileCobranca(boolean profileCobranca) {
 		this.profileCobranca = profileCobranca;
+	}
+
+	public boolean isProfileMarketing() {
+		return profileMarketing;
+	}
+
+	public void setProfileMarketing(boolean profileMarketing) {
+		this.profileMarketing = profileMarketing;
 	}
 }
