@@ -7090,6 +7090,8 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setReprovadoJuridicoEsteiraData(gerarDataHoje());
 		this.objetoContratoCobranca.setReprovadoJuridicoEsteiraUsuario(getNomeUsuarioLogado());
 		
+		updateCheckList();
+		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		

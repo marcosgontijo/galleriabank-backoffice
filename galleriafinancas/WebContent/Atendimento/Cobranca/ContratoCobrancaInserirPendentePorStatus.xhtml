@@ -1394,7 +1394,9 @@
 							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48"
 								counter="display" maxlength="3000" onblur=""
 								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" >
+								<p:ajax process="@this" partialSubmit="true" />
+							</p:inputTextarea>
 							<p:outputLabel id="display" />
 						</h:panelGrid>
 					</p:panel>
@@ -3913,9 +3915,7 @@
 			</p:panel>	
 			
 			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR" >  	
-				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" 
-				rendered="#{(contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo 
-				and contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada)}" >						
+				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;"  >						
 					<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
 							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
@@ -4067,7 +4067,7 @@
 						<p:commandButton value=" X Reprovar"
 							onclick="PF('reprovarContratoDialog').show();" />
 						<p:spacer width="20" />
-						<p:commandButton value=" ✓ Anvaçar"
+						<p:commandButton value=" ✓ Avançar"
 							onclick="PF('enviarPreComiteJuridico').show();" />
 					</h:panelGrid>
 				</div>

@@ -20,6 +20,7 @@ public class CcbContrato implements Serializable{
 	
 	private String numeroCcb;
 	private String numeroOperacao;
+	private String serieCcb;
 	private String nomeEmitente;
 	private String cpfEmitente;
 	private String logradouroEmitente;
@@ -1075,5 +1076,12 @@ public class CcbContrato implements Serializable{
 	public void setTipoParticipanteEmitente(String tipoParticipanteEmitente) {
 		this.tipoParticipanteEmitente = tipoParticipanteEmitente;
 	}
-	
+
+	public String getSerieCcb() {
+		return serieCcb;
+	}
+
+	public void setSerieCcb(String serieCcb) {
+		this.serieCcb = serieCcb;
+	}
 }
