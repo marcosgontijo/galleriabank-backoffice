@@ -9,7 +9,6 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -33,13 +32,11 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
-
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
-
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.Parametros;
@@ -286,23 +283,8 @@ public class ContractService {
 	
 							// salva contrato
 							Long idContratoCobranca = criaContratoBD();
+							this.objetoContratoCobranca.setId(idContratoCobranca);
 							criaPagadores(contratoAPP);
-							
-							if(contratoAPP.has("pagadores")) {
-								 JSONArray pagadoresJson = contratoAPP.getJSONArray("pagadores");
-								 if(pagadoresJson.length() > 0) {
-									 for(int i=0; i < pagadoresJson.length(); i++) {
-										 String cpf = pagadoresJson.getJSONObject(i).getString("cpf");
-										 if(cpf != null) {
-											 PagadorRecebedor pagador = validaPagadorOperacaoLista(cpf, pagadoresJson);
-											 //createPagadoresLista(pagador, idContratoCobranca);
-										 }else {
-											 //this.objetoContratoCobranca.setPagador(validaPagadorOperacaoLista(cpf, pagadores));
-										 }
-										 
-									 }
-								 }
-							}
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação criada com sucesso!!!\"}";
 				
@@ -348,84 +330,69 @@ public class ContractService {
 		}
 	}
 	
-	private void createPagadoresLista(PagadorRecebedor pagador, Long idContratoCobranca) {
-		PagadorRecebedorAdicionaisDao pagadorRecebedorAdicionaisDao = new PagadorRecebedorAdicionaisDao();
-		pagadorRecebedorAdicionais.getContratoCobranca().setId(idContratoCobranca);
-		pagadorRecebedorAdicionais.setPessoa(pagador);
-		pagadorRecebedorAdicionaisDao.create(pagadorRecebedorAdicionais);
-		
-	}
-
-
-
 	private void criaPagadores(JSONObject contratoAPP) {
 		/***
 		 * OBJETO PAGADORES ADICIONAIS
 		 */
 		PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
-		JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
+		PagadorRecebedorAdicionaisDao pagadorAdicionaisDao = new PagadorRecebedorAdicionaisDao();
 		
-		if(contratoAPP.has("pagadoresAdicionais")) {
-			JSONArray pagadoresAdicionaisAPP = contratoAPP.getJSONArray("pagadoresAdicionais");
+		if(contratoAPP.has("pagadores")) {
+			JSONArray pagadoresAdicionaisAPP = contratoAPP.getJSONArray("pagadores");
 			
 			if(pagadoresAdicionaisAPP.length() > 0) {
-			
+				
 				for(int i = 0; i < pagadoresAdicionaisAPP.length(); i++) {
-					long idPessoa = 0;
-					if(pagadoresAdicionaisAPP.getJSONObject(i).has("id")) {
-						idPessoa = pagadoresAdicionaisAPP.getJSONObject(i).isNull("id") ? 0 : pagadoresAdicionaisAPP.getJSONObject(i).getLong("id");
-					} 
-					JSONObject pessoaApp = pagadoresAdicionaisAPP.getJSONObject(i).getJSONObject("pessoa");
-					//long pessoaId = pagadoresAdicionaisAPP.getJSONObject(i).getJSONObject("pessoa").getLong("id");
+					JSONObject pagadores = pagadoresAdicionaisAPP.getJSONObject(i);
+					List<PagadorRecebedor> pessoas = pagadorDao.findByFilter("cpf", pagadores.getString("cpfCnpj"));
 					
-					if(idPessoa != 0) {
+					if(pessoas.isEmpty()) {
+						PagadorRecebedor pessoa = new PagadorRecebedor();
+						pessoa.setNome(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
+						pessoa.setCpf(pagadoresAdicionaisAPP.getJSONObject(i).getString("cpfCnpj"));
+						pessoa.setNomeParticipanteCheckList(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
+						
+						Long idPagador = pagadorDao.create(pessoa);
+						PagadorRecebedor novoPagador = pagadorDao.findById(idPagador);
+						
 						pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-						PagadorRecebedor pessoa = pagadorDao.findById(idPessoa);
-						
-						pagadorRecebedorAdicionais.setId(idPessoa);
-						pagadorRecebedorAdicionais.setPessoa(pessoa);
+						pagadorRecebedorAdicionais.setId(-1);
+						pagadorRecebedorAdicionais.setPessoa(novoPagador);
 						pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
+						pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoa.getNome());
 						
-						pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList")
-								? pessoaApp.getString("nomeParticipanteCheckList") : null);
-						pagadorRecebedorAdicionais.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-						pagadorRecebedorAdicionais.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-						pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-						pagadorRecebedorAdicionais.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
-						
-						listaPagadores = new HashSet<PagadorRecebedorAdicionais>();
-						listaPagadores.add(pagadorRecebedorAdicionais);
-						this.objetoContratoCobranca.setListaPagadores(listaPagadores);
-						
+						Long idPagadorAdicionais = pagadorAdicionaisDao.create(pagadorRecebedorAdicionais);
+						System.out.println("Novo Pagador e Pagador Adicional ID: "+idPagadorAdicionais);
 					}else {
-						pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-						pagadorRecebedorAdicionais.setPessoa(new PagadorRecebedor());
-						pagadorRecebedorAdicionais.getPessoa().setNome(pessoaApp.getString("nome"));
-						pagadorRecebedorAdicionais.getPessoa().setCpf(pessoaApp.getString("cpfCnpj"));
-						pagadorRecebedorAdicionais.getPessoa().setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList") ? pessoaApp.getString("nomeParticipanteCheckList") : null);
-						pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
+						List<PagadorRecebedor> pagadorCadastrado = pagadorDao.findByFilter("cpf", pagadores.getString("cpfCnpj"));
 						
-						pagadorRecebedorAdicionais.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-						pagadorRecebedorAdicionais.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-						pagadorRecebedorAdicionais.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-						pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-						pagadorRecebedorAdicionais.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
-						pagadorRecebedorAdicionais.setContratoCobranca(new ContratoCobranca());
+						System.out.println("Pagador Adicional pessoa: "+pagadorCadastrado.get(0).getId());
 						
-						listaPagadores = new HashSet<PagadorRecebedorAdicionais>();
-						listaPagadores.add(pagadorRecebedorAdicionais);
-						this.objetoContratoCobranca.setListaPagadores(listaPagadores);
+						List<PagadorRecebedorAdicionais> pagadorAdicionaisCadastrado = 
+								pagadorAdicionaisDao.getPagadorAdicionaisPessoa(pagadorCadastrado.get(0).getId());
+						
+						if(pagadorAdicionaisCadastrado.isEmpty()) {
+							pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
+							pagadorRecebedorAdicionais.setId(-1);
+							pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
+							pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
+							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoas.get(0).getNome());
+							
+							Long idPagadorAdicionais = pagadorAdicionaisDao.create(pagadorRecebedorAdicionais);
+							
+							System.out.println("Pagador Cadastrado e Pagador Adicional ID: "+idPagadorAdicionais);
+						
+						}else {
+							pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
+							pagadorRecebedorAdicionais.setId(pagadorAdicionaisCadastrado.get(0).getId());
+							pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
+							pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
+							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoas.get(0).getNome());
+							
+							pagadorAdicionaisDao.update(pagadorRecebedorAdicionais);
+							
+							System.out.println("Atualizar Pagador Adicional ID: "+pessoas.get(i).getId());
+						}
 					}
 				}
 			}
@@ -436,78 +403,76 @@ public class ContractService {
 		 * OBJETO PAGADORES SOCIO
 		 */
 		
-		if(contratoAPP.has("pagadoresSocio")) {
-			JSONArray pagadoresSocioPP = contratoAPP.getJSONArray("pagadoresSocio");
-			
-			if(pagadoresSocioPP.length() > 0) {
-				
-				for(int i = 0; i < pagadoresSocioPP.length(); i++) {
-					JSONObject pessoaApp = pagadoresSocioPP.getJSONObject(i);
-					if(pessoaApp.has("id")) {
-						PagadorRecebedorSocio pagadorRecebedorSocio = new PagadorRecebedorSocio();
-						PagadorRecebedor objetoPagadorSocio = new PagadorRecebedor();
-						objetoPagadorSocio = pagadorDao.findById(contratoAPPPagador.getLong("id"));
-						pagadorRecebedorSocio.setPessoa(objetoPagadorSocio);
-						pagadorRecebedorSocio.setContratoCobranca(this.objetoContratoCobranca);
-						
-						pagadorRecebedorSocio.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList") ? pessoaApp.getString("nomeParticipanteCheckList") : null);
-						pagadorRecebedorSocio.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-						pagadorRecebedorSocio.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-						pagadorRecebedorSocio.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-						pagadorRecebedorSocio.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-						pagadorRecebedorSocio.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-						pagadorRecebedorSocio.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-						pagadorRecebedorSocio.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-						pagadorRecebedorSocio.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-						pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-						pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
-						
-						listSocios = new HashSet<PagadorRecebedorSocio>();
-						listSocios.add(pagadorRecebedorSocio);
-						
-						// TODO Salvar pagadorRecebedorAdicionais DS 
-						
-					}else {
-						PagadorRecebedor pessoa = new PagadorRecebedor();
-						PagadorRecebedorSocio pagadorRecebedorSocio = new PagadorRecebedorSocio();
-						pessoa.setCpf(pessoaApp.getString("cpfCnpj"));
-						pessoa.setSexo(pessoaApp.getString("sexo"));
-						pessoa.setNomeMae(pessoaApp.getString("nomeMae"));
-						pessoa.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList") ? pessoaApp.getString("nomeParticipanteCheckList") : null);
-						pessoa.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-						pessoa.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-						pessoa.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-						pessoa.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-						pessoa.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-						pessoa.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-						pessoa.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-						pessoa.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-						pessoa.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-						pessoa.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
-						pagadorRecebedorSocio.setPessoa(pessoa);
-						
-						pagadorRecebedorSocio.setContratoCobranca(objetoContratoCobranca);
-						
-						pagadorRecebedorSocio.setNomeParticipanteCheckList(pessoaApp.getString("nomeParticipanteCheckList"));
-						pagadorRecebedorSocio.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
-						pagadorRecebedorSocio.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
-						pagadorRecebedorSocio.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
-						pagadorRecebedorSocio.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
-						pagadorRecebedorSocio.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
-						pagadorRecebedorSocio.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
-						pagadorRecebedorSocio.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
-						pagadorRecebedorSocio.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
-						pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
-						pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
-						
-						listSocios = new HashSet<PagadorRecebedorSocio>();
-						listSocios.add(pagadorRecebedorSocio);
-						
-						// TODO Salvar pagadorRecebedorAdicionais DS 
-					}
-				}
-			}
-		}
+//		if(contratoAPP.has("pagadoresSocio")) {
+//			JSONArray pagadoresSocioPP = contratoAPP.getJSONArray("pagadoresSocio");
+//			
+//			if(pagadoresSocioPP.length() > 0) {
+//				
+//				for(int i = 0; i < pagadoresSocioPP.length(); i++) {
+//					JSONObject pessoaApp = pagadoresSocioPP.getJSONObject(i);
+//					if(pessoaApp.has("id")) {
+//						PagadorRecebedorSocio pagadorRecebedorSocio = new PagadorRecebedorSocio();
+//						PagadorRecebedor objetoPagadorSocio = new PagadorRecebedor();
+//						objetoPagadorSocio = pagadorDao.findById(contratoAPPPagador.getLong("id"));
+//						pagadorRecebedorSocio.setPessoa(objetoPagadorSocio);
+//						pagadorRecebedorSocio.setContratoCobranca(this.objetoContratoCobranca);
+//						
+//						pagadorRecebedorSocio.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList") ? pessoaApp.getString("nomeParticipanteCheckList") : null);
+//						pagadorRecebedorSocio.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
+//						pagadorRecebedorSocio.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
+//						pagadorRecebedorSocio.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
+//						pagadorRecebedorSocio.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
+//						pagadorRecebedorSocio.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
+//						pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
+//						pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
+//						
+//						listSocios = new HashSet<PagadorRecebedorSocio>();
+//						listSocios.add(pagadorRecebedorSocio);
+//						
+//						
+//					}else {
+//						PagadorRecebedor pessoa = new PagadorRecebedor();
+//						PagadorRecebedorSocio pagadorRecebedorSocio = new PagadorRecebedorSocio();
+//						pessoa.setCpf(pessoaApp.getString("cpfCnpj"));
+//						pessoa.setSexo(pessoaApp.getString("sexo"));
+//						pessoa.setNomeMae(pessoaApp.getString("nomeMae"));
+//						pessoa.setNomeParticipanteCheckList(pessoaApp.has("nomeParticipanteCheckList") ? pessoaApp.getString("nomeParticipanteCheckList") : null);
+//						pessoa.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
+//						pessoa.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
+//						pessoa.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
+//						pessoa.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
+//						pessoa.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
+//						pessoa.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
+//						pessoa.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
+//						pessoa.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
+//						pessoa.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
+//						pessoa.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
+//						pagadorRecebedorSocio.setPessoa(pessoa);
+//						
+//						pagadorRecebedorSocio.setContratoCobranca(objetoContratoCobranca);
+//						
+//						pagadorRecebedorSocio.setNomeParticipanteCheckList(pessoaApp.getString("nomeParticipanteCheckList"));
+//						pagadorRecebedorSocio.setRgDocumentosCheckList(pessoaApp.getBoolean("rgDocumentosCheckList"));
+//						pagadorRecebedorSocio.setComprovanteEnderecoDocumentosCheckList(pessoaApp.getBoolean("comprovanteEnderecoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoaApp.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setFichaCadastralDocumentosCheckList(pessoaApp.getBoolean("fichaCadastralDocumentosCheckList"));
+//						pagadorRecebedorSocio.setBancoDocumentosCheckList(pessoaApp.getBoolean("bancoDocumentosCheckList"));
+//						pagadorRecebedorSocio.setTelefoneEmailDocumentosCheckList(pessoaApp.getBoolean("telefoneEmailDocumentosCheckList"));
+//						pagadorRecebedorSocio.setComprovanteRendaCheckList(pessoaApp.getBoolean("comprovanteRendaCheckList"));
+//						pagadorRecebedorSocio.setCombateFraudeCheckList(pessoaApp.getBoolean("combateFraudeCheckList"));
+//						pagadorRecebedorSocio.setCargoOcupacaoCheckList(pessoaApp.getBoolean("cargoOcupacaoCheckList"));
+//						pagadorRecebedorSocio.setTaxaCheckList(pessoaApp.getBoolean("taxaCheckList"));
+//						
+//						listSocios = new HashSet<PagadorRecebedorSocio>();
+//						listSocios.add(pagadorRecebedorSocio);
+//						
+//					}
+//				}
+//			}
+//		}
 	}
 
 
@@ -613,49 +578,6 @@ public class ContractService {
 		
 		return contratoCobrancaDao.create(this.objetoContratoCobranca);
 	}
-	
-	public PagadorRecebedor validaPagadorOperacaoLista(String cpfCnpj, JSONArray pagadoresJson) {
-		/***
-		 * Busca pagador Lista
-		 */
-		PagadorRecebedor pagadorRecebedorLista = null;
-		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-
-			boolean registraPagador = false;
-			Long idPagador = (long) 0;
-
-			if (cpfCnpj.length() <= 14) {
-				List<PagadorRecebedor> pagadorPf = pagadorRecebedorDao.findByFilter("cpf", cpfCnpj);
-				if (!pagadorPf.isEmpty()) {
-					pagadorRecebedorLista = pagadorPf.get(0);
-				} else {
-					pagadorRecebedorLista = new PagadorRecebedor();
-					pagadorRecebedorLista.setCpf(pagadoresJson.getJSONObject(0).getString("cpf"));
-					pagadorRecebedorLista.setNome(pagadoresJson.getJSONObject(0).getString("nome"));
-					registraPagador = true;
-				}
-			}
-
-			if (cpfCnpj.length() >= 15) {
-				List<PagadorRecebedor> pagadorPj = pagadorRecebedorDao.findByFilter("cnpj", cpfCnpj);
-				if (!pagadorPj.isEmpty()) {
-					pagadorRecebedorLista = pagadorPj.get(0);
-				} else {
-					pagadorRecebedorLista = new PagadorRecebedor();
-					pagadorRecebedorLista.setCnpj(pagadoresJson.getJSONObject(0).getString("cnpj"));
-					pagadorRecebedorLista.setNome(pagadoresJson.getJSONObject(0).getString("nome"));
-					registraPagador = true;
-				}
-			}
-
-			if (registraPagador) {
-				idPagador = pagadorRecebedorDao.create(pagadorRecebedorLista);
-				pagadorRecebedorLista.setId(idPagador);
-			}
-			
-		return pagadorRecebedorLista;
-	}
-
 
 	public PagadorRecebedor validaPagadorOperacao() {
 		/***
