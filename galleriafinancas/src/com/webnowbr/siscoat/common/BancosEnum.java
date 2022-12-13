@@ -85,6 +85,7 @@ public enum BancosEnum {
 	BANCO_MERCANTIL_DO_BRASIL_S_A("389", "Banco Mercantil do Brasil S.A."),
 	BANCO_BRADESCO_FINANCIAMENTOS_S_A("394", "Banco Bradesco Financiamentos S.A."),
 	HSBC_BANK_BRASIL_S_A_BANCO_MULTIPLO("399", "HSBC Bank Brasil S.A. - Banco Múltiplo"),
+	CORA_SCD("403", "Cora SCD"),
 	BANCO_SAFRA_S_A("422", "Banco Safra S.A."),
 	BANCO_DE_Tokyo_MITSUBISHI_UFJ_BRASIL_S_A("456", "Banco de Tokyo-Mitsubishi UFJ Brasil S.A."),
 	BANCO_SUMITOMO_MITSUI_BRASILEIRO_S_A("464", "Banco Sumitomo Mitsui Brasileiro S.A."),
