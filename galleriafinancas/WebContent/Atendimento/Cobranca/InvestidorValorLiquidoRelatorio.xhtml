@@ -100,7 +100,7 @@
 							</p:commandButton>									
 						</f:facet>
 						<p:headerRow>
-							<p:column style="text-align: center;width: 100px;" colspan="13"
+							<p:column style="text-align: center;width: 100px;" colspan="14"
 								headerText="Investidor" filterBy="#{parcelas.investidor.nome}"
 								filterMatchMode="contains" sortBy="#{parcelas.investidor.nome}">
 								<h:outputText value="#{parcelas.investidor.nome}"/>
@@ -150,6 +150,10 @@
 							<h:outputText value="#{parcelas.tipoParcela}"/>
 						</p:column>	
 						<p:column style="text-align: center;width: 50px;"
+							headerText="Recebe Juros Mensal?" >
+							<h:outputText value="#{parcelas.recebeJurosMensal}"/>
+						</p:column>	
+						<p:column style="text-align: center;width: 50px;"
 							headerText="Valor Bruto da Parcela" >
 							<h:outputText value="#{parcelas.parcelaMensalBaixa}" converter="bigDecimalConverter"/>
 						</p:column>									
@@ -184,7 +188,7 @@
 							</shiro:hasAnyRoles>
 						</p:column>							
 						<p:summaryRow>
-				            <p:column colspan="8" style="text-align:right">
+				            <p:column colspan="9" style="text-align:right">
 				                <h:outputText value="Total:" />
 				            </p:column>
 				            <p:column style="text-align: center;">

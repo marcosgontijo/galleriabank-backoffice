@@ -1944,6 +1944,14 @@
 			type="java.lang.String">
 			<column name="comentarioJuridicoInternoUsuario" />
 		</property>
-
+		<property name="contratoEmCartorio" type="boolean">
+			<column name="contratoEmCartorio" />
+		</property>
+		<property name="contratoEmCartorioData" type="java.util.Date">
+			<column name="contratoEmCartorioData" />
+		</property>
+		<property name="contratoEmCartorioUsuario" type="java.lang.String">
+			<column name="contratoEmCartorioUsuario" />
+		</property>
 	</class>
 </hibernate-mapping>

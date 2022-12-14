@@ -721,6 +721,32 @@ public class ContratoCobrancaMB {
 	
 	private Boolean addPagadorPreContrato;
 	
+	public void saveContratoEmCartorio() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (this.objetoContratoCobranca.isContratoEmCartorio()) {
+			User usuarioLogado = getUsuarioLogado();
+			
+			if (usuarioLogado != null) {
+				this.objetoContratoCobranca.setContratoEmCartorioUsuario(usuarioLogado.getName());			
+			}
+			
+			this.objetoContratoCobranca.setContratoEmCartorioData(gerarDataHoje());
+		} else {
+			this.objetoContratoCobranca.setContratoEmCartorioUsuario("");	
+			this.objetoContratoCobranca.setContratoEmCartorioData(null);
+		}
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		geraConsultaContratosPerformance();
+		
+		context.addMessage(null,
+			new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Contrato " + this.objetoContratoCobranca.getNumeroContrato() + " - Status contrato em cartório alterado com sucesso!!!",""));
+	}
+	
 	public void alterarEmpresa() {
 		FacesContext context = FacesContext.getCurrentInstance();
 

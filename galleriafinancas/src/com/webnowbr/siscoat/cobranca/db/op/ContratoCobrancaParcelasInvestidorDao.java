@@ -19,71 +19,71 @@ import com.webnowbr.siscoat.db.dao.*;
 
 public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <ContratoCobrancaParcelasInvestidor,Long> {
 
-	private static final String QUERY_GET_PARCELAS_POR_DATA =  	"select id idparcela, numerocontrato, recebedor, pagador, recebedorenvelope, empresa, recebedorgarantido, datavencimento, baixado, valorFace, saldoCredor, taxaRemuneracaoInvestidor from (" + 
-			" select cp.id, c.numerocontrato, c.recebedor recebedor, c.pagador pagador, c.recebedorenvelope recebedorenvelope, empresa, c.recebedorgarantido1 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor1 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor1 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_1 cj" + 
+	private static final String QUERY_GET_PARCELAS_POR_DATA =  	"select id idparcela, numerocontrato, recebedor, pagador, recebedorenvelope, empresa, recebedorgarantido, datavencimento, baixado, valorFace, saldoCredor, taxaRemuneracaoInvestidor, qtdeParcelasInvestidor, carenciaInvestidor from (" + 
+			" select cp.id, c.numerocontrato, c.recebedor recebedor, c.pagador pagador, c.recebedorenvelope recebedorenvelope, empresa, c.recebedorgarantido1 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor1 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor1 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor1 qtdeParcelasInvestidor, carenciaInvestidor1 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_1 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor1" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor = false " + 
 			"union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor2 recebedor, c.pagador pagador, c.recebedorenvelope2 recebedorenvelope, empresa, c.recebedorgarantido2 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor2 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor2 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_2 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor2 recebedor, c.pagador pagador, c.recebedorenvelope2 recebedorenvelope, empresa, c.recebedorgarantido2 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor2 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor2 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor2 qtdeParcelasInvestidor, carenciaInvestidor2 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_2 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor2" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor2 = false " + 
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor3 recebedor, c.pagador pagador, c.recebedorenvelope3 recebedorenvelope, empresa, c.recebedorgarantido3 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor3 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor3 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_3 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor3 recebedor, c.pagador pagador, c.recebedorenvelope3 recebedorenvelope, empresa, c.recebedorgarantido3 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor3 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor3 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor3 qtdeParcelasInvestidor, carenciaInvestidor3 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_3 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor3" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor3 = false " + 
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor4 recebedor, c.pagador pagador, c.recebedorenvelope4 recebedorenvelope, empresa, c.recebedorgarantido4 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor4 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor4 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_4 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor4 recebedor, c.pagador pagador, c.recebedorenvelope4 recebedorenvelope, empresa, c.recebedorgarantido4 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor4 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor4 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor4 qtdeParcelasInvestidor, carenciaInvestidor4 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_4 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor4" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor4 = false " + 
 			" union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor5 recebedor, c.pagador pagador, c.recebedorenvelope5 recebedorenvelope, empresa, c.recebedorgarantido5 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor5 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor5 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_5 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor5 recebedor, c.pagador pagador, c.recebedorenvelope5 recebedorenvelope, empresa, c.recebedorgarantido5 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor5 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor5 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor5 qtdeParcelasInvestidor, carenciaInvestidor5 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_5 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor5" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " +
 			" and c.ocultarecebedor5 = false " + 
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor, c.pagador pagador, c.recebedorenvelope6 recebedorenvelope, empresa, c.recebedorgarantido6 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor6 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor6 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor6 recebedor, c.pagador pagador, c.recebedorenvelope6 recebedorenvelope, empresa, c.recebedorgarantido6 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor6 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor6 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor6 qtdeParcelasInvestidor, carenciaInvestidor6 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_6 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor6" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor6 = false " + 
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor7 recebedor, c.pagador pagador, c.recebedorenvelope7 recebedorenvelope, empresa, c.recebedorgarantido7 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor7 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor7 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_7 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor7 recebedor, c.pagador pagador, c.recebedorenvelope7 recebedorenvelope, empresa, c.recebedorgarantido7 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor7 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor7 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor7 qtdeParcelasInvestidor, carenciaInvestidor7 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_7 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor7" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor7 = false " + 
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor8 recebedor, c.pagador pagador, c.recebedorenvelope8 recebedorenvelope, empresa, c.recebedorgarantido8 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor8 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor8 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_8 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor8 recebedor, c.pagador pagador, c.recebedorenvelope8 recebedorenvelope, empresa, c.recebedorgarantido8 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor8 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor8 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor8 qtdeParcelasInvestidor, carenciaInvestidor8 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_8 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor8" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor8 = false " + 
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor9 recebedor, c.pagador pagador, c.recebedorenvelope9 recebedorenvelope, empresa, c.recebedorgarantido9 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor9 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor9 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_9 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor9 recebedor, c.pagador pagador, c.recebedorenvelope9 recebedorenvelope, empresa, c.recebedorgarantido9 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor9 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor9 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor9 qtdeParcelasInvestidor, carenciaInvestidor9 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_9 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor9" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
 			" and cp.datavencimento < ? ::timestamp " +
 			" and c.ocultarecebedor9 = false " + 
 			"  union" + 
-			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor, c.pagador pagador, c.recebedorenvelope10 recebedorenvelope, empresa, c.recebedorgarantido10 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor10 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor10 taxaRemuneracaoInvestidor from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
+			"  select cp.id, c.numerocontrato, c.recebedor10 recebedor, c.pagador pagador, c.recebedorenvelope10 recebedorenvelope, empresa, c.recebedorgarantido10 recebedorgarantido, cp.datavencimento datavencimento, cp.baixado baixado, c.vlrInvestidor10 valorFace, cp.saldoCredorAtualizado saldoCredor, c.taxaRemuneracaoInvestidor10 taxaRemuneracaoInvestidor, qtdeParcelasInvestidor10 qtdeParcelasInvestidor, carenciaInvestidor10 carenciaInvestidor from cobranca.contratocobranca_parcelas_investidor_join_10 cj" + 
 			" inner join cobranca.contratocobranca c on c.id = cj.idcontratocobrancaparcelasinvestidor10" + 
 			" inner join cobranca.contratocobrancaparcelasinvestidor cp on cp.id = cj.idcontratocobrancaparcelasinvestidor" + 
 			" where cp.datavencimento >= ? ::timestamp  " + 
@@ -152,6 +152,16 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 
 						contratoCobrancaParcelasInvestidor.setValorFace(rs.getBigDecimal(10));
 						contratoCobrancaParcelasInvestidor.setTxRemuneracao(rs.getBigDecimal(12));
+						
+						contratoCobrancaParcelasInvestidor.setQtdeParcelasInvestidor(rs.getInt(13));
+						contratoCobrancaParcelasInvestidor.setCarenciaInvestidor(rs.getInt(14));
+						
+						
+						if (contratoCobrancaParcelasInvestidor.getCarenciaInvestidor() == contratoCobrancaParcelasInvestidor.getQtdeParcelasInvestidor() - 1) {
+							contratoCobrancaParcelasInvestidor.setRecebeJurosMensal("Não");
+						} else {
+							contratoCobrancaParcelasInvestidor.setRecebeJurosMensal("Sim");
+						}
 						
 						if (contratoCobrancaParcelasInvestidor.getNumeroParcela().equals("Antecipação")) {
 							contratoCobrancaParcelasInvestidor.setTipoParcela("Antecipação");

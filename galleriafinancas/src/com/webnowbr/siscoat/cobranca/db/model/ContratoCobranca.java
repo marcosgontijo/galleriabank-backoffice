@@ -724,6 +724,10 @@ public class ContratoCobranca implements Serializable {
 	private Responsavel analistaGeracaoPAJU;	
 	
 	private Date notificacaoCartorioData;
+	
+	private boolean contratoEmCartorio;
+	private Date contratoEmCartorioData;
+	private String contratoEmCartorioUsuario;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -5848,5 +5852,28 @@ public class ContratoCobranca implements Serializable {
 	public void setComentarioJuridicoInternoUsuario(String comentarioJuridicoInternoUsuario) {
 		this.comentarioJuridicoInternoUsuario = comentarioJuridicoInternoUsuario;
 	}
-	
+
+	public boolean isContratoEmCartorio() {
+		return contratoEmCartorio;
+	}
+
+	public void setContratoEmCartorio(boolean contratoEmCartorio) {
+		this.contratoEmCartorio = contratoEmCartorio;
+	}
+
+	public Date getContratoEmCartorioData() {
+		return contratoEmCartorioData;
+	}
+
+	public void setContratoEmCartorioData(Date contratoEmCartorioData) {
+		this.contratoEmCartorioData = contratoEmCartorioData;
+	}
+
+	public String getContratoEmCartorioUsuario() {
+		return contratoEmCartorioUsuario;
+	}
+
+	public void setContratoEmCartorioUsuario(String contratoEmCartorioUsuario) {
+		this.contratoEmCartorioUsuario = contratoEmCartorioUsuario;
+	}
 }

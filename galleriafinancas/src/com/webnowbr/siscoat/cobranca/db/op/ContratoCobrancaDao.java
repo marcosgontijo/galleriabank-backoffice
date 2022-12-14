@@ -1127,7 +1127,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (!empresa.equals("TODAS")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.empresa = '" + empresa + "' ";
 					}
-							
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false ";
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + "order by cc.numeroContrato ";
 					
@@ -4582,6 +4583,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (!empresa.equals("TODAS")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
 					}
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false ";
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " order by cc.numeroContrato ";
 					

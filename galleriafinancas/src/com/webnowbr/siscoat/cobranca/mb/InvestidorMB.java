@@ -3695,15 +3695,18 @@ public class InvestidorMB {
 		cell.setCellValue("Antecipação?");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
-		cell.setCellValue("Valor Bruto da Parcela");
+		cell.setCellValue("Recebe Juros Mensal?");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(11);
-		cell.setCellValue("Valor Líquido a Receber");
+		cell.setCellValue("Valor Bruto da Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(12);
-		cell.setCellValue("Valor Face");
+		cell.setCellValue("Valor Líquido a Receber");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(13);
+		cell.setCellValue("Valor Face");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(14);
 		cell.setCellValue("Saldo Credor");
 		cell.setCellStyle(cell_style);
 
@@ -3816,9 +3819,14 @@ public class InvestidorMB {
 			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getTipoParcela());	
+			
+			// Recebe Juros Mensal?
+			cell = row.createCell(10);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getRecebeJurosMensal());	
 
 			// Valor Bruto Parcela
-			cell = row.createCell(10);
+			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getParcelaMensalBaixa() != null) {
@@ -3828,7 +3836,7 @@ public class InvestidorMB {
 			}
 			
 			// Valor Líquido a Receber
-			cell = row.createCell(11);
+			cell = row.createCell(12);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorLiquidoBaixa() != null) {
@@ -3838,7 +3846,7 @@ public class InvestidorMB {
 			}
 
 			// Valor Face
-			cell = row.createCell(12);
+			cell = row.createCell(13);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorFace() != null) {
@@ -3848,7 +3856,7 @@ public class InvestidorMB {
 			}
 			
 			// Saldo Credor
-			cell = row.createCell(13);
+			cell = row.createCell(14);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getSaldoCredorAtualizado() != null) {

@@ -180,6 +180,8 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " +
 			"where cd.datavencimento >= ? ::timestamp " + 
 			"and cd.datavencimento <= ? ::timestamp " +
+			"and cd.parcelapaga = false " +
+			"and cc.contratoEmCartorio = false " +
 			"and cc.pagador != 14";
 	
 	@SuppressWarnings("unchecked")

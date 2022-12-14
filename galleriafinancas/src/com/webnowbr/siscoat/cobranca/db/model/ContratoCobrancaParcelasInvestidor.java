@@ -52,6 +52,11 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	private boolean parcelaContratoVencida;
 	
+	private Integer qtdeParcelasInvestidor;
+	private Integer carenciaInvestidor;
+	
+	private String recebeJurosMensal;
+	
 	private String tipoParcela;
 
 	public ContratoCobrancaParcelasInvestidor() {
@@ -324,5 +329,29 @@ public class ContratoCobrancaParcelasInvestidor implements Serializable {
 
 	public void setTipoParcela(String tipoParcela) {
 		this.tipoParcela = tipoParcela;
+	}
+
+	public Integer getQtdeParcelasInvestidor() {
+		return qtdeParcelasInvestidor;
+	}
+
+	public void setQtdeParcelasInvestidor(Integer qtdeParcelasInvestidor) {
+		this.qtdeParcelasInvestidor = qtdeParcelasInvestidor;
+	}
+
+	public Integer getCarenciaInvestidor() {
+		return carenciaInvestidor;
+	}
+
+	public void setCarenciaInvestidor(Integer carenciaInvestidor) {
+		this.carenciaInvestidor = carenciaInvestidor;
+	}
+
+	public String getRecebeJurosMensal() {
+		return recebeJurosMensal;
+	}
+
+	public void setRecebeJurosMensal(String recebeJurosMensal) {
+		this.recebeJurosMensal = recebeJurosMensal;
 	}
 }

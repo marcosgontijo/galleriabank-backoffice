@@ -198,7 +198,13 @@
 						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
 					    	</p:confirmDialog>   
-		                </shiro:hasAnyRoles>           
+		                </shiro:hasAnyRoles>      
+		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
+			                <p:commandButton oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" >
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                </p:commandButton>	            		                		               
+			                <p:spacer width="10" height="10"/>
+			            </shiro:hasAnyRoles>      
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearFieldsNew}">
@@ -566,6 +572,35 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-	
+		<p:dialog header="Contrato em Cartório" overflow="auto"
+			widgetVar="contratoEmCartorioDialog" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratoEmCartorioForm">
+				<h:panelGrid columns="2">	
+					<p:outputLabel styleClass="labelBold">Em Cartório?</p:outputLabel>																	
+					<p:selectOneRadio id="contratoEmCartorio" value="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio}" >
+				         <f:selectItem itemLabel="Sim" itemValue="true" />
+				         <f:selectItem itemLabel="Não" itemValue="false" />
+				    </p:selectOneRadio>
+				</h:panelGrid>
+		    	<h:panelGrid columns="2">	
+			    	<p:outputLabel styleClass="labelBold">Usuário: </p:outputLabel>
+		            <h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorioUsuario}" />  
+			    	<p:outputLabel styleClass="labelBold">Data: </p:outputLabel>
+			    	<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorioData}" >			            	
+			           	<f:convertDateTime locale="pt_BR"  />
+			            <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+			         </h:outputText>
+		         </h:panelGrid>
+			    <div align="center">
+				    <p:commandButton value="Salvar"
+						action="#{contratoCobrancaMB.saveContratoEmCartorio}"
+						image="ui-icon ui-icon-check" update=":form:ConsultaContratosResultados :form:mensagens :form:dtContratos contratoEmCartorioForm"
+						oncomplete="PF('contratoEmCartorioDialog').hide();" />
+					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							oncomplete="PF('contratoEmCartorioDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>
