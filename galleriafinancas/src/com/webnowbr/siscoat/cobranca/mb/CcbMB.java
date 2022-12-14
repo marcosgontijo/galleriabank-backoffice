@@ -8466,6 +8466,569 @@ public class CcbMB {
 		return null;
 	}
 	
+	public StreamedContent geraCciFinanciamento() throws IOException{
+		try {
+			XWPFDocument document;	
+			XWPFRun run;
+			XWPFRun run2;
+			XWPFRun run3;
+			XWPFRun run4;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+					this.objetoCcb.setTerceiroGarantidor(true);
+					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
+				}
+			}
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento (final).docx"));
+				
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Times New Roman");
+			fonts.setAscii("Times New Roman");
+			fonts.setEastAsia("Times New Roman");
+			fonts.setCs("Times New Roman");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			
+			XWPFParagraph paragraph;
+			
+			XWPFTable table = document.getTables().get(0);
+			setTableAlignment(table, STJc.CENTER);
+			XWPFTableRow tableRow1 = table.getRow(2);
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.LEFT);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+			XWPFTableRow tableRowAux = tableRow1.getCell(0).getTableArray(0).getRow(0);
+			int iParticipante = 0;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
+				
+				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR")) {
+					participante.setTipoParticipante("Vendedor");
+				
+					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
+					run.setFontSize(12);
+					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
+					run.setBold(true);
+					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					//run2.setFontFamily("Times New Roman");
+					if (!participante.isEmpresa()) {
+						geraParagrafoPF(run2, participante);
+						run2.addBreak();
+					} else {
+						run2.setFontSize(12);
+						PagadorRecebedor pessoa = participante.getPessoa();
+						String socios = "";
+						if (participante.getSocios().size() > 1) {
+							socios = "pelos seus sócios, ";
+						} else if(participante.getSocios().size() > 0){
+							if (participante.getSocios().iterator().next().isFeminino()) {
+								socios = "pela sua única sócia, ";
+							} else {
+								socios = "pelo seu único sócio, ";
+							}
+						} else {
+							socios = "";
+						}
+						run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+								+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+								+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+								+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+								+ "; neste ato representada " + socios);
+						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
+							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							runSocios.setFontSize(12);
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setBold(true);
+							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							geraParagrafoPF(runSociosNome, sociosParticipante);
+							runSociosNome.addBreak();
+						}
+					}									
+					iParticipante++;
+				}
+			}
+			
+			tableRow1 = table.getRow(4);
+			tableRowAux = tableRow1.getCell(0).getTableArray(0).getRow(0);
+			iParticipante = 0;
+			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
+				
+				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")) {
+					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+					}
+					if(CommonsUtil.semValor(cpfEmitente)) {
+						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						} else {
+							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						}
+					}
+					participante.setTipoParticipante("Devedor");
+								
+					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
+					run.setFontSize(12);
+					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
+					run.setBold(true);
+					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					//run2.setFontFamily("Times New Roman");
+					if (!participante.isEmpresa()) {
+						geraParagrafoPF(run2, participante);
+						run2.addBreak();
+					} else {
+						run2.setFontSize(12);
+						PagadorRecebedor pessoa = participante.getPessoa();
+						String socios = "";
+						if (participante.getSocios().size() > 1) {
+							socios = "pelos seus sócios, ";
+						} else if(participante.getSocios().size() > 0){
+							if (participante.getSocios().iterator().next().isFeminino()) {
+								socios = "pela sua única sócia, ";
+							} else {
+								socios = "pelo seu único sócio, ";
+							}
+						} else {
+							socios = "";
+						}
+						run2.setText(participante.getTipoEmpresa() + ", devidamente inscrito no CNPJ sob n° "
+								+ pessoa.getCnpj() + ", com sede em " + pessoa.getEndereco() + ", " + "n° "
+								+ pessoa.getNumero() + ", Sala " + participante.getSalaEmpresa() + ", " + pessoa.getBairro()
+								+ ", " + pessoa.getCidade() + " - " + pessoa.getEstado() + ", CEP " + pessoa.getCep()
+								+ "; neste ato representada " + socios);
+						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
+							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							runSocios.setFontSize(12);
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setBold(true);
+							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
+							geraParagrafoPF(runSociosNome, sociosParticipante);
+							runSociosNome.addBreak();
+						}
+					}									
+					iParticipante++;
+				}
+			}
+			
+			for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            
+			            text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	 		
+			            text = trocaValoresXWPF(text, r, "porcentagemImovel", CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getPorcentagemImovel(), ""));	 		
+			            text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.objetoCcb.getPorcentagemImovel());
+						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
+
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());								
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+						text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+						
+						if(CommonsUtil.mesmoValor(text, "aaaaaaaaaaa")){
+							text = trocaValoresXWPF(text, r, "aaaaaaaaaaa", "");	 	
+							
+							for(CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {
+							
+								r.setText("____________________________________________________________________");
+								r.setBold(true);
+								r.setFontSize(12);
+								r.setFontFamily("Times New Roman");
+								r.addCarriageReturn();
+								r.setText(participante.getTipoParticipante().toUpperCase() + ": " + participante.getPessoa().getNome());
+								r.addCarriageReturn();
+								r.addCarriageReturn();
+								r.addCarriageReturn();
+							}
+						}
+			        }
+			    }
+			}	
+		
+			int indexSegurados = 62;
+			
+			for(Segurado segurado : objetoCcb.getListSegurados()) {
+				table = document.getTables().get(0);
+				table.insertNewTableRow(indexSegurados);
+				tableRow1 = table.getRow(indexSegurados);
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.LEFT);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				tableRow1.createCell();
+				tableRow1.getCell(0).setParagraph(paragraph);		
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setText("");
+				tableRow1.getCell(0).getCTTc().addNewTcPr();				
+				tableRow1.createCell();
+				tableRow1.getCell(1).getCTTc().addNewTcPr();				
+				tableRow1.createCell();
+				tableRow1.getCell(2).getCTTc().addNewTcPr();				
+				tableRow1.createCell();
+				tableRow1.getCell(3).getCTTc().addNewTcPr();
+				tableRow1.createCell();
+				tableRow1.getCell(4).getCTTc().addNewTcPr();			
+				tableRow1.createCell();
+				tableRow1.getCell(5).setParagraph(paragraph);		
+				run = tableRow1.getCell(5).getParagraphArray(0).createRun();
+				run.setText("");
+				tableRow1.getCell(5).getCTTc().addNewTcPr();				
+				tableRow1.createCell();
+				tableRow1.getCell(6).getCTTc().addNewTcPr();				
+				tableRow1.createCell();
+				tableRow1.getCell(7).getCTTc().addNewTcPr();				
+				CTHMerge hMerge = CTHMerge.Factory.newInstance();
+				table = document.getTables().get(0);
+				hMerge.setVal(STMerge.RESTART);
+				table.getRow(indexSegurados).getCell(0).getCTTc().getTcPr().setHMerge(hMerge);				
+				CTHMerge hMerge1 = CTHMerge.Factory.newInstance();
+				hMerge1.setVal(STMerge.CONTINUE);
+				table.getRow(indexSegurados).getCell(1).getCTTc().getTcPr().setHMerge(hMerge1);
+				table.getRow(indexSegurados).getCell(2).getCTTc().getTcPr().setHMerge(hMerge1);				
+				table.getRow(indexSegurados).getCell(3).getCTTc().getTcPr().setHMerge(hMerge1);
+				table.getRow(indexSegurados).getCell(4).getCTTc().getTcPr().setHMerge(hMerge1);				
+				CTHMerge hMerge2 = CTHMerge.Factory.newInstance();
+				table = document.getTables().get(0);
+				hMerge2.setVal(STMerge.RESTART);
+				table.getRow(indexSegurados).getCell(5).getCTTc().getTcPr().setHMerge(hMerge2);
+				table.getRow(indexSegurados).getCell(6).getCTTc().getTcPr().setHMerge(hMerge1);
+				table.getRow(indexSegurados).getCell(7).getCTTc().getTcPr().setHMerge(hMerge1);
+				
+				tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				CTTcBorders border = tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();	
+				border.addNewRight().setVal(STBorder.SINGLE);
+				border.addNewBottom().setVal(STBorder.SINGLE);
+				border.addNewTop().setVal(STBorder.SINGLE);
+				border.addNewLeft().setVal(STBorder.TRIPLE);	
+				border.getRight().setColor("808080");
+				border.getBottom().setColor("808080");
+				border.getTop().setColor("808080");
+				border.getLeft().setColor("808080");
+				run = tableRow1.getCell(0).getParagraphArray(0).getRuns().get(0);
+				run.setFontSize(12);
+				run.setFontFamily("Times New Roman");
+				run.setText("Nome: " + segurado.getPessoa().getNome());
+				
+				tableRow1.getCell(5).getCTTc().addNewTcPr().addNewTcBorders();
+				tableRow1.getCell(5).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);	
+				border = tableRow1.getCell(5).getCTTc().addNewTcPr().addNewTcBorders();
+				border.addNewBottom().setVal(STBorder.SINGLE);
+				border.addNewTop().setVal(STBorder.SINGLE);
+				border.addNewLeft().setVal(STBorder.SINGLE);	
+				border.getBottom().setColor("808080");
+				border.getTop().setColor("808080");
+				border.getLeft().setColor("808080");
+				border = tableRow1.getCell(6).getCTTc().addNewTcPr().addNewTcBorders();
+				border.addNewBottom().setVal(STBorder.SINGLE);
+				border.addNewTop().setVal(STBorder.SINGLE);	
+				border.getBottom().setColor("808080");
+				border.getTop().setColor("808080");
+				border = tableRow1.getCell(7).getCTTc().addNewTcPr().addNewTcBorders();	
+				border.addNewRight().setVal(STBorder.TRIPLE);
+				border.addNewBottom().setVal(STBorder.SINGLE);
+				border.addNewTop().setVal(STBorder.SINGLE);
+				border.addNewLeft().setVal(STBorder.SINGLE);	
+				border.getRight().setColor("808080");
+				border.getBottom().setColor("808080");
+				border.getTop().setColor("808080");
+				border.getLeft().setColor("808080");
+				run = tableRow1.getCell(5).getParagraphArray(0).getRuns().get(0);
+				run.setFontSize(12);
+				run.setFontFamily("Times New Roman");
+				run.setText("Percentual: ");
+				run2 = tableRow1.getCell(5).getParagraphArray(0).createRun();
+				run2.setFontSize(12);
+				run2.setFontFamily("Times New Roman");
+				run2.setBold(true);
+				run2.setText(CommonsUtil.formataValorMonetario(segurado.getPorcentagemSegurador()) + "%");
+				indexSegurados++;
+			}
+			// First Row
+						
+			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
+			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
+			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
+			
+			BigDecimal despesas = this.objetoCcb.getValorDespesas();
+			despesas = despesas.subtract(this.objetoCcb.getCustasCartorariasValor());
+			despesas = despesas.subtract(this.objetoCcb.getItbiValor());
+			
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+								String text = r.getText(0);		 
+								
+								text = trocaValoresXWPFCci(text, r, "precoVendaCompra", this.objetoCcb.getPrecoVendaCompra(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "PrecoVendaCompra", this.objetoCcb.getPrecoVendaCompra());	
+								
+								text = trocaValoresXWPFCci(text, r, "valorCredito", this.objetoCcb.getValorCredito(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", this.objetoCcb.getValorCredito());									
+								text = trocaValoresXWPFCci(text, r, "valorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorLiquidoCredito", this.objetoCcb.getValorLiquidoCredito());								
+								text = trocaValoresXWPFCci(text, r, "custoEmissao", this.objetoCcb.getCustoEmissao(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "CustoEmissao", this.objetoCcb.getCustoEmissao());	
+								text = trocaValoresXWPFCci(text, r, "valorIOF", this.objetoCcb.getValorIOF(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorIOF", this.objetoCcb.getValorIOF());	
+								text = trocaValoresXWPFCci(text, r, "valorDespesas", despesas, "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDespesas", despesas);	
+								
+								text = trocaValoresXWPFCci(text, r, "custasCartorariasValor", this.objetoCcb.getCustasCartorariasValor(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "CustasCartorariasValor", this.objetoCcb.getCustasCartorariasValor());
+								
+								text = trocaValoresXWPFCci(text, r, "itbiValor", this.objetoCcb.getItbiValor(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ItbiValor", this.objetoCcb.getItbiValor());
+								
+								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
+								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
+								text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());					
+								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());		
+				
+								text = trocaValoresXWPF(text, r, "prazoContrato", this.objetoCcb.getPrazo());
+								text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
+								text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
+								text = trocaValoresXWPF(text, r, "taxaDeJurosMes", this.objetoCcb.getTaxaDeJurosMes());
+								text = trocaValoresXWPF(text, r, "taxaDeJurosAno", this.objetoCcb.getTaxaDeJurosAno());
+								text = trocaValoresXWPF(text, r, "cetMes", this.objetoCcb.getCetMes());
+								text = trocaValoresXWPF(text, r, "cetAno", this.objetoCcb.getCetAno());
+								
+								text = trocaValoresXWPFCci(text, r, "totalPrimeiraParcela", totalPrimeiraParcela, "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "TotalPrimeiraParcela", totalPrimeiraParcela);	
+								text = trocaValoresXWPFCci(text, r, "valorMipParcela", this.objetoCcb.getValorMipParcela(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorMipParcela", this.objetoCcb.getValorMipParcela());			
+								text = trocaValoresXWPFCci(text, r, "valorDfiParcela", this.objetoCcb.getValorDfiParcela(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorDfiParcela", this.objetoCcb.getValorDfiParcela());
+								text = trocaValoresXWPFCci(text, r, "valorParcela", this.objetoCcb.getValorParcela(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
+								
+								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+								text = trocaValoresXWPF(text, r, "serieCCB", this.objetoCcb.getSerieCcb());
+								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
+								
+								text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+								text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+								text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+								text = trocaValoresXWPF(text, r, "numeroImovel", this.objetoCcb.getNumeroImovel());
+								text = trocaValoresXWPF(text, r, "inscricaoMunicipal", this.objetoCcb.getInscricaoMunicipal());
+								text = trocaValoresXWPFCci(text, r, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", this.objetoCcb.getVendaLeilao());	
+								
+								text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+								
+								text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+								text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+								text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+								
+								text = trocaValoresXWPF(text, r, "nomeEmitente", this.objetoCcb.getNomeEmitente());	 		
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());								
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+								
+								if (text != null && text.contains("sistemaAmortizacao")) {
+									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {
+										text = trocaValoresXWPF(text, r, "sistemaAmortizacao", "Tabela Price");
+									} else if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "SAC")) {
+										text = trocaValoresXWPF(text, r, "sistemaAmortizacao", "SAC - Sistema de Amortização Constante");
+									} else {
+										text = trocaValoresXWPF(text, r, "sistemaAmortizacao", "");
+									}
+								}
+								
+								if (text != null && text.contains("participantesCci")) {
+									text = text.replace("participantesCci", "");
+									r.setText(text, 0);			
+								}
+								
+								if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
+									int iImagem = 0;
+									for(UploadedFile imagem :  filesList) {
+										r.addBreak();
+										this.populateFiles(iImagem);
+										r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
+										r.addBreak();	
+										iImagem++;
+									}
+									text = trocaValoresXWPF(text, r, "ImagemImovel", "");						
+									adicionarEnter(text, r);
+								} else if(text != null && text.contains("ImagemImovel") && filesList.size() == 0) {
+									text = trocaValoresXWPF(text, r, "ImagemImovel", "");
+								}
+							}
+						}
+						
+						for (XWPFTable t : cell.getTables()) {
+							for (XWPFTableRow row2 : t.getRows()) {
+								for (XWPFTableCell cell2 : row2.getTableCells()) {
+									for (XWPFParagraph p2 : cell2.getParagraphs()) {
+										for (XWPFRun r2 : p2.getRuns()) {
+											String text = r2.getText(0);
+											text = trocaValoresXWPF(text, r2, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+											text = trocaValoresXWPF(text, r2, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+											text = trocaValoresXWPF(text, r2, "ufImovel", this.objetoCcb.getUfImovel());		
+											text = trocaValoresXWPF(text, r2, "numeroImovel", this.objetoCcb.getNumeroImovel());
+											text = trocaValoresXWPF(text, r2, "inscricaoMunicipal", this.objetoCcb.getInscricaoMunicipal());
+											text = trocaValoresXWPFCci(text, r2, "vendaLeilao", this.objetoCcb.getVendaLeilao(), "R$ ");
+											text = trocaValoresDinheiroExtensoXWPF(text, r2, "VendaLeilao", this.objetoCcb.getVendaLeilao());	
+											
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		    
+		    int indexParcela = 1;
+			
+			//calcularSimulador();
+
+			XWPFParagraph paragraph1 = document.createParagraph();
+			paragraph1.setAlignment(ParagraphAlignment.CENTER);
+			paragraph1.setSpacingBefore(0);
+			paragraph1.setSpacingAfter(0);
+			
+			XWPFParagraph paragraph2 = document.createParagraph();
+			paragraph2.setAlignment(ParagraphAlignment.RIGHT);
+			paragraph2.setSpacingBefore(0);
+			paragraph2.setSpacingAfter(0);
+			
+			int fontSize = 7;
+			for(SimulacaoDetalheVO p : simulador.getParcelas()) {
+				table = document.getTableArray(2);
+				table.insertNewTableRow(indexParcela);
+				tableRow1 = table.getRow(indexParcela);
+				tableRow1.createCell();
+				tableRow1.getCell(0).setParagraph(paragraph1);
+				tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
+				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(p.getNumeroParcela().toString());
+				tableRow1.createCell();
+				tableRow1.getCell(1).setParagraph(paragraph2);
+				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataData(DateUtil.adicionarPeriodo(simulador.getDataSimulacao(), p.getNumeroParcela().intValue(), Calendar.MONTH), "dd/MM/yyyy"));
+				tableRow1.createCell();
+				tableRow1.getCell(2).setParagraph(paragraph2);
+				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSaldoDevedorInicial(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(3).setParagraph(paragraph2);
+				tableRow1.getCell(3).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(3).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getAmortizacao(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(4).setParagraph(paragraph2);
+				tableRow1.getCell(4).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(4).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(5).setParagraph(paragraph2);
+				tableRow1.getCell(5).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(5).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getJuros().add(p.getAmortizacao()), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(6).setParagraph(paragraph2);
+				tableRow1.getCell(6).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(6).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getTxAdm(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(7).setParagraph(paragraph2);
+				tableRow1.getCell(7).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(7).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroMIP(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(8).setParagraph(paragraph2);
+				tableRow1.getCell(8).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(8).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroDFI(), "R$ "));
+				tableRow1.createCell();
+				tableRow1.getCell(9).setParagraph(paragraph2);
+				tableRow1.getCell(9).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
+				run.setFontSize(fontSize);
+				run.setFontFamily("Calibri");
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				indexParcela++;////////////////////////////////////////////////////////////////////////////////
+			}
+			
+			table = document.getTableArray(1);			
+			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
+			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
+			CabecalhoAnexo1(table, 2, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorCredito(), "R$ "));
+			CabecalhoAnexo1(table, 2, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosMes(),"") + "%");
+			
+			CabecalhoAnexo1(table, 3, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorIOF(), "R$ "));
+			CabecalhoAnexo1(table, 3, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getTaxaDeJurosAno(),"") + "%");
+			
+			CabecalhoAnexo1(table, 4, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCustoEmissao(), "R$ "));
+			CabecalhoAnexo1(table, 4, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetMes(),"") + "%");
+			CabecalhoAnexo1(table, 4, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getVlrImovel(), "R$ "));
+			
+			CabecalhoAnexo1(table, 5, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorDespesas(), "R$ "));
+			CabecalhoAnexo1(table, 5, 4, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getCetAno(),"") + "%");
+			CabecalhoAnexo1(table, 5, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteMIP(), "R$ "));
+			
+			CabecalhoAnexo1(table, 6, 1, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getValorLiquidoCredito(), "R$ "));
+			CabecalhoAnexo1(table, 6, 4, CommonsUtil.stringValue(
+					CommonsUtil.formataValorInteiro(
+							DateUtil.getDaysBetweenDates(this.objetoCcb.getDataDeEmissao(), this.objetoCcb.getVencimentoUltimaParcelaPagamento()))));
+			CabecalhoAnexo1(table, 6, 7, CommonsUtil.formataValorMonetarioCci(this.objetoCcb.getMontanteDFI(), "R$ "));
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
+			gerador.open(String.format("Galleria Bank - CCI %s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public StreamedContent geraCessao() throws IOException{
 		try {
 			XWPFDocument document;
@@ -8849,6 +9412,8 @@ public class CcbMB {
 		    	return geraEndossosEmPretoGalleria();
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"AquisicaoCCI")) {
 		    	return geraCciAquisicao();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"FinanciamentoCCI")) {
+		    	return geraCciFinanciamento();
 		    } else {
 	    		
 	    	}

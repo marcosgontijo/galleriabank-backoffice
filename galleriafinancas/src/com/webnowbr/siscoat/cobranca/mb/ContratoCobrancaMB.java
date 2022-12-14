@@ -3898,6 +3898,7 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					Responsavel rValidaDocs4 = new Responsavel();
+					Responsavel rValidaDocs5 = new Responsavel();
 					
 					//teste
 					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -3939,6 +3940,15 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
+					
+					// Leticia
+					rValidaDocs5 = rDao.findById((long) 1127);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs5,
+					"contrato_recebido_paju", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
@@ -3975,6 +3985,7 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
 					Responsavel rValidaDocs4 = new Responsavel();
+					Responsavel rValidaDocs5 = new Responsavel();
 					
 					//teste
 					//takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
@@ -4011,6 +4022,15 @@ public class ContratoCobrancaMB {
  					// Tatiane
 					rValidaDocs4 = rDao.findById((long) 643);					
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
+					"contrato_recebido_laudo", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Leticia
+					rValidaDocs5 = rDao.findById((long) 1127);
+					
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs5,
 					"contrato_recebido_laudo", 
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
@@ -4086,6 +4106,7 @@ public class ContratoCobrancaMB {
 					Responsavel rValidaDocs1 = new Responsavel();
 					Responsavel rValidaDocs2 = new Responsavel();
 					Responsavel rValidaDocs3 = new Responsavel();
+					Responsavel rValidaDocs4 = new Responsavel();
 					
 					// Valdir ()
 					//rValidaDocs1 = rDao.findById((long) 619);
@@ -4108,6 +4129,15 @@ public class ContratoCobrancaMB {
 					rValidaDocs3 = rDao.findById((long) 643);
 	
 					takeBlipMB.sendWhatsAppMessage(rValidaDocs3,
+					"ag_validacao_documentos", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Mariana
+					rValidaDocs4 = rDao.findById((long) 1126);
+	
+					takeBlipMB.sendWhatsAppMessage(rValidaDocs4,
 					"ag_validacao_documentos", 
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
@@ -4159,6 +4189,7 @@ public class ContratoCobrancaMB {
 					
 					Responsavel rCcb1 = new Responsavel();
 					Responsavel rCcb2 = new Responsavel();
+					Responsavel rCcb3 = new Responsavel();
 		
 					// Tati
 					rCcb1 = rDao.findById((long) 643);
@@ -4175,6 +4206,15 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
+					
+					// Mariana
+					rCcb3 = rDao.findById((long) 1126);
+					takeBlipMB.sendWhatsAppMessage(rCcb3,
+					"aprovado_comite_ag_ccb", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+								
 								
 					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
 						takeBlipMB = new TakeBlipMB();
@@ -7983,7 +8023,8 @@ public class ContratoCobrancaMB {
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 			if (CommonsUtil.mesmoValor(usuarioLogado.getId(), (long) 778)
-					|| usuarioLogado.isAdministrador()) {
+					|| usuarioLogado.isAdministrador()
+					|| CommonsUtil.mesmoValor(usuarioLogado.getId(), (long) 210)) {
 				gerenciaStatus = true;
 			} else {
 				gerenciaStatus = false;
