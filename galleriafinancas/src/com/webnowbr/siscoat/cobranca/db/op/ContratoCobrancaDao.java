@@ -1128,7 +1128,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.empresa = '" + empresa + "' ";
 					}
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false ";
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.operacaopaga = false ";
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + "order by cc.numeroContrato ";
 					
@@ -4578,13 +4578,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.responsavel = ?";
 					}
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false";
-					
 					if (!empresa.equals("TODAS")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = " and cc.empresa = " + empresa;
 					}
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cd.parcelapaga = false ";
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " and cc.operacaopaga = false ";
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + " order by cc.numeroContrato ";
 					
@@ -6592,7 +6590,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_GET_DRE_ENTRADAS =  	"select codj.idContratoCobrancaDetalhes, codj.idContratoCobranca, coco.numeroContrato, pare.nome, ccde.numeroParcela,"
 			+ "        ccdp.vlrrecebido,      "
-			+ "        ccdp.datapagamento , "
+			+ "        ccdp.datapagamento , "			
 			+ "	COALESCE ( ( "
 			+ "          select  sum( vlrrecebido ) "
 			+ "            from  cobranca.contratocobrancadetalhesparcial ccdp2 "
@@ -6604,7 +6602,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " ccdp.saldoapagar, "
 			+ "	ccdp.vlrrecebido, "
 			+ "	ccde.seguromip, "
-			+ "	ccde.segurodfi "
+			+ "	ccde.segurodfi, "
+			+ " ccde.datavencimento "
 			+ " from cobranca.ContratoCobrancaDetalhes ccde"
 			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on ccde.id = cdpj.idcontratocobrancadetalhes  "
 			+ " inner join cobranca.contratocobrancadetalhesparcial ccdp on cdpj.idcontratocobrancadetalhesparcial = ccdp.id"
@@ -6659,15 +6658,25 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						demonstrativoResultadosGrupoDetalhe.setNumeroParcela(rs.getInt("numeroParcela"));
 						
+						Date dataVencimentoOriginal = rs.getDate("datavencimento");
 						
 						Date dataVencimento = rs.getDate("datapagamento");
 						
-						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);
-						
+						demonstrativoResultadosGrupoDetalhe.setDataVencimento(dataVencimento);						
 						
 						BigDecimal totalrecebidoAnterior = rs.getBigDecimal("totalrecebidoAnterior");
-						BigDecimal vlrjurosparcela = rs.getBigDecimal("vlrjurosparcela");
-						BigDecimal vlramortizacaoparcela = rs.getBigDecimal("vlramortizacaoparcela");
+						
+						BigDecimal vlrjurosparcela = null;
+						BigDecimal vlramortizacaoparcela = null;
+						
+						if (dataVencimento.before(dataVencimentoOriginal)) {
+							//vlrjurosparcela = rs.getBigDecimal("vlrjurosparcela");
+							vlramortizacaoparcela = rs.getBigDecimal("vlrrecebido");
+						} else {
+							vlrjurosparcela = rs.getBigDecimal("vlrjurosparcela");
+							vlramortizacaoparcela = rs.getBigDecimal("vlramortizacaoparcela");
+						}
+						
 						BigDecimal saldoapagar = rs.getBigDecimal("saldoapagar");
 						BigDecimal vlrrecebido = rs.getBigDecimal("vlrrecebido");
 						BigDecimal seguroMip = rs.getBigDecimal("seguromip");
@@ -6687,7 +6696,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						if (CommonsUtil.semValor(seguroDfi))
 							seguroDfi = BigDecimal.ZERO;
 						
-						demonstrativoResultadosGrupoDetalhe.setValor((vlrrecebido.subtract(seguroDfi)).subtract(seguroMip));
+						if (dataVencimento.before(dataVencimentoOriginal)) {
+							demonstrativoResultadosGrupoDetalhe.setValor(rs.getBigDecimal("vlrrecebido"));
+						} else {
+							demonstrativoResultadosGrupoDetalhe.setValor((vlrrecebido.subtract(seguroDfi)).subtract(seguroMip));
+						}
 								
 						if ( vlrjurosparcela == BigDecimal.ZERO)						
 							demonstrativoResultadosGrupoDetalhe.setJuros(vlrjurosparcela);						
