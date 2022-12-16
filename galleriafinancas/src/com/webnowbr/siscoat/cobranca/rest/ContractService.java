@@ -405,21 +405,22 @@ public class ContractService {
 							pagadorRecebedorAdicionais.setId(pagadorAdicionaisCadastrado.get(0).getId());
 							pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
 							pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
-							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoas.get(0).getNome());
-							pagadorRecebedorAdicionais.setRgDocumentosCheckList(pessoas.get(0).getRgDocumentosCheckList());
-							pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pessoas.get(0).getComprovanteEnderecoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pessoas.get(0).getCertidaoCasamentoNascimentoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setFichaCadastralDocumentosCheckList(pessoas.get(0).getFichaCadastralDocumentosCheckList());
-							pagadorRecebedorAdicionais.setBancoDocumentosCheckList(pessoas.get(0).getBancoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setTelefoneEmailDocumentosCheckList(pessoas.get(0).getTelefoneEmailDocumentosCheckList());
-							pagadorRecebedorAdicionais.setComprovanteRendaCheckList(pessoas.get(0).getComprovanteRendaCheckList());
-							pagadorRecebedorAdicionais.setCombateFraudeCheckList(pessoas.get(0).isCombateFraudeCheckList());
-							pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pessoas.get(0).isCargoOcupacaoCheckList());
-							pagadorRecebedorAdicionais.setTaxaCheckList(pessoas.get(0).isTaxaCheckList());
+							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pagadorCadastrado.get(0).getNome());
+							pagadorRecebedorAdicionais.setRgDocumentosCheckList(pagadorCadastrado.get(0).getRgDocumentosCheckList());
+							pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pagadorCadastrado.get(0).getComprovanteEnderecoDocumentosCheckList());
+							pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pagadorCadastrado.get(0).getCertidaoCasamentoNascimentoDocumentosCheckList());
+							pagadorRecebedorAdicionais.setFichaCadastralDocumentosCheckList(pagadorCadastrado.get(0).getFichaCadastralDocumentosCheckList());
+							pagadorRecebedorAdicionais.setBancoDocumentosCheckList(pagadorCadastrado.get(0).getBancoDocumentosCheckList());
+							pagadorRecebedorAdicionais.setTelefoneEmailDocumentosCheckList(pagadorCadastrado.get(0).getTelefoneEmailDocumentosCheckList());
+							pagadorRecebedorAdicionais.setComprovanteRendaCheckList(pagadorCadastrado.get(0).getComprovanteRendaCheckList());
+							pagadorRecebedorAdicionais.setCombateFraudeCheckList(pagadorCadastrado.get(0).isCombateFraudeCheckList());
+							pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pagadorCadastrado.get(0).isCargoOcupacaoCheckList());
+							pagadorRecebedorAdicionais.setTaxaCheckList(pagadorCadastrado.get(0).isTaxaCheckList());
+
+							System.out.println("Atualizar Pagador Adicional ID: "+pagadorCadastrado.get(0).getId());
 							
 							pagadorAdicionaisDao.update(pagadorRecebedorAdicionais);
 							
-							System.out.println("Atualizar Pagador Adicional ID: "+pessoas.get(i).getId());
 						}
 					}
 				}
