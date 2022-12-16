@@ -42,8 +42,7 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00410958904109589);
 	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.00821917808219178);
 	
-	
-	
+	public static final boolean DEV = true;
 
 	public static final BigDecimal TARIFA_IOF_ADICIONAL = BigDecimal.valueOf(0.38);
 

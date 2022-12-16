@@ -49,7 +49,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -3034,7 +3033,9 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		try {
-			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());	
+			if(!SiscoatConstants.DEV) {
+				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3607,29 +3608,31 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
-		try {				
+		try {
 			
-			// envia WhatsApp
-			notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
-
-			// notifica a Compass caso for setado contrato para eles
-			if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
-				notificaCompassWhatsApp();
-				notificaCompassEmail();
-			}
-			
-			if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
-				notificaGalacheWhatsApp();
-				notificaGalacheEmail();
-			}
-			
-			// notifica a Compass caso for setado contrato para eles
-			if (this.controleWhatsAlteracaoGeracaoPAJU) {				
-				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-				notificaPAJUWhatsApp();
-				notificaPAJUEmail();
-			} else {
-				this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
+			if(!SiscoatConstants.DEV) {
+				// envia WhatsApp
+				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+	
+				// notifica a Compass caso for setado contrato para eles
+				if (this.controleWhatsAlteracaoAvaliadorLaudo && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Compass")) {
+					notificaCompassWhatsApp();
+					notificaCompassEmail();
+				}
+				
+				if (this.controleWhatsAlteracaoAvaliadorLaudoGalache && this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
+					notificaGalacheWhatsApp();
+					notificaGalacheEmail();
+				}
+				
+				// notifica a Compass caso for setado contrato para eles
+				if (this.controleWhatsAlteracaoGeracaoPAJU) {				
+					this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
+					notificaPAJUWhatsApp();
+					notificaPAJUEmail();
+				} else {
+					this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
+				}
 			}
 			
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
@@ -3700,7 +3703,9 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 										this.objetoContratoCobranca.setAprovadoComite(true);
-										notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+										if(!SiscoatConstants.DEV) {
+											notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
+										}
 									}
 								} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
@@ -11508,9 +11513,11 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		this.baixarPreContratoAutomatico();
-		this.enviaZapLeadEmTratamento();
-		enviaZapCartorio();
+		if(!SiscoatConstants.DEV) {
+			this.baixarPreContratoAutomatico();
+			this.enviaZapLeadEmTratamento();
+			enviaZapCartorio();
+		}
 
 	//	if (this.preContratoCustom) {
 
@@ -12022,9 +12029,11 @@ public class ContratoCobrancaMB {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
-		this.baixarPreContratoAutomatico();
-		this.enviaZapLeadEmTratamento();
-		enviaZapCartorio();
+		if(!SiscoatConstants.DEV) {
+			this.baixarPreContratoAutomatico();
+			this.enviaZapLeadEmTratamento();
+			enviaZapCartorio();
+		}
 		
 		this.tituloTelaConsultaPreStatus = status;
 		
