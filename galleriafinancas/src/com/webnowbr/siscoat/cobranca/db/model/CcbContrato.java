@@ -53,6 +53,20 @@ public class CcbContrato implements Serializable{
 	private String nomeBanco;
 	private String titularConta;
 	private String pixBanco;
+	private String digitoBanco;//
+	private String tipoContaBanco;
+	
+	private BigDecimal recursosProprios;
+	private BigDecimal recursosFinanciamento;
+	
+	private String contaCorrenteVendedor;
+	private String agenciaVendedor;
+	private String numeroBancoVendedor;
+	private String nomeBancoVendedor;
+	private String titularContaVendedor;
+	private String pixBancoVendedor;
+	private String digitoBancoVendedor;
+	private String tipoContaBancoVendedor;//
 	
 	private String sistemaAmortizacao;
 	
@@ -1084,4 +1098,102 @@ public class CcbContrato implements Serializable{
 	public void setSerieCcb(String serieCcb) {
 		this.serieCcb = serieCcb;
 	}
+
+	public String getDigitoBanco() {
+		return digitoBanco;
+	}
+
+	public void setDigitoBanco(String digitoBanco) {
+		this.digitoBanco = digitoBanco;
+	}
+
+	public String getTipoContaBanco() {
+		return tipoContaBanco;
+	}
+
+	public void setTipoContaBanco(String tipoContaBanco) {
+		this.tipoContaBanco = tipoContaBanco;
+	}
+
+	public BigDecimal getRecursosProprios() {
+		return recursosProprios;
+	}
+
+	public void setRecursosProprios(BigDecimal recursosProprios) {
+		this.recursosProprios = recursosProprios;
+	}
+
+	public BigDecimal getRecursosFinanciamento() {
+		return recursosFinanciamento;
+	}
+
+	public void setRecursosFinanciamento(BigDecimal recursosFinanciamento) {
+		this.recursosFinanciamento = recursosFinanciamento;
+	}
+
+	public String getContaCorrenteVendedor() {
+		return contaCorrenteVendedor;
+	}
+
+	public void setContaCorrenteVendedor(String contaCorrenteVendedor) {
+		this.contaCorrenteVendedor = contaCorrenteVendedor;
+	}
+
+	public String getAgenciaVendedor() {
+		return agenciaVendedor;
+	}
+
+	public void setAgenciaVendedor(String agenciaVendedor) {
+		this.agenciaVendedor = agenciaVendedor;
+	}
+
+	public String getNumeroBancoVendedor() {
+		return numeroBancoVendedor;
+	}
+
+	public void setNumeroBancoVendedor(String numeroBancoVendedor) {
+		this.numeroBancoVendedor = numeroBancoVendedor;
+	}
+
+	public String getNomeBancoVendedor() {
+		return nomeBancoVendedor;
+	}
+
+	public void setNomeBancoVendedor(String nomeBancoVendedor) {
+		this.nomeBancoVendedor = nomeBancoVendedor;
+	}
+
+	public String getTitularContaVendedor() {
+		return titularContaVendedor;
+	}
+
+	public void setTitularContaVendedor(String titularContaVendedor) {
+		this.titularContaVendedor = titularContaVendedor;
+	}
+
+	public String getPixBancoVendedor() {
+		return pixBancoVendedor;
+	}
+
+	public void setPixBancoVendedor(String pixBancoVendedor) {
+		this.pixBancoVendedor = pixBancoVendedor;
+	}
+
+	public String getDigitoBancoVendedor() {
+		return digitoBancoVendedor;
+	}
+
+	public void setDigitoBancoVendedor(String digitoBancoVendedor) {
+		this.digitoBancoVendedor = digitoBancoVendedor;
+	}
+
+	public String getTipoContaBancoVendedor() {
+		return tipoContaBancoVendedor;
+	}
+
+	public void setTipoContaBancoVendedor(String tipoContaBancoVendedor) {
+		this.tipoContaBancoVendedor = tipoContaBancoVendedor;
+	}
+	
+	
 }
