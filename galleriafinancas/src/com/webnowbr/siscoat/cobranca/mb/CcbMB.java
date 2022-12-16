@@ -631,6 +631,25 @@ public class CcbMB {
 			}
 		}
 	}
+	
+	public void populateCodigosBancoVendedor() {
+		for(BancosEnum banco : BancosEnum.values()) {
+			if(CommonsUtil.mesmoValor(this.objetoCcb.getNomeBancoVendedor(), banco.getNome().toString())) {
+				this.objetoCcb.setNumeroBancoVendedor(banco.getCodigo());
+				break;
+			}
+		}
+	}
+	
+	public void populateNomesBancoVendedor() {
+		for(BancosEnum banco : BancosEnum.values()) {
+			if(CommonsUtil.mesmoValor(this.objetoCcb.getNumeroBancoVendedor(),banco.getCodigo())) {
+				this.objetoCcb.setNomeBancoVendedor(banco.getNome());
+				//PrimeFaces.current().ajax().update(":nomeBanco");
+				break;
+			}
+		}
+	}
 
 	String updatePagadorRecebedor = ":form";
 
@@ -8509,7 +8528,7 @@ public class CcbMB {
 				
 					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
 					run.setFontSize(12);
-					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
+					run.setText(participante.getTipoParticipante() + " - " + (iParticipante + 1));
 					run.setBold(true);
 					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 					run2.setText(" " + participante.getPessoa().getNome() + ", ");
@@ -8683,8 +8702,8 @@ public class CcbMB {
 				tableRow1.getCell(5).getCTTc().addNewTcPr();				
 				tableRow1.createCell();
 				tableRow1.getCell(6).getCTTc().addNewTcPr();				
-				tableRow1.createCell();
-				tableRow1.getCell(7).getCTTc().addNewTcPr();				
+				//tableRow1.createCell();
+				//tableRow1.getCell(7).getCTTc().addNewTcPr();				
 				CTHMerge hMerge = CTHMerge.Factory.newInstance();
 				table = document.getTables().get(0);
 				hMerge.setVal(STMerge.RESTART);
@@ -8700,7 +8719,7 @@ public class CcbMB {
 				hMerge2.setVal(STMerge.RESTART);
 				table.getRow(indexSegurados).getCell(5).getCTTc().getTcPr().setHMerge(hMerge2);
 				table.getRow(indexSegurados).getCell(6).getCTTc().getTcPr().setHMerge(hMerge1);
-				table.getRow(indexSegurados).getCell(7).getCTTc().getTcPr().setHMerge(hMerge1);
+				//table.getRow(indexSegurados).getCell(7).getCTTc().getTcPr().setHMerge(hMerge1);
 				
 				tableRow1.getCell(0).getCTTc().addNewTcPr().addNewTcBorders();
 				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -8728,11 +8747,15 @@ public class CcbMB {
 				border.getTop().setColor("808080");
 				border.getLeft().setColor("808080");
 				border = tableRow1.getCell(6).getCTTc().addNewTcPr().addNewTcBorders();
+				border.addNewRight().setVal(STBorder.TRIPLE);
 				border.addNewBottom().setVal(STBorder.SINGLE);
-				border.addNewTop().setVal(STBorder.SINGLE);	
+				border.addNewTop().setVal(STBorder.SINGLE);
+				border.addNewLeft().setVal(STBorder.SINGLE);	
 				border.getBottom().setColor("808080");
 				border.getTop().setColor("808080");
-				border = tableRow1.getCell(7).getCTTc().addNewTcPr().addNewTcBorders();	
+				border.getRight().setColor("808080");
+				border.getLeft().setColor("808080");
+				/*border = tableRow1.getCell(7).getCTTc().addNewTcPr().addNewTcBorders();	
 				border.addNewRight().setVal(STBorder.TRIPLE);
 				border.addNewBottom().setVal(STBorder.SINGLE);
 				border.addNewTop().setVal(STBorder.SINGLE);
@@ -8740,7 +8763,7 @@ public class CcbMB {
 				border.getRight().setColor("808080");
 				border.getBottom().setColor("808080");
 				border.getTop().setColor("808080");
-				border.getLeft().setColor("808080");
+				border.getLeft().setColor("808080");*/
 				run = tableRow1.getCell(5).getParagraphArray(0).getRuns().get(0);
 				run.setFontSize(12);
 				run.setFontFamily("Times New Roman");
@@ -8792,10 +8815,24 @@ public class CcbMB {
 								text = trocaValoresXWPFCci(text, r, "itbiValor", this.objetoCcb.getItbiValor(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ItbiValor", this.objetoCcb.getItbiValor());
 								
+								text = trocaValoresXWPFCci(text, r, "recursosProprios", this.objetoCcb.getRecursosProprios(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "RecursosProprios", this.objetoCcb.getRecursosProprios());							
+								text = trocaValoresXWPFCci(text, r, "recursosFinanciamento", this.objetoCcb.getRecursosFinanciamento(), "R$ ");
+								text = trocaValoresDinheiroExtensoXWPF(text, r, "RecursosFinanciamento", this.objetoCcb.getRecursosFinanciamento());
+								
+								text = trocaValoresXWPF(text, r, "titularContaVendedor", this.objetoCcb.getTitularContaVendedor());
+								text = trocaValoresXWPF(text, r, "agenciaVendedor", this.objetoCcb.getAgenciaVendedor());
+								text = trocaValoresXWPF(text, r, "contaCorrenteVendedor", this.objetoCcb.getContaCorrenteVendedor());					
+								text = trocaValoresXWPF(text, r, "nomeBancoVendedor", this.objetoCcb.getNomeBancoVendedor() + " - " + this.objetoCcb.getNumeroBancoVendedor() );		
+								text = trocaValoresXWPF(text, r, "digitoBancoVendedor", this.objetoCcb.getDigitoBancoVendedor());	
+								text = trocaValoresXWPF(text, r, "tipoContaBancoVendedor", this.objetoCcb.getTipoContaBancoVendedor());	
+								
 								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
 								text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());					
-								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());		
+								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco() + " - " + this.objetoCcb.getNumeroBanco() );		
+								text = trocaValoresXWPF(text, r, "digitoBanco", this.objetoCcb.getDigitoBanco());	
+								text = trocaValoresXWPF(text, r, "tipoContaBanco", this.objetoCcb.getTipoContaBanco());	
 				
 								text = trocaValoresXWPF(text, r, "prazoContrato", this.objetoCcb.getPrazo());
 								text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());

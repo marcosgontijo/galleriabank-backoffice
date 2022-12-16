@@ -49,7 +49,7 @@
 							<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
 							<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
 							<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />									
-							<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel" event="valueChange"
+							<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 								listener="#{ccbMB.verificaModeloAntigo()}" />
 						</p:selectOneMenu>	
 						
@@ -1970,7 +1970,7 @@
 
 					<h:panelGroup id="SeguradoresPanel">
 						<p:panel header="Segurados" style="margin-bottom:10px;"
-							rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI'}">
+							rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI' || ccbMB.tipoDownload == 'FinanciamentoCCI' }">
 							<f:facet name="header"> Segurados 
 							<p:outputLabel value="" />
 								<p:selectBooleanButton
@@ -2126,7 +2126,7 @@
 										value="Calcular Parcelas" update="msgs Dados" />
 								</h:panelGrid>
 							</p:panel>	
-							<p:panel header="Emissão / Banco">
+							<p:panel header="Emissão / Banco" id="PanelBanco">
 								<h:panelGrid columns="2">
 									<p:outputLabel for="tarifaAntecipada"
 										value="Tarifa Antecipada (%):" styleClass="labelBold"
@@ -2185,6 +2185,22 @@
 									<p:inputText id="PixBanco" value="#{ccbMB.objetoCcb.pixBanco}"
 										label="Contrato" />							
 								</h:panelGrid>
+								<h:panelGrid columns="2" rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
+									<p:outputLabel for="digitoBanco" value="Digito: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText id="digitoBanco" value="#{ccbMB.objetoCcb.digitoBanco}"
+										label="Contrato" />		
+										
+									<p:outputLabel for="tipoContaBanco"
+										value="Tipo Da Conta " styleClass="labelBold" />
+									<p:selectOneMenu id="tipoContaBanco" required="true"
+										value="#{ccbMB.objetoCcb.tipoContaBanco}" >
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									</p:selectOneMenu>
+								</h:panelGrid>							
 							</p:panel>
 							<p:panel header="Imóvel">
 								<h:panelGrid columns="2">
@@ -2295,6 +2311,92 @@
 
 								</h:panelGrid>
 							</p:panel>
+							
+							<h:panelGroup id="PgmntBancoVendedor">
+								<p:panel header="Forma de Pgment / Banco Vendedor"  rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="recursosProprios" value="recursosProprios: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="recursosProprios" value="#{ccbMB.objetoCcb.recursosProprios}"
+											label="Contrato" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+											
+										<p:outputLabel for="recursosFinanciamento" value="recursosFinanciamento: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="recursosFinanciamento" value="#{ccbMB.objetoCcb.recursosFinanciamento}"
+											label="Contrato" onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);"
+											converter="bigDecimalConverter" />
+											
+										<p:outputLabel for="contaCorrenteVendedor" value="Nº Conta Corrente: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="contaCorrenteVendedor" value="#{ccbMB.objetoCcb.contaCorrenteVendedor}"
+											label="Contrato" />
+	
+										<p:outputLabel for="agenciaVendedor" value="Nº Agência: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="agenciaVendedor" value="#{ccbMB.objetoCcb.agenciaVendedor}"
+											label="Contrato" />
+	
+										<p:outputLabel for="nomeBancoVendedor" value="Nome do Banco: "
+											styleClass="labelBold" />
+										<p:autoComplete id="nomeBancoVendedor" value="#{ccbMB.objetoCcb.nomeBancoVendedor}"
+											completeMethod="#{ccbMB.completeBancosNome}" var="bancoNome"
+											itemLabel="#{bancoNome}" itemValue="#{bancoNome}"
+											forceSelection="true" styleClass="labelBold" label="Conta"
+											style="width:100px;" scrollHeight="250">
+											<p:ajax update="numeroBancoVendedor" event="itemSelect"
+												listener="#{ccbMB.populateCodigosBancoVendedor()}" />
+										</p:autoComplete>
+	
+										<p:outputLabel for="numeroBancoVendedor" value="Nº do Banco: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:autoComplete id="numeroBancoVendedor" value="#{ccbMB.objetoCcb.numeroBancoVendedor}"
+											completeMethod="#{ccbMB.completeBancosCodigo}"
+											var="bancoCodigo" itemLabel="#{bancoCodigo}"
+											itemValue="#{bancoCodigo}" forceSelection="true"
+											styleClass="labelBold" label="Conta" style="width:100px;"
+											scrollHeight="250">
+											<p:ajax update="nomeBanco" event="itemSelect"
+												listener="#{ccbMB.populateNomesBancoVendedor()}" />
+										</p:autoComplete>
+										
+										<p:outputLabel for="titularContaVendedor" value="Titular: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="titularContaVendedor" value="#{ccbMB.objetoCcb.titularContaVendedor}"
+											label="Contrato" />
+											
+										<p:outputLabel for="PixBancoVendedor" value="Pix: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="PixBancoVendedor" value="#{ccbMB.objetoCcb.pixBancoVendedor}"
+											label="Contrato" />							
+												
+										<p:outputLabel for="digitoBancoVendedor" value="Digito: "
+											styleClass="labelBold"
+											style="font-weight: bold; font-size: 18px;" />
+										<p:inputText id="digitoBancoVendedor" value="#{ccbMB.objetoCcb.digitoBancoVendedor}"
+											label="Contrato" />		
+											
+										<p:outputLabel for="tipoContaBancoVendedor"
+											value="Tipo Do Documento: " styleClass="labelBold" />
+										<p:selectOneMenu id="tipoContaBancoVendedor" 
+											value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+											<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />			
+										</p:selectOneMenu>
+												
+									</h:panelGrid>		
+								</p:panel>
+							</h:panelGroup>
 							
 							<h:panelGrid  columns="2">
 								<p:outputLabel value="Mostrar Dados Ocultos: " styleClass="labelBold"
