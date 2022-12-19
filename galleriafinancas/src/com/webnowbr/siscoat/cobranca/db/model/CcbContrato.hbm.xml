@@ -419,6 +419,54 @@
 		<property name="serieCcb" type="java.lang.String">
 			<column name="serieCcb" />
 		</property>
+		
+		<property name="digitoBanco" type="java.lang.String">
+			<column name="digitoBanco" />
+		</property>
+		
+		<property name="tipoContaBanco" type="java.lang.String">
+			<column name="tipoContaBanco" />
+		</property>
+		
+		<property name="recursosProprios" type="big_decimal">
+			<column name="recursosProprios" />
+		</property>
+		
+		<property name="recursosFinanciamento" type="big_decimal">
+			<column name="recursosFinanciamento" />
+		</property>
+		
+		<property name="contaCorrenteVendedor" type="java.lang.String">
+			<column name="contaCorrenteVendedor" />
+		</property>
+		
+		<property name="agenciaVendedor" type="java.lang.String">
+			<column name="agenciaVendedor" />
+		</property>
+		
+		<property name="numeroBancoVendedor" type="java.lang.String">
+			<column name="numeroBancoVendedor" />
+		</property>
+		
+		<property name="nomeBancoVendedor" type="java.lang.String">
+			<column name="nomeBancoVendedor" />
+		</property>
+		
+		<property name="titularContaVendedor" type="java.lang.String">
+			<column name="titularContaVendedor" />
+		</property>
+		
+		<property name="pixBancoVendedor" type="java.lang.String">
+			<column name="pixBancoVendedor" />
+		</property>
+		
+		<property name="digitoBancoVendedor" type="java.lang.String">
+			<column name="digitoBancoVendedor" />
+		</property>
+		
+		<property name="tipoContaBancoVendedor" type="java.lang.String">
+			<column name="tipoContaBancoVendedor" />
+		</property>
 		        
     </class>
 </hibernate-mapping>
