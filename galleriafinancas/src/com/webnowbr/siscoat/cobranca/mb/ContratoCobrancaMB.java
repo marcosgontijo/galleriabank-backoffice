@@ -3274,17 +3274,15 @@ public class ContratoCobrancaMB {
 				*/
 		
 		// "Pâmela Montesanti Demuci"
-		/*
 		responsavel = rDao.findById((long) 795);		
 		
-		takeBlipMB = new TakeBlipMB();
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"geracao_paju", 
 				"Neves e Maggioni",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
-				*/
 		
 		// "Luciana Melara Alves Sant'Ana"
 		/*
@@ -3303,7 +3301,7 @@ public class ContratoCobrancaMB {
 	
 		responsavel = rDao.findById((long) 797);	
 		
-		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		takeBlipMB = new TakeBlipMB();
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"geracao_paju", 
 				"Neves e Maggioni",
@@ -3332,7 +3330,6 @@ public class ContratoCobrancaMB {
 
 		
 		// "Maria Clara Pazin Costa"
-		/*
 		responsavel = rDao.findById((long) 798);		
 		
 		takeBlipMB = new TakeBlipMB();
@@ -3342,7 +3339,6 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
-				*/
 	
 	}
 	
