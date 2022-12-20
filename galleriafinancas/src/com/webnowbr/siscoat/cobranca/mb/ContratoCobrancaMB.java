@@ -2758,7 +2758,7 @@ public class ContratoCobrancaMB {
 
 					this.objetoContratoCobranca.setRecebedor(null);
 
-					if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {
+					if (this.qtdeParcelas != null && !this.qtdeParcelas.equals("")) {                 
 						this.objetoContratoCobranca.setQtdeParcelas(Integer.valueOf(this.qtdeParcelas));
 					}
 
@@ -7131,11 +7131,11 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setStatusContrato("Reprovado");
 		this.objetoContratoCobranca.setReprovado(true);
-		this.objetoContratoCobranca.setStatus("Reprovado");
-		
+		this.objetoContratoCobranca.setReprovadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setReprovadoUsuario(getNomeUsuarioLogado());
+		this.objetoContratoCobranca.setStatus("Reprovado");		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -7150,6 +7150,8 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setStatusContrato("Reprovado");
 		this.objetoContratoCobranca.setReprovado(true);
+		this.objetoContratoCobranca.setReprovadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setReprovadoUsuario(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setStatus("Reprovado");
 		
 		this.objetoContratoCobranca.setMotivoReprovaSelectItem("Reprovado pelo Jurídico");
@@ -7172,7 +7174,7 @@ public class ContratoCobrancaMB {
 	}
 	
 	public String reprovarContratoConsultar(String consulta) {
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		//this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		reprovarContrato();
 		
 		return geraConsultaContratosPorStatus(consulta);
