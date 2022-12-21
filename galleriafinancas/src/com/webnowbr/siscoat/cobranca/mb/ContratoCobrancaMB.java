@@ -8227,29 +8227,28 @@ public class ContratoCobrancaMB {
 			}	
 		}
 		
-
-		if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
-			for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
-				User usuarioLogado = new User();
-				UserDao u = new UserDao();
-				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-				if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
-					this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
-				} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
-					this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
-				} 
-				if(CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
-					this.objetoAnaliseComite = comite;
-				} 
-			}
-		} 
 		
-		if(CommonsUtil.semValor(this.objetoAnaliseComite.getTaxaComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovada());
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
+			if(!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+				for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
+					User usuarioLogado = new User();
+					UserDao u = new UserDao();
+					usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+					if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Aprovado")) {
+						this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
+					} else if(CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
+						this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+					} 
+					if(CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
+						this.objetoAnaliseComite = comite;
+					} 
+				}
+			} 
+			
+			gerarRecomendacaoComite();
 		}
-		if(CommonsUtil.semValor(this.objetoAnaliseComite.getPrazoMaxComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxPreAprovado())) {
-			this.objetoAnaliseComite.setPrazoMaxComite(this.objetoContratoCobranca.getPrazoMaxPreAprovado());
-		}
+
+		
 		
 		User usuarioLogado = new User();
 		UserDao u = new UserDao();
@@ -8279,6 +8278,37 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
 	}
+
+	private void gerarRecomendacaoComite() {
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getTaxaComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovada())) {
+			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovada());
+		}
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getPrazoMaxComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxPreAprovado())) {
+			this.objetoAnaliseComite.setPrazoMaxComite(this.objetoContratoCobranca.getPrazoMaxPreAprovado());
+		}
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getComentarioComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
+			this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
+		}
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getValorComite())){
+			BigDecimal valorSugerido = BigDecimal.ZERO;
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento") 
+					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
+					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio acima1000")){
+				
+				if(!CommonsUtil.semValor(this.objetoContratoCobranca.getValorMercadoImovel())) {
+					valorSugerido = this.objetoContratoCobranca.getValorMercadoImovel().multiply(BigDecimal.valueOf(40));
+					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100),  MathContext.DECIMAL128);
+				}
+			} else {
+				if(!CommonsUtil.semValor(this.objetoContratoCobranca.getValorVendaForcadaImovel())) {
+					valorSugerido = this.objetoContratoCobranca.getValorVendaForcadaImovel().multiply(BigDecimal.valueOf(50));
+					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100),  MathContext.DECIMAL128);
+				}
+			}
+			this.objetoAnaliseComite.setValorComite(valorSugerido);
+		}
+	}
+
 	
 	public String clearFieldsEditarAvaliacaoImovel() {
 		clearMensagensWhatsApp();
