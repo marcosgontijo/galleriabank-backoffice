@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,6 +48,7 @@ import com.webnowbr.siscoat.security.LoginBean;
 public class ContractService {
 	
 	private ContratoCobranca objetoContratoCobranca;
+	private List<ContratoCobranca> objetoContratoCobrancaList;
 	private ImovelCobranca objetoImovelCobranca;
 	private PagadorRecebedor objetoPagador;
 	private List<PagadorRecebedor> pagadores;
@@ -61,17 +63,12 @@ public class ContractService {
 		
 		String authorization = "Basic d2Vibm93YnI6IVNpc0NvQXRAMjAyMSo=";
 		
-		String[] tokens;
-		String username = "";
-		String password = "";
-		
 		authorization = authorization.replace("Basic ", "");
 		
 		try {
-			tokens = (new String(Base64.getDecoder().decode(authorization), "UTF-8")).split(":");
+			String[] tokens = (new String(Base64.getDecoder().decode(authorization), "UTF-8")).split(":");
+			System.out.println("Token : "+tokens);
 
-			username = tokens[0];
-			password = tokens[1];
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,8 +81,6 @@ public class ContractService {
 	@GET
 	@Path("/TestarOperacao")
 	public Response testarOperacao() {
-		String retorno = "TESTE OK";
-
 		String message = "{\"hello\": \"This is a JSON response\"}";
 
 	    return Response
@@ -100,94 +95,278 @@ public class ContractService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response criarOperacao(String operacaoData, @HeaderParam("Token") String token, @HeaderParam("Authorization") String authorization) { 
 		System.out.println("[Galleria Bank] Criar Operação - Authorization: " + authorization);
-	
-		if (authorization == null || !authorization.startsWith("Basic")) {
-			String message = "{\"retorno\": \"Authentication Failed!!!\"}";
+		
+		if(verificarAutenticacao(authorization)) {
+			try {
+				JSONObject contratoAPP = new JSONObject(operacaoData);
+
+				clearCriacaoContrato();	
+				
+				JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
+				
+				if (contratoAPPResponsavel.has("codigoResponsavel")) {
+					ResponsavelDao rDao = new ResponsavelDao();
+					String codigoResponsavel = contratoAPPResponsavel.getString("codigoResponsavel");
+					
+					List<Responsavel> responsaveis = new ArrayList<Responsavel>();
+					responsaveis = rDao.findByFilter("codigo", codigoResponsavel);
+					
+					if (responsaveis.size() > 0) {
+						this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
+						
+						if (contratoAPP.has("numeroContrato")) {
+							this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));	
+						} else {
+							this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
+						}
+						
+						this.objetoContratoCobranca.setTipoOperacao(contratoAPP.getString("tipoOperacao"));
+						String tipoPessoa = contratoAPP.getString("tipoPessoa");
+						this.objetoContratoCobranca.setCobrarComissaoCliente(contratoAPP.getString("cobrarComissaoCliente"));
+						this.objetoContratoCobranca.setComissaoClienteValorFixo(contratoAPP.has("comissaoClienteValorFixo") 
+								?  new BigDecimal(contratoAPP.getDouble("comissaoClienteValorFixo")) : null);
+						this.objetoContratoCobranca.setComissaoClientePorcentagem(contratoAPP.has("comissaoClientePorcentagem")
+								? new BigDecimal(contratoAPP.getDouble("comissaoClientePorcentagem")) : null);
+						this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.getString("tipoCobrarComissaoCliente"));
+						this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"));
+						
+						this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
+						this.objetoContratoCobranca.setObservacao(contratoAPP.has("observacao") ? contratoAPP.getString("observacao") : null);
+						
+						this.objetoContratoCobranca.setPagadorDonoGarantia(contratoAPP.getBoolean("pagadorDonoGarantia") == true ? true : false);
+						this.objetoContratoCobranca.setDivida(contratoAPP.getString("divida"));
+						this.objetoContratoCobranca.setDividaValor(contratoAPP.has("dividaValor") ? new BigDecimal(contratoAPP.getDouble("dividaValor")) : null);
+						
+						
+						/***
+						 * VALORES DEFAULT
+						 */
+						this.objetoContratoCobranca.setInicioAnalise(false);
+						this.objetoContratoCobranca.setStatusLead("Completo");
+						this.objetoContratoCobranca.setDocumentosComite(false);
+						this.objetoContratoCobranca.setCadastroAprovado(false);
+						this.objetoContratoCobranca.setPedidoPreLaudo(false);
+						this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
+						this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
+						this.objetoContratoCobranca.setAnaliseComercial(false);
+						this.objetoContratoCobranca.setComentarioJuridicoEsteira(false);
+						this.objetoContratoCobranca.setPreAprovadoComite(false);
+						this.objetoContratoCobranca.setAprovadoComite(false);
+						this.objetoContratoCobranca.setPedidoLaudo(false);
+						this.objetoContratoCobranca.setPedidoPajuComercial(false);
+						this.objetoContratoCobranca.setTemTxAdm(false);
+						
+						/***
+						 * OBJETO PAGADOR
+						 */
+						JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
+						this.objetoPagador = new PagadorRecebedor();
+						PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+						
+						if (contratoAPPPagador.has("id")) {
+							this.objetoPagador = pagadorDao.findById(contratoAPPPagador.getLong("id"));
+						} else {
+							this.objetoPagador.setId(-1);
+							
+							if (tipoPessoa.equals("PF")) {
+								this.objetoPagador.setCpf(contratoAPPPagador.getString("cpfCnpj"));
+							} else if(tipoPessoa.equals("PJ")) {
+								this.objetoPagador.setCnpj(contratoAPPPagador.getString("cpfCnpj"));
+							}
+							
+							this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
+							this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
+							this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular") : null);
+							this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
+							
+							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
+							Date dtNascimentoDate = null;
+							try {
+								if(contratoAPPPagador.has("dataNascimento")) {
+									dtNascimentoDate = dtNascimento.parse(contratoAPPPagador.getString("dataNascimento"));
+									this.objetoPagador.setDtNascimento(dtNascimentoDate);
+								}else {
+									this.objetoPagador.setDtNascimento(null);
+								}
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						
+							this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
+							this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil") : null);
+							this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge") : null);
+							this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge") : null); 
+							
+							this.objetoPagador.setRgDocumentosCheckList(contratoAPPPagador.has("rgDocumentosCheckList") ? contratoAPPPagador.getBoolean("rgDocumentosCheckList") : false);
+							this.objetoPagador.setComprovanteEnderecoDocumentosCheckList(contratoAPPPagador.has("comprovanteEnderecoDocumentosCheckList") ? contratoAPPPagador.getBoolean("comprovanteEnderecoDocumentosCheckList") : false);
+							this.objetoPagador.setCertidaoCasamentoNascimentoDocumentosCheckList(contratoAPPPagador.has("certidaoCasamentoNascimentoDocumentosCheckList") ? contratoAPPPagador.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList") : false);
+							this.objetoPagador.setFichaCadastralDocumentosCheckList(contratoAPPPagador.has("fichaCadastralDocumentosCheckList") ? contratoAPPPagador.getBoolean("fichaCadastralDocumentosCheckList") : false);
+							this.objetoPagador.setBancoDocumentosCheckList(contratoAPPPagador.has("bancoDocumentosCheckList") ? contratoAPPPagador.getBoolean("bancoDocumentosCheckList") : false);
+							this.objetoPagador.setTelefoneEmailDocumentosCheckList(contratoAPPPagador.has("telefoneEmailDocumentosCheckList") ? contratoAPPPagador.getBoolean("telefoneEmailDocumentosCheckList") : false);
+							this.objetoPagador.setComprovanteRendaCheckList(contratoAPPPagador.has("comprovanteRendaCheckList") ? contratoAPPPagador.getBoolean("comprovanteRendaCheckList") : false);
+							this.objetoPagador.setCombateFraudeCheckList(contratoAPPPagador.has("combateFraudeCheckList") ? contratoAPPPagador.getBoolean("combateFraudeCheckList") : false);
+							this.objetoPagador.setCargoOcupacaoCheckList(contratoAPPPagador.has("cargoOcupacaoCheckList") ? contratoAPPPagador.getBoolean("cargoOcupacaoCheckList") : false);
+							this.objetoPagador.setTaxaCheckList(contratoAPPPagador.has("taxaCheckList") ? contratoAPPPagador.getBoolean("taxaCheckList") : false);
+						}
+						
+						this.objetoContratoCobranca.setPagador(this.objetoPagador);
+						
+						/***
+						 * OBJETO IMOVEL
+						 */
+						JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
+						this.objetoImovelCobranca = new ImovelCobranca();
+						ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+						
+						if (contratoAPPImovel.has("id")) {
+							this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
+						} else {
+							this.objetoImovelCobranca.setId(-1);
+							this.objetoImovelCobranca.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+							if(contratoAPPImovel.has("numero")) {
+								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", " + contratoAPPImovel.getString("numero"));
+							}else {
+								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));									
+							}
+							this.objetoImovelCobranca.setComplemento(contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento") : null);
+							this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
+							this.objetoImovelCobranca.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
+							this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
+							this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio") ? contratoAPPImovel.getString("numeroCartorio") : null);
+							this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro") ? contratoAPPImovel.getString("cartorioRegistro") : null);
+							this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado") ? contratoAPPImovel.getString("cartorioEstado") : null);
+							this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio") ? contratoAPPImovel.getString("cartorioMunicipio") : null);
+							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.getString("numeroMatricula"));
+							this.objetoImovelCobranca.setTipo(contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel") : null);
+							this.objetoImovelCobranca.setComprovanteMatriculaCheckList(contratoAPPImovel.has("comprovanteMatriculaCheckList") ? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList") : false);
+							this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(contratoAPPImovel.has("comprovanteFotosImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList") : false);
+							this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(contratoAPPImovel.has("comprovanteIptuImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList") : false);
+							
+							this.objetoImovelCobranca.setValoEstimado(new BigDecimal(contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado") : null));								
+						}
+						
+						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+
+						// salva contrato
+						Long idContratoCobranca = criaContratoBD();
+						this.objetoContratoCobranca.setId(idContratoCobranca);
+						criarEditarPagadoresAdicionais(contratoAPP);
+						
+						String message = "{\"retorno\": \"[Galleria Bank] Operação criada com sucesso!!!\"}";
+			
+					    return Response
+					      .status(Response.Status.OK)
+					      .entity(message)
+					      .type(MediaType.APPLICATION_JSON)
+					      .build();
+					} else {
+						String message = "{\"retorno\": \"[Galleria Bank] Código do Responsável não encontrato!!!\"}";
+						
+						return Response
+							      .status(Response.Status.FORBIDDEN)
+							      .entity(message)
+							      .type(MediaType.APPLICATION_JSON)
+							      .build();		
+					}
+				} else {
+					String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
+					
+					return Response
+						      .status(Response.Status.FORBIDDEN)
+						      .entity(message)
+						      .type(MediaType.APPLICATION_JSON)
+						      .build();		
+				}
+			} catch (org.json.JSONException exception) {
+				return Response
+					      .status(Response.Status.BAD_REQUEST)
+					      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!")
+					      .type(MediaType.APPLICATION_JSON)
+					      .build();
+			}
+			
+		}else {
+			String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed!!!\"}";
 			
 			return Response
 				      .status(Response.Status.FORBIDDEN)
 				      .entity(message)
 				      .type(MediaType.APPLICATION_JSON)
 				      .build();
-		} else {
-			
-			//TODO AUTENTICACAO VIA TOKEN
-			
-			/// decoda token de autenticação
-			String[] tokens;
-			String username = "";
-			String password = ""; 
-			
-			authorization = authorization.replace("Basic ", "");
-			
+		}
+	}
+
+	@PUT
+	@Path("/EditarOperacao")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response editarOperacao(String operacaoData, @HeaderParam("Token") String token, @HeaderParam("Authorization") String authorization) { 
+		System.out.println("[Galleria Bank] Editar Operação - Authorization: " + authorization);
+
+		if(verificarAutenticacao(authorization)) {
 			try {
-				tokens = (new String(Base64.getDecoder().decode(authorization), "UTF-8")).split(":");
-
-				username = tokens[0];
-				password = tokens[1];
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			
-			if (username.equals("webnowbr") && password.equals("!SisCoAt@2021*")) {
-				try {
-					JSONObject contratoAPP = new JSONObject(operacaoData);
-
-					clearCriacaoContrato();	
-					
-					JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
-					
-					if (contratoAPPResponsavel.has("codigoResponsavel")) {
-						ResponsavelDao rDao = new ResponsavelDao();
-						String codigoResponsavel = contratoAPPResponsavel.getString("codigoResponsavel");
+				JSONObject contratoAPP = new JSONObject(operacaoData);
+				
+				clearEditarContrato();
+				
+				if (contratoAPP.has("numeroContrato")) {
+					this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));	
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					this.objetoContratoCobrancaList = contratoCobrancaDao.findByFilter("numeroContrato", contratoAPP.getString("numeroContrato"));
+					if(this.objetoContratoCobrancaList.isEmpty()) {
+						String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
+						return Response
+							      .status(Response.Status.FORBIDDEN)
+							      .entity(message)
+							      .type(MediaType.APPLICATION_JSON)
+							      .build();	
+					}else {
 						
-						List<Responsavel> responsaveis = new ArrayList<Responsavel>();
-						responsaveis = rDao.findByFilter("codigo", codigoResponsavel);
+						/*
+						 * OBJETO CONTRATO COBRANCA
+						 */
+						this.objetoContratoCobranca = this.objetoContratoCobrancaList.get(0);
+						JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
+						if (contratoAPPResponsavel.has("codigoResponsavel")) {
 						
-						if (responsaveis.size() > 0) {
-							this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
+							ResponsavelDao rDao = new ResponsavelDao();
+							String codigoResponsavel = contratoAPPResponsavel.getString("codigoResponsavel");
 							
-							if (contratoAPP.has("numeroContrato")) {
-								this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));	
-							} else {
-								this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
+							List<Responsavel> responsaveis = new ArrayList<Responsavel>();
+							responsaveis = rDao.findByFilter("codigo", codigoResponsavel);
+							
+							if(!responsaveis.isEmpty()) {
+								this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
 							}
 							
-							this.objetoContratoCobranca.setTipoOperacao(contratoAPP.getString("tipoOperacao"));
-							String tipoPessoa = contratoAPP.getString("tipoPessoa");
-							this.objetoContratoCobranca.setCobrarComissaoCliente(contratoAPP.getString("cobrarComissaoCliente"));
+							this.objetoContratoCobranca.setTipoOperacao(contratoAPP.has("tipoOperacao") 
+									? contratoAPP.getString("tipoOperacao") : this.objetoContratoCobranca.getTipoOperacao());
+							String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa") : null;
+							this.objetoContratoCobranca.setCobrarComissaoCliente(contratoAPP.has("cobrarComissaoCliente") 
+									? contratoAPP.getString("cobrarComissaoCliente") : this.objetoContratoCobranca.getCobrarComissaoCliente());
 							this.objetoContratoCobranca.setComissaoClienteValorFixo(contratoAPP.has("comissaoClienteValorFixo") 
-									?  new BigDecimal(contratoAPP.getDouble("comissaoClienteValorFixo")) : null);
+									?  new BigDecimal(contratoAPP.getDouble("comissaoClienteValorFixo")) : this.objetoContratoCobranca.getComissaoClienteValorFixo());
 							this.objetoContratoCobranca.setComissaoClientePorcentagem(contratoAPP.has("comissaoClientePorcentagem")
-									? new BigDecimal(contratoAPP.getDouble("comissaoClientePorcentagem")) : null);
-							this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.getString("tipoCobrarComissaoCliente"));
-							this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"));
+									? new BigDecimal(contratoAPP.getDouble("comissaoClientePorcentagem")) : this.objetoContratoCobranca.getComissaoClientePorcentagem());
+							this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.has("tipoCobrarComissaoCliente") 
+									? contratoAPP.getString("tipoCobrarComissaoCliente") : this.objetoContratoCobranca.getTipoCobrarComissaoCliente());
+							this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.has("brutoLiquidoCobrarComissaoCliente") 
+									? contratoAPP.getString("brutoLiquidoCobrarComissaoCliente") : this.objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente());
 							
-							this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
+							this.objetoContratoCobranca.setQuantoPrecisa(contratoAPP.has("quantoPrecisa") 
+									? new BigDecimal(contratoAPP.getDouble("quantoPrecisa")) : this.objetoContratoCobranca.getQuantoPrecisa());
 							this.objetoContratoCobranca.setObservacao(contratoAPP.has("observacao") ? contratoAPP.getString("observacao") : null);
 							
-							this.objetoContratoCobranca.setPagadorDonoGarantia(contratoAPP.getBoolean("pagadorDonoGarantia"));
-							this.objetoContratoCobranca.setDivida(contratoAPP.getString("divida"));
-							this.objetoContratoCobranca.setDividaValor(contratoAPP.has("dividaValor") ? new BigDecimal(contratoAPP.getDouble("dividaValor")) : null);
+							this.objetoContratoCobranca.setPagadorDonoGarantia(contratoAPP.has("pagadorDonoGarantia") 
+									? contratoAPP.getBoolean("pagadorDonoGarantia") : this.objetoContratoCobranca.getPagadorDonoGarantia());
+							this.objetoContratoCobranca.setDivida(contratoAPP.has("divida") 
+									? contratoAPP.getString("divida") : this.objetoContratoCobranca.getDivida());
+							this.objetoContratoCobranca.setDividaValor(contratoAPP.has("dividaValor") 
+									? new BigDecimal(contratoAPP.getDouble("dividaValor")) : this.objetoContratoCobranca.getDividaValor());
 							
-							
-							/***
-							 * VALORES DEFAULT
-							 */
-							this.objetoContratoCobranca.setInicioAnalise(false);
-							this.objetoContratoCobranca.setStatusLead("Completo");
-							this.objetoContratoCobranca.setDocumentosComite(false);
-							this.objetoContratoCobranca.setCadastroAprovado(false);
-							this.objetoContratoCobranca.setPedidoPreLaudo(false);
-							this.objetoContratoCobranca.setPedidoPreLaudoComercial(false);
-							this.objetoContratoCobranca.setPedidoLaudoPajuComercial(false);
-							this.objetoContratoCobranca.setAnaliseComercial(false);
-							this.objetoContratoCobranca.setComentarioJuridicoEsteira(false);
-							this.objetoContratoCobranca.setPreAprovadoComite(false);
-							this.objetoContratoCobranca.setAprovadoComite(false);
-							this.objetoContratoCobranca.setPedidoLaudo(false);
-							this.objetoContratoCobranca.setPedidoPajuComercial(false);
-							this.objetoContratoCobranca.setTemTxAdm(false);
+							this.objetoContratoCobranca.setContatoAgendamendoLaudoAvaliacao(contratoAPP.has("contatoAgendamentoLaudoAvaliacao")
+									? contratoAPP.getString("contatoAgendamentoLaudoAvaliacao") : this.objetoContratoCobranca.getContatoAgendamendoLaudoAvaliacao());
+							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju") 
+									? contratoAPP.getString("formaPagamentoLaudoPaju") : this.objetoContratoCobranca.getFormaDePagamentoLaudoPAJU());
 							
 							/***
 							 * OBJETO PAGADOR
@@ -197,20 +376,27 @@ public class ContractService {
 							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
 							
 							if (contratoAPPPagador.has("id")) {
-								this.objetoPagador = pagadorDao.findById(contratoAPPPagador.getLong("id"));
+								this.objetoPagador = pagadorDao.findById(contratoAPPPagador.has("id") 
+										? contratoAPPPagador.getLong("id") : this.objetoContratoCobranca.getId());
 							} else {
 								this.objetoPagador.setId(-1);
 								
 								if (tipoPessoa.equals("PF")) {
-									this.objetoPagador.setCpf(contratoAPPPagador.getString("cpfCnpj"));
+									this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") 
+										? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCpf());
 								} else if(tipoPessoa.equals("PJ")) {
-									this.objetoPagador.setCnpj(contratoAPPPagador.getString("cpfCnpj"));
+									this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") 
+										? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCnpj());
 								}
 								
-								this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
-								this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
-								this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular") : null);
-								this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
+								this.objetoPagador.setNome(contratoAPPPagador.has("nome") 
+										? contratoAPPPagador.getString("nome") : this.objetoContratoCobranca.getPagador().getNome());
+								this.objetoPagador.setEmail(contratoAPPPagador.has("email") 
+										? contratoAPPPagador.getString("email") : this.objetoContratoCobranca.getPagador().getEmail());
+								this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") 
+										? contratoAPPPagador.getString("telCelular") : this.objetoContratoCobranca.getPagador().getTelCelular());
+								this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") 
+										? contratoAPPPagador.getString("sexo") : this.objetoContratoCobranca.getPagador().getSexo());
 								
 								SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
 								Date dtNascimentoDate = null;
@@ -219,27 +405,22 @@ public class ContractService {
 										dtNascimentoDate = dtNascimento.parse(contratoAPPPagador.getString("dataNascimento"));
 										this.objetoPagador.setDtNascimento(dtNascimentoDate);
 									}else {
-										this.objetoPagador.setDtNascimento(null);
+										this.objetoPagador.setDtNascimento(this.objetoContratoCobranca.getPagador().getDtNascimento());
 									}
 								} catch (ParseException e) {
 									e.printStackTrace();
 								}
 							
-								this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
-								this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil") : null);
-								this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge") : null);
-								this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge") : null); 
-								
-								this.objetoPagador.setRgDocumentosCheckList(contratoAPPPagador.has("rgDocumentosCheckList") ? contratoAPPPagador.getBoolean("rgDocumentosCheckList") : false);
-								this.objetoPagador.setComprovanteEnderecoDocumentosCheckList(contratoAPPPagador.has("comprovanteEnderecoDocumentosCheckList") ? contratoAPPPagador.getBoolean("comprovanteEnderecoDocumentosCheckList") : false);
-								this.objetoPagador.setCertidaoCasamentoNascimentoDocumentosCheckList(contratoAPPPagador.has("certidaoCasamentoNascimentoDocumentosCheckList") ? contratoAPPPagador.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList") : false);
-								this.objetoPagador.setFichaCadastralDocumentosCheckList(contratoAPPPagador.has("fichaCadastralDocumentosCheckList") ? contratoAPPPagador.getBoolean("fichaCadastralDocumentosCheckList") : false);
-								this.objetoPagador.setBancoDocumentosCheckList(contratoAPPPagador.has("bancoDocumentosCheckList") ? contratoAPPPagador.getBoolean("bancoDocumentosCheckList") : false);
-								this.objetoPagador.setTelefoneEmailDocumentosCheckList(contratoAPPPagador.has("telefoneEmailDocumentosCheckList") ? contratoAPPPagador.getBoolean("telefoneEmailDocumentosCheckList") : false);
-								this.objetoPagador.setComprovanteRendaCheckList(contratoAPPPagador.has("comprovanteRendaCheckList") ? contratoAPPPagador.getBoolean("comprovanteRendaCheckList") : false);
-								this.objetoPagador.setCombateFraudeCheckList(contratoAPPPagador.has("combateFraudeCheckList") ? contratoAPPPagador.getBoolean("combateFraudeCheckList") : false);
-								this.objetoPagador.setCargoOcupacaoCheckList(contratoAPPPagador.has("cargoOcupacaoCheckList") ? contratoAPPPagador.getBoolean("cargoOcupacaoCheckList") : false);
-								this.objetoPagador.setTaxaCheckList(contratoAPPPagador.has("taxaCheckList") ? contratoAPPPagador.getBoolean("taxaCheckList") : false);
+								this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") 
+										? contratoAPPPagador.getString("nomeMae") : this.objetoContratoCobranca.getPagador().getNomeMae());
+								this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") 
+										? contratoAPPPagador.getString("estadoCivil") : this.objetoContratoCobranca.getPagador().getEstadocivil());
+								this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") 
+										? contratoAPPPagador.getString("cpfConjuge") : this.objetoContratoCobranca.getPagador().getCpfConjuge());
+								this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") 
+										? contratoAPPPagador.getString("nomeConjuge") : this.objetoContratoCobranca.getPagador().getNomeConjuge());
+								this.objetoPagador.setNomeParticipanteCheckList(contratoAPPPagador.has("nomeParticipanteCheckList") 
+										? contratoAPPPagador.getString("nomeParticipanteCheckList") : this.objetoContratoCobranca.getPagador().getNomeParticipanteCheckList()); 
 							}
 							
 							this.objetoContratoCobranca.setPagador(this.objetoPagador);
@@ -252,48 +433,55 @@ public class ContractService {
 							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 							
 							if (contratoAPPImovel.has("id")) {
-								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
+								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.has("id")
+										? contratoAPPImovel.getLong("id") : this.objetoContratoCobranca.getImovel().getId());
 							} else {
 								this.objetoImovelCobranca.setId(-1);
-								this.objetoImovelCobranca.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+								this.objetoImovelCobranca.setCep(contratoAPPImovel.has("cep") 
+										? contratoAPPImovel.getString("cep") : null);
 								if(contratoAPPImovel.has("numero")) {
 									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", " + contratoAPPImovel.getString("numero"));
 								}else {
 									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));									
 								}
-								this.objetoImovelCobranca.setComplemento(contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento") : null);
+								this.objetoImovelCobranca.setComplemento(contratoAPPImovel.has("complemento") 
+										? contratoAPPImovel.getString("complemento") : this.objetoContratoCobranca.getImovel().getComplemento());
 								this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
-								this.objetoImovelCobranca.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
+								this.objetoImovelCobranca.setBairro(contratoAPPImovel.has("bairro") 
+										? contratoAPPImovel.getString("bairro") : this.objetoContratoCobranca.getImovel().getBairro());
 								this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
-								this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio") ? contratoAPPImovel.getString("numeroCartorio") : null);
-								this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro") ? contratoAPPImovel.getString("cartorioRegistro") : null);
-								this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado") ? contratoAPPImovel.getString("cartorioEstado") : null);
-								this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio") ? contratoAPPImovel.getString("cartorioMunicipio") : null);
-								this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.getString("numeroMatricula"));
-								this.objetoImovelCobranca.setTipo(contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel") : null);
-								this.objetoImovelCobranca.setComprovanteMatriculaCheckList(contratoAPPImovel.has("comprovanteMatriculaCheckList") ? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList") : false);
-								this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(contratoAPPImovel.has("comprovanteFotosImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList") : false);
-								this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(contratoAPPImovel.has("comprovanteIptuImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList") : false);
+								this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio") 
+										? contratoAPPImovel.getString("numeroCartorio") : this.objetoContratoCobranca.getImovel().getNumeroCartorio());
+								this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro") 
+										? contratoAPPImovel.getString("cartorioRegistro") : this.objetoContratoCobranca.getImovel().getCartorio());
+								this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado") 
+										? contratoAPPImovel.getString("cartorioEstado") : this.objetoContratoCobranca.getImovel().getCartorioEstado());
+								this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio") 
+										? contratoAPPImovel.getString("cartorioMunicipio") : this.objetoContratoCobranca.getImovel().getCartorioMunicipio());
+								this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
+										? contratoAPPImovel.getString("numeroMatricula") : this.objetoContratoCobranca.getImovel().getNumeroMatricula());
+								this.objetoImovelCobranca.setTipo(contratoAPPImovel.has("tipoImovel") 
+										? contratoAPPImovel.getString("tipoImovel") : this.objetoContratoCobranca.getImovel().getTipo());
 								
-								this.objetoImovelCobranca.setValoEstimado(new BigDecimal(contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado") : null));								
+								this.objetoImovelCobranca.setValoEstimado(contratoAPPImovel.has("valoEstimado") 
+										? new BigDecimal(contratoAPPImovel.getDouble("valoEstimado")) : this.objetoContratoCobranca.getImovel().getValoEstimado());								
 							}
 							
 							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
-	
-							// salva contrato
-							Long idContratoCobranca = criaContratoBD();
-							this.objetoContratoCobranca.setId(idContratoCobranca);
-							criaPagadores(contratoAPP);
+					
+							// atualizar contrato
+							contratoCobrancaDao.update(this.objetoContratoCobranca);
+							criarEditarPagadoresAdicionais(contratoAPP);
 							
-							String message = "{\"retorno\": \"[Galleria Bank] Operação criada com sucesso!!!\"}";
-				
-						    return Response
-						      .status(Response.Status.OK)
-						      .entity(message)
-						      .type(MediaType.APPLICATION_JSON)
-						      .build();
-						} else {
-							String message = "{\"retorno\": \"[Galleria Bank] Código do Responsável não encontrato!!!\"}";
+							String message = "{\"retorno\": \"[Galleria Bank] Operação editada com sucesso!!!\"}";
+							
+							return Response
+									.status(Response.Status.OK)
+									.entity(message)
+									.type(MediaType.APPLICATION_JSON)
+									.build();
+						}else {
+							String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
 							
 							return Response
 								      .status(Response.Status.FORBIDDEN)
@@ -301,35 +489,37 @@ public class ContractService {
 								      .type(MediaType.APPLICATION_JSON)
 								      .build();		
 						}
-					} else {
-						String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
-						
-						return Response
-							      .status(Response.Status.FORBIDDEN)
-							      .entity(message)
-							      .type(MediaType.APPLICATION_JSON)
-							      .build();		
+							
 					}
-				} catch (org.json.JSONException exception) {
+				} else {
+					String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
 					return Response
-						      .status(Response.Status.BAD_REQUEST)
-						      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!")
+						      .status(Response.Status.FORBIDDEN)
+						      .entity(message)
 						      .type(MediaType.APPLICATION_JSON)
-						      .build();
+						      .build();	
 				}
-			} else {	
-				String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed!!!\"}";
-				
+
+			} catch (Exception exception) {
 				return Response
-					      .status(Response.Status.FORBIDDEN)
-					      .entity(message)
+					      .status(Response.Status.BAD_REQUEST)
+					      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!")
 					      .type(MediaType.APPLICATION_JSON)
-					      .build();				
+					      .build();
 			}
+			
+		}else {
+			String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed!!!\"}";
+			
+			return Response
+				      .status(Response.Status.FORBIDDEN)
+				      .entity(message)
+				      .type(MediaType.APPLICATION_JSON)
+				      .build();
 		}
 	}
 	
-	private void criaPagadores(JSONObject contratoAPP) {
+	private void criarEditarPagadoresAdicionais(JSONObject contratoAPP) {
 		/***
 		 * OBJETO PAGADORES ADICIONAIS
 		 */
@@ -400,27 +590,6 @@ public class ContractService {
 							
 							System.out.println("Pagador Cadastrado e Pagador Adicional ID: "+idPagadorAdicionais);
 						
-						}else {
-							pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-							pagadorRecebedorAdicionais.setId(pagadorAdicionaisCadastrado.get(0).getId());
-							pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
-							pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
-							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pagadorCadastrado.get(0).getNome());
-							pagadorRecebedorAdicionais.setRgDocumentosCheckList(pagadorCadastrado.get(0).getRgDocumentosCheckList());
-							pagadorRecebedorAdicionais.setComprovanteEnderecoDocumentosCheckList(pagadorCadastrado.get(0).getComprovanteEnderecoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(pagadorCadastrado.get(0).getCertidaoCasamentoNascimentoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setFichaCadastralDocumentosCheckList(pagadorCadastrado.get(0).getFichaCadastralDocumentosCheckList());
-							pagadorRecebedorAdicionais.setBancoDocumentosCheckList(pagadorCadastrado.get(0).getBancoDocumentosCheckList());
-							pagadorRecebedorAdicionais.setTelefoneEmailDocumentosCheckList(pagadorCadastrado.get(0).getTelefoneEmailDocumentosCheckList());
-							pagadorRecebedorAdicionais.setComprovanteRendaCheckList(pagadorCadastrado.get(0).getComprovanteRendaCheckList());
-							pagadorRecebedorAdicionais.setCombateFraudeCheckList(pagadorCadastrado.get(0).isCombateFraudeCheckList());
-							pagadorRecebedorAdicionais.setCargoOcupacaoCheckList(pagadorCadastrado.get(0).isCargoOcupacaoCheckList());
-							pagadorRecebedorAdicionais.setTaxaCheckList(pagadorCadastrado.get(0).isTaxaCheckList());
-
-							System.out.println("Atualizar Pagador Adicional ID: "+pagadorCadastrado.get(0).getId());
-							
-							pagadorAdicionaisDao.update(pagadorRecebedorAdicionais);
-							
 						}
 					}
 				}
@@ -506,6 +675,17 @@ public class ContractService {
 		}
 	}
 	
+	public void clearEditarContrato() {
+		this.objetoContratoCobranca = new ContratoCobranca();
+		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
+		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
+		this.objetoContratoCobranca.setGeraParcelaFinal(false);
+		this.objetoImovelCobranca = new ImovelCobranca();
+		this.objetoPagador = new PagadorRecebedor();
+	}
+	
 	/**
 	 * 
 	 * @param origem os valores são publico ou aprovado
@@ -529,6 +709,7 @@ public class ContractService {
 		
 		return contratoCobrancaDao.create(this.objetoContratoCobranca);
 	}
+	
 
 	public PagadorRecebedor validaPagadorOperacao() {
 		/***
@@ -578,10 +759,45 @@ public class ContractService {
 				idPagador = pagadorRecebedorDao.create(pagadorRecebedor);
 				this.objetoPagador.setId(idPagador);
 				this.objetoContratoCobranca.setPagador(this.objetoPagador);
+			}else {
+				pagadorRecebedorDao.update(pagadorRecebedor);
+				this.objetoPagador.setId(pagadorRecebedor.getId());
+				this.objetoContratoCobranca.setPagador(this.objetoPagador);
 			}
 		} 
 		
 		return this.objetoPagador;
+	}
+	
+	private boolean verificarAutenticacao(String authorization) {
+		if (authorization == null || !authorization.startsWith("Basic")) {
+			return false;
+		} else {
+			
+			//TODO AUTENTICACAO VIA TOKEN
+			
+			/// decoda token de autenticação
+			String[] tokens;
+			String username = "";
+			String password = ""; 
+			
+			authorization = authorization.replace("Basic ", "");
+			
+			try {
+				tokens = (new String(Base64.getDecoder().decode(authorization), "UTF-8")).split(":");
+
+				username = tokens[0];
+				password = tokens[1];
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			if (username.equals("webnowbr") && password.equals("!SisCoAt@2021*")) {
+				return true;
+			} else {	
+				return false;		
+			}
+		}
 	}
 
 	/**
