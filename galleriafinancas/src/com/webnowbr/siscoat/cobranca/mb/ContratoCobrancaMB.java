@@ -13769,7 +13769,7 @@ public class ContratoCobrancaMB {
 			// Tipo Juros
 			cell = row.createCell(13);
 			cell.setCellStyle(cell_style);
-			if (record.isCorrigidoIPCA()) {
+			if (record.isCorrigidoIPCA() || record.isCorrigidoNovoIPCA()) {
 				cell.setCellValue("Pós-Fixado");
 			} else {
 				cell.setCellValue("Pré-Fixado");
@@ -14492,7 +14492,7 @@ public class ContratoCobrancaMB {
 			// Tipo Juros
 			cell = row.createCell(13);
 			cell.setCellStyle(cell_style);
-			if (record.isCorrigidoIPCA()) {
+			if (record.isCorrigidoIPCA() || record.isCorrigidoNovoIPCA()) {
 				cell.setCellValue("Pós-Fixado");
 			} else {
 				cell.setCellValue("Pré-Fixado");
