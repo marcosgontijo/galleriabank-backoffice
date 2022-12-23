@@ -2313,7 +2313,7 @@
 							</p:panel>
 							
 							<h:panelGroup id="PgmntBancoVendedor">
-								<p:panel header="Forma de Pgment / Banco Vendedor"  rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
+								<p:panel header="Forma de Pagamento / Banco Vendedor"  rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
 									<h:panelGrid columns="2">
 										<p:outputLabel for="recursosProprios" value="recursosProprios: "
 											styleClass="labelBold"
@@ -2363,7 +2363,7 @@
 											itemValue="#{bancoCodigo}" forceSelection="true"
 											styleClass="labelBold" label="Conta" style="width:100px;"
 											scrollHeight="250">
-											<p:ajax update="nomeBanco" event="itemSelect"
+											<p:ajax update="numeroBancoVendedor" event="itemSelect"
 												listener="#{ccbMB.populateNomesBancoVendedor()}" />
 										</p:autoComplete>
 										
@@ -2386,7 +2386,7 @@
 											label="Contrato" />		
 											
 										<p:outputLabel for="tipoContaBancoVendedor"
-											value="Tipo Do Documento: " styleClass="labelBold" />
+											value="Tipo Da Conta: " styleClass="labelBold" />
 										<p:selectOneMenu id="tipoContaBancoVendedor" 
 											value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
 											<f:selectItem itemValue="" itemLabel="Selecione" />

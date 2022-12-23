@@ -875,7 +875,7 @@ public class ContratoCobranca implements Serializable {
 		this.temSeguroDFI = false;
 		this.temSeguroMIP = false;
 		this.enviadoJsonBRL = false;
-		this.pagadorDonoGarantia = false;	
+		this.pagadorDonoGarantia = true;	
 		this.rgDocumentosCheckList = false;
 		this.comprovanteEnderecoDocumentosCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosCheckList = false;

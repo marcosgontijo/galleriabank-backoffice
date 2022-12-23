@@ -47,6 +47,17 @@ public class PagadorRecebedorAdicionaisDao extends HibernateDao <PagadorRecebedo
 						pagadorAdicionais.setId(rs.getLong("id"));
 						pagadorAdicionais.setPessoa(new PagadorRecebedor());
 						pagadorAdicionais.setPessoa(pagador);
+						pagadorAdicionais.setNomeParticipanteCheckList(pagador.getNome());
+						pagadorAdicionais.setRgDocumentosCheckList(rs.getBoolean("rgdocumentoschecklist"));
+						pagadorAdicionais.setComprovanteEnderecoDocumentosCheckList(rs.getBoolean("comprovanteenderecodocumentoschecklist"));
+						pagadorAdicionais.setCertidaoCasamentoNascimentoDocumentosCheckList(rs.getBoolean("certidaocasamentonascimentodocumentoschecklist"));
+						pagadorAdicionais.setFichaCadastralDocumentosCheckList(rs.getBoolean("fichacadastraldocumentoschecklist"));
+						pagadorAdicionais.setBancoDocumentosCheckList(rs.getBoolean("bancodocumentoschecklist"));
+						pagadorAdicionais.setTelefoneEmailDocumentosCheckList(rs.getBoolean("telefoneemaildocumentoschecklist"));
+						pagadorAdicionais.setComprovanteRendaCheckList(rs.getBoolean("comprovanterendachecklist"));
+						pagadorAdicionais.setCombateFraudeCheckList(rs.getBoolean("combatefraudechecklist"));
+						pagadorAdicionais.setCargoOcupacaoCheckList(rs.getBoolean("cargoocupacaochecklist"));
+						pagadorAdicionais.setTaxaCheckList(rs.getBoolean("taxachecklist"));
 						pagadorRecebedorAdicionais.add(pagadorAdicionais);
 					}
 										
