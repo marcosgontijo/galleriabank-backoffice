@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
    
 @SuppressWarnings("unchecked")  
 public class ValorPorExtenso {  
@@ -146,7 +148,7 @@ public class ValorPorExtenso {
     }  
    
     boolean ehGrupoZero(int ps) {  
-       if (ps == nro.size())  
+       if (CommonsUtil.mesmoValor(ps,nro.size()))  
           return true;  
        return ((Integer)nro.get(ps)).intValue() == 0;  
     }  
