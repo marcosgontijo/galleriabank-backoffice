@@ -5258,8 +5258,21 @@ public class ContratoCobrancaMB {
 				FacesContext.getCurrentInstance());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+		
+		String nomeSemvirgula = con.getPagador().getNome();
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		
+		if(nomeSemvirgula.contains("/")) {
+			nomeSemvirgula = nomeSemvirgula.replace("/", "");
+	    }
+		
+		if(nomeSemvirgula.contains(".")) {
+			nomeSemvirgula = nomeSemvirgula.replace(".", "");
+	    }
 	
-		gerador.open("Galleria Bank - " + con.getPagador().getNome() + ".pdf");
+		gerador.open("Galleria Bank - " + nomeSemvirgula + ".pdf");
 	
 		gerador.feed(jp);
 		gerador.close();
@@ -5343,7 +5356,21 @@ public class ContratoCobrancaMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");	
-		gerador.open("Galleria Bank - " + con.getPagador().getNome() + ".pdf");
+		
+		String nomeSemvirgula = con.getPagador().getNome();
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		
+		if(nomeSemvirgula.contains("/")) {
+			nomeSemvirgula = nomeSemvirgula.replace("/", "");
+	    }
+		
+		if(nomeSemvirgula.contains(".")) {
+			nomeSemvirgula = nomeSemvirgula.replace(".", "");
+	    }
+		
+		gerador.open("Galleria Bank - " + nomeSemvirgula + ".pdf");
 		gerador.feed(jp);
 		gerador.close();		
 		return null;
