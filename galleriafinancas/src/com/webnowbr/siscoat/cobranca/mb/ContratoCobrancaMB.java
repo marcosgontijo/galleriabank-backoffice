@@ -24,6 +24,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -28715,8 +28717,71 @@ public class ContratoCobrancaMB {
 			filesPagar = listaArquivosPagar();
 		}
 	}
+	
+	public void handleFileContaPagarUpload(FileUploadEvent event, ContasPagar conta) throws IOException {
+		if(CommonsUtil.mesmoValor(conta.getId(), 0)) {
+			
+		}
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		String pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar /";
+		
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		
+		//pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		 pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar /" + conta.getId();	
+		diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		//String pathContrato = "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 
-	public String generateFileID() {		
+		if(event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			// cria o arquivo
+			//event.getFile().getFileName();
+			byte[] conteudo = event.getFile().getContents();
+			//String oldFileName = new String(event.getFile().getFileName());
+			//String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
+			//String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
+			
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			// atualiza lista de arquivos contidos no diretório
+			filesPagar = listaArquivosPagar();
+		}
+	}
+	
+	//Queue<FileUploadEvent> arquivosContasPagar = new ArrayDeque<FileUploadEvent>();
+	
+	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
+//		arquivosContasPagar.add(event);
+	}
+	
+	public void populateFilesContasPagar(ContasPagar conta) throws IOException {
+//		while (arquivosContasPagar.size() > 0) {
+//			handleFileContaPagarUpload(arquivosContasPagar.remove(), conta);
+//		}
+	}
+
+	public String generateFileID() {
 		return CommonsUtil.stringValue(System.currentTimeMillis());
 	}
 	/**
