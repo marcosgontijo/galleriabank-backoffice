@@ -140,6 +140,7 @@ public class ContractService {
 						/***
 						 * VALORES DEFAULT
 						 */
+						this.objetoContratoCobranca.setUserCadastro(contratoAPP.has("userCadastro") ? contratoAPP.getString("userCadastro") : getNomeUsuarioLogado());
 						this.objetoContratoCobranca.setInicioAnalise(false);
 						this.objetoContratoCobranca.setStatusLead("Completo");
 						this.objetoContratoCobranca.setDocumentosComite(false);
@@ -648,7 +649,6 @@ public class ContractService {
 		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
 		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
 		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
-		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
