@@ -262,6 +262,7 @@ public class ContratoCobrancaMB {
 	AnaliseComite objetoAnaliseComite;
 	
 	ContasPagar contasPagarSelecionada;
+	ContasPagar contasPagarArquivos;
 	
 	private boolean addSegurador;
 	private boolean addSocio;
@@ -3006,9 +3007,10 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			
-			enviaEmailAtualizacaoPreContratoNovo();
-			System.out.println("saveLeadTerceiros");
+			if(!SiscoatConstants.DEV) {
+				enviaEmailAtualizacaoPreContratoNovo();
+				System.out.println("saveLeadTerceiros");
+			}
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3105,9 +3107,10 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			
-			enviaEmailAtualizacaoPreContratoNovo();
-			System.out.println("editPreContrato");
+			if(!SiscoatConstants.DEV) {
+				enviaEmailAtualizacaoPreContratoNovo();
+				System.out.println("editPreContrato");
+			}
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3719,9 +3722,10 @@ public class ContratoCobrancaMB {
 
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
-
-				enviaEmailAtualizacaoPreContratoNovo();	
-				System.out.println("editPreContratoPorStatus");
+				if(!SiscoatConstants.DEV) {
+					enviaEmailAtualizacaoPreContratoNovo();	
+					System.out.println("editPreContratoPorStatus");
+				}
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -28519,6 +28523,7 @@ public class ContratoCobrancaMB {
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
 
 		// cria o diretório, caso não exista
@@ -28552,6 +28557,7 @@ public class ContratoCobrancaMB {
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				//String pathContrato = "C:/Users/Usuario/Desktop/"	
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 
 		// cria o diretório, caso não exista
@@ -28718,31 +28724,32 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	public void handleFileContaPagarUpload(FileUploadEvent event, ContasPagar conta) throws IOException {
-		if(CommonsUtil.mesmoValor(conta.getId(), 0)) {
-			
-		}
+	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
+		ContasPagar conta = (ContasPagar) event.getComponent().getAttributes().get("foo"); 
 		
 		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar /";
+		if(CommonsUtil.semValor(conta.getFileListId())) {
+			conta.setFileListId(generateFileID());
+		}	
 		
+		//cria pasta pagar
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";		
 		File diretorio = new File(pathContrato);
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
 		
-		//pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		 pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar /" + conta.getId();	
+		//cria pasta da conta
+		pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/" + conta.getFileListId() + "/";	
 		diretorio = new File(pathContrato);
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
-		}
-		//String pathContrato = "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		}		
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -28753,7 +28760,6 @@ public class ContratoCobrancaMB {
 			//String oldFileName = new String(event.getFile().getFileName());
 			//String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
 			//String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-			
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
@@ -28765,20 +28771,19 @@ public class ContratoCobrancaMB {
 			}
 
 			// atualiza lista de arquivos contidos no diretório
-			filesPagar = listaArquivosPagar();
+			conta.setFilesContas(listaArquivosContasPagar(conta));
 		}
 	}
 	
 	//Queue<FileUploadEvent> arquivosContasPagar = new ArrayDeque<FileUploadEvent>();
 	
-	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
-//		arquivosContasPagar.add(event);
-	}
 	
-	public void populateFilesContasPagar(ContasPagar conta) throws IOException {
-//		while (arquivosContasPagar.size() > 0) {
-//			handleFileContaPagarUpload(arquivosContasPagar.remove(), conta);
-//		}
+	public void populateFilesContasPagar(ContasPagar conta) throws IOException {	
+		contasPagarArquivos = conta;
+		contasPagarArquivos.setFilesContas(listaArquivosContasPagar(contasPagarArquivos));
+		
+		PrimeFaces current = PrimeFaces.current();
+		current.executeScript("PF('contaArquivosdlg').show();");
 	}
 
 	public String generateFileID() {
@@ -28881,6 +28886,7 @@ public class ContratoCobrancaMB {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
@@ -28988,8 +28994,34 @@ public class ContratoCobrancaMB {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
 		//String pathContrato = "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
+		if(CommonsUtil.semValor(conta.getFileListId())) {
+			return new ArrayList<FileUploaded>();
+		}
+		
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/" + conta.getFileListId();
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
 		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
@@ -29016,6 +29048,7 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+			//String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
 
 			/*
@@ -29087,6 +29120,7 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+			//		String pathContrato = "C:/Users/Usuario/Desktop/"
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
 
 			/*
@@ -29158,6 +29192,7 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					//String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
 
 			/*
@@ -29229,6 +29264,7 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+				//	String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
 
 			/*
@@ -29300,6 +29336,7 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					//String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
 
 			/*
@@ -29371,7 +29408,80 @@ public class ContratoCobrancaMB {
 
 			ParametrosDao pDao = new ParametrosDao();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
+					//String pathContrato = "C:/Users/Usuario/Desktop/"
+			+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
+
+			/*
+			 * 'docx' =>
+			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			 * 'xlsx' =>
+			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+			 */
+			String mineFile = "";
+
+			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+				mineFile = "image-jpg";
+			}
+
+			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+				mineFile = "image-jpeg";
+			}
+
+			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+				mineFile = "image-png";
+			}
+
+			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+				mineFile = "application/pdf";
+			}
+
+			File arquivo = new File(pathContrato);
+
+			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength((int) arquivo.length());
+
+			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+
+			// Write file contents to response.
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+			facesContext.responseComplete();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewFileContaPagar(String fileName, ContasPagar conta) {
+		
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+
+			ParametrosDao pDao = new ParametrosDao();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+			//		String pathContrato = "C:/Users/Usuario/Desktop/"
+					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + conta.getFileListId() + "/" + fileName;
 
 			/*
 			 * 'docx' =>
@@ -31405,4 +31515,14 @@ public class ContratoCobrancaMB {
 	public void setCedente(PagadorRecebedor cedente) {
 		this.cedente = cedente;
 	}
+
+	public ContasPagar getContasPagarArquivos() {
+		return contasPagarArquivos;
+	}
+
+	public void setContasPagarArquivos(ContasPagar contasPagarArquivos) {
+		this.contasPagarArquivos = contasPagarArquivos;
+	}
+	
+	
 }
