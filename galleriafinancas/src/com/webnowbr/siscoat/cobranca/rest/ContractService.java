@@ -366,6 +366,8 @@ public class ContractService {
 							/***
 							 * DADOS DO FLUXO DO CONTRATO COBRANCA - APP	
 							 */
+							this.objetoContratoCobranca.setValorEmprestimo(contratoAPP.has("valorEmprestimo") 
+									? new BigDecimal(contratoAPP.getDouble("valorEmprestimo")) : this.objetoContratoCobranca.getValorEmprestimo());
 							this.objetoContratoCobranca.setComentarioPendencia(contratoAPP.has("comentarioPendencia")
 									? contratoAPP.getString("comentarioPendencia") : this.objetoContratoCobranca.getComentarioPendencia());
 							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju")
