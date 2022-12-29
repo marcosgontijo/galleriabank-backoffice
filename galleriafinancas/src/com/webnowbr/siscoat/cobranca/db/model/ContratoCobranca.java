@@ -326,6 +326,8 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal vlrParcelaFinal;
 	private BigDecimal quantoPrecisa;
+	private BigDecimal valorEmprestimo;
+	
 	private String estadoCivil;
 	private String temMaisImoveis;
 	private String finalidade;
@@ -5876,4 +5878,14 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoEmCartorioUsuario(String contratoEmCartorioUsuario) {
 		this.contratoEmCartorioUsuario = contratoEmCartorioUsuario;
 	}
+
+	public BigDecimal getValorEmprestimo() {
+		return valorEmprestimo;
+	}
+
+	public void setValorEmprestimo(BigDecimal valorEmprestimo) {
+		this.valorEmprestimo = valorEmprestimo;
+	}
+	
+	
 }

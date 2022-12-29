@@ -1953,5 +1953,8 @@
 		<property name="contratoEmCartorioUsuario" type="java.lang.String">
 			<column name="contratoEmCartorioUsuario" />
 		</property>
+		<property name="valorEmprestimo" type="big_decimal">
+			<column name="valorEmprestimo"/>
+		</property>
 	</class>
 </hibernate-mapping>
