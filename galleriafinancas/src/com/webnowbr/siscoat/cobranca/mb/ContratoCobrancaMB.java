@@ -7219,6 +7219,8 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(false);
+		this.objetoContratoCobranca.setBaixadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setBaixadoUsuario(getNomeUsuarioLogado());
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
@@ -7253,6 +7255,8 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setStatus("Baixado");
 		this.objetoContratoCobranca.setStatusContrato("Baixado");
 		this.objetoContratoCobranca.setContratoResgatadoBaixar(false);
+		this.objetoContratoCobranca.setBaixadoData(gerarDataHoje());
+		this.objetoContratoCobranca.setBaixadoUsuario("Sistema");
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 	}
