@@ -875,6 +875,16 @@
 							<p:spacer height="10" />
 							<p:spacer height="10" />
 							
+							<p:outputLabel for="valorEmprestimo" value="Valor do Empréstimo: "
+								styleClass="labelBold"/>
+							<p:inputText id="valorEmprestimo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorEmprestimo}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								converter="bigDecimalConverter">
+								<p:ajax process="@this" partialSubmit="true" />
+							</p:inputText>
+							
 							<p:outputLabel for="divida"
 									value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
 									styleClass="labelBold" />

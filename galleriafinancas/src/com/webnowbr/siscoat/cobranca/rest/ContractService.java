@@ -43,7 +43,6 @@ import com.webnowbr.siscoat.infra.db.model.Parametros;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 
-
 @Path("/services")
 public class ContractService {
 	
@@ -141,6 +140,7 @@ public class ContractService {
 						/***
 						 * VALORES DEFAULT
 						 */
+						this.objetoContratoCobranca.setUserCadastro(contratoAPP.has("userCadastro") ? contratoAPP.getString("userCadastro") : getNomeUsuarioLogado());
 						this.objetoContratoCobranca.setInicioAnalise(false);
 						this.objetoContratoCobranca.setStatusLead("Completo");
 						this.objetoContratoCobranca.setDocumentosComite(false);
@@ -363,66 +363,71 @@ public class ContractService {
 							this.objetoContratoCobranca.setDividaValor(contratoAPP.has("dividaValor") 
 									? new BigDecimal(contratoAPP.getDouble("dividaValor")) : this.objetoContratoCobranca.getDividaValor());
 							
+							/***
+							 * DADOS DO FLUXO DO CONTRATO COBRANCA - APP	
+							 */
+							this.objetoContratoCobranca.setComentarioPendencia(contratoAPP.has("comentarioPendencia")
+									? contratoAPP.getString("comentarioPendencia") : this.objetoContratoCobranca.getComentarioPendencia());
+							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju")
+									? contratoAPP.getString("formaPagamentoLaudoPaju") 
+									: this.objetoContratoCobranca.getFormaDePagamentoLaudoPAJU());
 							this.objetoContratoCobranca.setContatoAgendamendoLaudoAvaliacao(contratoAPP.has("contatoAgendamentoLaudoAvaliacao")
-									? contratoAPP.getString("contatoAgendamentoLaudoAvaliacao") : this.objetoContratoCobranca.getContatoAgendamendoLaudoAvaliacao());
-							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju") 
-									? contratoAPP.getString("formaPagamentoLaudoPaju") : this.objetoContratoCobranca.getFormaDePagamentoLaudoPAJU());
+									? contratoAPP.getString("contatoAgendamentoLaudoAvaliacao")
+									: this.objetoContratoCobranca.getContatoAgendamendoLaudoAvaliacao());
+							
+							this.objetoContratoCobranca.setComentarioPreComite(contratoAPP.has("comentarioPreComite")
+									? contratoAPP.getString("comentarioPreComite") : this.objetoContratoCobranca.getComentarioPreComite());
 							
 							/***
 							 * OBJETO PAGADOR
 							 */
 							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 							this.objetoPagador = new PagadorRecebedor();
-							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+							this.objetoPagador.setId(contratoAPPPagador.has("id") 
+									? contratoAPPPagador.getLong("id") : this.objetoContratoCobranca.getPagador().getId());
 							
-							if (contratoAPPPagador.has("id")) {
-								this.objetoPagador = pagadorDao.findById(contratoAPPPagador.has("id") 
-										? contratoAPPPagador.getLong("id") : this.objetoContratoCobranca.getId());
-							} else {
-								this.objetoPagador.setId(-1);
-								
-								if (tipoPessoa.equals("PF")) {
-									this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") 
-										? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCpf());
-								} else if(tipoPessoa.equals("PJ")) {
-									this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") 
-										? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCnpj());
-								}
-								
-								this.objetoPagador.setNome(contratoAPPPagador.has("nome") 
-										? contratoAPPPagador.getString("nome") : this.objetoContratoCobranca.getPagador().getNome());
-								this.objetoPagador.setEmail(contratoAPPPagador.has("email") 
-										? contratoAPPPagador.getString("email") : this.objetoContratoCobranca.getPagador().getEmail());
-								this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") 
-										? contratoAPPPagador.getString("telCelular") : this.objetoContratoCobranca.getPagador().getTelCelular());
-								this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") 
-										? contratoAPPPagador.getString("sexo") : this.objetoContratoCobranca.getPagador().getSexo());
-								
-								SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
-								Date dtNascimentoDate = null;
-								try {
-									if(contratoAPPPagador.has("dataNascimento")) {
-										dtNascimentoDate = dtNascimento.parse(contratoAPPPagador.getString("dataNascimento"));
-										this.objetoPagador.setDtNascimento(dtNascimentoDate);
-									}else {
-										this.objetoPagador.setDtNascimento(this.objetoContratoCobranca.getPagador().getDtNascimento());
-									}
-								} catch (ParseException e) {
-									e.printStackTrace();
-								}
-							
-								this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") 
-										? contratoAPPPagador.getString("nomeMae") : this.objetoContratoCobranca.getPagador().getNomeMae());
-								this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") 
-										? contratoAPPPagador.getString("estadoCivil") : this.objetoContratoCobranca.getPagador().getEstadocivil());
-								this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") 
-										? contratoAPPPagador.getString("cpfConjuge") : this.objetoContratoCobranca.getPagador().getCpfConjuge());
-								this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") 
-										? contratoAPPPagador.getString("nomeConjuge") : this.objetoContratoCobranca.getPagador().getNomeConjuge());
-								this.objetoPagador.setNomeParticipanteCheckList(contratoAPPPagador.has("nomeParticipanteCheckList") 
-										? contratoAPPPagador.getString("nomeParticipanteCheckList") : this.objetoContratoCobranca.getPagador().getNomeParticipanteCheckList()); 
+							if (tipoPessoa.equals("PF")) {
+								this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") 
+									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCpf());
+							} else if(tipoPessoa.equals("PJ")) {
+								this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") 
+									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCnpj());
 							}
 							
+							this.objetoPagador.setNome(contratoAPPPagador.has("nome") 
+									? contratoAPPPagador.getString("nome") : this.objetoContratoCobranca.getPagador().getNome());
+							this.objetoPagador.setEmail(contratoAPPPagador.has("email") 
+									? contratoAPPPagador.getString("email") : this.objetoContratoCobranca.getPagador().getEmail());
+							this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") 
+									? contratoAPPPagador.getString("telCelular") : this.objetoContratoCobranca.getPagador().getTelCelular());
+							this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") 
+									? contratoAPPPagador.getString("sexo") : this.objetoContratoCobranca.getPagador().getSexo());
+							
+							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
+							Date dtNascimentoDate = null;
+							try {
+								if(contratoAPPPagador.has("dataNascimento")) {
+									dtNascimentoDate = dtNascimento.parse(contratoAPPPagador.getString("dataNascimento"));
+									this.objetoPagador.setDtNascimento(dtNascimentoDate);
+								}else {
+									this.objetoPagador.setDtNascimento(this.objetoContratoCobranca.getPagador().getDtNascimento());
+								}
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						
+							this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") 
+									? contratoAPPPagador.getString("nomeMae") : this.objetoContratoCobranca.getPagador().getNomeMae());
+							this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") 
+									? contratoAPPPagador.getString("estadoCivil") : this.objetoContratoCobranca.getPagador().getEstadocivil());
+							this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") 
+									? contratoAPPPagador.getString("cpfConjuge") : null);
+							this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") 
+									? contratoAPPPagador.getString("nomeConjuge") : null);
+							this.objetoPagador.setDtNascimentoConjuge(contratoAPPPagador.has("dtNascimentoConjuge") 
+									? dtNascimento.parse(contratoAPPPagador.getString("dtNascimentoConjuge")) : null);
+							this.objetoPagador.setNomeParticipanteCheckList(contratoAPPPagador.has("nomeParticipanteCheckList") 
+									? contratoAPPPagador.getString("nomeParticipanteCheckList") : this.objetoContratoCobranca.getPagador().getNomeParticipanteCheckList()); 
 							this.objetoContratoCobranca.setPagador(this.objetoPagador);
 							
 							/***
@@ -430,13 +435,9 @@ public class ContractService {
 							 */
 							JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
 							this.objetoImovelCobranca = new ImovelCobranca();
-							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 							
-							if (contratoAPPImovel.has("id")) {
-								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.has("id")
+								this.objetoImovelCobranca.setId(contratoAPPImovel.has("id")
 										? contratoAPPImovel.getLong("id") : this.objetoContratoCobranca.getImovel().getId());
-							} else {
-								this.objetoImovelCobranca.setId(-1);
 								this.objetoImovelCobranca.setCep(contratoAPPImovel.has("cep") 
 										? contratoAPPImovel.getString("cep") : null);
 								if(contratoAPPImovel.has("numero")) {
@@ -465,12 +466,12 @@ public class ContractService {
 								
 								this.objetoImovelCobranca.setValoEstimado(contratoAPPImovel.has("valoEstimado") 
 										? new BigDecimal(contratoAPPImovel.getDouble("valoEstimado")) : this.objetoContratoCobranca.getImovel().getValoEstimado());								
-							}
 							
 							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 					
 							// atualizar contrato
-							contratoCobrancaDao.update(this.objetoContratoCobranca);
+							atualizarContratoBD();
+							contratoCobrancaDao.merge(this.objetoContratoCobranca);
 							criarEditarPagadoresAdicionais(contratoAPP);
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação editada com sucesso!!!\"}";
@@ -648,7 +649,6 @@ public class ContractService {
 		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
 		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
 		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
-		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
@@ -703,11 +703,28 @@ public class ContractService {
 			long idImovel = imovelCobrancaDao.create(this.objetoImovelCobranca);
 			this.objetoImovelCobranca.setId(idImovel);
 			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
-		} 				
+		} else {
+			imovelCobrancaDao.update(this.objetoImovelCobranca);
+		}
 		
 		this.objetoContratoCobranca.setRecebedor(null);
 		
 		return contratoCobrancaDao.create(this.objetoContratoCobranca);
+	}
+	
+	public void atualizarContratoBD() {
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		pagadorRecebedorDao.merge(this.objetoPagador);
+
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		
+		// Atualizar objeto imovel, caso não exista
+		try { 
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
+		}catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 
@@ -758,10 +775,6 @@ public class ContractService {
 			if (registraPagador) {
 				idPagador = pagadorRecebedorDao.create(pagadorRecebedor);
 				this.objetoPagador.setId(idPagador);
-				this.objetoContratoCobranca.setPagador(this.objetoPagador);
-			}else {
-				pagadorRecebedorDao.update(pagadorRecebedor);
-				this.objetoPagador.setId(pagadorRecebedor.getId());
 				this.objetoContratoCobranca.setPagador(this.objetoPagador);
 			}
 		} 
