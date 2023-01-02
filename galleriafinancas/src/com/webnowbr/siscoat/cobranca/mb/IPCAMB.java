@@ -302,8 +302,7 @@ public class IPCAMB {
 
 			LOGGER.info("incio atualizaIPCAPorContrato");
 			
-			if (contratosCobranca.size() > 0) {		
-				if (!contratosCobranca.get(0).isCorrigidoNovoIPCA()) {		
+			if (contratosCobranca.size() > 0) {			
 					for (ContratoCobranca contratoCobranca : contratosCobranca) {
 						
 						contratoCobranca.setRecalculaIPCA(true);
@@ -330,10 +329,6 @@ public class IPCAMB {
 						context.addMessage(null, new FacesMessage(
 								FacesMessage.SEVERITY_INFO, "[Reprocessamento IPCA] Contrato " + contratoCobranca.getNumeroContrato() + " reprocessado com sucesso!", ""));
 					}
-				} else {
-					context.addMessage(null, new FacesMessage(
-							FacesMessage.SEVERITY_ERROR, "[Reprocessamento IPCA] Este reprocessamento não é permitido para contratos corrigidos pelo NOVO IPCA!", ""));
-				}
 			}
 			//contratoCobranca = contratoCobrancaDao.findById(contratoCobranca.getId());
 				

@@ -292,7 +292,7 @@ public class KobanaMB {
 						boleto.setStatus(objetoBoleto.getString("status"));
 					}		
 					
-					if (boleto.getStatus().equals("Pago")) {						
+					//if (boleto.getStatus().equals("Pago")) {						
 						if (objetoBoleto.has("custom_data")) {
 							if (!objetoBoleto.isNull("custom_data")) {
 							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
@@ -306,7 +306,7 @@ public class KobanaMB {
 							boleto.setParcela(parcela);
 							}
 						}
-					}
+					//}
 					
 					boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 					boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));

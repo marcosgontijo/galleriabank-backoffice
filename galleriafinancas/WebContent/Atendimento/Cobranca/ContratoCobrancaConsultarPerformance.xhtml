@@ -191,10 +191,9 @@
 			                <p:commandButton action="#{ipcaMB.atualizaIPCAPorContrato(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar IPCA" title="Reprocessar IPCA" update=":form:mensagens" rendered="#{contratos.corrigidoIPCA and !contratos.corrigidoNovoIPCA}">
 			                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 			                </p:commandButton> 
-			                <p:commandButton action="#{ipcaMB.atualizaIPCAPorContratoMaluco(contratos.numeroContrato)}" icon="ui-icon-calculator" value="ATENÇÃO!! Reprocessar IPCA Híbrido" title="ATENÇÃO!! Reprocessar IPCA Híbrido" update=":form:mensagens" rendered="#{contratos.corrigidoIPCA and !contratos.corrigidoNovoIPCA}">
+			                <p:commandButton action="#{ipcaMB.atualizaIPCAPorContratoMaluco(contratos.numeroContrato)}" icon="ui-icon-calculator" value="ATENÇÃO!! Reprocessar IPCA Híbrido" title="ATENÇÃO!! Reprocessar IPCA Híbrido" update=":form:mensagens">
 			                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 			                </p:commandButton> 
-			                
 			                <p:commandButton action="#{ipcaMB.atualizaNovoIPCAPorContrato(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar Novo IPCA" title="Reprocessar Novo IPCA" update=":form:mensagens" rendered="#{!contratos.corrigidoIPCA and contratos.corrigidoNovoIPCA}">
 			                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 			                </p:commandButton> 

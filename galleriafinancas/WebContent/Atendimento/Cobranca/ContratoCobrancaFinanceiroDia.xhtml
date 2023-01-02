@@ -66,6 +66,24 @@
 						value="IMPORTANTE!!! Esta consulta pode demorar alguns minutos devido ao grande volume de dados a ser pesquisado. "
 						styleClass="labelBold" style="margin-right: 59px;color: red" />
 				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="DataCorte" value="Utilizar Data Corte Baixas: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="DataCorte"
+						value="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}" required="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax update="ConsultaFinanceiro" event="valueChange" />
+					</p:selectOneRadio>
+					<p:outputLabel for="dataCorte" value="Data Corte Baixas: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}"/>
+					<p:calendar id="dataCorte"
+						value="#{contratoCobrancaMB.filtroDataCorteRelatorioDia}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"
+						rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}"/>
+				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
 					action="#{contratoCobrancaMB.geraRelFinanceiroDia}"

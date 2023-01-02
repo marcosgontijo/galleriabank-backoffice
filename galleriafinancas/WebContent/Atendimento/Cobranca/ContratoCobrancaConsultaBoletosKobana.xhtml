@@ -72,7 +72,7 @@
 				<p:dataTable id="dtBoletosKobana" var="boleto" 
 					value="#{kobanaMB.listBoletosKobana}"
 					emptyMessage="" sortBy="#{boleto.createdAt}"
-					rowStyleClass="#{boleto.status eq 'Pago' ? 'parcelaPaga' : null}"
+					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'true') ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'false') ? 'parcelaBoletoPago' : null}"
 					sortOrder="descending">
 					
 					<p:column style="text-align: center;"
@@ -131,6 +131,15 @@
 						<h:outputText value="#{boleto.paidAmount}"
 							converter="bigDecimalConverter">
 						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;"
+						headerText="# Parcela / Baixada?">
+						<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+							<h:outputText value="#{boleto.parcela.numeroParcela} / Sim" />
+						</ui:fragment>
+						<ui:fragment rendered="#{!boleto.parcela.parcelaPaga}">
+							<h:outputText value="#{boleto.parcela.numeroParcela} / Não" />
+						</ui:fragment>
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">

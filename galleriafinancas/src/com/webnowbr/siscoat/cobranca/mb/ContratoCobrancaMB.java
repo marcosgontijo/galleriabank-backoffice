@@ -191,6 +191,8 @@ public class ContratoCobrancaMB {
 	private String tituloTelaConsultaPreStatus;
 
 	private Date dataHoje;
+	private Date filtroDataCorteRelatorioDia;
+	private boolean consideraDataCorteRelatorioDia;
 	
 	SimulacaoIPCACalculoV2 simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
 	
@@ -11191,6 +11193,9 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsRelFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
 		this.relDataContratoInicio = gerarDataHoje();
+		this.filtroDataCorteRelatorioDia = gerarDataHoje();
+		this.consideraDataCorteRelatorioDia = false;
+		
 		this.contratoGerado = false;
 		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
 
@@ -13030,10 +13035,20 @@ public class ContratoCobrancaMB {
 				BigDecimal somaBaixas = BigDecimal.ZERO;
 
 				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					
-					if (cBaixas.getVlrRecebido() != null) {
-						somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+					if (this.consideraDataCorteRelatorioDia) {
+						if (cBaixas.getDataPagamento().before(this.filtroDataCorteRelatorioDia)) {
+							ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+							
+							if (cBaixas.getVlrRecebido() != null) {
+								somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+							}
+						}
+					} else {
+						ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+						
+						if (cBaixas.getVlrRecebido() != null) {
+							somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+						}
 					}
 					
 					/*
@@ -31312,5 +31327,21 @@ public class ContratoCobrancaMB {
 
 	public void setCedente(PagadorRecebedor cedente) {
 		this.cedente = cedente;
+	}
+
+	public Date getFiltroDataCorteRelatorioDia() {
+		return filtroDataCorteRelatorioDia;
+	}
+
+	public void setFiltroDataCorteRelatorioDia(Date filtroDataCorteRelatorioDia) {
+		this.filtroDataCorteRelatorioDia = filtroDataCorteRelatorioDia;
+	}
+
+	public boolean isConsideraDataCorteRelatorioDia() {
+		return consideraDataCorteRelatorioDia;
+	}
+
+	public void setConsideraDataCorteRelatorioDia(boolean consideraDataCorteRelatorioDia) {
+		this.consideraDataCorteRelatorioDia = consideraDataCorteRelatorioDia;
 	}
 }
