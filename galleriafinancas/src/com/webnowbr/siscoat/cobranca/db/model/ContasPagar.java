@@ -3,10 +3,12 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 
 public class ContasPagar implements Serializable {
@@ -36,7 +38,11 @@ public class ContasPagar implements Serializable {
 	private String contaTed;
 	private String agenciaTed;
 	
+	private String fileListId;
+	
 	private Responsavel responsavel;
+	
+	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 
 	public ContasPagar() {
 	}
@@ -234,5 +240,23 @@ public class ContasPagar implements Serializable {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+
+	public String getFileListId() {
+		return fileListId;
+	}
+
+	public void setFileListId(String fileListId) {
+		this.fileListId = fileListId;
+	}
+
+	public Collection<FileUploaded> getFilesContas() {
+		return filesContas;
+	}
+
+	public void setFilesContas(Collection<FileUploaded> filesContas) {
+		this.filesContas = filesContas;
+	}
+	
+	
 	
 }
