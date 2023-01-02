@@ -429,8 +429,10 @@
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO">  						
 					<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
-	                          update="ArquivosPagarSalvos msgArquivo" />								
+							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+							fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" update="ArquivosPagarSalvos" >
+								<f:attribute name="foo" value="#{contratoCobrancaMB.contasPagarSelecionada}" />
+							</p:fileUpload>							
 						</h:panelGrid>  
 					</p:panel>	
 					
@@ -440,7 +442,7 @@
 	
 					<p:panel id="ArquivosPagarSalvos" header="Arquivo(s) a Pagar Salvo(s) no Contrato" style="margin-bottom:10px;">							
 						<h:panelGrid columns="1">			                      								
-							<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contratoCobrancaMB.filesPagar}" rowKey="#{filesPagar.name}" selection="#{contratoCobrancaMB.deletefilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
+							<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contratoCobrancaMB.contasPagarSelecionada.filesContas}" rowKey="#{filesPagar.name}" selection="#{contratoCobrancaMB.deletefilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">											 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFilePagar}"/>
@@ -450,7 +452,7 @@
 									filterMatchMode="contains" sortBy="#{filesPagar.name}">
 									<h:outputText value="#{filesPagar.name}" />
 									<p:spacer height="10" />
-									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFilePagar(filesPagar.name)}"
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileContaPagar(filesPagar.name, contratoCobrancaMB.contasPagarSelecionada)}"
 										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  
@@ -555,6 +557,10 @@
 									<p:commandButton value="Remover" icon="ui-icon-trash"
 										action="#{contratoCobrancaMB.removerConta(contas)}"
 										ajax="true" update=":form:ContasPagarPanel" />
+									<p:spacer height="10" />
+									<p:commandButton value="Arquivos" icon="ui-icon-print"
+										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
+										ajax="true" update=":form:ContasPagarPanel" />		
 								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>
@@ -798,6 +804,95 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		
-		</h:form>		 		
+		</h:form>	
+		
+		<p:dialog header="Arquivos da Conta" overflow="auto"
+			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contaArquivosForm">
+
+				<p:panel id="UploadArquivos" header="Upload de Arquivo(s)"
+					style="margin-bottom:10px;">
+					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
+						style="margin-bottom:10px;text-align: center;">
+						<h:panelGrid columns="1">
+							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+								fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" 
+								update="contaArquivosForm" >
+								<f:attribute name="foo" value="#{contratoCobrancaMB.contasPagarArquivos}" />
+							</p:fileUpload>
+						</h:panelGrid>
+					</p:panel>
+
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;">
+						<h:panelGrid columns="1">
+							<p:dataTable id="dtFiles" var="files"
+								value="#{contratoCobrancaMB.contasPagarArquivos.filesContas}" rowKey="#{files.name}"
+								selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
+								sortBy="#{files.name}">
+								<p:column selectionMode="multiple"
+									style="width:16px;text-align:center" />
+								<f:facet name="header">
+									<p:commandButton value="Download Selecionado(s)" ajax="false"
+										onclick="PrimeFaces.monitorDownload(start, stop);"
+										icon="ui-icon-arrowthick-1-s">
+										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									</p:commandButton>
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" />
+								</f:facet>
+
+								<p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{files.name}"
+									filterMatchMode="contains" sortBy="#{files.name}">
+									<h:outputText value="#{files.name}" />
+									<p:spacer height="10" />
+									<p:commandButton value="Abrir" ajax="false"
+										action="#{contratoCobrancaMB.viewFile(files.name)}"
+										immediate="true" icon="ui-icon-search"
+										onclick="target='_blank'" onblur="target='_self'">
+									</p:commandButton>
+								</p:column>
+
+								<p:column style="width:100px;">
+									<p:commandButton value="Download" ajax="false"
+										onclick="PrimeFaces.monitorDownload(start, stop);"
+										icon="ui-icon-arrowthick-1-s">
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
+										<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+									</p:commandButton>
+								</p:column>
+
+								<f:facet name="footer">
+									<p:commandButton value="Download Selecionado(s)" ajax="false"
+										onclick="PrimeFaces.monitorDownload(start, stop);"
+										icon="ui-icon-arrowthick-1-s">
+										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									</p:commandButton>
+									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" />
+								</f:facet>
+							</p:dataTable>
+						</h:panelGrid>
+					</p:panel>
+					<script type="text/javascript">
+						function start() {
+						    PF('statusDialog').show();
+						}
+						 
+						function stop() {
+						    PF('statusDialog').hide();
+						}
+					</script>
+				</p:panel>
+
+			</h:form>
+		</p:dialog>
+			 		
 	</ui:define>
 </ui:composition>

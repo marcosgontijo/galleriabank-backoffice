@@ -8271,6 +8271,7 @@ public class CcbMB {
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorParcela", this.objetoCcb.getValorParcela());		
 								
 								text = trocaValoresXWPF(text, r, "numeroCCB", this.objetoCcb.getNumeroCcb());
+								text = trocaValoresXWPF(text, r, "serieCcb", this.objetoCcb.getSerieCcb());
 								
 								text = trocaValoresXWPF(text, r, "numeroRegistroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
 								

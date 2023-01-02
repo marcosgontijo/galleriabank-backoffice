@@ -326,6 +326,8 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal vlrParcelaFinal;
 	private BigDecimal quantoPrecisa;
+	private BigDecimal valorEmprestimo;
+	
 	private String estadoCivil;
 	private String temMaisImoveis;
 	private String finalidade;
@@ -486,6 +488,9 @@ public class ContratoCobranca implements Serializable {
 	private Date reprovadoData;
 	private boolean reprovado;
 	private String reprovadoUsuario;
+
+	private Date baixadoData;
+	private String baixadoUsuario;
 
 	private Date semFotoImovelData;
 	private boolean semFotoImovel;
@@ -5876,4 +5881,30 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoEmCartorioUsuario(String contratoEmCartorioUsuario) {
 		this.contratoEmCartorioUsuario = contratoEmCartorioUsuario;
 	}
+
+	public BigDecimal getValorEmprestimo() {
+		return valorEmprestimo;
+	}
+
+	public void setValorEmprestimo(BigDecimal valorEmprestimo) {
+		this.valorEmprestimo = valorEmprestimo;
+	}
+
+	public Date getBaixadoData() {
+		return baixadoData;
+	}
+
+	public void setBaixadoData(Date baixadoData) {
+		this.baixadoData = baixadoData;
+	}
+
+	public String getBaixadoUsuario() {
+		return baixadoUsuario;
+	}
+
+	public void setBaixadoUsuario(String baixadoUsuario) {
+		this.baixadoUsuario = baixadoUsuario;
+	}
+	
+	
 }
