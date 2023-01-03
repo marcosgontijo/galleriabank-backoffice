@@ -28902,8 +28902,8 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivos() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
-		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/"
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
@@ -29639,10 +29639,10 @@ public class ContratoCobrancaMB {
 	 * 
 	 * @return
 	 */
-	public StreamedContent getDownloadFile() throws IOException {
-		if (this.selectedFile != null) { 
+	public StreamedContent getDownloadFile() {
+		if (this.selectedFile != null) {
 			FileInputStream stream;
-			try {	
+			try {
 				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
 				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
 						this.selectedFile.getFile().getName());
@@ -29651,7 +29651,6 @@ public class ContratoCobrancaMB {
 				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
 			}
 		}
-		
 		return this.downloadFile;
 	}
 
