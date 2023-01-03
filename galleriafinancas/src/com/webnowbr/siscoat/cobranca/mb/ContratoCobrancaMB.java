@@ -24,7 +24,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -36,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -28904,8 +28902,8 @@ public class ContratoCobrancaMB {
 	public Collection<FileUploaded> listaArquivos() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//String pathContrato = "C:/Users/Usuario/Desktop/"
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
@@ -29641,10 +29639,10 @@ public class ContratoCobrancaMB {
 	 * 
 	 * @return
 	 */
-	public StreamedContent getDownloadFile() {
-		if (this.selectedFile != null) {
+	public StreamedContent getDownloadFile() throws IOException {
+		if (this.selectedFile != null) { 
 			FileInputStream stream;
-			try {
+			try {	
 				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
 				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
 						this.selectedFile.getFile().getName());
@@ -29653,6 +29651,7 @@ public class ContratoCobrancaMB {
 				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
 			}
 		}
+		
 		return this.downloadFile;
 	}
 

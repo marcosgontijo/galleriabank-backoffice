@@ -275,7 +275,7 @@
 							</p:column>
 					        
 					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<f:setPropertyActionListener target="#{contasPagarMB.selectedFile}" value="#{filesPagar}" />
 						       	 	<p:fileDownload value="#{contasPagarMB.downloadFile}" immediate="true" />
 						    	</p:commandButton>	
@@ -375,7 +375,7 @@
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										onclick="PrimeFaces.monitorDownload(start, stop);"
+										
 										icon="ui-icon-arrowthick-1-s">
 										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 									</p:commandButton>
@@ -398,7 +398,7 @@
 
 								<p:column style="width:100px;">
 									<p:commandButton value="Download" ajax="false"
-										onclick="PrimeFaces.monitorDownload(start, stop);"
+										
 										icon="ui-icon-arrowthick-1-s">
 										<f:setPropertyActionListener
 											target="#{contasPagarMB.selectedFile}" value="#{files}" />

@@ -24,25 +24,25 @@
 
 					<h:form>
 						<p:commandButton value="Download Debêntures" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.debenturePDFGerado}">  
 							<p:fileDownload value="#{investidorMB.file}"/>
 						</p:commandButton>
 						<p:spacer width="10" />
 						<p:commandButton value="Download Termo Securitização" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.termoSecuritizacaoPDFGerado}">
 							<p:fileDownload value="#{investidorMB.termoSecuritizacaoPDF}" />
 						</p:commandButton>
 						<p:spacer width="10" />
 						<p:commandButton value="Download BS" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.bsPDFGerado}">
 							<p:fileDownload value="#{investidorMB.bsPDF}"/>
 						</p:commandButton>
 						<p:spacer width="10" />
 						<p:commandButton value="Download Anexo I" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s" rendered="#{investidorMB.anexo1PDFGerado}">
 							<p:fileDownload value="#{investidorMB.anexoPDF}"/>
 						</p:commandButton>				

@@ -1989,7 +1989,7 @@
 
 							<h:form>
 								<p:commandButton value="Download do Boleto" ajax="false"
-									onclick="PrimeFaces.monitorDownload(start, stop);"
+									
 									icon="ui-icon-arrowthick-1-s" update=":form:PanelBoleto"
 									rendered="#{geracaoBoletoMB.gerouBoleto}">
 									<p:fileDownload value="#{geracaoBoletoMB.file}" />
@@ -2021,7 +2021,7 @@
 
 							<h:form>
 								<p:commandButton value="Download do Recibo" ajax="false"
-									onclick="PrimeFaces.monitorDownload(start, stop);"
+									
 									icon="ui-icon-arrowthick-1-s" update=":form:PanelBoleto"
 									rendered="#{contratoCobrancaMB.reciboGerado}">
 									<p:fileDownload value="#{contratoCobrancaMB.fileRecibo}" />
@@ -2233,7 +2233,7 @@
 							style="width:16px;text-align:center" />
 						<f:facet name="header">
 							<p:commandButton value="Download Selecionado(s)" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
+								
 								icon="ui-icon-arrowthick-1-s">
 								<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 							</p:commandButton>
@@ -2254,7 +2254,7 @@
 
 						<p:column style="width:100px;">
 							<p:commandButton value="Download" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
+								
 								icon="ui-icon-arrowthick-1-s">
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
@@ -2264,7 +2264,7 @@
 
 						<f:facet name="footer">
 							<p:commandButton value="Download Selecionado(s)" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
+								
 								icon="ui-icon-arrowthick-1-s">
 								<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 							</p:commandButton>

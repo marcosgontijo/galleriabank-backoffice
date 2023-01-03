@@ -32,7 +32,7 @@
 					action="#{kobanaMB.consultarParcelasBoleto}"
 					image="ui-icon ui-icon-check"
 					update=":form:dtContratos :form:ConsultaFinanceiroResultados"
-					onclick="PrimeFaces.monitorDownload(start, stop);"
+					
 					style="TEXT-DECORATION: bold;" />					
 			</p:panel>
 			<script type="text/javascript">
@@ -54,7 +54,7 @@
 					<f:facet name="header">
 						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
 							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
-							update=":form:dtContratos :form:mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"
+							update=":form:dtContratos :form:mensagens" 
 							disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>	
 					</f:facet>
 					<p:ajax event="rowSelectCheckbox" update=":form:ConsultaFinanceiroResultados :form:growl" process="@this" listener="#{kobanaMB.validateParcelaSelected}"/>
@@ -132,7 +132,7 @@
 					<f:facet name="footer">
 						<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
 							icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
-							update="mensagens" onclick="PrimeFaces.monitorDownload(start, stop);"
+							update="mensagens" 
 							disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>
 					</f:facet>
 				</p:dataTable>

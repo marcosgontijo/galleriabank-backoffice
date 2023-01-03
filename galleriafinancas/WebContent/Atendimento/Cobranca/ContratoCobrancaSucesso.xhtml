@@ -17,11 +17,11 @@
 					</p:dialog>
 					 
 					<h:form>					
-					    <p:commandButton value="Download do Contrato" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					    <p:commandButton value="Download do Contrato" ajax="false"  icon="ui-icon-arrowthick-1-s">
 					        <p:fileDownload value="#{contratoCobrancaMB.file}" />
 					    </p:commandButton>
 					    <p:spacer height="10" />
-					     <p:commandButton value="Download do(s) Boleto(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					     <p:commandButton value="Download do(s) Boleto(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">
 					        <p:fileDownload value="#{contratoCobrancaMB.fileBoleto}" />
 					     </p:commandButton>
 					</h:form>

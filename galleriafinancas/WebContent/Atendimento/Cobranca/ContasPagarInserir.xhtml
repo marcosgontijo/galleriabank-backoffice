@@ -230,7 +230,7 @@
 							</p:column>
 					        
 					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<f:setPropertyActionListener target="#{contasPagarMB.selectedFile}" value="#{filesPagar}" />
 						       	 	<p:fileDownload value="#{contasPagarMB.downloadFile}" immediate="true" />
 						    	</p:commandButton>	
