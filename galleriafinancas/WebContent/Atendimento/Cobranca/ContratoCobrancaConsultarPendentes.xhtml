@@ -43,12 +43,12 @@
 
 					<h:form>
 						<p:commandButton value="Ficha Principal" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s">
 							<p:fileDownload value="#{impressoesPDFMB.file}" />
 						</p:commandButton>
 						<p:commandButton value="Ficha Conjuge" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaConjugeGerado}">
 							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
 						</p:commandButton>

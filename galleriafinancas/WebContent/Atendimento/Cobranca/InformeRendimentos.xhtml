@@ -25,7 +25,7 @@
 
 					<h:form>
 						<p:commandButton value="Download Selecionado(s)" ajax="false"
-							onclick="PrimeFaces.monitorDownload(start, stop);"
+							
 							icon="ui-icon-arrowthick-1-s">
 							<p:fileDownload value="#{investidorMB.file}" />
 						</p:commandButton>
@@ -197,7 +197,7 @@
 							</h:panelGrid>
 				
 							<p:commandButton value="Gerar PDFs" ajax="false"
-								onclick="PrimeFaces.monitorDownload(start, stop);"
+								
 								icon="ui-icon-arrowthick-1-s">
 								<p:fileDownload value="#{investidorMB.downloadAllFiles}" />
 							</p:commandButton>

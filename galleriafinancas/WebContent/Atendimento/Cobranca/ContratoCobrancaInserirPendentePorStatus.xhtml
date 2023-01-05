@@ -3116,7 +3116,7 @@
 								</p:column>  
 						        
 						        <p:column style="width:100px;">
-									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesPagar}" />
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							    	</p:commandButton>	
@@ -3834,7 +3834,7 @@
 								</p:column>  
 						        
 						        <p:column style="width:100px;">
-									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesComite}" />
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							    	</p:commandButton>	
@@ -3876,7 +3876,7 @@
 							<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download Selecionado(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
 							    	</p:commandButton>								 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>
@@ -3892,14 +3892,14 @@
 								</p:column>  
 						        
 						        <p:column style="width:100px;">
-									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesInterno}" />
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							    	</p:commandButton>	
 					            </p:column>						        
 	
 					             <f:facet name="footer">
-									<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download Selecionado(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
 							    	</p:commandButton>					             
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileInterno}"/>								
@@ -3949,7 +3949,7 @@
 							</p:column>  
 					        
 					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesFaltante}" />
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 						    	</p:commandButton>	
@@ -4005,7 +4005,7 @@
 								</p:column>  
 						        
 						        <p:column style="width:100px;">
-									<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+									<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesJuridico}" />
 							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							    	</p:commandButton>	
@@ -4049,7 +4049,7 @@
 						<p:dataTable id="dtFiles" var="files" value="#{contratoCobrancaMB.files}" rowKey="#{files.name}" selection="#{contratoCobrancaMB.deletefiles}" emptyMessage="" sortBy="#{files.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 							 <f:facet name="header">
-								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download Selecionado(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 						    	</p:commandButton>								 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>
@@ -4067,14 +4067,14 @@
 							</p:column> 
 					        
 					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 						    	</p:commandButton>	
 				            </p:column>						        
 
 				            <f:facet name="footer">
-								<p:commandButton value="Download Selecionado(s)" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">						       	 	
+								<p:commandButton value="Download Selecionado(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
 						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 						    	</p:commandButton>					             
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}"/>								
@@ -4144,7 +4144,7 @@
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										onclick="PrimeFaces.monitorDownload(start, stop);"
+										
 										icon="ui-icon-arrowthick-1-s">
 										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 									</p:commandButton>
@@ -4167,7 +4167,7 @@
 
 								<p:column style="width:100px;">
 									<p:commandButton value="Download" ajax="false"
-										onclick="PrimeFaces.monitorDownload(start, stop);"
+										
 										icon="ui-icon-arrowthick-1-s">
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
