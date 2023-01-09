@@ -1953,12 +1953,6 @@
 		<property name="contratoEmCartorioUsuario" type="java.lang.String">
 			<column name="contratoEmCartorioUsuario" />
 		</property>
-		<property name="valorEmprestimo" type="big_decimal">
-			<column name="valorEmprestimo"/>
-		</property>		
-		<property name="avaliacaoEquipeLaudo" type="java.lang.String">
-			<column name="avaliacaoEquipeLaudo" />
-		</property>
 		
 		<property name="baixadoData" type="java.util.Date">
 			<column name="baixadoData" />

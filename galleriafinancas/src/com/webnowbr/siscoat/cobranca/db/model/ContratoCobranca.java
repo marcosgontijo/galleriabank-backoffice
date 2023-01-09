@@ -5912,14 +5912,6 @@ public class ContratoCobranca implements Serializable {
 	public void setBaixadoUsuario(String baixadoUsuario) {
 		this.baixadoUsuario = baixadoUsuario;
 	}
-	
-	public BigDecimal getValorEmprestimo() {
-		return valorEmprestimo;
-	}
-
-	public void setValorEmprestimo(BigDecimal valorEmprestimo) {
-		this.valorEmprestimo = valorEmprestimo;
-	}
 
 	public String getAvaliacaoEngenharia() {
 		return avaliacaoEngenharia;
