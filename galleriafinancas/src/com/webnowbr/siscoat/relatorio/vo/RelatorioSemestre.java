@@ -19,6 +19,7 @@ public class RelatorioSemestre implements Serializable {
 	private BigDecimal valorAmortizacao;
 	private BigDecimal valorCapitalizacao;
 	private String indiceContratoRelatorio;
+	private String indiceNovoContratoRelatorio;
 	
 	
 	public RelatorioSemestre() {
@@ -115,6 +116,14 @@ public class RelatorioSemestre implements Serializable {
 	
 	public void setValorCapitalizacao(BigDecimal valorCapitalizacao) {
 		this.valorCapitalizacao = valorCapitalizacao;
+	}
+
+	public String getIndiceNovoContratoRelatorio() {
+		return indiceNovoContratoRelatorio;
+	}
+	
+	public void setIndiceNovoContratoRelatorio(String indiceNovoContratoRelatorio) {
+		this.indiceNovoContratoRelatorio = indiceNovoContratoRelatorio;
 	}
 	
 }

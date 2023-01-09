@@ -13,7 +13,7 @@ import com.webnowbr.siscoat.relatorio.vo.RelatorioSemestre;
 
 public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long> {
 
-	private static final String QUERY_CONTRATOS_RECEBER = " select coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA"
+	private static final String QUERY_CONTRATOS_RECEBER = " select coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA, corrigidonovoipca "
 			+ " from cobranca.contratocobranca coco "
 			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
 			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false "
@@ -165,6 +165,13 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 						} else {
 							relatorio.setIndiceContratoRelatorio("Não");
 						}
+						
+						if (rs.getBoolean("corrigidonovoipca")) {
+							relatorio.setIndiceNovoContratoRelatorio("Sim");
+						} else {
+							relatorio.setIndiceNovoContratoRelatorio("Não");
+						}
+						
 						objects.add(relatorio);
 					}
 
@@ -210,7 +217,7 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 							relatorio.setIndiceContratoRelatorio("Sim");
 						} else {
 							relatorio.setIndiceContratoRelatorio("Não");
-						}
+						}	
 
 						if (SiscoatConstants.PAGADOR_GALLERIA.contains(rs.getBigDecimal("pagador").longValue())) {
 							relatorio.setTipoPagadorRelatorio("Debênture");
