@@ -77,7 +77,8 @@ public class RelatorioSemestralMB {
 		gravaCelula(3, "Valor da parcela", linha);
 		gravaCelula(4, "Taxa", linha);
 		gravaCelula(5, "Índice", linha);
-		gravaCelula(6, "Empresa", linha);
+		gravaCelula(6, "Índice NOVO", linha);
+		gravaCelula(7, "Empresa", linha);
 
 		iLinha++;
 
@@ -96,7 +97,8 @@ public class RelatorioSemestralMB {
 			gravaCelula(3, relatorio.getValorContratoRelatorio(), linha);
 			gravaCelula(4, relatorio.getTaxaContratoRelatorio(), linha);
 			gravaCelula(5, relatorio.getIndiceContratoRelatorio(), linha);
-			gravaCelula(6, relatorio.getEmpresaContratoRelatorio(), linha);
+			gravaCelula(6, relatorio.getIndiceNovoContratoRelatorio(), linha);
+			gravaCelula(7, relatorio.getEmpresaContratoRelatorio(), linha);
 
 			iLinha++;
 		}
@@ -141,10 +143,13 @@ public class RelatorioSemestralMB {
 		gravaCelula(1, "Pagador", linha);
 		gravaCelula(2, "Data de Vencimento da Parcela", linha);
 		gravaCelula(3, "Valor da parcela", linha);
-		gravaCelula(4, "Taxa", linha);
-		gravaCelula(5, "Índice", linha);
-		gravaCelula(6, "Empresa", linha);
-		gravaCelula(7, "Tipo Pagador", linha);
+		gravaCelula(4, "Amortização", linha);
+		gravaCelula(5, "Capitalização", linha);
+		gravaCelula(6, "Taxa Contrato", linha);
+		gravaCelula(7, "Taxa Investidor", linha);
+		gravaCelula(8, "Índice", linha);
+		gravaCelula(9, "Empresa", linha);
+		gravaCelula(10, "Tipo Pagador", linha);
 
 		iLinha++;
 
@@ -161,10 +166,13 @@ public class RelatorioSemestralMB {
 			gravaCelula(1, relatorio.getNomePagadorRelatorio(), linha);
 			gravaCelula(2, relatorio.getDataVencimentoRelatorio(), linha);
 			gravaCelula(3, relatorio.getValorContratoRelatorio(), linha);
-			gravaCelula(4, relatorio.getTaxaContratoRelatorio(), linha);
-			gravaCelula(5, relatorio.getIndiceContratoRelatorio(), linha);
-			gravaCelula(6, relatorio.getEmpresaContratoRelatorio(), linha);
-			gravaCelula(7, relatorio.getTipoPagadorRelatorio(), linha);
+			gravaCelula(4, relatorio.getValorAmortizacao(), linha);
+			gravaCelula(5, relatorio.getValorCapitalizacao(), linha);
+			gravaCelula(6, relatorio.getTaxaContratoRelatorio(), linha);
+			gravaCelula(7, relatorio.getTaxaInvestidor(), linha);
+			gravaCelula(8, relatorio.getIndiceContratoRelatorio(), linha);
+			gravaCelula(9, relatorio.getEmpresaContratoRelatorio(), linha);
+			gravaCelula(10, relatorio.getTipoPagadorRelatorio(), linha);
 
 			iLinha++;
 		}
