@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui" template="./MenuManutencao.xhtml">
 	<ui:define name="conteudo">
 		<h:form id="form">
@@ -400,8 +401,14 @@
 				
 				<p:panel id="Responsaveis" header="Acesso aos dados do(s) Responsável(eis):"
 					style="margin-bottom:10px;">
-					<h:panelGrid columns="2">
-						 <p:selectCheckboxMenu id="responsavelList" value="#{usuarioMB.selectedResponsaveis}" label="Selecione os responsáveis ..."
+					<h:panelGrid columns="1">
+					
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton value="Carrega Listagem" icon="ui-icon-check"
+								action="#{usuarioMB.atualizaListagem}" style="TEXT-DECORATION: bold;" />
+						</shiro:hasAnyRoles>
+
+						<p:selectCheckboxMenu id="responsavelList" value="#{usuarioMB.selectedResponsaveis}" label="Selecione os responsáveis ..."
 		                              filter="true" filterMatchMode="contains" panelStyle="width:550px" style="width:550px;"  converter="ResponsavelConverter">
 				            <f:selectItems value="#{usuarioMB.responsaveis}" var="resp" itemLabel="#{resp.nome}" itemValue="#{resp}" />
 				        </p:selectCheckboxMenu>
@@ -410,7 +417,7 @@
 				
 				<p:panel id="GoogleAuthenticator" header="Google Authenticator"
 					style="margin-bottom:10px;">
-					<h:panelGrid columns="2">
+					<h:panelGrid columns="1">
 						<h:outputLabel for="twofactor" value="Habilitar Autenticação Google: " />
 						<p:selectBooleanButton id="twofactor" value="#{usuarioMB.objetoUsuario.twoFactorAuth}" onLabel="Sim" offLabel="Não" style="width:60px" />
 						<h:outputLabel for="qrCode" value="QR Code: " />

@@ -595,6 +595,12 @@ public class UsuarioMB {
 		uDao.popularListaResponsavel();
 	}
 	
+	public void atualizaListagem() {
+		UserDao userDao = new UserDao();
+		userDao.carregarListaResponsavel(objetoUsuario);
+		selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+	}
+			
 	
 	/**
 	 * @return the lazyModel

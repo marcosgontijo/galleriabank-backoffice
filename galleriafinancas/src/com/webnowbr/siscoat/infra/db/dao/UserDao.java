@@ -3,7 +3,10 @@ package com.webnowbr.siscoat.infra.db.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.db.dao.*;
 import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
@@ -50,4 +53,45 @@ public class UserDao extends HibernateDao<User, Long> {
 			}
 		});	
 	}	
+
+	private final String QUERY_LISTA_RESP = "select	r.id, r.nome  from 	cobranca.responsavel r"
+			+ " inner join cobranca.responsavel r2 on r2.id = r.donoresponsavel  where 	r2.codigo  = ?";
+
+	@SuppressWarnings("unchecked")
+	public void carregarListaResponsavel(User u) {
+		executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					
+					String query_QUERY_GET_GUARDA_CHUVA = QUERY_LISTA_RESP;
+			
+					ps = connection.prepareStatement(query_QUERY_GET_GUARDA_CHUVA);		
+					ps.setString(1, u.getCodigoResponsavel());
+					rs = ps.executeQuery();
+			
+					ResponsavelDao rDao = new ResponsavelDao();
+					while (rs.next()) {
+						//if(!u.getListResponsavel().contains(rs.getLong("id"))) {
+						Responsavel r = rDao.findById(rs.getLong("id"));
+						//}
+							
+						if(!u.getListResponsavel().contains(r)) {
+							u.getListResponsavel().add(r);
+						}	
+					}
+					
+					UserDao uDao = new UserDao();
+					uDao.merge(u);
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return null;
+			}
+		});	
+	}
 }
