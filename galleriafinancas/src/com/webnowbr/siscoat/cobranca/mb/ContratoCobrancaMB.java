@@ -4401,7 +4401,6 @@ public class ContratoCobrancaMB {
 			// Bia (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 359);
-
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
 			template, 
 			nomeCliente,
@@ -4413,10 +4412,10 @@ public class ContratoCobrancaMB {
 	
 	public void enviarWhatsappLuis(String template, String nomeCliente, String numeroContrato, String taxaAprovada, String prazoAprovado) {
 		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {			
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 6)
@@ -4433,17 +4432,26 @@ public class ContratoCobrancaMB {
 						taxaAprovada,
 						prazoAprovado);
 			}
-			// Jaque (assistente Luis) (não é mais)
-			/*
+			
+			// Jaque (assistente Luis) (agr é de novo)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 689);
-
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
 			template, 
 			nomeCliente,
 			numeroContrato,
 			taxaAprovada,
-			prazoAprovado);*/
+			prazoAprovado);
+			
+			// Fernanda (assistente Luis) (agr é de novo)
+			Responsavel rAssistente2 = new Responsavel();
+			rAssistente2 = rDao.findById((long) 689);
+			takeBlipMB.sendWhatsAppMessage(rAssistente2,
+			template, 
+			nomeCliente,
+			numeroContrato,
+			taxaAprovada,
+			prazoAprovado);			
 		}
 	}
 	
@@ -4470,7 +4478,7 @@ public class ContratoCobrancaMB {
 						prazoAprovado);
 			}
 			
-			// Thais Vieira (assistente Eric e Fabio Moron)
+			// Lennara (assistente Eric e Fabio Moron)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 102);
 
