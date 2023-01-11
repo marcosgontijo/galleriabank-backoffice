@@ -382,6 +382,17 @@ public class InvestidorMB {
 					this.labelAnoBase = "Valor em 31/12/2021";
 					this.labelAnoAnterior = "Valor em 31/12/2020";
 				}
+				
+				if (this.anoBase.equals("2022")) {
+					this.dataInicio = format.parse("31/12/2021");
+					this.dataFim = format.parse("31/12/2022");
+
+					dataInicioAnterior = format.parse("31/12/2020");
+					dataFimAnterior = format.parse("31/12/2021");
+
+					this.labelAnoBase = "Valor em 31/12/2022";
+					this.labelAnoAnterior = "Valor em 31/12/2021";
+				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
