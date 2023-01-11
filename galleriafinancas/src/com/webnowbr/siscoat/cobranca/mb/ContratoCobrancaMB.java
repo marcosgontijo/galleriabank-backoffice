@@ -4889,6 +4889,33 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setDocumentosCompletosUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isReanalisePronta()) {
+			this.objetoContratoCobranca.setReanaliseProntaData(null);
+			this.objetoContratoCobranca.setReanaliseProntaUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getReanaliseProntaData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setReanaliseProntaData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getReanaliseProntaData());
+				this.objetoContratoCobranca.setReanaliseProntaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isReanaliseJuridico()) {
+			this.objetoContratoCobranca.setReanaliseJuridicoData(null);
+			this.objetoContratoCobranca.setReanaliseJuridicoUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getReanaliseJuridicoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setReanaliseJuridicoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getReanaliseJuridicoData());
+				this.objetoContratoCobranca.setReanaliseJuridicoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setReanalise(false);
+			}
+		}
 
 		if (!this.objetoContratoCobranca.isCcbPronta()) {
 			this.objetoContratoCobranca.setCcbProntaData(null);
@@ -8509,7 +8536,8 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isAnaliseComercial() &&
 						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
 						this.objetoContratoCobranca.isAprovadoComite() &&
-						!this.objetoContratoCobranca.isDocumentosCompletos()) {
+						(!this.objetoContratoCobranca.isDocumentosCompletos()
+							|| this.objetoContratoCobranca.isReanalise())) {
 					this.indexStepsStatusContrato = 8;
 				}
 				
@@ -8521,7 +8549,8 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isAnaliseComercial() &&
 						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
 						this.objetoContratoCobranca.isDocumentosCompletos() &&
-						this.objetoContratoCobranca.isAprovadoComite() &&
+						this.objetoContratoCobranca.isAprovadoComite()&&
+						!this.objetoContratoCobranca.isReanalise() &&
 						!this.objetoContratoCobranca.isCcbPronta()) {
 					this.indexStepsStatusContrato = 9;
 				}
@@ -12022,11 +12051,25 @@ public class ContratoCobrancaMB {
 							&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
 						c.setStatus("Ag. DOC");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isReanalise() && !c.isReanalisePronta()) {
+						c.setStatus("Ag. Reanalise");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
+						c.setStatus("Ag. Reanalise Juridico");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& !c.isCcbPronta()) {
+							&& !c.isReanalise() && !c.isCcbPronta()) {
 						c.setStatus("Ag. CCB");
 					}
 					
@@ -12179,6 +12222,12 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Ag. DOC")) {
 			this.tituloTelaConsultaPreStatus = "Ag. DOC";
+		}
+		if (status.equals("Ag. Reanalise")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Reanalise";
+		}
+		if (status.equals("Ag. Reanalise Juridico")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Reanalise Juridico";
 		}
 		if (status.equals("Ag. CCB")) {
 			this.tituloTelaConsultaPreStatus = "Ag. CCB";

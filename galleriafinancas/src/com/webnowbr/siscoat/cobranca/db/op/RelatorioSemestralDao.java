@@ -163,13 +163,11 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 						if (rs.getBoolean("corrigidoIPCA")) {
 							relatorio.setIndiceContratoRelatorio("Sim");
 						} else {
-							relatorio.setIndiceContratoRelatorio("Não");
-						}
-						
-						if (rs.getBoolean("corrigidonovoipca")) {
-							relatorio.setIndiceNovoContratoRelatorio("Sim");
-						} else {
-							relatorio.setIndiceNovoContratoRelatorio("Não");
+							if (rs.getBoolean("corrigidonovoipca")) {
+								relatorio.setIndiceContratoRelatorio("Sim");
+							} else {
+								relatorio.setIndiceContratoRelatorio("Não");
+							}
 						}
 						
 						objects.add(relatorio);

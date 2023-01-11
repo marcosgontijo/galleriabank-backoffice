@@ -976,11 +976,25 @@ public class CRMMB {
 							&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
 						c.setStatus("Ag. DOC");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isReanalise() && !c.isReanalisePronta()) {
+						c.setStatus("Ag. Reanalise");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
+						c.setStatus("Ag. Reanalise Juridico");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& !c.isCcbPronta()) {
+							&& !c.isReanalise() && !c.isCcbPronta()) {
 						c.setStatus("Ag. CCB");
 					}
 

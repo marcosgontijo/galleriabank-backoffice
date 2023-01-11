@@ -78,7 +78,7 @@
 
 				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">
 					<p:panel id="Status" header="Check-List"
-						style="margin-bottom:20px;">
+						style="margin-bottom:20px;" toggleable="true" toggleableHeader="true">
 						<h:panelGrid columns="7" style="margin-top:20px;">
 							<shiro:hasAnyRoles name="ROOT">
 								<h:panelGrid columns="2" style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
@@ -949,6 +949,78 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+							
+							<h:panelGrid columns="2"
+								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
+								<p:spacer></p:spacer>
+								<shiro:hasAnyRoles name="PRECOBRANCA">
+									<p:selectBooleanButton id="reanaliseProntaView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+									<p:selectBooleanButton id="reanalisePronta"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px" />
+								</shiro:hasAnyRoles>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="reanaliseProntaUsuario"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaUsuario}"
+									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								<h:outputText id="reanaliseProntaData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2"
+								style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+									-moz-border-radius: 5px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
+								<p:spacer></p:spacer>
+								<shiro:hasAnyRoles name="PRECOBRANCA">
+									<p:selectBooleanButton id="reanaliseJuridicoView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+									<p:selectBooleanButton id="reanaliseJuridico"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px" />
+								</shiro:hasAnyRoles>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:spacer height="7"></p:spacer>
+								<p:outputLabel>Atualizado por: </p:outputLabel>
+								<p:spacer height="7"></p:spacer>
+								<h:outputText id="reanaliseJuridicoUsuario"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoUsuario}"
+									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								<h:outputText id="reanaliseJuridicoData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+						</h:panelGrid>
+						
+						<h:panelGrid columns="5" style="margin-top:20px; margin-bottom: 20px;">						
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -1022,10 +1094,7 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
-							</h:panelGrid>
-						</h:panelGrid>
-						
-						<h:panelGrid columns="4" style="margin-top:20px; margin-bottom: 20px;">						
+							</h:panelGrid>							
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -1093,8 +1162,7 @@
 									<f:convertDateTime locale="pt_BR" />
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
-							</h:panelGrid>
-							
+							</h:panelGrid>					
 							<h:panelGrid columns="2"
 								style="background-color: #e4e4e4; margin-left: 20px; width: 250px; height: 110px; -webkit-border-radius: 5px;
 									-moz-border-radius: 5px;
@@ -1130,6 +1198,10 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="4"
+							style="margin-top:20px; margin-bottom: 20px;">
 							<h:panelGrid columns="2"
 								style="margin-left: 20px;background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -1160,6 +1232,7 @@
 								</shiro:hasAnyRoles>
 							</h:panelGrid>
 						</h:panelGrid>
+						
 					</p:panel>
 				</shiro:hasAnyRoles>
 				

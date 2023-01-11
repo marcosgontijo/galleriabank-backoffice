@@ -213,6 +213,7 @@
 										<f:selectItem itemValue="" itemLabel="" />
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
+										<p:ajax update="pedirLaudoBtn" event="valueChange" />
 									</p:selectOneMenu>
 								</shiro:hasAnyRoles>
 									
@@ -222,6 +223,7 @@
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}">Laudo Pedido: </p:outputLabel>								
 								<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
 									onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+									disabled="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq null or contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq ''}"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
 									and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Galache'}" />								
 								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">

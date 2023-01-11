@@ -419,6 +419,17 @@ public class ContratoCobranca implements Serializable {
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
 	private String documentosCompletosUsuario;
+	
+	//
+	private boolean reanalise;
+	
+	private Date reanaliseProntaData;
+	private boolean reanalisePronta;
+	private String reanaliseProntaUsuario;
+	
+	private Date reanaliseJuridicoData;
+	private boolean reanaliseJuridico;
+	private String reanaliseJuridicoUsuario;
 
 	private Date ccbProntaData;
 	private boolean ccbPronta;
@@ -5952,4 +5963,61 @@ public class ContratoCobranca implements Serializable {
 	public void setProcessosPajuInterno(String processosPajuInterno) {
 		this.processosPajuInterno = processosPajuInterno;
 	}
+
+	public boolean isReanalise() {
+		return reanalise;
+	}
+
+	public void setReanalise(boolean reanalise) {
+		this.reanalise = reanalise;
+	}
+
+	public Date getReanaliseProntaData() {
+		return reanaliseProntaData;
+	}
+
+	public void setReanaliseProntaData(Date reanaliseProntaData) {
+		this.reanaliseProntaData = reanaliseProntaData;
+	}
+
+	public boolean isReanalisePronta() {
+		return reanalisePronta;
+	}
+
+	public void setReanalisePronta(boolean reanalisePronta) {
+		this.reanalisePronta = reanalisePronta;
+	}
+
+	public String getReanaliseProntaUsuario() {
+		return reanaliseProntaUsuario;
+	}
+
+	public void setReanaliseProntaUsuario(String reanaliseProntaUsuario) {
+		this.reanaliseProntaUsuario = reanaliseProntaUsuario;
+	}
+
+	public Date getReanaliseJuridicoData() {
+		return reanaliseJuridicoData;
+	}
+
+	public void setReanaliseJuridicoData(Date reanaliseJuridicoData) {
+		this.reanaliseJuridicoData = reanaliseJuridicoData;
+	}
+
+	public boolean isReanaliseJuridico() {
+		return reanaliseJuridico;
+	}
+
+	public void setReanaliseJuridico(boolean reanaliseJuridico) {
+		this.reanaliseJuridico = reanaliseJuridico;
+	}
+
+	public String getReanaliseJuridicoUsuario() {
+		return reanaliseJuridicoUsuario;
+	}
+
+	public void setReanaliseJuridicoUsuario(String reanaliseJuridicoUsuario) {
+		this.reanaliseJuridicoUsuario = reanaliseJuridicoUsuario;
+	}
+	
 }
