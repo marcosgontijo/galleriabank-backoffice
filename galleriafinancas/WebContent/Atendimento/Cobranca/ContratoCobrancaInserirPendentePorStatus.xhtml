@@ -262,13 +262,40 @@
 									</ui:fragment>						
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
 										<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
-											-moz-border-radius: 5px;
-											border-radius: 5px; padding: 10px;">	
+											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.reanalise}">	
 											<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
 											<p:spacer ></p:spacer>		
 											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-												<p:selectBooleanButton id="documentosCompletos" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+												<p:selectBooleanButton id="documentosCompletos" value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
+												 onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+												 <p:spacer ></p:spacer>	
+												 <p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
+												 <p:selectBooleanButton id="precisaReanalise" value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
+												 onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
 											</shiro:hasAnyRoles>													    						    
+										</h:panelGrid>
+										<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
+											and !contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">	
+											<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
+											<p:spacer></p:spacer>		
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+										        <p:selectBooleanButton id="reanalisePronta" value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+										         onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+											</shiro:hasAnyRoles>													    						    
+										</h:panelGrid>
+										<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
+											and contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">	
+											<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
+											<p:spacer></p:spacer>		
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+										        <p:selectBooleanButton id="reanaliseJuridico" value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+										         onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+										    </shiro:hasAnyRoles>													    						    
 										</h:panelGrid>
 									</ui:fragment>															
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 9}">
@@ -296,8 +323,7 @@
 												</p:selectBooleanButton>
 											</shiro:hasAnyRoles>														    						    
 										</h:panelGrid>									
-									</ui:fragment>
-									
+									</ui:fragment>						
 									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">						
 										<h:panelGrid columns="2" style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px;

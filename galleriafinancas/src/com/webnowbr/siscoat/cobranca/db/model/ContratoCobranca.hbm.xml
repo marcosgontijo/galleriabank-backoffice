@@ -1979,6 +1979,34 @@
 		<property name="processosPajuInterno" type="text">
 			<column name="processosPajuInterno" />
 		</property>
+		
+		<property name="reanalise" type="boolean">
+			<column name="reanalise" not-null="true" default="false"/>
+		</property>
+		
+		<property name="reanaliseProntaData" type="java.util.Date">
+			<column name="reanaliseProntaData" />
+		</property>
+		
+		<property name="reanalisePronta" type="boolean">
+			<column name="reanalisePronta" not-null="true" default="false"/>
+		</property>
+		
+		<property name="reanaliseProntaUsuario" type="java.lang.String">
+			<column name="reanaliseProntaUsuario" />
+		</property>
+		
+		<property name="reanaliseJuridicoData" type="java.util.Date">
+			<column name="reanaliseJuridicoData" />
+		</property>
+		
+		<property name="reanaliseJuridico" type="boolean">
+			<column name="reanaliseJuridico" not-null="true" default="false"/>
+		</property>
+		
+		<property name="reanaliseJuridicoUsuario" type="java.lang.String">
+			<column name="reanaliseJuridicoUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>

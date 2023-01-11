@@ -549,6 +549,9 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 								<p:spacer height="10" />
+									<p:commandButton value="Arquivos" icon="ui-icon-print"
+										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
+										ajax="true" update=":form:ContasPagarPanel" />
 								<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
