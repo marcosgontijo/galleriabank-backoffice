@@ -1953,15 +1953,31 @@
 		<property name="contratoEmCartorioUsuario" type="java.lang.String">
 			<column name="contratoEmCartorioUsuario" />
 		</property>
-		<property name="valorEmprestimo" type="big_decimal">
-			<column name="valorEmprestimo"/>
-		</property>
 		
 		<property name="baixadoData" type="java.util.Date">
 			<column name="baixadoData" />
 		</property>
 		<property name="baixadoUsuario" type="java.lang.String">
 			<column name="baixadoUsuario" />
+		</property>
+		
+		<property name="valorEmprestimo" type="big_decimal">
+			<column name="valorEmprestimo"/>
+		</property>		
+		<property name="avaliacaoEquipeLaudo" type="java.lang.String">
+			<column name="avaliacaoEquipeLaudo" />
+		</property>
+		<property name="avaliacaoEngenharia" type="java.lang.String">
+			<column name="avaliacaoEngenharia" />
+		</property>
+		<property name="qtdeVotosNecessariosComite" type="big_integer">
+			<column name="qtdeVotosNecessariosComite" />
+		</property>
+		<property name="processosPajuExterno" type="text">
+			<column name="processosPajuExterno" />
+		</property>	
+		<property name="processosPajuInterno" type="text">
+			<column name="processosPajuInterno" />
 		</property>
 
 	</class>

@@ -458,6 +458,7 @@ public class ContratoCobranca implements Serializable {
 	private String aprovadoComiteUsuario;
 	private BigInteger qtdeVotosAprovadosComite;
 	private BigInteger qtdeVotosReprovadosComite;
+	private BigInteger qtdeVotosNecessariosComite;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -597,6 +598,12 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
+	
+	private String avaliacaoEngenharia;
+	private String avaliacaoEquipeLaudo;
+	
+	private String processosPajuExterno;
+	private String processosPajuInterno;
 	
 	private BigDecimal taxaAprovada;
 	private BigInteger prazoMaxAprovado;
@@ -5905,6 +5912,44 @@ public class ContratoCobranca implements Serializable {
 	public void setBaixadoUsuario(String baixadoUsuario) {
 		this.baixadoUsuario = baixadoUsuario;
 	}
-	
-	
+
+	public String getAvaliacaoEngenharia() {
+		return avaliacaoEngenharia;
+	}
+
+	public void setAvaliacaoEngenharia(String avaliacaoEngenharia) {
+		this.avaliacaoEngenharia = avaliacaoEngenharia;
+	}
+
+	public String getAvaliacaoEquipeLaudo() {
+		return avaliacaoEquipeLaudo;
+	}
+
+	public void setAvaliacaoEquipeLaudo(String avaliacaoEquipeLaudo) {
+		this.avaliacaoEquipeLaudo = avaliacaoEquipeLaudo;
+	}
+
+	public BigInteger getQtdeVotosNecessariosComite() {
+		return qtdeVotosNecessariosComite;
+	}
+
+	public void setQtdeVotosNecessariosComite(BigInteger qtdeVotosNecessariosComite) {
+		this.qtdeVotosNecessariosComite = qtdeVotosNecessariosComite;
+	}
+
+	public String getProcessosPajuExterno() {
+		return processosPajuExterno;
+	}
+
+	public void setProcessosPajuExterno(String processosPajuExterno) {
+		this.processosPajuExterno = processosPajuExterno;
+	}
+
+	public String getProcessosPajuInterno() {
+		return processosPajuInterno;
+	}
+
+	public void setProcessosPajuInterno(String processosPajuInterno) {
+		this.processosPajuInterno = processosPajuInterno;
+	}
 }

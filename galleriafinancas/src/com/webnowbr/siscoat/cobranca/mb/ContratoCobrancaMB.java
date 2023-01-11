@@ -4401,7 +4401,6 @@ public class ContratoCobrancaMB {
 			// Bia (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 359);
-
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
 			template, 
 			nomeCliente,
@@ -4413,10 +4412,10 @@ public class ContratoCobrancaMB {
 	
 	public void enviarWhatsappLuis(String template, String nomeCliente, String numeroContrato, String taxaAprovada, String prazoAprovado) {
 		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 81)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 458)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 249)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(),(long) 506)) {			
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 6)
@@ -4433,17 +4432,26 @@ public class ContratoCobrancaMB {
 						taxaAprovada,
 						prazoAprovado);
 			}
-			// Jaque (assistente Luis) (não é mais)
-			/*
+			
+			// Jaque (assistente Luis) (agr é de novo)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 689);
-
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
 			template, 
 			nomeCliente,
 			numeroContrato,
 			taxaAprovada,
-			prazoAprovado);*/
+			prazoAprovado);
+			
+			// Fernanda (assistente Luis) (agr é de novo)
+			Responsavel rAssistente2 = new Responsavel();
+			rAssistente2 = rDao.findById((long) 689);
+			takeBlipMB.sendWhatsAppMessage(rAssistente2,
+			template, 
+			nomeCliente,
+			numeroContrato,
+			taxaAprovada,
+			prazoAprovado);			
 		}
 	}
 	
@@ -4470,7 +4478,7 @@ public class ContratoCobrancaMB {
 						prazoAprovado);
 			}
 			
-			// Thais Vieira (assistente Eric e Fabio Moron)
+			// Lennara (assistente Eric e Fabio Moron)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 102);
 
@@ -4850,6 +4858,8 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setDocumentosComiteData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getDocumentosComiteData());
 				this.objetoContratoCobranca.setDocumentosComiteUsuario(getNomeUsuarioLogado());
+				//gerarVotoLaudo(this.objetoContratoCobranca);
+				this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
 			}
 		}
 		
@@ -4863,7 +4873,6 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setAprovadoComiteData(gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getAprovadoComiteData());
 				concluirComite(this.objetoContratoCobranca);
-				
 				this.objetoContratoCobranca.setAprovadoComiteUsuario(getNomeUsuarioLogado());
 			}
 		}
@@ -8341,6 +8350,10 @@ public class ContratoCobrancaMB {
 				}
 			}
 			this.objetoAnaliseComite.setValorComite(valorSugerido);
+		}
+		
+		if(CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())){
+			this.objetoContratoCobranca.setProcessosQuitarComite(this.objetoContratoCobranca.getProcessosPajuInterno());
 		}
 	}
 
@@ -18227,6 +18240,93 @@ public class ContratoCobrancaMB {
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}	
 		contrato.setComentarioComite(comentarioComiteFinal);
+	}
+	
+	public void gerarVotoLaudo(ContratoCobranca contrato) {
+		if(CommonsUtil.semValor(contrato.getAvaliacaoEngenharia()) 
+				|| CommonsUtil.semValor(contrato.getAvaliacaoEquipeLaudo())) {
+			return;
+		}
+		
+		if(CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom") 
+				&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEquipeLaudo(), "Bom") ) {
+			AnaliseComite voto = new AnaliseComite();
+			voto.setTaxaComite(contrato.getTaxaPreAprovada());
+			voto.setPrazoMaxComite(contrato.getPrazoMaxPreAprovado());
+			voto.setValorComite(contrato.getQuantoPrecisa());
+			voto.setDataComite(gerarDataHoje());
+			voto.setUsuarioComite("Laudo");
+			voto.setTipoValorComite("bruto");
+			voto.setComentarioComite("Voto Gerado Pelo Sistema");
+			voto.setVotoAnaliseComite("Aprovado");			
+			contrato.getListaAnaliseComite().add(voto);
+		}
+	}
+	
+	public BigInteger definirQtdeVotoComite(ContratoCobranca contrato) {
+		//Se o valor solicitado no início for menor do que o solicitado pelo comercial, a operação irá precisar de 2 votos no comitê
+		if(!CommonsUtil.semValor(contrato.getValorEmprestimo()) 
+				&& contrato.getQuantoPrecisa().compareTo(contrato.getValorEmprestimo()) < 0 ) {
+			return BigInteger.valueOf(2);
+		}
+		
+		//Se o estado civil do cliente é Solteiro ou Divorciado e a taxa é acima de 1,59%, a operação irá precisar de 2 votos no comitê
+		if(CommonsUtil.semValor(contrato.getPagador().getEstadocivil())) {
+			return BigInteger.valueOf(2);
+		}
+		if((CommonsUtil.mesmoValor(contrato.getPagador().getEstadocivil(), "Solteiro") 
+				|| CommonsUtil.mesmoValor(contrato.getPagador().getEstadocivil(), "Divorciado")) 
+			&& contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.59)) > 0 ){
+			return BigInteger.valueOf(2);
+		}
+		
+		//Se a garantia for definida como imóvel comercial na análise, a operação irá precisar de 2 votos no comitê
+		if(contrato.getImovel().getTipo().contains("Comercial")) {
+			return BigInteger.valueOf(2);
+		}
+		
+		//Qualquer operação acima de 2mm precisa de 2 votos no comitê
+		if(contrato.getQuantoPrecisa().compareTo(BigDecimal.valueOf(2000000)) > 0) {
+			return BigInteger.valueOf(2);
+		}
+		
+		
+		//Se a garantia for definida como boa pela empresa de engenharia e pela equipe de Laudo e a garantia não for imóvel comercial,
+		//terreno ou chácara, operação pode ser aprovada com apenas 1 voto
+		if(!CommonsUtil.semValor(contrato.getAvaliacaoEngenharia()) 
+				&& !CommonsUtil.semValor(contrato.getAvaliacaoEquipeLaudo())) {
+			if(CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom") 
+					&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEquipeLaudo(), "Bom")) {
+				if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Prédio Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Sala Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Terreno")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Chácara")) {
+					return BigInteger.valueOf(1);
+				}
+			}
+		}
+		
+		//Apartamento ou casa em condomínio com taxa máxima de 1,39% pode ser aprovado com 50% de LTV com apenas 1 voto		
+		if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
+			BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
+			if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
+				if(ltv.compareTo(BigDecimal.valueOf(0.35)) <= 0) {				
+					return BigInteger.valueOf(1);									
+				}
+			}
+			if(!CommonsUtil.semValor(contrato.getValorMercadoImovel()) 
+					&& !CommonsUtil.semValor(contrato.getValorEmprestimo())
+					&& !CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {					
+				if(ltv.compareTo(BigDecimal.valueOf(0.5)) <= 0) {						
+					return BigInteger.valueOf(1);										
+				}
+			}
+		}
+		
+		//padrão
+		return BigInteger.valueOf(2);
 	}
 	
 	public void editarSocio(PagadorRecebedorSocio socio) {

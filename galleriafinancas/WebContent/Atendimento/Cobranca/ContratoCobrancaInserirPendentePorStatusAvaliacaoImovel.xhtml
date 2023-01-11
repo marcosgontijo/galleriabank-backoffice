@@ -204,6 +204,18 @@
 									cols="84" maxlength="3000" onblur=""
 									counterTemplate="{0} characters remaining." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+									
+								<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL">				
+									<p:outputLabel for="avaliacaoEngenharia"
+										value="O Imovel é: " styleClass="labelBold" />
+									<p:selectOneMenu id="avaliacaoEngenharia" required="true"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItem itemValue="Bom" itemLabel="Bom" />
+										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
+									</p:selectOneMenu>
+								</shiro:hasAnyRoles>
+								
 							</h:panelGrid>
 							<h:panelGrid columns="3">
 								<p:outputLabel styleClass="labelBold"
