@@ -145,9 +145,10 @@
 													|| contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU eq ' ')}">
 												<f:selectItem itemValue="" itemLabel="" />
 												<f:selectItem itemValue="No final" itemLabel="No final" 
-													itemDisabled="#{!(contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Apartamento' or 
-																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Casa' or
-																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Casa de Condomínio')}"/>
+													itemDisabled="#{(contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Terreno' or 
+																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Rural' or
+																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Casa em construção' or
+																	contratoCobrancaMB.objetoImovelCobranca.tipo eq 'Galpão')}"/>
 												<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
 											</p:selectOneMenu>
 											
