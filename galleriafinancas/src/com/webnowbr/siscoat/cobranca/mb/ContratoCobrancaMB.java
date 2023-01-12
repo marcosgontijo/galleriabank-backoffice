@@ -1700,7 +1700,7 @@ public class ContratoCobrancaMB {
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://backoffice.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target='_blank'>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -1959,7 +1959,7 @@ public class ContratoCobrancaMB {
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://backoffice.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target='_blank'>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -2021,13 +2021,13 @@ public class ContratoCobrancaMB {
 				+ "</td>";
 		
 		mensagemHtmlTeste = mensagemHtmlTeste + " </tr> ";
-
+		
 		mensagemHtmlTeste = mensagemHtmlTeste + " </tbody> " + " </table>" + " </td>" + " <td width='20'> </td>"
 				+ " </tr>" + " </tbod>" + " </table>" + " <br>"
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://backoffice.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target='_blank'>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -2112,7 +2112,7 @@ public class ContratoCobrancaMB {
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' href='http://backoffice.galleriabank.com.br/' target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;' target='_blank'>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -2885,6 +2885,7 @@ public class ContratoCobrancaMB {
 										""));
 						
 						CRMMB crmMb = new CRMMB();
+						enviaEmailCriacaoPreContratoNovo();
 
 						return crmMb.clearFieldsDetalhado();
 					} else {
@@ -2922,7 +2923,7 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e.getCause(), ""));
 		}
 		
-		enviaEmailCriacaoPreContratoNovo();
+		//enviaEmailCriacaoPreContratoNovo();
 		return null;
 	}
 
