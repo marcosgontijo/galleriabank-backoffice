@@ -278,18 +278,30 @@
 										<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
-											and !contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">	
-											<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
-											<p:spacer></p:spacer>		
-											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
-										        <p:selectBooleanButton id="reanalisePronta" value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
-										         onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
-											</shiro:hasAnyRoles>													    						    
+											and (!contratoCobrancaMB.objetoContratoCobranca.reanalisePronta 
+											or !contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado)}">	
+											<h:panelGrid columns="2">
+												<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
+												<p:spacer></p:spacer>		
+												<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											        <p:selectBooleanButton id="reanalisePronta" value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+											         onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+												</shiro:hasAnyRoles>
+											</h:panelGrid>		
+											<h:panelGrid columns="2">
+												<p:outputLabel styleClass="labelBold">PAJU Atualizado</p:outputLabel>
+												<p:spacer></p:spacer>		
+												<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									
+											        <p:selectBooleanButton id="pajuAtualizado" value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
+											         onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=60px"/>
+												</shiro:hasAnyRoles>
+											</h:panelGrid>													    						    
 										</h:panelGrid>
 										<h:panelGrid columns="2" style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
-											and contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">	
+											and contratoCobrancaMB.objetoContratoCobranca.reanalisePronta
+											and contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">	
 											<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
 											<p:spacer></p:spacer>		
 											<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">									

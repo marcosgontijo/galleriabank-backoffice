@@ -427,6 +427,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean reanalisePronta;
 	private String reanaliseProntaUsuario;
 	
+	private Date pajuAtualizadoData;
+	private boolean pajuAtualizado;
+	private String pajuAtualizadoUsuario;
+	
 	private Date reanaliseJuridicoData;
 	private boolean reanaliseJuridico;
 	private String reanaliseJuridicoUsuario;
@@ -6019,5 +6023,31 @@ public class ContratoCobranca implements Serializable {
 	public void setReanaliseJuridicoUsuario(String reanaliseJuridicoUsuario) {
 		this.reanaliseJuridicoUsuario = reanaliseJuridicoUsuario;
 	}
+
+	public Date getPajuAtualizadoData() {
+		return pajuAtualizadoData;
+	}
+
+	public void setPajuAtualizadoData(Date pajuAtualizadoData) {
+		this.pajuAtualizadoData = pajuAtualizadoData;
+	}
+
+	public boolean isPajuAtualizado() {
+		return pajuAtualizado;
+	}
+
+	public void setPajuAtualizado(boolean pajuAtualizado) {
+		this.pajuAtualizado = pajuAtualizado;
+	}
+
+	public String getPajuAtualizadoUsuario() {
+		return pajuAtualizadoUsuario;
+	}
+
+	public void setPajuAtualizadoUsuario(String pajuAtualizadoUsuario) {
+		this.pajuAtualizadoUsuario = pajuAtualizadoUsuario;
+	}
+	
+	
 	
 }
