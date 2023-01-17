@@ -2048,6 +2048,14 @@
 						selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
 						rowKey="#{parcelas.id}">
 
+						<f:facet name="header">
+							<p:commandButton onclick="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
+								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
+								update=":formBpGerarBoletoKobanaPARCELAS">
+							</p:commandButton>
+						</f:facet>
+						
+						<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
 						<p:column style="width:150px" headerText="Ações"
 							styleClass="colunaResponsivaRelFinanceiro">
@@ -2218,6 +2226,13 @@
 								<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
 							</ui:fragment>
 						</p:column>
+						
+						<f:facet name="footer">
+							<p:commandButton onclick="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
+								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
+								update=":formBpGerarBoletoKobanaPARCELAS">
+							</p:commandButton>
+						</f:facet>
 					</p:dataTable>
 				</p:panel>
 			</p:panel>
@@ -2707,6 +2722,82 @@
 						ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar"
 						update=":form:DetalheParcelas" />
 				</p:panel>
+			</h:form>
+		</p:dialog>
+		<p:dialog header="Gerar Boleto Kobana +PARCELAS"
+			widgetVar="bpGerarBoletoKobanaPARCELASDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="460">
+			<h:form id="formBpGerarBoletoKobanaPARCELAS">
+				<h:body onload="#{contratoCobrancaMB.calculaValorTotalBoleto()}">
+				<div style="float: left; width: 75%;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="numeroContrato" value="Número do Contrato:"
+							styleClass="labelBold" style="margin-right: 20px;" />
+						<h:outputText id="numeroContrato"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+							label="Número do Contrato"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:outputLabel value="Cedente:" styleClass="labelBold"
+							style="margin-right: 20px;" />
+						<p:outputLabel value="GALLERIA FINANÇAS" styleClass="labelBold"
+							style="margin-right: 20px;" />
+						<p:outputLabel for="dataVencimento" value="Data do Vencimento: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="dataVencimento"
+							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
+							required="true" label="Data do Vencimento" size="100"
+							pattern="dd/MM/yyyy" styleClass="dateTimeField">
+							<p:ajax event="dateSelect" update="formBpGerarBoletoKobana"
+								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
+						</p:calendar>
+					</h:panelGrid>
+						
+					<h:panelGrid columns="1">			
+						<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
+									value="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+									emptyMessage="Nenhuma parcela selecionada!!!">
+							<p:column style="text-align: center;"
+								headerText="Parcela">
+								<h:outputText value="#{parcelasSelecionadas.numeroParcela}"/>
+							</p:column>		
+							<p:column style="text-align: center;"
+								headerText="Valor">
+								<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
+							</p:column>		
+						</p:dataTable>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="3">
+						<p:outputLabel for="valorBoleto" value="Valor Total do Boleto: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 16px;" />
+						<p:inputText id="valorBoleto"
+							value="#{contratoCobrancaMB.valorBoleto}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+				</div>
+				<div style="float: right; width: 25%; text-align: right;">
+					<img src="#{resource['image/boleto.jpg']}" alt="" />
+				</div>
+				<div align="center"
+					style="margin-bottom: 10px; margin-top: 10px; width: 100%; float: left;">
+					<p:commandButton value="Gerar Boleto Kobana"
+						action="#{contratoCobrancaMB.geraBoletoMaisParcelasKobana(contratoCobrancaMB.objetoContratoCobranca,
+																	contratoCobrancaMB.selectedListContratoCobrancaDetalhes,
+																	contratoCobrancaMB.dataVencimentoBoleto,																	
+																	contratoCobrancaMB.valorBoleto)}"
+						update=":form:msgs :form:PanelRecibo :form:dtParcelas"
+						ajax="false" icon="ui-icon-print" title="Gerar Boleto IUGU">
+					</p:commandButton>
+					<p:spacer width="10" />
+					<p:commandButton value="Voltar"
+						icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').hide();" />
+				</div>
+				</h:body>
 			</h:form>
 		</p:dialog>
 		<p:dialog header="Gerar Boleto Kobana"
