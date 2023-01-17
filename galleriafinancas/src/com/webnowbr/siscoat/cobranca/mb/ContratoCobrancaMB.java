@@ -28972,6 +28972,19 @@ public class ContratoCobrancaMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
+		
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+				"comprovante_anexado", 
+				getNomeUsuarioLogado(),
+				this.objetoContratoCobranca.getNumeroContrato(),
+				event.getFile().getFileName());
+		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -29024,6 +29037,19 @@ public class ContratoCobrancaMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}		
+		
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+				"comprovante_anexado", 
+				getNomeUsuarioLogado(),
+				this.objetoContratoCobranca.getNumeroContrato(),
+				event.getFile().getFileName());
+		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
