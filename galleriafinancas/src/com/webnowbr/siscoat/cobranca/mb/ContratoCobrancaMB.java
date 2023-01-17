@@ -7733,6 +7733,11 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+				if(parcelas.getDataVencimento().before(getDataHoje())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+				}
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				
 				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
@@ -18370,20 +18375,22 @@ public class ContratoCobrancaMB {
 		}
 		
 		//Apartamento ou casa em condomínio com taxa máxima de 1,39% pode ser aprovado com 50% de LTV com apenas 1 voto		
-		if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
-			BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
-			if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
-					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
-					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
-				if(ltv.compareTo(BigDecimal.valueOf(0.35)) <= 0) {				
-					return BigInteger.valueOf(1);									
+		if(!CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {
+			if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
+				BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
+				if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
+						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
+						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
+					if(ltv.compareTo(BigDecimal.valueOf(0.35)) <= 0) {				
+						return BigInteger.valueOf(1);									
+					}
 				}
-			}
-			if(!CommonsUtil.semValor(contrato.getValorMercadoImovel()) 
-					&& !CommonsUtil.semValor(contrato.getValorEmprestimo())
-					&& !CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {					
-				if(ltv.compareTo(BigDecimal.valueOf(0.5)) <= 0) {						
-					return BigInteger.valueOf(1);										
+				if(!CommonsUtil.semValor(contrato.getValorMercadoImovel()) 
+						&& !CommonsUtil.semValor(contrato.getValorEmprestimo())
+						&& !CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {					
+					if(ltv.compareTo(BigDecimal.valueOf(0.5)) <= 0) {						
+						return BigInteger.valueOf(1);										
+					}
 				}
 			}
 		}
