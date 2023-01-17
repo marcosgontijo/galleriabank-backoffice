@@ -1032,6 +1032,22 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 	}
 	
+	public void geraBoletoMaisParcelasKobana(ContratoCobranca contrato, List<ContratoCobrancaDetalhes> parcelasSelecionadas, Date vencimento,
+			BigDecimal valor) {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (parcelasSelecionadas.size() > 0) {
+			this.kobanaMB.gerarBoletoMaisParcelasKobana(contrato, parcelasSelecionadas, vencimento, valor);
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
+		} else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Boleto Kobana - Nenhuma parcela selecionada!", ""));
+		}		
+	}
+	
 	public void emitirCCB() {
 		CcbMB ccbMb = new CcbMB();
 		ccbMb.clearFieldsInserirCcb();
@@ -3281,15 +3297,18 @@ public class ContratoCobrancaMB {
 				*/
 		
 		// "Pâmela Montesanti Demuci"
+		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		/*
 		responsavel = rDao.findById((long) 795);		
 		
-		TakeBlipMB takeBlipMB = new TakeBlipMB();
+		
 		takeBlipMB.sendWhatsAppMessage(responsavel,
 				"geracao_paju", 
 				"Neves e Maggioni",
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
+		*/
 		
 		// "Luciana Melara Alves Sant'Ana"
 		/*
@@ -3315,7 +3334,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
-		
+		/*
 		responsavel = rDao.findById((long) 793);	
 		
 		takeBlipMB = new TakeBlipMB();
@@ -3346,7 +3365,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.getNumeroContrato(),
 				this.objetoContratoCobranca.getPagador().getNome(),
 				"");
-	
+	*/
 	}
 	
 	public void notificaGalacheWhatsApp() {
@@ -9575,7 +9594,20 @@ public class ContratoCobrancaMB {
 		this.tituloPainel = ""; 
 		this.updatePagadorRecebedor = "";
 		
+		this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPerformance.xhtml";
+	}
+	
+	public void calculaValorTotalBoleto() {
+		// calcula o valor do boleto quando a geração é de mais de 1 parcela
+		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
+			this.valorBoleto = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
+				this.valorBoleto = this.valorBoleto.add(parcelasSelecionadas.getVlrParcela());				
+			}
+		}
 	}
 	
 	public void clearFiltersConsultaContratosPerformance() {

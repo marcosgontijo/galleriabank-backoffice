@@ -295,15 +295,39 @@ public class KobanaMB {
 					//if (boleto.getStatus().equals("Pago")) {						
 						if (objetoBoleto.has("custom_data")) {
 							if (!objetoBoleto.isNull("custom_data")) {
-							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
-
-							ContratoCobranca contrato = new ContratoCobranca();
-							contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
-							boleto.setContrato(contrato);
-							
-							ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
-							parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
-							boleto.setParcela(parcela);
+								JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
+	
+								ContratoCobranca contrato = new ContratoCobranca();
+								contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
+								boleto.setContrato(contrato);
+								
+								if (objetoDataBoleto.has("qtdeParcelas")) { 
+									if (objetoDataBoleto.getString("qtdeParcelas").equals("unica")) {
+										if (objetoDataBoleto.has("idParcela")) {
+											ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
+											parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+											boleto.setParcela(parcela);
+										}
+									} else {
+										// se gerou para mais de parcela
+										// aqui esta como baixar as parcelas
+										/*
+										int numeroParcelas = objetoDataBoleto.length() - 2;
+										List<ContratoCobrancaDetalhes> parcelasBoleto = new ArrayList<ContratoCobrancaDetalhes>();
+										ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+										
+										for (int j = 1; j <= numeroParcelas; j++) {
+											parcelasBoleto.add(cDao.findById((Long) objetoDataBoleto.get("idParcela/" + String.valueOf(j))));
+										}
+										*/
+									}
+								} else {
+									if (objetoDataBoleto.has("idParcela")) {
+										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
+										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+										boleto.setParcela(parcela);
+									}
+								}
 							}
 						}
 					//}
@@ -390,7 +414,7 @@ public class KobanaMB {
 
 			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
 
-			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, vencimento, valor);
+			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, vencimento, valor, null);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
@@ -461,6 +485,96 @@ public class KobanaMB {
 		}	
 	}
 	
+	public void gerarBoletoMaisParcelasKobana(ContratoCobranca contrato, List<ContratoCobrancaDetalhes> parcelasSelecionadas, Date vencimento,
+			BigDecimal valor) {
+		
+		try {		
+			FacesContext context = FacesContext.getCurrentInstance();
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
+
+			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, null, vencimento, valor, parcelasSelecionadas);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+			myURLConnection.setRequestProperty("User-Agent", "webnowbr@gmail.com");
+		     
+			myURLConnection.setDoOutput(true);
+			//myURLConnection.getOutputStream().write(postDataBytes);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = jsonObj.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);			
+			}
+	
+			JSONObject myResponse = null;
+			int status = myURLConnection.getResponseCode();
+			
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());			
+			
+			String urlBoleto = "";
+			
+			if (status == 201) {
+				if (myResponse.has("url")) {					
+					if (!myResponse.isNull("url")) {
+						urlBoleto = myResponse.getString("url");
+					}
+				}
+				
+				for (ContratoCobrancaDetalhes parcela : parcelasSelecionadas) {
+					updateParcelaBoletoKobana(parcela, urlBoleto);
+				}
+								
+				enviaWhatsAppBoletoKobana(contrato, urlBoleto); 
+			} else {
+				if (status == 401) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de autenticação. Token inválido!", ""));
+				}
+				if (status == 403) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
+				}
+				if (status == 422) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Geração Boleto] Boleto inválido!", ""));
+				}			
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[Kobana - Geração Boleto] Erro não conhecido!", ""));
+			}
+						
+			myURLConnection.disconnect();
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void updateParcelaBoletoKobana(ContratoCobrancaDetalhes parcela, String urlBoleto) {
+		ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
+		parcela.setUrlBoletoKonana(urlBoleto);
+		parcelaDao.merge(parcela);
+	}
+	
+	public void enviaWhatsAppBoletoKobana(ContratoCobranca contratoBoleto, String urlBoleto) {
+		TakeBlipMB tkblpMb = new TakeBlipMB();
+		PagadorRecebedor pagador;
+		pagador = contratoBoleto.getPagador();
+
+		tkblpMb.sendWhatsAppMessagePagadorBoleto(pagador, "envio_boleto_cobranca", urlBoleto);
+	}
+	
 	public void gerarBoletoSimplesCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, BigDecimal valorBoleto) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -484,7 +598,7 @@ public class KobanaMB {
 
 			URL myURL = new URL("https://api.kobana.com.br/v1/bank_billets");			
 
-			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, null, valoBoleto);
+			JSONObject jsonObj = getJSONBoletoKobanaCustom(contrato, parcela, null, valoBoleto, null);
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
@@ -555,7 +669,7 @@ public class KobanaMB {
 		}
 	}
 	
-	public JSONObject getJSONBoletoKobanaCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, Date vencimento, BigDecimal valorBoleto) {
+	public JSONObject getJSONBoletoKobanaCustom(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela, Date vencimento, BigDecimal valorBoleto, List<ContratoCobrancaDetalhes> parcelasSelecionadas) {
 		PagadorRecebedor cliente = contrato.getPagador();
 		
 		// Quantidade de dias após o vencimento que a mora começará a incidir. 
@@ -597,7 +711,20 @@ public class KobanaMB {
 	    /*
 	    Descrição
 	     */
-	    jsonBoleto.put("description", contrato.getNumeroContrato() + "/" + parcela.getNumeroParcela());
+	    if (parcela != null) {
+	    	jsonBoleto.put("description", contrato.getNumeroContrato() + "/" + parcela.getNumeroParcela());	
+	    } else {
+	    	String parcelas = "";
+	    	
+	    	for (ContratoCobrancaDetalhes parcelaSelecionada : parcelasSelecionadas) {
+	    		if (parcelas.equals("")) {
+	    			parcelas = parcelaSelecionada.getNumeroParcela();
+	    		} else {
+	    			parcelas = parcelas + " - " + parcelaSelecionada.getNumeroParcela();
+	    		}
+	    	}
+	    }
+	    
 		/*
 		Instruções
 		 */
@@ -610,10 +737,16 @@ public class KobanaMB {
 		/*
 		Data vencimento		
 		 */
-		if (vencimento != null) {
-			jsonBoleto.put("expire_at", getDataFormatada(vencimento));
+		if (parcela != null) {
+			if (vencimento != null) {
+				jsonBoleto.put("expire_at", getDataFormatada(vencimento));
+			} else {
+				jsonBoleto.put("expire_at", getDataFormatada(parcela.getDataVencimento()));
+			}
 		} else {
-			jsonBoleto.put("expire_at", getDataFormatada(parcela.getDataVencimento()));
+			if (vencimento != null) {
+				jsonBoleto.put("expire_at", getDataFormatada(vencimento));
+			}
 		}
 		/*
 		DADOS CLIENTE
@@ -695,10 +828,14 @@ public class KobanaMB {
 		1 Para percentual do valor do boleto
 		2 Para valor fixo  		 
 		 */
-		if (!parcela.isParcelaVencida()) {
-			jsonBoleto.put("fine_type", 1);	
+		if (parcela != null) {
+			if (!parcela.isParcelaVencida()) {
+				jsonBoleto.put("fine_type", 1);	
+			} else {
+				jsonBoleto.put("fine_type", 0);
+			}
 		} else {
-			jsonBoleto.put("fine_type", 0);
+			jsonBoleto.put("fine_type", 1);	
 		}
 		
 		/*
@@ -722,8 +859,23 @@ public class KobanaMB {
 		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		
 		JSONObject jsonCustomData = new JSONObject();
-		jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
-		jsonCustomData.put("idParcela", String.valueOf(parcela.getId()));
+		
+		if (parcela != null) {
+			jsonCustomData.put("qtdeParcelas", "unica");
+			
+			jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
+			jsonCustomData.put("idParcela", String.valueOf(parcela.getId()));
+		} else {
+			if (parcelasSelecionadas.size() > 0) {
+				jsonCustomData.put("qtdeParcelas", "varias");
+				
+				jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
+				
+				for (int i = 0; i < parcelasSelecionadas.size(); i++) {
+					jsonCustomData.put("idParcela/" + i, String.valueOf(parcelasSelecionadas.get(i).getId()));
+		    	}
+			}
+		}
 		
 		jsonBoleto.put("custom_data", jsonCustomData);
 		
