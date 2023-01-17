@@ -2007,6 +2007,18 @@
 		<property name="reanaliseJuridicoUsuario" type="java.lang.String">
 			<column name="reanaliseJuridicoUsuario" />
 		</property>
+		
+		<property name="pajuAtualizadoData" type="java.util.Date">
+			<column name="pajuAtualizadoData" />
+		</property>
+		
+		<property name="pajuAtualizado" type="boolean">
+			<column name="pajuAtualizado" not-null="true" default="false"/>
+		</property>
+		
+		<property name="pajuAtualizadoUsuario" type="java.lang.String">
+			<column name="pajuAtualizadoUsuario" />
+		</property>
 
 	</class>
 </hibernate-mapping>

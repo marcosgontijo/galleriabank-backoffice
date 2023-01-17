@@ -8441,7 +8441,7 @@ public class CcbMB {
 				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
@@ -9022,7 +9022,7 @@ public class CcbMB {
 				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ "));
+				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
