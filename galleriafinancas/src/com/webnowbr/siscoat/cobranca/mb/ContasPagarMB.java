@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -43,6 +44,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 @ManagedBean(name = "contasPagarMB")
 @SessionScoped
@@ -132,6 +136,19 @@ public class ContasPagarMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
+		
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+					"comprovante_anexado", 
+					getNomeUsuarioLogado(),
+					this.selectedContratoLov.getNumeroContrato(),
+					event.getFile().getFileName());
+		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -180,6 +197,19 @@ public class ContasPagarMB {
 			diretorio.mkdir();
 		}		
 
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+					"comprovante_anexado", 
+					getNomeUsuarioLogado(),
+					this.selectedContratoLov.getNumeroContrato(),
+					event.getFile().getFileName());
+		}
+		
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
@@ -777,13 +807,44 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setContaContabil(null);
 		this.selectedContaContabil = new ContaContabil();
 	}
-	
-	
 
 	public final void populateSelectedContaContabil() {
 		this.objetoContasPagar.setContaContabil(this.selectedContaContabil);
 	}
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
+	public String getNomeUsuarioLogado() {
+		User usuario = getUsuarioLogado();
 
+		if (usuario.getLogin() != null) {
+			if (!usuario.getLogin().equals("")) {
+				return usuario.getLogin();
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	public User getUsuarioLogado() {
+		User usuario = new User();
+		if (loginBean != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
+			}
+		}
+
+		return usuario;
+	}
+		
 	public List<ContasPagar> getContasPagar() {
 		return contasPagar;
 	}
@@ -995,6 +1056,12 @@ public class ContasPagarMB {
 	}
 	public void setDeleteFilesContas(List<FileUploaded> deleteFilesContas) {
 		this.deleteFilesContas = deleteFilesContas;
+	}
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
 	}
 	
 	

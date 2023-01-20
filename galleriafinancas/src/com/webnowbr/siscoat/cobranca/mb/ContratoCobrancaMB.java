@@ -9,10 +9,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -7465,7 +7467,38 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-
+	public void logPrimitivo() throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
+		// cria o diretório, caso não exista
+		File log = new File(pathContrato);
+		FileWriter fileWriter = new FileWriter(log, true);
+		PrintWriter printWriter = new PrintWriter(fileWriter);
+		
+		Date data = gerarDataHoje();		
+		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
+		
+		printWriter.println(dataStr + " " + Math.random());
+		printWriter.close();
+	}
+	
+	public void logPrimitivo(String msg) throws IOException {
+		ParametrosDao pDao = new ParametrosDao();
+		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
+		// cria o diretório, caso não exista
+		File log = new File(pathContrato);
+		FileWriter fileWriter = new FileWriter(log, true);
+		PrintWriter printWriter = new PrintWriter(fileWriter);
+		
+		Date data = gerarDataHoje();		
+		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
+		
+		printWriter.println(dataStr + " - " + msg);
+		printWriter.close();
+	}
+	
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -7752,6 +7785,11 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+				if(parcelas.getDataVencimento().before(getDataHoje())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+				}
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				
 				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
@@ -8150,6 +8188,13 @@ public class ContratoCobrancaMB {
 
 		saveEstadoCheckListAtual();
 
+		/*try {
+			logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " 
+					+ objetoContratoCobranca.getNumeroContrato() + " (" + objetoContratoCobranca.toString() + ")");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		
 		
 		if (this.baixarMode) {
@@ -8352,6 +8397,13 @@ public class ContratoCobrancaMB {
 			gerarRecomendacaoComite();
 		}
 
+		/*try {
+			logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " 
+					+ objetoContratoCobranca.getNumeroContrato() + " (" + objetoContratoCobranca.toString() + ")");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		
 		
 		User usuarioLogado = new User();
@@ -8727,6 +8779,14 @@ public class ContratoCobrancaMB {
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
 		// saveEstadoCheckListAtual();
+		
+		/*try {
+			logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " 
+					+ objetoContratoCobranca.getNumeroContrato() + " (" + objetoContratoCobranca.toString() + ")");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		
 		if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
@@ -18402,20 +18462,22 @@ public class ContratoCobrancaMB {
 		}
 		
 		//Apartamento ou casa em condomínio com taxa máxima de 1,39% pode ser aprovado com 50% de LTV com apenas 1 voto		
-		if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
-			BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
-			if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
-					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
-					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
-				if(ltv.compareTo(BigDecimal.valueOf(0.35)) <= 0) {				
-					return BigInteger.valueOf(1);									
+		if(!CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {
+			if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
+				BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
+				if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
+						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
+						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
+					if(ltv.compareTo(BigDecimal.valueOf(0.35)) <= 0) {				
+						return BigInteger.valueOf(1);									
+					}
 				}
-			}
-			if(!CommonsUtil.semValor(contrato.getValorMercadoImovel()) 
-					&& !CommonsUtil.semValor(contrato.getValorEmprestimo())
-					&& !CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {					
-				if(ltv.compareTo(BigDecimal.valueOf(0.5)) <= 0) {						
-					return BigInteger.valueOf(1);										
+				if(!CommonsUtil.semValor(contrato.getValorMercadoImovel()) 
+						&& !CommonsUtil.semValor(contrato.getValorEmprestimo())
+						&& !CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {					
+					if(ltv.compareTo(BigDecimal.valueOf(0.5)) <= 0) {						
+						return BigInteger.valueOf(1);										
+					}
 				}
 			}
 		}
@@ -28910,6 +28972,19 @@ public class ContratoCobrancaMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
+		
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+				"comprovante_anexado", 
+				getNomeUsuarioLogado(),
+				this.objetoContratoCobranca.getNumeroContrato(),
+				event.getFile().getFileName());
+		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -28962,6 +29037,19 @@ public class ContratoCobrancaMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}		
+		
+		if(event.getFile().getFileName().contains("Pag ")
+				|| event.getFile().getFileName().contains("PAG ")) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+			Responsavel rGerente = new Responsavel();
+			rGerente = rDao.findById((long) 1175); //camilo
+			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+				"comprovante_anexado", 
+				getNomeUsuarioLogado(),
+				this.objetoContratoCobranca.getNumeroContrato(),
+				event.getFile().getFileName());
+		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
