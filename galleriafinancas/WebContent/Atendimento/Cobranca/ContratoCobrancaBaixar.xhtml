@@ -2737,10 +2737,6 @@
 							value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
 							label="Número do Contrato"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:outputLabel value="Cedente:" styleClass="labelBold"
-							style="margin-right: 20px;" />
-						<p:outputLabel value="GALLERIA FINANÇAS" styleClass="labelBold"
-							style="margin-right: 20px;" />
 						<p:outputLabel for="dataVencimento" value="Data do Vencimento: "
 							styleClass="labelBold" style="margin-right: 59px;" />
 						<p:calendar id="dataVencimento"
@@ -2751,7 +2747,7 @@
 								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
 						</p:calendar>
 					</h:panelGrid>
-						
+
 					<h:panelGrid columns="1">			
 						<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
 									value="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"

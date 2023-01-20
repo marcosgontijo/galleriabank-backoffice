@@ -134,12 +134,17 @@
 					</p:column>
 					<p:column style="text-align: center;"
 						headerText="# Parcela / Baixada?">
-						<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
-							<h:outputText value="#{boleto.parcela.numeroParcela} / Sim" />
+						<ui:fragment rendered="#{boleto.parcela.id gt 0} ">
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+								<h:outputText value="#{boleto.parcela.numeroParcela} / Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+								<h:outputText value="#{boleto.parcela.numeroParcela} / Não" />
+							</ui:fragment>
 						</ui:fragment>
-						<ui:fragment rendered="#{!boleto.parcela.parcelaPaga}">
-							<h:outputText value="#{boleto.parcela.numeroParcela} / Não" />
-						</ui:fragment>
+						<ui:fragment rendered="#{boleto.parcela eq null}">
+							<h:outputText value="Multi-Parcelas" />
+						</ui:fragment>						
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
@@ -335,7 +340,7 @@
 				</div>
 			</h:form>
 		</p:dialog>
-				<p:dialog header="Recebedores" widgetVar="recebedorDialog"
+	    <p:dialog header="Recebedores" widgetVar="recebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			<h:form id="formRecebedores">
 				<p:dataTable id="recebedorDialogdlg" var="recebedorDialogdlg"

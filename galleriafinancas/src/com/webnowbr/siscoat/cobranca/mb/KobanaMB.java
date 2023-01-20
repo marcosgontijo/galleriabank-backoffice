@@ -320,6 +320,7 @@ public class KobanaMB {
 											parcelasBoleto.add(cDao.findById((Long) objetoDataBoleto.get("idParcela/" + String.valueOf(j))));
 										}
 										*/
+										boleto.setParcela(null);
 									}
 								} else {
 									if (objetoDataBoleto.has("idParcela")) {
@@ -708,26 +709,9 @@ public class KobanaMB {
 	     */
 	    jsonBoleto.put("document_number", contrato.getNumeroContrato());
 	    
-	    /*
-	    Descrição
-	     */
-	    if (parcela != null) {
-	    	jsonBoleto.put("description", contrato.getNumeroContrato() + "/" + parcela.getNumeroParcela());	
-	    } else {
-	    	String parcelas = "";
-	    	
-	    	for (ContratoCobrancaDetalhes parcelaSelecionada : parcelasSelecionadas) {
-	    		if (parcelas.equals("")) {
-	    			parcelas = parcelaSelecionada.getNumeroParcela();
-	    		} else {
-	    			parcelas = parcelas + " - " + parcelaSelecionada.getNumeroParcela();
-	    		}
-	    	}
-	    }
-	    
 		/*
 		Instruções
-		 */
+		*/
 	    //jsonBoleto.put("first_instruction", "");
 		//jsonBoleto.put("second_instruction", "");
 		/*
@@ -855,7 +839,25 @@ public class KobanaMB {
 		jsonBoleto.put("fine_percentage", fine_percentage);
 		//jsonBoleto.put("days_for_infine_valueterest", fine_value);
 		
-		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
+	    /*
+	    Descrição
+	     */
+	    String parcelas = "";
+	    if (parcela != null) {
+	    	parcelas = parcela.getNumeroParcela();
+	    } else {
+	    	parcelas = "";
+	    	
+	    	for (ContratoCobrancaDetalhes parcelaSelecionada : parcelasSelecionadas) {
+	    		if (parcelas.equals("")) {
+	    			parcelas = parcelaSelecionada.getNumeroParcela();
+	    		} else {
+	    			parcelas = parcelas + ", " + parcelaSelecionada.getNumeroParcela();
+	    		}
+	    	}
+	    }
+		
+		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
 		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		
 		JSONObject jsonCustomData = new JSONObject();
@@ -867,7 +869,7 @@ public class KobanaMB {
 			jsonCustomData.put("idParcela", String.valueOf(parcela.getId()));
 		} else {
 			if (parcelasSelecionadas.size() > 0) {
-				jsonCustomData.put("qtdeParcelas", "varias");
+				jsonCustomData.put("qtdeParcelas", "multiparcelas");
 				
 				jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));
 				
