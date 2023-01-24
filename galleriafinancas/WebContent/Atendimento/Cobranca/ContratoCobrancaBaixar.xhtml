@@ -1643,6 +1643,16 @@
 							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
 							<h:outputText value="Não" />
 						</ui:fragment>
+						
+						<p:outputLabel value="Corrigido IPCA Hibrído: " styleClass="labelBold" />
+						<ui:fragment
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoIPCAHibrido}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{!contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
+							<h:outputText value="Não" />
+						</ui:fragment>
 
 						<p:outputLabel value="Tem Seguro? " styleClass="labelBold" />
 						<ui:fragment
@@ -2724,7 +2734,7 @@
 				</p:panel>
 			</h:form>
 		</p:dialog>
-		<p:dialog header="Gerar Boleto Kobana +PARCELAS"
+		<p:dialog header="Gerar Boleto Kobana - MultiParcelas"
 			widgetVar="bpGerarBoletoKobanaPARCELASDialog" resizable="false"
 			style="FONT-SIZE: 10pt;" width="460">
 			<h:form id="formBpGerarBoletoKobanaPARCELAS">

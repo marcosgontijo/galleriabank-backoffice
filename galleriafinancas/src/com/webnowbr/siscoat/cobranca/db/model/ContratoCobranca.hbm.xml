@@ -2016,6 +2016,10 @@
 			<column name="pajuAtualizado" not-null="true" default="false"/>
 		</property>
 		
+		<property name="corrigidoIPCAHibrido" type="boolean">
+			<column name="corrigidoIPCAHibrido" not-null="true" default="false"/>
+		</property>
+		
 		<property name="pajuAtualizadoUsuario" type="java.lang.String">
 			<column name="pajuAtualizadoUsuario" />
 		</property>

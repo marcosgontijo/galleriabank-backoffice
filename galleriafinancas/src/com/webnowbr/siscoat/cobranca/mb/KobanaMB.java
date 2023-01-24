@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -133,6 +134,7 @@ public class KobanaMB {
 	public String clearFieldsConsultarBoleto() {
 		
 		this.listBoletosKobana = new ArrayList<BoletoKobana>();
+		this.selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
 		this.dtInicioConsulta = gerarDataHoje();
 		this.dtFimConsulta = gerarDataHoje();
 		
@@ -296,7 +298,6 @@ public class KobanaMB {
 						if (objetoBoleto.has("custom_data")) {
 							if (!objetoBoleto.isNull("custom_data")) {
 								JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
-	
 								ContratoCobranca contrato = new ContratoCobranca();
 								contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
 								boleto.setContrato(contrato);
@@ -311,16 +312,25 @@ public class KobanaMB {
 									} else {
 										// se gerou para mais de parcela
 										// aqui esta como baixar as parcelas
-										/*
-										int numeroParcelas = objetoDataBoleto.length() - 2;
-										List<ContratoCobrancaDetalhes> parcelasBoleto = new ArrayList<ContratoCobrancaDetalhes>();
-										ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
-										
-										for (int j = 1; j <= numeroParcelas; j++) {
-											parcelasBoleto.add(cDao.findById((Long) objetoDataBoleto.get("idParcela/" + String.valueOf(j))));
+										if (objetoDataBoleto.getString("qtdeParcelas").equals("multiparcelas")
+												|| objetoDataBoleto.getString("qtdeParcelas").equals("varias")) {
+											List<ContratoCobrancaDetalhes> parcelasBoleto = new ArrayList<ContratoCobrancaDetalhes>();
+											ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+											
+											Iterator<String> contratoParcelas = objetoDataBoleto.keys();
+
+											// Verifica se há mais alguma key
+											while (contratoParcelas.hasNext()) {
+												String nomeObjeto = contratoParcelas.next();
+												
+											    if (nomeObjeto.contains("idParcela")) {
+											    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
+											    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
+											    }
+											}
+					
+											boleto.setMultiParcelas(parcelasBoleto);
 										}
-										*/
-										boleto.setParcela(null);
 									}
 								} else {
 									if (objetoDataBoleto.has("idParcela")) {

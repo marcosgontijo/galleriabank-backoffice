@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class BoletoKobana implements Serializable {
 	/**
@@ -26,6 +27,8 @@ public class BoletoKobana implements Serializable {
 	
 	private ContratoCobranca contrato;
 	private ContratoCobrancaDetalhes parcela;
+	
+	private List<ContratoCobrancaDetalhes> multiParcelas;
 	
 	public long getId() {
 		return id;
@@ -116,5 +119,11 @@ public class BoletoKobana implements Serializable {
 	}
 	public void setParcela(ContratoCobrancaDetalhes parcela) {
 		this.parcela = parcela;
+	}
+	public List<ContratoCobrancaDetalhes> getMultiParcelas() {
+		return multiParcelas;
+	}
+	public void setMultiParcelas(List<ContratoCobrancaDetalhes> multiParcelas) {
+		this.multiParcelas = multiParcelas;
 	}
 }

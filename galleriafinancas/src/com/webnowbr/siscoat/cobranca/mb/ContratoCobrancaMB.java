@@ -725,6 +725,8 @@ public class ContratoCobrancaMB {
 	
 	private Boolean addPagadorPreContrato;
 	
+	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
+	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -19393,7 +19395,41 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 	}
 	
-	/* BAIXA PARCIAL */
+	/* BAIXA MULTI PARCELAS PARCIAL */
+	public void baixarMultiParcelaParcial() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+		this.selectedRecebedor = new PagadorRecebedor();
+		if (this.objetoContratoCobranca.getEmpresa() != null) {
+			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) { 
+				this.selectedRecebedor = prDao.findById((long) 6625);
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+				this.selectedRecebedor = prDao.findById((long) 15765);
+			} else {
+				this.selectedRecebedor = prDao.findById((long) 803);
+			}
+		} else {
+			this.selectedRecebedor = prDao.findById((long) 803);
+		}
+
+		if (this.selectedParcelas.size() > 0) {
+			this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));
+		}
+		
+		for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
+			this.bpContratoCobrancaDetalhes = parcelasBoleto;
+			this.vlrParcelaAtualizadaNew = parcelasBoleto.getVlrParcela();
+			this.valorPresenteParcela = parcelasBoleto.getVlrParcela();
+			
+			//efetua baixa
+			baixarParcelaParcial();
+		}
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Baixa - Boletos Kobana: Parcela(s) baixada(s) com sucesso!", ""));
+	}
+	
 	public void baixarParcelaParcial() {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		
@@ -31838,6 +31874,14 @@ public class ContratoCobrancaMB {
 
 	public void setContasPagarArquivos(ContasPagar contasPagarArquivos) {
 		this.contasPagarArquivos = contasPagarArquivos;
+	}
+
+	public List<ContratoCobrancaDetalhes> getSelectedParcelas() {
+		return selectedParcelas;
+	}
+
+	public void setSelectedParcelas(List<ContratoCobrancaDetalhes> selectedParcelas) {
+		this.selectedParcelas = selectedParcelas;
 	}
 	
 }

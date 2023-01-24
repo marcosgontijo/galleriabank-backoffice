@@ -150,7 +150,7 @@
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
 						<p:commandButton onclick="PF('baixaParcialDialog').show();"
 							title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
-							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago'}">
+							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago' and boleto.parcela.id gt 0}">
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.callMetodoPorDialogBaixaParcial}" value="true" />	
 							<f:setPropertyActionListener
@@ -166,6 +166,28 @@
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.vlrRecebido}"
 								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+						</p:commandButton>
+						<p:commandButton onclick="PF('baixaParcialMultiParcelasDialog').show();"
+							title="Baixar Parcela - MultiParcelas" icon="ui-icon-circle-plus"
+							update=":formBaixaParcialMultiParcelas" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago' and boleto.parcela eq null}">
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.callMetodoPorDialogBaixaParcial}" value="true" />	
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.objetoContratoCobranca}"
+								value="#{boleto.contrato}" />	
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.rowEditNewDate}"
+								value="#{boleto.paidAt}" />		
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.selectedParcelas}"
+								value="#{boleto.multiParcelas}" />			
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.txZero}" value="true" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.vlrRecebido}"
+								value="#{boleto.paidAmount}" />
 						</p:commandButton>
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
@@ -196,6 +218,79 @@
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<p:dialog header="Baixa Parcial - MultiParcelas" widgetVar="baixaParcialMultiParcelasDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
+			height="650" width="500">
+			<h:form id="formBaixaParcialMultiParcelas">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato:"
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<h:outputText id="numeroContrato"
+						value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataPagamento"
+						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
+						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+						styleClass="dateTimeField">
+					</p:calendar>
+				</h:panelGrid>
+				<h:panelGrid columns="1">			
+					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
+								value="#{contratoCobrancaMB.selectedParcelas}"
+								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;">
+						<p:column style="text-align: center;"
+							headerText="Parcela">
+							<h:outputText value="#{parcelasSelecionadas.numeroParcela}"/>
+						</p:column>		
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela">
+							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
+						</p:column>		
+					</p:dataTable>
+				</h:panelGrid>
+					
+				<p:panel id="ValoresAtualizados" header="Valores Atualizados"
+					style="margin-top:20px;margin-bottom:20px;">
+					<h:panelGrid columns="3">
+						<p:outputLabel for="valorRecebido" value="Valor Recebido: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<h:outputText value="R$"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorRecebido"
+							value="#{contratoCobrancaMB.vlrRecebido}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);" required="true"
+							converter="bigDecimalConverter" />
+					</h:panelGrid>
+				</p:panel>
+
+				<p:panel id="ConsultaObservacores" header="Detalhes do Pagamento"
+					style="margin-bottom:10px;margin-top:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Observacao" value="Observação: " />
+						<p:inputTextarea rows="10" cols="50" id="Observacao"
+							value="#{contratoCobrancaMB.observacao}" label="Observação"
+							onblur="" style="width:300px;" />
+						<p:spacer width="10" />
+					</h:panelGrid>
+				</p:panel>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarMultiParcelaParcial()}" ajax="false" 
+							icon="ui-icon-transferthick-e-w" value="Baixar"
+							update=":form:DetalheParcelas" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcialMultiParcelasDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
 		<p:dialog header="Baixa Parcial" widgetVar="baixaParcialDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
 			height="650" width="500">

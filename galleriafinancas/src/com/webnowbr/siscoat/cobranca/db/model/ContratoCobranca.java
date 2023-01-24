@@ -755,6 +755,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoEmCartorio;
 	private Date contratoEmCartorioData;
 	private String contratoEmCartorioUsuario;
+	
+	private boolean corrigidoIPCAHibrido;	
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6047,7 +6049,12 @@ public class ContratoCobranca implements Serializable {
 	public void setPajuAtualizadoUsuario(String pajuAtualizadoUsuario) {
 		this.pajuAtualizadoUsuario = pajuAtualizadoUsuario;
 	}
-	
-	
-	
+
+	public boolean isCorrigidoIPCAHibrido() {
+		return corrigidoIPCAHibrido;
+	}
+
+	public void setCorrigidoIPCAHibrido(boolean corrigidoIPCAHibrido) {
+		this.corrigidoIPCAHibrido = corrigidoIPCAHibrido;
+	}
 }
