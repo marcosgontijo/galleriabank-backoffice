@@ -7615,6 +7615,18 @@ public class ContratoCobrancaMB {
 	
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		if(parcelas.getDataVencimento().before(getDataHoje())) {	
+			if(!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+			}
+			if(!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+			}
+			if(!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+			}		
+		}
 	}
 	
 	public void calcularValorPresenteParcela(boolean calcularComSeguro){
@@ -7653,6 +7665,18 @@ public class ContratoCobrancaMB {
 	
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		if(parcelas.getDataVencimento().before(getDataHoje())) {	
+			if(!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+			}
+			if(!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+			}
+			if(!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+			}		
+		}
 	}
 	
 	public BigDecimal calcularValorPresenteTotalContrato(ContratoCobranca contrato){
@@ -7688,6 +7712,18 @@ public class ContratoCobrancaMB {
 		
 			this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
 			this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+			
+			if(parcelas.getDataVencimento().before(getDataHoje())) {	
+				if(!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+				}
+				if(!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+				}
+				if(!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+					valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+				}		
+			}
 			
 			valorPresenteTotalContrato = valorPresenteTotalContrato.add(this.valorPresenteParcela);
 		}
@@ -7785,11 +7821,7 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
 				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
-				if(parcelas.getDataVencimento().before(getDataHoje())) {
-					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
-					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
-					valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
-				}
+
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				
 				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
@@ -7965,8 +7997,8 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	public void calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas){
 		
+	public void calcularValorPresenteParcelaData(Date data, ContratoCobrancaDetalhes parcelas){
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
 		
 		BigDecimal saldo = BigDecimal.ZERO;
@@ -8001,7 +8033,19 @@ public class ContratoCobrancaMB {
 		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
 	
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
-		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);	
+		
+		if(parcelas.getDataVencimento().before(data)) {	
+			if(!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+			}
+			if(!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+			}
+			if(!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+			}		
+		}
 	}
 
 	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {	
