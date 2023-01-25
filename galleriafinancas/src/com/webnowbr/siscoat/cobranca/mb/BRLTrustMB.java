@@ -1689,7 +1689,7 @@ public class BRLTrustMB {
 			jsonSacado.put("pessoa", jsonPessoa);
 			
 			JSONObject jsonEndereco = new JSONObject();
-			if (parcela.getContrato().getPagador().getCep() != null) {
+			if (!CommonsUtil.semValor(parcela.getContrato().getPagador().getCep())) {
 				jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(parcela.getContrato().getPagador().getCep())));
 			} else {
 				jsonEndereco.put("cep", Long.valueOf(00000000));

@@ -81,8 +81,8 @@
 						
 						<shiro:hasAnyRoles name="ROOT">
 							<p:spacer height="10" />
-							<p:commandButton value="Gerar Relatorio Comercial" oncomplete="PF('relatorioComercialDialog').show();" action="#{contratoCobrancaMB.clearFieldsRelatorioComercial}" update=":form:relatorioComercial">
-							</p:commandButton>
+							<p:commandButton value="Gerar Relatorio Comercial" oncomplete="PF('relatorioComercialDialog').show();" 
+								action="#{contratoCobrancaMB.clearFieldsRelatorioComercial}" update=":form:relatorioComercial"/>
 						</shiro:hasAnyRoles>
 			        </f:facet>                 
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
@@ -121,24 +121,15 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                </p:commandButton>
-		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">  	
+
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-			                </p:commandButton>			
-			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
-			                </p:commandButton>
-			                
+			                </p:commandButton>					              
+			           
 			                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 				                and contratos.statusLead == 'Completo' 
 				                and contratos.inicioAnalise == true
@@ -152,11 +143,19 @@
 								and contratos.cadastroAprovadoValor == 'Aprovado'
 								and contratos.aprovadoComite == true}"
 							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
-			                
-		                </shiro:hasAnyRoles>
+
 		                <p:spacer height="10"/>
 		                <shiro:hasAnyRoles name="ROOT"> 
-							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir">
+		                  	<p:commandButton value="Baixar" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Baixar">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
+			                </p:commandButton>
+							<p:commandButton value="Excluir" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" title="Excluir">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
@@ -165,7 +164,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 			                </p:commandButton>
-			               <p:commandButton action="#{ccbMB.EmitirCcbPreContrato}" value="Emitir CCB">
+			                <p:commandButton value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
 			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>		                	
 		                </shiro:hasAnyRoles>
@@ -189,9 +188,9 @@
 					<h:panelGrid columns="2">	
 						<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
 						<p:selectOneRadio id="Pessoa" value="#{impressoesPDFMB.tipoPessoaIsFisica}" required="true">
-						  <f:selectItem itemLabel="Física" itemValue="true" />
-						  <f:selectItem itemLabel="Jurídica" itemValue="false" />
-						  <p:ajax update="dados" event="valueChange" listener="#{impressoesPDFMB.selectedTipoPessoaPublico}"/>
+							<f:selectItem itemLabel="Física" itemValue="true" />
+						  	<f:selectItem itemLabel="Jurídica" itemValue="false" />
+						  	<p:ajax update="dados" event="valueChange" listener="#{impressoesPDFMB.selectedTipoPessoaPublico}"/>
 						</p:selectOneRadio>		
 		
 						<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{impressoesPDFMB.tipoPessoaIsFisica}"/>
@@ -217,11 +216,11 @@
 				    </h:panelGrid>
 			
 			        <div align="center" style="margin-top: 25px;">
-						  <p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
 							oncomplete="PF('fichaIndividual').hide();" />
-						  <p:spacer height="10" />
-						  <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
-					      </p:commandButton>
+						<p:spacer height="10" />
+						<p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
+					    </p:commandButton>
 					</div>			
 				</p:panel>
 			</p:dialog> 

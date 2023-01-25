@@ -205,7 +205,7 @@
 									counterTemplate="{0} characters remaining." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />
 										
-								<shiro:hasAnyRoles name="ROOT, USER_GALACHE">				
+								<shiro:hasAnyRoles name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_GALACHE">				
 									<p:outputLabel for="avaliacaoEngenharia"
 										value="O Imovel é: " styleClass="labelBold" />
 									<p:selectOneMenu id="avaliacaoEngenharia" required="true"
