@@ -80,7 +80,6 @@
 				</shiro:hasAnyRoles>
 
 				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.status != 'Baixado' and contratoCobrancaMB.objetoContratoCobranca.status != 'Aprovado'}">
-					<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
 					<ui:fragment
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						<p:steps
@@ -93,13 +92,12 @@
 								rendered="true" />
 						</p:steps>
 					</ui:fragment>
-					</shiro:hasAnyRoles>
 					<ui:fragment
 						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}">
 						<h:panelGrid columns="14">	
-							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">
-								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >
-								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />						   				   
+							
+								<p:steps activeIndex="#{contratoCobrancaMB.indexStepsStatusContrato}" styleClass="custom" readonly="false" >								    
+								    <p:menuitem id="agAnaliseStep" value="Aguardando Análise" />	
 								    <p:menuitem id="cadastroAprovadoStep" value="Pré-Cadastro"/>
 								    <p:menuitem id="pagtoLaudoConfirmadaStep" value="Laudo e Parecer Jurídico Pago"/>
 								    <p:menuitem id="laudoRecebidoStep" value="Laudo e PAJU Recebido"/>							    
@@ -115,7 +113,7 @@
 								    <p:menuitem id="agRegistroStep" value="Aguardando Registro"/>
 								    <p:menuitem id="aprovadoStep" value="Contrato"/>			             
 								</p:steps>
-							</shiro:hasAnyRoles>
+				
 							
 							<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, COMITECONSULTAR">
 								<h:panelGrid columns="1">
