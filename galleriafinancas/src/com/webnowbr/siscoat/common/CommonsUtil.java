@@ -617,6 +617,16 @@ public class CommonsUtil {
 		}
 	}
 	
+	public static final String formataValorMonetarioCciArredondado(BigDecimal valor, String moeda) {
+		valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
+		DecimalFormat df = new DecimalFormat("#,##0.00",  PT_BR_SYMBOLS);
+		if(!CommonsUtil.semValor(valor)) {
+			return moeda + df.format(valor);	
+		} else {
+			return moeda + df.format(BigDecimal.ZERO);
+		}
+	}
+	
 	public static final String formataValorTaxa(BigDecimal valor) {
 		return formataNumero(valor, "#,##0.0000");
 	}

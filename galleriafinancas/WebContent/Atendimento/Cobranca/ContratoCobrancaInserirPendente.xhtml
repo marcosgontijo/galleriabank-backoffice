@@ -80,7 +80,8 @@
 							PROFILE_ANALISTA_POS_COMITE, 
 							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
 							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">					<p:panel id="Status" header="Check-List"
+							PROFILE_LAUDO">					
+						<p:panel id="Status" header="Check-List"
 						style="margin-bottom:20px;" toggleable="true" toggleableHeader="true">
 						<h:panelGrid columns="7" style="margin-top:20px;">
 							<shiro:hasAnyRoles name="ROOT">
@@ -116,8 +117,7 @@
 									-moz-border-radius: 5px;
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Início Cadastro</p:outputLabel>
-								<p:spacer height="50"></p:spacer>
-							
+								<p:spacer height="50"></p:spacer>							
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
 								<p:outputLabel>Atualizado por: </p:outputLabel>
@@ -138,17 +138,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
 								<p:spacer height="50"></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
 									<p:selectBooleanButton id="inicioAnaliseView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PROFILE_GERENTE_ANALISE">
 									<p:selectBooleanButton id="inicioAnalise"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -175,19 +171,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_CREDITO">
 									<p:selectBooleanButton id="analiseReprovadaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO">
 									<p:selectBooleanButton id="analiseReprovadaEdit"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -238,11 +230,7 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO">
 									<p:selectOneRadio id="cadastroAprovado" unselectable="true"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}">
 										<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
@@ -251,7 +239,7 @@
 										<p:ajax update="BoletoPanel" event="change" />
 									</p:selectOneRadio>
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_CREDITO">
 									<p:selectOneRadio id="cadastroAprovadoView" unselectable="true"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}"
 										disabled="true">
@@ -259,7 +247,7 @@
 										<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 										<p:ajax update="BoletoPanel" event="change" />
 									</p:selectOneRadio>
-								</shiro:hasAnyRoles>
+								</shiro:lacksRole>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
@@ -281,25 +269,21 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Imóvel</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO">
 									<p:selectOneRadio id="imovelAprovado" unselectable="true"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}">
 										<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 									</p:selectOneRadio>
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_CREDITO">
 									<p:selectOneRadio id="imovelAprovadoView" unselectable="true"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}"
 										disabled="true">
 										<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
 										<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
 									</p:selectOneRadio>
-								</shiro:hasAnyRoles>
+								</shiro:lacksRole>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
 								<p:spacer height="7"></p:spacer>
@@ -370,11 +354,7 @@
 											<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 										</p:selectBooleanButton>
 									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+									<shiro:hasAnyRoles name="ROOT">
 										<p:selectBooleanButton id="pedidoPreLaudo"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
 											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -504,19 +484,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pedido Laudo + Paju Comercial</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PRECOBRANCA">
 									<p:selectBooleanButton id="pedidoLaudoPajuComercialView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT">
 									<p:selectBooleanButton id="pedidoLaudoPajuComercial"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -545,19 +521,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pedido Laudo</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_LAUDO">
 									<p:selectBooleanButton id="pedidoLaudoView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO">
 									<p:selectBooleanButton id="pedidoLaudo"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -586,19 +558,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pedido PAJU</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_LAUDO">
 									<p:selectBooleanButton id="pagtoLaudoConfirmadaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:80px" disabled="true">
 										<p:ajax update="CheckListInformacoesAdicionais" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO">
 									<p:selectBooleanButton id="pagtoLaudoConfirmada"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -627,19 +595,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pendencia Laudo + Paju</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_LAUDO">
 									<p:selectBooleanButton id="pendenciaLaudoPajuView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO">
 									<p:selectBooleanButton id="pendenciaLaudoPaju"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -668,19 +632,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
 								<p:spacer height="50"></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_LAUDO">
 									<p:selectBooleanButton id="laudoRecebidoView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO">
 									<p:selectBooleanButton id="laudoRecebido"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -713,19 +673,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_LAUDO">
 									<p:selectBooleanButton id="pajurFavoravelView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO">
 									<p:selectBooleanButton id="pajurFavoravel"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -754,19 +710,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Análise Comercial</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="ROOT">
 									<p:selectBooleanButton id="analiseComercialView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT">
 									<p:selectBooleanButton id="analiseComercial"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -795,19 +747,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Comentário Jurídico (Esteira)</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="comentarioJuridicoEsteiraView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="comentarioJuridicoEsteira"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -836,19 +784,15 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Comentado pelo Jurídico</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="comentarioJuridicoInternoView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="RecebidoPajulaudoPanel" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="comentarioJuridicoInterno"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -877,12 +821,12 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="COMITECONSULTAR">
 									<p:selectBooleanButton id="preAprovadoComiteView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
+								</shiro:lacksRole>
 								<shiro:hasAnyRoles name="ROOT, COMITECONSULTAR">
 									<p:selectBooleanButton id="preAprovadoComite"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
@@ -913,18 +857,14 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
 									<p:selectBooleanButton id="documentosComiteView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
+								</shiro:lacksRole>
 
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE">
 									<p:selectBooleanButton id="documentosComite"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -952,12 +892,12 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aprovado Pelo Comitê</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="COMITEEDITAR">
 									<p:selectBooleanButton id="aprovadoComiteView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
+								</shiro:lacksRole>
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 									<p:selectBooleanButton id="aprovadoComite"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
@@ -985,17 +925,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_POS_COMITE">
 									<p:selectBooleanButton id="documentosCompletosView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_POS_COMITE">
 									<p:selectBooleanButton id="documentosCompletos"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1023,17 +959,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_ANALISTA_POS_COMITE">
 									<p:selectBooleanButton id="reanaliseProntaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_POS_COMITE">
 									<p:selectBooleanButton id="reanalisePronta"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1061,17 +993,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="reanaliseJuridicoView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,	PROFILE_COMENTARIO_JURIDICO">
 									<p:selectBooleanButton id="reanaliseJuridico"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1102,19 +1030,15 @@
 										border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
 								<p:spacer height="50"></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_CONTRATO">
 									<p:selectBooleanButton id="ccbProntaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="Dados" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_CONTRATO">
 									<p:selectBooleanButton id="ccbPronta"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1143,19 +1067,15 @@
 										border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Contrato Conferido </p:outputLabel>
 								<p:spacer height="50"></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_CONTRATO">
 									<p:selectBooleanButton id="contratoConferidoView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 										<p:ajax update="Dados" event="change" />
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO">
 									<p:selectBooleanButton id="contratoConferido"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1184,17 +1104,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agAssinaturaView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agAssinatura"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1222,17 +1138,13 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agEnvioCartorioView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agEnvioCartorio"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1260,18 +1172,14 @@
 									border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>
 								<p:spacer></p:spacer>
-								<shiro:hasAnyRoles name="PRECOBRANCA">
+								<shiro:lacksRole name="PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agRegistroView"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
 									</p:selectBooleanButton>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
+								</shiro:lacksRole>
+								<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO">
 									<p:selectBooleanButton id="agRegistro"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
@@ -1302,7 +1210,7 @@
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
 								<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>
-							<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+							<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
 							PROFILE_ANALISTA_POS_COMITE, 
 							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
 							PROFILE_COMENTARIO_JURIDICO,  
@@ -1937,23 +1845,17 @@
 
 								</h:panelGrid>
 							</h:panelGroup>
-							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-							PROFILE_ANALISTA_POS_COMITE, 
-							PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-							PROFILE_COMENTARIO_JURIDICO,  
-							PROFILE_LAUDO">
-								<h:panelGroup>
-									<h:panelGrid columns="2">
-										<p:outputLabel for="observacaoParaComite"
-											value="Observação para o Comitê: " styleClass="labelBold" />
-										<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
-											maxlength="3000" onblur=""
-											counterTemplate="{0} characters remaining."
-											autoResize="false"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
-									</h:panelGrid>
-								</h:panelGroup>
-							</shiro:hasAnyRoles>
+							<h:panelGroup>
+								<h:panelGrid columns="2">
+									<p:outputLabel for="observacaoParaComite"
+										value="Observação para o Comitê: " styleClass="labelBold" />
+									<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
+										maxlength="3000" onblur=""
+										counterTemplate="{0} characters remaining."
+										autoResize="false"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+								</h:panelGrid>
+							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -2085,45 +1987,44 @@
 						style="margin-bottom:20px;"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
-						<p:panel id="DataVistoriaPanel" style="border: none">
-							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">
-								<h:panelGrid columns="2">					
-									<p:outputLabel for="dataVistoria"
-										value="Data Vistoria Imóvel: " styleClass="labelBold" />				
-									<p:calendar id="dataVistoria" showOn="button"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
-										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-										locale="pt" styleClass="dateTimeField" />									
+						<p:panel id="DataVistoriaPanel" style="border: none">						
+							<h:panelGrid columns="2">					
+								<p:outputLabel for="dataVistoria"
+									value="Data Vistoria Imóvel: " styleClass="labelBold" />				
+								<p:calendar id="dataVistoria" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
+									locale="pt" styleClass="dateTimeField" />									
+								
+								<p:outputLabel for="nomeVistoriador"
+									value="Nome Vistoriador: " styleClass="labelBold" />
+								<p:inputText id="nomeVistoriador"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
+									style="FONT-SIZE: 10pt;width:300px;"/>			
 									
-									<p:outputLabel for="nomeVistoriador"
-										value="Nome Vistoriador: " styleClass="labelBold" />
-									<p:inputText id="nomeVistoriador"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
-										style="FONT-SIZE: 10pt;width:300px;"/>			
-										
-									<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL">				
-										<p:outputLabel for="avaliacaoEngenharia"
-											value="Avaliação Engenharia: " styleClass="labelBold" />
-										<p:selectOneMenu id="avaliacaoEngenharia" 
-											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
-											<f:selectItem itemValue="" itemLabel="" />
-											<f:selectItem itemValue="Bom" itemLabel="Bom" />
-											<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-										</p:selectOneMenu>
-									</shiro:hasAnyRoles>			
-									
-									<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA">				
-										<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-											value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-										<p:selectOneMenu id="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
-											<f:selectItem itemValue="" itemLabel="" />
-											<f:selectItem itemValue="Bom" itemLabel="Bom" />
-											<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-										</p:selectOneMenu>
-									</shiro:hasAnyRoles>
-								</h:panelGrid>
-							</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">				
+									<p:outputLabel for="avaliacaoEngenharia" 
+										value="Avaliação Engenharia: " styleClass="labelBold" />
+									<p:selectOneMenu id="avaliacaoEngenharia" 
+										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItem itemValue="Bom" itemLabel="Bom" />
+										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
+									</p:selectOneMenu>
+								</shiro:hasAnyRoles>			
+								
+								<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE,  
+									PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL">				
+									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
+									<p:selectOneMenu id="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItem itemValue="Bom" itemLabel="Bom" />
+										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
+									</p:selectOneMenu>
+								</shiro:hasAnyRoles>
+							</h:panelGrid>
 						</p:panel>
 					</p:panel>
 				</h:panelGroup>
@@ -2184,29 +2085,27 @@
 				
 				<p:panel id="PanelPagadorRecebedor" header="Pagador"
 					style="margin-bottom:10px;">
-					<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
-						<h:panelGrid columns="1">
-							<p:outputLabel
-								value="NOVO Pagador: preencha os dados do painel Dados Pagador"
-								styleClass="labelBold" style="color: green !important;" />
-							<p:outputLabel
-								value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
-								styleClass="labelBold" style="color: green !important;" />
-						</h:panelGrid>
-						<h:panelGrid columns="3" style="margin-top: 10px;">
-							<p:outputLabel for="Recebedor" value="Pagador: "
-								styleClass="labelBold" />
-							<p:inputText id="Recebedor"
-								value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
-								readonly="TRUE"
-								style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-							<p:commandButton id="botaoRecebedor" type="button"
-								onclick="PF('recebedorDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"
-								disabled="#{contratoCobrancaMB.deleteMode}" />
-						</h:panelGrid>
-					</shiro:hasAnyRoles>
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
+							styleClass="labelBold" style="color: green !important;" />
+						<p:outputLabel
+							value="Pagador EXISTENTE: selecione-o abaixo (neste caso é possível editar os dados do pagador no painel Dados Pagador)"
+							styleClass="labelBold" style="color: green !important;" />
+					</h:panelGrid>
+					<h:panelGrid columns="3" style="margin-top: 10px;">
+						<p:outputLabel for="Recebedor" value="Pagador: "
+							styleClass="labelBold" />
+						<p:inputText id="Recebedor"
+							value="#{contratoCobrancaMB.nomeRecebedor}" label="Pagador"
+							readonly="TRUE"
+							style="FONT-SIZE: 10pt;width:300px;margin-left: 90px;"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+						<p:commandButton id="botaoRecebedor" type="button"
+							onclick="PF('recebedorDialog').show();"
+							image="ui-icon ui-icon-circle-zoomin"
+							disabled="#{contratoCobrancaMB.deleteMode}" />
+					</h:panelGrid>
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
 						style="margin-top:10px;margin-bottom:10px;">
 						<p:messages id="mensagensCPFCNPJ" showDetail="true" />
@@ -2409,7 +2308,6 @@
 								<f:selectItem itemValue="SE" itemLabel="Sergipe" />
 								<f:selectItem itemValue="TO" itemLabel="Tocantins" />
 							</p:selectOneMenu>
-
 						</h:panelGrid>
 
 						<h:panelGrid columns="2" id="referenciaBancaria">
@@ -2441,7 +2339,6 @@
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.nomeCC}"
 								label="Nome" onblur="" style="width:400px; margin-left:67px;" />
 
-
 							<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
 							<p:autoComplete id="Banco" value="#{contratoCobrancaMB.objetoPagadorRecebedor.banco}"
 								completeMethod="#{contratoCobrancaMB.objetoPagadorRecebedor.completeBancos}"
@@ -2449,8 +2346,7 @@
 								forceSelection="true" styleClass="labelBold" label="Conta" 
 								style="width:100px; margin-left:67px;"
 								scrollHeight="250" />
-
-							
+						
 							<p:outputLabel for="Agencia" value="Agência: "
 								styleClass="labelBold" />
 							<p:inputText id="Agencia"
@@ -2693,9 +2589,7 @@
 								</h:panelGrid>
 							</h:panelGroup>
 						</p:panel>
-						
-
-						
+												
 						<h:panelGroup id="SociosPanel">
 							<p:panel header="Socios" style="margin-bottom:10px;"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}">
@@ -4461,7 +4355,9 @@
 			
 			<p:messages id="msgArquivo"/>
 			
-			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
+			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+				PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO, PROFILE_COMENTARIO_JURIDICO,  
+				PROFILE_LAUDO">  	
 				<p:panel id="UploadArquivosComite" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;" >						
 					<p:panel id="ArquivosComite" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
@@ -4516,7 +4412,9 @@
 				</p:panel>	
 			</shiro:hasAnyRoles>
 			
-			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  
+			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+				PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO, PROFILE_COMENTARIO_JURIDICO,  
+				PROFILE_LAUDO">  
 				<p:panel id="UploadArquivosInternos"
 					header="Upload de Arquivo(s) Interno(s)" style="margin-bottom:10px;">
 					<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)"
@@ -4662,7 +4560,9 @@
 				</script>
 			</p:panel>	
 		
-			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR">  	
+			<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, COMITECONSULTAR, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+				PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO, PROFILE_COMENTARIO_JURIDICO,  
+				PROFILE_LAUDO">  	
 				<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" >						
 					<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		

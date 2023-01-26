@@ -7891,21 +7891,21 @@ public class CcbMB {
 				run = tableRow1.getCell(7).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroMIP(), "R$ "));
+				run.setText(CommonsUtil.formataValorMonetarioCciArredondado(p.getSeguroMIP(), "R$ "));
 				tableRow1.createCell();
 				tableRow1.getCell(8).setParagraph(paragraph2);
 				tableRow1.getCell(8).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
 				run = tableRow1.getCell(8).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getSeguroDFI(), "R$ "));
+				run.setText(CommonsUtil.formataValorMonetarioCciArredondado(p.getSeguroDFI(), "R$ "));
 				tableRow1.createCell();
 				tableRow1.getCell(9).setParagraph(paragraph2);
 				tableRow1.getCell(9).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
 				run = tableRow1.getCell(9).getParagraphArray(0).createRun();
 				run.setFontSize(fontSize);
 				run.setFontFamily("Calibri");
-				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
+				run.setText(CommonsUtil.formataValorMonetarioCciArredondado(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
