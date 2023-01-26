@@ -108,6 +108,8 @@ public class LoginBean {
         	UserDao userdao = new UserDao();
             userTmp = userdao.findByFilter("login", username);
             
+            //Thread.sleep(300);
+            
             if (userTmp.get(0).isBlockBackoffice()) {
             	blockedBackofficeAccess = true;
             	loggedIn = false;

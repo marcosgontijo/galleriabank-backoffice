@@ -2377,7 +2377,7 @@ public class InvestidorMB {
 //					if (cd.getSaldoCredorAtualizado().compareTo( BigDecimal.ZERO) == 0) {
 //						valorRecebido = cd.getValorLiquido().subtract(contratoVo.getValorInvestido());						
 //					} else {
-					if(!CommonsUtil.semValor(cd.getAmortizacao())) {
+					if(!CommonsUtil.semValor(cd.getAmortizacao()) && !CommonsUtil.semValor(cd.getValorLiquido())) {
 						valorRecebido = cd.getValorLiquido().subtract(cd.getAmortizacao());
 					}
 					
