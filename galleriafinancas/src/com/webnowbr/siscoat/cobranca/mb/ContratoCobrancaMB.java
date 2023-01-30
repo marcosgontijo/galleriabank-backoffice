@@ -19461,15 +19461,45 @@ public class ContratoCobrancaMB {
 			this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));
 		}
 		
-		for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
-			this.bpContratoCobrancaDetalhes = parcelasBoleto;
-			this.vlrParcelaAtualizadaNew = parcelasBoleto.getVlrParcela();
-			this.valorPresenteParcela = parcelasBoleto.getVlrParcela();
-			
-			//efetua baixa
-			baixarParcelaParcial();
-		}
+		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		
+		Calendar dataPagamento = Calendar.getInstance(zone, locale);
+		dataPagamento.setTime(this.rowEditNewDate);
 
+		//if (this.selectedRecebedor != null) {
+		//	if (this.selectedRecebedor.getId() > 0) {
+		//		contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+		//	}
+		//}
+
+		//if (this.observacao != null) {
+		//	contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
+		//}
+		
+		ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+		
+		for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
+			if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0) {
+				
+				contratoCobrancaDetalhesParcial.setNumeroParcela(parcelasBoleto.getNumeroParcela());
+				
+				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+				
+				contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
+				contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
+				contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
+				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+	
+				parcelasBoleto.setVlrParcelaAtualizada(null);
+				parcelasBoleto.setParcelaPaga(true);
+				parcelasBoleto.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+				
+				contratoCobrancaDetalhesDao.merge(parcelasBoleto);
+			} 
+		}
+		
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Baixa - Boletos Kobana: Parcela(s) baixada(s) com sucesso!", ""));
 	}
@@ -24398,6 +24428,8 @@ public class ContratoCobrancaMB {
 		cell = row.createCell(8);
 		cell.setCellValue("Status");
 		cell.setCellStyle(cell_style);
+		
+		int indexColuna = 8 + 1;
 
 		if (this.isRelIsRelAtraso()) {
 			cell = row.createCell(50);
@@ -24406,6 +24438,8 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(50);
 			cell.setCellValue("Com Baixas Parciais (# Parcela)");
 			cell.setCellStyle(cell_style);
+			
+			indexColuna = 50 + 1;
 		}
 
 		if (this.exibeSomenteFavorecidosFiltrados.equals("Todos")) {
@@ -24469,6 +24503,8 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(28);
 			cell.setCellValue("Valor");
 			cell.setCellStyle(cell_style);
+			
+			indexColuna = 28 + 1;
 		}
 
 		if (this.exibeSomenteFavorecidosFiltrados.equals("Somente Filtrados")) {
@@ -24479,6 +24515,8 @@ public class ContratoCobrancaMB {
 				cell = row.createCell(10);
 				cell.setCellValue("Valor");
 				cell.setCellStyle(cell_style);
+				
+				indexColuna = 10 + 1;
 			}
 			if (this.idRecebedor2 > 0) {
 				cell = row.createCell(11);
@@ -24487,8 +24525,14 @@ public class ContratoCobrancaMB {
 				cell = row.createCell(12);
 				cell.setCellValue("Valor");
 				cell.setCellStyle(cell_style);
+				
+				indexColuna = 12 + 1;
 			}
 		}
+		
+		cell = row.createCell(indexColuna);
+		cell.setCellValue("Tipo Cálculo");
+		cell.setCellStyle(cell_style);
 
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
@@ -24660,6 +24704,11 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+			
+			// Parcela
+			cell = row.createCell(indexColuna);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getTipoCalculo());			
 
 			if (this.exibeSomenteFavorecidosFiltrados.equals("Todos")) {
 				// FAvorecido 1
