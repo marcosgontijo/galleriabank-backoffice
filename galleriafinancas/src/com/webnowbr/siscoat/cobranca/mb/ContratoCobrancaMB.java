@@ -6641,7 +6641,8 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getEmpresa() != null) {
 			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
 				this.selectedRecebedor = prDao.findById((long) 6625);
-			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+				//TODO CRI 2
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1") || this.objetoContratoCobranca.getEmpresa().equals("CRI 2")){
 				this.selectedRecebedor = prDao.findById((long) 15765);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
@@ -9555,6 +9556,17 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI1.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroBaixadoCRI2() {
+		this.relDataContratoInicio = gerarDataHoje();
+		this.relDataContratoFim = gerarDataHoje();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI2.xhtml";
+	}
 
 	public String clearFieldsRelFinanceiroRecebedor() {
 		this.relDataContratoInicio = null;
@@ -9696,6 +9708,15 @@ public class ContratoCobrancaMB {
 			stackedGroupBarModel = new BarChartModel();
 		
 			this.tituloPainel = "CRI 1";
+		}
+		
+		if (empresa.equals("CRI 2")) {
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+			
+			clearCRI2();
+			stackedGroupBarModel = new BarChartModel();
+		
+			this.tituloPainel = "CRI 2";
 		}
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
@@ -9854,7 +9875,48 @@ public class ContratoCobrancaMB {
 		this.porcentagem180 = BigDecimal.ZERO;
 	}
 	
-	public void consultaDadosCRI1() {
+	public void clearCRI2() {
+		this.somaContratos240 = BigDecimal.ZERO;
+		this.volumeCarteira = BigDecimal.ZERO;
+		this.somaContratos180 = BigDecimal.ZERO;
+		this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+		this.qtdDeparcelasVencidas = 0;
+		this.inadimplencia30Soma = BigDecimal.ZERO;
+		this.inadimplencia60Soma = BigDecimal.ZERO;
+		this.inadimplencia90Soma = BigDecimal.ZERO;
+		this.inadimplencia30Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia60Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia90Porcentagem = BigDecimal.ZERO;
+		
+		this.contratosInadimplencia30 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
+		this.contratoPrazoMin = new ArrayList<ContratoCobranca>();
+		
+		this.prazoMax = BigDecimal.ZERO;
+		this.prazoMedio = BigDecimal.ZERO;
+		this.prazoMin =  BigDecimal.valueOf(0);
+		
+		this.taxaMax = BigDecimal.ZERO;
+		this.taxaMedia = BigDecimal.ZERO;
+		this.taxaMin =  BigDecimal.valueOf(0);
+		
+		this.taxaMaxIPCA = BigDecimal.ZERO;
+		this.taxaMediaIPCA = BigDecimal.ZERO;
+		this.taxaMinIPCA = BigDecimal.valueOf(0);
+		
+		this.ltvMax = BigDecimal.ZERO;
+		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(0);
+		
+		this.totalContratosConsultar = 0;
+		
+		this.totalAVencer = BigDecimal.ZERO;
+		this.porcentagem240 = BigDecimal.ZERO;
+		this.porcentagem180 = BigDecimal.ZERO;
+	}
+	
+	public void consultaDadosCRI(String relatorioTipo) {
 		clearCRI1();
 		
 		TimeZone zone = TimeZone.getDefault();
@@ -9879,7 +9941,7 @@ public class ContratoCobrancaMB {
 		this.contratos = new ArrayList<ContratoCobranca>();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		this.contratos = contratoCobrancaDao.consultaContratos("CRI 1");	
+		this.contratos = contratoCobrancaDao.consultaContratos(relatorioTipo);	
 		this.totalContratosConsultar = this.contratos.size();
 		
 		contratosGraficoFidc = new ArrayList<ContratoCobranca>();
@@ -10488,7 +10550,7 @@ public class ContratoCobrancaMB {
 	//	createStackedGroupBarModel();
 	}
 	
-	public StreamedContent geraRelatorioCRI1() throws IOException{
+	public StreamedContent geraRelatorioCRI(String relatorioTipo) throws IOException{
 		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 		int iLinha = 0;
 		int numeroLista = 1;
@@ -10627,7 +10689,7 @@ public class ContratoCobrancaMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		gerador.open(String.format("Galleria Bank - Relatorio CRI 1 %s.xlsx", ""));
+		gerador.open(String.format("Galleria Bank - Relatorio " + relatorioTipo + " %s.xlsx", ""));
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 		
@@ -11391,6 +11453,22 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI1.xhtml";
 	}
 	
+public String clearFieldsRelFinanceiroAtrasoCRI2() {
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+		
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI2.xhtml";
+	}
+	
 	public String clearFieldsRelFinanceiroAtrasoSecuritizadora() {
 		
 		TimeZone zone = TimeZone.getDefault();
@@ -11693,6 +11771,26 @@ public class ContratoCobrancaMB {
 					this.relDataContratoInicio, this.relDataContratoFim);
 		} else {
 			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI1(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		}	
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroBaixadoCRI2() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		if(this.financeiroGalleria) {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI22(
+					this.relDataContratoInicio, this.relDataContratoFim);
+		} else {
+			this.relObjetoContratoCobranca = contratoCobrancaDao.relatorioFinanceiroBaixadoPeriodoTotalCRI2(
 					this.relDataContratoInicio, this.relDataContratoFim);
 		}	
 
@@ -12813,6 +12911,39 @@ public class ContratoCobrancaMB {
 
 		// Busca Contratos com Parcelas que vencem no dia atual
 		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullCRI1(gerarDataHoje());
+
+		// exclui o registro, quando o pagador é a Galleria SA
+		/*
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			for (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) {
+				if (r.getContratoCobranca().getPagador().getId() != 14) {
+					this.relObjetoContratoCobranca.add(r);
+				}
+			}
+		}
+		*/
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
+		}
+		
+		processaDadosRelFinanceiroAtrasoFull();
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroAtrasoCRI2() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		List<RelatorioFinanceiroCobranca> relObjetoContratoCobrancaAux = new ArrayList<RelatorioFinanceiroCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullCRI2(gerarDataHoje());
 
 		// exclui o registro, quando o pagador é a Galleria SA
 		/*
@@ -19405,7 +19536,7 @@ public class ContratoCobrancaMB {
 			if (this.objetoContratoCobranca.getEmpresa() != null) {
 				if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
 					this.selectedRecebedor = prDao.findById((long) 6625);
-				} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+				} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1") || this.objetoContratoCobranca.getEmpresa().equals("CRI 2")){
 					this.selectedRecebedor = prDao.findById((long) 15765);
 				} else {
 					this.selectedRecebedor = prDao.findById((long) 803);
@@ -19448,7 +19579,7 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getEmpresa() != null) {
 			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) { 
 				this.selectedRecebedor = prDao.findById((long) 6625);
-			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")){
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1") || this.objetoContratoCobranca.getEmpresa().equals("CRI 2")){
 				this.selectedRecebedor = prDao.findById((long) 15765);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
@@ -25404,14 +25535,14 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 	}
 	
-	public void gerarXLSFinanceiroBaixadoCRI1() throws IOException {
+	public void gerarXLSFinanceiroBaixadoCRI(String relatorioTipo) throws IOException {
 		if(financeiroGalleria) {
-			gerarXLSFinanceiroBaixadoEspelhoCRI1();
+			gerarXLSFinanceiroBaixadoEspelhoCRI(relatorioTipo);
 			return;
 		}
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeContrato = "Relatório Financeiro Baixado CRI 1.xlsx";
+		this.nomeContrato = "Relatório Financeiro Baixado " + relatorioTipo + ".xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -25588,10 +25719,10 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 	}
 
-	public void gerarXLSFinanceiroBaixadoEspelhoCRI1() throws IOException {
+	public void gerarXLSFinanceiroBaixadoEspelhoCRI(String relatorioTipo) throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeContrato = "Relatório Financeiro Baixado CRI 1.xlsx";
+		this.nomeContrato = "Relatório Financeiro Baixado " + relatorioTipo + ".xlsx";
 	
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -26707,10 +26838,10 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 	}
 	
-	public void geraXLSFinanceiroAtrasoCRI1() throws IOException {
+	public void geraXLSFinanceiroAtrasoCRI(String relatorioTipo) throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeContrato = "Relatório Atraso CRI 1.xlsx";
+		this.nomeContrato = "Relatório Atraso " + relatorioTipo + ".xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");

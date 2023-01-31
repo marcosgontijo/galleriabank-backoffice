@@ -319,6 +319,10 @@
 										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<p:menuitem value="Contratos CRI 2"
+										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 2')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Debênturistas"
@@ -377,6 +381,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoCRI1}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Atraso CRI 2"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoCRI2}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Atraso Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoSecuritizadora}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -396,7 +404,11 @@
 									<p:menuitem value="Financeiro Dia CRI 1"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('CRI 1')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />		
+										styleClass="itemMenu" />	
+									<p:menuitem value="Financeiro Dia CRI 2"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('CRI 2')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />	
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -409,6 +421,10 @@
 										styleClass="itemMenu" />		
 									<p:menuitem value="Financeiro Dia Espelhamento CRI 1"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoCRI1')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia Espelhamento CRI 2"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoCRI2')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
@@ -431,6 +447,12 @@
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
+									<p:menuitem value="Financeiro Baixado CRI 2"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI2}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 									<p:menuitem value="Financeiro Recebedores"
@@ -445,6 +467,12 @@
 								<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, AGENTE_ESPELHAMENTO">
 									<p:menuitem value="Agente Espelhamento CRI 1"
 											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI1}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" >
+											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
+									<p:menuitem value="Agente Espelhamento CRI 2"
+											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI2}"
 											ajax="false" icon="ui-icon ui-icon-calculator"
 											styleClass="itemMenu" >
 											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
@@ -591,6 +619,10 @@
 									styleClass="itemMenu" />
 								<p:menuitem value="Contratos CRI 1"
 									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Contratos CRI 2"
+									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 2')}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</p:submenu>
