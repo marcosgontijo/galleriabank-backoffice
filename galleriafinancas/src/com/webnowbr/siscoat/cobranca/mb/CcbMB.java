@@ -6500,7 +6500,7 @@ public class CcbMB {
 				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 				run.setFontSize(12);
 				run.setColor("000000");
-				run.setText("Certidão de Casamento");
+				run.setText("Certidão de estado civil");
 
 				tableRow1.getCell(1).setParagraph(paragraph);
 				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);

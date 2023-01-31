@@ -696,6 +696,11 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 						query = query + " where analisePendenciadaData >= ? ::timestamp " 
 						+ " and analisePendenciadaData <= ? ::timestamp";	
 						param1 = "select c.analisePendenciadaUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Reanalise pós comitê")) {
+						object.setTipo("Reanalise pós comitê");
+						query = query + " where reanaliseProntaData >= ? ::timestamp " 
+						+ " and reanaliseProntaData <= ? ::timestamp";	
+						param1 = "select c.reanaliseProntaUsuario";
 					} else if(CommonsUtil.mesmoValor(tipo, "Com pedido de laudo")) {
 						object.setTipo("Com pedido de laudo");
 						query = query + " where pedidoLaudoData >= ? ::timestamp " 
@@ -721,6 +726,11 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 						query = query + " where reprovadoJuridicoEsteiraData >= ? ::timestamp " 
 						+ " and reprovadoJuridicoEsteiraData <= ? ::timestamp ";		
 						param1 = "select c.reprovadoJuridicoEsteiraUsuario";
+					} else if(CommonsUtil.mesmoValor(tipo, "Reanlise Jurídico pós comitê")) {
+						object.setTipo("Reanlise Jurídico pós comitê");
+						query = query + " where reanaliseJuridicoData >= ? ::timestamp " 
+						+ " and reanaliseJuridicoData <= ? ::timestamp ";		
+						param1 = "select c.reanaliseJuridicoUsuario";
 					} else if(CommonsUtil.mesmoValor(tipo, "Enviadas para Validação Doc.")) {
 						object.setTipo("Enviadas para Validação Doc.");
 						query = query + " where preAprovadoComiteData >= ? ::timestamp " 
