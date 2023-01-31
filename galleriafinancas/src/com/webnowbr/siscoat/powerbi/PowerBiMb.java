@@ -98,11 +98,12 @@ public class PowerBiMb {
 		powerBiNew.add(pbAprovadas);
 		powerBiNew.add(pbReprovadas);
 		powerBiNew.add(getPBNewDataBase("Pendenciadas"));
+		powerBiNew.add(getPBNewDataBase("Reanalise pós comitê"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de laudo"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de paju"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Com. Jurídico"));
 		powerBiNew.add(getPBNewDataBase("Comentadas pelo Jurídico"));
-		powerBiNew.add(getPBNewDataBase("Reprovadas pelo Jurídico"));
+		powerBiNew.add(getPBNewDataBase("Reanlise Jurídico pós comitê"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Validação Doc."));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Comitê"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Ag. Doc"));
