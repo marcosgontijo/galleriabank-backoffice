@@ -193,7 +193,17 @@
 			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
 			            </shiro:hasAnyRoles>   		            
-		                <p:spacer height="10"/>
+		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
+		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
+			                </p:commandButton>
+		                </shiro:hasAnyRoles>
 		                <shiro:hasAnyRoles name="ROOT"> 
 							<p:commandButton value="Excluir" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-trash"  title="Excluir">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -203,16 +213,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false"/>
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-			                </p:commandButton>
-			                <p:commandButton value="Baixar" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Baixar">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
-			                </p:commandButton>	                			                            	
+			                </p:commandButton>			                               			                            	
 		                </shiro:hasAnyRoles>
 		            </p:column>	
 					<f:facet name="footer">	

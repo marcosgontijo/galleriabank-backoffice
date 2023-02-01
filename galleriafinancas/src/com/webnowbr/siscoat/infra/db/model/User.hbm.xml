@@ -180,6 +180,9 @@
 		</property>	     
 		<property name="userCobrancaFinanceiro" type="boolean">
 			<column name="userCobrancaFinanceiro" not-null="true" default="false" />
-		</property>	                     		      
+		</property>	   
+		<property name="userPosOperacao" type="boolean">
+			<column name="userPosOperacao" not-null="true" default="false" />
+		</property>	                   		      
     </class>
 </hibernate-mapping>
