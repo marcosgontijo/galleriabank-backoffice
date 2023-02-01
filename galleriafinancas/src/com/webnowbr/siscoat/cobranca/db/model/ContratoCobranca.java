@@ -338,6 +338,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoLead; 
 	private Date leadReprovadoData;
 	private Date leadEmTratamentoData;
+	private Date leadAgContatoData;
+	private Date leadAgDocData;
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
@@ -6057,4 +6059,21 @@ public class ContratoCobranca implements Serializable {
 	public void setCorrigidoIPCAHibrido(boolean corrigidoIPCAHibrido) {
 		this.corrigidoIPCAHibrido = corrigidoIPCAHibrido;
 	}
+
+	public Date getLeadAgContatoData() {
+		return leadAgContatoData;
+	}
+
+	public void setLeadAgContatoData(Date leadAgContatoData) {
+		this.leadAgContatoData = leadAgContatoData;
+	}
+
+	public Date getLeadAgDocData() {
+		return leadAgDocData;
+	}
+
+	public void setLeadAgDocData(Date leadAgDocData) {
+		this.leadAgDocData = leadAgDocData;
+	}
+	
 }

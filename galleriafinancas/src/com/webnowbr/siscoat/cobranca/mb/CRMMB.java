@@ -905,6 +905,14 @@ public class CRMMB {
 						c.setStatus("Lead em Tratamento");
 					}
 					
+					if (c.getStatusLead().equals("Ag. Contato")) {
+						c.setStatus("Lead Ag. Contato");
+					}
+					
+					if (c.getStatusLead().equals("Ag. Doc.")) {
+						c.setStatus("Lead Ag. Doc.");
+					}
+					
 					if (c.getStatusLead().equals("Reprovado")) {
 						c.setStatus("Lead Reprovado");
 					}

@@ -4519,9 +4519,15 @@ public class ContratoCobrancaMB {
 		} else {
 			if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 				return geraConsultaLeads("Novo Lead");
-			}
+			}		
 			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
 				return geraConsultaLeads("Em Tratamento");
+			}
+			if (this.objetoContratoCobranca.getStatusLead().equals("Ag. Contato")) {
+				return geraConsultaLeads("Ag. Contato");
+			}
+			if (this.objetoContratoCobranca.getStatusLead().equals("Ag. Doc.")) {
+				return geraConsultaLeads("Ag. Doc.");
 			}
 			if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 				return geraConsultaLeads("Completo");
@@ -4606,19 +4612,33 @@ public class ContratoCobrancaMB {
 	public void updateCheckList() {
 		
 		if (this.objetoContratoCobranca.getStatusLead() != null) {
-			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
-				Responsavel responsavel = getResponsavelUsuarioLogado();
+			if (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {			
 				this.objetoContratoCobranca.setLeadCompleto(false);
+				Responsavel responsavel = getResponsavelUsuarioLogado();
 				if (responsavel != null && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")) {					
 					this.objetoContratoCobranca.setResponsavel(responsavel);				
 				}
 				if(this.objetoContratoCobranca.getLeadEmTratamentoData() == null) {
 					this.objetoContratoCobranca.setLeadEmTratamentoData(gerarDataHoje());
 				}
+			} else if(this.objetoContratoCobranca.getStatusLead().equals("Ag. Contato")) {				
+				this.objetoContratoCobranca.setLeadCompleto(false);
+				Responsavel responsavel = getResponsavelUsuarioLogado();
+				if (responsavel != null && CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")) {					
+					this.objetoContratoCobranca.setResponsavel(responsavel);				
+				}
+				if(CommonsUtil.semValor(this.objetoContratoCobranca.getLeadAgContatoData())){
+					this.objetoContratoCobranca.setLeadAgContatoData(gerarDataHoje());
+				}
+			} else if(this.objetoContratoCobranca.getStatusLead().equals("Ag. Doc.")) {				
+				this.objetoContratoCobranca.setLeadCompleto(false);
+				if(CommonsUtil.semValor(this.objetoContratoCobranca.getLeadAgDocData())){
+					this.objetoContratoCobranca.setLeadAgDocData(gerarDataHoje());
+				}
 			} else if(this.objetoContratoCobranca.getStatusLead().equals("Novo Lead")) {
 				this.objetoContratoCobranca.setLeadCompleto(false);
 				if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getCodigo(), "lead")){
-					this.objetoContratoCobranca.setStatusLead("Em Tratamento");
+					this.objetoContratoCobranca.setStatusLead("Ag. Contato");
 				}
 			} else if(this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) {
 				if(this.objetoContratoCobranca.getLeadReprovadoData() == null) {
@@ -7349,7 +7369,7 @@ public class ContratoCobrancaMB {
 			if (!this.objetoContratoCobranca.getStatus().equals("Aprovado")) {
 				//System.out.println("Contrato na Lista a ser Baixado: " + this.objetoContratoCobranca.getNumeroContrato());
 				
-				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Em Tratamento")) {
+				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Ag. Contato")) {
 					this.objetoContratoCobranca.setStatusLead("Arquivado");
 					contratoCobrancaDao.merge(this.objetoContratoCobranca);
 				}
@@ -12057,6 +12077,14 @@ public class ContratoCobrancaMB {
 						c.setStatus("Lead em Tratamento");
 					}
 					
+					if (c.getStatusLead().equals("Ag. Contato")) {
+						c.setStatus("Lead Ag. Contato");
+					}
+					
+					if (c.getStatusLead().equals("Ag. Doc.")) {
+						c.setStatus("Lead Ag. Doc.");
+					}
+					
 					if (c.getStatusLead().equals("Reprovado")) {
 						c.setStatus("Lead Reprovado");
 					}
@@ -12538,7 +12566,7 @@ public class ContratoCobrancaMB {
 		if (statuslead.equals("Novo Lead")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
 		}
-		if (statuslead.equals("Em Tratamento")) {
+		if (statuslead.equals("Em Tratamento") || statuslead.equals("Ag. Contato") || statuslead.equals("Ag. Doc.")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsTratamento.xhtml";
 		}
 		if (statuslead.equals("Completo")) {
