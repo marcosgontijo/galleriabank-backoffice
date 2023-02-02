@@ -85,6 +85,12 @@ public class DashboardMBVer2 {
 	int totalLeadsEmTratamento;
 	BigDecimal totalValorLeadsEmTratamento;
 	
+	int totalLeadsAgContato;
+	BigDecimal totalValorLeadsAgContato;
+	
+	int totalLeadsAgDoc;
+	BigDecimal totalValorLeadsAgDoc;
+	
 	int totalLeadsReprovados;
 	BigDecimal totalValorLeadsReprovados;
 	
@@ -153,6 +159,8 @@ public class DashboardMBVer2 {
 		
 		this.totalContratosCadastrados = 0;
 		this.totalLeadsEmTratamento = 0;
+		this.totalLeadsAgContato = 0;
+		this.totalLeadsAgDoc = 0;
 		this.totalLeadsReprovados = 0;
 		this.totalLeadsCompletos = 0;
 		this.totalContratosPreAprovados = 0;
@@ -163,6 +171,8 @@ public class DashboardMBVer2 {
 		
 		this.totalValorContratosCadastrados = BigDecimal.ZERO;
 		this.totalValorLeadsEmTratamento = BigDecimal.ZERO;	
+		this.totalValorLeadsAgContato = BigDecimal.ZERO;
+		this.totalValorLeadsAgDoc = BigDecimal.ZERO;
 		this.totalValorLeadsReprovados = BigDecimal.ZERO;
 		this.totalValorLeadsCompletos = BigDecimal.ZERO;
 		this.totalValorContratosPreAprovados = BigDecimal.ZERO;
@@ -257,6 +267,12 @@ public class DashboardMBVer2 {
 		this.totalLeadsEmTratamento = 0;
 		this.totalValorLeadsEmTratamento = BigDecimal.ZERO;
 		
+		this.totalLeadsAgContato = 0;
+		this.totalValorLeadsAgContato = BigDecimal.ZERO;
+		
+		this.totalLeadsAgDoc = 0;
+		this.totalValorLeadsAgDoc = BigDecimal.ZERO;	
+		
 		this.totalLeadsReprovados = 0;
 		this.totalValorLeadsReprovados = BigDecimal.ZERO;
 		
@@ -296,10 +312,15 @@ public class DashboardMBVer2 {
 			if (!CommonsUtil.semValor(dash.getLeadsEmTratamento())) {
 				this.totalLeadsEmTratamento = totalLeadsEmTratamento + dash.getLeadsEmTratamento();
 			}
+			if (!CommonsUtil.semValor(dash.getLeadsAgContato())) {
+				this.totalLeadsAgContato = totalLeadsAgContato + dash.getLeadsAgContato();
+			}
+			if (!CommonsUtil.semValor(dash.getLeadsAgDoc())) {
+				this.totalLeadsAgDoc = totalLeadsAgDoc + dash.getLeadsAgDoc();
+			}
 			if (!CommonsUtil.semValor(dash.getLeadsReprovados())) {
 				this.totalLeadsReprovados = totalLeadsReprovados + dash.getLeadsReprovados();
-			}
-			
+			}		
 			if (!CommonsUtil.semValor(dash.getLeadsCompletos())) {
 				this.totalLeadsCompletos = totalLeadsCompletos + dash.getLeadsCompletos();
 			}
@@ -323,6 +344,12 @@ public class DashboardMBVer2 {
 			}			
 			if (!CommonsUtil.semValor(dash.getValorLeadsEmTratamento())) {
 				this.totalValorLeadsEmTratamento = totalValorLeadsEmTratamento.add(dash.getValorLeadsEmTratamento());
+			}
+			if (!CommonsUtil.semValor(dash.getValorLeadsAgContato())) {
+				this.totalValorLeadsAgContato = totalValorLeadsAgContato.add(dash.getValorLeadsAgContato());
+			}
+			if (!CommonsUtil.semValor(dash.getValorLeadsAgDoc())) {
+				this.totalValorLeadsAgDoc = totalValorLeadsAgDoc.add(dash.getValorLeadsAgDoc());
 			}
 			if (!CommonsUtil.semValor(dash.getValorLeadsReprovados())) {
 				this.totalValorLeadsReprovados = totalValorLeadsReprovados.add(dash.getValorLeadsReprovados());
@@ -716,21 +743,27 @@ public class DashboardMBVer2 {
 			e.printStackTrace();
 		}
         
-        PieChartDataSet dataSet = new PieChartDataSet();
+		PieChartDataSet dataSet = new PieChartDataSet();
         List<Number> values = new ArrayList<Number>();
         values.add(dashboard.getNovoLead());
         values.add(dashboard.getLeadEmTratamento());
+        values.add(dashboard.getLeadAgContato());
+        values.add(dashboard.getLeadAgDoc());
         dataSet.setData(values);
         
         List<String> bgColors = new ArrayList<String>();
         bgColors.add("rgb(81, 132, 225)");
         bgColors.add("rgb(225, 223, 81)");
+        bgColors.add("rgb(182, 147, 96)");
+        bgColors.add("rgb(216, 57, 192)");
         dataSet.setBackgroundColor(bgColors);
         
         data.addChartDataSet(dataSet);
         List<String> labels = new ArrayList<String>();
         labels.add("Novo Lead");
         labels.add("Em Tratamento");
+        labels.add("Ag. Contato");
+        labels.add("Ag. Doc.");
         
         data.setLabels(labels);
 
@@ -905,6 +938,10 @@ public class DashboardMBVer2 {
 					if (contrato.getStatusLead().equals("Novo Lead")) {
 						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Em Tratamento")) {
+						qualidadeLead = "Lead Pendente";
+					} else if (contrato.getStatusLead().equals("Ag. Contato")) {
+						qualidadeLead = "Lead Pendente";
+					} else if (contrato.getStatusLead().equals("Ag. Doc.")) {
 						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Reprovado")) {
 						qualidadeLead = "Lead Reprovado na entrada";
@@ -1469,6 +1506,38 @@ public class DashboardMBVer2 {
 
 	public void setConsultaTaxa(boolean consultaTaxa) {
 		this.consultaTaxa = consultaTaxa;
+	}
+
+	public int getTotalLeadsAgContato() {
+		return totalLeadsAgContato;
+	}
+
+	public void setTotalLeadsAgContato(int totalLeadsAgContato) {
+		this.totalLeadsAgContato = totalLeadsAgContato;
+	}
+
+	public BigDecimal getTotalValorLeadsAgContato() {
+		return totalValorLeadsAgContato;
+	}
+
+	public void setTotalValorLeadsAgContato(BigDecimal totalValorLeadsAgContato) {
+		this.totalValorLeadsAgContato = totalValorLeadsAgContato;
+	}
+
+	public int getTotalLeadsAgDoc() {
+		return totalLeadsAgDoc;
+	}
+
+	public void setTotalLeadsAgDoc(int totalLeadsAgDoc) {
+		this.totalLeadsAgDoc = totalLeadsAgDoc;
+	}
+
+	public BigDecimal getTotalValorLeadsAgDoc() {
+		return totalValorLeadsAgDoc;
+	}
+
+	public void setTotalValorLeadsAgDoc(BigDecimal totalValorLeadsAgDoc) {
+		this.totalValorLeadsAgDoc = totalValorLeadsAgDoc;
 	}
 	
 	

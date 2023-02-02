@@ -171,6 +171,36 @@
 						<h:outputText value="#{dashContratos.valorLeadsEmTratamento}" converter="bigDecimalConverter" />
 					</p:column>
 					
+					<p:column style="text-align: center;" headerText="Total Ag. Contato"  rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsAgContato}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsAgContato}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsAgContato}" converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Total Ag. Doc"  rendered="#{dashboardMBVer2.consultaLead}">	
+						<p:commandLink onclick="PF('listaContratos').show()"
+							update="contratosForm" >
+							<f:setPropertyActionListener
+								target="#{dashboardMBVer2.listaContratosConsulta}"
+								value="#{dashContratos.listaLeadsAgDoc}" />
+							<p:outputLabel
+								value="#{dashContratos.leadsAgDoc}"/>
+						</p:commandLink>		
+					</p:column>
+					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMBVer2.consultaLead}">
+						<h:outputText value="R$ " />
+						<h:outputText value="#{dashContratos.valorLeadsAgDoc}" converter="bigDecimalConverter" />
+					</p:column>
+					
 					<p:column style="text-align: center;" headerText="Total Reprovado" sortBy="#{dashContratos.leadsReprovados}" rendered="#{dashboardMBVer2.consultaLead}">	
 						<p:commandLink onclick="PF('listaContratos').show()"
 							update="contratosForm" >
@@ -297,6 +327,28 @@
 								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
 									<h:outputText value="R$ " />
 									<h:outputText value="#{dashboardMBVer2.totalValorLeadsEmTratamento}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+								<h:outputText value="Total Leads Ag. Contato: " rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsAgContato}" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsAgContato}"
+										converter="bigDecimalConverter" />
+								</h:panelGroup>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>
+								
+								<h:outputText value="Total Leads Ag. Doc: " rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:outputText value="#{dashboardMBVer2.totalLeadsAgDoc}" rendered="#{dashboardMBVer2.consultaLead}"/>
+								<h:panelGroup rendered="#{dashboardMBVer2.consultaLead}">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{dashboardMBVer2.totalValorLeadsAgDoc}"
 										converter="bigDecimalConverter" />
 								</h:panelGroup>
 								<h:outputText value="" rendered="#{dashboardMBVer2.consultaLead}"/>

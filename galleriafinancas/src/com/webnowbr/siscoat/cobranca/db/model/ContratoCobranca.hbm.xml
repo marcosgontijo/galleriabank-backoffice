@@ -2023,6 +2023,14 @@
 		<property name="pajuAtualizadoUsuario" type="java.lang.String">
 			<column name="pajuAtualizadoUsuario" />
 		</property>
+		
+		<property name="leadAgContatoData" type="java.util.Date">
+			<column name="leadAgContatoData" />
+		</property>
+		
+		<property name="leadAgDocData" type="java.util.Date">
+			<column name="leadAgDocData" />
+		</property>
 
 	</class>
 </hibernate-mapping>

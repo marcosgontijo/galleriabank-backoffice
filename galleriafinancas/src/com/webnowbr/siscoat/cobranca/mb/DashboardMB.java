@@ -692,17 +692,23 @@ public class DashboardMB {
         List<Number> values = new ArrayList<Number>();
         values.add(dashboard.getNovoLead());
         values.add(dashboard.getLeadEmTratamento());
+        values.add(dashboard.getLeadAgContato());
+        values.add(dashboard.getLeadAgDoc());
         dataSet.setData(values);
         
         List<String> bgColors = new ArrayList<String>();
         bgColors.add("rgb(81, 132, 225)");
         bgColors.add("rgb(225, 223, 81)");
+        bgColors.add("rgb(182, 147, 96)");
+        bgColors.add("rgb(216, 57, 192)");
         dataSet.setBackgroundColor(bgColors);
         
         data.addChartDataSet(dataSet);
         List<String> labels = new ArrayList<String>();
         labels.add("Novo Lead");
         labels.add("Em Tratamento");
+        labels.add("Ag. Contato");
+        labels.add("Ag. Doc.");
         
         data.setLabels(labels);
 
@@ -877,6 +883,10 @@ public class DashboardMB {
 					if (contrato.getStatusLead().equals("Novo Lead")) {
 						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Em Tratamento")) {
+						qualidadeLead = "Lead Pendente";
+					} else if (contrato.getStatusLead().equals("Ag. Contato")) {
+						qualidadeLead = "Lead Pendente";
+					} else if (contrato.getStatusLead().equals("Ag. Doc.")) {
 						qualidadeLead = "Lead Pendente";
 					} else if (contrato.getStatusLead().equals("Reprovado")) {
 						qualidadeLead = "Lead Reprovado na entrada";

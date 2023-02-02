@@ -7501,7 +7501,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " (select count(id) from cobranca.contratocobranca " 
 			+ " where statusLead = 'Novo Lead') novolead,  " 
 			+ " (select count(id) from cobranca.contratocobranca " 
-			+ " where statusLead = 'Em Tratamento') leademtratamento ";
+			+ " where statusLead = 'Em Tratamento') leademtratamento "
+			+ " (select count(id) from cobranca.contratocobranca " 
+			+ " where statusLead = 'Ag. Contato') leadagcontato "
+			+ " (select count(id) from cobranca.contratocobranca " 
+			+ " where statusLead = 'Ag. Doc.') leadagdoc ";
 
 	@SuppressWarnings("unchecked")
 	public Dashboard getStatusLeads()
@@ -7524,6 +7528,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			while (rs.next()) {	
 				dashboard.setNovoLead(rs.getInt("novolead"));
 				dashboard.setLeadEmTratamento(rs.getInt("leademtratamento"));
+				dashboard.setLeadAgContato(rs.getInt("leadagcontato"));
+				dashboard.setLeadAgDoc(rs.getInt("leadagdoc"));
 			}
 			
 		} catch (SQLException e) {
@@ -8101,7 +8107,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "		and agAssinatura = true "
 			+ "		and ( DATE_PART( 'day', ? ::timestamp - c.ContratoResgatadoData ) > 30 "
 			+ "			or ContratoResgatadoData is null)) "
-			+ "	or ( c.statusLead = 'Em Tratamento' "
+			+ "	or ( (c.statusLead = 'Em Tratamento' or c.statusLead = 'Ag. Contato' or c.statusLead = 'Ag. Doc.') "
 			+ "		and status != 'Aprovado' "
 			+ "		and status != 'Reprovado' "
 			+ "		and status != 'Baixado' "

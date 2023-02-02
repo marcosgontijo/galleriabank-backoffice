@@ -135,7 +135,7 @@
 					<p:column style="text-align: center;" headerText="Valor Total"  rendered="#{dashboardMB.consultaLead}">
 						<h:outputText value="R$ " />
 						<h:outputText value="#{dashContratos.valorLeadsEmTratamento}" converter="bigDecimalConverter" />
-					</p:column>
+					</p:column>	
 					
 					<p:column style="text-align: center;" headerText="Total Reprovado" rendered="#{dashboardMB.consultaLead}">	
 						<p:commandLink onclick="PF('listaContratos').show()"
