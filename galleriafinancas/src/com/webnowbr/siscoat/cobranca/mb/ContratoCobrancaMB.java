@@ -191,6 +191,7 @@ public class ContratoCobrancaMB {
 	private String parametroConsultaContrato;
 	
 	private String tituloTelaConsultaPreStatus;
+	private String tituloTelaLead = "";
 
 	private Date dataHoje;
 	private Date filtroDataCorteRelatorioDia;
@@ -12566,9 +12567,18 @@ public class ContratoCobrancaMB {
 		if (statuslead.equals("Novo Lead")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
 		}
-		if (statuslead.equals("Em Tratamento") || statuslead.equals("Ag. Contato") || statuslead.equals("Ag. Doc.")) {
+		if (statuslead.equals("Em Tratamento")) {
+			tituloTelaLead = "Em Tratamento";
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsTratamento.xhtml";
 		}
+		if (statuslead.equals("Ag. Contato")) {
+			tituloTelaLead = "Ag. Contato";
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsTratamento.xhtml";
+		}
+		if (statuslead.equals("Ag. Doc.")) {
+			tituloTelaLead = "Ag. Doc.";
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsTratamento.xhtml";
+		}	
 		if (statuslead.equals("Completo")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeadsCompletos.xhtml";
 		}
@@ -32001,6 +32011,14 @@ public class ContratoCobrancaMB {
 
 	public void setSelectedParcelas(List<ContratoCobrancaDetalhes> selectedParcelas) {
 		this.selectedParcelas = selectedParcelas;
+	}
+
+	public String getTituloTelaLead() {
+		return tituloTelaLead;
+	}
+
+	public void setTituloTelaLead(String tituloTelaLead) {
+		this.tituloTelaLead = tituloTelaLead;
 	}
 	
 }

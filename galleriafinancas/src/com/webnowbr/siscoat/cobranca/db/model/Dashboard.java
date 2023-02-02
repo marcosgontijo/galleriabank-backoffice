@@ -26,6 +26,8 @@ public class Dashboard implements Serializable {
 	
 	private int novoLead;
 	private int leadEmTratamento;
+	private int leadAgContato;
+	private int leadAgDoc;
 	
 	private Responsavel responsavel;
 	private String nomeResponsavel;
@@ -46,6 +48,14 @@ public class Dashboard implements Serializable {
 	private int leadsEmTratamento;
 	private BigDecimal valorLeadsEmTratamento;
 	private List<ContratoCobranca> listaLeadsEmTratamento;
+	
+	private int leadsAgContato;
+	private BigDecimal valorLeadsAgContato;
+	private List<ContratoCobranca> listaLeadsAgContato;
+	
+	private int leadsAgDoc;
+	private BigDecimal valorLeadsAgDoc;
+	private List<ContratoCobranca> listaLeadsAgDoc;
 	
 	private int leadsReprovados;
 	private BigDecimal valorLeadsReprovados;
@@ -547,6 +557,70 @@ public class Dashboard implements Serializable {
 
 	public void setTaxaOrigem(BigDecimal taxaOrigem) {
 		this.taxaOrigem = taxaOrigem;
+	}
+
+	public int getLeadAgContato() {
+		return leadAgContato;
+	}
+
+	public void setLeadAgContato(int leadAgContato) {
+		this.leadAgContato = leadAgContato;
+	}
+
+	public int getLeadAgDoc() {
+		return leadAgDoc;
+	}
+
+	public void setLeadAgDoc(int leadAgDoc) {
+		this.leadAgDoc = leadAgDoc;
+	}
+
+	public int getLeadsAgContato() {
+		return leadsAgContato;
+	}
+
+	public void setLeadsAgContato(int leadsAgContato) {
+		this.leadsAgContato = leadsAgContato;
+	}
+
+	public BigDecimal getValorLeadsAgContato() {
+		return valorLeadsAgContato;
+	}
+
+	public void setValorLeadsAgContato(BigDecimal valorLeadsAgContato) {
+		this.valorLeadsAgContato = valorLeadsAgContato;
+	}
+
+	public List<ContratoCobranca> getListaLeadsAgContato() {
+		return listaLeadsAgContato;
+	}
+
+	public void setListaLeadsAgContato(List<ContratoCobranca> listaLeadsAgContato) {
+		this.listaLeadsAgContato = listaLeadsAgContato;
+	}
+
+	public int getLeadsAgDoc() {
+		return leadsAgDoc;
+	}
+
+	public void setLeadsAgDoc(int leadsAgDoc) {
+		this.leadsAgDoc = leadsAgDoc;
+	}
+
+	public BigDecimal getValorLeadsAgDoc() {
+		return valorLeadsAgDoc;
+	}
+
+	public void setValorLeadsAgDoc(BigDecimal valorLeadsAgDoc) {
+		this.valorLeadsAgDoc = valorLeadsAgDoc;
+	}
+
+	public List<ContratoCobranca> getListaLeadsAgDoc() {
+		return listaLeadsAgDoc;
+	}
+
+	public void setListaLeadsAgDoc(List<ContratoCobranca> listaLeadsAgDoc) {
+		this.listaLeadsAgDoc = listaLeadsAgDoc;
 	}	
 	
 	

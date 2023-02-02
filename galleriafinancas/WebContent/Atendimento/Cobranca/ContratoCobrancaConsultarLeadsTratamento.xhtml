@@ -46,7 +46,7 @@
 
 				</h:panelGrid>
 			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Leads em Tratamento - Consultar" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratos" header="Leads #{contratoCobrancaMB.tituloTelaLead} - Consultar" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending" 
    		         rows="50"
                  paginator="true"
