@@ -1981,6 +1981,67 @@
 						
 					</h:panelGrid>
 				</p:panel>
+				<p:panel id="Comite" header="Comentário Comitê"	style="margin-bottom:10px;">
+				<p:dataView var="comite"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
+									paginator="false" layout="list"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+									<p:dataViewListItem>
+										<h:panelGrid columns="2">
+	
+											<p:outputLabel value="Usuario comitê: " styleClass="labelBold" />
+											<p:outputLabel value="#{comite.usuarioComite}"
+												styleClass="labelBold" />
+	
+											<p:outputLabel value="Data comitê: " styleClass="labelBold" />
+											<p:outputLabel value="#{comite.dataComite}"
+												styleClass="labelBold" >
+												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+											</p:outputLabel>
+	
+											<p:outputLabel value="Voto do comitê: " styleClass="labelBold" />
+											<p:outputLabel value="#{comite.votoAnaliseComite}"
+												styleClass="labelBold" />
+	
+											<p:outputLabel value="Taxa Aprovada: " styleClass="labelBold" />
+											<h:panelGroup>
+												<p:outputLabel value="#{comite.taxaComite}"
+													converter="bigDecimalConverter" />
+												<p:outputLabel value="% + IPCA a.m." />
+											</h:panelGroup>
+	
+											<p:outputLabel value="Prazo Maximo Aprovado: "
+												styleClass="labelBold" />
+											<h:panelGroup>
+												<p:outputLabel value="#{comite.prazoMaxComite}" size="100"
+													style="width:60px;" />
+												<p:outputLabel value=" meses" />
+											</h:panelGroup>
+	
+											<p:outputLabel value="Valor Aprovado pelo Comitê: "
+												styleClass="labelBold" />
+	
+											<h:panelGroup>
+												<p:outputLabel value="#{comite.valorComite}"
+													converter="bigDecimalConverter"
+													style="FONT-SIZE: 10pt;width:100px;" />
+												<!-- -->
+												<p:outputLabel value="#{comite.tipoValorComite}"
+													label="Status" style="width:100px;" />
+											</h:panelGroup>
+	
+											<p:outputLabel value="Comentários comitê: "
+												styleClass="labelBold" />
+											<p:outputLabel value="#{comite.comentarioComite}" />
+	
+											<p:outputLabel value="_______________________________"
+												styleClass="labelBold" />
+											<p:outputLabel value="_______________________________"
+												styleClass="labelBold" />
+										</h:panelGrid>
+									</p:dataViewListItem>
+								</p:dataView>
+				</p:panel>
 				
 				<p:panel id="DetalheParcelas"
 					header="Detalhamento - Forma de Pagamento"
