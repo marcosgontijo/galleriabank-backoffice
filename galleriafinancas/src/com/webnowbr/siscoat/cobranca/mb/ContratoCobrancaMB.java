@@ -4285,10 +4285,9 @@ public class ContratoCobrancaMB {
 					Responsavel rCcb4 = new Responsavel();
 					Responsavel rCcb5 = new Responsavel();
 					Responsavel rCcb6 = new Responsavel();	
-
 					
-					// Amanda
-					rCcb1 = rDao.findById((long) 621);
+					// Tati
+					rCcb1 = rDao.findById((long) 643);
 					takeBlipMB.sendWhatsAppMessage(rCcb1,
 					"aprovado_comite_ag_ccb", 
 					this.objetoContratoCobranca.getPagador().getNome(),
@@ -4298,14 +4297,6 @@ public class ContratoCobrancaMB {
 					// Anna Flavia
 					rCcb2 = rDao.findById((long) 622);
 					takeBlipMB.sendWhatsAppMessage(rCcb2,
-					"aprovado_comite_ag_ccb", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
-					
-					// Flavia
-					rCcb3 = rDao.findById((long) 623);
-					takeBlipMB.sendWhatsAppMessage(rCcb3,
 					"aprovado_comite_ag_ccb", 
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
@@ -5265,13 +5256,15 @@ public class ContratoCobrancaMB {
 			clearResponsavel();
 			this.updateResponsavel = "";
 			try {
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				// Mensagem PAJU RECEBIDO
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-				"recebimento_lead_comercial",
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(), "", "");					
+				if(!CommonsUtil.semValor(selectedResponsavel.getTelCelular())){
+					// Mensagem PAJU RECEBIDO
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"recebimento_lead_comercial",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+									
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

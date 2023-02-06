@@ -185,7 +185,8 @@ public class ResponsavelMB {
 		}	
 		
 		UserDao uDao = new UserDao();
-		List<User> listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
+		List<User> listaUser = new ArrayList<User>();
+		listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
 		if(!CommonsUtil.semValor(listaUser)) {
 			User user = listaUser.get(0);
 			addUsuario = false;
