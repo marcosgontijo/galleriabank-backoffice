@@ -2031,6 +2031,17 @@
 		<property name="leadAgDocData" type="java.util.Date">
 			<column name="leadAgDocData" />
 		</property>
-
+		
+		<property name="certificadoEmitidoData" type="java.util.Date">
+			<column name="certificadoEmitidoData" />
+		</property>
+		
+		<property name="certificadoEmitido" type="boolean">
+			<column name="certificadoEmitido" not-null="true" default="false"/>
+		</property>
+		
+		<property name="certificadoEmitidoUsuario" type="java.lang.String">
+			<column name="certificadoEmitidoUsuario" />
+		</property>
 	</class>
 </hibernate-mapping>

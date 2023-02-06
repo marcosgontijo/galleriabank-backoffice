@@ -21,6 +21,8 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean documentosComite;
 	private boolean aprovadoComite;
 	private boolean documentosCompletos;
+	private boolean reanalisePronta;
+	private boolean pajuAtualizado;
 	private boolean contratoConferido;
 	private String contratoPreAprovado;
 	private BigDecimal valorPreLaudo;
@@ -127,5 +129,23 @@ public class ContratoCobrancaStatus implements Serializable {
 	public void setContratoConferido(boolean contratoConferido) {
 		this.contratoConferido = contratoConferido;
 	}
+
+	public boolean isReanalisePronta() {
+		return reanalisePronta;
+	}
+
+	public void setReanalisePronta(boolean reanalisePronta) {
+		this.reanalisePronta = reanalisePronta;
+	}
+
+	public boolean isPajuAtualizado() {
+		return pajuAtualizado;
+	}
+
+	public void setPajuAtualizado(boolean pajuAtualizado) {
+		this.pajuAtualizado = pajuAtualizado;
+	}
+	
+	
 	
 }

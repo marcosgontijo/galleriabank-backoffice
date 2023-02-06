@@ -302,6 +302,10 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_CONTRATO">
+									<p:menuitem value="9.5 - Ag. Certificado"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Certificado')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									<p:menuitem value="10 - Ag. CCB"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. CCB')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
