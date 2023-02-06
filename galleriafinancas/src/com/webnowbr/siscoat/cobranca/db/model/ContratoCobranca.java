@@ -436,6 +436,10 @@ public class ContratoCobranca implements Serializable {
 	private Date reanaliseJuridicoData;
 	private boolean reanaliseJuridico;
 	private String reanaliseJuridicoUsuario;
+	
+	private Date certificadoEmitidoData;
+	private boolean certificadoEmitido;
+	private String certificadoEmitidoUsuario;
 
 	private Date ccbProntaData;
 	private boolean ccbPronta;
@@ -6075,5 +6079,30 @@ public class ContratoCobranca implements Serializable {
 	public void setLeadAgDocData(Date leadAgDocData) {
 		this.leadAgDocData = leadAgDocData;
 	}
+
+	public Date getCertificadoEmitidoData() {
+		return certificadoEmitidoData;
+	}
+
+	public void setCertificadoEmitidoData(Date certificadoEmitidoData) {
+		this.certificadoEmitidoData = certificadoEmitidoData;
+	}
+
+	public boolean isCertificadoEmitido() {
+		return certificadoEmitido;
+	}
+
+	public void setCertificadoEmitido(boolean certificadoEmitido) {
+		this.certificadoEmitido = certificadoEmitido;
+	}
+
+	public String getCertificadoEmitidoUsuario() {
+		return certificadoEmitidoUsuario;
+	}
+
+	public void setCertificadoEmitidoUsuario(String certificadoEmitidoUsuario) {
+		this.certificadoEmitidoUsuario = certificadoEmitidoUsuario;
+	}
+	
 	
 }

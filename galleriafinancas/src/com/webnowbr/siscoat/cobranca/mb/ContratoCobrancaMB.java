@@ -4275,7 +4275,7 @@ public class ContratoCobrancaMB {
 			
 			// Mensagem Documentos pronto Ag CCB
 			if (this.objetoContratoCobranca.isDocumentosCompletos() != statusContrato.isDocumentosCompletos()) {
-				if (this.objetoContratoCobranca.isDocumentosCompletos()) {
+				if (this.objetoContratoCobranca.isDocumentosCompletos() && !this.objetoContratoCobranca.isReanalise()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
 					ResponsavelDao rDao = new ResponsavelDao();
 					
@@ -4285,10 +4285,9 @@ public class ContratoCobrancaMB {
 					Responsavel rCcb4 = new Responsavel();
 					Responsavel rCcb5 = new Responsavel();
 					Responsavel rCcb6 = new Responsavel();	
-
 					
-					// Amanda
-					rCcb1 = rDao.findById((long) 621);
+					// Tati
+					rCcb1 = rDao.findById((long) 643);
 					takeBlipMB.sendWhatsAppMessage(rCcb1,
 					"aprovado_comite_ag_ccb", 
 					this.objetoContratoCobranca.getPagador().getNome(),
@@ -4298,14 +4297,6 @@ public class ContratoCobrancaMB {
 					// Anna Flavia
 					rCcb2 = rDao.findById((long) 622);
 					takeBlipMB.sendWhatsAppMessage(rCcb2,
-					"aprovado_comite_ag_ccb", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
-					
-					// Flavia
-					rCcb3 = rDao.findById((long) 623);
-					takeBlipMB.sendWhatsAppMessage(rCcb3,
 					"aprovado_comite_ag_ccb", 
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
@@ -4335,6 +4326,35 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
 					
+				}
+			}				
+			
+			// Mensagem Documentos pronto Ag Reanalise Juridico
+			if (this.objetoContratoCobranca.isReanalisePronta() != statusContrato.isReanalisePronta()
+					|| this.objetoContratoCobranca.isPajuAtualizado() != statusContrato.isPajuAtualizado()) {
+				if (this.objetoContratoCobranca.isReanalisePronta() && this.objetoContratoCobranca.isPajuAtualizado()) {
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rJuridico1 = new Responsavel();
+					Responsavel rJuridico2 = new Responsavel();
+	
+					// JP
+					rJuridico1 = rDao.findById((long) 617);
+					
+					takeBlipMB.sendWhatsAppMessage(rJuridico1,
+					"ag_comentarios_juridico", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					"REANALISE - " + this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
+					
+					// Ale dos Paju
+					rJuridico2 = rDao.findById((long) 618);
+	
+					takeBlipMB.sendWhatsAppMessage(rJuridico2,
+					"ag_comentarios_juridico", 
+					this.objetoContratoCobranca.getPagador().getNome(),
+					"REANALISE - " + this.objetoContratoCobranca.getNumeroContrato(),
+					"", "");
 				}
 			}
 			
@@ -5236,13 +5256,15 @@ public class ContratoCobrancaMB {
 			clearResponsavel();
 			this.updateResponsavel = "";
 			try {
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				// Mensagem PAJU RECEBIDO
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
-				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-				"recebimento_lead_comercial",
-				this.objetoContratoCobranca.getPagador().getNome(),
-				this.objetoContratoCobranca.getNumeroContrato(), "", "");					
+				if(!CommonsUtil.semValor(selectedResponsavel.getTelCelular())){
+					// Mensagem PAJU RECEBIDO
+					TakeBlipMB takeBlipMB = new TakeBlipMB();
+					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+					"recebimento_lead_comercial",
+					this.objetoContratoCobranca.getPagador().getNome(),
+					this.objetoContratoCobranca.getNumeroContrato(), "", "");
+				}
+									
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -8687,8 +8709,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.isAnaliseComercial() &&
 						this.objetoContratoCobranca.isComentarioJuridicoEsteira() &&
 						this.objetoContratoCobranca.isAprovadoComite() &&
-						(!this.objetoContratoCobranca.isDocumentosCompletos()
-							|| this.objetoContratoCobranca.isReanalise())) {
+						(!this.objetoContratoCobranca.isCertificadoEmitido())) {
 					this.indexStepsStatusContrato = 8;
 				}
 				
@@ -12342,38 +12363,45 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
 						c.setStatus("Ag. Reanalise Juridico");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
+							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& !c.isReanalise() && !c.isCertificadoEmitido() ) {
+						c.setStatus("Ag. Certificado");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& !c.isReanalise() && !c.isCcbPronta()) {
+							&& !c.isReanalise() && c.isCertificadoEmitido() && !c.isCcbPronta()) {
 						c.setStatus("Ag. CCB");
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCertificadoEmitido()
 							&& c.isCcbPronta() && !c.isContratoConferido()) {
 						c.setStatus("Ag. Conferência");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCertificadoEmitido()
 							&& c.isCcbPronta() && c.isContratoConferido() && c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
 					}
 					
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCertificadoEmitido()
 							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
 						c.setStatus("Ag. Envio Cartório");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPagtoLaudoConfirmada()
 							&& c.isLaudoRecebido() && c.isPajurFavoravel() && c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos() && c.isCertificadoEmitido()
 							&& c.isCcbPronta() && c.isContratoConferido() && !c.isAgAssinatura() && !c.isAgEnvioCartorio() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
@@ -12505,6 +12533,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		if (status.equals("Ag. Reanalise Juridico")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Reanalise Juridico";
+		}
+		if (status.equals("Ag. Certificado")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Certificado";
 		}
 		if (status.equals("Ag. CCB")) {
 			this.tituloTelaConsultaPreStatus = "Ag. CCB";

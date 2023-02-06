@@ -312,7 +312,7 @@
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
-										rendered="#{!contratoCobrancaMB.objetoContratoCobranca.reanalise}">
+										rendered="#{!contratoCobrancaMB.objetoContratoCobranca.reanalise and !contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}">
 										<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
 										<p:spacer></p:spacer>
 										<p:selectBooleanButton id="documentosCompletos"
@@ -359,6 +359,18 @@
 										<p:spacer></p:spacer>
 										<p:selectBooleanButton id="reanaliseJuridico"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-close" style="width:=60px" />
+									</h:panelGrid>
+									<h:panelGrid columns="2"
+										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos
+										and !contratoCobrancaMB.objetoContratoCobranca.reanalise}">
+										<p:outputLabel styleClass="labelBold">Certificado Emitido</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectBooleanButton id="certificadoEmitido"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitido}"
 											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 											offIcon="ui-icon-close" style="width:=60px" />
 									</h:panelGrid>
@@ -464,7 +476,8 @@
 
 								<ui:fragment
 									rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
-								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7)}">
+								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
+								|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
 									<h:panelGrid columns="2"
 										style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
