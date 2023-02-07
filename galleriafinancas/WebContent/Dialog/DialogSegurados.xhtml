@@ -73,15 +73,15 @@
 
 					<p:commandButton value="Adicionar" ajax="true"
 						action="#{contratoCobrancaMB.concluirSegurado()}"
-						update=":formSegurados:SeguradoresPanel" image="ui-icon ui-icon-check" />
+						update=":formSegurados:SeguradoresPanel" icon="ui-icon ui-icon-check" />
 				</h:panelGrid>
 
 				<f:facet name="footer">
 					<p:commandButton value="Concluir"
 						action="#{contratoCobrancaMB.editarSeguradosConsulta()}"
-						image="ui-icon ui-icon-check" update=":formSegurados:SeguradoresPanel" />
+						icon="ui-icon ui-icon-check" update=":formSegurados:SeguradoresPanel" />
 					<p:commandButton value="Cancelar" 
-						action="#{contratoCobrancaMB.cancelarSeguradosConsulta()}" image="ui-icon ui-icon-cancel"
+						action="#{contratoCobrancaMB.cancelarSeguradosConsulta()}" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('seguradosDialog').hide();" />
 
 				</f:facet>

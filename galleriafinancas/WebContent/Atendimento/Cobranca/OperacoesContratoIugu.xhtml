@@ -42,7 +42,7 @@
 						disabled="#{iuguMB.relIsContrato}" />
 					<p:commandButton value="Consultar Contrato"
 						action="#{iuguMB.consultaOperacoesContratoIugu}"
-						image="ui-icon ui-icon-check"
+						icon="ui-icon ui-icon-check"
 						update="contratos dadosContrato mensagens dadosParcelas dadosOperacoes dadosContratoDT :formObservacoes"
 						style="TEXT-DECORATION: bold;" />						
 				</h:panelGrid>
@@ -203,7 +203,7 @@
 						<p:column>
 							<p:commandButton id="botaoObservacoes" 
 								onclick="PF('observacoesDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"  update=":formObservacoes" >
+								icon="ui-icon ui-icon-circle-zoomin"  update=":formObservacoes" >
 								<f:setPropertyActionListener
 									target="#{iuguMB.contratoCobrancaDetalhes}"
 									value="#{parcelas}"/>
@@ -233,7 +233,7 @@
 							style="FONT-SIZE: 10pt;width:420px;" />
 						<p:commandButton id="botaoFavorecido" type="button"
 							onclick="PF('favorecidoDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin" 
+							icon="ui-icon ui-icon-circle-zoomin" 
 							disabled="#{iuguMB.contaMestre}" />
 						<p:outputLabel for="senha" value="Senha da Operação: "
 							styleClass="labelBold" rendered="#{iuguMB.senhaStorage ==  '' }" />
@@ -437,13 +437,13 @@
 						<f:facet name="footer">
 							<p:commandButton value="Selecionar"
 								action="#{iuguMB.populateSelectedRecebedor}"
-								image="ui-icon ui-icon-check" update=":form:dadosContrato"
+								icon="ui-icon ui-icon-check" update=":form:dadosContrato"
 								oncomplete="PF('favorecidoDialog').hide();" />
 							<p:commandButton value="Limpar Seleção"
-								action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+								action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash"
 								update=":form:CobrancaIugu favorecidoDialogdlg"
 								oncomplete="PF('favorecidoDialog').hide();" />
-							<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 								oncomplete="PF('favorecidoDialog').hide();" />
 						</f:facet>
 					</p:dataTable>
@@ -496,7 +496,7 @@
 					</p:dataTable>	
 				</p:panel>			
 				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
-					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+					<p:commandButton value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
 				</div>	  				
 			</h:form>
 		</p:dialog> 			

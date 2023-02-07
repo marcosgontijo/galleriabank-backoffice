@@ -57,12 +57,12 @@
 						style="FONT-SIZE: 10pt;width:300px;" />
 					<p:commandButton id="botaoPagador" type="button"
 						onclick="PF('pagadorDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" />
+						icon="ui-icon ui-icon-circle-zoomin" />
 				</h:panelGrid>
 				
 				<p:commandButton value="Consultar"
 					action="#{contratoCobrancaMB.geraConsultaNovosLeads()}"
-					image="ui-icon ui-icon-check"
+					icon="ui-icon ui-icon-check"
 					update=":form:ConsultaContratos"
 					style="TEXT-DECORATION: bold;" />
 				<p:spacer width="10" />
@@ -164,14 +164,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedPagador}"
-							image="ui-icon ui-icon-check" update=":form:ConsultaFinanceiro"
+							icon="ui-icon ui-icon-check" update=":form:ConsultaFinanceiro"
 							oncomplete="PF('pagadorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearPagador}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:ConsultaFinanceiro pagadorDialogdlg"
 							oncomplete="PF('pagadorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('pagadorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

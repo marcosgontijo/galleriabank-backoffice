@@ -62,7 +62,7 @@
 
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.gerarRelatorioValorLiquido}"
-					image="ui-icon ui-icon-check"
+					icon="ui-icon ui-icon-check"
 					update=":form:dtResultado :form:ConsultaResultadosGallerias :form:ConsultaResultadosSA :form:ConsultaResultadosCorrespondente :form:ConsultaResultadosEnvelope PanelPDF mensagens"
 					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
 			</p:panel>
@@ -508,10 +508,10 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaDoInvestidorLote}"
-							ajax="false" image="ui-icon-transferthick-e-w" value="Baixar" update=":form:ConsultaResultados" />
+							ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar" update=":form:ConsultaResultados" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('baixaParcelaInvestidorLoteDialog').hide();" />
 				</div>
 			</h:form>
@@ -552,10 +552,10 @@
 					<shiro:hasAnyRoles name="ROOT">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaDoInvestidor}"
-							ajax="false" image="ui-icon-transferthick-e-w" value="Baixar" update=":form:ConsultaResultados" />
+							ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar" update=":form:ConsultaResultados" />
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('baixaParcelaInvestidorDialog').hide();" />
 				</div>
 			</h:form>

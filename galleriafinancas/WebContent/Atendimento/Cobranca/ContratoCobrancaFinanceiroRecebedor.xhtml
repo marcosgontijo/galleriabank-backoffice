@@ -43,7 +43,7 @@
 				<h:panelGrid columns="3">
 					<p:outputLabel for="Recebedor" value="Favorecido: "  styleClass="labelBold"  /> 
 					<p:inputText id="Recebedor" value="#{contratoCobrancaMB.nomeRecebedor}"  label="Recebedor" readonly="TRUE" required="true" style="FONT-SIZE: 10pt;width:300px;" />       
-					<p:commandButton id="botaoRecebedor" type="button" onclick="PF('recebedorDialog').show();" image="ui-icon ui-icon-circle-zoomin"  />	 			  																	
+					<p:commandButton id="botaoRecebedor" type="button" onclick="PF('recebedorDialog').show();" icon="ui-icon ui-icon-circle-zoomin"  />	 			  																	
 				</h:panelGrid>					
 				<h:panelGrid columns="2">	
 					<p:outputLabel for="TipoFiltro" value="Financeiro Baixado por: " styleClass="labelBold" />
@@ -59,7 +59,7 @@
 					<p:outputLabel for="dataFim" value="Data Pagamento Fim " styleClass="labelBold" style="margin-right: 59px;" />							
 					<p:calendar id="dataFim" value="#{contratoCobrancaMB.relDataContratoFim}" required="true" label="Data Pagamento Fim" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="#{contratoCobrancaMB.filtroRelBaixado == 'Contrato' or contratoCobrancaMB.filtroRelBaixado == 'inicio'}"/>
 				</h:panelGrid>												
-				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroRecebedor}" image="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;" />					
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroRecebedor}" icon="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;" />					
 			</p:panel>
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Recebedores - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataPagamento}">
@@ -143,9 +143,9 @@
 			         </p:column>	
 			  
 			        <f:facet name="footer">  
-			            <p:commandButton value="Selecionar" action="#{contratoCobrancaMB.populateSelectedRecebedor}" image="ui-icon ui-icon-check" update=":form:Recebedor" oncomplete="PF('recebedorDialog').hide();"/>  
-			            <p:commandButton value="Limpar Seleção" action="#{contratoCobrancaMB.clearRecebedor}" image="ui-icon ui-icon-trash" update=":form:Recebedor recebedorDialogdlg" oncomplete="PF('recebedorDialog').hide();"/>
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('recebedorDialog').hide();"/>  			                             
+			            <p:commandButton value="Selecionar" action="#{contratoCobrancaMB.populateSelectedRecebedor}" icon="ui-icon ui-icon-check" update=":form:Recebedor" oncomplete="PF('recebedorDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{contratoCobrancaMB.clearRecebedor}" icon="ui-icon ui-icon-trash" update=":form:Recebedor recebedorDialogdlg" oncomplete="PF('recebedorDialog').hide();"/>
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel" oncomplete="PF('recebedorDialog').hide();"/>  			                             
 			        </f:facet>  
 			    </p:dataTable> 			
 			</h:form>

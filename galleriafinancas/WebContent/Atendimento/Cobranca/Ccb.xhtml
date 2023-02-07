@@ -1601,7 +1601,7 @@
 												<p:commandButton value="Adicionar Socio" ajax="true"
 													action="#{ccbMB.concluirSocio()}"
 													update=":form:ParticipantesPanel"
-													image="ui-icon ui-icon-check" />
+													icon="ui-icon ui-icon-check" />
 											</h:panelGroup>
 										</p:panel>
 									</h:panelGroup>
@@ -1609,7 +1609,7 @@
 									<p:commandButton value="Adicionar" ajax="true"
 										action="#{ccbMB.concluirParticipante()}"
 										update=":form:ParticipantesPanel :form:Dados "
-										image="ui-icon ui-icon-check" />
+										icon="ui-icon ui-icon-check" />
 
 								</h:panelGroup>
 							</p:panel>
@@ -2035,7 +2035,7 @@
 
 							<p:commandButton value="Adicionar" ajax="true"
 								action="#{ccbMB.concluirSegurado()}"
-								update=":form:SeguradoresPanel" image="ui-icon ui-icon-check" />
+								update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
 
 						</h:panelGrid>
 					</p:panel>
@@ -2793,9 +2793,9 @@
 					<f:facet name="footer">
 						<p:commandButton value="Limpar Seleção"
 							action="#{ccbMB.clearContratoCobranca()}"
-							image="ui-icon ui-icon-trash" update="contratoDialogdlg"
+							icon="ui-icon ui-icon-trash" update="contratoDialogdlg"
 							oncomplete="PF('contratoCobrancaDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('contratoCobrancaDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

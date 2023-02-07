@@ -442,14 +442,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{responsavelMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador :form:AssistenteComercial"
+							icon="ui-icon ui-icon-check" update=":form:Responsavel :form:ResponsavelCaptador :form:AssistenteComercial"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{responsavelMB.clearResponsavelDialog}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:Responsavel :form:ResponsavelCaptador :form:AssistenteComercial responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

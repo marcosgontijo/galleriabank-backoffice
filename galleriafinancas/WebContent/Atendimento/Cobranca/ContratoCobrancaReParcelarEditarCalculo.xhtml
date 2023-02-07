@@ -149,12 +149,12 @@
 
 			<p:commandButton value="Re-parcelar"
 				action="#{contratoCobrancaMB.mostrarReParcelamento()}"
-				image="ui-icon ui-icon-check" ajax="true"
+				icon="ui-icon ui-icon-check" ajax="true"
 				update="ConsultaReparcelamento" />
 			<p:spacer height="10" />
 			<p:commandButton value="Concluir"
 				action="#{contratoCobrancaMB.concluirReparcelamento()}"
-				image="ui-icon ui-icon-check" update=":form"
+				icon="ui-icon ui-icon-check" update=":form"
 				oncomplete="PF('reParcelamentoDialog').hide();" />
 
 		</f:facet>

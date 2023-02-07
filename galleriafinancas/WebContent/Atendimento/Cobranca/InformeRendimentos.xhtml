@@ -67,7 +67,7 @@
 						style="FONT-SIZE: 10pt;width:300px;"/>
 					<p:commandButton id="botaoPagador" type="button"
 						onclick="PF('pagadorDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin"/>
+						icon="ui-icon ui-icon-circle-zoomin"/>
 				</h:panelGrid>
 				
 				<h:panelGrid columns="2">
@@ -78,7 +78,7 @@
 
 				<p:commandButton value="Consultar"
 					action="#{investidorMB.processInformeRendimentos}"
-					image="ui-icon ui-icon-check"
+					icon="ui-icon ui-icon-check"
 					update=":form:dtResultado :form:ConsultaResultados PanelPDF mensagens"
 					style="TEXT-DECORATION: bold; margin-top: 15px;" />
 			</p:panel>
@@ -259,14 +259,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{investidorMB.populateSelectedPagador}"
-							image="ui-icon ui-icon-check" update=":form:Recebedor"
+							icon="ui-icon ui-icon-check" update=":form:Recebedor"
 							oncomplete="PF('pagadorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{investidorMB.clearPagador}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:Recebedor pagadorDialogdlg"
 							oncomplete="PF('pagadorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('pagadorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

@@ -33,13 +33,13 @@
 						style="FONT-SIZE: 10pt;width:420px;" />
 					<p:commandButton id="botaoFavorecido" type="button"
 						onclick="PF('favorecidoDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" 
+						icon="ui-icon ui-icon-circle-zoomin" 
 						disabled="#{iuguMB.contaMestre}" />
 				</h:panelGrid>
 				<br />
 				<p:commandButton value="Consultar Saldo SubConta"
 					action="#{iuguMB.consultarSaldoSubConta}"
-					image="ui-icon ui-icon-check" update="saldoSubConta mensagens"
+					icon="ui-icon ui-icon-check" update="saldoSubConta mensagens"
 					style="TEXT-DECORATION: bold;" />
 			</p:panel>
 
@@ -140,7 +140,7 @@
 								rendered="#{iuguMB.operacaoTransferencia}" />
 							<p:commandButton id="botaoFavorecidoAux" type="button"
 								onclick="PF('favorecidoDialogAux').show();"
-								image="ui-icon ui-icon-circle-zoomin" 
+								icon="ui-icon ui-icon-circle-zoomin" 
 								rendered="#{iuguMB.operacaoTransferencia}"
 								disabled="#{iuguMB.contaMestreAux}" />
 
@@ -182,7 +182,7 @@
 
 							<p:commandButton value="Transferir entre SubContas"
 								action="#{iuguMB.processaTransferenciaSubcontasTela}"
-								image="ui-icon ui-icon-check" update="saldoSubConta mensagens"
+								icon="ui-icon ui-icon-check" update="saldoSubConta mensagens"
 								style="TEXT-DECORATION: bold;"
 								rendered="#{iuguMB.operacaoTransferencia}" />
 
@@ -190,7 +190,7 @@
 
 							<p:commandButton value="Solicitar Saque"
 								action="#{iuguMB.processaSaqueSubcontaTela}"
-								image="ui-icon ui-icon-check"
+								icon="ui-icon ui-icon-check"
 								update="saldoSubConta mensagens :form:PanelPDF"
 								style="TEXT-DECORATION: bold;"
 								rendered="#{!iuguMB.operacaoTransferencia}" />
@@ -242,13 +242,13 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{iuguMB.populateSelectedRecebedor}"
-							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							icon="ui-icon ui-icon-check" update=":form:CobrancaIugu"
 							oncomplete="PF('favorecidoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash"
 							update=":form:CobrancaIugu favorecidoDialogdlg"
 							oncomplete="PF('favorecidoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('favorecidoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>
@@ -300,14 +300,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{iuguMB.populateSelectedRecebedorAux}"
-							image="ui-icon ui-icon-check" update=":form:operacoesSubConta"
+							icon="ui-icon ui-icon-check" update=":form:operacoesSubConta"
 							oncomplete="PF('favorecidoDialog'Aux).hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{iuguMB.clearRecebedorAux}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:operacoesSubConta favorecidoDialogdlgAux"
 							oncomplete="PF('favorecidoDialogAux').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('favorecidoDialogAux').hide();" />
 					</f:facet>
 				</p:dataTable>

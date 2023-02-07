@@ -32,7 +32,7 @@
 					<p:inputMask id="CNPJ" value="#{consultaRobos.cnpj}" label="CNPJ" mask="99.999.999/9999-99"  rendered="#{consultaRobos.consultaPor}"/>										
 				</h:panelGrid>	
 				<br></br>					
-				<p:commandButton value="Consultar" ajax="false" action="#{consultaRobos.gerarConsultasRobos}" image="ui-icon ui-icon-check" update=":form:PanelPDF" 
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaRobos.gerarConsultasRobos}" icon="ui-icon ui-icon-check" update=":form:PanelPDF" 
 				style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>					
 			</p:panel>
 		 	<p:panel id="PanelPDF"

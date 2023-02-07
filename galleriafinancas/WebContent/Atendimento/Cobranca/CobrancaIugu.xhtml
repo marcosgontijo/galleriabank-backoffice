@@ -22,7 +22,7 @@
 						style="FONT-SIZE: 10pt;width:420px;" />
 					<p:commandButton id="botaoFavorecido" type="button"
 						onclick="PF('favorecidoDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin"  />
+						icon="ui-icon ui-icon-circle-zoomin"  />
 					<p:outputLabel for="Cedente" value="Recebedor: "
 						styleClass="labelBold" />
 					<p:inputText id="Cedente" value="#{iuguMB.nomeCedente}"
@@ -30,7 +30,7 @@
 						style="FONT-SIZE: 10pt;width:420px;" />
 					<p:commandButton id="botaoCedente" type="button"
 						onclick="PF('cedenteDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin"  />
+						icon="ui-icon ui-icon-circle-zoomin"  />
 				</h:panelGrid>
 				<h:panelGrid columns="2">	
 					<p:outputLabel for="qtdeParcelas" value="Qtde. de Parcelas: "	
@@ -63,7 +63,7 @@
 								
 				<p:commandButton value="Gerar Cobrança"
 					action="#{iuguMB.geraCobrancaSimplesMenu()}"
-					image="ui-icon ui-icon-check"
+					icon="ui-icon ui-icon-check"
 					update="mensagens :formFaturas:FaturasIugu CobrancaIugu"
 					style="TEXT-DECORATION: bold;margin-top:25px;" />
 					
@@ -137,9 +137,9 @@
 			         </p:column>	
 			  
 			        <f:facet name="footer">  
-			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedRecebedor}" image="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('favorecidoDialog').hide();"/>  
-			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash" update=":form:CobrancaIugu favorecidoDialogdlg" oncomplete="PF('favorecidoDialog').hide();"/>
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('favorecidoDialog').hide();"/>  			                             
+			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedRecebedor}" icon="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('favorecidoDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash" update=":form:CobrancaIugu favorecidoDialogdlg" oncomplete="PF('favorecidoDialog').hide();"/>
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel" oncomplete="PF('favorecidoDialog').hide();"/>  			                             
 			        </f:facet>  
 			    </p:dataTable> 			
 			</h:form>
@@ -173,9 +173,9 @@
 			         </p:column>	
 			  
 			        <f:facet name="footer">  
-			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedCedente}" image="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('cedenteDialog').hide();"/>  
-			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearCedentes}" image="ui-icon ui-icon-trash" update=":form:CobrancaIugu cedenteDialogdlg" oncomplete="PF('cedenteDialog').hide();"/>
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel" oncomplete="PF('cedenteDialog').hide();"/>  			                             
+			            <p:commandButton value="Selecionar" action="#{iuguMB.populateSelectedCedente}" icon="ui-icon ui-icon-check" update=":form:CobrancaIugu" oncomplete="PF('cedenteDialog').hide();"/>  
+			            <p:commandButton value="Limpar Seleção" action="#{iuguMB.clearCedentes}" icon="ui-icon ui-icon-trash" update=":form:CobrancaIugu cedenteDialogdlg" oncomplete="PF('cedenteDialog').hide();"/>
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel" oncomplete="PF('cedenteDialog').hide();"/>  			                             
 			        </f:facet>  
 			    </p:dataTable> 			
 			</h:form>

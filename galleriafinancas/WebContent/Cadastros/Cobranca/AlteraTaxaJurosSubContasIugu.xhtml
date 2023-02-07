@@ -33,7 +33,7 @@
 						style="FONT-SIZE: 10pt;width:420px;" />
 					<p:commandButton id="botaoFavorecido" type="button"
 						onclick="PF('favorecidoDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" 
+						icon="ui-icon ui-icon-circle-zoomin" 
 						disabled="#{iuguMB.contaMestre}" />
 				</h:panelGrid>
 				
@@ -93,13 +93,13 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{iuguMB.populateSelectedRecebedor}"
-							image="ui-icon ui-icon-check" update=":form:PanelTaxaJuros"
+							icon="ui-icon ui-icon-check" update=":form:PanelTaxaJuros"
 							oncomplete="PF('favorecidoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash"
 							update=":form:PanelTaxaJuros favorecidoDialogdlg"
 							oncomplete="PF('favorecidoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('favorecidoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

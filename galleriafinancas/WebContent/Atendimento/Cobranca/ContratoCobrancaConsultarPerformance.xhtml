@@ -89,7 +89,7 @@
 					<p:commandButton value="Consultar"
 						ajax="false"
 						action="#{contratoCobrancaMB.geraConsultaContratosPerformance}"
-						image="ui-icon ui-icon-check"
+						icon="ui-icon ui-icon-check"
 						update=":form:ConsultaContratosResultados"
 						style="TEXT-DECORATION: bold;" />
 					<p:spacer width="25"></p:spacer>
@@ -97,7 +97,7 @@
 						ajax="false"
 						action="#{contratoCobrancaMB.clearFiltersConsultaContratosPerformance}"
 						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
-						image="ui-icon ui-icon-check"
+						icon="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
 				</h:panelGrid>
 			</p:panel>
@@ -266,7 +266,7 @@
 					</p:dataTable>	
 				</p:panel>			
 				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
-					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+					<p:commandButton value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
 				</div>	  				
 			</h:form>
 		</p:dialog>  
@@ -600,9 +600,9 @@
 			    <div align="center">
 				    <p:commandButton value="Salvar"
 						action="#{contratoCobrancaMB.saveContratoEmCartorio}"
-						image="ui-icon ui-icon-check" update=":form:ConsultaContratosResultados :form:mensagens :form:dtContratos contratoEmCartorioForm"
+						icon="ui-icon ui-icon-check" update=":form:ConsultaContratosResultados :form:mensagens :form:dtContratos contratoEmCartorioForm"
 						oncomplete="PF('contratoEmCartorioDialog').hide();" />
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('contratoEmCartorioDialog').hide();" />
 				</div>
 			</h:form>
