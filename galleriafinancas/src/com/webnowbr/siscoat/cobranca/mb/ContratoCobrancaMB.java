@@ -5250,31 +5250,38 @@ public class ContratoCobrancaMB {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Comercial não encontrado",""));
 			}
 			return null;
-		} else {
-			this.objetoContratoCobranca.setResponsavel(rDao.findById(selectedResponsavel.getId()));
-			contratoCobrancaDao.merge(this.objetoContratoCobranca);
-			clearResponsavel();
-			this.updateResponsavel = "";
-			try {
-				if(!CommonsUtil.semValor(selectedResponsavel.getTelCelular())){
-					// Mensagem PAJU RECEBIDO
-					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-					"recebimento_lead_comercial",
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(), "", "");
-				}
-									
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "WhatsApp: " + e, ""));
-			}	
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO,"Lead editado com sucesso! (Contrato: "
-							+ this.objetoContratoCobranca.getNumeroContrato() + ")!",""));
-			return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";
-		}
+		} 
+		Responsavel resp = new Responsavel();
+		resp = rDao.findById(selectedResponsavel.getId());
+		if(CommonsUtil.semValor(resp)) {
+			if (context != null) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro ao buscar comercial, tente novamente",""));
+			}
+			return null;
+		}	
+		this.objetoContratoCobranca.setResponsavel(resp);
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);					
+		clearResponsavel();
+		this.updateResponsavel = "";
+		try {
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getTelCelular())){
+				// Mensagem PAJU RECEBIDO
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
+				"recebimento_lead_comercial",
+				this.objetoContratoCobranca.getPagador().getNome(),
+				this.objetoContratoCobranca.getNumeroContrato(), "", "");
+			}
+								
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "WhatsApp: " + e, ""));
+		}	
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,"Lead editado com sucesso! (Contrato: "
+						+ this.objetoContratoCobranca.getNumeroContrato() + ")!",""));
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarLeads.xhtml";		
 	}
 	
 	public void geraContasPagarRemuneracao(ContratoCobranca contrato) {
