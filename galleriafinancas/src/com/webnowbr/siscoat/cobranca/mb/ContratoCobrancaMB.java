@@ -9837,6 +9837,13 @@ public class ContratoCobrancaMB {
 		this.parametroConsultaContrato = null;
 	}
 	
+	public void changeStatusConsultaPreContratos() {
+		this.parametroConsultaContrato = null;
+		if(CommonsUtil.mesmoValor(this.tipoParametroConsultaContrato, "todos")){
+			geraConsultaContratosPendentes();
+		}
+	}
+	
 	private int totalContratosConsultar;
 	private int prazoContrato;
 	private BigDecimal valorUltimaPareclaPaga;
@@ -11943,14 +11950,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 				if (usuarioLogado != null) {
 					if (usuarioLogado.isAdministrador()) {
-						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null);
+						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null, tipoParametroConsultaContrato, parametroConsultaContrato);
 					} else {
 						if (usuarioLogado.getListResponsavel().size() > 0) {
 							this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesResponsaveis(
 									usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
 						} else {
 							this.contratosPendentes = contratoCobrancaDao
-									.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel());
+									.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel(), tipoParametroConsultaContrato, parametroConsultaContrato);
 						}
 					}
 				}
@@ -12760,14 +12767,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			if (usuarioLogado != null) {
 				if (usuarioLogado.isAdministrador()) {
-					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null);
+					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null, tipoParametroConsultaContrato, parametroConsultaContrato);
 				} else {
 					if (usuarioLogado.getListResponsavel().size() > 0) {
 						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesResponsaveis(
 								usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
 					} else {
 						this.contratosPendentes = contratoCobrancaDao
-								.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel());
+								.consultaContratosPendentes(usuarioLogado.getCodigoResponsavel(), tipoParametroConsultaContrato, parametroConsultaContrato);
 					}
 				}
 			}
