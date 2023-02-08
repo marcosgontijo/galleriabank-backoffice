@@ -388,7 +388,7 @@ public class IpcaJobCalcular {
 			
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
 			dataCorteParcelasMalucas.set(Calendar.YEAR, 2022);
-			dataCorteParcelasMalucas.set(Calendar.MONTH, 12);
+			dataCorteParcelasMalucas.set(Calendar.MONTH, 11);
 			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 15);
 
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
@@ -480,6 +480,7 @@ public class IpcaJobCalcular {
 						if (parcela.getNumeroParcela().compareTo(BigInteger.ZERO) == 0)
 							continue;
 
+						/*
 						Integer parcelaSimuladorReal = 0;
 
 						if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 1)
@@ -487,8 +488,16 @@ public class IpcaJobCalcular {
 									+ CommonsUtil.intValue(detalhe.getNumeroParcela()) - 1;
 						else
 							parcelaSimuladorReal = CommonsUtil.intValue(parcela.getNumeroParcela());
-
+						
 						final int parcelaProcura = parcelaSimuladorReal;
+						*/
+						
+						Integer parcelaSimuladorReal = 0;
+						
+						parcelaSimuladorReal = CommonsUtil.intValue(parcela.getNumeroParcela());
+						
+						final int parcelaProcura = parcelaSimuladorReal;
+						
 						ContratoCobrancaDetalhes detalheIpca = contratoCobranca
 								.getListContratoCobrancaDetalhes().stream().filter(x -> CommonsUtil
 										.mesmoValor(CommonsUtil.intValue(x.getNumeroParcela()), parcelaProcura))
@@ -500,7 +509,7 @@ public class IpcaJobCalcular {
 						if (detalheIpca.getVlrParcelaOriginal() == null)
 							detalheIpca.setVlrParcelaOriginal(detalheIpca.getVlrParcela());
 
-						if (CommonsUtil.mesmoValor(parcelaSimuladorReal.toString(), detalheIpca.getNumeroParcela())) {
+						if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalheIpca.getNumeroParcela())) {
 							if (detalheIpca.isParcelaPaga()
 									&& !CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA())) {
 								continue;
@@ -519,7 +528,7 @@ public class IpcaJobCalcular {
 							// detalheIpca.setSeguroDFI(parcela.getSeguroDFI());
 							int finalCarencia = contratoCobranca.getMesesCarencia() + 1;
 
-							if (CommonsUtil.mesmoValor(parcelaSimuladorReal, finalCarencia)) {
+							if (Integer.valueOf(detalheIpca.getNumeroParcela()) == finalCarencia) {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP().add(valorSeguroMIPCarencia));
 								detalheIpca.setSeguroDFI(valorSeguroDFI.multiply(
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
@@ -670,7 +679,7 @@ public class IpcaJobCalcular {
 			
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
 			dataCorteParcelasMalucas.set(Calendar.YEAR, 2022);
-			dataCorteParcelasMalucas.set(Calendar.MONTH, 12);
+			dataCorteParcelasMalucas.set(Calendar.MONTH, 11);
 			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 15);
 
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
