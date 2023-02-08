@@ -5845,7 +5845,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContratoCobranca> consultaContratosPendentes(final String codResponsavel) {
+	public Collection<ContratoCobranca> consultaContratosPendentes(final String codResponsavel, final String tipoParametro, final String valorParametrto) {
 		return (Collection<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -5859,12 +5859,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES_CONSULTA;
 					
-					if (codResponsavel != null) {
-						if (!codResponsavel.equals("")) { 
-							query = query + " where res.codigo = '" + codResponsavel + "' ";
-						}				
-					} 
+					String where = " where 1 = 1 ";
 					
+					if (!CommonsUtil.semValor(codResponsavel)) {
+						where = where + " and res.codigo = '" + codResponsavel + "' ";			
+					} 	
+					
+					if(!CommonsUtil.semValor(tipoParametro)) {
+						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
+							where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
+						}
+					}
+					
+					query = query + where;					
 					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
@@ -5947,6 +5954,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
+			+ "	inner join cobranca.imovelcobranca imv on imv.id = coco.imovel "
 			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id ";
 	
 	

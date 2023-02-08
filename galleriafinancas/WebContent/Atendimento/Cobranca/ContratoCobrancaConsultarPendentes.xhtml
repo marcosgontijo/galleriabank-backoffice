@@ -64,7 +64,29 @@
 						}
 					</script>
 				</h:panelGrid>
-			</p:panel>									
+			</p:panel>
+			<p:panel id="panelParametros"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="4">
+					<p:outputLabel for="tipoParametroConsultaContrato" value="Filtro: "
+						style="margin-right: 5px;" />
+					<p:selectOneListbox id="tipoParametroConsultaContrato"
+						value="#{contratoCobrancaMB.tipoParametroConsultaContrato}">
+						<f:selectItem itemLabel="Todos" itemValue="todos" />
+						<f:selectItem itemLabel="Matrícula" itemValue="Matricula" />	
+						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
+							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
+					</p:selectOneListbox>
+					<p:inputText id="parametroConsultaContrato"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="Contrato" style="width:150px;" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
+						<p:ajax event="blur" update="ConsultaContratos"
+							listener="#{contratoCobrancaMB.geraConsultaContratosPendentes}" />
+					</p:inputText>
+				</h:panelGrid>
+			</p:panel>
+
 			<p:panel id="ConsultaContratos" header="Pré-Contratos Pendentes - Consultar" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
    		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }

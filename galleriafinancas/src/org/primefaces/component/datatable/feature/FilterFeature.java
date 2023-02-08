@@ -195,13 +195,13 @@ public class FilterFeature implements DataTableFeature {
             ve.setValue(context.getELContext(), value);
         }
         else {
-            if(value != null) {
+            /*if(value != null) {
                 logger.log(Level.WARNING, "DataTable {0} has filtering enabled but no filteredValue model reference is defined"
                         + ", for backward compatibility falling back to page viewstate method to keep filteredValue."
                         + " It is highly suggested to use filtering with a filteredValue model reference as viewstate method is deprecated and will be removed in future."
                         , new Object[]{table.getClientId(context)});
 
-            }
+            }*/
 
             table.setFilteredValue(value);
         }
