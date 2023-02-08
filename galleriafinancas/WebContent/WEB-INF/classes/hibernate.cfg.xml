@@ -18,7 +18,7 @@
 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriafinancas</property>
 	<property name="hibernate.connection.username">postgres</property>
 	<property name="hibernate.connection.password">Hvj28383**</property>
-	-->
+		-->
 	<!--
 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriafinancas</property>
 	<property name="hibernate.connection.username">postgres</property>

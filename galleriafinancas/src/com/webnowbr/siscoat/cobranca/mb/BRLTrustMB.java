@@ -489,20 +489,24 @@ public class BRLTrustMB {
 		cell.setCellValue("Saldo Devedor");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(17);
-		cell.setCellValue("Parcela");
+		cell.setCellValue("IF (Termo Cessão)");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(18);
-		cell.setCellValue("Data Vencimento");
+		cell.setCellValue("Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(19);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(20);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Valor");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(21);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(22);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
+		
 
 		// cria estilo para dados em geral
 		cell_style = wb.createCellStyle();
@@ -683,6 +687,13 @@ public class BRLTrustMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0"));
 			}
+			
+			// IF (Termo Cessão)
+			cell = row.createCell(17);
+			cell.setCellStyle(cell_style);
+			if (record.isTemSeguro()) {
+				cell.setCellValue(record.getTermoCessao());
+			}
 
 			int parcelaCount = 0;
 			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
@@ -805,7 +816,7 @@ public class BRLTrustMB {
 					}
 	
 					// Parcela
-					cell = row.createCell(17);
+					cell = row.createCell(18);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -816,7 +827,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getNumeroParcela());
 	
 					// Data Vencimento
-					cell = row.createCell(18);
+					cell = row.createCell(19);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -827,7 +838,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataVencimento());
 	
 					// Valor Parcela
-					cell = row.createCell(19);
+					cell = row.createCell(20);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -855,7 +866,7 @@ public class BRLTrustMB {
 					}
 	
 					// Data pagto
-					cell = row.createCell(20);
+					cell = row.createCell(21);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -866,7 +877,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataUltimoPagamento());
 	
 					// Valor Pago
-					cell = row.createCell(21);
+					cell = row.createCell(22);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -901,6 +912,7 @@ public class BRLTrustMB {
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 14, 14));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 15, 15));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 16, 16));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 17, 17));
 			}
 
 			// pula 1 linha
@@ -950,6 +962,8 @@ public class BRLTrustMB {
 			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(21);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(22);
 			cell.setCellStyle(cell_style);
 			
 			// Style para cabeçalho
