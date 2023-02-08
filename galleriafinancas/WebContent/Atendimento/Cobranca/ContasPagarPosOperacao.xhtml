@@ -179,7 +179,7 @@
 						
 						<p:commandButton value="Concluir" ajax="true"
 							action="#{contasPagarMB.concluirContaPosOperacao()}"
-							update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
+							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
 				
 					<p:dataView var="contas"
@@ -329,14 +329,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contasPagarMB.populateSelectedContrato}"
-							image="ui-icon ui-icon-check" update=":form:  :form:contasPagar contratoDialogdlg"
+							icon="ui-icon ui-icon-check" update=":form:  :form:contasPagar contratoDialogdlg"
 							oncomplete="PF('contratoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contasPagarMB.clearContrato}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:contasPagar "
 							oncomplete="PF('contratoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('contratoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

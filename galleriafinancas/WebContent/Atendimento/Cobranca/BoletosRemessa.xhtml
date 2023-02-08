@@ -57,14 +57,14 @@
 				</h:panelGrid>	
 				<h:panelGrid columns="1">	
 					<br/>								
-					<p:commandButton value="Consultar" action="#{geracaoRemessaMB.consultarBoletos}" image="ui-icon ui-icon-check" update=":form:BoletosRemessa" style="TEXT-DECORATION: bold;"/>
+					<p:commandButton value="Consultar" action="#{geracaoRemessaMB.consultarBoletos}" icon="ui-icon ui-icon-check" update=":form:BoletosRemessa" style="TEXT-DECORATION: bold;"/>
 				</h:panelGrid>					
 			</p:panel>
 			<p:panel id="BoletosRemessa" header="Boletos Gerados - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtBoletos" var="boletos" value="#{geracaoRemessaMB.listBoletosRemessa}" emptyMessage="" sortBy="#{boletos.numeroContrato}"
    		          selection="#{geracaoRemessaMB.selectedBoletos}" rowKey="#{boletos.id}">
                  	<f:facet name="header">
-                 		<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" image="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>          
+                 		<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" icon="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>          
 			        </f:facet>		
 			        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>		        
                  	<p:column style="text-align: center;width: 100px;" headerText="Contrato" filterBy="#{boletos.numeroContrato}" filterMatchMode="contains" sortBy="#{boletos.numeroContrato}">
@@ -100,7 +100,7 @@
 			            </p:commandButton>
 			        </p:column>
 		            <f:facet name="footer">
-		            	<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" image="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>					
+		            	<p:commandButton value="Gerar Remessa" action="#{geracaoRemessaMB.gerarRemessa}" update=":form :form:PanelPDF :form:mensagens" icon="ui-icon ui-icon-check" style="TEXT-DECORATION: bold;"/>					
 			        </f:facet>	            	        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>

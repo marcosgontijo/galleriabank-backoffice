@@ -559,7 +559,7 @@
 							disabled="#{contratoCobrancaMB.deleteMode}" />
 						<p:commandButton id="botaoRecebedor" type="button"
 							onclick="PF('recebedorDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin" 
+							icon="ui-icon ui-icon-circle-zoomin" 
 							disabled="#{contratoCobrancaMB.deleteMode}" />
 					</h:panelGrid>	
 				</shiro:hasAnyRoles>	
@@ -1462,14 +1462,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedRecebedorPreContrato}"
-							image="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
+							icon="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
 							oncomplete="PF('recebedorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearRecebedor}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:PanelPagadorRecebedor recebedorDialogdlg"
 							oncomplete="PF('recebedorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('recebedorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

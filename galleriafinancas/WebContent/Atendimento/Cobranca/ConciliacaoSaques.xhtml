@@ -45,7 +45,7 @@
 						<br />
 						<p:commandButton value="Processa Conciliação"
 							action="#{iuguMB.consultarConciliacaoExtratoFinanceiroSubConta}"
-							image="ui-icon ui-icon-check"
+							icon="ui-icon ui-icon-check"
 							update="saldoSubConta :form:mensagens"
 							style="TEXT-DECORATION: bold;" />
 						<p:ajaxStatus onstart="PF('statusDialog').show()"
@@ -144,7 +144,7 @@
 								<br />						
 								<p:commandButton value="Processa Consulta Saque"
 								action="#{iuguMB.processaConciliacaoSaldoSubcontas}"
-								image="ui-icon ui-icon-check"
+								icon="ui-icon ui-icon-check"
 								update="saldoTotalIUGU :form:mensagens"
 								style="TEXT-DECORATION: bold;" />
 								<br />
@@ -233,13 +233,13 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{iuguMB.populateSelectedRecebedor}"
-							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							icon="ui-icon ui-icon-check" update=":form:CobrancaIugu"
 							oncomplete="PF('favorecidoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash"
 							update=":form:CobrancaIugu favorecidoDialogdlg"
 							oncomplete="PF('favorecidoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('favorecidoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

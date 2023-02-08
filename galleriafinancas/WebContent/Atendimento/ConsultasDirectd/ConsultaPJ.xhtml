@@ -52,7 +52,7 @@
 					<p:inputMask id="CNPJ" value="#{consultaPJ.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" />									
 				</h:panelGrid>	
 				<br></br>						
-				<p:commandButton value="Consultar" ajax="false" action="#{consultaPJ.consultaPJ}" image="ui-icon ui-icon-check" update=":form:consultaPJResultados" style="TEXT-DECORATION: bold;"/>					
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaPJ.consultaPJ}" icon="ui-icon ui-icon-check" update=":form:consultaPJResultados" style="TEXT-DECORATION: bold;"/>					
 			</p:panel>
 			<p:panel id="consultaPJResultados" header="Retorno Consulta PJ" style="margin-bottom:10px;">	    		    
       			<h:panelGrid columns="2">	

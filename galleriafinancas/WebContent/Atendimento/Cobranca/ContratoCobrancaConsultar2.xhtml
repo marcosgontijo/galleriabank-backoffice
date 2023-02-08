@@ -98,7 +98,7 @@
 					<p:commandButton value="Consultar"
 						ajax="false"
 						action="#{contratoCobrancaMB.geraConsultaContratos}"
-						image="ui-icon ui-icon-check"
+						icon="ui-icon ui-icon-check"
 						update=":form:ConsultaContratosResultados"
 						style="TEXT-DECORATION: bold;" />
 					<p:spacer width="25"></p:spacer>
@@ -106,7 +106,7 @@
 						ajax="false"
 						action="#{contratoCobrancaMB.clearFiltersConsultaContratos}"
 						update=":form:ConsultaContratos :form:ConsultaContratosResultados"
-						image="ui-icon ui-icon-check"
+						icon="ui-icon ui-icon-check"
 						style="TEXT-DECORATION: bold;" />
 				</h:panelGrid>
 			</p:panel>
@@ -260,7 +260,7 @@
 					</p:dataTable>	
 				</p:panel>			
 				<div align="center" style="margin-top:20px;margin-bottom:20px;">								
-					<p:commandButton value="Voltar" image="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
+					<p:commandButton value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="PF('observacoesDialog').hide();"/>																						
 				</div>	  				
 			</h:form>
 		</p:dialog>  

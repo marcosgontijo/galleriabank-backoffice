@@ -45,14 +45,14 @@
 				<f:facet name="footer">
 					<p:commandButton value="Selecionar"
 						action="#{mbean.populateSelectedContaContabil}"
-						image="ui-icon ui-icon-check" update=":form"
+						icon="ui-icon ui-icon-check" update=":form"
 						oncomplete="PF('contaContabilDialog').hide();" />
 					<p:commandButton value="Limpar Seleção"
 						action="#{mbean.clearContaContabil}"
-						image="ui-icon ui-icon-trash"
+						icon="ui-icon ui-icon-trash"
 						update=":form contaContabilDialogdlg"
 						oncomplete="PF('contaContabilDialog').hide();" />
-					<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('contaContabilDialog').hide();" />
 				</f:facet>
 			</p:dataTable>

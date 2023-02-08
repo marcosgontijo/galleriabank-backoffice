@@ -2085,7 +2085,7 @@
 							disabled="#{contratoCobrancaMB.deleteMode}" />
 						<p:commandButton id="botaoRecebedor" type="button"
 							onclick="PF('recebedorDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin"
+							icon="ui-icon ui-icon-circle-zoomin"
 							disabled="#{contratoCobrancaMB.deleteMode}" />
 					</h:panelGrid>
 					<p:panel id="PanelNovoPagador" header="Dados Pagador"
@@ -2842,7 +2842,7 @@
 									<p:commandButton value="Adicionar" ajax="true"
 										action="#{contratoCobrancaMB.concluirSocio()}"
 										update=":form:SociosPanel  :form:CheckListDocumentosSocios"
-										image="ui-icon ui-icon-check" />
+										icon="ui-icon ui-icon-check" />
 								</h:panelGroup>
 							</p:panel>
 						</h:panelGroup>
@@ -3118,7 +3118,7 @@
 									<p:commandButton value="Adicionar" ajax="true"
 										action="#{contratoCobrancaMB.concluirPagador()}"
 										update=":form:OutrosPagadores :form:CheckListDocumentosAdicionais"
-										image="ui-icon ui-icon-check" />
+										icon="ui-icon ui-icon-check" />
 
 								</h:panelGroup>
 							</p:panel>
@@ -3491,7 +3491,7 @@
 
 								<p:commandButton value="Adicionar" ajax="true"
 									action="#{contratoCobrancaMB.concluirSegurado()}"
-									update=":form:SeguradoresPanel" image="ui-icon ui-icon-check" />
+									update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
 
 							</h:panelGrid>
 						</p:panel>
@@ -3700,7 +3700,7 @@
 							
 							<p:commandButton value="Concluir" ajax="true"
 								action="#{contratoCobrancaMB.concluirConta()}"
-								update=":form:ContasPagarPanel" image="ui-icon ui-icon-check" />
+								update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 						</h:panelGroup>
 
 						<p:dataView var="contas"
@@ -4758,14 +4758,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedRecebedorPreContrato}"
-							image="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
+							icon="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
 							oncomplete="PF('recebedorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearRecebedor}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:PanelPagadorRecebedor recebedorDialogdlg"
 							oncomplete="PF('recebedorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('recebedorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>
@@ -4812,14 +4812,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedImovel}"
-							image="ui-icon ui-icon-check" 
+							icon="ui-icon ui-icon-check" 
 							oncomplete="PF('imovelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearImovel}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update="imovelDialogdlg"
 							oncomplete="PF('imovelDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('imovelDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

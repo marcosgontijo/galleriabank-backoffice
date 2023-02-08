@@ -30,7 +30,7 @@
 						style="FONT-SIZE: 10pt;width:420px;" rendered="#{iuguMB.relPorSubconta}"/>
 					<p:commandButton id="botaoFavorecido" type="button"
 						onclick="PF('favorecidoDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin" rendered="#{iuguMB.relPorSubconta}" />					
+						icon="ui-icon ui-icon-circle-zoomin" rendered="#{iuguMB.relPorSubconta}" />					
 					<p:outputLabel for="dataInicio" value="Data Inicio: "
 						styleClass="labelBold" style="margin-right: 20px;"  rendered="#{iuguMB.relPorSubconta}" />
 					<p:calendar id="dataInicio" value="#{iuguMB.relDataContratoInicio}"
@@ -62,7 +62,7 @@
 				<br />
 				<p:commandButton value="Processar conciliação"
 					action="#{iuguMB.processarConciliacaoSaque}"
-					image="ui-icon ui-icon-check" update="faturasSubConta mensagens"
+					icon="ui-icon ui-icon-check" update="faturasSubConta mensagens"
 					style="TEXT-DECORATION: bold;" onclick="start();" oncomplete="stop();"/>
 			</p:panel>
 
@@ -149,13 +149,13 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{iuguMB.populateSelectedRecebedor}"
-							image="ui-icon ui-icon-check" update=":form:CobrancaIugu"
+							icon="ui-icon ui-icon-check" update=":form:CobrancaIugu"
 							oncomplete="PF('favorecidoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
-							action="#{iuguMB.clearRecebedor}" image="ui-icon ui-icon-trash"
+							action="#{iuguMB.clearRecebedor}" icon="ui-icon ui-icon-trash"
 							update=":form:CobrancaIugu favorecidoDialogdlg"
 							oncomplete="PF('favorecidoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('favorecidoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

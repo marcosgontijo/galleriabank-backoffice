@@ -1276,7 +1276,7 @@
 									<p:commandButton value="Adicionar" ajax="true"
 										action="#{contratoCobrancaMB.concluirSocio()}"
 										update=":form:SociosPanel  :form:CheckListDocumentosSocios"
-										image="ui-icon ui-icon-check" />
+										icon="ui-icon ui-icon-check" />
 								</h:panelGroup>
 							</p:panel>
 						</h:panelGroup>
@@ -1498,7 +1498,7 @@
 									<p:commandButton value="Adicionar" ajax="true"
 										action="#{contratoCobrancaMB.concluirPagador()}"
 										update=":form:OutrosPagadores :form:CheckListDocumentosAdicionais"
-										image="ui-icon ui-icon-check" />
+										icon="ui-icon ui-icon-check" />
 
 								</h:panelGroup>
 							</p:panel>
@@ -2164,14 +2164,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedRecebedorPreContrato}"
-							image="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
+							icon="ui-icon ui-icon-check" update=":form:PanelPagadorRecebedor :form:PanelNovoPagador"
 							oncomplete="PF('recebedorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearRecebedor}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:PanelPagadorRecebedor recebedorDialogdlg"
 							oncomplete="PF('recebedorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('recebedorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

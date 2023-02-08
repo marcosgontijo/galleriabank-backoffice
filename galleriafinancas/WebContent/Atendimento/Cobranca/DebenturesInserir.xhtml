@@ -43,7 +43,7 @@
 						style="FONT-SIZE: 10pt;width:300px;"/>
 					<p:commandButton id="botaoPagador" type="button"
 						onclick="PF('pagadorDialog').show();"
-						image="ui-icon ui-icon-circle-zoomin"  />
+						icon="ui-icon ui-icon-circle-zoomin"  />
 			</h:panelGrid>
 				<p:panel id="termoSecuritizacao" header="PDF - Termo de Securitização"
 					style="margin-bottom:20px;margin-top:20px;">
@@ -105,7 +105,7 @@
 							style="FONT-SIZE: 10pt;width:50px;" rendered="#{!investidorMB.filtraContrato}"/>
 						<p:commandButton id="botaoContrato" type="button"
 							onclick="PF('contratoDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin" rendered="#{!investidorMB.filtraContrato}"  disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>
+							icon="ui-icon ui-icon-circle-zoomin" rendered="#{!investidorMB.filtraContrato}"  disabled="#{!investidorMB.debenturesInvestidor.lastrearTitulos}"/>
 					</h:panelGrid>
 				</p:panel>
 				</p:panel>
@@ -150,14 +150,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{investidorMB.populateSelectedContrato}"
-							image="ui-icon ui-icon-check" update=":form:contrato"
+							icon="ui-icon ui-icon-check" update=":form:contrato"
 							oncomplete="PF('contratoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{investidorMB.clearContrato}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:contrato contratoDialogdlg"
 							oncomplete="PF('contratoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('contratoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>
@@ -205,14 +205,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{investidorMB.populateSelectedPagador}"
-							image="ui-icon ui-icon-check" update=":form:Pagador"
+							icon="ui-icon ui-icon-check" update=":form:Pagador"
 							oncomplete="PF('pagadorDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{investidorMB.clearPagador}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:Pagador pagadorDialogdlg"
 							oncomplete="PF('pagadorDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('pagadorDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

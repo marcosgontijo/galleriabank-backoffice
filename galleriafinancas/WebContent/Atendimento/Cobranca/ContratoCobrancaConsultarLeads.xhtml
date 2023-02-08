@@ -123,7 +123,7 @@
 							<p:spacer width="5px" />
 							<p:commandButton id="botaoResponsavel" 
 								onclick="PF('responsavelDialog').show();" update="formResponsavel"
-								image="ui-icon ui-icon-circle-zoomin"  />						
+								icon="ui-icon ui-icon-circle-zoomin"  />						
 					</h:panelGrid>
 					<h:panelGrid columns="3" style="margin-top:50px"> 
 						<p:commandButton value="Cancelar" 
@@ -171,14 +171,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contratoCobrancaMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":fromEnviarLeadComercial:nomeResponsavel"
+							icon="ui-icon ui-icon-check" update=":fromEnviarLeadComercial:nomeResponsavel"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contratoCobrancaMB.clearResponsavel}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

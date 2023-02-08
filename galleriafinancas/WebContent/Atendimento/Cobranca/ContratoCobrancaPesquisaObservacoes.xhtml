@@ -18,7 +18,7 @@
 			        <p:outputLabel value="Texto da Observação: " styleClass="labelBold" style="margin-right: 59px;"/>
 			        <p:inputText id="texto" value="#{contratoCobrancaMB.pesquisaObservacao}" label="Texto da Observação" style="width:150px;" required="true"/>
 				</h:panelGrid>																	
-				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.pesquisarObservacoes}" image="ui-icon ui-icon-check" update=":form:dtResultado :form:PesquisaObservacaoResultados :form:mensagens" style="TEXT-DECORATION: bold;"/>					
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.pesquisarObservacoes}" icon="ui-icon ui-icon-check" update=":form:dtResultado :form:PesquisaObservacaoResultados :form:mensagens" style="TEXT-DECORATION: bold;"/>					
 			</p:panel>
 			<p:panel id="PesquisaObservacaoResultados" header="Pesquisa Observações - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtResultado" var="resultado" value="#{contratoCobrancaMB.listPesquisaObservacoes}" emptyMessage="" sortBy="#{resultado.contratoCobrancaObservacoes.data}">

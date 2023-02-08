@@ -52,7 +52,7 @@
 					<p:inputMask id="CPF" value="#{consultaPF.cpf}" label="CNPJ" mask="999.999.999-99" required="true" />									
 				</h:panelGrid>	
 				<br></br>						
-				<p:commandButton value="Consultar" ajax="false" action="#{consultaPF.consultaPF}" image="ui-icon ui-icon-check" update=":form:consultaPFResultados" style="TEXT-DECORATION: bold;"/>					
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaPF.consultaPF}" icon="ui-icon ui-icon-check" update=":form:consultaPFResultados" style="TEXT-DECORATION: bold;"/>					
 			</p:panel>
 			<p:panel id="consultaPFResultados" header="Retorno Consulta PF" style="margin-bottom:10px;">	    		    
       			<h:panelGrid columns="2">	

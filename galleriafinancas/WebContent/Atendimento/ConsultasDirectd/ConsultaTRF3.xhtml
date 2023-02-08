@@ -62,7 +62,7 @@
 					<p:inputMask id="CNPJ" value="#{consultaTRF3.cnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{!consultaTRF3.tipoDocumento}"/>									
 				</h:panelGrid>	
 				<br></br>						
-				<p:commandButton value="Consultar" ajax="false" action="#{consultaTRF3.consultaTRF3}" image="ui-icon ui-icon-check" update=":form:ConsultaTRF3Resultados" style="TEXT-DECORATION: bold;"/>					
+				<p:commandButton value="Consultar" ajax="false" action="#{consultaTRF3.consultaTRF3}" icon="ui-icon ui-icon-check" update=":form:ConsultaTRF3Resultados" style="TEXT-DECORATION: bold;"/>					
 			</p:panel>
 			<p:panel id="ConsultaTRF3Resultados" header="Retorno Consulta TRF 3" style="margin-bottom:10px;">	    		    
       			<h:panelGrid columns="2">	

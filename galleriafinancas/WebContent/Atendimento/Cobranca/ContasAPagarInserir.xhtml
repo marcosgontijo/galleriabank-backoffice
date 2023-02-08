@@ -38,7 +38,7 @@
 
 						<p:commandButton id="botaoContaContabil" type="button"
 							onclick="PF('contaContabilDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin" />
+							icon="ui-icon ui-icon-circle-zoomin" />
 					</h:panelGrid>
 
 					<p:outputLabel for="dataVencimento" value="Data Vencimento: "
@@ -123,14 +123,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{contasAPagarMB.populateSelectedContrato}"
-							image="ui-icon ui-icon-check" update=":form:contasPagar"
+							icon="ui-icon ui-icon-check" update=":form:contasPagar"
 							oncomplete="PF('contratoDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{contasAPagarMB.clearContrato}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:contasPagar contratoDialogdlg"
 							oncomplete="PF('contratoDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('contratoDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

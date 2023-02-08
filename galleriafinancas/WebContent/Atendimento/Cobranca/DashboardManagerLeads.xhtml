@@ -70,7 +70,7 @@
 						<p:spacer height="10" />
 						<p:commandButton id="botaoZerados" type="button"
 							onclick="PF('responsavelZeradoDialog').show();"
-							image="ui-icon ui-icon-circle-zoomin"  
+							icon="ui-icon ui-icon-circle-zoomin"  
 							disabled="#{dashboardMBVer2.listResponsavelZerado.size() == 0}"/>
 					</h:panelGroup>
 					<p:outputLabel for="responsavel" value="Gerente:  " rendered="#{dashboardMBVer2.filtroConsulta eq 'Responsaveis' or dashboardMBVer2.filtroConsulta eq 'Gerentes' }"
@@ -82,7 +82,7 @@
 								style="width:210px;" />
 							<p:commandButton id="botaoResponsavel" type="button"
 								onclick="PF('responsavelDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin"  />
+								icon="ui-icon ui-icon-circle-zoomin"  />
 					</h:panelGrid>			
 				</h:panelGrid>
 				

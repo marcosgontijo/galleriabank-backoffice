@@ -49,14 +49,14 @@
 								style="FONT-SIZE: 10pt;width:300px;"/>
 							<p:commandButton id="botaoResponsavel" type="button"
 								onclick="PF('responsavelDialog').show();"
-								image="ui-icon ui-icon-circle-zoomin" />
+								icon="ui-icon ui-icon-circle-zoomin" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 
 				<p:commandButton value="Enviar Notificação"
 					action="#{notificacoesMB.enviaNotificacao}"
-					image="ui-icon ui-icon-check"
+					icon="ui-icon ui-icon-check"
 					update="mensagens"
 					style="TEXT-DECORATION: bold; margin-top: 15px;" />
 			</p:panel>
@@ -104,14 +104,14 @@
 					<f:facet name="footer">
 						<p:commandButton value="Selecionar"
 							action="#{notificacoesMB.populateSelectedResponsavel}"
-							image="ui-icon ui-icon-check" update=":form:Responsavel"
+							icon="ui-icon ui-icon-check" update=":form:Responsavel"
 							oncomplete="PF('responsavelDialog').hide();" />
 						<p:commandButton value="Limpar Seleção"
 							action="#{notificacoesMB.clearResponsavel}"
-							image="ui-icon ui-icon-trash"
+							icon="ui-icon ui-icon-trash"
 							update=":form:Responsavel responsavelDialogdlg"
 							oncomplete="PF('responsavelDialog').hide();" />
-						<p:commandButton value="Cancelar" image="ui-icon ui-icon-cancel"
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
 							oncomplete="PF('responsavelDialog').hide();" />
 					</f:facet>
 				</p:dataTable>

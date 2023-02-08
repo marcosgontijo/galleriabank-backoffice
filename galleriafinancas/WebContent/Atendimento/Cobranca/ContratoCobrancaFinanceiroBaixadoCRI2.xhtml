@@ -62,7 +62,7 @@
 					<p:outputLabel for="dataFim" value="Data Fim " styleClass="labelBold" style="margin-right: 59px;" />							
 					<p:calendar id="dataFim" value="#{contratoCobrancaMB.relDataContratoFim}" required="true" label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>							
 				</h:panelGrid>														
-				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixadoCRI2}" image="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;"  onclick="start();" oncomplete="stop();"/>					
+				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixadoCRI2}" icon="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;"  onclick="start();" oncomplete="stop();"/>					
 			</p:panel>
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado CRI 2 - Resultados" style="margin-bottom:10px;">	    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
