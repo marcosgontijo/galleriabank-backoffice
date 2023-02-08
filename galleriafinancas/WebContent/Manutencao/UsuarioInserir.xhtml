@@ -378,11 +378,11 @@
 						</p:inputText>
 						
 						<h:outputLabel for="saberip" value="Não sabe seu IP? " />
-						<a href="https://www.meuip.com.br/" class="linkPDF" target="_blank"><b>clique aqui</b></a>
+						<a id="saberip" href="https://www.meuip.com.br/" class="linkPDF" target="_blank"><b>clique aqui</b></a>
 	
 						<h:outputLabel for="diasSemana"
 							value="Dias da Semana Autorizados: " />
-						<p:selectCheckboxMenu id="multiple"
+						<p:selectCheckboxMenu id="diasSemana"
 							value="#{usuarioMB.selectedDiasSemana}" label="Dias da Semana"
 							multiple="true" filter="true" filterMatchMode="startsWith"
 							panelStyle="width:550px">
@@ -421,7 +421,7 @@
 						<h:outputLabel for="twofactor" value="Habilitar Autenticação Google: " />
 						<p:selectBooleanButton id="twofactor" value="#{usuarioMB.objetoUsuario.twoFactorAuth}" onLabel="Sim" offLabel="Não" style="width:60px" />
 						<h:outputLabel for="qrCode" value="QR Code: " />
-						<img src="#{usuarioMB.objetoUsuario.urlQRCode}"/>
+						<img id="qrCode" src="#{usuarioMB.objetoUsuario.urlQRCode}"/>
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>
