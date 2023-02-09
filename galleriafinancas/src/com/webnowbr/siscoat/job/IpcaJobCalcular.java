@@ -357,10 +357,16 @@ public class IpcaJobCalcular {
 			ContratoCobrancaDetalhes contratoCobrancaDetalhes, ContratoCobranca contratoCobranca) {
 
 		Date dataIPCA = DateUtil.adicionarMes(contratoCobrancaDetalhes.getDataVencimento(), -2);
+		// este método pegara o último IPCA na base, com data anterior a data base, mesmo que não do mesmo mês.
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(dataIPCA);
-		if (ultimoIpca == null || dataIPCA.getMonth() != ultimoIpca.getData().getMonth()
-				|| dataIPCA.getYear() != ultimoIpca.getData().getYear())
-			return false;
+		
+		if (dataIPCA.getMonth() != ultimoIpca.getData().getMonth()
+				|| dataIPCA.getYear() != ultimoIpca.getData().getYear()) {
+			ultimoIpca = new IPCA();
+			ultimoIpca.setData(dataIPCA);
+			ultimoIpca.setId(-1);
+			ultimoIpca.setTaxa(new BigDecimal(0.0));
+		}
 
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
@@ -506,7 +512,9 @@ public class IpcaJobCalcular {
 								continue;
 							}
 
-							detalheIpca.setIpcaAtualizou(ultimoIpca);
+							if (ultimoIpca.getId() >= 0) {
+								detalheIpca.setIpcaAtualizou(ultimoIpca);
+							}
 							//detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
 
 							detalheIpca

@@ -1487,10 +1487,6 @@ public class BRLTrustMB {
 					jsonRecebivel.put("tipo", 73);
 					jsonRecebivel.put("documento", contrato.getNumeroContratoSeguro());
 					jsonRecebivel.put("termoCessao", contrato.getTermoCessao());
-					
-					if (contrato.getTxJurosParcelas() != null) {
-						jsonRecebivel.put("txJuros", contrato.getTxJurosParcelas());
-					}
 										
 					JSONObject jsonSacado = new JSONObject();
 					
@@ -1567,6 +1563,10 @@ public class BRLTrustMB {
 					JSONObject jsonDados = new JSONObject();
 					jsonDados.put("indice", "IPCA");	
 					
+					if (contrato.getTxJurosParcelas() != null) {
+						jsonDados.put("taxaJuros", contrato.getTxJurosParcelas());
+					}
+
 					JSONObject jsonCessionario = new JSONObject();
 					
 					JSONObject jsonCessionarioPessoa = new JSONObject();
