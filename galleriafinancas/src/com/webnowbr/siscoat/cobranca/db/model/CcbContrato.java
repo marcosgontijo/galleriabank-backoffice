@@ -29,6 +29,7 @@ public class CcbContrato implements Serializable{
 	private String cidadeEmitente;
 	private String ufEmitente;
 	private String cepEmitente;
+	private String bairroEmitente;
 	private String TipoPessoaEmitente;
 	private String tipoParticipanteEmitente;
 	
@@ -1193,6 +1194,14 @@ public class CcbContrato implements Serializable{
 
 	public void setTipoContaBancoVendedor(String tipoContaBancoVendedor) {
 		this.tipoContaBancoVendedor = tipoContaBancoVendedor;
+	}
+
+	public String getBairroEmitente() {
+		return bairroEmitente;
+	}
+
+	public void setBairroEmitente(String bairroEmitente) {
+		this.bairroEmitente = bairroEmitente;
 	}
 	
 	

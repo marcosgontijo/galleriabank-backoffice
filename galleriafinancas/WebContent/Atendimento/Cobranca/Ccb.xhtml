@@ -47,7 +47,9 @@
 						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisição CCI" />
 						<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
 						<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
-						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />									
+						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />			
+						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
+						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />							
 						<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 							listener="#{ccbMB.verificaModeloAntigo()}" />
 					</p:selectOneMenu>	
@@ -1066,7 +1068,9 @@
 										<p:commandButton value="Remover" icon="ui-icon-trash"
 											action="#{ccbMB.removerParticipante(participante)}"
 											ajax="true" update=":form:ParticipantesPanel" />
-
+										<p:commandButton value="Gerar Ficha" icon="ui-icon-print"
+											action="#{ccbMB.geraFichaCadastro(participante.pessoa)}"
+											ajax="false" />
 									</p:dataViewListItem>
 								</p:dataView>
 
