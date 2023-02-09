@@ -5755,7 +5755,13 @@ public class CcbMB {
 							if(!CommonsUtil.semValor(participante.getPessoa().getCep())) {
 								this.objetoCcb.setCepEmitente(participante.getPessoa().getCep());
 							}
-						}						
+						}	
+						
+						if(CommonsUtil.semValor(this.objetoCcb.getBairroEmitente())) {
+							if(!CommonsUtil.semValor(participante.getPessoa().getBairro())) {
+								this.objetoCcb.setBairroEmitente(participante.getPessoa().getBairro());
+							}
+						}
 					}
 				}
 				
@@ -5775,6 +5781,15 @@ public class CcbMB {
 				paragraph.setSpacingAfter(0);
 				run = paragraph.createRun();
 				run.setText(this.objetoCcb.getLogradouroEmitente() +", nº "+ this.objetoCcb.getNumeroEmitente() +", "+ this.objetoCcb.getComplementoEmitente());
+				run.setFontSize(10);
+				run.setBold(false);
+				
+				paragraph = document.createParagraph();
+				paragraph.setAlignment(ParagraphAlignment.BOTH);
+				paragraph.setSpacingBefore(0);
+				paragraph.setSpacingAfter(0);
+				run = paragraph.createRun();
+				run.setText(this.objetoCcb.getBairroEmitente());
 				run.setFontSize(10);
 				run.setBold(false);
 				
@@ -6664,6 +6679,13 @@ public class CcbMB {
 					+" C/C: "+ this.objetoCcb.getCCBCC() +" Chave Pix: "+ this.objetoCcb.getCCBPix()
 					+ this.objetoCcb.getCCBNome() +" CNPJ: "+ this.objetoCcb.getCCBCNPJ() );
 				run.setColor("000000");	
+				run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run2.addBreak();
+				run2.addBreak();
+				run2.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCI " + this.objetoCcb.getNumeroCcb() 
+						+ " da matricula " + this.objetoCcb.getNumeroImovel() + " do "+ this.objetoCcb.getCartorioImovel() 
+						+ " Cartório de Registro de Imóveis de " + this.objetoCcb.getCidadeImovel() + " - " + this.objetoCcb.getUfImovel() + "* ");
+				run2.setColor("FF0000");
 				
 				tableRow1.getCell(2).setParagraph(paragraph);
 				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -6977,6 +6999,7 @@ public class CcbMB {
 			run.addCarriageReturn();
 			
 			run2 = paragraph.createRun();
+			run2.setColor("000000");
 			run2.setFontSize(12);
 			run2.setText("" + this.objetoCcb.getNomeEmitente());
 			run2.setBold(true);
@@ -7297,7 +7320,7 @@ public class CcbMB {
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
 				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr 
 				+ conjugeStr + ","
-				+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + "SSP/"+ pessoa.getEstado() +","
+				+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + ","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
 				+ " residente e domiciliado à "+ pessoa.getEndereco() +", nº "+ pessoa.getNumero() +", "
 				+ pessoa.getComplemento() + ", "+ pessoa.getBairro() + ", " 
@@ -7550,7 +7573,7 @@ public class CcbMB {
 			XWPFTable table = document.getTables().get(0);
 			XWPFTableRow tableRow1 = table.getRow(3);
 			XWPFParagraph paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.LEFT);
+			paragraph.setAlignment(ParagraphAlignment.BOTH);
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(0);
 			int iParticipante = 0;
@@ -7560,7 +7583,7 @@ public class CcbMB {
 				run.setText(alphabet[iParticipante] + ") ");
 				run.setBold(true);
 				run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
-				run2.setText(" " + participante.getPessoa().getNome() + ", ");
+				run.setText(" " + participante.getPessoa().getNome() + ", ");
 				//run2.setFontFamily("Calibri");
 				if (!participante.isEmpresa()) {
 					geraParagrafoPF(run2, participante);
@@ -9392,7 +9415,42 @@ public class CcbMB {
 		}
 		return null;
 	}
+	
+	public StreamedContent geraFichaPPE() throws IOException{
+		try {
+			InputStream in = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - Ficha PPE %s.pdf", ""));
+			gerador.feed(in);
+			gerador.close();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public StreamedContent geraFichaPLDeFT() throws IOException{
+		try {
+			InputStream in = getClass().getResourceAsStream("/resource/Ficha PLD e FT.pdf");
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			gerador.open(String.format("Galleria Bank - Ficha PPE %s.pdf", ""));
+			gerador.feed(in);
+			gerador.close();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
+	public StreamedContent geraFichaCadastro(PagadorRecebedor pagador) throws IOException{
+		//PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		//PagadorRecebedor pagador = new PagadorRecebedor();
+		//pagador = pDao.findById((long)27193); 
+		ImpressoesPDFMB impressaoMb = new ImpressoesPDFMB();
+		
+		return impressaoMb.geraPdfCadastroPagadorRecebedor(pagador);
+	}
+	
 	public void setTableAlignment(XWPFTable table, STJc.Enum justification) {
 	    CTTblPr tblPr = table.getCTTbl().getTblPr();
 	    CTJc jc = (tblPr.isSetJc() ? tblPr.getJc() : tblPr.addNewJc());
@@ -9452,12 +9510,14 @@ public class CcbMB {
 		    	return geraCciAquisicao();
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"FinanciamentoCCI")) {
 		    	return geraCciFinanciamento();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha PPE")) {
+		    	return geraFichaPPE();
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha PLD e FT")) {
+		    	return geraFichaPLDeFT();
 		    } else {
 	    		
 	    	}
-	    	
-	    	
-	    	
+   	
 	    	
 	    	//BufferedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 
 	    	//RenderedImage picture = ImageIO.read(getClass().getResourceAsStream("/resource/GalleriaBank.png")); 

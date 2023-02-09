@@ -4992,6 +4992,19 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setReanalise(false);
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isCertificadoEmitido()) {
+			this.objetoContratoCobranca.setCertificadoEmitidoData(null);
+			this.objetoContratoCobranca.setCertificadoEmitidoUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getCertificadoEmitidoData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setCertificadoEmitidoData(gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCertificadoEmitidoData());
+				this.objetoContratoCobranca.setCertificadoEmitidoUsuario(getNomeUsuarioLogado());
+			}
+		}
 
 		if (!this.objetoContratoCobranca.isCcbPronta()) {
 			this.objetoContratoCobranca.setCcbProntaData(null);
