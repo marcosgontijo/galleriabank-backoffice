@@ -1502,7 +1502,9 @@ public class BRLTrustMB {
 					jsonSacado.put("pessoa", jsonPessoa);
 					
 					JSONObject jsonEndereco = new JSONObject();
-					jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCep())));
+					if (contrato.getPagador().getCep() != null && !contrato.getPagador().getCep().equals("")) {
+						jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCep())));
+					}
 					jsonEndereco.put("logradouro", contrato.getPagador().getEndereco());
 					jsonEndereco.put("numero", contrato.getPagador().getNumero());
 					jsonEndereco.put("complemento", contrato.getPagador().getComplemento());
