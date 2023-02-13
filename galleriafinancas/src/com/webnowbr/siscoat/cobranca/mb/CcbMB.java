@@ -322,12 +322,23 @@ public class CcbMB {
 	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
+		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+			if(this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {
+				this.objetoCcb.getObjetoContratoCobranca().getListSegurados().remove(segurado);
+			}
+		}
 	}
 	
 	public void concluirSegurado() {
 		this.tituloPagadorRecebedorDialog = "";
 		this.updatePagadorRecebedor = "";
 		this.seguradoSelecionado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
+		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+			if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(this.seguradoSelecionado)) {		
+				this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
+				this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(seguradoSelecionado);
+			}
+		}
 		this.objetoCcb.getListSegurados().add(this.seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
@@ -1506,6 +1517,11 @@ public class CcbMB {
 				ccbDao.create(this.objetoCcb);
 				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
 						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+			}
+			
+			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				cDao.merge(objetoCcb.getObjetoContratoCobranca());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

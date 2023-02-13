@@ -8500,11 +8500,26 @@ public class ContratoCobrancaMB {
 						this.objetoAnaliseComite = comite;
 					} 
 				}
-			} 
-			
+			} 		
 			gerarRecomendacaoComite();
 		}
+		
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
+			this.objetoContratoCobranca.setTxHonorario(BigDecimal.valueOf(20.00));
+			this.objetoContratoCobranca.setTxJuros(BigDecimal.valueOf(1.00));
+			this.objetoContratoCobranca.setTxMulta(BigDecimal.valueOf(2.00));
+			this.objetoContratoCobranca.setCorrigidoIPCA(true);
+			this.objetoContratoCobranca.setTemTxAdm(true);
+			this.objetoContratoCobranca.setTemSeguro(true);
+			this.objetoContratoCobranca.setTemSeguroDFI(true);
+			this.objetoContratoCobranca.setTemSeguroMIP(true);
+			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
+			this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
+			this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
+		}
 
+		
 		/*try {
 			logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " 
 					+ objetoContratoCobranca.getNumeroContrato() + " (" + objetoContratoCobranca.toString() + ")");
