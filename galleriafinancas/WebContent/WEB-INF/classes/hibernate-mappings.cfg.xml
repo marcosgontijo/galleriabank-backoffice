@@ -29,6 +29,9 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/IPCA.hbm.xml"/>   
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CDI.hbm.xml"/>   
 		
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketCidades.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketEstados.hbm.xml"/>
+		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProofDocuments.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProof.hbm.xml"/>    
 		

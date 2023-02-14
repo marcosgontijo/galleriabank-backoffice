@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.DocketCidades" table="DocketCidades">
+    	<id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>   
+        <id name="idDocket" type="java.lang.String">
+            <column name="idDocket" />
+        </id>
+        <property name="nome" type="java.lang.String">
+            <column name="nome" />
+        </property>     			               
+       <property name="url" type="java.lang.String">
+            <column name="url" />
+       </property>            
+    </class>
+</hibernate-mapping>
