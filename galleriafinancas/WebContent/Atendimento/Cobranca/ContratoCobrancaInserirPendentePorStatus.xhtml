@@ -1310,9 +1310,53 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<h:panelGroup id="BoletoPanel" style="margin-bottom:80px;">
+				<h:panelGroup id="CertificadoPanel" >
+					<p:panel header="Certificado"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >
+						<h:panelGrid columns="2"> 					
+							<p:outputLabel for="empresaCertificado"
+								value="Empresa Certificado: " styleClass="labelBold" />
+							<p:inputText id="empresaCertificado" style="FONT-SIZE: 10pt;width:100px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.empresaCertificado}" />
+								
+							<p:outputLabel for="dataSolicitacaoCertificado"
+								value="Data Solicitação: " styleClass="labelBold" />
+							<p:calendar id="dataSolicitacaoCertificado" showOn="button"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dataSolicitacaoCertificado}"
+								size="100" pattern="dd/MM/yyyy"
+								locale="pt" styleClass="dateTimeField" />
+
+							<p:outputLabel for="tipoCertificado" value="Tipo Certificado: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="tipoCertificado"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCertificado}" ajax="true" 
+								style="font-weight: bold;">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Videoconferência" itemLabel="Videoconferência" />
+								<f:selectItem itemValue="Presencial" itemLabel="Presencial" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="ticketCertificado"
+								value="Ticket Certificado: " styleClass="labelBold" />
+							<p:inputText id="ticketCertificado" style="FONT-SIZE: 10pt;width:100px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.ticketCertificado}" />
+								
+							<p:outputLabel for="dispositivoCertificado" value="Dispositivo Certificado: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="dispositivoCertificado"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dispositivoCertificado}" ajax="true" 
+								style="font-weight: bold;">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="Computador" itemLabel="Computador" />
+								<f:selectItem itemValue="Celular" itemLabel="Celular" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+				
+				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" style="margin-bottom:25px;">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" >
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de Condomínio' }"> 
