@@ -2043,5 +2043,22 @@
 		<property name="certificadoEmitidoUsuario" type="java.lang.String">
 			<column name="certificadoEmitidoUsuario" />
 		</property>
+		
+		<property name="empresaCertificado" type="java.lang.String">
+			<column name="empresaCertificado" />
+		</property>			
+		<property name="dataSolicitacaoCertificado" type="java.util.Date">
+			<column name="dataSolicitacaoCertificado" />
+		</property>	
+		<property name="tipoCertificado" type="java.lang.String">
+			<column name="tipoCertificado" />
+		</property>		
+		<property name="ticketCertificado" type="java.lang.String">
+			<column name="ticketCertificado" />
+		</property>	
+		<property name="dispositivoCertificado" type="java.lang.String">
+			<column name="dispositivoCertificado" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
