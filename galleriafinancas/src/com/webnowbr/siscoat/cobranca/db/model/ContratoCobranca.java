@@ -634,6 +634,12 @@ public class ContratoCobranca implements Serializable {
 	private String processosQuitarComite;
 	private String obsValidacaoDocumentos;
 	
+	private String empresaCertificado;
+	private Date dataSolicitacaoCertificado;
+	private String tipoCertificado;
+	private String ticketCertificado;
+	private String dispositivoCertificado;
+	
 	private BigDecimal valorLaudoPajuTotal;
 	private BigDecimal valorLaudoPajuPago;
 	private BigDecimal valorLaudoPajuFaltante;
@@ -6103,6 +6109,48 @@ public class ContratoCobranca implements Serializable {
 	public void setCertificadoEmitidoUsuario(String certificadoEmitidoUsuario) {
 		this.certificadoEmitidoUsuario = certificadoEmitidoUsuario;
 	}
+
+	public String getEmpresaCertificado() {
+		return empresaCertificado;
+	}
+
+	public void setEmpresaCertificado(String empresaCertificado) {
+		this.empresaCertificado = empresaCertificado;
+	}
+
+	public Date getDataSolicitacaoCertificado() {
+		return dataSolicitacaoCertificado;
+	}
+
+	public void setDataSolicitacaoCertificado(Date dataSolicitacaoCertificado) {
+		this.dataSolicitacaoCertificado = dataSolicitacaoCertificado;
+	}
+
+	public String getTipoCertificado() {
+		return tipoCertificado;
+	}
+
+	public void setTipoCertificado(String tipoCertificado) {
+		this.tipoCertificado = tipoCertificado;
+	}
+
+	public String getTicketCertificado() {
+		return ticketCertificado;
+	}
+
+	public void setTicketCertificado(String ticketCertificado) {
+		this.ticketCertificado = ticketCertificado;
+	}
+
+	public String getDispositivoCertificado() {
+		return dispositivoCertificado;
+	}
+
+	public void setDispositivoCertificado(String dispositivoCertificado) {
+		this.dispositivoCertificado = dispositivoCertificado;
+	}
+	
+	
 	
 	
 }
