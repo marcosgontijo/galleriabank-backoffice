@@ -8,9 +8,9 @@
             <column name="ID" />
             <generator class="increment" />
         </id>   
-        <id name="idDocket" type="java.lang.String">
+        <property name="idDocket" type="java.lang.String">
             <column name="idDocket" />
-        </id>
+        </property>
         <property name="nome" type="java.lang.String">
             <column name="nome" />
         </property>     			               

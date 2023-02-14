@@ -114,8 +114,6 @@ public class DocketMB {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"[Docket - Login] Erro não conhecido!", ""));
 			}
-			
-			System.out.println(this.tokenLogin);
 						
 			myURLConnection.disconnect();
 			
@@ -135,10 +133,8 @@ public class DocketMB {
 
 			URL myURL = new URL("https://sandbox-saas.docket.com.br/api/v2/galleria-bank/cidades?estadoId=" + estadoID);			
 
-			// verifica se temos o token
-			if (this.tokenLogin == null) {
-				loginDocket();
-			}
+			// GET TOKEN Login
+			loginDocket();
 
 			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
 			myURLConnection.setUseCaches(false);
@@ -168,13 +164,15 @@ public class DocketMB {
 						estado = docketEstadosDao.getEstado(estadoID);
 						
 						if (estado == null) {
+							estado = new DocketEstados();
+							
 							estado.setIdDocket(estadoID);
 						
 							// TODO set NOME
 							//estado.setNome(estadoID);
 							// TODO set URL
 							//estado.setUrl(estadoID);
-						}
+						} 
 						
 						List<DocketCidades> cidades = new ArrayList<DocketCidades>();														
 						JSONArray cidadesObj = myResponse.getJSONArray("cidades");		
