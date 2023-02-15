@@ -7531,6 +7531,11 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void testeDocket() {
+		DocketMB docket = new DocketMB();
+		docket.loginDocket();
+	}
+	
 	public void logPrimitivo() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		//String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()

@@ -8115,6 +8115,42 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_CONSULTA_CONTRATOS_DOCKET =  "select cc.id, cc.numerocontrato, pare.nome "
+			+ " from cobranca.contratocobranca cc"
+			+ " inner join cobranca.pagadorrecebedor pare on cc.pagador = pare.id  ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosDocket() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_CONTRATOS_DOCKET);
+	
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						ContratoCobranca contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setId(rs.getLong("id"));
+						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
+						contratoCobranca.setPagador(new PagadorRecebedor());
+						contratoCobranca.getPagador().setNome(rs.getString("nome"));
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
 	private static final String QUERY_CONSULTA_CONTRATOS_A_SEREM_BAIXADOS = "select "
 			+ "	c.id, "
 			+ "	ContratoResgatadoBaixar, "

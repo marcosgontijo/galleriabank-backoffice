@@ -580,5 +580,13 @@
 			<column name="pix" />
 		</property>	  
 		
+		<list name="documentosDocket"
+			table="PagadorRecebedor_DocumentosPagadorDocket_Join" cascade="all" lazy="false">
+			<key column="idPagador" />
+			<list-index></list-index>
+			<many-to-many column="idDocumentosPagadorDocket"
+				class="com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket" />
+		</list>
+		
     </class>
 </hibernate-mapping>

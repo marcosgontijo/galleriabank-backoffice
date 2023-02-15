@@ -1376,16 +1376,13 @@
 
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
-						<h:panelGrid columns="2">
+					<p:panel header="Comentário Pré-Comitê">
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
 							<p:outputLabel id="comentarioPreComite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPreComite}"
-								rows="10" cols="48" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								style="FONT-SIZE: 10pt;width:400px;" />
+								style="FONT-SIZE: 10pt; width:800px;white-space: pre-wrap;" />
 							<p:spacer height="10" />
 							<p:spacer height="10" />
 							
@@ -1398,7 +1395,8 @@
 								converter="bigDecimalConverter">
 								<p:ajax process="@this" partialSubmit="true" />
 							</p:inputText>
-							
+						</h:panelGrid>
+						<h:panelGrid columns="2">
 							<p:outputLabel for="divida"
 								value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
 								styleClass="labelBold" />
