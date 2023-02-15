@@ -67,6 +67,12 @@
 					<p:menu style="width: 250px; ">	
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO">					
 							<p:submenu label="Gerenciamento" styleClass="titulosMenu">
+								<shiro:hasAnyRoles name="ROOT">	
+									<p:menuitem value="docket"
+										action="#{docketMB.clearFieldsDocket}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Contas a Pagar"
 										action="#{contasPagarMB.clearFields}"
