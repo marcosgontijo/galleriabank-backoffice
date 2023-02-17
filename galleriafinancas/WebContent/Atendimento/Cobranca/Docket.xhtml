@@ -30,6 +30,7 @@
 							<p:spacer height="10" />
 							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
 								action="#{docketMB.pesquisaContratoCobranca}"
+								disabled="#{docketMB.objetoContratoCobranca.numeroContrato ne null}"
 								oncomplete="PF('contratoCobrancaDialog').show();"
 								update="contrato contratoDialogdlg" />
 						</h:panelGroup>
@@ -38,7 +39,7 @@
 							styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:commandButton action="#{docketMB.pesquisaPagadorRecebedor}"
-							icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+							icon="ui-icon ui-icon-plus" ajax="true"
 							oncomplete="PF('pagadorRecebedorDialog').show();"
 							update="formReceborPagador" />
 					</h:panelGrid>
@@ -95,7 +96,7 @@
 									<p:inputText value="#{pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
 								</h:panelGroup> 						    
 							</h:panelGrid>	
-							<p:panel id="docsPanel" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" >
+							<p:panel id="docsPanel" header="Documentos - #{pagador.documentosDocket.size()}" style="padding: 0" toggleable="true" toggleableHeader="true" >
 								 <p:dataList id="docsList" value="#{pagador.documentosDocket}" var="docs" style="padding: 0" type="definition">
 								 	<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
 										<f:facet name="header" styleClass="ui-accordion-header">
@@ -132,6 +133,11 @@
 						</p:panel>
 					</ui:repeat>
 				</h:panelGroup>
+			
+				<h:panelGrid columns="3">	
+					<p:commandButton action="#{docketMB.criarPedido}"
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
+				</h:panelGrid>
 			</p:panel>
 			
 		</h:form>

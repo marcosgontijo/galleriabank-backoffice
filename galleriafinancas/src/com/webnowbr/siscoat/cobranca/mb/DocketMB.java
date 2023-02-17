@@ -63,27 +63,40 @@ public class DocketMB {
 	private String login = "galleria-bank.api";
 	private String senha = "5TM*sgZKJ3hoh@J";
 	private String organizacao_url = "galleria-bank";	
-	private String tokenLogin = null;
+	private String tokenLogin;
 	
-	private List<PagadorRecebedor> listRecebedorPagador = new ArrayList<PagadorRecebedor>();	//lista de consulta
-	private List<ContratoCobranca> listaContratosConsultar = new ArrayList<ContratoCobranca>();	//lista de consulta
+	private List<PagadorRecebedor> listRecebedorPagador;	//lista de consulta
+	private List<ContratoCobranca> listaContratosConsultar;	//lista de consulta
 	private PagadorRecebedor selectedPagadorGenerico; //usado para consulta	de pessoa
 	private PagadorRecebedor selectedPagadorDocumentos; //usado para consulta de docs
 	String updatePagadorRecebedor = ":form";
 	
-	private List<DocumentosDocket> listaDococumentosDocket = new ArrayList<DocumentosDocket>();  //listagem de docs
-	private List<DocumentosPagadorDocket> listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); //listagem de docs
-	List<SelectItem> listaEstados = pesquisaEstadosListaNome(); // listagem de estados
+	private List<DocumentosDocket> listaDococumentosDocket;  //listagem de docs
+	private List<DocumentosPagadorDocket> listaDococumentosPagador; //listagem de docs
+	List<SelectItem> listaEstados; // listagem de estados
 		
-	private ContratoCobranca objetoContratoCobranca = new ContratoCobranca(); //op de referencia
-	private List<PagadorRecebedor> listaPagador = new ArrayList<PagadorRecebedor>(); //titulares pra enviar pedido
-
+	private ContratoCobranca objetoContratoCobranca; //op de referencia
+	private List<PagadorRecebedor> listaPagador; //titulares pra enviar pedido
 	private EstadosEnum estadoSelecionadoImovel;
 	private List<DocketCidades> listaCidadesImovel;
 	private String estadoImovel;
 	private String cidadeImovel;
 	
 	public DocketMB() {
+		urlHomologacao = "https://sandbox-saas.docket.com.br";
+		kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
+		kitNomeGalleria = "1 - GALLERIA BANK";
+		login = "galleria-bank.api";
+		senha = "5TM*sgZKJ3hoh@J";
+		organizacao_url = "galleria-bank";
+		
+		listRecebedorPagador = new ArrayList<PagadorRecebedor>();
+		listaContratosConsultar = new ArrayList<ContratoCobranca>();	
+		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
+		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>();
+		listaEstados = pesquisaEstadosListaNome(); 
+		objetoContratoCobranca = new ContratoCobranca(); 
+		listaPagador = new ArrayList<PagadorRecebedor>(); 
 		clearContratoCobranca();
 	}
 	
@@ -392,7 +405,7 @@ public class DocketMB {
 			jsonDocketCampos.put("cpf", pagador.getCpf());
 			jsonDocketCampos.put("nomeMae", pagador.getNomeMae());
 			jsonDocketCampos.put("rg", pagador.getRg());
-			jsonDocketCampos.put("dataNascimento", pagador.getDtNascimento()); //2003-01-10T02:00:00.000+0000
+			jsonDocketCampos.put("dataNascimento", CommonsUtil.formataData(pagador.getDtNascimento(), "yyyy-MM-dd")); //2003-01-10T02:00:00.000+0000
 		} else {
 			jsonDocketCampos.put("razaoSocial", pagador.getNome());
 			jsonDocketCampos.put("cnpj", pagador.getCnpj());
@@ -486,6 +499,28 @@ public class DocketMB {
 		this.listaContratosConsultar = cDao.consultaContratosDocket();
 	}
 	
+	public String clearFieldsContratoCobranca() {
+		listaPagador = new ArrayList<PagadorRecebedor>();
+		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
+		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
+		estadoSelecionadoImovel = null;
+		listaCidadesImovel = new ArrayList<DocketCidades>(); 
+		estadoImovel = null;
+		cidadeImovel = null;
+		
+		DocumentosDocketDao docDao = new DocumentosDocketDao();	
+		listaDococumentosDocket = docDao.findAll();
+
+		for(DocumentosDocket doc : listaDococumentosDocket) {
+			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
+			docPagador.setDocumentoDocket(doc);
+			listaDococumentosPagador.add(docPagador);
+		}	
+		populateSelectedContratoCobranca();
+		return "/Atendimento/Cobranca/Docket.xhtml";
+	}
+	
+	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		ImovelCobrancaDao iDao = new ImovelCobrancaDao();
@@ -493,21 +528,39 @@ public class DocketMB {
 		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());	
 		ImovelCobranca imovel = new ImovelCobranca();
 		imovel = iDao.findById(contrato.getImovel().getId());
-		if(CommonsUtil.semValor(this.objetoContratoCobranca)){
+		//if(CommonsUtil.semValor(this.objetoContratoCobranca)){
 			this.objetoContratoCobranca = contrato;
-		}
-		if(!CommonsUtil.semValor(imovel.getEstado())) {
-			this.setEstadoSelecionadoImovel(EstadosEnum.getByUf(imovel.getEstado()));
-		}
-		if(!CommonsUtil.semValor(imovel.getCidade())) {
-			setCidadeImovel(imovel.getCidade());
-		}
-		getListaCidadesImovel();
-		
-		adiconarDocumentospagador(contrato.getPagador());
-		listaPagador.add(contrato.getPagador());
-		
-		atualizaTodosDocumentos();
+			if(!CommonsUtil.semValor(imovel.getEstado())) {
+				this.setEstadoSelecionadoImovel(EstadosEnum.getByUf(imovel.getEstado()));
+			}
+			if(!CommonsUtil.semValor(imovel.getCidade())) {
+				setCidadeImovel(imovel.getCidade());
+			}
+			getListaCidadesImovel();
+			
+			adiconarDocumentospagador(contrato.getPagador());
+			listaPagador.add(contrato.getPagador());
+			
+			//this.atualizaTodosDocumentos(); // PQ QUE ESSE CHAMADO QUEBRAAAAAAAAAAAAAAAAAAA
+			
+			if(CommonsUtil.semValor(listaPagador)) {
+				return;
+			}
+			for(PagadorRecebedor pagador : listaPagador) {
+				if(CommonsUtil.semValor(pagador.getDocumentosDocket()) 
+						|| CommonsUtil.semValor(estadoSelecionadoImovel) 
+						|| CommonsUtil.semValor(cidadeImovel)
+						|| CommonsUtil.semValor(listaCidadesImovel)) {
+					return;
+				}
+				for(DocumentosPagadorDocket doc : pagador.getDocumentosDocket()) {
+					doc.setEstadoSelecionado(estadoSelecionadoImovel);
+					doc.setCidade(cidadeImovel);
+					doc.setListaCidades(listaCidadesImovel);
+					doc.getCidadeDocketId();
+				}		
+			}
+		//}
 	}
 	
 	public void populateSelectedPagadorRecebedor() {
@@ -535,6 +588,17 @@ public class DocketMB {
 				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
 				if(!CommonsUtil.semValor(estadoSelecionadoImovel)) {
 					docPagador.setEstadoSelecionado(estadoSelecionadoImovel);
+					if(CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "RJ")
+						||CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "PR")) {
+						if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
+								"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância)")
+							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+									"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")
+							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
+									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância)")){
+							continue;
+						}	
+					}
 				}
 				if(!CommonsUtil.semValor(cidadeImovel)) {
 					docPagador.setCidade(cidadeImovel);
@@ -610,7 +674,8 @@ public class DocketMB {
 				doc.setListaCidades(listaCidadesImovel);
 				doc.getCidadeDocketId();
 			}		
-		}	
+		}	                                         
+		return;
 	}
 	
 	
