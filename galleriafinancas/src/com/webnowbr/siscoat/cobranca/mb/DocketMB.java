@@ -11,26 +11,36 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.event.SelectEvent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.EstadosEnum;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
 @ManagedBean(name = "docketMB")
@@ -57,15 +67,26 @@ public class DocketMB {
 	
 	private List<PagadorRecebedor> listRecebedorPagador = new ArrayList<PagadorRecebedor>();	//lista de consulta
 	private List<ContratoCobranca> listaContratosConsultar = new ArrayList<ContratoCobranca>();	//lista de consulta
-	private PagadorRecebedor selectedPagadorGenerico;
-	private PagadorRecebedor selectedPagadorDocumentos;
-	
+	private PagadorRecebedor selectedPagadorGenerico; //usado para consulta	de pessoa
+	private PagadorRecebedor selectedPagadorDocumentos; //usado para consulta de docs
 	String updatePagadorRecebedor = ":form";
-	private ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
-	private List<PagadorRecebedor> listaPagador = new ArrayList<PagadorRecebedor>();
-	private List<DocumentosDocket> listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
-	private List<DocumentosPagadorDocket> listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
+	
+	private List<DocumentosDocket> listaDococumentosDocket = new ArrayList<DocumentosDocket>();  //listagem de docs
+	private List<DocumentosPagadorDocket> listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); //listagem de docs
+	List<SelectItem> listaEstados = pesquisaEstadosListaNome(); // listagem de estados
 		
+	private ContratoCobranca objetoContratoCobranca = new ContratoCobranca(); //op de referencia
+	private List<PagadorRecebedor> listaPagador = new ArrayList<PagadorRecebedor>(); //titulares pra enviar pedido
+
+	private EstadosEnum estadoSelecionadoImovel;
+	private List<DocketCidades> listaCidadesImovel;
+	private String estadoImovel;
+	private String cidadeImovel;
+	
+	public DocketMB() {
+		clearContratoCobranca();
+	}
+	
 	public void loginDocket() {		
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -94,7 +115,6 @@ public class DocketMB {
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 		     
 			myURLConnection.setDoOutput(true);
-			//myURLConnection.getOutputStream().write(postDataBytes);
 			
 			try(OutputStream os = myURLConnection.getOutputStream()) {
 			    byte[] input = jsonObj.toString().getBytes("utf-8");
@@ -138,12 +158,39 @@ public class DocketMB {
 		}	
 	}
 	
+	public void getListaCidades(DocumentosPagadorDocket doc) {
+		DocketCidadesDao dcDao = new DocketCidadesDao();
+		List<DocketCidades> lista = new ArrayList<DocketCidades>();
+		lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
+		if(CommonsUtil.semValor(lista)) {
+			getCidadesPorEstadoID(doc.getEstadoId());
+			lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
+		}
+		doc.setListaCidades(lista);
+	}
+	
+	public void getListaCidadesImovel() {
+		DocketCidadesDao dcDao = new DocketCidadesDao();
+		List<DocketCidades> lista = new ArrayList<DocketCidades>();
+		lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
+		if(CommonsUtil.semValor(lista)) {
+			getCidadesPorEstadoID(estadoSelecionadoImovel.getIdDocket());
+			lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
+		}
+		this.setListaCidadesImovel(lista);
+	}
+	
 	public void getCidadesPorEstadoID(String estadoID) {		
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL = new URL("https://sandbox-saas.docket.com.br/api/v2/galleria-bank/cidades?estadoId=" + estadoID);			
+			URL myURL;
+			if(SiscoatConstants.DEV) {
+				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
+			} else {
+				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
+			}
 
 			// GET TOKEN Login
 			loginDocket();
@@ -161,11 +208,9 @@ public class DocketMB {
 			JSONObject myResponse = null;
 			int status = myURLConnection.getResponseCode();
 			
-			myResponse = getJSONSucesso(myURLConnection.getInputStream());			
+			myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			
-			this.tokenLogin = "";
-			
-			if (HTTP_COD_SUCESSO == 200) {				
+			if (status == HTTP_COD_SUCESSO) {				
 				if (myResponse.has("cidades")) {					
 					if (!myResponse.isNull("cidades")) {
 						
@@ -198,7 +243,7 @@ public class DocketMB {
 							cidade.setNome(cidadeObj.getString("nome"));
 							cidade.setUrl(cidadeObj.getString("url"));
 							
-							cidades.add(cidade);						
+							cidades.add(cidade);
 						}
 						
 						estado.setCidades(cidades);
@@ -226,8 +271,6 @@ public class DocketMB {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"[Docket - Login] Erro não conhecido!", ""));
 			}
-			
-			System.out.println(this.tokenLogin);
 						
 			myURLConnection.disconnect();
 			
@@ -243,27 +286,34 @@ public class DocketMB {
 	public void criarPedido() {	
 		FacesContext context = FacesContext.getCurrentInstance();
 		try {
+			loginDocket();
 			int HTTP_COD_SUCESSO = 200;
+			
 			URL myURL;
 			if(SiscoatConstants.DEV) {
-				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
-			}			
+				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
+			} else {
+				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
+			}
+			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
 			myURLConnection.setDoOutput(true);		
 			
 			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = getBodyJsonPedido(listaPagador);					
+			JSONObject jsonWhatsApp = getBodyJsonPedido(listaPagador);
+			
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
 				os.write(input, 0, input.length);
 			}
 						
-			/*try(BufferedReader br = new BufferedReader(
+			try(BufferedReader br = new BufferedReader(
 			  new InputStreamReader(myURLConnection.getInputStream(), "utf-8"))) {
 			    StringBuilder response = new StringBuilder();
 			    String responseLine = null;
@@ -271,7 +321,7 @@ public class DocketMB {
 			        response.append(responseLine.trim());
 			    }
 			    System.out.println(response.toString());
-			}*/
+			}
 								
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -353,13 +403,6 @@ public class DocketMB {
 		return jsonDocketCampos;
 	}
 	
-	/***
-	 * 
-	 * PARSE DO RETORNO SUCESSO
-	 * 
-	 * @param inputStream
-	 * @return
-	 */
 	public JSONObject getJSONSucesso(InputStream inputStream) {
 		BufferedReader in;
 		try {
@@ -394,6 +437,10 @@ public class DocketMB {
 		listaPagador = new ArrayList<PagadorRecebedor>();
 		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
 		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
+		estadoSelecionadoImovel = null;
+		listaCidadesImovel = new ArrayList<DocketCidades>(); 
+		estadoImovel = null;
+		cidadeImovel = null;
 		
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
 		listaDococumentosDocket = docDao.findAll();
@@ -441,13 +488,26 @@ public class DocketMB {
 	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		ImovelCobrancaDao iDao = new ImovelCobrancaDao();
 		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());
+		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());	
+		ImovelCobranca imovel = new ImovelCobranca();
+		imovel = iDao.findById(contrato.getImovel().getId());
 		if(CommonsUtil.semValor(this.objetoContratoCobranca)){
 			this.objetoContratoCobranca = contrato;
 		}
+		if(!CommonsUtil.semValor(imovel.getEstado())) {
+			this.setEstadoSelecionadoImovel(EstadosEnum.getByUf(imovel.getEstado()));
+		}
+		if(!CommonsUtil.semValor(imovel.getCidade())) {
+			setCidadeImovel(imovel.getCidade());
+		}
+		getListaCidadesImovel();
+		
 		adiconarDocumentospagador(contrato.getPagador());
 		listaPagador.add(contrato.getPagador());
+		
+		atualizaTodosDocumentos();
 	}
 	
 	public void populateSelectedPagadorRecebedor() {
@@ -473,6 +533,13 @@ public class DocketMB {
 		if(CommonsUtil.semValor(pagador.getDocumentosDocket())) {
 			for(DocumentosDocket doc : listaDocs) {
 				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
+				if(!CommonsUtil.semValor(estadoSelecionadoImovel)) {
+					docPagador.setEstadoSelecionado(estadoSelecionadoImovel);
+				}
+				if(!CommonsUtil.semValor(cidadeImovel)) {
+					docPagador.setCidade(cidadeImovel);
+					docPagador.getCidadeDocketId();
+				} 
 				pagador.getDocumentosDocket().add(docPagador);
 			}
 		}		
@@ -482,6 +549,86 @@ public class DocketMB {
 		this.selectedPagadorGenerico = new PagadorRecebedor();
 	}
 
+	public List<SelectItem> pesquisaEstadosListaNome() {
+		List<SelectItem> listaEstados= new ArrayList<>();
+		for(EstadosEnum estado : EstadosEnum.values()) {
+			SelectItem item = new SelectItem(estado);
+			item.setLabel(estado.getNomeComposto());
+			listaEstados.add(item);
+		}
+		return listaEstados;
+	}
+	
+	/*public void changeEstado(DocumentosPagadorDocket docs) {
+		docs.setEstadoId(docs.getEstadoSelecionado().getIdDocket());
+		docs.setEstado(docs.getEstadoSelecionado().getNome());
+	}*/
+	
+	public List<String> completeCidades(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> cidades = new ArrayList<>();
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocumentosPagadorDocket doc = (DocumentosPagadorDocket) UIComponent.getCurrentComponent(context).getAttributes().get("documentoAtual");
+		if(!CommonsUtil.semValor(doc.getListaCidades())) {
+			for (DocketCidades cidade : doc.getListaCidades()) {
+				String cidadeStr = cidade.getNome();
+				cidades.add(cidadeStr);
+				/*if(estado.getNomeComposto().contains(queryLowerCase)) {
+					estados.add(estado);
+				}*/
+			}
+		}
+		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
+	
+	public List<String> completeCidadesImovel(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> cidades = new ArrayList<>();
+		if(!CommonsUtil.semValor(listaCidadesImovel)) {
+			for (DocketCidades cidade : listaCidadesImovel) {
+				String cidadeStr = cidade.getNome();
+				cidades.add(cidadeStr);
+			}
+		}
+		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
+	
+	public void atualizaTodosDocumentos() {
+		if(CommonsUtil.semValor(listaPagador)) {
+			return;
+		}
+		for(PagadorRecebedor pagador : listaPagador) {
+			if(CommonsUtil.semValor(pagador.getDocumentosDocket()) 
+					&& CommonsUtil.semValor(estadoSelecionadoImovel) 
+					&& CommonsUtil.semValor(cidadeImovel)
+					&& CommonsUtil.semValor(listaCidadesImovel)) {
+				return;
+			}
+			for(DocumentosPagadorDocket doc : pagador.getDocumentosDocket()) {
+				doc.setEstadoSelecionado(estadoSelecionadoImovel);
+				doc.setCidade(cidadeImovel);
+				doc.setListaCidades(listaCidadesImovel);
+				doc.getCidadeDocketId();
+			}		
+		}	
+	}
+	
+	
+		
+	/*public List<EstadosEnum> completeBancos(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<EstadosEnum> estados = new ArrayList<>();
+		for (EstadosEnum estado : EstadosEnum.values()) {
+			//String bancoStr = estado.getNomeComposto().toString();
+			//bancos.add(bancoStr);
+			if(estado.getNomeComposto().contains(queryLowerCase)) {
+				estados.add(estado);
+			}
+		}
+		return estados;//.stream().filter(t -> t.getNomeComposto().toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }*/
+	
+	
 	public List<ContratoCobranca> getListaContratosConsultar() {
 		return listaContratosConsultar;
 	}
@@ -552,6 +699,43 @@ public class DocketMB {
 
 	public void setSelectedPagadorDocumentos(PagadorRecebedor selectedPagadorDocumentos) {
 		this.selectedPagadorDocumentos = selectedPagadorDocumentos;
+	}
+
+	public List<SelectItem> getListaEstados() {
+		return listaEstados;
+	}
+
+	public void setListaEstados(List<SelectItem> listaEstados) {
+		this.listaEstados = listaEstados;
+	}
+
+	public EstadosEnum getEstadoSelecionadoImovel() {
+		return estadoSelecionadoImovel;
+	}
+
+	public void setEstadoSelecionadoImovel(EstadosEnum estadoSelecionadoImovel) {
+		this.estadoSelecionadoImovel = estadoSelecionadoImovel;
+		this.estadoImovel = estadoSelecionadoImovel.getNome();
+	}
+
+	public void setListaCidadesImovel(List<DocketCidades> listaCidadesImovel) {
+		this.listaCidadesImovel = listaCidadesImovel;
+	}
+
+	public String getEstadoImovel() {
+		return estadoImovel;
+	}
+
+	public void setEstadoImovel(String estadoImovel) {
+		this.estadoImovel = estadoImovel;
+	}
+
+	public String getCidadeImovel() {
+		return cidadeImovel;
+	}
+
+	public void setCidadeImovel(String cidadeImovel) {
+		this.cidadeImovel = cidadeImovel;
 	}
 	
 	

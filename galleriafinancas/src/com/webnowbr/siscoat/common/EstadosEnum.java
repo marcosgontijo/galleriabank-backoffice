@@ -1,5 +1,11 @@
 package com.webnowbr.siscoat.common;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.faces.model.SelectItem;
+
 public enum EstadosEnum {
 	ACRE("Acre", "AC", "6d451d2b-e333-9a97-acff-bf832dfcb368"),
 	ALAGOAS( "Alagoas", "AL", "14902efc-897d-7ba3-d21e-0824e12cb1aa"),
@@ -32,11 +38,44 @@ public enum EstadosEnum {
 	private String nome;
 	private String uf;
 	private String idDocket;
+	private String nomeComposto;
 	private EstadosEnum(String nome, String uf, String idDocket) {
 		this.nome = nome;
 		this.uf = uf;	
 		this.idDocket = idDocket;
+		nomeComposto = uf + " - " + nome;
 	}
+	
+	public static EstadosEnum getByUf(String uf) {
+		for(EstadosEnum estado : EstadosEnum.values()) {
+			if(CommonsUtil.mesmoValor(uf, estado.getUf())) {
+				return estado;
+			}
+		}
+		return null;
+	}
+	
+	/*List<SelectItem> listaEstados =  pesquisaEstadosListaNome();
+	
+	public List<String> completeEstados(String query) {
+	    String queryLowerCase = query.toLowerCase();
+	    List<String> bancos = new ArrayList<>();
+	    for(EstadosEnum banco : EstadosEnum.values()) {
+	    	String bancoStr = banco.getNome().toString();
+	    	bancos.add(bancoStr);
+	    }
+	    return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
+	
+	public List<SelectItem> pesquisaEstadosListaNome() {
+		System.out.println("PagadorRecebedor metodo - pesquisaBancosListaNome");
+		List<SelectItem> listaEstados= new ArrayList<>();
+		for(EstadosEnum estado : EstadosEnum.values()) {
+			SelectItem item = new SelectItem(estado);
+			listaEstados.add(item);
+		}
+		return listaEstados;
+	}*/
 
 	public String getNome() {
 		return this.nome;
@@ -48,6 +87,10 @@ public enum EstadosEnum {
 
 	public String getIdDocket() {
 		return idDocket;
+	}
+
+	public String getNomeComposto() {
+		return nomeComposto;
 	}
 }
 
