@@ -4710,38 +4710,36 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
-			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("")) {
-				this.objetoContratoCobranca.setCadastroAprovadoData(null);
-				this.objetoContratoCobranca.setCadastroAprovadoUsuario(null);
-			} else {
-				if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") ) {
-					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
-						this.objetoContratoCobranca.setStatus("Pendente");
-						
-						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
-						this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
-						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
-					}
+		if (CommonsUtil.semValor(this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+			this.objetoContratoCobranca.setCadastroAprovadoData(null);
+			this.objetoContratoCobranca.setCadastroAprovadoUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") || this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") ) {
+				if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
+					this.objetoContratoCobranca.setStatus("Pendente");
 					
-					if(this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") && this.objetoContratoCobranca.getAnalisePendenciadaData() == null) {
-						this.objetoContratoCobranca.setAnalisePendenciadaData(gerarDataHoje());
-						this.objetoContratoCobranca.setAnalisePendenciadaUsuario(getNomeUsuarioLogado());
-					}
-				} else {
-					if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
-						this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());				
-						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
-					}
-					this.objetoContratoCobranca.setAnaliseReprovada(true);
-					if (this.objetoContratoCobranca.getAnaliseReprovadaData() == null) {
-						this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());				
-						this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
-					}
-					this.objetoContratoCobranca.setStatus("Reprovado");		
+					this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());
+					this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
+					this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 				}
+				
+				if(this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") && this.objetoContratoCobranca.getAnalisePendenciadaData() == null) {
+					this.objetoContratoCobranca.setAnalisePendenciadaData(gerarDataHoje());
+					this.objetoContratoCobranca.setAnalisePendenciadaUsuario(getNomeUsuarioLogado());
+				}
+			} else {
+				if (this.objetoContratoCobranca.getCadastroAprovadoData() == null) {
+					this.objetoContratoCobranca.setCadastroAprovadoData(gerarDataHoje());				
+					this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
+				}
+				this.objetoContratoCobranca.setAnaliseReprovada(true);
+				if (this.objetoContratoCobranca.getAnaliseReprovadaData() == null) {
+					this.objetoContratoCobranca.setAnaliseReprovadaData(gerarDataHoje());				
+					this.objetoContratoCobranca.setAnaliseReprovadaUsuario(getNomeUsuarioLogado());
+				}
+				this.objetoContratoCobranca.setStatus("Reprovado");		
 			}
-		}
+		}	
 
 		if (this.objetoContratoCobranca.getMatriculaAprovadaValor() != null) {
 			if (this.objetoContratoCobranca.getMatriculaAprovadaValor().equals("")) {
