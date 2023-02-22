@@ -46,6 +46,7 @@ public enum BancosEnum {
 	BBN_BANCO_BRASILEIRO_DE_NEGOCIOS_S_A("081-7", "BBN Banco Brasileiro de Negócios S.A."), //
 	BANCO_TOPAZIO_S_A("082-5", "Banco Topázio S.A."), //
 	BANCO_DA_CHINA_BRASIL_S_A("083-3", "Banco da China Brasil S.A."), //
+	CREDCREA("085", "CredCrea"), //
 	BANCO_PETRA_S_A("094-2", "Banco Petra S.A."), //
 	BANCO_CONFIDENCE_DE_CAMBIO_S_A("095", "Banco Confidence de Câmbio S.A."), //
 	BANCO_BMFBOVESPA_DE_SERVICOS_DE_LIQUIDACAO_E_CUSTODIA_S_A("096", "Banco BMFBOVESPA de Serviços de Liquidação e Custódia S.A."), //

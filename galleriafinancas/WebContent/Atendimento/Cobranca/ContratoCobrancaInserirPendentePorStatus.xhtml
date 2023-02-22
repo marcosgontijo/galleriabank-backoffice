@@ -1125,9 +1125,8 @@
 
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" 
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
-						<h:panelGrid columns="2">
+					<p:panel header="Comentário Pré-Comitê">
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
 							<p:outputLabel id="comentarioPreComite"
@@ -1145,31 +1144,32 @@
 								converter="bigDecimalConverter">
 								<p:ajax process="@this" partialSubmit="true" />
 							</p:inputText>
-							
+						</h:panelGrid>
+						<h:panelGrid columns="2">
 							<p:outputLabel for="divida"
-									value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="divida" 
-									value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
-									label="Status" style="width:100px;">
-									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="Sim" itemLabel="Sim" />
-									<f:selectItem itemValue="Nao" itemLabel="Não" />
-									<p:ajax update="comentarioPreComitePanel" event="change" />
-								</p:selectOneMenu>
+								value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="divida" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
+								label="Status" style="width:100px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Sim" itemLabel="Sim" />
+								<f:selectItem itemValue="Nao" itemLabel="Não" />
+								<p:ajax update="comentarioPreComitePanel" event="change" />
+							</p:selectOneMenu>
 
-								<p:outputLabel for="dividaValor" value="Valor da dívida: "
-									styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}" />
+							<p:outputLabel for="dividaValor" value="Valor da dívida: "
+								styleClass="labelBold"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}" />
 
-								<p:inputText id="dividaValor"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}">
-									<p:ajax process="@this" partialSubmit="true" />
-								</p:inputText>
+							<p:inputText id="dividaValor"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dividaValor}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.divida == 'Sim'}">
+								<p:ajax process="@this" partialSubmit="true" />
+							</p:inputText>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

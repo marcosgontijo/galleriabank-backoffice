@@ -229,6 +229,8 @@ public class PagadorRecebedor implements Serializable {
 	private boolean taxaCheckListCoobrigadoCasado;
 	/////////
 	
+	private List<DocumentosPagadorDocket> documentosDocket;
+	
 	private User usuario;
 	
 	private BigDecimal saldoInvestidor;
@@ -310,6 +312,8 @@ public class PagadorRecebedor implements Serializable {
 		this.casado = false;
 		this.coobrigado = false;
 		this.userInvestidor = false;
+		
+		this.documentosDocket = new ArrayList<DocumentosPagadorDocket>();
 	}
 	
 	 public List<String> completeBancos(String query) {
@@ -2063,5 +2067,11 @@ public class PagadorRecebedor implements Serializable {
 		this.pix = pix;
 	}
 
-	
+	public List<DocumentosPagadorDocket> getDocumentosDocket() {
+		return documentosDocket;
+	}
+
+	public void setDocumentosDocket(List<DocumentosPagadorDocket> documentosDocket) {
+		this.documentosDocket = documentosDocket;
+	}
 }
