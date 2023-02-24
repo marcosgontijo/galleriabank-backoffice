@@ -67,12 +67,6 @@
 					<p:menu style="width: 250px; ">	
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO">					
 							<p:submenu label="Gerenciamento" styleClass="titulosMenu">
-								<shiro:hasAnyRoles name="ROOT">	
-									<p:menuitem value="docket"
-										action="#{docketMB.clearFieldsDocket}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Contas a Pagar"
 										action="#{contasPagarMB.clearFields}"
@@ -200,6 +194,10 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
+									<p:menuitem value="Docket"
+										action="#{docketMB.clearFieldsDocket}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

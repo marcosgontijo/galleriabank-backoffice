@@ -10,12 +10,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -23,9 +27,9 @@ import javax.faces.model.SelectItem;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.event.SelectEvent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
@@ -34,28 +38,24 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
-@ManagedBean(name = "docketMB")
+@ManagedBean(name="docketMB")
 @SessionScoped
 public class DocketMB {
-
-	/****
-	 * Token de Segurança
-	 * 
-	 * 
-		Login: galleria-bank.api
-		Senha: 5TM*sgZKJ3hoh@J
-		
-		https://sandbox-saas.docket.com.br
-	 */
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
 	
 	private String urlHomologacao = "https://sandbox-saas.docket.com.br";
 	private String kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
@@ -70,6 +70,8 @@ public class DocketMB {
 	private PagadorRecebedor selectedPagadorGenerico; //usado para consulta	de pessoa
 	private PagadorRecebedor selectedPagadorDocumentos; //usado para consulta de docs
 	String updatePagadorRecebedor = ":form";
+	private PagadorRecebedor pagadorAdicionar;
+	private boolean tipoPessoaIsFisica;
 	
 	private List<DocumentosDocket> listaDococumentosDocket;  //listagem de docs
 	private List<DocumentosPagadorDocket> listaDococumentosPagador; //listagem de docs
@@ -81,15 +83,9 @@ public class DocketMB {
 	private List<DocketCidades> listaCidadesImovel;
 	private String estadoImovel;
 	private String cidadeImovel;
+	private Docket docket = new Docket();
 	
 	public DocketMB() {
-		urlHomologacao = "https://sandbox-saas.docket.com.br";
-		kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
-		kitNomeGalleria = "1 - GALLERIA BANK";
-		login = "galleria-bank.api";
-		senha = "5TM*sgZKJ3hoh@J";
-		organizacao_url = "galleria-bank";
-		
 		listRecebedorPagador = new ArrayList<PagadorRecebedor>();
 		listaContratosConsultar = new ArrayList<ContratoCobranca>();	
 		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
@@ -100,12 +96,45 @@ public class DocketMB {
 		clearContratoCobranca();
 	}
 	
-	public void loginDocket() {		
+	public String clearFieldsDocket() {
+		this.objetoContratoCobranca = new ContratoCobranca();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		listaContratosConsultar = new ArrayList<ContratoCobranca>();
+		this.listaContratosConsultar = cDao.consultaContratosDocket();
+		
+		listaPagador = new ArrayList<PagadorRecebedor>();
+		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
+		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
+		estadoSelecionadoImovel = null;
+		listaCidadesImovel = new ArrayList<DocketCidades>(); 
+		estadoImovel = null;
+		cidadeImovel = null;
+		docket = new Docket();
+		
+		DocumentosDocketDao docDao = new DocumentosDocketDao();	
+		listaDococumentosDocket = docDao.findAll();
+
+		for(DocumentosDocket doc : listaDococumentosDocket) {
+			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
+			docPagador.setDocumentoDocket(doc);
+			listaDococumentosPagador.add(docPagador);
+		}
+		return "/Atendimento/Cobranca/Docket.xhtml";
+	}
+	
+	public String clearFieldsContratoCobranca(ContratoCobranca contrato) { //chama clearFields populado com dados do contrato
+		clearFieldsDocket();
+		this.objetoContratoCobranca = contrato;  
+		populateSelectedContratoCobranca();
+		return "/Atendimento/Cobranca/Docket.xhtml";
+	}
+	
+	public void loginDocket() {	//POST pra pegar token	
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
-			URL myURL;	
+			URL myURL;
 			
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
@@ -171,29 +200,29 @@ public class DocketMB {
 		}	
 	}
 	
-	public void getListaCidades(DocumentosPagadorDocket doc) {
+	public void pegarListaCidades(DocumentosPagadorDocket doc) {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
 		List<DocketCidades> lista = new ArrayList<DocketCidades>();
 		lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
 		if(CommonsUtil.semValor(lista)) {
-			getCidadesPorEstadoID(doc.getEstadoId());
+			pegarCidadesPorEstadoID(doc.getEstadoId());
 			lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
 		}
 		doc.setListaCidades(lista);
 	}
 	
-	public void getListaCidadesImovel() {
+	public void pegarListaCidadesImovel() {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
 		List<DocketCidades> lista = new ArrayList<DocketCidades>();
 		lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
 		if(CommonsUtil.semValor(lista)) {
-			getCidadesPorEstadoID(estadoSelecionadoImovel.getIdDocket());
+			pegarCidadesPorEstadoID(estadoSelecionadoImovel.getIdDocket());
 			lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
 		}
 		this.setListaCidadesImovel(lista);
 	}
 	
-	public void getCidadesPorEstadoID(String estadoID) {		
+	public void pegarCidadesPorEstadoID(String estadoID) {	//GET pra pegar cidades na API
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
@@ -296,7 +325,7 @@ public class DocketMB {
 		}	
 	}
 	
-	public void criarPedido() {	
+	public void criarPedido() {	//POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		try {
 			loginDocket();
@@ -326,7 +355,7 @@ public class DocketMB {
 				os.write(input, 0, input.length);
 			}
 						
-			try(BufferedReader br = new BufferedReader(
+			/*try(BufferedReader br = new BufferedReader(
 			  new InputStreamReader(myURLConnection.getInputStream(), "utf-8"))) {
 			    StringBuilder response = new StringBuilder();
 			    String responseLine = null;
@@ -334,12 +363,17 @@ public class DocketMB {
 			        response.append(responseLine.trim());
 			    }
 			    System.out.println(response.toString());
-			}
+			}*/
 								
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-			} else {				
+				System.out.println(jsonWhatsApp.toString());
+			} else {
+				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				DocketDao docketDao = new DocketDao();
+				docketDao.create(docket);
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));	
 				myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();		
@@ -352,13 +386,13 @@ public class DocketMB {
 		}
 	}
 		
-	public JSONObject getBodyJsonPedido(List<PagadorRecebedor> listaPagador) {	
+	public JSONObject getBodyJsonPedido(List<PagadorRecebedor> listaPagador) { //JSON p/ pedido	
 		JSONObject jsonDocketBodyPedido = new JSONObject();	
 		jsonDocketBodyPedido.put("pedido", getJsonPedido(listaPagador));
 		return jsonDocketBodyPedido;
 	}
 	
-	public JSONObject getJsonPedido(List<PagadorRecebedor> listaPagador) {	
+	public JSONObject getJsonPedido(List<PagadorRecebedor> listaPagador) { //JSON p/ pedido		
 		JSONArray jsonDocumentosArray = new JSONArray();
 		for(PagadorRecebedor pagador : listaPagador) {
 			for(DocumentosPagadorDocket documentos : pagador.getDocumentosDocket()) {
@@ -375,7 +409,7 @@ public class DocketMB {
 		return jsonDocketPedido;
 	}
 	
-	public JSONObject getJsonDocumentos(PagadorRecebedor pagador, DocumentosPagadorDocket documentosPagador) {	
+	public JSONObject getJsonDocumentos(PagadorRecebedor pagador, DocumentosPagadorDocket documentosPagador) { //JSON p/ pedido		
 		//PagadorRecebedor pagador = new PagadorRecebedor();
 		JSONObject jsonDocketDocumentos = new JSONObject();	
 		DocumentosDocket documento = documentosPagador.getDocumentoDocket();
@@ -397,7 +431,7 @@ public class DocketMB {
 		return jsonDocketDocumentos;
 	}
 	
-	public JSONObject getJsonCampos(PagadorRecebedor pagador, String estadoId, String cidadeId) {	
+	public JSONObject getJsonCampos(PagadorRecebedor pagador, String estadoId, String cidadeId) { //JSON p/ pedido		
 		JSONObject jsonDocketCampos = new JSONObject();				
 		//jsonDocketCampos = new JSONObject();		
 		if(!CommonsUtil.semValor(pagador.getCpf())) {
@@ -416,7 +450,7 @@ public class DocketMB {
 		return jsonDocketCampos;
 	}
 	
-	public JSONObject getJSONSucesso(InputStream inputStream) {
+	public JSONObject getJSONSucesso(InputStream inputStream) { //Pega resultado da API
 		BufferedReader in;
 		try {
 			in = new BufferedReader(
@@ -444,42 +478,21 @@ public class DocketMB {
 		}
 		return null;
 	}
-	
-	public String clearFieldsDocket() {
-		clearContratoCobranca();
-		listaPagador = new ArrayList<PagadorRecebedor>();
-		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
-		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
-		estadoSelecionadoImovel = null;
-		listaCidadesImovel = new ArrayList<DocketCidades>(); 
-		estadoImovel = null;
-		cidadeImovel = null;
 		
-		DocumentosDocketDao docDao = new DocumentosDocketDao();	
-		listaDococumentosDocket = docDao.findAll();
-
-		for(DocumentosDocket doc : listaDococumentosDocket) {
-			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
-			docPagador.setDocumentoDocket(doc);
-			listaDococumentosPagador.add(docPagador);
-		}		
-		return "/Atendimento/Cobranca/Docket.xhtml";
-	}
-	
-	public void clearDialogDoc(PagadorRecebedor pagador) {
+	public void clearDialogDoc(PagadorRecebedor pagador) { //abre o dialog dos documentos
 		selectedPagadorDocumentos = pagador;
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
 		listaDococumentosDocket = new ArrayList<DocumentosDocket>();
 		listaDococumentosDocket = docDao.findAll();
 	}
 	
-	public void adicionaDoc(DocumentosDocket doc) {
+	public void adicionaDoc(DocumentosDocket doc) { //seleciona um documento no dialog
 		DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
 		selectedPagadorDocumentos.getDocumentosDocket().add(docPagador);
 		selectedPagadorDocumentos = new PagadorRecebedor();
 	}
 
-	public void pesquisaContratoCobranca() {
+	public void pesquisaContratoCobranca() { 
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		listaContratosConsultar = new ArrayList<ContratoCobranca>();
 		this.listaContratosConsultar = cDao.consultaContratosDocket();
@@ -493,39 +506,16 @@ public class DocketMB {
 	}
 	
 	public void clearContratoCobranca() {
-		this.objetoContratoCobranca = new ContratoCobranca();
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		listaContratosConsultar = new ArrayList<ContratoCobranca>();
-		this.listaContratosConsultar = cDao.consultaContratosDocket();
-	}
-	
-	public String clearFieldsContratoCobranca() {
-		listaPagador = new ArrayList<PagadorRecebedor>();
-		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
-		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
-		estadoSelecionadoImovel = null;
-		listaCidadesImovel = new ArrayList<DocketCidades>(); 
-		estadoImovel = null;
-		cidadeImovel = null;
 		
-		DocumentosDocketDao docDao = new DocumentosDocketDao();	
-		listaDococumentosDocket = docDao.findAll();
-
-		for(DocumentosDocket doc : listaDococumentosDocket) {
-			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
-			docPagador.setDocumentoDocket(doc);
-			listaDococumentosPagador.add(docPagador);
-		}	
-		populateSelectedContratoCobranca();
-		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
-	
-	
+		
 	public void populateSelectedContratoCobranca() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocketDao docketDao = new DocketDao();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		ImovelCobrancaDao iDao = new ImovelCobrancaDao();
 		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());	
+		contrato = cDao.findById(this.objetoContratoCobranca.getId());	
 		ImovelCobranca imovel = new ImovelCobranca();
 		imovel = iDao.findById(contrato.getImovel().getId());
 		//if(CommonsUtil.semValor(this.objetoContratoCobranca)){
@@ -536,29 +526,15 @@ public class DocketMB {
 			if(!CommonsUtil.semValor(imovel.getCidade())) {
 				setCidadeImovel(imovel.getCidade());
 			}
-			getListaCidadesImovel();
+			pegarListaCidadesImovel();
 			
 			adiconarDocumentospagador(contrato.getPagador());
 			listaPagador.add(contrato.getPagador());
 			
-			//this.atualizaTodosDocumentos(); // PQ QUE ESSE CHAMADO QUEBRAAAAAAAAAAAAAAAAAAA
+			this.atualizaTodosDocumentos(); 
 			
-			if(CommonsUtil.semValor(listaPagador)) {
-				return;
-			}
-			for(PagadorRecebedor pagador : listaPagador) {
-				if(CommonsUtil.semValor(pagador.getDocumentosDocket()) 
-						|| CommonsUtil.semValor(estadoSelecionadoImovel) 
-						|| CommonsUtil.semValor(cidadeImovel)
-						|| CommonsUtil.semValor(listaCidadesImovel)) {
-					return;
-				}
-				for(DocumentosPagadorDocket doc : pagador.getDocumentosDocket()) {
-					doc.setEstadoSelecionado(estadoSelecionadoImovel);
-					doc.setCidade(cidadeImovel);
-					doc.setListaCidades(listaCidadesImovel);
-					doc.getCidadeDocketId();
-				}		
+			if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
 			}
 		//}
 	}
@@ -623,10 +599,6 @@ public class DocketMB {
 		return listaEstados;
 	}
 	
-	/*public void changeEstado(DocumentosPagadorDocket docs) {
-		docs.setEstadoId(docs.getEstadoSelecionado().getIdDocket());
-		docs.setEstado(docs.getEstadoSelecionado().getNome());
-	}*/
 	
 	public List<String> completeCidades(String query) {
 		String queryLowerCase = query.toLowerCase();
@@ -637,9 +609,6 @@ public class DocketMB {
 			for (DocketCidades cidade : doc.getListaCidades()) {
 				String cidadeStr = cidade.getNome();
 				cidades.add(cidadeStr);
-				/*if(estado.getNomeComposto().contains(queryLowerCase)) {
-					estados.add(estado);
-				}*/
 			}
 		}
 		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
@@ -678,22 +647,89 @@ public class DocketMB {
 		return;
 	}
 	
+	public void clearPessoaDialog() {
+		pagadorAdicionar = new PagadorRecebedor();
+		tipoPessoaIsFisica = true;
+	}
 	
+	public void inserirPessoa() {
+		adiconarDocumentospagador(pagadorAdicionar);
+		if(pagadorAdicionar.getId() <= 0) {
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			pDao.create(pagadorAdicionar);
+		}
+		this.listaPagador.add(pagadorAdicionar);
 		
-	/*public List<EstadosEnum> completeBancos(String query) {
-		String queryLowerCase = query.toLowerCase();
-		List<EstadosEnum> estados = new ArrayList<>();
-		for (EstadosEnum estado : EstadosEnum.values()) {
-			//String bancoStr = estado.getNomeComposto().toString();
-			//bancos.add(bancoStr);
-			if(estado.getNomeComposto().contains(queryLowerCase)) {
-				estados.add(estado);
+		pagadorAdicionar = new PagadorRecebedor();
+	}
+	
+	public void procurarPF() {
+		if(CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
+			return;
+		}
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		if(pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
+			pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);	
+		} else {
+			return;
+		}
+	}
+	
+	public void procurarPJ() {
+		if(CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
+			return;
+		}		
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		if(pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
+			pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
+		} else {
+			return;
+		}	
+	}
+	
+	public void selectedTipoPessoaPublico() {
+		this.pagadorAdicionar = new PagadorRecebedor();
+	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
+	
+	public String getNomeUsuarioLogado() {
+		User usuario = getUsuarioLogado();
+
+		if (usuario.getLogin() != null) {
+			if (!usuario.getLogin().equals("")) {
+				return usuario.getLogin();
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	public User getUsuarioLogado() {
+		User usuario = new User();
+		if (loginBean != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
 			}
 		}
-		return estados;//.stream().filter(t -> t.getNomeComposto().toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
-	 }*/
+
+		return usuario;
+	}
 	
-	
+		
 	public List<ContratoCobranca> getListaContratosConsultar() {
 		return listaContratosConsultar;
 	}
@@ -803,6 +839,36 @@ public class DocketMB {
 		this.cidadeImovel = cidadeImovel;
 	}
 	
-	
-	
+	public Docket getDocket() {
+		return docket;
+	}
+
+	public void setDocket(Docket docket) {
+		this.docket = docket;
+	}
+
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
+	}
+
+	public PagadorRecebedor getPagadorAdicionar() {
+		return pagadorAdicionar;
+	}
+
+	public void setPagadorAdicionar(PagadorRecebedor pagadorAdicionar) {
+		this.pagadorAdicionar = pagadorAdicionar;
+	}
+
+	public boolean isTipoPessoaIsFisica() {
+		return tipoPessoaIsFisica;
+	}
+
+	public void setTipoPessoaIsFisica(boolean tipoPessoaIsFisica) {
+		this.tipoPessoaIsFisica = tipoPessoaIsFisica;
+	}	
+				
 }
