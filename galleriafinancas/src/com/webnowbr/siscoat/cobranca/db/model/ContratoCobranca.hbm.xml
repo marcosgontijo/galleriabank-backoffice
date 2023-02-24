@@ -2060,5 +2060,13 @@
 			<column name="dispositivoCertificado" />
 		</property>
 		
+		<list name="listCadastroStatus"
+			table="ContratoCobranca_CadastroStatus_Join" cascade="all" lazy="false">
+			<key column="idContratoCobranca" />
+			<list-index></list-index>
+			<many-to-many column="idCadastroStatus"
+				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
+		</list>	
+		
 	</class>
 </hibernate-mapping>

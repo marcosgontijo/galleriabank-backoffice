@@ -192,7 +192,8 @@
 		                	<p:commandButton value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
 			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
-			            </shiro:hasAnyRoles>   		            
+			            </shiro:hasAnyRoles>		            
+						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		            
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

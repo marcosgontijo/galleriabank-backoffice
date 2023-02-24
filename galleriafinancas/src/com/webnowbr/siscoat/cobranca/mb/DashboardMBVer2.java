@@ -649,10 +649,12 @@ public class DashboardMBVer2 {
 			gravaCelula(8, CommonsUtil.formataValorMonetario(dash.getValorContratosPreAprovados(),"R$ "), linha);
 			gravaCelula(9, dash.getContratosBoletosPagos(), linha);
 			gravaCelula(10, CommonsUtil.formataValorMonetario(dash.getValorBoletosPagos(),"R$ "), linha);
-			gravaCelula(11, dash.getContratosCcbsEmitidas(), linha);
-			gravaCelula(12, CommonsUtil.formataValorMonetario(dash.getValorCcbsEmitidas(),"R$ "), linha);
-			gravaCelula(13, dash.getContratosRegistrados(), linha);
-			gravaCelula(14, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);	
+			gravaCelula(11, dash.getContratosComite(), linha);
+			gravaCelula(12, CommonsUtil.formataValorMonetario(dash.getValorContratosComite(),"R$ "), linha);//
+			gravaCelula(13, dash.getContratosCcbsEmitidas(), linha);
+			gravaCelula(14, CommonsUtil.formataValorMonetario(dash.getValorCcbsEmitidas(),"R$ "), linha);
+			gravaCelula(15, dash.getContratosRegistrados(), linha);
+			gravaCelula(16, CommonsUtil.formataValorMonetario(dash.getValorContratosRegistrados(),"R$ "), linha);		
 			
 			iLinha++;
 		}
@@ -690,16 +692,16 @@ public class DashboardMBVer2 {
 		calculaSoma();
 		XSSFRow linha = sheet.getRow(1);
 		
-		gravaCelula(18, this.totalContratosCadastrados, linha);
-		gravaCelula(19, CommonsUtil.formataValorMonetario(this.totalValorContratosPreAprovados,"R$ "), linha);
-		gravaCelula(20, this.totalContratosPreAprovados, linha);
-		gravaCelula(21, CommonsUtil.formataValorMonetario(this.totalValorContratosCadastrados,"R$ "), linha);	
-		gravaCelula(22, this.totalContratosBoletosPagos, linha);
-		gravaCelula(23, CommonsUtil.formataValorMonetario(this.totalValorBoletosPagos,"R$ "), linha);	
-		gravaCelula(24, this.totalContratosCcbsEmitidas, linha);
-		gravaCelula(25, CommonsUtil.formataValorMonetario(this.totalValorCcbsEmitidas,"R$ "), linha);	
-		gravaCelula(26, this.totalContratosRegistrados, linha);
-		gravaCelula(27, CommonsUtil.formataValorMonetario(this.totalValorContratosRegistrados,"R$ "), linha);
+		gravaCelula(20, this.totalContratosCadastrados, linha);
+		gravaCelula(21, CommonsUtil.formataValorMonetario(this.totalValorContratosPreAprovados,"R$ "), linha);
+		gravaCelula(22, this.totalContratosPreAprovados, linha);
+		gravaCelula(23, CommonsUtil.formataValorMonetario(this.totalValorContratosCadastrados,"R$ "), linha);	
+		gravaCelula(24, this.totalContratosBoletosPagos, linha);
+		gravaCelula(25, CommonsUtil.formataValorMonetario(this.totalValorBoletosPagos,"R$ "), linha);	
+		gravaCelula(26, this.totalContratosCcbsEmitidas, linha);
+		gravaCelula(27, CommonsUtil.formataValorMonetario(this.totalValorCcbsEmitidas,"R$ "), linha);	
+		gravaCelula(28, this.totalContratosRegistrados, linha);
+		gravaCelula(29, CommonsUtil.formataValorMonetario(this.totalValorContratosRegistrados,"R$ "), linha);
 		
 		
 		
