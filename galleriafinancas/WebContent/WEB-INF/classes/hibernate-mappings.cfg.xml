@@ -39,6 +39,8 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CcbContrato.hbm.xml"/>   
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CcbParticipantes.hbm.xml"/>  
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CcbProcessosJudiciais.hbm.xml"/>  
+		
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CadastroStatus.hbm.xml"/>    
 
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosDocket.hbm.xml"/>    
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosPagadorDocket.hbm.xml"/> 

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" table="CadastroStatus">
+       <id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+   
+		<property name="status" type="java.lang.String">
+			<column name="status" />
+		</property>
+		
+		<property name="data" type="java.util.Date">
+			<column name="data" />
+		</property>
+		
+		<property name="usuarioLogin" type="java.lang.String">
+			<column name="usuarioLogin" />
+		</property>
+		
+		<many-to-one name="usuario"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="usuario" />
+		</many-to-one> 
+		
+		<property name="detalhes" type="java.lang.String">
+			<column name="detalhes" />
+		</property>  
+		
+		<many-to-one name="contratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratocobranca" />
+		</many-to-one>       
+    </class>
+</hibernate-mapping>

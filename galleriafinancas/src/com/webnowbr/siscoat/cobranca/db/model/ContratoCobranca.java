@@ -320,6 +320,7 @@ public class ContratoCobranca implements Serializable {
 
 	private boolean contratoRestritoAdm;
 
+	private List<CadastroStatus> listCadastroStatus;
 	private String status;
 
 	private String vlrParcelaStr;
@@ -802,6 +803,7 @@ public class ContratoCobranca implements Serializable {
 		this.listaPagadores = new HashSet<>();
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
+		this.listCadastroStatus = new ArrayList<CadastroStatus>();
 		
 		limparPrimitivos();
 	}
@@ -6149,8 +6151,14 @@ public class ContratoCobranca implements Serializable {
 	public void setDispositivoCertificado(String dispositivoCertificado) {
 		this.dispositivoCertificado = dispositivoCertificado;
 	}
-	
-	
-	
+
+	public List<CadastroStatus> getListCadastroStatus() {
+		return listCadastroStatus;
+	}
+
+	public void setListCadastroStatus(List<CadastroStatus> listCadastroStatus) {
+		this.listCadastroStatus = listCadastroStatus;
+	}
+		
 	
 }

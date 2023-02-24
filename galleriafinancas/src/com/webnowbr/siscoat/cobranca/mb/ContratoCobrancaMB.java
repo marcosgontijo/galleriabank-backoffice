@@ -109,6 +109,7 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -3033,6 +3034,7 @@ public class ContratoCobrancaMB {
 				enviaEmailAtualizacaoPreContratoNovo();
 				System.out.println("saveLeadTerceiros");
 			}
+			contratoCobrancaCheckList = null;
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3133,6 +3135,7 @@ public class ContratoCobrancaMB {
 				enviaEmailAtualizacaoPreContratoNovo();
 				System.out.println("editPreContrato");
 			}
+			contratoCobrancaCheckList = null;
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3751,6 +3754,7 @@ public class ContratoCobrancaMB {
 					enviaEmailAtualizacaoPreContratoNovo();	
 					System.out.println("editPreContratoPorStatus");
 				}
+				contratoCobrancaCheckList = null;
 				
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -4723,7 +4727,7 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCadastroAprovadoData());
 						this.objetoContratoCobranca.setCadastroAprovadoUsuario(getNomeUsuarioLogado());
 					}
-					
+										
 					if(this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Pendente") && this.objetoContratoCobranca.getAnalisePendenciadaData() == null) {
 						this.objetoContratoCobranca.setAnalisePendenciadaData(gerarDataHoje());
 						this.objetoContratoCobranca.setAnalisePendenciadaUsuario(getNomeUsuarioLogado());
@@ -4740,6 +4744,18 @@ public class ContratoCobrancaMB {
 					}
 					this.objetoContratoCobranca.setStatus("Reprovado");		
 				}
+				
+				if(!CommonsUtil.semValor(contratoCobrancaCheckList)) {
+					if(!CommonsUtil.mesmoValor(contratoCobrancaCheckList.getCadastroAprovadoValor(), this.objetoContratoCobranca.getCadastroAprovadoValor())) {
+						CadastroStatus cadastroStatus = new CadastroStatus("Cadastro " + this.objetoContratoCobranca.getCadastroAprovadoValor(), //Status
+							gerarDataHoje(), //data
+							getUsuarioLogado(), //usuario
+							objetoContratoCobranca); //cotrato
+					
+						this.objetoContratoCobranca.getListCadastroStatus().add(cadastroStatus);
+					}
+				}	
+				
 			}
 		}
 
@@ -18755,7 +18771,10 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		//Apartamento ou casa em condomínio com taxa máxima de 1,39% pode ser aprovado com 50% de LTV com apenas 1 voto		
 		if(!CommonsUtil.semValor(contrato.getTaxaPreAprovada())) {
 			if(contrato.getTaxaPreAprovada().compareTo(BigDecimal.valueOf(1.39)) <= 0) {
-				BigDecimal ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
+				BigDecimal ltv = BigDecimal.ONE;
+				if(!CommonsUtil.semValor(contrato.getValorMercadoImovel())) {
+					ltv = contrato.getValorEmprestimo().divide(contrato.getValorMercadoImovel(),MathContext.DECIMAL128);
+				}						
 				if(!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Apartamento")
 						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio")
 						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Casa de Condomínio acima1000")) {
