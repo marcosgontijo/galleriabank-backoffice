@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
+import com.webnowbr.siscoat.common.EstadosEnum;
+
 public class DocumentosPagadorDocket implements Serializable {
 	/**
 	 * 
@@ -17,9 +20,16 @@ public class DocumentosPagadorDocket implements Serializable {
 	private String estadoId;
 	private String cidade;
 	private String cidadeId;
+	private EstadosEnum estadoSelecionado;
+	private List<DocketCidades> listaCidades;
 	
 	public DocumentosPagadorDocket() {
 		
+	}
+	
+	public void getCidadeDocketId() {
+		DocketCidadesDao dcDao = new DocketCidadesDao();
+		cidadeId = dcDao.getCidadeId(cidade);
 	}
 	
 	public DocumentosPagadorDocket(DocumentosDocket doc) {
@@ -61,5 +71,25 @@ public class DocumentosPagadorDocket implements Serializable {
 	}
 	public void setCidadeId(String cidadeId) {
 		this.cidadeId = cidadeId;
+	}
+
+	public EstadosEnum getEstadoSelecionado() {
+		return estadoSelecionado;
+	}
+
+	public void setEstadoSelecionado(EstadosEnum estadoSelecionado) {
+		this.estadoSelecionado = estadoSelecionado;
+		this.estado = estadoSelecionado.getNome();
+		this.estadoId = estadoSelecionado.getIdDocket();
+	}
+
+	public List<DocketCidades> getListaCidades() {
+		return listaCidades;
+	}
+
+	public void setListaCidades(List<DocketCidades> listaCidades) {
+		this.listaCidades = listaCidades;
 	}	
+	
+	
 }

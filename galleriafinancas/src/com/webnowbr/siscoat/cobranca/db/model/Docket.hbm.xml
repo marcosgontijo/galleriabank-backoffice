@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.Docket" table="Docket">
+       <id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		
+		<many-to-one name="objetoContratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="objetoContratoCobranca" />
+		</many-to-one>
+		
+		<property name="estado" type="java.lang.String">
+			<column name="estado" />
+		</property>
+		
+		<property name="estadoDocketId" type="java.lang.String">
+			<column name="estadoDocketId" />
+		</property>
+		
+		<property name="cidade" type="java.lang.String">
+			<column name="cidade" />
+		</property>
+		
+		<property name="cidadeDocketId" type="java.lang.String">
+			<column name="cidadeDocketId" />
+		</property>
+		
+		<property name="usuario" type="java.lang.String">
+			<column name="usuario" />
+		</property>
+		
+		<property name="data" type="java.util.Date">
+			<column name="data" />
+		</property>
+				
+		<list name="listaPagador"
+			table="Docket_PagadorRecebedor_Join" cascade="all" lazy="false">
+			<key column="idDocket" />
+			<list-index></list-index>
+			<many-to-many column="idPagadorRecebedor"
+				class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor" />
+		</list>	
+		       
+    </class>
+</hibernate-mapping>

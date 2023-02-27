@@ -165,6 +165,7 @@
 							and contratos.cadastroAprovadoValor == 'Aprovado'
 							and contratos.aprovadoComite == true}"
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
+						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>	
 						<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 							<p:commandButton value="Baixar" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -176,6 +177,7 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" />
 			                </p:commandButton>
 						</shiro:hasAnyRoles>
+						
 		                <shiro:hasAnyRoles name="ROOT"> 		                  	
 							<p:commandButton value="Excluir" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" title="Excluir">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
