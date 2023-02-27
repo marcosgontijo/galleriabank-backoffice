@@ -321,6 +321,29 @@ public class ResponsavelMB {
 		return "ResponsavelConsultar.xhtml";
 	}
 	
+	public String desativar() {	
+		UserDao uDao = new UserDao();
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		User user;
+		if(!CommonsUtil.semValor(uDao.findByFilter("login", this.login))) {
+			user = uDao.findByFilter("login", this.login).get(0);
+			UsuarioMB userMb = new UsuarioMB();
+			userMb.setObjetoUsuario(user);		
+			userMb.clearFieldsUpdate();
+			userMb.getObjetoUsuario().setComiteConsultar(false);
+			userMb.setSelectedResponsaveis(new Responsavel[0]);
+			userMb.getObjetoUsuario().setName("DESATIVADO - " + user.getName());
+			userMb.inserir();
+		}
+		
+		objetoResponsavel.setDesativado(true);
+		objetoResponsavel.setDataDesativado(gerarDataHoje());
+		objetoResponsavel.setNome("DESATIVADO - " + objetoResponsavel.getNome());
+		responsavelDao.merge(objetoResponsavel);
+		
+		return "ResponsavelConsultar.xhtml";
+	}
+	
 	public void pesquisaResponsavel() {	
 		this.tipoPesquisa = "Responsavel";
 	}
