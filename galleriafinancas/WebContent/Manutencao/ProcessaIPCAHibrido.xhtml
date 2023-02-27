@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"	  
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  template="./MenuManutencao.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ProcessaIPCAHibrido" header="Processa IPCA Híbrido" style="margin-bottom:10px;">		    		       		    										
+				<h:panelGrid columns="3">
+					<p:outputLabel for="numeroContrato" value="Número Contrato: "
+						styleClass="labelBold" />
+					<p:inputText id="numeroContrato"
+						value="#{ipcaMB.numeroContrato}" 
+						style="FONT-SIZE: 10pt;width:40px;" />
+					<p:commandButton action="#{ipcaMB.atualizaIPCAPorContratoMaluco(ipcaMB.numeroContrato)}" icon="ui-icon-calculator" value="ATENÇÃO!! Reprocessar IPCA Híbrido" title="ATENÇÃO!! Reprocessar IPCA Híbrido" update=":form:mensagens">
+	                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
+	                </p:commandButton> 
+	            </h:panelGrid>
+   		    </p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	        

@@ -240,7 +240,8 @@
 				<h:panelGrid columns="1">			
 					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
 								value="#{contratoCobrancaMB.selectedParcelas}"
-								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;">
+								rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : 'parcelaVencendo'}"
+								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;" sortBy="#{parcelasSelecionadas.id}">
 						<p:column style="text-align: center;"
 							headerText="Parcela">
 							<h:outputText value="#{parcelasSelecionadas.numeroParcela}"/>
@@ -248,7 +249,16 @@
 						<p:column style="text-align: center;"
 							headerText="Valor da Parcela">
 							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
-						</p:column>		
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Baixada?">
+							<ui:fragment rendered="#{parcelasSelecionadas.parcelaPaga}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!parcelasSelecionadas.parcelaPaga}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+						</p:column>			
 					</p:dataTable>
 				</h:panelGrid>
 					
