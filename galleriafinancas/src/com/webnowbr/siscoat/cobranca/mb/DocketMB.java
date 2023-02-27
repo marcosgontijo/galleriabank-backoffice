@@ -58,10 +58,13 @@ public class DocketMB {
 	protected LoginBean loginBean;
 	
 	private String urlHomologacao = "https://sandbox-saas.docket.com.br";
+	private String urlProducao = "https://saascompany.docket.com.br";
 	private String kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
 	private String kitNomeGalleria = "1 - GALLERIA BANK";
 	private String login = "galleria-bank.api";
 	private String senha = "5TM*sgZKJ3hoh@J";
+	private String loginProd = "tatiane.galleria";
+	private String senhaProd = "Nina2021@";
 	private String organizacao_url = "galleria-bank";	
 	private String tokenLogin;
 	
@@ -136,16 +139,20 @@ public class DocketMB {
 
 			URL myURL;
 			
-			if(SiscoatConstants.DEV) {
-				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
-			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
-			}
-
 			JSONObject jsonObj = new JSONObject();
 			
-			jsonObj.put("login", login);
-			jsonObj.put("senha", senha);
+			if(SiscoatConstants.DEV) {
+				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
+				jsonObj.put("login", login);
+				jsonObj.put("senha", senha);
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/auth/login");
+				jsonObj.put("login", loginProd);
+				jsonObj.put("senha", senhaProd);
+			}
+
+			
+			
 			
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
@@ -231,7 +238,7 @@ public class DocketMB {
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
+				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			}
 
 			// GET TOKEN Login
@@ -335,7 +342,7 @@ public class DocketMB {
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
+				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			}
 			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
