@@ -2073,6 +2073,9 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobranca contrato = new ContratoCobranca();
 		contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		if(CommonsUtil.semValor(contrato)) {
+			return;
+		}
 		ContratoCobranca c = contrato;
 
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
@@ -12479,6 +12482,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		// POPULA STATUS
 		ContratoCobranca c = contrato;
 		ContratoCobranca s = contratoCobrancaCheckList;
+		if(CommonsUtil.semValor(s)) {
+			return null;
+		}
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")
 				&& !CommonsUtil.mesmoValor(c.getStatus(), s.getStatus())) {
@@ -19730,7 +19736,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 	
 			if (this.selectedParcelas.size() > 0) {
-				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));
+				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));//Usa MathContext.DECIMAL128
 			}
 			
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
