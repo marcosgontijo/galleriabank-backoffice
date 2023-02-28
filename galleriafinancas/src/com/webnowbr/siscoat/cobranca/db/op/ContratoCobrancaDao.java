@@ -5872,7 +5872,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					query = query + where;					
-					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
+					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira,"
@@ -5894,6 +5894,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
 						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
 						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.getResponsavel().setDonoResponsavel(new Responsavel());
 						contratoCobranca.getResponsavel().getDonoResponsavel().setNome(rs.getString(7));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
@@ -5945,7 +5946,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	
 	private static final String QUERY_CONTRATOS_PENDENTES_CONSULTA = " select coco.id, coco.numeroContrato, coco.datacontrato, coco.quantoPrecisa, res.nome,  "
-			+ "	pare.nome, gerente.nome, "
+			+ "	pare.nome, gerente.nome, res.superlogica, "
 			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
@@ -5985,7 +5986,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				
 					query = query + " where  " + queryResponsavel + " ";
 					
-					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, "
+					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status,"
@@ -6007,6 +6008,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
 						contratoCobranca.setDataContrato(rs.getDate("datacontrato"));
 						contratoCobranca.getResponsavel().setNome(rs.getString(5));
+						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.getResponsavel().setDonoResponsavel(new Responsavel());
 						contratoCobranca.getResponsavel().getDonoResponsavel().setNome(rs.getString(7));
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
@@ -6204,7 +6206,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador " +
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6502,6 +6504,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setNumeroContrato(rs.getString(2));
 						contratoCobranca.setDataContrato(rs.getTimestamp(3));
 						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setResponsavel(new Responsavel());
+						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.setNomeGerente(rs.getString("nomeGerente")); // utilizado nome da variavel na query para não mudar a posicao dos elementos
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
 						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
