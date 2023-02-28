@@ -1468,7 +1468,7 @@ public class BRLTrustMB {
 		
 		for (ContratoCobranca contrato : this.selectedContratos) {
 			for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
-				if (parcela.getDataVencimento().after(this.dataValorPresente)) {
+				if (parcela.getDataVencimento().after(this.dataValorPresente) && !parcela.isParcelaPaga()) {
 					JSONObject jsonRecebivel = new JSONObject();
 					
 					String numeroParcela = "";

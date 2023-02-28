@@ -102,6 +102,11 @@
 						<h:outputText value="#{boleto.status}" />
 					</p:column>	
 					<p:column style="text-align: center;"
+						headerText="Empresa" filterMatchMode="contains"
+						sortBy="#{boleto.contrato.empresa}">
+						<h:outputText value="#{boleto.contrato.empresa}" />
+					</p:column>
+					<p:column style="text-align: center;"
 						headerText="Cedente" filterMatchMode="contains"
 						sortBy="#{boleto.beneficiaryName}">
 						<h:outputText value="#{boleto.beneficiaryName}" />
@@ -117,15 +122,11 @@
 						<h:outputText value="#{boleto.customerPersonName}" />
 					</p:column>
 					<p:column style="text-align: center;"
-						headerText="CPF/CNPJ" filterMatchMode="contains"
-						sortBy="#{boleto.customerPersonCNPJCPF}">
-						<h:outputText value="#{boleto.customerPersonCNPJCPF}" />
+						headerText="Valor Parcela (R$)">
+						<h:outputText value="#{boleto.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
 					</p:column>
-					<p:column style="text-align: center;"
-						headerText="Cliente E-mail" filterMatchMode="contains"
-						sortBy="#{boleto.customerEmail}">
-						<h:outputText value="#{boleto.customerEmail}" />
-					</p:column>					
 					<p:column style="text-align: center;"
 						headerText="Valor Pago (R$)">
 						<h:outputText value="#{boleto.paidAmount}"
