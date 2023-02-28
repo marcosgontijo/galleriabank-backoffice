@@ -397,6 +397,9 @@
 								</p:selectCheckboxMenu>
 							</h:panelGrid>
 						</p:panel>
+						
+						<p:commandButton value="Desativar" icon="ui-icon-cancel" onclick="PF('desativarDialog').show();"
+							rendered="#{!responsavelMB.objetoResponsavel.desativado}"/>
 					</h:panelGroup>
 				</h:panelGroup>
 
@@ -455,5 +458,21 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
+		
+		<p:dialog header="DESATIVAR" widgetVar="desativarDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+			<h:form id="fromDesativar">
+				<div align="center">
+					<h:outputText value="Tem certeza?" styleClass="labelBold" 
+						style="margin-bottom:20px; width:250px;font-weight: bold; font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:20px;">
+						<p:commandButton value="Sim" action="#{responsavelMB.desativar()}"/>	
+						<p:spacer width="20" />
+						<p:commandButton value="Não" onclick="PF('desativarDialog').close();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
 	</ui:define>
 </ui:composition>

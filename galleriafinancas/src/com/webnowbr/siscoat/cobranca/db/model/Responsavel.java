@@ -35,6 +35,8 @@ public class Responsavel implements Serializable {
 	private Date dataCadastro;
 	private Responsavel responsavelCaptador;
 	private Responsavel responsavelAssistenteComercial;
+	private boolean desativado;
+	private Date dataDesativado;
 	
 	private String rg;
 	private String cpf;
@@ -484,4 +486,21 @@ public class Responsavel implements Serializable {
 	public void setCpfCnpjCC(String cpfCnpjCC) {
 		this.cpfCnpjCC = cpfCnpjCC;
 	}
+
+	public boolean isDesativado() {
+		return desativado;
+	}
+
+	public void setDesativado(boolean desativado) {
+		this.desativado = desativado;
+	}
+
+	public Date getDataDesativado() {
+		return dataDesativado;
+	}
+
+	public void setDataDesativado(Date dataDesativado) {
+		this.dataDesativado = dataDesativado;
+	}
+
 }
