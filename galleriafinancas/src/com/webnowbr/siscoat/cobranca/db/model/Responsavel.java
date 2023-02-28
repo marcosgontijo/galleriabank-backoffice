@@ -62,6 +62,8 @@ public class Responsavel implements Serializable {
 	
 	private String whatsAppNumero;
 	
+	private boolean superlogica;
+	
 	
 	public Responsavel(){
 	}
@@ -502,5 +504,15 @@ public class Responsavel implements Serializable {
 	public void setDataDesativado(Date dataDesativado) {
 		this.dataDesativado = dataDesativado;
 	}
+
+	public boolean isSuperlogica() {
+		return superlogica;
+	}
+
+	public void setSuperlogica(boolean superlogica) {
+		this.superlogica = superlogica;
+	}
+	
+	
 
 }

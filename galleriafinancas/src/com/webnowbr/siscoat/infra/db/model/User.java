@@ -36,6 +36,9 @@ public final class User implements Serializable {
     
     private String ip;
     
+    private String loginDocket;
+    private String senhaDocket;
+    
     private boolean administrador;
     private boolean userPosto;
     private boolean userLocacao;
@@ -647,4 +650,21 @@ public final class User implements Serializable {
 	public void setProfileMarketing(boolean profileMarketing) {
 		this.profileMarketing = profileMarketing;
 	}
+
+	public String getLoginDocket() {
+		return loginDocket;
+	}
+
+	public void setLoginDocket(String loginDocket) {
+		this.loginDocket = loginDocket;
+	}
+
+	public String getSenhaDocket() {
+		return senhaDocket;
+	}
+
+	public void setSenhaDocket(String senhaDocket) {
+		this.senhaDocket = senhaDocket;
+	}
+	
 }

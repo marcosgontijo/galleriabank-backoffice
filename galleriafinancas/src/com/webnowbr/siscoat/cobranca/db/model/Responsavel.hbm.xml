@@ -136,6 +136,8 @@
 			<column name="dataDesativado" />
 		</property>
 		
-        
+        <property name="superlogica" type="boolean">
+			<column name="superlogica" not-null="true" default="false"/>
+		</property>
     </class>
 </hibernate-mapping>

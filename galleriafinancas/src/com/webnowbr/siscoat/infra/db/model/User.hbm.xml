@@ -183,6 +183,14 @@
 		</property>	   
 		<property name="userPosOperacao" type="boolean">
 			<column name="userPosOperacao" not-null="true" default="false" />
-		</property>	                   		      
+		</property>	          
+		
+		<property name="loginDocket" type="java.lang.String">
+            <column name="loginDocket" />
+        </property>
+        <property name="senhaDocket" type="encryptedString">
+            <column name="senhaDocket" />
+        </property>         		      
+
     </class>
 </hibernate-mapping>
