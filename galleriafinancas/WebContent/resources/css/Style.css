@@ -82,6 +82,11 @@
 		.ui-datatable .ui-datatable-data .parcelaparcial td{
 		    background-color: #f1c88c;  
 		}
+		
+		.ui-datatable .ui-datatable-data .superlogica td{
+		    background-color: #5bcfd8;  
+		}
+		
 
 		.campoRequerido {
 			color: #cd0a0a;

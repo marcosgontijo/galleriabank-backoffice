@@ -127,6 +127,17 @@
 			<many-to-many column="idComissao"
 				class="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" />
 		</list>
-        
+		
+		<property name="desativado" type="boolean">
+			<column name="desativado" not-null="true" default="false"/>
+		</property>
+		
+		<property name="dataDesativado" type="java.util.Date">
+			<column name="dataDesativado" />
+		</property>
+		
+        <property name="superlogica" type="boolean">
+			<column name="superlogica" not-null="true" default="false"/>
+		</property>
     </class>
 </hibernate-mapping>
