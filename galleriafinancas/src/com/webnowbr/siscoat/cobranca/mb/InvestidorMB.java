@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.cobranca.mb;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,10 +27,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.el.ArrayELResolver;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -76,7 +75,6 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
-import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -89,11 +87,11 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DebenturesInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.irpf.vo.IrpfContrato;
 import com.webnowbr.siscoat.cobranca.vo.ContratoCobrancaResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.DashboardInvestidorResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.Util;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -238,28 +236,28 @@ public class InvestidorMB {
 	String labelAnoAnterior = "";
 
 	private boolean imprimirHeaderFooter;
-	
+
 	private boolean debenturesEmitidasXLSGerado;
 	private String pathContrato;
 	private String nomeContrato;
 	private StreamedContent fileXLS;
-	
+
 	private DualListModel<PagadorRecebedor> dualListModelRecebedores;
 	private List<PagadorRecebedor> listRecebedoresSeleciodados;
 	private List<PagadorRecebedor> listRecebedores;
-	
+
 	private String filtroDebenturesTipoDocumento;
 	private String filtroDebenturesDocumento;
 	private String filtroDebenturesStatus;
-	
+
 	private String filtroDebenturesPorValor = "Todos";
 	private String filtroDebenturesTipoData = "Todos";
-	
+
 	private BigDecimal filtroValorFaceInicial = null;
 	private BigDecimal filtroValorFaceFinal = null;
-	
+
 	private String filtroDebenturesTipoFiltro;
-		
+
 	public InvestidorMB() {
 
 	}
@@ -371,7 +369,7 @@ public class InvestidorMB {
 					this.labelAnoBase = "Valor em 31/12/2020";
 					this.labelAnoAnterior = "Valor em 31/12/2019";
 				}
-				
+
 				if (this.anoBase.equals("2021")) {
 					this.dataInicio = format.parse("31/12/2020");
 					this.dataFim = format.parse("31/12/2021");
@@ -382,7 +380,7 @@ public class InvestidorMB {
 					this.labelAnoBase = "Valor em 31/12/2021";
 					this.labelAnoAnterior = "Valor em 31/12/2020";
 				}
-				
+
 				if (this.anoBase.equals("2022")) {
 					this.dataInicio = format.parse("31/12/2021");
 					this.dataFim = format.parse("31/12/2022");
@@ -397,7 +395,6 @@ public class InvestidorMB {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 
 			/****
 			 * BUSCA O SALDO DA ÚLTIMA PARCELA PAGA, IR E JUROS (ano base atual)
@@ -412,168 +409,257 @@ public class InvestidorMB {
 			BigDecimal jurosTotalContrato = BigDecimal.ZERO;
 			BigDecimal saldoTotalContrato = BigDecimal.ZERO;
 
-			for (ContratoCobrancaParcelasInvestidor parcela : this.parcelasInvestidor) {
-				
-				/*******
-				 * VERIFICA SE A DATA DE ENTRADA DO INVESTIDOR NO CONTRATO FOI NO ANO BASE
-				 */
-				if (verificarAnoBaseInvestidor(this.selectedPagador, parcela.getIdContrato(), this.dataInicio, this.dataFim)) {
-					// Corrige valores nulos de valores
-					if (parcela.getIrRetido() == null) {
-						parcela.setIrRetido(BigDecimal.ZERO);
-					}
-	
-					if (parcela.getJuros() == null) {
-						parcela.setJuros(BigDecimal.ZERO);
-					}
-	
-					if (parcela.getSaldoCredorAtualizado() == null) {
-						parcela.setSaldoCredorAtualizado(BigDecimal.ZERO);
-					}
-	
-					if (numeroContrato == null) {
-						numeroContrato = parcela.getNumeroContrato();
-						irRetidoTotalContrato = parcela.getIrRetido();
-						jurosTotalContrato = parcela.getJuros();
-	
-						saldoTotalContrato = parcela.getSaldoCredorAtualizado();
-						numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-					} else {
-						if (numeroContrato.equals(parcela.getNumeroContrato())) {
-							irRetidoTotalContrato = irRetidoTotalContrato.add(parcela.getIrRetido());
-							jurosTotalContrato = jurosTotalContrato.add(parcela.getJuros());
-	
-							// pegar sempre o saldo da última parcela baixada
-							if (Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
-								numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-								saldoTotalContrato = parcela.getSaldoCredorAtualizado();
-							}
-						} else {
-							// Armazena dados do contrato anterior
-							informeRendimentos = new InvestidorInformeRendimentos();
-							informeRendimentos.setNumeroContrato(numeroContrato);
-							informeRendimentos.setIrRetido(irRetidoTotalContrato);
-							informeRendimentos.setJuros(jurosTotalContrato);
-							informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
-							informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-							informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
-									dataFimAnterior, cDao, numeroContrato));
-							informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
-							informeRendimentos.setCnpj("34.425.347/0001-06");
-	
-							this.investidorInformeRendimentos.add(informeRendimentos);
-	
-							// Coleta dados do contrato atual
-							numeroContrato = parcela.getNumeroContrato();
-							irRetidoTotalContrato = parcela.getIrRetido();
-							jurosTotalContrato = parcela.getJuros();
-							saldoTotalContrato = parcela.getSaldoCredorAtualizado();
-							numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
-						}
-					}
-				}
-			}
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			List<String> contratos = this.parcelasInvestidor.stream().map(p -> p.getNumeroContrato()).distinct()
+					.collect(Collectors.toList());
 
-			if (numeroContrato != null) {
-				// Armazena dados do último contrato
+			for (String numeroContratoIRPF : contratos) {
+				List<ContratoCobrancaParcelasInvestidor> parcelasContrato = this.parcelasInvestidor.stream()
+						.filter(p -> p.getNumeroContrato().equals(numeroContratoIRPF))
+						.sorted((e1, e2) -> e1.getDataBaixa().compareTo(e2.getDataBaixa()))
+						.collect(Collectors.toList());
+
+				ContratoCobrancaParcelasInvestidor utltimaParcela = parcelasContrato.stream()
+						.reduce((first, second) -> second).orElse(null);
+
+				ContratoCobranca contrato = contratoCobrancaDao.findById(utltimaParcela.getIdContrato());
+
+				IrpfContrato irpfContrato = BuscaDadosIRPF(contrato, utltimaParcela);
+
+				boolean parcelaFimContrato = false;
+				if (irpfContrato != null)
+					parcelaFimContrato = (irpfContrato.getQtdeParcelasInvestidor()
+							- irpfContrato.getCarenciaInvestidor()) == 1;
+
+				irRetidoTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getIrRetido()))
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				jurosTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getJuros()))
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+				// pegar sempre o saldo da última parcela baixada
+				if (!parcelaFimContrato
+						|| (parcelaFimContrato && (Integer.valueOf(utltimaParcela.getNumeroParcela()) == irpfContrato
+								.getQtdeParcelasInvestidor())
+						|| CommonsUtil.mesmoValor(BigDecimal.ZERO, utltimaParcela.getSaldoCredorAtualizado())
+						|| !CommonsUtil.mesmoValor(BigDecimal.ZERO, utltimaParcela.getParcelaMensal())))
+					saldoTotalContrato = utltimaParcela.getSaldoCredorAtualizado();
+				else
+					saldoTotalContrato = irpfContrato.getVlrInvestidor();
+
+				// Armazena dados do contrato anterior
 				informeRendimentos = new InvestidorInformeRendimentos();
-				informeRendimentos.setNumeroContrato(numeroContrato);
+				informeRendimentos.setNumeroContrato(numeroContratoIRPF);
 				informeRendimentos.setIrRetido(irRetidoTotalContrato);
 				informeRendimentos.setJuros(jurosTotalContrato);
 				informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
 				informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-				informeRendimentos.setSaldoAnoAnterior(
-						getSaldoInvestidorAnoAnterior(dataInicioAnterior, dataFimAnterior, cDao, numeroContrato));
+
+				informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
+						dataFimAnterior, cDao, contratoCobrancaDao, numeroContratoIRPF));
 				informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
 				informeRendimentos.setCnpj("34.425.347/0001-06");
 
 				this.investidorInformeRendimentos.add(informeRendimentos);
+
+				numeroParcela = Integer.valueOf(utltimaParcela.getNumeroParcela());
+
+				// for (ContratoCobrancaParcelasInvestidor parcela : parcelasContrato) {
+				//
+				// ContratoCobranca contrato =
+				// contratoCobrancaDao.findById(parcela.getIdContrato());
+				//
+				// IrpfContrato irpfContrato = BuscaDadosIRPF(contrato, parcela);
+				//
+				// boolean parcelaFimContrato = false;
+				// if (irpfContrato != null)
+				// parcelaFimContrato = (irpfContrato.getQtdeParcelasInvestidor()
+				// - irpfContrato.getCarenciaInvestidor()) == 1;
+				//
+				// /*******
+				// * VERIFICA SE A DATA DE ENTRADA DO INVESTIDOR NO CONTRATO FOI NO ANO BASE
+				// */
+				// if (verificarAnoBaseInvestidor(this.selectedPagador, contrato,
+				// this.dataInicio, this.dataFim)) {
+				// // Corrige valores nulos de valores
+				// if (parcela.getIrRetido() == null) {
+				// parcela.setIrRetido(BigDecimal.ZERO);
+				// }
+				//
+				// if (parcela.getJuros() == null) {
+				// parcela.setJuros(BigDecimal.ZERO);
+				// }
+				//
+				// if (parcela.getSaldoCredorAtualizado() == null) {
+				// parcela.setSaldoCredorAtualizado(BigDecimal.ZERO);
+				// }
+				//
+				// if (numeroContrato == null) {
+				// numeroContrato = parcela.getNumeroContrato();
+				// //irRetidoTotalContrato = parcela.getIrRetido();
+				// jurosTotalContrato = parcela.getJuros();
+				//
+				// saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+				// numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+				// } else {
+				// if (numeroContrato.equals(parcela.getNumeroContrato())) {
+				//
+				//// irRetidoTotalContrato = irRetidoTotalContrato.add(parcela.getIrRetido());
+				// jurosTotalContrato = jurosTotalContrato.add(parcela.getJuros());
+				//
+				// // pegar sempre o saldo da última parcela baixada
+				// if (!parcelaFimContrato
+				// && Integer.valueOf(parcela.getNumeroParcela()) > numeroParcela) {
+				// numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+				// saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+				// }
+				// } else {
+				// // Armazena dados do contrato anterior
+				// informeRendimentos = new InvestidorInformeRendimentos();
+				// informeRendimentos.setNumeroContrato(numeroContrato);
+				// informeRendimentos.setIrRetido(irRetidoTotalContrato);
+				// informeRendimentos.setJuros(jurosTotalContrato);
+				// informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
+				// informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+				//
+				// informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
+				// dataFimAnterior, cDao, contratoCobrancaDao, numeroContrato));
+				// informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+				// informeRendimentos.setCnpj("34.425.347/0001-06");
+				//
+				// this.investidorInformeRendimentos.add(informeRendimentos);
+				//
+				// // Coleta dados do contrato atual
+				// numeroContrato = parcela.getNumeroContrato();
+				// irRetidoTotalContrato = parcela.getIrRetido();
+				// jurosTotalContrato = parcela.getJuros();
+				// if (!parcelaFimContrato || (parcelaFimContrato
+				// && Integer.valueOf(parcela.getNumeroParcela()) == irpfContrato
+				// .getQtdeParcelasInvestidor()))
+				// saldoTotalContrato = parcela.getSaldoCredorAtualizado();
+				// else
+				// saldoTotalContrato = irpfContrato.getVlrInvestidor();
+				//
+				// numeroParcela = Integer.valueOf(parcela.getNumeroParcela());
+				// }
+				// }
+				// }
+				// }
+				// }
+				//
+				// if (numeroContrato != null) {
+				// // Armazena dados do último contrato
+				// informeRendimentos = new InvestidorInformeRendimentos();
+				// informeRendimentos.setNumeroContrato(numeroContrato);
+				// informeRendimentos.setIrRetido(irRetidoTotalContrato);
+				// informeRendimentos.setJuros(jurosTotalContrato);
+				// informeRendimentos.setSaldoAnoAtual(saldoTotalContrato);
+				// informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+				// informeRendimentos.setSaldoAnoAnterior(getSaldoInvestidorAnoAnterior(dataInicioAnterior,
+				// dataFimAnterior, cDao, contratoCobrancaDao, numeroContrato));
+				// informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+				// informeRendimentos.setCnpj("34.425.347/0001-06");
+				//
+				// this.investidorInformeRendimentos.add(informeRendimentos);
+				// }
 			}
+				/****
+				 * PEGA CONTRATOS GERADOS NO ANO BASE E QUE NÃO TIVERAM BAIXA
+				 */
+				Date dataInicioContrato = null;
+				Date dataFimContrato = null;
 
-			/****
-			 * PEGA CONTRATOS GERADOS NO ANO BASE E QUE NÃO TIVERAM BAIXA
-			 */
-			Date dataInicioContrato = null;
-			Date dataFimContrato = null;
-
-			try {
-				dataInicioContrato = format.parse("01/01/" + this.anoBase);
-				dataFimContrato = format.parse("31/12/" + this.anoBase);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-			List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
-					this.selectedPagador.getId(), dataInicioContrato, dataFimContrato);
-
-			// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
-			// SE SIM, É PQ JÁ HOUVE BAIXA
-			for (ContratoCobranca contrato : listContratos) {
-				boolean consideraContrato = true;
-
-				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
-					if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
-						consideraContrato = false;
-					}
+				try {
+					dataInicioContrato = format.parse("01/01/" + this.anoBase);
+					dataFimContrato = format.parse("31/12/" + this.anoBase);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
-				// SE CONSIDERA O CONTRATO,
-				if (consideraContrato) {
-					if (verificarAnoBaseInvestidor(this.selectedPagador, contrato.getId(), this.dataInicio, this.dataFim)) {
-						informeRendimentos = new InvestidorInformeRendimentos();
-						informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
-						informeRendimentos.setIrRetido(BigDecimal.ZERO);
-						informeRendimentos.setJuros(BigDecimal.ZERO);
-						informeRendimentos.setSaldoAnoAtual(
-								buscaValorDebentureInvestidorNoContrato(contrato, this.selectedPagador.getId()));
-						informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
-						informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
-						informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
-						informeRendimentos.setCnpj("34.425.347/0001-06");
-	
-						this.investidorInformeRendimentos.add(informeRendimentos);
-					}
-				}
-			}
-			
-			/****
-			 * PEGA CONTRATOS EM ATRASO ANOS ANTERIORES, PEGA A ÚLTIMA BAIXA E USA O SALDO CREDOR COMO VALOR DOS ANOS ANTERIORES
-			 */
-			
-			int anoInicioContratos = Integer.valueOf(this.anoBase) - 15;
-			int anoFimContratos = Integer.valueOf(this.anoBase) - 1;
-			try {
-				dataInicioContrato = format.parse("01/01/" + String.valueOf(anoInicioContratos));
-				dataFimContrato = format.parse("31/12/" + String.valueOf(anoFimContratos));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+				List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
+						this.selectedPagador.getId(), dataInicioContrato, dataFimContrato);
+				
+				final List<String> contratosNoRelatorio =   investidorInformeRendimentos.stream().map(ir -> ir.getNumeroContrato()).collect(Collectors.toList());
+										
+				List<ContratoCobranca> listContratosFilter =  listContratos.stream().filter(c -> !contratosNoRelatorio.contains( c.getNumeroContrato())).collect(Collectors.toList()); 
+				
+//				// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
+				// SE SIM, É PQ JÁ HOUVE BAIXA
+				for (ContratoCobranca contrato2 : listContratosFilter) {
+					boolean consideraContrato = true;
 
-			listContratos = new ArrayList<ContratoCobranca>();
-			listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
-					this.selectedPagador.getId(), dataInicioContrato, dataFimContrato);
+//					for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+//						if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
+//							consideraContrato = false;
+//						}
+//					}
 
-			// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
-			// SE SIM, É PQ JÁ HOUVE BAIXA ou Foi criado no ano base
-			for (ContratoCobranca contrato : listContratos) {
-				boolean consideraContrato = true;
+					// SE CONSIDERA O CONTRATO,
+//					if (consideraContrato) {
+						if (verificarAnoBaseInvestidor(this.selectedPagador, contrato2, this.dataInicio,
+								this.dataFim)) {
+							informeRendimentos = new InvestidorInformeRendimentos();
+							informeRendimentos.setNumeroContrato(contrato2.getNumeroContrato());
+							informeRendimentos.setIrRetido(BigDecimal.ZERO);
+							informeRendimentos.setJuros(BigDecimal.ZERO);
+							informeRendimentos.setSaldoAnoAtual(
+									buscaValorDebentureInvestidorNoContrato(contrato2, this.selectedPagador.getId()));
+							informeRendimentos.setIndice(this.investidorInformeRendimentos.size() + 1);
+							informeRendimentos.setSaldoAnoAnterior(BigDecimal.ZERO);
+							informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
+							informeRendimentos.setCnpj("34.425.347/0001-06");
 
-				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
-					if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
-						consideraContrato = false;
-					}
+							this.investidorInformeRendimentos.add(informeRendimentos);
+						}
+//					}
 				}
 
-				// SE CONSIDERA O CONTRATO,
-				if (consideraContrato) {
-						BigDecimal saldoContrato = buscaUltimoValorPago(contrato, this.selectedPagador.getId());
-					
+				/****
+				 * PEGA CONTRATOS EM ATRASO ANOS ANTERIORES, PEGA A ÚLTIMA BAIXA E USA O SALDO
+				 * CREDOR COMO VALOR DOS ANOS ANTERIORES
+				 */
+
+				int anoInicioContratos = Integer.valueOf(this.anoBase) - 15;
+				int anoFimContratos = Integer.valueOf(this.anoBase) - 1;
+				try {
+					dataInicioContrato = format.parse("01/01/" + String.valueOf(anoInicioContratos));
+					dataFimContrato = format.parse("31/12/" + String.valueOf(anoFimContratos));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				listContratos = new ArrayList<ContratoCobranca>();
+				listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(this.selectedPagador.getId(),
+						dataInicioContrato, dataFimContrato);
+
+				final List<String> contratosNoRelatorioNovo = investidorInformeRendimentos.stream()
+						.map(ir -> ir.getNumeroContrato()).collect(Collectors.toList());
+
+				listContratosFilter = listContratos
+						.stream().filter(c -> !contratosNoRelatorioNovo.contains( c.getNumeroContrato())).collect(Collectors.toList()); 
+				
+
+				// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
+				// SE SIM, É PQ JÁ HOUVE BAIXA ou Foi criado no ano base
+				for (ContratoCobranca contratoAnt : listContratosFilter) {
+
+//					boolean consideraContrato = true;
+//
+//					for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+//						if (contratoAnt.getNumeroContrato().equals(informe.getNumeroContrato())) {
+//							consideraContrato = false;
+//						}
+//					}
+
+					// SE CONSIDERA O CONTRATO,
+//					if (consideraContrato) {
+						BigDecimal saldoContrato = buscaUltimoValorPago(contratoAnt, this.selectedPagador.getId());
+
 						if (saldoContrato.compareTo(BigDecimal.ZERO) > 0) {
 							informeRendimentos = new InvestidorInformeRendimentos();
-							informeRendimentos.setNumeroContrato(contrato.getNumeroContrato());
+							informeRendimentos.setNumeroContrato(contratoAnt.getNumeroContrato());
 							informeRendimentos.setIrRetido(BigDecimal.ZERO);
 							informeRendimentos.setJuros(BigDecimal.ZERO);
 							informeRendimentos.setSaldoAnoAtual(saldoContrato);
@@ -581,245 +667,314 @@ public class InvestidorMB {
 							informeRendimentos.setSaldoAnoAnterior(saldoContrato);
 							informeRendimentos.setEmpresa("Galleria Finanças Securitizadora S.A");
 							informeRendimentos.setCnpj("34.425.347/0001-06");
-		
+
 							this.investidorInformeRendimentos.add(informeRendimentos);
 						}
+//					}
 				}
-			}
 
-			// FINALIZA PROCESSO DE CONSTRUÇÃO DO INFORME
-			if (this.investidorInformeRendimentos.size() == 0) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Investidores: Não há registros para os filtros informados!", ""));
-			} else {
-				this.totalIRRetido = BigDecimal.ZERO;
-				this.totalJurosLiquido = BigDecimal.ZERO;
-				this.valorInvestidorAnoAtual = BigDecimal.ZERO;
-				this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
+				// FINALIZA PROCESSO DE CONSTRUÇÃO DO INFORME
+				if (this.investidorInformeRendimentos.size() == 0) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Investidores: Não há registros para os filtros informados!", ""));
+				} else {
+					this.totalIRRetido = BigDecimal.ZERO;
+					this.totalJurosLiquido = BigDecimal.ZERO;
+					this.valorInvestidorAnoAtual = BigDecimal.ZERO;
+					this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
 
-				/***
-				 * CORRIGIR VALORES NULOS NA LISTA
+					/***
+					 * CORRIGIR VALORES NULOS NA LISTA
+					 */
+					for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+						if (informe.getIrRetido() == null) {
+							informe.setIrRetido(BigDecimal.ZERO);
+						}
+
+						if (informe.getJuros() == null) {
+							informe.setJuros(BigDecimal.ZERO);
+						}
+
+						if (informe.getSaldoAnoAtual() == null) {
+							informe.setSaldoAnoAtual(BigDecimal.ZERO);
+						}
+
+						if (informe.getSaldoAnoAnterior() == null) {
+							informe.setSaldoAnoAnterior(BigDecimal.ZERO);
+						}
+					}
+
+					/***
+					 * FAZ SOMATÓRIA FINAL
+					 */
+					for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
+						this.totalIRRetido = this.totalIRRetido.add(informe.getIrRetido());
+						this.totalJurosLiquido = this.totalJurosLiquido.add(informe.getJuros());
+						this.valorInvestidorAnoAtual = this.valorInvestidorAnoAtual.add(informe.getSaldoAnoAtual());
+						this.valorInvestidorAnoAnterior = this.valorInvestidorAnoAnterior
+								.add(informe.getSaldoAnoAnterior());
+					}
+				}
+				/*
+				 * this.valorInvestidorAnoAtual =
+				 * cDao.getParcelasPorDataInvestidorIR(this.dataInicio, this.dataFim,
+				 * this.selectedPagador.getId());
+				 * 
+				 * if (dataInicioAnterior != null && dataFimAnterior != null) {
+				 * this.valorInvestidorAnoAnterior =
+				 * cDao.getParcelasPorDataInvestidorIR(dataInicioAnterior, dataFimAnterior,
+				 * this.selectedPagador.getId()); } else { this.valorInvestidorAnoAnterior =
+				 * BigDecimal.ZERO; }
 				 */
-				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
-					if (informe.getIrRetido() == null) {
-						informe.setIrRetido(BigDecimal.ZERO);
-					}
 
-					if (informe.getJuros() == null) {
-						informe.setJuros(BigDecimal.ZERO);
-					}
-
-					if (informe.getSaldoAnoAtual() == null) {
-						informe.setSaldoAnoAtual(BigDecimal.ZERO);
-					}
-
-					if (informe.getSaldoAnoAnterior() == null) {
-						informe.setSaldoAnoAnterior(BigDecimal.ZERO);
-					}
-				}
-
-				/***
-				 * FAZ SOMATÓRIA FINAL
-				 */
-				for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
-					this.totalIRRetido = this.totalIRRetido.add(informe.getIrRetido());
-					this.totalJurosLiquido = this.totalJurosLiquido.add(informe.getJuros());
-					this.valorInvestidorAnoAtual = this.valorInvestidorAnoAtual.add(informe.getSaldoAnoAtual());
-					this.valorInvestidorAnoAnterior = this.valorInvestidorAnoAnterior
-							.add(informe.getSaldoAnoAnterior());
-				}
 			}
-			/*
-			 * this.valorInvestidorAnoAtual =
-			 * cDao.getParcelasPorDataInvestidorIR(this.dataInicio, this.dataFim,
-			 * this.selectedPagador.getId());
-			 * 
-			 * if (dataInicioAnterior != null && dataFimAnterior != null) {
-			 * this.valorInvestidorAnoAnterior =
-			 * cDao.getParcelasPorDataInvestidorIR(dataInicioAnterior, dataFimAnterior,
-			 * this.selectedPagador.getId()); } else { this.valorInvestidorAnoAnterior =
-			 * BigDecimal.ZERO; }
-			 */
 		}
+	//}
+	
+	private IrpfContrato BuscaDadosIRPF(ContratoCobranca contrato, ContratoCobrancaParcelasInvestidor parcela) {
+		IrpfContrato irpfContrato = null;
+		if (contrato.getRecebedor() != null && contrato.getRecebedor().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor1(), contrato.getVlrInvestidor1(),
+					contrato.getQtdeParcelasInvestidor1(), contrato.getCarenciaInvestidor1(),
+					contrato.getDataInicioInvestidor1());
+		} else if (contrato.getRecebedor2() != null
+				&& contrato.getRecebedor2().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor2(), contrato.getVlrInvestidor2(),
+					contrato.getQtdeParcelasInvestidor2(), contrato.getCarenciaInvestidor2(),
+					contrato.getDataInicioInvestidor2());
+		} else if (contrato.getRecebedor3() != null
+				&& contrato.getRecebedor3().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor3(), contrato.getVlrInvestidor3(),
+					contrato.getQtdeParcelasInvestidor3(), contrato.getCarenciaInvestidor3(),
+					contrato.getDataInicioInvestidor3());
+		} else if (contrato.getRecebedor4() != null
+				&& contrato.getRecebedor4().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor4(), contrato.getVlrInvestidor4(),
+					contrato.getQtdeParcelasInvestidor4(), contrato.getCarenciaInvestidor4(),
+					contrato.getDataInicioInvestidor4());
+		} else if (contrato.getRecebedor5() != null
+				&& contrato.getRecebedor5().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor5(), contrato.getVlrInvestidor5(),
+					contrato.getQtdeParcelasInvestidor5(), contrato.getCarenciaInvestidor5(),
+					contrato.getDataInicioInvestidor5());
+		} else if (contrato.getRecebedor6() != null
+				&& contrato.getRecebedor6().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor6(), contrato.getVlrInvestidor6(),
+					contrato.getQtdeParcelasInvestidor6(), contrato.getCarenciaInvestidor6(),
+					contrato.getDataInicioInvestidor6());
+		} else if (contrato.getRecebedor7() != null
+				&& contrato.getRecebedor7().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor7(), contrato.getVlrInvestidor7(),
+					contrato.getQtdeParcelasInvestidor7(), contrato.getCarenciaInvestidor7(),
+					contrato.getDataInicioInvestidor7());
+		} else if (contrato.getRecebedor8() != null
+				&& contrato.getRecebedor8().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor8(), contrato.getVlrInvestidor8(),
+					contrato.getQtdeParcelasInvestidor8(), contrato.getCarenciaInvestidor8(),
+					contrato.getDataInicioInvestidor8());
+		} else if (contrato.getRecebedor9() != null
+				&& contrato.getRecebedor9().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor9(), contrato.getVlrInvestidor9(),
+					contrato.getQtdeParcelasInvestidor9(), contrato.getCarenciaInvestidor9(),
+					contrato.getDataInicioInvestidor9());
+		} else if (contrato.getRecebedor10() != null
+				&& contrato.getRecebedor10().equals(parcela.getInvestidor())) {
+			irpfContrato = new IrpfContrato(contrato.getTipoCalculoInvestidor10(), contrato.getVlrInvestidor10(),
+					contrato.getQtdeParcelasInvestidor10(), contrato.getCarenciaInvestidor10(),
+					contrato.getDataInicioInvestidor10());
+		}
+
+		return irpfContrato;
 	}
 	
-	public boolean verificarAnoBaseInvestidor(PagadorRecebedor investidor, long idContrato, Date dataInicio, Date dataFim) {
+
+	public boolean verificarAnoBaseInvestidor(PagadorRecebedor investidor, ContratoCobranca contrato, Date dataInicio,
+			Date dataFim) {
 		boolean retorno = false;
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		ContratoCobranca contrato = new ContratoCobranca();
+
 		Date dataEntradaInvestidor = null;
-		
-		contrato = cDao.findById(idContrato);
-		
+
 		// acha o investidorm no contrato
 		if (contrato.getRecebedor() != null) {
 			if (investidor.getId() == contrato.getRecebedor().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor1()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor1()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor2() != null) {
 			if (investidor.getId() == contrato.getRecebedor2().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor2()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor2()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor3() != null) {
 			if (investidor.getId() == contrato.getRecebedor3().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor3()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor3()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor4() != null) {
 			if (investidor.getId() == contrato.getRecebedor4().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor4()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor4()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor5() != null) {
 			if (investidor.getId() == contrato.getRecebedor5().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor5()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor5()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor6() != null) {
 			if (investidor.getId() == contrato.getRecebedor6().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor6()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor6()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor7() != null) {
 			if (investidor.getId() == contrato.getRecebedor7().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor7()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor7()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor8() != null) {
 			if (investidor.getId() == contrato.getRecebedor8().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor8()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor8()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor9() != null) {
 			if (investidor.getId() == contrato.getRecebedor9().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor9()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor9()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
-		
+
 		if (contrato.getRecebedor10() != null) {
 			if (investidor.getId() == contrato.getRecebedor10().getId()) {
 				// pega as parcelas dele no contrato
-				for (ContratoCobrancaParcelasInvestidor parcela : contrato.getListContratoCobrancaParcelasInvestidor10()) {
+				for (ContratoCobrancaParcelasInvestidor parcela : contrato
+						.getListContratoCobrancaParcelasInvestidor10()) {
 					dataEntradaInvestidor = parcela.getDataVencimento();
-					
+
 					Calendar c = Calendar.getInstance();
 					c.setTime(parcela.getDataVencimento());
 					c.add(Calendar.MONTH, -1);
 					dataEntradaInvestidor = c.getTime();
-					
+
 					break;
 				}
 			}
 		}
 		// verifica se a data de entrada do investidor está no ano base
 		if (dataEntradaInvestidor != null) {
-			//if ((dataEntradaInvestidor.compareTo(dataInicio) == 0 || dataEntradaInvestidor.compareTo(dataInicio) > 0) &&
-			//		(dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
+			// if ((dataEntradaInvestidor.compareTo(dataInicio) == 0 ||
+			// dataEntradaInvestidor.compareTo(dataInicio) > 0) &&
+			// (dataEntradaInvestidor.compareTo(dataFim) == 0 ||
+			// dataEntradaInvestidor.compareTo(dataFim) < 0)) {
 			if ((dataEntradaInvestidor.compareTo(dataFim) == 0 || dataEntradaInvestidor.compareTo(dataFim) < 0)) {
 				retorno = true;
 			}
 		}
-		
+
 		return retorno;
 	}
 
@@ -833,7 +988,7 @@ public class InvestidorMB {
 	 * @return
 	 */
 	public BigDecimal getSaldoInvestidorAnoAnterior(Date dataInicioAnoAnterior, Date dataFimAnoAnterior,
-			ContratoCobrancaParcelasInvestidorDao cDaoAtual, String numeroContrato) {
+			ContratoCobrancaParcelasInvestidorDao cDaoAtual, ContratoCobrancaDao contratoCobrancaDao, String numeroContrato) {
 		BigDecimal saldoAnterior = BigDecimal.ZERO;
 
 		/***
@@ -845,7 +1000,10 @@ public class InvestidorMB {
 		int numeroParcela = 0;
 
 		for (ContratoCobrancaParcelasInvestidor parcela : parcelasInvestidorAnoAnterior) {
-			if (verificarAnoBaseInvestidor(this.selectedPagador, parcela.getIdContrato(), dataInicioAnoAnterior, dataFimAnoAnterior)) {
+			ContratoCobranca contrato = contratoCobrancaDao.findById( parcela.getIdContrato());
+			
+			if (verificarAnoBaseInvestidor(this.selectedPagador, contrato, dataInicioAnoAnterior,
+					dataFimAnoAnterior)) {
 				if (numeroContrato.equals(parcela.getNumeroContrato())) {
 					if (numeroParcela == 0) {
 						saldoAnterior = parcela.getSaldoCredorAtualizado();
@@ -859,39 +1017,35 @@ public class InvestidorMB {
 				}
 			}
 		}
-		
-		if (numeroContrato.equals("01287")) {			
+
+		if (numeroContrato.equals("01287")) {
 			saldoAnterior = new BigDecimal(177000.00).setScale(2);
 		}
-		
+
 		/****
 		 * TODOS CONTRATOS GERADOS NO ANTERIOR E QUE NÃO TIVERAM BAIXA
 		 */
 		/*
-		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-		List<ContratoCobranca> listContratos = contratoDao.getContratosPorInvestidorInformeRendimentos(
-				this.selectedPagador.getId(), dataInicioAnoAnterior, dataFimAnoAnterior);
-
-		// VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE
-		// SE SIM, É PQ JÁ HOUVE BAIXA
-		for (ContratoCobranca contrato : listContratos) {
-			boolean consideraContrato = true;
-
-			for (InvestidorInformeRendimentos informe : this.investidorInformeRendimentos) {
-				if (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
-					consideraContrato = false;
-				}
-			}
-
-			// SE CONSIDERA O CONTRATO,
-			if (consideraContrato) {
-				if (verificarAnoBaseInvestidor(this.selectedPagador, contrato.getId(), this.dataInicio, this.dataFim)) {
-					saldoAnterior = 
-							buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId());
-				}
-			}
-		}
-		*/
+		 * ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		 * List<ContratoCobranca> listContratos =
+		 * contratoDao.getContratosPorInvestidorInformeRendimentos(
+		 * this.selectedPagador.getId(), dataInicioAnoAnterior, dataFimAnoAnterior);
+		 * 
+		 * // VERIFICAR SE O CONTRATO JÁ ENCONTRA-SE LISTADO NO ANO BASE // SE SIM, É PQ
+		 * JÁ HOUVE BAIXA for (ContratoCobranca contrato : listContratos) { boolean
+		 * consideraContrato = true;
+		 * 
+		 * for (InvestidorInformeRendimentos informe :
+		 * this.investidorInformeRendimentos) { if
+		 * (contrato.getNumeroContrato().equals(informe.getNumeroContrato())) {
+		 * consideraContrato = false; } }
+		 * 
+		 * // SE CONSIDERA O CONTRATO, if (consideraContrato) { if
+		 * (verificarAnoBaseInvestidor(this.selectedPagador, contrato.getId(),
+		 * this.dataInicio, this.dataFim)) { saldoAnterior =
+		 * buscaValorFinalInvestidorNoContrato(contrato, this.selectedPagador.getId());
+		 * } } }
+		 */
 
 		return saldoAnterior;
 	}
@@ -962,12 +1116,12 @@ public class InvestidorMB {
 		this.pathPDF = "";
 		this.nomePDF = "";
 		this.file = null;
-		
+
 		this.valoresLiquidosInvestidoresPDFGerado = false;
-		
+
 		return "/Atendimento/Cobranca/InvestidorValorLiquido.xhtml";
 	}
-	
+
 	public String clearFieldsValorLiquidoRelatorio() {
 		this.dataInicio = gerarDataHoje();
 		this.dataFim = gerarDataHoje();
@@ -981,9 +1135,9 @@ public class InvestidorMB {
 		this.pathPDF = "";
 		this.nomePDF = "";
 		this.file = null;
-		
+
 		this.valoresLiquidosInvestidoresPDFGerado = false;
-		
+
 		return "/Atendimento/Cobranca/InvestidorValorLiquidoRelatorio.xhtml";
 	}
 
@@ -1022,7 +1176,7 @@ public class InvestidorMB {
 					"Investidores: Não há registros para os filtros informados!", ""));
 		}
 	}
-	
+
 	public void gerarRelatorioValorLiquidoCustom() {
 
 		this.valoresLiquidosInvestidoresPDFGerado = false;
@@ -1127,7 +1281,7 @@ public class InvestidorMB {
 
 		return totalLiquido.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalLiquidoInvestidorBaixa(long idInvestidor) {
 		BigDecimal totalLiquido = BigDecimal.ZERO;
 
@@ -1141,7 +1295,7 @@ public class InvestidorMB {
 
 		return totalLiquido.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalParcelaInvestidorBaixa(long idInvestidor) {
 		BigDecimal totalParcela = BigDecimal.ZERO;
 
@@ -1155,7 +1309,7 @@ public class InvestidorMB {
 
 		return totalParcela;
 	}
-	
+
 	public BigDecimal getTotalFaceInvestidorBaixa(long idInvestidor) {
 		BigDecimal totalFace = BigDecimal.ZERO;
 
@@ -1169,7 +1323,7 @@ public class InvestidorMB {
 
 		return totalFace.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalSaldoCredorInvestidorBaixa(long idInvestidor) {
 		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
 
@@ -1183,7 +1337,7 @@ public class InvestidorMB {
 
 		return totalSaldoCredor.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalFaceInvestidorBaixaCorrespondente(long idInvestidor) {
 		BigDecimal totalFace = BigDecimal.ZERO;
 
@@ -1197,7 +1351,7 @@ public class InvestidorMB {
 
 		return totalFace.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalSaldoCredorInvestidorBaixaCorrespondente(long idInvestidor) {
 		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
 
@@ -1211,7 +1365,7 @@ public class InvestidorMB {
 
 		return totalSaldoCredor.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalFaceInvestidorBaixaEnvelope(long idInvestidor) {
 		BigDecimal totalFace = BigDecimal.ZERO;
 
@@ -1225,7 +1379,7 @@ public class InvestidorMB {
 
 		return totalFace.setScale(2);
 	}
-	
+
 	public BigDecimal getTotalSaldoCredorInvestidorBaixaEnvelope(long idInvestidor) {
 		BigDecimal totalSaldoCredor = BigDecimal.ZERO;
 
@@ -1312,10 +1466,10 @@ public class InvestidorMB {
 		for (ContratoCobrancaParcelasInvestidor parcelas : this.parcelasInvestidorSA) {
 			totalLiquido = totalLiquido.add(parcelas.getValorLiquidoBaixa());
 		}
-		
+
 		return totalLiquido;
 	}
-	
+
 	public BigDecimal getTotalLiquidoTodosInvestidoresSAOld() {
 		BigDecimal totalLiquido = BigDecimal.ZERO;
 
@@ -1712,7 +1866,7 @@ public class InvestidorMB {
 			}
 		}
 	}
-	
+
 	// busca o valor final do investidor no contrato
 	public BigDecimal buscaUltimoValorPago(ContratoCobranca contrato, long idInvestidor) {
 		BigDecimal valorFinal = null;
@@ -1720,13 +1874,14 @@ public class InvestidorMB {
 		if (contrato.getRecebedor() != null) {
 			if (contrato.getRecebedor().getId() == idInvestidor && !contrato.isRecebedorEnvelope()) {
 				// pega a última parcela baixa
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor1()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor1()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor1().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor1().get(0).getSaldoCredor();
@@ -1737,13 +1892,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor2() != null) {
 			if (contrato.getRecebedor2().getId() == idInvestidor && !contrato.isRecebedorEnvelope2()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor2()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor2()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor2().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor2().get(0).getSaldoCredor();
@@ -1754,13 +1910,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor3() != null) {
 			if (contrato.getRecebedor3().getId() == idInvestidor && !contrato.isRecebedorEnvelope3()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor3()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor3()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor3().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor3().get(0).getSaldoCredor();
@@ -1771,13 +1928,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor4() != null) {
 			if (contrato.getRecebedor4().getId() == idInvestidor && !contrato.isRecebedorEnvelope4()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor4()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor4()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor4().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor4().get(0).getSaldoCredor();
@@ -1788,13 +1946,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor5() != null) {
 			if (contrato.getRecebedor5().getId() == idInvestidor && !contrato.isRecebedorEnvelope5()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor5()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor5()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor5().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor5().get(0).getSaldoCredor();
@@ -1805,13 +1964,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor6() != null) {
 			if (contrato.getRecebedor6().getId() == idInvestidor && !contrato.isRecebedorEnvelope6()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor6()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor6()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor6().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor6().get(0).getSaldoCredor();
@@ -1822,13 +1982,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor7() != null) {
 			if (contrato.getRecebedor7().getId() == idInvestidor && !contrato.isRecebedorEnvelope7()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor7()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor7()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor7().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor7().get(0).getSaldoCredor();
@@ -1839,13 +2000,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor8() != null) {
 			if (contrato.getRecebedor8().getId() == idInvestidor && !contrato.isRecebedorEnvelope8()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor8()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor8()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor8().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor8().get(0).getSaldoCredor();
@@ -1856,13 +2018,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor9() != null) {
 			if (contrato.getRecebedor9().getId() == idInvestidor && !contrato.isRecebedorEnvelope9()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor9()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor9()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor9().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor9().get(0).getSaldoCredor();
@@ -1873,13 +2036,14 @@ public class InvestidorMB {
 
 		if (contrato.getRecebedor10() != null) {
 			if (contrato.getRecebedor10().getId() == idInvestidor && !contrato.isRecebedorEnvelope10()) {
-				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato.getListContratoCobrancaParcelasInvestidor10()) {
+				for (ContratoCobrancaParcelasInvestidor parcelasInvestidor : contrato
+						.getListContratoCobrancaParcelasInvestidor10()) {
 					if (parcelasInvestidor.isBaixado()) {
 						valorFinal = parcelasInvestidor.getSaldoCredorAtualizado();
 					}
 				}
-				
-				// se não houve baixa, pega a primeira parcela				
+
+				// se não houve baixa, pega a primeira parcela
 				if (valorFinal == null) {
 					if (contrato.getListContratoCobrancaParcelasInvestidor10().size() > 0) {
 						valorFinal = contrato.getListContratoCobrancaParcelasInvestidor10().get(0).getSaldoCredor();
@@ -1890,7 +2054,7 @@ public class InvestidorMB {
 
 		return valorFinal;
 	}
-	
+
 	// busca o valor final do investidor no contrato
 	public BigDecimal buscaValorDebentureInvestidorNoContrato(ContratoCobranca contrato, long idInvestidor) {
 		BigDecimal valorFinal = BigDecimal.ZERO;
@@ -2034,29 +2198,30 @@ public class InvestidorMB {
 
 			for (ContratoCobrancaParcelasInvestidor cd : listParcelasInvestidor) {
 				if (cd.isBaixado()) {
-					// valorInvestidoContrato = cd.getSaldoCredorAtualizado();					
+					// valorInvestidoContrato = cd.getSaldoCredorAtualizado();
 					contratoVo.setValorInvestido(cd.getSaldoCredorAtualizado());
 				} else {
 					break;
 				}
-			} 
+			}
 
 			if (contratoVo.getValorInvestido().compareTo(BigDecimal.ZERO) == 0) {
 				// valorInvestidoContrato = c.getVlrFinalRecebedor1();
 				boolean semValor = false;
 				switch (this.posicaoInvestidorNoContrato) {
-				case 1:					
+				case 1:
 					if (CommonsUtil.semValor(c.getVlrInvestidor1())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor1()));
 						}
@@ -2069,14 +2234,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor2())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor2()));
 						}
@@ -2089,14 +2255,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor3())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor3()));
 						}
@@ -2109,14 +2276,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor4())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor4()));
 						}
@@ -2129,14 +2297,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor5())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor5()));
 						}
@@ -2149,14 +2318,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor6())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor6()));
 						}
@@ -2169,14 +2339,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor7())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor7()));
 						}
@@ -2189,14 +2360,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor8())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor8()));
 						}
@@ -2209,14 +2381,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor9())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor9()));
 						}
@@ -2229,14 +2402,15 @@ public class InvestidorMB {
 					if (CommonsUtil.semValor(c.getVlrInvestidor10())) {
 						if (listParcelasInvestidor.size() > 0) {
 							if (listParcelasInvestidor.get(0).getSaldoCredor() != null) {
-									contratoVo.setValorInvestido(Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
+								contratoVo.setValorInvestido(
+										Util.zeroIsNull(listParcelasInvestidor.get(0).getSaldoCredor()));
 							} else {
 								semValor = true;
-							}						
-						}  else {
+							}
+						} else {
 							semValor = true;
 						}
-					
+
 						if (semValor) {
 							contratoVo.setValorInvestido(Util.zeroIsNull(c.getVlrFinalRecebedor10()));
 						}
@@ -2370,17 +2544,17 @@ public class InvestidorMB {
 					if (contratoQuitato.equals("-1"))
 						contratoQuitato = cd.getNumeroParcela();
 				} else {
-					
+
 					// se parcela paga soma o valor recebido pelo investidor
 					// soma valor a receber
 					BigDecimal valorRecebido = BigDecimal.ZERO;
 //					if (cd.getSaldoCredorAtualizado().compareTo( BigDecimal.ZERO) == 0) {
 //						valorRecebido = cd.getValorLiquido().subtract(contratoVo.getValorInvestido());						
 //					} else {
-					if(!CommonsUtil.semValor(cd.getAmortizacao()) && !CommonsUtil.semValor(cd.getValorLiquido())) {
+					if (!CommonsUtil.semValor(cd.getAmortizacao()) && !CommonsUtil.semValor(cd.getValorLiquido())) {
 						valorRecebido = cd.getValorLiquido().subtract(cd.getAmortizacao());
 					}
-					
+
 //					}					
 					contratoVo.addValorRecebido(valorRecebido);
 
@@ -2400,7 +2574,7 @@ public class InvestidorMB {
 						this.extrato.add(extrato);
 					}
 
-					if(!CommonsUtil.semValor(cd.getAmortizacao())) {
+					if (!CommonsUtil.semValor(cd.getAmortizacao())) {
 						if (cd.getAmortizacao().compareTo(BigDecimal.ZERO) > 0) {
 							ExtratoVO extrato = new ExtratoVO();
 							extrato.setIdContratoCobranca(c.getId());
@@ -2426,7 +2600,7 @@ public class InvestidorMB {
 			if (contratoQuitato.equals("-1")) {
 				contratoVo.setSituacao(SiscoatConstants.CONTRATO_QUITADO);
 			}
-			
+
 		}
 	}
 
@@ -2631,7 +2805,7 @@ public class InvestidorMB {
 
 		this.selectedContrato.setListContratoCobrancaParcelasInvestidorSelecionado(
 				contrato.getListContratoCobrancaParcelasInvestidorSelecionado());
-		
+
 		return null;
 	}
 
@@ -3068,7 +3242,7 @@ public class InvestidorMB {
 
 	public void habilitaFiltrosContrato() {
 		loadContratos();
-		
+
 		if (!this.updateMode) {
 			if (this.filtraContrato) {
 				clearContrato();
@@ -3205,7 +3379,7 @@ public class InvestidorMB {
 
 		return qtdeDias;
 	}
-	
+
 	public void geraXLSDebenturesEmitidas() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -3281,11 +3455,11 @@ public class InvestidorMB {
 		cell = row.createCell(9);
 		cell.setCellValue("Quitado");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row.createCell(10);
 		cell.setCellValue("Data ultima Pacela Paga");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row.createCell(11);
 		cell.setCellValue("Valor ultima Parcela Paga");
 		cell.setCellStyle(cell_style);
@@ -3339,7 +3513,7 @@ public class InvestidorMB {
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getRecebedor().getNome());
-			
+
 			// Contrato
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
@@ -3394,17 +3568,17 @@ public class InvestidorMB {
 			cell = row.createCell(8);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcela());
-			
+
 			// Quitado
 			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQuitado());
-			
+
 			// Data Ultima Parcela paga
 			cell = row.createCell(10);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcelaPaga());
-			
+
 			// Valor Ultima Parcela paga
 			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
@@ -3414,8 +3588,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
-			
+
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
@@ -3427,7 +3600,7 @@ public class InvestidorMB {
 
 		this.debenturesEmitidasXLSGerado = true;
 	}
-	
+
 	public void geraXLSValorLiquidoInvestidores() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -3548,11 +3721,11 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getInvestidor().getNome());
-			
+
 			// CPF CNPJ
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.getInvestidor().getCpf() != null) {
 				cell.setCellValue(record.getInvestidor().getCpf());
 			} else {
@@ -3562,42 +3735,42 @@ public class InvestidorMB {
 			// Agencia Conta
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
-			
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " + record.getInvestidor().getConta());
+
 			// Contrato
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getNumeroContrato());			
-			
+			cell.setCellValue(record.getNumeroContrato());
+
 			// Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());		
-			
+			cell.setCellValue(record.getPagador().getNome());
+
 			// Garantido
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.isInvestidorGarantido()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
 			}
-						
+
 			// Data Vencimento
 			cell = row.createCell(6);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataVencimento());
-			
+
 			// Em dia
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			
+
 			if (!record.isParcelaContratoVencida()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
-			}		
+			}
 
 			// Valor Bruto Parcela
 			cell = row.createCell(8);
@@ -3608,7 +3781,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Valor Líquido a Receber
 			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
@@ -3629,7 +3802,7 @@ public class InvestidorMB {
 
 		this.valoresLiquidosInvestidoresPDFGerado = true;
 	}
-	
+
 	public void geraXLSValorLiquidoInvestidoresRelatorio() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -3765,11 +3938,11 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getInvestidor().getNome());
-			
+
 			// CPF CNPJ
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.getInvestidor().getCpf() != null) {
 				cell.setCellValue(record.getInvestidor().getCpf());
 			} else {
@@ -3779,43 +3952,43 @@ public class InvestidorMB {
 			// Agencia Conta
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
-			
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " + record.getInvestidor().getConta());
+
 			// Contrato
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getNumeroContrato());			
-			
+			cell.setCellValue(record.getNumeroContrato());
+
 			// Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());		
-			
+			cell.setCellValue(record.getPagador().getNome());
+
 			// Garantido
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.isInvestidorGarantido()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
 			}
-						
+
 			// Data Vencimento
 			cell = row.createCell(6);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataVencimento());
-			
+
 			// Em dia
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			
+
 			if (!record.isParcelaContratoVencida()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
-			}		
-			
+			}
+
 			// Taxa Remuneração
 			cell = row.createCell(8);
 			cell.setCellStyle(numericStyle);
@@ -3825,16 +3998,16 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Antecipação?
 			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getTipoParcela());	
-			
+			cell.setCellValue(record.getTipoParcela());
+
 			// Recebe Juros Mensal?
 			cell = row.createCell(10);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getRecebeJurosMensal());	
+			cell.setCellValue(record.getRecebeJurosMensal());
 
 			// Valor Bruto Parcela
 			cell = row.createCell(11);
@@ -3845,7 +4018,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Valor Líquido a Receber
 			cell = row.createCell(12);
 			cell.setCellStyle(numericStyle);
@@ -3865,7 +4038,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Saldo Credor
 			cell = row.createCell(14);
 			cell.setCellStyle(numericStyle);
@@ -3886,7 +4059,7 @@ public class InvestidorMB {
 
 		this.valoresLiquidosInvestidoresPDFGerado = true;
 	}
-	
+
 	public void geraXLSValorLiquidoCorrespondente() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -4013,11 +4186,11 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getInvestidor().getNome());
-			
+
 			// CPF CNPJ
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.getInvestidor().getCpf() != null) {
 				cell.setCellValue(record.getInvestidor().getCpf());
 			} else {
@@ -4027,42 +4200,42 @@ public class InvestidorMB {
 			// Agencia Conta
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
-			
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " + record.getInvestidor().getConta());
+
 			// Contrato
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getNumeroContrato());			
-			
+			cell.setCellValue(record.getNumeroContrato());
+
 			// Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());		
-			
+			cell.setCellValue(record.getPagador().getNome());
+
 			// Garantido
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.isInvestidorGarantido()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
 			}
-						
+
 			// Data Vencimento
 			cell = row.createCell(6);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataVencimento());
-			
+
 			// Em dia
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			
+
 			if (!record.isParcelaContratoVencida()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
-			}			
+			}
 
 			// Valor Bruto Parcela
 			cell = row.createCell(8);
@@ -4073,7 +4246,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Valor Líquido a Receber
 			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
@@ -4093,7 +4266,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Saldo Credor
 			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
@@ -4114,7 +4287,7 @@ public class InvestidorMB {
 
 		this.valoresLiquidosInvestidoresPDFGerado = true;
 	}
-	
+
 	public void geraXLSValorLiquidoEnvelopeRelatorio() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -4235,11 +4408,11 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getInvestidor().getNome());
-			
+
 			// CPF CNPJ
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.getInvestidor().getCpf() != null) {
 				cell.setCellValue(record.getInvestidor().getCpf());
 			} else {
@@ -4249,42 +4422,42 @@ public class InvestidorMB {
 			// Agencia Conta
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
-			
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " + record.getInvestidor().getConta());
+
 			// Contrato
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getNumeroContrato());			
-			
+			cell.setCellValue(record.getNumeroContrato());
+
 			// Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());		
-			
+			cell.setCellValue(record.getPagador().getNome());
+
 			// Garantido
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.isInvestidorGarantido()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
 			}
-						
+
 			// Data Vencimento
 			cell = row.createCell(6);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataVencimento());
-			
+
 			// Em dia
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			
+
 			if (!record.isParcelaContratoVencida()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
-			}			
+			}
 
 			// Valor Bruto Parcela
 			cell = row.createCell(8);
@@ -4295,7 +4468,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Valor Líquido a Receber
 			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
@@ -4316,7 +4489,7 @@ public class InvestidorMB {
 
 		this.valoresLiquidosInvestidoresPDFGerado = true;
 	}
-	
+
 	public void geraXLSValorLiquidoEnvelope() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathPDF = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -4443,11 +4616,11 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getInvestidor().getNome());
-			
+
 			// CPF CNPJ
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.getInvestidor().getCpf() != null) {
 				cell.setCellValue(record.getInvestidor().getCpf());
 			} else {
@@ -4457,42 +4630,42 @@ public class InvestidorMB {
 			// Agencia Conta
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getInvestidor().getAgencia() + " | " +  record.getInvestidor().getConta());
-			
+			cell.setCellValue(record.getInvestidor().getAgencia() + " | " + record.getInvestidor().getConta());
+
 			// Contrato
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getNumeroContrato());			
-			
+			cell.setCellValue(record.getNumeroContrato());
+
 			// Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());		
-			
+			cell.setCellValue(record.getPagador().getNome());
+
 			// Garantido
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			
+
 			if (record.isInvestidorGarantido()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
 			}
-						
+
 			// Data Vencimento
 			cell = row.createCell(6);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataVencimento());
-			
+
 			// Em dia
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			
+
 			if (!record.isParcelaContratoVencida()) {
-				cell.setCellValue("Sim");		
+				cell.setCellValue("Sim");
 			} else {
 				cell.setCellValue("Não");
-			}			
+			}
 
 			// Valor Bruto Parcela
 			cell = row.createCell(8);
@@ -4503,7 +4676,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Valor Líquido a Receber
 			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
@@ -4523,7 +4696,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Saldo Credor
 			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
@@ -4544,7 +4717,7 @@ public class InvestidorMB {
 
 		this.valoresLiquidosInvestidoresPDFGerado = true;
 	}
-	
+
 	public void geraXLSRelatorioDebenturesEmitidas() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -4618,7 +4791,7 @@ public class InvestidorMB {
 		cell.setCellValue("Valor Parcela Mensal");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(9);
-		cell.setCellValue("Valor Líquido");		
+		cell.setCellValue("Valor Líquido");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
 		cell.setCellValue("Data Última Parcela");
@@ -4689,24 +4862,24 @@ public class InvestidorMB {
 			cell = row.createCell(0);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getRecebedor().getNome());
-			
+
 			// Contrato
 			cell = row.createCell(1);
 			cell.setCellStyle(cell_style);
 			if (record.getContrato() != null) {
-				cell.setCellValue(record.getContrato().getNumeroContrato());	
-			} 			
-			
+				cell.setCellValue(record.getContrato().getNumeroContrato());
+			}
+
 			// Emissao
 			cell = row.createCell(2);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataDebentures());
-			
+
 			// Prazo
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getPrazo());
-			
+
 			// Valor Face
 			cell = row.createCell(4);
 			cell.setCellStyle(numericStyle);
@@ -4716,7 +4889,7 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Taxa
 			cell = row.createCell(5);
 			cell.setCellStyle(numericStyle);
@@ -4726,17 +4899,17 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Meses Carência
 			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getMesesCarencia());
-			
+
 			// Mensal
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getPagamentoMensal());
-			
+
 			// Valor Parcela Mensal
 			cell = row.createCell(8);
 			cell.setCellStyle(numericStyle);
@@ -4745,8 +4918,8 @@ public class InvestidorMB {
 				cell.setCellValue(record.getParcelaMensal().doubleValue());
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
-			}	
-			
+			}
+
 			// Valor Liquido
 			cell = row.createCell(9);
 			cell.setCellStyle(numericStyle);
@@ -4756,13 +4929,13 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Data Última Parcela
 			cell = row.createCell(10);
 			cell.setCellStyle(dateStyle);
 			cell.setCellValue(record.getDataUltimaParcela());
-			
-			//Valor Última Parcela
+
+			// Valor Última Parcela
 			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
@@ -4771,30 +4944,30 @@ public class InvestidorMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0.00"));
 			}
-			
+
 			// Quitado
 			cell = row.createCell(12);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQuitado());
-			
+
 			// Data Quitação
 			cell = row.createCell(13);
 			cell.setCellStyle(dateStyle);
-			cell.setCellValue(record.getDataQuitacao());			
-			
+			cell.setCellValue(record.getDataQuitacao());
+
 			// Tipo de Cálculo
 			cell = row.createCell(14);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getTipoCalculo());
-						
+
 			// Garantido
 			cell = row.createCell(15);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getGarantido());
-			
+
 			if (record.getParcelaInvestidor() != null) {
 				if (record.getParcelaInvestidor().getId() > 0) {
-					//Saldo Credor
+					// Saldo Credor
 					cell = row.createCell(16);
 					cell.setCellStyle(numericStyle);
 					cell.setCellType(CellType.NUMERIC);
@@ -4803,8 +4976,8 @@ public class InvestidorMB {
 					} else {
 						cell.setCellValue(Double.valueOf("0.00"));
 					}
-					
-					//Número Parcela
+
+					// Número Parcela
 					cell = row.createCell(17);
 					cell.setCellStyle(numericStyle);
 					cell.setCellType(CellType.NUMERIC);
@@ -4847,7 +5020,7 @@ public class InvestidorMB {
 
 		Document doc = null;
 		OutputStream os = null;
-		//ByteArrayOutputStream os = new ByteArrayOutputStream();
+		// ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 		try {
 			/*
@@ -4876,8 +5049,8 @@ public class InvestidorMB {
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
 			this.nomePDF = "Informe de rendimentos - " + this.selectedPagador.getNome() + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString();
-			
-			os = new FileOutputStream(this.pathPDF + this.nomePDF); 
+
+			os = new FileOutputStream(this.pathPDF + this.nomePDF);
 
 			// Associa a stream de saída ao
 			PdfWriter writer = PdfWriter.getInstance(doc, os);
@@ -4899,10 +5072,10 @@ public class InvestidorMB {
 				writer.setPageEvent(event);
 
 				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/LogoFinancas.png"));
-		        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		        ImageIO.write(buff, "png", bos);
-		        Image img = Image.getInstance(bos.toByteArray());
-		        
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ImageIO.write(buff, "png", bos);
+				Image img = Image.getInstance(bos.toByteArray());
+
 				img.setAlignment(Element.ALIGN_CENTER);
 				img.scaleAbsolute(90, 65);
 				cell1 = new PdfPCell(img);
@@ -5435,12 +5608,12 @@ public class InvestidorMB {
 				// fechamento do documento
 				doc.close();
 			}
-			
+
 			if (os != null) {
-				//fechamento da stream de saída
+				// fechamento da stream de saída
 				try {
 					os.close();
-					
+
 					// fechamento da stream de saída
 					String caminho = this.pathPDF + this.nomePDF;
 					String arquivo = this.nomePDF;
@@ -5454,12 +5627,12 @@ public class InvestidorMB {
 					file = new DefaultStreamedContent(stream, caminho, arquivo);
 
 					return file;
-					
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}			
+			}
 		}
 
 		return null;
@@ -5540,8 +5713,8 @@ public class InvestidorMB {
 			 * Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
 			 * p1.setAlignment(Element.ALIGN_CENTER); p1.setSpacingAfter(10); doc.add(p1);
 			 */
-			PdfPTable table = new PdfPTable(
-					new float[] { 0.10f, 0.10f, 0.10f, 0.10f, 0.10f,0.10f, 0.10f, 0.10f, 0.10f, 0.10f,0.10f, 0.10f, 0.10f});
+			PdfPTable table = new PdfPTable(new float[] { 0.10f, 0.10f, 0.10f, 0.10f, 0.10f, 0.10f, 0.10f, 0.10f, 0.10f,
+					0.10f, 0.10f, 0.10f, 0.10f });
 			table.setWidthPercentage(100.0f);
 
 			PdfPCell cell1 = new PdfPCell(new Phrase("Galleria Finanças Securitizadora S.A.", header));
@@ -5704,7 +5877,6 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
 
 			cell1 = new PdfPCell(new Phrase("Cessionário", header10));
 			cell1.setBorder(0);
@@ -5721,7 +5893,6 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
 
 			cell1 = new PdfPCell(new Phrase("Aquisição", header10));
 			cell1.setBorder(0);
@@ -5738,7 +5909,6 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
 
 			cell1 = new PdfPCell(new Phrase("Cessão", header10));
 			cell1.setBorder(0);
@@ -5755,7 +5925,6 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
 
 			cell1 = new PdfPCell(new Phrase("Ágil", header10));
 			cell1.setBorder(0);
@@ -5881,7 +6050,7 @@ public class InvestidorMB {
 				cell1.setBackgroundColor(BaseColor.WHITE);
 				cell1.setUseBorderPadding(true);
 				table.addCell(cell1);
-				
+
 				cell1 = new PdfPCell(new Phrase(oi.getContrato().getCessionario(), normal8));
 				cell1.setBorder(0);
 				cell1.setBorderWidthLeft(1);
@@ -5894,8 +6063,9 @@ public class InvestidorMB {
 				cell1.setUseBorderPadding(true);
 				table.addCell(cell1);
 
-				if (oi.getContrato().getDataAquisicaoCessao() != null) { 
-					cell1 = new PdfPCell(new Phrase(sdfDataRel.format(oi.getContrato().getDataAquisicaoCessao()), normal8));
+				if (oi.getContrato().getDataAquisicaoCessao() != null) {
+					cell1 = new PdfPCell(
+							new Phrase(sdfDataRel.format(oi.getContrato().getDataAquisicaoCessao()), normal8));
 				} else {
 					cell1 = new PdfPCell(new Phrase(" ", normal8));
 				}
@@ -5909,8 +6079,8 @@ public class InvestidorMB {
 				cell1.setBackgroundColor(BaseColor.WHITE);
 				cell1.setUseBorderPadding(true);
 				table.addCell(cell1);
-				
-				if (oi.getContrato().getValorCessao() != null) { 
+
+				if (oi.getContrato().getValorCessao() != null) {
 					cell1 = new PdfPCell(new Phrase("R$ " + df.format(oi.getContrato().getValorCessao()), normal8));
 				} else {
 					cell1 = new PdfPCell(new Phrase(" ", normal8));
@@ -5925,8 +6095,8 @@ public class InvestidorMB {
 				cell1.setBackgroundColor(BaseColor.WHITE);
 				cell1.setUseBorderPadding(true);
 				table.addCell(cell1);
-				
-				if (oi.getContrato().getValorAgilCessao() != null) { 
+
+				if (oi.getContrato().getValorAgilCessao() != null) {
 					cell1 = new PdfPCell(new Phrase("R$ " + df.format(oi.getContrato().getValorAgilCessao()), normal8));
 				} else {
 					cell1 = new PdfPCell(new Phrase(" ", normal8));
@@ -6014,7 +6184,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
+
 			cell1 = new PdfPCell(new Phrase(" ", header8));
 			cell1.setBorder(0);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -6022,7 +6192,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
+
 			cell1 = new PdfPCell(new Phrase(" ", header8));
 			cell1.setBorder(0);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -6030,7 +6200,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
+
 			cell1 = new PdfPCell(new Phrase(" ", header8));
 			cell1.setBorder(0);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -6038,7 +6208,7 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			table.addCell(cell1);
-			
+
 			cell1 = new PdfPCell(new Phrase(" ", header8));
 			cell1.setBorder(0);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -6085,55 +6255,52 @@ public class InvestidorMB {
 
 		return "/Atendimento/Cobranca/TitulosQuitadosConsultar.xhtml";
 	}
-	
+
 	public final String clearFieldsDebeturesEmitidas() {
 		this.dataInicio = gerarDataHoje();
 		this.dataFim = gerarDataHoje();
 
 		clearTitulosQuitadosPDFParams();
-		
+
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		this.listRecebedores = pagadorRecebedorDao.findAll();
 		this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
-		
-		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
-				listRecebedores,
+
+		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(listRecebedores,
 				listRecebedoresSeleciodados);
 
 		return "/Atendimento/Cobranca/DebenturesEmitidasConsultar.xhtml";
 	}
-	
+
 	public final String clearFieldsRelatorioDebeturesEmitidas() {
 		this.dataInicio = gerarDataHoje();
 		this.dataFim = gerarDataHoje();
-		
 
 		this.filtroDebenturesDocumento = "";
 		this.filtroDebenturesTipoDocumento = "Todos";
 		this.filtroDebenturesStatus = "Todos";
-		
+
 		this.filtroDebenturesTipoFiltro = "Periodo";
 		this.filtroDebenturesTipoData = "Contrato";
-		
+
 		this.filtroDebenturesPorValor = "Todos";
 		this.filtroValorFaceInicial = null;
 		this.filtroValorFaceFinal = null;
-		
+
 		this.filtroNumeroContrato = "";
 
 		clearTitulosQuitadosPDFParams();
-		/*		
-		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listRecebedores = pagadorRecebedorDao.findAll();
-		this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
-		
-		this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
-				listRecebedores,
-				listRecebedoresSeleciodados);
-		*/
+		/*
+		 * PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		 * this.listRecebedores = pagadorRecebedorDao.findAll();
+		 * this.listRecebedoresSeleciodados = new ArrayList<PagadorRecebedor>();
+		 * 
+		 * this.dualListModelRecebedores = new DualListModel<PagadorRecebedor>(
+		 * listRecebedores, listRecebedoresSeleciodados);
+		 */
 		return "/Atendimento/Cobranca/RelatorioDebenturesEmitidas.xhtml";
 	}
-	
+
 	public void updateFiltroDocumento() {
 		if (this.filtroDebenturesTipoDocumento.equals("Todos")) {
 			this.filtroDebenturesDocumento = "";
@@ -6144,13 +6311,13 @@ public class InvestidorMB {
 		if (this.filtroDebenturesTipoFiltro.equals("Periodo")) {
 			this.dataInicio = gerarDataHoje();
 			this.dataFim = gerarDataHoje();
-			
+
 			this.filtroNumeroContrato = "";
 		} else {
 			this.filtroNumeroContrato = "";
 		}
 	}
-	
+
 	public void updateFiltroPorValor() {
 		if (this.filtroDebenturesPorValor.equals("Todos")) {
 			this.filtroValorFaceInicial = null;
@@ -6161,23 +6328,26 @@ public class InvestidorMB {
 	public void consultaDebeturesEmitidas() {
 		System.out.println("Debentures Emitidas Size: Consultando...");
 		clearTitulosQuitadosPDFParams();
-	
+
 		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim, this.dualListModelRecebedores.getTarget());
-		
-		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
-	}
-	
-	public void relatorioDebeturesEmitidas() {
-		System.out.println("Debentures Emitidas Size: Consultando...");
-		clearTitulosQuitadosPDFParams();
-	
-		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
-		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim, this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus, this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal, this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro, this.filtroDebenturesTipoData);
-		
+		listDebenturesInvestidor = dbDao.getDebenturesEmitidasPorPeriodo(this.dataInicio, this.dataFim,
+				this.dualListModelRecebedores.getTarget());
+
 		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
 	}
 
+	public void relatorioDebeturesEmitidas() {
+		System.out.println("Debentures Emitidas Size: Consultando...");
+		clearTitulosQuitadosPDFParams();
+
+		DebenturesInvestidorDao dbDao = new DebenturesInvestidorDao();
+		listDebenturesInvestidor = dbDao.getRelatorioDebenturesEmitidas(this.dataInicio, this.dataFim,
+				this.filtroDebenturesTipoDocumento, this.filtroDebenturesDocumento, this.filtroDebenturesStatus,
+				this.filtroDebenturesPorValor, this.filtroValorFaceInicial, this.filtroValorFaceFinal,
+				this.filtroNumeroContrato, this.filtroDebenturesTipoFiltro, this.filtroDebenturesTipoData);
+
+		System.out.println("Debentures Emitidas Size: " + listDebenturesInvestidor.size());
+	}
 
 	public void clearTitulosQuitadosPDFParams() {
 		this.titulosQuitadosPDF = null;
@@ -6241,7 +6411,7 @@ public class InvestidorMB {
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getDefault();						
+			TimeZone zone = TimeZone.getDefault();
 			Locale locale = new Locale("pt", "BR");
 			Calendar date = Calendar.getInstance(zone, locale);
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MM/yyyy", locale);
@@ -8373,7 +8543,6 @@ public class InvestidorMB {
 				table.addCell(cell1);
 			}
 
-
 			cell1 = new PdfPCell(new Phrase("______________________________________________", normal));
 			cell1.setBorder(0);
 			cell1.setPaddingRight(20f);
@@ -9392,47 +9561,35 @@ public class InvestidorMB {
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setColspan(6);
 			table.addCell(cell1);
-/*
-			cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", title));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(10f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("João Augusto Magatti Alves", title));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(10f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Comercial", title));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(20f);
-			cell1.setPaddingRight(10f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Diretor Administrativo", title));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(10f);
-			cell1.setPaddingRight(20f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setColspan(3);
-			table.addCell(cell1);
-*/
+			/*
+			 * cell1 = new PdfPCell(new Phrase("Fabricio Figueiredo", title));
+			 * cell1.setBorder(0); cell1.setPaddingLeft(20f); cell1.setPaddingRight(10f);
+			 * cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			 * cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			 * cell1.setBackgroundColor(BaseColor.WHITE); cell1.setColspan(3);
+			 * table.addCell(cell1);
+			 * 
+			 * cell1 = new PdfPCell(new Phrase("João Augusto Magatti Alves", title));
+			 * cell1.setBorder(0); cell1.setPaddingLeft(10f); cell1.setPaddingRight(20f);
+			 * cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			 * cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			 * cell1.setBackgroundColor(BaseColor.WHITE); cell1.setColspan(3);
+			 * table.addCell(cell1);
+			 * 
+			 * cell1 = new PdfPCell(new Phrase("Diretor Comercial", title));
+			 * cell1.setBorder(0); cell1.setPaddingLeft(20f); cell1.setPaddingRight(10f);
+			 * cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			 * cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			 * cell1.setBackgroundColor(BaseColor.WHITE); cell1.setColspan(3);
+			 * table.addCell(cell1);
+			 * 
+			 * cell1 = new PdfPCell(new Phrase("Diretor Administrativo", title));
+			 * cell1.setBorder(0); cell1.setPaddingLeft(10f); cell1.setPaddingRight(20f);
+			 * cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			 * cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			 * cell1.setBackgroundColor(BaseColor.WHITE); cell1.setColspan(3);
+			 * table.addCell(cell1);
+			 */
 			doc.add(table);
 
 		} catch (FileNotFoundException e) {
@@ -11299,7 +11456,7 @@ public class InvestidorMB {
 		this.listPagadores = prDao.findAll();
 
 		// Seta ano Base
-		//this.anoBase = "2020";
+		// this.anoBase = "2020";
 
 		// gera consulta e PDFs
 		for (PagadorRecebedor investidor : this.listPagadores) {
@@ -11447,7 +11604,7 @@ public class InvestidorMB {
 	}
 
 	public List<ContratoCobrancaParcelasInvestidor> getListContratoCobrancaParcelasInvestidorSelecionado() {
-		if(CommonsUtil.semValor(this.listContratoCobrancaParcelasInvestidorSelecionado) ) {
+		if (CommonsUtil.semValor(this.listContratoCobrancaParcelasInvestidorSelecionado)) {
 			BigDecimal capitalizacaoAcumulada = BigDecimal.ZERO;
 
 			for (ContratoCobrancaParcelasInvestidor parcela : this.selectedContrato
@@ -11460,11 +11617,11 @@ public class InvestidorMB {
 				this.listContratoCobrancaParcelasInvestidorSelecionado.add(parcela);
 
 			}
-			;			
+			;
 		}
-		
+
 		return this.listContratoCobrancaParcelasInvestidorSelecionado;
-		
+
 	}
 
 	public LoginBean getLoginBean() {
@@ -12218,7 +12375,7 @@ public class InvestidorMB {
 	public void setNomeContrato(String nomeContrato) {
 		this.nomeContrato = nomeContrato;
 	}
-	
+
 	/**
 	 * @return the fileRecibo
 	 */
@@ -12238,7 +12395,6 @@ public class InvestidorMB {
 
 		return fileXLS;
 	}
-
 
 	public void setFileXLS(StreamedContent fileXLS) {
 		this.fileXLS = fileXLS;

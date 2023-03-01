@@ -132,6 +132,16 @@ public class DocketMB {
 		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
 	
+	public void teste() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		tokenLogin = null;
+		loginDocket();
+		if(!CommonsUtil.semValor(tokenLogin)) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+			"[Docket - Login] Docket conectada", ""));
+		}
+	}
+	
 	public void loginDocket() {	//POST pra pegar token	
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -140,18 +150,29 @@ public class DocketMB {
 			URL myURL;
 			
 			JSONObject jsonObj = new JSONObject();
+			String loginDocket;
+			String senhaDocket;
 			
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
-				jsonObj.put("login", login);
-				jsonObj.put("senha", senha);
+				loginDocket = login;
+				senhaDocket = senha;
+				
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/auth/login");
-				jsonObj.put("login", loginProd);
-				jsonObj.put("senha", senhaProd);
+				loginDocket = loginProd;
+				senhaDocket = senhaProd;
+				User user = getUsuarioLogado();
+				if(!CommonsUtil.semValor(user)) {
+					if(!CommonsUtil.semValor(user.getLoginDocket()) && !CommonsUtil.semValor(user.getSenhaDocket())) {
+						loginDocket = user.getLoginDocket();
+						senhaDocket = user.getSenhaDocket();
+					}
+				}
 			}
 
-			
+			jsonObj.put("login", loginDocket);
+			jsonObj.put("senha", senhaDocket);
 			
 			
 			byte[] postDataBytes = jsonObj.toString().getBytes();
@@ -178,7 +199,7 @@ public class DocketMB {
 			this.tokenLogin = "";
 			
 			if (status == HTTP_COD_SUCESSO) {
-				if (myResponse.has("token")) {					
+				if (myResponse.has("token")) {
 					if (!myResponse.isNull("token")) {
 						this.tokenLogin = myResponse.getString("token");
 					}

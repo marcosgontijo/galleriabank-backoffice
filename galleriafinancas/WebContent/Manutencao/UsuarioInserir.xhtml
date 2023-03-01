@@ -353,6 +353,22 @@
 					</p:selectBooleanButton>
 					</h:panelGrid>
 				</p:panel>
+		
+				<p:panel id="PanelDocket"
+					header="Login Docket"
+					style="margin-bottom:10px;margin-top:20px;">
+					<h:panelGrid columns="2">
+						<h:outputLabel for="loginDocket" value="Login Docket: "  />
+						<p:inputText id="loginDocket" value="#{usuarioMB.objetoUsuario.loginDocket}"
+							style="FONT-SIZE: 10pt;"/>
+							
+						<h:outputLabel for="senhaDocket" value="Senha Docket: " />
+						<p:password id="senhaDocket" value="#{usuarioMB.objetoUsuario.senhaDocket}"
+							promptLabel="Por favor, digite a senha." weakLabel="Fácil"
+							goodLabel="Regular" strongLabel="Díficil" maxlength="10"
+							redisplay="true" feedback="true" inline="true"/>
+					</h:panelGrid>
+				</p:panel>
 				
 				<p:panel id="PanelResponsavel"
 					header="Sistema de Cobrança - Gerencia Pré-Contratos"
@@ -377,8 +393,8 @@
 							<f:validateLength maximum="254" minimum="1" />
 						</p:inputText>
 						
-						<h:outputLabel for="saberip" value="Não sabe seu IP? " />
-						<a id="saberip" href="https://www.meuip.com.br/" class="linkPDF" target="_blank"><b>clique aqui</b></a>
+						<h:outputLabel  value="Não sabe seu IP? " />
+						<a  href="https://www.meuip.com.br/" class="linkPDF" target="_blank"><b>clique aqui</b></a>
 	
 						<h:outputLabel for="diasSemana"
 							value="Dias da Semana Autorizados: " />
@@ -420,8 +436,8 @@
 					<h:panelGrid columns="1">
 						<h:outputLabel for="twofactor" value="Habilitar Autenticação Google: " />
 						<p:selectBooleanButton id="twofactor" value="#{usuarioMB.objetoUsuario.twoFactorAuth}" onLabel="Sim" offLabel="Não" style="width:60px" />
-						<h:outputLabel for="qrCode" value="QR Code: " />
-						<img id="qrCode" src="#{usuarioMB.objetoUsuario.urlQRCode}"/>
+						<h:outputLabel value="QR Code: " />
+						<img src="#{usuarioMB.objetoUsuario.urlQRCode}"/>
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>
