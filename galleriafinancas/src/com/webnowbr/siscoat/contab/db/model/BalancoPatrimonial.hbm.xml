@@ -4,13 +4,13 @@
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="contab">
 	<class
-		name="com.webnowbr.siscoat.cobranca.db.model.BalancoPatrimonial"
+		name="com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial"
 		table="BALANCO_PATRIMONIAL">
-		<id name="id" type="long">
-			<column name="ID" />
-			<generator class="increment" />
-		</id>
-		<property name="saldo_total_api" type="big_decimal">
+		 <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+		<!-- <property name="saldo_total_api" type="big_decimal">
 			<column name="saldo_total_api" />
 		</property>
 		<property name="aaaa_mm" type="big_decimal">
@@ -69,10 +69,7 @@
 		</property>
 		<property name="empresa" type="big_decimal">
 			<column name="empresa" />
-		</property>
-		<property name="id" type="int">
-			<column name="id" />
-		</property>
+		</property> -->
 
 	</class>
 </hibernate-mapping>
